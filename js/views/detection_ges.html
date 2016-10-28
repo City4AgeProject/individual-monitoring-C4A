@@ -1,0 +1,384 @@
+<h1 class="oj-header-border" style="align-self: center;">Geriatric Sub-factors</h1>
+
+<div class="demo-flex-display oj-flex-items-pad">
+    <div class="oj-flex oj-sm-flex-direction-column">
+        <div class="oj-flex-item oj-header-border">
+            <div class="oj-flex">
+                <div class="oj-flex-item">
+                    <span>Care recipient:<b> L_1567</b></span>
+                </div>
+                <div class="oj-flex-item">
+                    <span>Assigned geriatrician: <b>Dr Leonardo Multi</b></span>
+                </div>
+                <div class="oj-flex-item" align="right">
+                    <button id= "frailtyButton" class="oj-button-confirm" style="min-width: 100px;"
+                            data-bind="ojComponent: { component: 'ojButton', 
+                                                    label: 'Fit',
+                                                    menu: '#frailtyMenu',
+                                                    icons: {end:'oj-component-icon oj-button-menu-dropdown-icon'}}">
+                    </button>
+
+                    <ul id="frailtyMenu" style="display:none" aria-label="Order Actions"
+                        data-bind="ojComponent: {component: 'ojMenu', 
+                                                    select: frailtyMenuItemSelect
+                                                    }" >
+                        <li id="fit">
+                            <a href="#">Fit</a>
+                        </li>
+                        <li id="prefrail">
+                            <a href="#">Pre-frail</a>
+                        </li>
+                        <li id="frail">
+                            <a href="#">Frail</a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <div class="oj-flex-item"><br></div>
+        <div class="oj-flex-item">
+            <div class="oj-flex">
+                <div class="oj-flex-item"  >
+                    <!-- GEF combo box -->
+                    <div id="searchGEF">
+                        <span style="margin-right: 10px;">Select GEF:</span>
+                        <input id="combobox1" 
+                               data-bind="ojComponent: {
+                            component: 'ojCombobox',
+                            options:[{label : 'Group 1', 
+                                    children: [{value: 'motility', label: 'Motility'}, 
+                                            {value: 'physicalactivity', label: 'Physical Activity'},
+                                            {value: 'basicactivities', label: 'Basic Activities of Daily Living'},
+                                            {value: 'instrumentalactivities', label: 'Instrumental Activities of Daily Living'},
+                                            {value: 'socialization', label: 'Socialization'},
+                                            {value: 'culturalengagement', label: 'Cultural Engagement'}]}, 
+                                    {label: 'Group 2', 
+                                    children: [{value: 'environment', label: 'Environment'},
+                                            {value: 'dependence', label: 'Dependence'},
+                                            {value: 'healthphysical', label: 'Health – physical'},
+                                            {value: 'healthcognitive', label: 'Health – cognitive'}]}]
+                        }">
+                    </div>
+                    <!-- end GEF combo box -->
+                </div>
+                <div class="oj-flex-item" >
+                    <!-- period combo box -->
+                    <div id="choosePeriod">
+                        <span style="margin-right: 10px;">Period:</span>
+                        <input id="combobox2" list="periods"
+                               data-bind="ojComponent: {component: 'ojCombobox', 
+                                            value: val}
+                               "/>
+                        <datalist id="periods">
+                            <option value="Month">Month</option>
+                            <option value="Quarter">Quarter</option>
+                            <option value="Semester">Semester</option>
+                            <option value="Year">Year</option>
+                        </datalist>
+                    </div>
+                    <!-- end period combo box -->
+                </div>
+                <div class="oj-flex-item">
+                    <!-- slider -->
+                    <div id="slider-container">
+                        <div id="flex-container" >
+                            <span id="slider-label" style="margin-right: 10px" >Select date range:</span>
+                            <span id="value1" data-bind="text: valueArray()[0]" style="margin-right: 4px"> </span>
+                            <input id="slider-id"
+                                   data-bind="ojComponent: {
+                                component: 'ojSlider', 
+                                type: 'range',
+                                max:max, 
+                                min:min, 
+                                step:step, 
+                                value: valueArray,
+                                rootAttributes: {style:'max-width:50%; '}
+                            }"/>
+                            <span id="value2" data-bind="text: valueArray()[1]" style="margin-left: 4px"></span>
+                        </div> <!-- flex-container -->
+                    </div>
+                    <!-- end slider -->
+
+                </div>
+            </div>
+
+
+        </div>
+        <div class="oj-flex-item">
+            <!-- line chart GES -->
+            <div id="chart-container">
+                <div id="lineChart" contextmenu="menu123" data-bind="ojComponent: {
+                    component: 'ojChart', 
+                    type: 'line', 
+                    series: seriesValue, 
+                    groups: groupsValue, 
+                    selectionMode: 'multiple',
+                    animationOnDisplay: 'auto',
+                    animationOnDataChange: 'auto',
+                    hideAndShowBehavior: 'withoutRescale',
+                    optionChange: chartOptionChange,
+                    orientation: orientationValue,
+                    hoverBehavior: 'dim',
+                    title: {text: 'Motility', halign: 'center'},
+                    yAxis:{step:0.5},
+                    legend: {position: 'top'},
+                    tooltip: {renderer: tooltipFuntion}
+                  }" style="width:100%;height:400px;">
+                </div>
+            </div>  
+            <!-- end line chart GES drilling: 'on',
+                    drill: chartOptionChange,-->
+        </div>
+    </div>
+</div>
+
+<div id="menu-container">
+    <ul id="menu123" style="display:none" aria-label="Edit"
+        data-bind="ojComponent: {
+            component: 'ojMenu',
+            select: menuItemSelect,
+            beforeOpen: beforeOpenFunction,
+            open:openX}" >
+        <li id="action1">
+            <a href="#">
+                Add comment
+            </a>
+        </li>
+        <li id="action2">
+            <a href="#">
+                View comments
+            </a>
+        </li>
+        <li id="action3">
+            <a href="#">
+                View daily measures
+            </a>
+        </li>
+        <li id="action4">
+            <a href="#">
+                View numerical indicators
+            </a>
+        </li>
+    </ul>
+
+</div>
+
+
+<div id="dialogWrapper">
+  <div style="display:none" id="dialog1" title="Add comment"  
+       data-bind="ojComponent:{component: 'ojDialog', initialVisibility: 'hide'}">
+     <div class="oj-dialog-body">
+         
+         <div id="form-container">
+                <div class="oj-form-layout">
+                    <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline" >
+                        
+                        <div class="oj-flex" style="width: 19em;"> 
+                            <div class="oj-flex-item">
+                                <label for="selectRole">Select role</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <select id="selectRole" 
+                                        data-bind="ojComponent: {
+                                                        component: 'ojSelect', 
+                                                        value: 'Caregiver'
+                                        }">
+
+                                    <option value="Caregiver">Caregiver</option>
+                                    <option value="Gereatrician">Gereatrician</option>
+                                    <option value="Intervention staff">Intervention staff</option>
+                                    <option value="City 4 Age staff">City 4 Age staff</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="oj-flex" style="width: 19em;"> 
+                            <div class="oj-flex-item">
+                                <label for="select1">Select type</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <select id="select1"
+                                        data-bind="ojComponent: {
+                                                            component: 'ojSelect',
+                                                            list: 'types', 
+                                                            value: 'Comment'
+                                        }">
+                                </select>
+                                <ul id="types" style="display: none">
+                                    <li oj-data-value="Comment"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Comment</li>
+                                    <li oj-data-value="Warning"><img src="images/warning-icon.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Warning</li>
+                                    <li oj-data-value="Alert"><img src="images/alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Alert</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="oj-flex" style="width: 19em;">
+                            <div class="oj-flex-item">
+                                <label id="radiosetlabel">Importance</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <div id="radioSetId" 
+                                     aria-labelledby="radiosetlabel"
+                                     data-bind="ojComponent: {
+                                                        component: 'ojRadioset'
+                                    }">
+                                    <span class="oj-choice-row">
+                                        <input id="highopt" type="radio" name="rbb" value="high">
+                                        <label for="highopt">High</label>
+                                    </span>
+                                    <span class="oj-choice-row">
+                                        <input id="mediumopt" type="radio" name="rbb" value="medium">
+                                        <label for="mediumopt">Medium</label>
+                                    </span>
+                                    <span class="oj-choice-row">
+                                        <input id="lowopt" type="radio" name="rbb" value="low" checked>
+                                        <label for="lowopt">Low</label>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oj-flex" style="width: 19em;">
+                            <div class="oj-flex-item">
+                                <label for="textareacontrol">Comment</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <textarea id="textareacontrol" rows="6"
+                                          data-bind="ojComponent: {
+                                                            component: 'ojTextArea'
+                                          }"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        
+    
+     </div>
+     <div class="oj-dialog-footer">
+        <div style="width: 19em;" align="right">
+            <button id= "okButton" 
+                    data-bind="ojComponent: { 
+                                component: 'ojButton', 
+                                chroming: 'full', 
+                                label: 'Save'},
+                                click: function(){$('#dialog1').ojDialog('close');}
+                    ">
+            </button>
+
+            <button id= "buttonCancel"
+                    data-bind="ojComponent: { 
+                                component: 'ojButton', 
+                                chroming: 'full', 
+                                label: 'Cancel'},
+                                click: function(){$('#dialog1').ojDialog('close');} 
+                    ">
+            </button>
+        </div>
+     </div>
+  </div>
+  <button data-bind="ojComponent: {
+                    component: 'ojButton', 
+                    label: 'Open Dialog'}, 
+                    click: function(){$('#dialog1').ojDialog('open');}
+          "></button>
+</div>
+
+
+
+<div id="popupWrapper">
+  <div style="display:none" id="popup1"
+       data-bind="ojComponent:{component: 'ojPopup',
+                               rootAttributes: {style:'width:300px;height:270px;'},
+                              }">
+    <div class="demo-flex-display oj-flex-items-pad">
+        <div class="oj-flex oj-sm-flex-direction-column">
+            <div class="oj-flex-item">
+                <h3>Summary</h3>
+                <button id="btnClose" class="oj-panel-remove-button" 
+                  data-bind="
+                    ojComponent: {
+                      component: 'ojButton', 
+                      chroming: 'half',
+                      display: 'icons', 
+                      icons: {end: 'oj-panel-remove-icon'}, 
+                      label: 'remove'},
+                      click: function()
+                      {
+                          $('#popup1').ojPopup('close', '#btnClose');
+                      }">
+                </button>
+            </div>
+            <div class="oj-flex-item oj-dialog-body" style="height:150px; ">
+                <ul >
+                    <li>
+                        Comments: 3
+                    </li>
+                    <li>
+                        Warnings: 5
+                    </li>
+                    <li>
+                        Alerts: 1
+                    </li>
+                    <li>
+                        Comments: 3 bociewo bxuqb iw cbqwiu fbgiwebvfw vvrbe bvfoew
+                    </li>
+                    <li>
+                        Warnings: 5 noqisb dewbdco foicwrbovreboerb nwprhf23npwhnfp
+                    </li>
+                    <li>
+                        Alerts bdvbdob chnbibcf kbk
+                    </li>
+                </ul>
+            </div>
+            <div class="oj-flex-item" style="height:10px">
+            </div>
+            <div class="oj-flex-item oj-flex-items-pad">
+                <div class="oj-flex">
+                    <div class="oj-flex-item">
+                        <a href="#">
+                            <img src="images/comment_add.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                             Add comment
+                        </a>
+                    </div>
+                    <div class="oj-flex-item">
+                        <a href="#">
+                            <img src="images/comment_view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                             View comments
+                        </a>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="oj-flex-item oj-flex-items-pad">
+                <div class="oj-flex">
+                    <div class="oj-flex-item">
+                        <a href="#">
+                            <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                             View daily measures
+                        </a> 
+                    </div>
+                    <div class="oj-flex-item">
+                        <a href="#">
+                            <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                             View NUIs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+  </div>
+  <button id="btnGo" 
+    data-bind="ojComponent: {component: 'ojButton', label: 'Go'},
+               click: function()
+               {
+                 $('#popup1').ojPopup('open', '#btnGo');
+               }">
+  </button>
+</div>

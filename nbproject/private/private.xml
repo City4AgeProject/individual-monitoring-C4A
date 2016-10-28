@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/C4A/js/navigation.js</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/C4A/js/viewModels/graphics.js</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/C4A/index.html</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/C4A/js/views/people.html</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/C4A/js/appController.js</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/C4A/js/main.js</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/C4A/js/viewModels/people.js</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/C4A/js/views/graphics.html</file>
+        </group>
+        <group name="City4AgeProject">
+<<<<<<< HEAD
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/city4agedashboardapp_v1/frontend/js/navigation.js</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/city4agedashboardapp_v1/frontend/js/viewModels/detection_gef.js</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/city4agedashboardapp_v1/frontend/js/views/detection_ges.html</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/city4agedashboardapp_v1/frontend/js/main.js</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/city4agedashboardapp_v1/frontend/js/views/cr_list.html</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/city4agedashboardapp_v1/frontend/js/viewModels/detection_ges.js</file>
+            <file>file:/C:/Users/ljiljana/Documents/NetBeansProjects/city4agedashboardapp_v1/frontend/js/views/detection_gef.html</file>
+=======
+            <file>file:/J:/Dropbox/PROJEKTI/BELIT/City4Age/4.%20Implementation/City4AgeDashboardApp_v1_GIT/frontend/index.html</file>
+            <file>file:/J:/Dropbox/PROJEKTI/BELIT/City4Age/4.%20Implementation/City4AgeDashboardApp_v1_GIT/frontend/css/override.css</file>
+            <file>file:/J:/Dropbox/PROJEKTI/BELIT/City4Age/4.%20Implementation/City4AgeDashboardApp_v1_GIT/frontend/js/views/detection_ges.html</file>
+            <file>file:/J:/Dropbox/PROJEKTI/BELIT/City4Age/4.%20Implementation/City4AgeDashboardApp_v1_GIT/frontend/js/viewModels/detection_ges.js</file>
+            <file>file:/J:/Dropbox/PROJEKTI/BELIT/City4Age/4.%20Implementation/City4AgeDashboardApp_v1_GIT/frontend/js/views/detection_gef.html</file>
+            <file>file:/J:/Dropbox/PROJEKTI/BELIT/City4Age/4.%20Implementation/City4AgeDashboardApp_v1_GIT/frontend/js/viewModels/detection_gef.js</file>
+>>>>>>> 0517941e3eb0c96efbf70f8c990de6ffbc0d4c33
+        </group>
+    </open-files>
+</project-private>
