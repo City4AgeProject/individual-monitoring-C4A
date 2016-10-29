@@ -1,6 +1,6 @@
 define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
-    'ojs/ojradioset', 'ojs/ojdialog'],
+    'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource'],
         function (oj, ko, $) {
 
 
@@ -114,11 +114,23 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 
                 self.value = ko.observableArray(['Motility']);
 
-                self.valueArray = ko.observableArray([30, 100]);
+                //self.valueArray = ko.observableArray([30, 100]);
+
+                //self.min = ko.observable(0);
+                //self.max = ko.observable(120);
+                //self.step = ko.observable(10);
+                self.valueArray = ko.observableArray([0, 13]);
 
                 self.min = ko.observable(0);
-                self.max = ko.observable(120);
-                self.step = ko.observable(10);
+                self.max = ko.observable(13);
+                self.step = ko.observable(1);
+
+                self.optionChangeSlider = function (event, data) {
+                    console.log("option that changed is: ");
+                    console.log(data);
+                    $("#value1").html("Initial");
+                    $("#value2").html("Dec2016");
+                }
 
 
                 self.val = ko.observableArray(["Month"]);
@@ -138,6 +150,28 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                 $("#okButton").click(function() {
                     $("#dialog1").ojDialog("close");
                 });
+                
+                
+                //Use to perform tasks after the View is inserted into the DOM., str 103
+                self.handleAttached = function (info) {                    
+                    console.log('option 1');
+                    $('#summary').css({height: '20px', overflow: 'hidden'});
+                    $('#showmore').on('click', function () {
+                        var $this = $("#summary");
+                        if ($this.data('open')) {
+                            $("#showmore").html("Show more");
+                            $this.animate({height: '20px'});
+                            $this.data('open', 0);
+
+                        } else {
+                            $("#showmore").html("Show less");
+                            $this.animate({height: '100%'});
+                            $this.data('open', 1);
+
+                        }
+                    });
+                };
+
                 
                 /*    self.getTooltip = function(){
                  return null;
