@@ -1,19 +1,11 @@
-<!--
- Copyright (c) 2014, 2016, Oracle and/or its affiliates.
- The Universal Permissive License (UPL), Version 1.0
--->
-
-
-
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
     <span>Care recipient: <b>L_1567, age: 78, sex: male</b></span> 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <span>Assign Geriatrician: <b>Dr Leonardo Mutti</b></span> <!--class="oj-header-border"-->
     <br>                     
-    <div style="height:20px;overflow:hidden" id="blah"><b>Summary:</b> Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
+    <div style="height:20px;overflow:hidden" id="summary"><b>Summary:</b> Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
     <a href="#" id="showmore">Show more</a>
 </div>  
-
 
 
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
@@ -48,22 +40,22 @@
             <div class="oj-flex-item" >
 
                 <!-- slider -->
-                <div id="slider-container1" align="left">
+                <div id="slider-container" align="left">
                     <div id="flex-container" >
                         <span id="slider-label" style="margin-right: 10px" >Date range:</span>
-                        <span id="value1" data-bind="text: valueArray()[0]" style="margin-right: 4px"> </span>
+                        <span id="value1" data-bind="text: slider1ValueArray()[0]" style="margin-right: 4px"> </span>
                         <input id="slider1"
                                data-bind="ojComponent: {
                             component: 'ojSlider', 
                             type: 'range',
-                            max:max, 
-                            min:min, 
-                            step:step, 
-                            value: valueArray,
+                            max:slider1Max, 
+                            min:slider1Min, 
+                            step:slider1Step, 
+                            value: slider1ValueArray,
                             optionChange:optionChangeSlider,
                             rootAttributes: {style:'max-width:30%; '}
                         }"/>
-                        <!--<span id="value2" data-bind="text: valueArray()[1]" style="margin-left: 4px"></span>-->
+                        <!--<span id="value2" data-bind="text: slider1ValueArray()[1]" style="margin-left: 4px"></span>-->
                         <span>Dec 2016</span>
                     </div> <!-- flex-container -->
                 </div>
@@ -78,23 +70,23 @@
         <div class="oj-flex-item">
 
             <!-- chart for overall situation with two groups of geriatric factors -->
-            <div id="lineChart1" class="oj-flex-item" data-bind="ojComponent: {
-          component: 'ojChart', 
-          type: 'line', 
-          series: seriesValue, 
-          groups: groupsValue, 
-          selectionMode: selectionValue,
-          selection: selection1,
-          animationOnDisplay: 'auto',
-          animationOnDataChange: 'auto',
-          hideAndShowBehavior: 'withoutRescale',
-          orientation: orientationValue,
-          hoverBehavior: 'dim',
-          optionChange: chartOptionChangeLineChart1,
-          title: {text: 'Detection (Group 1 & Group 2 Geriatric factors)', halign: 'center'},
-          yAxis:{step:0.5},
-          legend: {position: 'top'}
-          }"
+            <div id="detectionGEFGroupsLineChart" class="oj-flex-item" data-bind="ojComponent: {
+                component: 'ojChart', 
+                type: 'line', 
+                series: seriesValue, 
+                groups: groupsValue, 
+                selectionMode: selectionValue,
+                selection: selectionArrayDetectionGEFGroupsLineChart,
+                animationOnDisplay: 'auto',
+                animationOnDataChange: 'auto',
+                hideAndShowBehavior: 'withoutRescale',
+                orientation: orientationValue,
+                hoverBehavior: 'dim',
+                optionChange: chartOptionChangeDetectionGEFGroupsLineChart,
+                title: {text: 'Detection (Group 1 & Group 2 Geriatric factors)', halign: 'center'},
+                yAxis:{step:0.5},
+                legend: {position: 'top'}
+                }"
                  style="width:100%;height:350px;">
             </div> 
         </div>
@@ -121,22 +113,21 @@
                     <!-- tab contents -->
                     <div id="tabs-1">
                         <!-- chart for group 1 -->
-                        <div id="lineChart2"  data-bind="ojComponent: {
+                        <div id="detectionGEFGroup1FactorsLineChart"  data-bind="ojComponent: {
                     component: 'ojChart', 
                     type: 'line', 
                     series: lineSeries1Value, 
                     groups: groupsValue, 
-                    selectionMode: selectionValue,
+                    selectionMode: 'single',
                     animationOnDisplay: 'auto',
                     animationOnDataChange: 'auto',
                     hideAndShowBehavior: 'withoutRescale',
                     orientation: orientationValue,
                     hoverBehavior: 'dim',
-                    optionChange: chartOptionChangeLineChartFactors,
+                    optionChange: chartOptionChangeFactorsGroup1,
                     title: {text: 'Group 1 Geriatric factors', halign: 'center'},
                     yAxis:{step:0.5},
-                    legend: {position: 'top'},
-                    tooltip: {renderer: getTooltip1}
+                    legend: {position: 'top'}
                     }"
                              style="width:100%;height:400px;">
                         </div>
@@ -247,7 +238,7 @@
 
 <!-- context menu for Detection chart -->
 <div id="menu-container">
-    <ul id="morphology" style="display:none" aria-label="Edit"
+    <ul id="morphologyMenu" style="display:none" aria-label="Edit"
         data-bind="ojComponent: {
             component: 'ojMenu'}" >
         <li id="action1">
@@ -262,13 +253,31 @@
         beforeOpen: beforeOpenFunction,
         open: openX-->
 
-<!-- popup for Group 1 and Group 2 charts -->
-<div style="display:none" id="popupShowFactorDetails" 
+<!-- popup for main detection (Group1 & Group2 factors) chart -->
+<div style="display:none" id="showMorphologyPopup" 
      data-bind="ojComponent:{
             component: 'ojPopup', 
             modality: 'modeless'}">
     <!-- popup panel -->
-    <div id="popupShowFactorDetailsPopupdata"></div>
+    <div align="center" style="padding: 8px 0px 8px 0px;">
+        <label for="buttonDetails"></label>
+        <button id="buttonDetails" 
+                data-bind="click: function(){$root.router.go('detection_ges');},
+                        ojComponent: {
+                        component:'ojButton', 
+                        label: 'Show morphology'
+        }"/></button>
+    </div>
+    <!-- end popup panel -->
+</div>
+<!--  -->
+
+<!-- popup for Group 1 GEF charts -->
+<div style="display:none" id="popupShowGEFGroup1Details" 
+     data-bind="ojComponent:{
+            component: 'ojPopup', 
+            modality: 'modeless'}">
+    <!-- popup panel -->
     <div align="center" style="padding: 8px 0px 8px 0px;">
         <label for="buttonDetails"></label>
         <button id="buttonDetails" 
