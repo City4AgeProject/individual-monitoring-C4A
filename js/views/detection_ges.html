@@ -230,6 +230,7 @@
                 </div>
 
 
+
             </div>
             <div class="oj-dialog-footer">
                 <div style="width: 19em;" align="right">
@@ -361,9 +362,10 @@
     </div>
 
 
+</div>
 
-
-    <!-- search comments -->
+<!-- search comments -->
+<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
     <div id="form-container3" style="width: 100%;">
         <div class="demo-flex-display oj-flex-items-pad">
             <div class="oj-flex  oj-sm-flex-items-initial oj-lg-justify-content-space-between oj-lg-align-items-flex-start" data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
@@ -415,12 +417,12 @@
                         <div class="oj-flex oj-sm-flex-direction-column">
                             <div class="oj-flex-item">
                                 <button id="filter-button"
-                                    data-bind="ojComponent: {
+                                        data-bind="ojComponent: {
                                             component: 'ojButton', 
                                             label: 'Apply',
                                             rootAttributes: {style:'width:50%; height:42px;'}},
                                             click: searchInput
-                                    ">
+                                        ">
                                 </button>
                             </div>
                             <div class="oj-flex-item">
@@ -446,60 +448,61 @@
         </div>
     </div>
 </div>
-<div class="demo-flex-display oj-flex-items-pad" >
-    <table style="width: 100%;" cellpadding="5">
-        <tr style=" background-color: #fad55c; height: 28px;">
-            <td style="width: 26px; " align="center"><img src="images/warning-icon.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
-            <td style="width: 180px; ">Dr John Doe</td>
-            <td>&nbsp;</td>
-            <td style="width: 160px; " align="right">Oct 10, 2016  14:18</td>
-            <td style="width: 160px; " align="right"></td>
-        </tr>
-        <tr>
-            <td colspan="5" style=" background-color: #fbfcc5;">
-                Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
-            </td>
-        </tr>
-        <tr><td></td></tr>
-        <tr style=" background-color: #e66; height: 28px;">
-            <td align="center"><img src="images/alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
-            <td>Dr Maria Bela</td>
-            <td>&nbsp;</td>
-            <td align="right">Oct 12, 2016  10:47</td>
-            <td align="right"></td>
-        </tr>
-        <tr>
-            <td colspan="5" style=" background-color: #ffcdc8;">
-                Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque.   
-            </td>
-        </tr>
-        <tr><td></td></tr>
-        <tr style=" background-color: #ebebeb; height: 28px;">
-            <td align="center"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
-            <td>Dr Maria Bela</td>
-            <td>To: Caregivers</td>
-            <td align="right">Oct 13, 2016  09:04</td>
-            <td align="right">Relevance: Medium</td>
-        </tr>
-        <tr>
-            <td colspan="5" style=" background-color: #fafafa;">
-                Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
-            </td>
-        </tr>
-        <tr><td></td></tr>
-        <tr style=" background-color: #ebebeb; height: 28px;">
-            <td align="center"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
-            <td>Dr Maria Bela</td>
-            <td>To: Geriatrician </td>
-            <td align="right">Oct 13, 2016  09:03</td>
-            <td align="right">Relevance: High</td>
-        </tr>
-        <tr>
-            <td colspan="5" style=" background-color: #fafafa;">
-                Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
-            </td>
-        </tr>
-    </table>
-
 </div>
+<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
+    <div class="demo-flex-display oj-flex-items-pad" >
+        <table style="width: 100%;" cellpadding="5">
+            <tr style=" background-color: #fad55c; height: 28px;">
+                <td style="width: 26px; " align="center"><img src="images/warning-icon.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
+                <td style="width: 180px; ">Dr John Doe</td>
+                <td>&nbsp;</td>
+                <td style="width: 160px; " align="right">Oct 10, 2016  14:18</td>
+                <td style="width: 160px; " align="right"></td>
+            </tr>
+            <tr>
+                <td colspan="5" style=" background-color: #fbfcc5;">
+                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
+                </td>
+            </tr>
+            <tr><td></td></tr>
+            <tr style=" background-color: #e66; height: 28px;">
+                <td align="center"><img src="images/alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
+                <td>Dr Maria Bela</td>
+                <td>&nbsp;</td>
+                <td align="right">Oct 12, 2016  10:47</td>
+                <td align="right"></td>
+            </tr>
+            <tr>
+                <td colspan="5" style=" background-color: #ffcdc8;">
+                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque.   
+                </td>
+            </tr>
+            <tr><td></td></tr>
+            <tr style=" background-color: #ebebeb; height: 28px;">
+                <td align="center"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
+                <td>Dr Maria Bela</td>
+                <td>To: Caregivers</td>
+                <td align="right">Oct 13, 2016  09:04</td>
+                <td align="right">Relevance: Medium</td>
+            </tr>
+            <tr>
+                <td colspan="5" style=" background-color: #fafafa;">
+                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
+                </td>
+            </tr>
+            <tr><td></td></tr>
+            <tr style=" background-color: #ebebeb; height: 28px;">
+                <td align="center"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
+                <td>Dr Maria Bela</td>
+                <td>To: Geriatrician </td>
+                <td align="right">Oct 13, 2016  09:03</td>
+                <td align="right">Relevance: High</td>
+            </tr>
+            <tr>
+                <td colspan="5" style=" background-color: #fafafa;">
+                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
+                </td>
+            </tr>
+        </table>
 
+    </div>
