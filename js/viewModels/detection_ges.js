@@ -186,6 +186,15 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                 };
                 
                 self.nowrap = ko.observable(false);
+                
+                
+                self.handleTransitionCompleted = function (info) {
+                    console.log('test');
+                    $( "#oj-inputsearch-choice-search-input" ).css( "height", "42px" );
+                    $( "#oj-select-choice-selectSort" ).css( "height", "42px" );
+                };
+
+                
                 /*    self.getTooltip = function(){
                  return null;
                  };
