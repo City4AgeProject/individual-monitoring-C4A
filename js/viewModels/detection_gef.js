@@ -9,8 +9,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 var PRE_FRAIL_SERIES_NAME = 'Pre-Frail';
                 var FRAIL_SERIES_NAME = 'Frail';
                 var FIT_SERIES_NAME = 'Fit';
-                var GROUP1_SERIES_NAME = 'Group 1';
-                var GROUP2_SERIES_NAME = 'Group 2';
+                var GROUP1_SERIES_NAME = 'Behavioural';
+                var GROUP2_SERIES_NAME = 'Contextual';
 
                 /* tracking mouse position when do mouseover and mouseup/touchend event*/
                 var clientX;
@@ -171,7 +171,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                     var filteredSelectedValues = [];
                     //console.log(ui);
                     if (ui['option'] === 'selection') {
-                        if ((ui['value'].length > 0)&&(!closeMorphologyPopupScheduled)) {
+                        if (ui['value'].length > 0) {
                             for (var i = 0; i < ui['value'].length; i++) {
                                 if ((ui['value'][i].series !== OVERALL_SERIES_NAME) &&
                                         (ui['value'][i].series !== PRE_FRAIL_SERIES_NAME) &&
