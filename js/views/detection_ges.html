@@ -76,7 +76,7 @@
                         </div>
                         <!-- end slider -->
                     </div>
-                    
+
                 </div>
 
 
@@ -149,7 +149,25 @@
                 <div id="form-container">
                     <div class="oj-form-layout">
                         <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline" >
-
+                            <div class="oj-flex" style="width: 19em;"> 
+                                <div class="oj-flex-item">
+                                    <label for="selectType">Type</label>
+                                </div>
+                                <div class="oj-flex-item">
+                                    <select id="selectType"
+                                            data-bind="ojComponent: {
+                                                        component: 'ojSelect',
+                                                        list: 'commenttype', 
+                                                        value: 'Comment'
+                                        }">
+                                    </select>
+                                    <ul id="commenttype" style="display: none">
+                                        <li oj-data-value="Comment"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Comment</li>
+                                        <li oj-data-value="Warning"><img src="images/warning-icon.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Warning</li>
+                                        <li oj-data-value="Alert"><img src="images/alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Alert</li>
+                                    </ul>
+                                </div>
+                            </div>
                             <div class="oj-flex" style="width: 19em;"> 
                                 <div class="oj-flex-item">
                                     <label for="selectRole">To</label>
@@ -171,7 +189,7 @@
 
                             <div class="oj-flex" style="width: 19em;">
                                 <div class="oj-flex-item">
-                                    <label id="radiosetlabel">Importance</label>
+                                    <label id="radiosetlabel">Relevance</label>
                                 </div>
                                 <div class="oj-flex-item">
                                     <div id="radioSetId" 
@@ -242,75 +260,10 @@
                 "></button>
     </div>
 
-
-    <div id="dialogWrapper2" >
-        <div style="display:none;" id="dialog2" title="Add warning"  
-             data-bind="ojComponent:{component: 'ojDialog', initialVisibility: 'hide'}">
-            <div class="oj-dialog-body">
-
-                <div id="form-container2">
-                    <div class="oj-form-layout">
-                        <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline" >
-                            <div class="oj-flex">
-                                <div class="oj-flex-item">
-                                    <div class="demo-flex-display oj-flex-items-pad">
-                                        <div class="oj-flex oj-sm-flex-direction-column">
-                                            <div class="oj-flex-item" style="height: 40px;">
-                                                <label for="textareacontrol2">Comment</label>
-                                            </div>
-                                            <div class="oj-flex-item" align="center">
-                                                <img src="images/warning-icon.png" style="vertical-align:middle; width: 30px; height: 30px;"/> 
-                                                <!--    <img src="images/alert.png" style="vertical-align:middle; width: 30px; height: 30px;"/>  -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="oj-flex-item">
-                                    <textarea id="textareacontrol2" rows="6"
-                                              data-bind="ojComponent: {
-                                                            component: 'ojTextArea'
-                                          }"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="oj-dialog-footer">
-                <div style="width: 19em;" align="right">
-                    <button id= "okButton2" 
-                            data-bind="ojComponent: { 
-                                component: 'ojButton', 
-                                chroming: 'full', 
-                                label: 'Save'},
-                                click: function(){$('#dialog2').ojDialog('close');}
-                            ">
-                    </button>
-
-                    <button id= "buttonCancel2"
-                            data-bind="ojComponent: { 
-                                component: 'ojButton', 
-                                chroming: 'full', 
-                                label: 'Cancel'},
-                                click: function(){$('#dialog2').ojDialog('close');} 
-                            ">
-                    </button>
-                </div>
-            </div>
-        </div>
-        <button data-bind="ojComponent: {
-                    component: 'ojButton', 
-                    label: 'Open dialog for warning/alert'}, 
-                    click: function(){$('#dialog2').ojDialog('open');}
-                "></button>
-    </div>
-
-
-
     <div id="popupWrapper1">
         <div style="display:none" id="popup1"
              data-bind="ojComponent:{component: 'ojPopup',
-                               rootAttributes: {style:'width:300px;height:270px;'},
+                               rootAttributes: {style:'width:300px;height:270px;'}
                               }">
             <div class="demo-flex-display oj-flex-items-pad">
                 <div class="oj-flex oj-sm-flex-direction-column">
@@ -411,61 +364,132 @@
 
 
     <!-- comments -->
-    <div class="demo-flex-display oj-flex-items-pad" >
-        <table style="width: 100%;" cellpadding="5">
-            <tr style=" background-color: #fad55c; height: 28px;">
-                <td style="width: 26px; " align="center"><img src="images/warning-icon.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
-                <td style="width: 180px; ">Dr John Doe</td>
-                <td>&nbsp;</td>
-                <td style="width: 160px; " align="right">Oct 10, 2016  14:18</td>
-                <td style="width: 160px; " align="right"></td>
-            </tr>
-            <tr>
-                <td colspan="5" style=" background-color: #fbfcc5;">
-                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
-                </td>
-            </tr>
-            <tr><td></td></tr>
-            <tr style=" background-color: #e66; height: 28px;">
-                <td align="center"><img src="images/alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
-                <td>Dr Maria Bela</td>
-                <td>&nbsp;</td>
-                <td align="right">Oct 12, 2016  10:47</td>
-                <td align="right"></td>
-            </tr>
-            <tr>
-                <td colspan="5" style=" background-color: #ffcdc8;">
-                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque.   
-                </td>
-            </tr>
-            <tr><td></td></tr>
-            <tr style=" background-color: #ebebeb; height: 28px;">
-                <td align="center"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
-                <td>Dr Maria Bela</td>
-                <td>To: Caregivers</td>
-                <td align="right">Oct 13, 2016  09:04</td>
-                <td align="right">Relevance: Medium</td>
-            </tr>
-            <tr>
-                <td colspan="5" style=" background-color: #fafafa;">
-                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
-                </td>
-            </tr>
-            <tr><td></td></tr>
-            <tr style=" background-color: #ebebeb; height: 28px;">
-                <td align="center"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
-                <td>Dr Maria Bela</td>
-                <td>To: Geriatrician </td>
-                <td align="right">Oct 13, 2016  09:03</td>
-                <td align="right">Relevance: High</td>
-            </tr>
-            <tr>
-                <td colspan="5" style=" background-color: #fafafa;">
-                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
-                </td>
-            </tr>
-        </table>
+    <div id="form-container3" style="width: 100%;">
+        <div class="demo-flex-display oj-flex-items-pad oj-form">
+            <div class="oj-flex  oj-sm-flex-items-initial oj-lg-justify-content-space-between oj-lg-align-items-flex-end" data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
+                <div class="oj-flex-item" style="width: 320px">
+                    <label for="selectRole">Role</label>
+                    <select id="selectRole" 
+                            data-bind="ojComponent: {
+                                            component: 'ojSelect', 
+                                            value: valRole,
+                                            multiple: true,
+                                            rootAttributes: {style:'max-width:100%'}
+                                        }">
 
+                        <option value="Caregiver">Caregiver</option>
+                        <option value="Gereatrician">Gereatrician</option>
+                        <option value="Intervention staff">Intervention staff</option>
+                        <option value="City 4 Age staff">City 4 Age staff</option>
+                    </select>
+                </div>
+
+                <div class="oj-flex-item" style="width: 310px">
+                    <label for="selectType">Type</label>
+                    <select id="selectType"
+                            data-bind="ojComponent: {
+                                        component: 'ojSelect',
+                                        list: 'types', 
+                                        value: valType,
+                                        multiple: true,
+                                        rootAttributes: {style:'max-width:100%'}
+                            }">
+                    </select>
+                    <ul id="types" style="display: none">
+                        <li oj-data-value="Comment"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Comment</li>
+                        <li oj-data-value="Warning"><img src="images/warning-icon.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Warning</li>
+                        <li oj-data-value="Alert"><img src="images/alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Alert</li>
+                    </ul>
+                </div>
+                <div class="oj-flex-item"  style="width: 210px">
+                    <label for="search-input">Author</label>
+                    <input id="search-input" 
+                           data-bind="ojComponent: {component: 'ojInputSearch', 
+                                                rawValue: currentRawValue,
+                                                rootAttributes: {style:'max-width:100%'}
+                                                }"/>
+
+                </div>
+                <div class="oj-flex-item" >
+                    <button id="filter-button"
+                            data-bind="ojComponent: {
+                                    component: 'ojButton', 
+                                    label: 'Apply filters'},
+                                    click: searchInput">
+                    </button>
+                </div>
+                <div class="oj-flex-item">
+                    <label for="selectSort">Sort by</label>
+                    <select id="selectSort" 
+                            data-bind="ojComponent: {
+                                                        component: 'ojSelect', 
+                                                        value: 'Date'
+                                        }">
+
+                        <option value="Date">Date</option>
+                        <option value="Author">Author</option>
+                        <option value="Type">Type</option>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+<div class="demo-flex-display oj-flex-items-pad" >
+    <table style="width: 100%;" cellpadding="5">
+        <tr style=" background-color: #fad55c; height: 28px;">
+            <td style="width: 26px; " align="center"><img src="images/warning-icon.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
+            <td style="width: 180px; ">Dr John Doe</td>
+            <td>&nbsp;</td>
+            <td style="width: 160px; " align="right">Oct 10, 2016  14:18</td>
+            <td style="width: 160px; " align="right"></td>
+        </tr>
+        <tr>
+            <td colspan="5" style=" background-color: #fbfcc5;">
+                Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
+            </td>
+        </tr>
+        <tr><td></td></tr>
+        <tr style=" background-color: #e66; height: 28px;">
+            <td align="center"><img src="images/alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
+            <td>Dr Maria Bela</td>
+            <td>&nbsp;</td>
+            <td align="right">Oct 12, 2016  10:47</td>
+            <td align="right"></td>
+        </tr>
+        <tr>
+            <td colspan="5" style=" background-color: #ffcdc8;">
+                Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque.   
+            </td>
+        </tr>
+        <tr><td></td></tr>
+        <tr style=" background-color: #ebebeb; height: 28px;">
+            <td align="center"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
+            <td>Dr Maria Bela</td>
+            <td>To: Caregivers</td>
+            <td align="right">Oct 13, 2016  09:04</td>
+            <td align="right">Relevance: Medium</td>
+        </tr>
+        <tr>
+            <td colspan="5" style=" background-color: #fafafa;">
+                Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
+            </td>
+        </tr>
+        <tr><td></td></tr>
+        <tr style=" background-color: #ebebeb; height: 28px;">
+            <td align="center"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/></td>
+            <td>Dr Maria Bela</td>
+            <td>To: Geriatrician </td>
+            <td align="right">Oct 13, 2016  09:03</td>
+            <td align="right">Relevance: High</td>
+        </tr>
+        <tr>
+            <td colspan="5" style=" background-color: #fafafa;">
+                Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
+            </td>
+        </tr>
+    </table>
+
+</div>
 
 </div>

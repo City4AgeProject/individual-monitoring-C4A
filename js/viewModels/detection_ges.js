@@ -175,7 +175,17 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                     });
                 };
 
+                self.valRole = ko.observableArray(["Caregiver"]);
+                self.valType = ko.observableArray(["Warning"]);
                 
+                self.currentRawValue = ko.observable();
+                
+                self.searchInput = function()
+                {
+                    alert("Search comments.");
+                };
+                
+                self.nowrap = ko.observable(false);
                 /*    self.getTooltip = function(){
                  return null;
                  };
