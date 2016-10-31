@@ -24,48 +24,59 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                     offsetTop = e.offsetX;
                     offsetLeft = e.offsetY;
                     //console.log(clientX);
-                    //console.log(e);
+                    //console.log(e);                   
                 });
                 $(document).on("mouseup touchend", function (e) {
                     clientX = e.clientX;
                     clientY = e.clientY;
-
-                    //$("#detectionGEFGroupsLineChart").triggerHandler('contextmenu');
                     //console.log(clientX);
                 });
-                /* */
+                /* End: tracking mouse position when do mouseover and mouseup/touchend event */
+
+                /* Detection GEF Groups Line Chart configuration with dummy data */
+                var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
+
+                function getValue() {
+                    return Math.random() * 4 + 1;
+                }
+
+                var series = [{name: GROUP1_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: GROUP2_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: PRE_FRAIL_SERIES_NAME, items: [0.1, 0.1, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'},
+                    {name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'},
+                    {name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'},
+                    {name: OVERALL_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], color: '#999999', lineWidth: 5}];
+
+                self.seriesValue = ko.observableArray(series);
+                self.groupsValue = ko.observableArray(groups);
+
+                /* End Detection GEF Groups Line Chart configuration with dummy data */
+
+                /* Group 1 and Group 2 Line Chart configuration with dummy data */
+                /* Group 1 */
+                var lineSeries1 = [{name: "Motility", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: "Physical Activity", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: "Basic Activities of Daily Living", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: "Instrumental Activities of Daily Living", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: "Socialization", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: "Cultural Engagement", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5}];
+
+                /* Group 2 */
+                var lineSeries2 = [{name: "Environment", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: "Dependence", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: "Health – physical", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+                    {name: "Health – cognitive", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5}];
+
+                self.lineSeries1Value = ko.observableArray(lineSeries1);
+                self.lineSeries2Value = ko.observableArray(lineSeries2);
+                self.lineGroupsValue = ko.observableArray(groups);
+                /* End: Group 1 and Group 2 Line Chart configuration with dummy data */
 
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
                 self.handleAttached = function (info) {
-                    console.log('handleAttached');
-                    /*Attach mouseover handler to detectionGEFGroup1FactorsLineChart*/
-                    $('#detectionGEFGroup1FactorsLineChart').mousedown(
-                            function (event) {
-                                console.log(event.target.nodeName);
-                                ///console.log(ui);
-                                var dataItemContext;
-                                if (event.target.nodeName == 'polyline') {
-                                    console.log('getContextByNode');
-                                    dataItemContext = $('#detectionGEFGroup1FactorsLineChart').ojChart('getContextByNode', event.target);
-                                    console.log(dataItemContext);
-                                }
-                                if (dataItemContext && dataItemContext['subId'] === 'oj-chart-series') {
-                                    var seriesIndex = dataItemContext['index'];
-                                    console.log('itemIndex: ' + seriesIndex);
-                                    var itemIndex = dataItemContext['itemIndex'];
-                                    var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px;'>" +
-                                            $('#detectionGEFGroup1FactorsLineChart').ojChart('getSeries', seriesIndex) + "</h3>" +
-                                            "</div>";
-                                    //"<div>Value: " + $('#detectionGEFGroup1FactorsLineChart').ojChart('getDataItem', seriesIndex, itemIndex).getValue() +
-                                    //"<br> Group: " + $('#detectionGEFGroup1FactorsLineChart').ojChart('getGroup', itemIndex) +
-                                    //"</div>";
-                                    $('#popupShowFactorDetails').html(popupText);
-                                    $('#popupShowFactorDetails').ojPopup('open', '#detectionGEFGroup1FactorsLineChart');
-                                }
-                            });
-                    /**/
+                    //console.log('handleAttached');                    
 
-                    /*Assign summary Show more/Show less ja*/
+                    /* Assign summary Show more/Show less  */
                     $('#summary').css({height: '20px', overflow: 'hidden'});
                     $('#showmore').on('click', function () {
                         var $this = $("#summary");
@@ -81,67 +92,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
 
                         }
                     });
+                    /*End: Assign summary Show more/Show less */
                 };
-
-
-
-
-
-                var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
-
-                function getValue() {
-                    return Math.random() * 4 + 1;
-                }
-
-                self.handleOpen = function () {
-                    $("#modelessDialog1").ojDialog("open");
-                };
-                self.handleOKClose = $("#okButton").click(function () {
-                    $("#modelessDialog1").ojDialog("close");
-                });
-
-
-//        function getSeriesItems() {
-//           var items = [];
-//           for (var g = 0; g < groups.length; g++) {
-//               items.push(getValue());
-//           }
-//           return items;
-//        }
-
-                /*PAOLINI Detection*/
-                var series = [{name: GROUP1_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: GROUP2_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: PRE_FRAIL_SERIES_NAME, items: [0.1, 0.1, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'},
-                    {name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'},
-                    {name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'},
-                    {name: OVERALL_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], color: '#999999', lineWidth: 5}];
-
-                self.seriesValue = ko.observableArray(series);
-                self.groupsValue = ko.observableArray(groups);
-                self.orientationValue = ko.observable('vertical');
-                self.selectionValue = ko.observable('multiple');
-
-
-                /*PAOLINI Group 1 and Group 2*/
-
-                /* Group 1 */
-                var lineSeries1 = [{name: "Motility", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: "Physical Activity", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: "Basic Activities of Daily Living", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: "Instrumental Activities of Daily Living", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: "Socialization", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: "Cultural Engagement", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]}];
-
-                /* Group 2 */
-                var lineSeries2 = [{name: "Environment", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: "Dependence", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: "Health – physical", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]},
-                    {name: "Health – cognitive", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()]}];
-
-                self.lineSeries1Value = ko.observableArray(lineSeries1);
-                self.lineSeries2Value = ko.observableArray(lineSeries2);
-                self.lineGroupsValue = ko.observableArray(groups);
+                /* End: handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
 
                 self.frailtyMenuItemSelect = function (event, ui) {
                     var launcherId = $(event.target).ojMenu("getCurrentOpenOptions").launcher.attr("id");
@@ -177,83 +130,48 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                  };*/
 
 
-                //        self.chartDrill1 = function(event, ui) {
-//            $('#currentText').html("drill:");
-//            var drillParams = "";
-//            drillParams += 'series: ' + ui['series'] + '<br/>';
-//            $('#currentText2').html(drillParams);
-//            $('#seriesName').html(ui['series']);
-                //            $('#popup1').ojPopup('open', '#detectionGEFGroup1FactorsLineChart');
-//        };
+                /*Slider 1 configuration and event hendlers*/
+                self.slider1ValueArray = ko.observableArray([0, 13]);
+                self.slider1Min = ko.observable(0);
+                self.slider1Max = ko.observable(13);
+                self.slider1Step = ko.observable(1);
 
-                /* popup for Group 1 */
-                self.getTooltip1 = function (event, ui) {
-                    console.log(ui);
-//                    $('#detectionGEFGroup1FactorsLineChart').mouseover(
-//                            function (event) {
-//                                var dataItemContext;
-//                                if (event.target.id !== 'detectionGEFGroup1FactorsLineChart')
-//                                    dataItemContext = $('#detectionGEFGroup1FactorsLineChart').ojChart('getContextByNode', event.target);
-//                                if (dataItemContext && dataItemContext['subId'] === 'oj-chart-item') {
-//                                    var seriesIndex = dataItemContext['seriesIndex'];
-//                                    console.log('itemIndex: ' + seriesIndex);
-//                                    var itemIndex = dataItemContext['itemIndex'];
-//                                    var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px;'>" +
-//                                            $('#detectionGEFGroup1FactorsLineChart').ojChart('getSeries', seriesIndex) + "</h3>" +
-//                                            "</div>" +
-//                                            "<div>Value: " + $('#detectionGEFGroup1FactorsLineChart').ojChart('getDataItem', seriesIndex, itemIndex).getValue() +
-//                                            "<br> Group: " + $('#detectionGEFGroup1FactorsLineChart').ojChart('getGroup', itemIndex) +
-//                                            "</div>";
-//                                    $('#popupdata').html(popupText);
-//                                }
-                    //                            });
-                };
+                self.optionChangeSlider = function (event, data) {
+                    //console.log("option that changed is: ");
+                    //console.log(data);
+                    $("#value1").html("Initial");
+                    $("#value2").html("Dec2016");
+                }
+                /*End Slider 1 configuration and event hendlers*/
 
-
-                //        self.chartDrill2= function(event, ui) {
-//            $('#currentText').html("drill:");
-//            var drillParams = "";
-//            drillParams += 'series: ' + ui['series'] + '<br/>';
-//            $('#currentText2').html(drillParams);
-//            $('#seriesName').html(ui['series']);
-                //            $('#popup1').ojPopup('open', '#lineChart3');
-//        };
-
-                /* popup for Group 2 */
-                self.getTooltip2 = function (event, ui) {
-                    $('#lineChart3').mouseover(
-                            function (event) {
-                                var dataItemContext;
-                                if (event.target.id !== 'lineChart3')
-                                    dataItemContext = $('#lineChart3').ojChart('getContextByNode', event.target);
-                                if (dataItemContext && dataItemContext['subId'] === 'oj-chart-item') {
-                                    var seriesIndex = dataItemContext['seriesIndex'];
-                                    var itemIndex = dataItemContext['itemIndex'];
-                                    var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px;'>" +
-                                            $('#lineChart3').ojChart('getSeries', seriesIndex) + "</h3>" +
-                                            "</div>" +
-                                            "<div>Value: " + $('#lineChart3').ojChart('getDataItem', seriesIndex, itemIndex).getValue() +
-                                            "<br> Group: " + $('#lineChart3').ojChart('getGroup', itemIndex) +
-                                            "</div>";
-                                    $('#popupdata').html(popupText);
-                                    //$('#popup1').ojPopup('open', null, {of: event, my: 'center bottom', at: 'center+' + event.target.getBBox().width / 2 + 'px', collision: 'none'});
-                                }
-                            });
-                };
-
-                /* detectionGEFGroupsLineChart popup and selection manipulation*/
-                ///if user used scroll all showed popups will be closed immidiately 
+                ///if user used scroll all popups will be closed immidiately 
                 $(document).on("scroll", function (e) {
-                    $('#showMorphologyPopup').ojPopup('close');
+                    try {
+                        $('#showMorphologyPopup').ojPopup('close');
+                        $('#GEFGroup1DetailsShowPopup').ojPopup('close');
+                    } catch (e) {
+
+                    }
                 });
 
+                /* detectionGEFGroupsLineChart popup and selection manipulation*/
+                self.showMorphologyButtonClick = function (data, event) {
+                    //console.log($("#detectionGEFGroupsLineChart").ojChart("getDataItem", 0, 0));
+                    $("#tabs").ojTabs("option", "selected", "showMorphologyTab");
+                    $('#showMorphologyPopup').ojPopup('close');
+                    return true;
+                }
+
+
+
+
                 self.selectionArrayDetectionGEFGroupsLineChart = ko.observableArray();
-                var closeScheduled = false;
+                var closeMorphologyPopupScheduled = false;
                 self.chartOptionChangeDetectionGEFGroupsLineChart = function (event, ui) {
                     var filteredSelectedValues = [];
-                    console.log(ui);
+                    //console.log(ui);
                     if (ui['option'] === 'selection') {
-                        if (ui['value'].length > 0) {
+                        if ((ui['value'].length > 0)&&(!closeMorphologyPopupScheduled)) {
                             for (var i = 0; i < ui['value'].length; i++) {
                                 if ((ui['value'][i].series !== OVERALL_SERIES_NAME) &&
                                         (ui['value'][i].series !== PRE_FRAIL_SERIES_NAME) &&
@@ -266,16 +184,16 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                             if (filteredSelectedValues.length !== ui['value'].length) {
                                 self.selectionArrayDetectionGEFGroupsLineChart(filteredSelectedValues);
                             }
-                            closeScheduled = false;
+                            closeMorphologyPopupScheduled = true;
                             $('#showMorphologyPopup').ojPopup('open', "#detectionGEFGroupsLineChart");
-                            $("#showMorphologyPopup").ojPopup("widget").css("left", clientX + document.body.scrollLeft + "px");
-                            $("#showMorphologyPopup").ojPopup("widget").css("top", clientY + document.body.scrollTop + "px");
+                            $("#showMorphologyPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
+                            $("#showMorphologyPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
                         } else if (ui['value'].length === 0) {
-                            //udji u status gasenja za 1.5 sekundi
-                            closeScheduled = true;
+                            //close popup scheduled for 1.5 seconds
                             setTimeout(function (event) {
-                                if (closeScheduled) {
+                                if (closeMorphologyPopupScheduled) {
                                     $('#showMorphologyPopup').ojPopup('close');
+                                    closeMorphologyPopupScheduled = false;
                                 }
                             }, 1500);
                         }
@@ -283,55 +201,93 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 }
                 /*End detectionGEFGroupsLineChart popup and selection manipulation*/
 
-                var selectedDone = false;
+                /* detectionGEFLineChart popup manipulation*/
+
+                self.findGEFColorLineBySeriesName = function (lineChartID, seriesName) {
+                    //find GEF color
+                    var foundColor = "#fafafa";
+                    var seriesCount = $(lineChartID).ojChart("getSeriesCount");
+                    for (i = 0; i < seriesCount; i++) {
+                        var dataItemObject = $(lineChartID).ojChart("getDataItem", i, 0);
+                        if (dataItemObject.series === seriesName) {
+                            foundColor = dataItemObject.color;
+                            break;
+                        }
+                    }
+                    return foundColor;
+                };
+
+                var closeGEFDetailsShowPopupScheduled = false;
                 self.chartOptionChangeFactorsGroup1 = function (event, ui) {
                     //console.log(ui);
-                    console.log(ui);
+                    if (ui['option'] === 'highlightedCategories') {
+                        if ((ui['value'].length > 0)&& (!closeGEFDetailsShowPopupScheduled)) {
+                            //alert('testi self.selectionValueChange = function(event, data) {');                            
+                            //console.log('Izvrsena selekcija linije na donjem dijagramu');
+                            $('#GEFGroup1DetailsShowPopup').ojPopup('open');
+                            $("#GEFGroup1DetailsShowPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
+                            $("#GEFGroup1DetailsShowPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
+                            var selectedGEF = "";
+                            if (ui['value'][0])
+                                selectedGEF = ui['value'][0];
+                            //console.log(ui['value'][0]);
+                            var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup1FactorsLineChart", ui['value'][0]);
+
+                            var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
+                                    "</b></h3>"
+                            closeGEFDetailsShowPopupScheduled = true;
+                            $('#GEFDetailsShowPopupData1').html(popupText);
+                        } else if (ui['value'].length === 0) {
+                            //close popup scheduled for 1.5 seconds
+                            //closeGEFDetailsShowPopupScheduled = true;
+                            setTimeout(function (event) {
+                                //close popup scheduled for 2 seconds
+                                if (closeGEFDetailsShowPopupScheduled) {
+                                    $('#GEFGroup1DetailsShowPopup').ojPopup('close');
+                                    closeGEFDetailsShowPopupScheduled = false;
+                                }
+                            }, 2000);
+                        }
+                    }
+                };
+
+                self.chartOptionChangeFactorsGroup2 = function (event, ui) {
+                    //console.log(ui);
                     if (ui['option'] === 'highlightedCategories') {
                         if (ui['value'].length > 0) {
-                            //                             alert('te');
-                            selectedDone = true;
                             //alert('testi self.selectionValueChange = function(event, data) {');                            
-                            console.log('Izvrsena selekcija linije na donjem dijagramu');
-                            //$("#detectionGEFGroupsLineChart").triggerHandler('contextmenu');
-                        } else
-                            selectedDone = false;
+                            //console.log('Izvrsena selekcija linije na donjem dijagramu');
+                            $('#GEFGroup2DetailsShowPopup').ojPopup('open');
+                            $("#GEFGroup2DetailsShowPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
+                            $("#GEFGroup2DetailsShowPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
+                            var selectedGEF = "";
+                            if (ui['value'][0])
+                                selectedGEF = ui['value'][0];
+                            //console.log(ui['value'][0]);
+                            var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup2FactorsLineChart", ui['value'][0]);
+
+                            var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
+                                    "</b></h3>"
+                            closeGEFDetailsShowPopupScheduled = false;
+                            $('#GEFDetailsShowPopupData2').html(popupText);
+                        } else if (ui['value'].length === 0) {
+                            //close popup scheduled for 1.5 seconds
+                            closeGEFDetailsShowPopupScheduled = true;
+                            setTimeout(function (event) {
+                                if (closeGEFDetailsShowPopupScheduled) {
+                                    $('#GEFGroup2DetailsShowPopup').ojPopup('close');
+                                }
+                            }, 1500);
+                        }
                     }
                 };
 
-                var item;
 
-                self.tooltipFuntion = function (dataContext) {
-                    console.log(dataContext);
-                };
+                /*End: detectionGEFLineChart popup manipulation*/
 
-                self.beforeOpenFunction = function (event, ui) {
-                    if (!selectedDone) {
-                        event.preventDefault();
-                        console.log(selectedDone);
-                    } //else
-                    //selectedDone = false;
 
-                    //var target = event.originalEvent.target;
-                    //var chart = $("#detectionGEFGroupsLineChart");
-                    //var context = chart.ojChart("getContextByNode", target);
-                    var context = null;
-                    if (context !== null) {
-                        if (context.subId === "oj-chart-item")
-                            item = chart.ojChart("getDataItem", context["seriesIndex"], context["itemIndex"]);
-                    }
-                };
-                self.menuItemSelect = function (event, ui) {
-                    var text = ui.item.children("a").text();
-                    if (item) {
-                        self.selectedMenuItem(text + " from " + item.series + "," + item.group);
-                        item = null;
-                    } else {
-                        self.selectedMenuItem(text + "from chart background");
-                    }
-                };
-
-                /* polar chart - uradjen za prvu grupu i to za mesece M1 i M5 */                 var lineSeriesPolar1 = [{name: groups[1], items: [lineSeries1[0].items[1], lineSeries1[1].items[1], lineSeries1[2].items[1], lineSeries1[3].items[1], lineSeries1[4].items[1], lineSeries1[5].items[1]], color: '#ED6647'},
+                /* polar chart - uradjen za prvu grupu i to za mesece M1 i M5 */
+                var lineSeriesPolar1 = [{name: groups[1], items: [lineSeries1[0].items[1], lineSeries1[1].items[1], lineSeries1[2].items[1], lineSeries1[3].items[1], lineSeries1[4].items[1], lineSeries1[5].items[1]], color: '#ED6647'},
                     {name: groups[5], items: [lineSeries1[0].items[5], lineSeries1[1].items[5], lineSeries1[2].items[5], lineSeries1[3].items[5], lineSeries1[4].items[5], lineSeries1[5].items[5]], color: '#6DDBDB'}];
                 var lineGroupsPolar1 = lineSeries1; //grupe su nazivi serija liniskog dijagrama
 
@@ -341,7 +297,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 self.polarChartSeriesValue1 = ko.observableArray(lineSeriesPolar1);
                 self.polarChartGroupsValue1 = ko.observableArray(lineGroupsPolar1);
 
-                /* polar chart - uradjen za drugu grupu i to za mesece M1, M2 i M5 */                 var lineSeriesPolar2 = [{name: groups[1], items: [lineSeries2[0].items[1], lineSeries2[1].items[1], lineSeries2[2].items[1], lineSeries2[3].items[1]], color: '#FAD55C'},
+                /* polar chart - uradjen za drugu grupu i to za mesece M1, M2 i M5 */
+                var lineSeriesPolar2 = [{name: groups[1], items: [lineSeries2[0].items[1], lineSeries2[1].items[1], lineSeries2[2].items[1], lineSeries2[3].items[1]], color: '#FAD55C'},
                     {name: groups[2], items: [lineSeries2[0].items[2], lineSeries2[1].items[2], lineSeries2[2].items[2], lineSeries2[3].items[2]], color: '#8561C8'},
                     {name: groups[5], items: [lineSeries2[0].items[5], lineSeries2[1].items[5], lineSeries2[2].items[5], lineSeries2[3].items[5]], color: '#1DDB1B'}];
                 var lineGroupsPolar2 = lineSeries2; //grupe su nazivi serija liniskog dijagrama
@@ -352,23 +309,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
 
 
                 self.nowrap = ko.observable(false);
-
-                /*Slider 1 configuration and event hendlers*/
-                self.slider1ValueArray = ko.observableArray([0, 13]);
-                self.slider1Min = ko.observable(0);
-                self.slider1Max = ko.observable(13);
-                self.slider1Step = ko.observable(1);
-
-                self.optionChangeSlider = function (event, data) {
-                    console.log("option that changed is: ");
-                    console.log(data);
-                    $("#value1").html("Initial");
-                    $("#value2").html("Dec2016");
-                }
-                /*End Slider 1 configuration and event hendlers*/
-
-
-
 
             }
 

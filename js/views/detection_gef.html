@@ -75,12 +75,12 @@
                 type: 'line', 
                 series: seriesValue, 
                 groups: groupsValue, 
-                selectionMode: selectionValue,
+                selectionMode: 'multiple',
                 selection: selectionArrayDetectionGEFGroupsLineChart,
                 animationOnDisplay: 'auto',
                 animationOnDataChange: 'auto',
                 hideAndShowBehavior: 'withoutRescale',
-                orientation: orientationValue,
+                orientation: 'vertical',
                 hoverBehavior: 'dim',
                 optionChange: chartOptionChangeDetectionGEFGroupsLineChart,
                 title: {text: 'Detection (Group 1 & Group 2 Geriatric factors)', halign: 'center'},
@@ -122,8 +122,9 @@
                     animationOnDisplay: 'auto',
                     animationOnDataChange: 'auto',
                     hideAndShowBehavior: 'withoutRescale',
-                    orientation: orientationValue,
+                    orientation: 'vertical',
                     hoverBehavior: 'dim',
+                    drilling: 'on',
                     optionChange: chartOptionChangeFactorsGroup1,
                     title: {text: 'Group 1 Geriatric factors', halign: 'center'},
                     yAxis:{step:0.5},
@@ -134,18 +135,19 @@
                     </div>
                     <div id="tabs-2">
                         <!-- chart for group 2 -->
-                        <div id="lineChart3" data-bind="ojComponent: {
+                        <div id="detectionGEFGroup2FactorsLineChart" data-bind="ojComponent: {
                     component: 'ojChart', 
                     type: 'line', 
                     series: lineSeries2Value, 
                     groups: groupsValue, 
-                    selectionMode: selectionValue,
+                    selectionMode: 'single',
                     animationOnDisplay: 'auto',
                     animationOnDataChange: 'auto',
                     hideAndShowBehavior: 'withoutRescale',
-                    orientation: orientationValue,
+                    orientation: 'vertical',
                     hoverBehavior: 'dim',
-                    tooltip: {renderer: getTooltip2},
+                    drilling: 'on',
+                    optionChange: chartOptionChangeFactorsGroup2,
                     title: {text: 'Group 2 Geriatric factors', halign: 'center'},
                     yAxis:{step:0.5},
                     legend: {position: 'top'}
@@ -154,7 +156,7 @@
                         </div>
 
                     </div>
-                    <div id="tabs-3">
+                    <div id="showMorphologyTab">
                         <div id="polarChart-container" class="oj-flex"  data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
                             <div class="oj-flex-item">
                                 <!-- polar chart for Group 1 -->
@@ -214,28 +216,6 @@
 
 </div>
 
-<!--<div id="popupWrapper">
-    <div style="display:none" id="popup1"
-         data-bind="ojComponent:{component: 'ojPopup',
-                               position: {at: 'center center', my:'center center'}}">
-        
-        <div >
-            <h3 class="oj-header-border" style="border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px;"><label id="seriesName"></label></h3>
-            <div align="center" style="padding: 3px 0px 8px 0px;">
-                <label for="buttonDetails"></label>
-                <button id="buttonDetails" 
-                        data-bind="click: function(){$root.router.go('detection_ges');},
-                                ojComponent: {
-                                    component:'ojButton', 
-                                    label: 'Show details'
-                }"/></button>
-            </div>
-        </div>
-    </div>
-
-</div>-->
-
-
 <!-- context menu for Detection chart -->
 <div id="menu-container">
     <ul id="morphologyMenu" style="display:none" aria-label="Edit"
@@ -248,10 +228,6 @@
         </li>
     </ul>
 </div>
-<!--,
-        select: menuItemSelect,
-        beforeOpen: beforeOpenFunction,
-        open: openX-->
 
 <!-- popup for main detection (Group1 & Group2 factors) chart -->
 <div style="display:none" id="showMorphologyPopup" 
@@ -262,7 +238,7 @@
     <div align="center" style="padding: 8px 0px 8px 0px;">
         <label for="buttonDetails"></label>
         <button id="buttonDetails" 
-                data-bind="click: function(){$root.router.go('detection_ges');},
+                data-bind="click: showMorphologyButtonClick,
                         ojComponent: {
                         component:'ojButton', 
                         label: 'Show morphology'
@@ -273,12 +249,31 @@
 <!--  -->
 
 <!-- popup for Group 1 GEF charts -->
-<div style="display:none" id="popupShowGEFGroup1Details" 
+<div style="display:none" id="GEFGroup1DetailsShowPopup" 
      data-bind="ojComponent:{
             component: 'ojPopup', 
             modality: 'modeless'}">
     <!-- popup panel -->
     <div align="center" style="padding: 8px 0px 8px 0px;">
+        <div id="GEFDetailsShowPopupData1"></div>
+        <label for="buttonDetails"></label>
+        <button id="buttonDetails" 
+                data-bind="click: function(){$root.router.go('detection_ges');},
+                        ojComponent: {
+                        component:'ojButton', 
+                        label: 'Show details'
+        }"/></button>
+    </div>
+    <!-- end popup panel -->
+</div>
+<!-- popup for Group 2 GEF charts -->
+<div style="display:none" id="GEFGroup2DetailsShowPopup" 
+     data-bind="ojComponent:{
+            component: 'ojPopup', 
+            modality: 'modeless'}">
+    <!-- popup panel -->
+    <div align="center" style="padding: 8px 0px 8px 0px;">
+        <div id="GEFDetailsShowPopupData2"></div>
         <label for="buttonDetails"></label>
         <button id="buttonDetails" 
                 data-bind="click: function(){$root.router.go('detection_ges');},
