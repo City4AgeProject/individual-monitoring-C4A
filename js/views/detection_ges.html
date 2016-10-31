@@ -142,7 +142,7 @@
 
 
     <div id="dialogWrapper1">
-        <div style="display:none" id="dialog1" title="Add comment"  
+        <div style="display:none" id="dialog1" title="Add anotation"  
              data-bind="ojComponent:{component: 'ojDialog', initialVisibility: 'hide'}">
             <div class="oj-dialog-body">
 
@@ -363,10 +363,10 @@
 
 
 
-    <!-- comments -->
+    <!-- search comments -->
     <div id="form-container3" style="width: 100%;">
-        <div class="demo-flex-display oj-flex-items-pad oj-form">
-            <div class="oj-flex  oj-sm-flex-items-initial oj-lg-justify-content-space-between oj-lg-align-items-flex-end" data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
+        <div class="demo-flex-display oj-flex-items-pad">
+            <div class="oj-flex  oj-sm-flex-items-initial oj-lg-justify-content-space-between oj-lg-align-items-flex-start" data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
                 <div class="oj-flex-item" style="width: 320px">
                     <label for="selectRole">Role</label>
                     <select id="selectRole" 
@@ -410,13 +410,24 @@
                                                 }"/>
 
                 </div>
-                <div class="oj-flex-item" >
-                    <button id="filter-button"
-                            data-bind="ojComponent: {
-                                    component: 'ojButton', 
-                                    label: 'Apply filters'},
-                                    click: searchInput">
-                    </button>
+                <div class="oj-flex-item" style="width: 320px">
+                    <div class="demo-flex-display oj-flex-items-pad">
+                        <div class="oj-flex oj-sm-flex-direction-column">
+                            <div class="oj-flex-item">
+                                <button id="filter-button"
+                                    data-bind="ojComponent: {
+                                            component: 'ojButton', 
+                                            label: 'Apply',
+                                            rootAttributes: {style:'width:50%; height:42px;'}},
+                                            click: searchInput
+                                    ">
+                                </button>
+                            </div>
+                            <div class="oj-flex-item">
+                                <a href="#">Clear filters</a>
+                            </div>
+                        </div>
+                    </div>    
                 </div>
                 <div class="oj-flex-item">
                     <label for="selectSort">Sort by</label>
@@ -492,4 +503,3 @@
 
 </div>
 
-</div>
