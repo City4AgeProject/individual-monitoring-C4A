@@ -84,7 +84,7 @@
             <div class="oj-flex-item">
                 <!-- line chart GES -->
                 <div id="chart-container">
-                    <div id="lineChart" contextmenu="menu123" data-bind="ojComponent: {
+                    <div id="lineChart" data-bind="ojComponent: {
                     component: 'ojChart', 
                     type: 'line', 
                     series: seriesValue, 
@@ -108,38 +108,6 @@
             </div>
         </div>
     </div>
-
-    <div id="menu-container">
-        <ul id="menu123" style="display:none" aria-label="Edit"
-            data-bind="ojComponent: {
-            component: 'ojMenu',
-            select: menuItemSelect,
-            beforeOpen: beforeOpenFunction,
-            open:openX}" >
-            <li id="action1">
-                <a href="#">
-                    Add comment
-                </a>
-            </li>
-            <li id="action2">
-                <a href="#">
-                    View comments
-                </a>
-            </li>
-            <li id="action3">
-                <a href="#">
-                    View daily measures
-                </a>
-            </li>
-            <li id="action4">
-                <a href="#">
-                    View numerical indicators
-                </a>
-            </li>
-        </ul>
-
-    </div>
-
 
     <div id="dialogWrapper1">
         <div style="display:none" id="dialog1" title="Add anotation"  
@@ -254,22 +222,17 @@
                 </div>
             </div>
         </div>
-        <button data-bind="ojComponent: {
-                    component: 'ojButton', 
-                    label: 'Open dialog for comment'}, 
-                    click: function(){$('#dialog1').ojDialog('open');}
-                "></button>
     </div>
 
     <div id="popupWrapper1">
         <div style="display:none" id="popup1"
              data-bind="ojComponent:{component: 'ojPopup',
-                               rootAttributes: {style:'width:300px;height:270px;'}
+                               rootAttributes: {style:'width:300px;height:250px;'}
                               }">
             <div class="demo-flex-display oj-flex-items-pad">
                 <div class="oj-flex oj-sm-flex-direction-column">
                     <div class="oj-flex-item">
-                        <h3>Summary</h3>
+                        <h3>3 data point marked</h3>
                         <button id="btnClose" class="oj-panel-remove-button" 
                                 data-bind="
                     ojComponent: {
@@ -302,37 +265,20 @@
                     <div class="oj-flex-item oj-flex-items-pad">
                         <div class="oj-flex">
                             <div class="oj-flex-item">
-                                <a href="#">
+                                <a href="#" id="addAnnotation">
                                     <img src="images/comment_add.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-                                    Add comment
-                                </a>
-                            </div>
-                            <div class="oj-flex-item" align="right">
-                                <a href="#">
-                                    <img src="images/warning-icon-gray.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-                                    Add warning
-                                </a>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="oj-flex-item oj-flex-items-pad">
-                        <div class="oj-flex">
-                            <div class="oj-flex-item">
-                                <a href="#">
-                                    <img src="images/alert-icon-red-gray.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-                                    Add alert
+                                    Add anotation
                                 </a>
                             </div>
                             <div class="oj-flex-item" align="right">
                                 <a href="#">
                                     <img src="images/comment_view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-                                    View comments
+                                    View anotations
                                 </a>
 
                             </div>
                         </div>
-                    </div>
+                    </div>                    
                     <div class="oj-flex-item oj-flex-items-pad">
                         <div class="oj-flex">
                             <div class="oj-flex-item">
@@ -352,13 +298,6 @@
                 </div>
             </div>
         </div>
-        <button id="btnGo" 
-                data-bind="ojComponent: {component: 'ojButton', label: 'Go'},
-               click: function()
-               {
-                 $('#popup1').ojPopup('open', '#btnGo');
-               }">
-        </button>
     </div>
 
 
