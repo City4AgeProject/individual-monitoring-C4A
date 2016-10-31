@@ -171,7 +171,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                     var filteredSelectedValues = [];
                     //console.log(ui);
                     if (ui['option'] === 'selection') {
-                        if (ui['value'].length > 0) {
+                        if ((ui['value'].length > 0)&&(!closeMorphologyPopupScheduled)) {
                             for (var i = 0; i < ui['value'].length; i++) {
                                 if ((ui['value'][i].series !== OVERALL_SERIES_NAME) &&
                                         (ui['value'][i].series !== PRE_FRAIL_SERIES_NAME) &&
@@ -184,16 +184,16 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                             if (filteredSelectedValues.length !== ui['value'].length) {
                                 self.selectionArrayDetectionGEFGroupsLineChart(filteredSelectedValues);
                             }
-                            closeMorphologyPopupScheduled = false;
+                            closeMorphologyPopupScheduled = true;
                             $('#showMorphologyPopup').ojPopup('open', "#detectionGEFGroupsLineChart");
                             $("#showMorphologyPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
                             $("#showMorphologyPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
                         } else if (ui['value'].length === 0) {
                             //close popup scheduled for 1.5 seconds
-                            closeMorphologyPopupScheduled = true;
                             setTimeout(function (event) {
                                 if (closeMorphologyPopupScheduled) {
                                     $('#showMorphologyPopup').ojPopup('close');
+                                    closeMorphologyPopupScheduled = false;
                                 }
                             }, 1500);
                         }
@@ -221,7 +221,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 self.chartOptionChangeFactorsGroup1 = function (event, ui) {
                     //console.log(ui);
                     if (ui['option'] === 'highlightedCategories') {
-                        if (ui['value'].length > 0) {
+                        if ((ui['value'].length > 0)&& (!closeGEFDetailsShowPopupScheduled)) {
                             //alert('testi self.selectionValueChange = function(event, data) {');                            
                             //console.log('Izvrsena selekcija linije na donjem dijagramu');
                             $('#GEFGroup1DetailsShowPopup').ojPopup('open');
@@ -235,16 +235,18 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
 
                             var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
                                     "</b></h3>"
-                            closeGEFDetailsShowPopupScheduled = false;
+                            closeGEFDetailsShowPopupScheduled = true;
                             $('#GEFDetailsShowPopupData1').html(popupText);
                         } else if (ui['value'].length === 0) {
                             //close popup scheduled for 1.5 seconds
-                            closeGEFDetailsShowPopupScheduled = true;
+                            //closeGEFDetailsShowPopupScheduled = true;
                             setTimeout(function (event) {
+                                //close popup scheduled for 2 seconds
                                 if (closeGEFDetailsShowPopupScheduled) {
                                     $('#GEFGroup1DetailsShowPopup').ojPopup('close');
+                                    closeGEFDetailsShowPopupScheduled = false;
                                 }
-                            }, 1500);
+                            }, 2000);
                         }
                     }
                 };
