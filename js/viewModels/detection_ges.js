@@ -54,7 +54,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                             selectedDone = false;
                     }
                 };
-                
+
                 self.value = ko.observableArray(['Motility']);
 
                 self.valueArray = ko.observableArray([0, 13]);
@@ -101,9 +101,35 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 
                         }
                     });
+
+
+                    var numberOfAnotations = $('div[id^="comment_"]').length;
+                    
+                    function handleElement1(j) {
+                            $('#comment_' + j).css({height: '20px', overflow: 'hidden'});
+                            $('#showmore_comment_' + j).on('click', function (e) {
+                                var $this = $("#comment_" + j);
+                                if ($this.data('open')) {
+                                    $("#showmore_comment_" + j).html("Show more");
+                                    $this.animate({height: '20px'});
+                                    $this.data('open', 0);
+                                    e.preventDefault();
+                                } else {
+                                    $("#showmore_comment_" + j).html("Show less");
+                                    $this.animate({height: '100%'});
+                                    $this.data('open', 1);
+                                    e.preventDefault();
+                                }
+                            });
+                        };
+                        
+                    for (var i = 1; i <= numberOfAnotations; i++) {
+                        handleElement1(i);
+                    };
+                        
                 };
-                
-                self.searchInput = function(){};
+                    
+                self.searchInput = function () {};
 
                 self.valRole = ko.observableArray(["Caregiver"]);
                 self.valType = ko.observableArray(["Warning"]);

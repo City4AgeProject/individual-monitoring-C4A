@@ -114,41 +114,69 @@
     </div>
     <!-- add anotation window -->
     <div id="dialogWrapper1">
-        <div style="display:none" id="dialog1" title="Add anotation"  
-             data-bind="ojComponent:{component: 'ojDialog', initialVisibility: 'hide'}">
+        <div style="display:none; " id="dialog1" title="Add anotation"  
+             data-bind="ojComponent:{
+                            component: 'ojDialog', 
+                            initialVisibility: 'hide',
+                            rootAttributes: {style: 'width: 460px; height: 360px;'}
+             }">
             <div class="oj-dialog-body">
 
                 <div id="form-container">
                     <div class="oj-form-layout">
                         <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline" >
-                            <div class="oj-flex" style="width: 19em;"> 
+                            <div class="oj-flex"> 
                                 <div class="oj-flex-item">
-                                    <label for="selectType">Type</label>
+                                    <label for="selectTypePerRisk">Type</label>
                                 </div>
-                                <div class="oj-flex-item">
-                                    <select id="selectType"
+                                <div class="oj-flex-item" style="width: 450px">
+                                    <div class="oj-flex">
+                                        <div class="oj-flex-item">
+                                            <select id="selectTypePerRisk"
                                             data-bind="ojComponent: {
                                                         component: 'ojSelect',
-                                                        list: 'commenttype', 
-                                                        value: 'Comment'
-                                        }">
-                                    </select>
-                                    <ul id="commenttype" style="display: none">
-                                        <li oj-data-value="Comment"><img src="images/comment.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Comment</li>
-                                        <li oj-data-value="Warning"><img src="images/warning-icon.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Warning</li>
-                                        <li oj-data-value="Alert"><img src="images/alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Alert</li>
-                                    </ul>
+                                                        list: 'typePerRisk',
+                                                        rootAttributes: {style:'width:142px'}
+                                                        
+                                            }">
+                                            </select>
+                                            <ul id="typePerRisk" style="display: none">
+                                                <li> </li>
+                                                <li oj-data-value="Risk warning"><img src="images/risk_warning.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Risk warning</li>
+                                                <li oj-data-value="Risk alert"><img src="images/risk_alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Risk alert</li>
+                                        
+                                            </ul>
+                                        </div>
+                                        <div class="oj-flex-item">
+                                            <select id="selectTypePerDataValidity"
+                                            data-bind="ojComponent: {
+                                                        component: 'ojSelect',
+                                                        list: 'typePerDataValidity',
+                                                        rootAttributes: {style:'width:142px'}
+                                            }">
+                                            </select>
+                                            <ul id="typePerDataValidity" style="display: none">
+                                                <li> </li>
+                                                <li oj-data-value="Questionable data"><img src="images/questionable_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Questionable data</li>
+                                                <li oj-data-value="Faulty data"><img src="images/faulty_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Faulty data</li>
+                                        
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    
                                 </div>
                             </div>
-                            <div class="oj-flex" style="width: 19em;"> 
+                            <div class="oj-flex"> 
                                 <div class="oj-flex-item">
                                     <label for="selectRole">To</label>
                                 </div>
-                                <div class="oj-flex-item">
+                                <div class="oj-flex-item" style="width: 450px">
                                     <select id="selectRole" 
                                             data-bind="ojComponent: {
-                                                        component: 'ojSelect', 
-                                                        value: 'Caregiver'
+                                                        component: 'ojSelect',
+                                                        rootAttributes: {style:'max-width:284px'}
+                                                       
                                         }">
 
                                         <option value="Caregiver">Caregiver</option>
@@ -159,11 +187,11 @@
                                 </div>
                             </div>
 
-                            <div class="oj-flex" style="width: 19em;">
+                    <!--        <div class="oj-flex">
                                 <div class="oj-flex-item">
                                     <label id="radiosetlabel">Relevance</label>
                                 </div>
-                                <div class="oj-flex-item">
+                                <div class="oj-flex-item" style="width: 380px">
                                     <div id="radioSetId" 
                                          aria-labelledby="radiosetlabel"
                                          data-bind="ojComponent: {
@@ -183,13 +211,13 @@
                                         </span>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
-                            <div class="oj-flex" style="width: 19em;">
+                            <div class="oj-flex">
                                 <div class="oj-flex-item">
                                     <label for="textareacontrol">Comment</label>
                                 </div>
-                                <div class="oj-flex-item">
+                                <div class="oj-flex-item" style="width: 450px">
                                     <textarea id="textareacontrol" rows="6"
                                               data-bind="ojComponent: {
                                                             component: 'ojTextArea'
@@ -201,8 +229,8 @@
                     </div>
                 </div>
             </div>
-            <div class="oj-dialog-footer">
-                <div style="width: 19em;" align="right">
+            <div class="oj-dialog-footer" style="padding-right: 15px;">
+                <div align="right">
                     <button id= "okButton" 
                             data-bind="ojComponent: { 
                                 component: 'ojButton', 
@@ -393,7 +421,7 @@
 <!-- end filter anotations -->
 
 <!-- view anotations -->
-<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
+<div class="oj-panel oj-panel-shadow-sm oj-dialog-body" style="border:none; background-color: #fcfcfc; height: 280px;">
     <div class="demo-flex-display oj-flex-items-pad" >
         <table style="width: 100%;" cellpadding="5">
             <tr style=" background-color: #fad55c; height: 28px;">
@@ -404,8 +432,9 @@
                 <td style="width: 160px; " align="right">Relevance: High</td>
             </tr>
             <tr>
-                <td colspan="5" style=" background-color: #fbfcc5;">
-                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
+                <td colspan="5" style=" background-color: #fbfcc5; ">
+                    <div style="height:20px;overflow:hidden" id="comment_1">Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
+                    <a href="#" id="showmore_comment_1">Show more</a>
                 </td>
             </tr>
             <tr><td></td></tr>
@@ -418,7 +447,8 @@
             </tr>
             <tr>
                 <td colspan="5" style=" background-color: #ffcdc8;">
-                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque.   
+                    <div style="height:20px;overflow:hidden" id="comment_2">Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
+                    <a href="#" id="showmore_comment_2">Show more</a>
                 </td>
             </tr>
             <tr><td></td></tr>
@@ -431,7 +461,8 @@
             </tr>
             <tr>
                 <td colspan="5" style=" background-color: #fafafa;">
-                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
+                    <div style="height:20px;overflow:hidden" id="comment_3">Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
+                    <a href="#" id="showmore_comment_3">Show more</a>
                 </td>
             </tr>
             <tr><td></td></tr>
@@ -444,7 +475,8 @@
             </tr>
             <tr>
                 <td colspan="5" style=" background-color: #fafafa;">
-                    Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. 
+                    <div style="height:20px;overflow:hidden" id="comment_4">Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
+                    <a href="#" id="showmore_comment_4">Show more</a>
                 </td>
             </tr>
         </table>
