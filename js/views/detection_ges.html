@@ -1,3 +1,4 @@
+<!-- CR info -->
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
     <span>Care recipient: <b>L_1567, age: 78, sex: male</b></span> 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -6,16 +7,18 @@
     <div style="height:20px;overflow:hidden" id="summary"><b>Summary:</b> Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
     <a href="#" id="showmore">Show more</a>
 </div>  
+<!-- end CR info -->
 
+<!-- main graph panel -->
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">    
     <div class="demo-flex-display oj-flex-items-pad">
         <div class="oj-flex oj-sm-flex-direction-column">
             <div class="oj-flex-item"><br></div>
             <div class="oj-flex-item">
-                <div class="oj-flex">
-                    <div class="oj-flex-item"  >
-                        <!-- GEF combo box -->
-                        <div id="searchGEF">
+                <div class="oj-flex oj-lg-align-items-flex-end">
+                    <div class="oj-flex-item" >
+                        <!-- choose GEF combo box -->
+                        <div id="searchGEF" style="width: 280px">
                             <span style="margin-right: 10px;">Select GEF:</span>
                             <input id="combobox1" 
                                    data-bind="ojComponent: {
@@ -31,18 +34,20 @@
                                     children: [{value: 'environment', label: 'Environment'},
                                             {value: 'dependence', label: 'Dependence'},
                                             {value: 'healthphysical', label: 'Health – physical'},
-                                            {value: 'healthcognitive', label: 'Health – cognitive'}]}]
+                                            {value: 'healthcognitive', label: 'Health – cognitive'}]}],
+                                    rootAttributes: {style:'max-width:100%'}
                         }">
                         </div>
-                        <!-- end GEF combo box -->
+                        <!-- end choose GEF combo box -->
                     </div>
                     <div class="oj-flex-item" >
                         <!-- period combo box -->
-                        <div id="choosePeriod">
+                        <div id="choosePeriod"  style="width: 100px">
                             <span style="margin-right: 10px;">Period:</span>
                             <input id="combobox2" list="periods"
                                    data-bind="ojComponent: {component: 'ojSelect', 
-                                            value: val}
+                                            value: val,
+                                            rootAttributes: {style:'max-width:100%'}}
                                    "/>
                             <datalist id="periods">
                                 <option value="Month">Month</option>
@@ -54,7 +59,7 @@
                         <!-- end period combo box -->
                     </div>
                     <div class="oj-flex-item">
-                        <!-- slider -->
+                        <!-- time slider -->
                         <div id="slider-container1" align="left">
                             <div id="flex-container" >
                                 <span id="slider-label" style="margin-right: 10px" >Date range:</span>
@@ -74,7 +79,7 @@
                                 <span>Dec 2016</span>
                             </div> <!-- flex-container -->
                         </div>
-                        <!-- end slider -->
+                        <!-- end time slider -->
                     </div>
 
                 </div>
@@ -107,7 +112,7 @@
             </div>
         </div>
     </div>
-
+    <!-- add anotation window -->
     <div id="dialogWrapper1">
         <div style="display:none" id="dialog1" title="Add anotation"  
              data-bind="ojComponent:{component: 'ojDialog', initialVisibility: 'hide'}">
@@ -195,9 +200,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
             </div>
             <div class="oj-dialog-footer">
                 <div style="width: 19em;" align="right">
@@ -222,7 +224,9 @@
             </div>
         </div>
     </div>
-
+    <!-- end add anotation window -->
+    
+    <!-- select point/s popup -->
     <div id="popupWrapper1">
         <div style="display:none" id="popup1"
              data-bind="ojComponent:{component: 'ojPopup',
@@ -298,11 +302,11 @@
             </div>
         </div>
     </div>
-
-
+    <!-- end select point/s popup -->
 </div>
+<!-- end main graph panel -->
 
-<!-- search comments -->
+<!-- filter anotations -->
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
     <div id="form-container3" style="width: 100%;">
         <div class="demo-flex-display oj-flex-items-pad">
@@ -386,7 +390,9 @@
         </div>
     </div>
 </div>
+<!-- end filter anotations -->
 
+<!-- view anotations -->
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
     <div class="demo-flex-display oj-flex-items-pad" >
         <table style="width: 100%;" cellpadding="5">
@@ -444,3 +450,5 @@
         </table>
 
     </div>
+</div>
+<!-- end view anotations -->
