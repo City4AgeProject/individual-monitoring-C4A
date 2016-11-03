@@ -80,8 +80,45 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                     $("#dialog1").ojDialog("close");
                 });
 
+
+
+                /*Test probe code*/
+                function getValue() {
+                    return Math.random() * 4;
+                }
+                self.overCommentTest = function () {
+
+                    var items = new Array();
+                    for (var g = 0; g < series[1].items.length; g++) {
+                        items.push(getValue());
+                        //console.log(items[g]);
+                    }
+                    var obj = {};
+                    obj['name'] = 'Referenced';
+                    obj['items'] = items;
+                    obj['source'] = "images/circle-423x400.png";
+                    obj['markerSize'] = 20;
+                    obj['lineType'] = 'none';
+                    obj['markerDisplayed'] = 'on';
+                    series.push(obj);
+                    self.seriesValue(series);
+                    self.groupsValue = groups;
+                    setTimeout(function (event) {
+                        series.pop();
+                        self.seriesValue(series);
+                    }, 2500);
+                    return true;
+                }
+                /*End Test probe code*/
+
                 //Use to perform tasks after the View is inserted into the DOM.
                 self.handleAttached = function (info) {
+                    /*Test probe code*/
+                    $("#comment_id_22").on("mouseover", function (e) {
+                        self.overCommentTest();
+                    });
+                    /*End Test probe code*/
+
                     $("#addAnnotation").click(
                             function (e) {
                                 $('#dialog1').ojDialog('open');
@@ -128,7 +165,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                     };
                         
                 };
+<<<<<<< HEAD
                     
+=======
+
+
+
+>>>>>>> a7d883c45de7d75867ec4af4c35375726af788f1
                 self.searchInput = function () {};
 
                 self.valRole = ko.observableArray(["Caregiver"]);
