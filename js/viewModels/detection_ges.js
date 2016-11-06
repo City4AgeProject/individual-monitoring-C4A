@@ -1,6 +1,6 @@
 define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
-    'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource'],
+    'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch'],
         function (oj, ko, $) {
 
 
@@ -113,12 +113,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 
                 //Use to perform tasks after the View is inserted into the DOM.
                 self.handleAttached = function (info) {
-                    /*Test probe code*/
-                    $("#comment_id_22").on("mouseover", function (e) {
-                        self.overCommentTest();
-                    });
-                    /*End Test probe code*/
-
+                    
                     $("#addAnnotation").click(
                             function (e) {
                                 $('#dialog1').ojDialog('open');
@@ -127,7 +122,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                     $('#showmore').on('click', function () {
                         var $this = $("#summary");
                         if ($this.data('open')) {
-                            $("#showmore").html("Show more");
+                            $("#showmore").html("Read more");
                             $this.animate({height: '20px'});
                             $this.data('open', 0);
 
@@ -142,12 +137,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 
                     var numberOfAnotations = $('div[id^="comment_"]').length;
                     
-                    function handleElement1(j) {
+                    function handleElement(j) {
                             $('#comment_' + j).css({height: '20px', overflow: 'hidden'});
                             $('#showmore_comment_' + j).on('click', function (e) {
                                 var $this = $("#comment_" + j);
                                 if ($this.data('open')) {
-                                    $("#showmore_comment_" + j).html("Show more");
+                                    $("#showmore_comment_" + j).html("Read more");
                                     $this.animate({height: '20px'});
                                     $this.data('open', 0);
                                     e.preventDefault();
@@ -158,33 +153,47 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                                     e.preventDefault();
                                 }
                             });
+                            $("#div_comment_" + j).on("mouseover", function (e) {
+                                self.overCommentTest();
+                            });
+                            
                         };
                         
                     for (var i = 1; i <= numberOfAnotations; i++) {
-                        handleElement1(i);
+                        handleElement(i);
                     };
-                        
-                };
-<<<<<<< HEAD
+
                     
-=======
 
+                    $("#buttonAddComment").click(
+                            function (e) {
+                                $('#dialog1').ojDialog('open');
+                            });
+                            
+                    $('#anotation-filter').css({display:'block'});
+                    
+                    
+                };
 
-
->>>>>>> a7d883c45de7d75867ec4af4c35375726af788f1
                 self.searchInput = function () {};
 
-                self.valRole = ko.observableArray(["Caregiver"]);
-                self.valType = ko.observableArray(["Warning"]);
+//                self.valRole = ko.observableArray(["Caregiver"]);
+//                self.valType = ko.observableArray(["Warning"]);
 
-                self.currentRawValue = ko.observable();
+//                self.currentRawValue = ko.observable();
                 self.nowrap = ko.observable(false);
 
 
-                self.handleTransitionCompleted = function (info) {
-                    $("#oj-inputsearch-choice-search-input").css("height", "42px");
-                    $("#oj-select-choice-selectSort").css("height", "42px");
-                };
+//                self.handleTransitionCompleted = function (info) {
+//                    $("#oj-inputsearch-choice-search-input").css("height", "42px");
+//                    $("#oj-select-choice-selectSort").css("height", "42px");
+//                };
+                
+                    
+                self.formats = ko.observableArray();
+                self.isChecked = ko.observable();
+                
+                    
             }
             return new detectionGesContentViewModel();
         });
