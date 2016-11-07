@@ -108,12 +108,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                         self.seriesValue(series);
                     }, 2500);
                     return true;
-                }
+                };
                 /*End Test probe code*/
 
                 //Use to perform tasks after the View is inserted into the DOM.
                 self.handleAttached = function (info) {
-                    
+
                     $("#addAnnotation").click(
                             function (e) {
                                 $('#dialog1').ojDialog('open');
@@ -136,48 +136,70 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 
 
                     var numberOfAnotations = $('div[id^="comment_"]').length;
-                    
+
                     function handleElement(j) {
-                            $('#comment_' + j).css({height: '20px', overflow: 'hidden'});
-                            $('#showmore_comment_' + j).on('click', function (e) {
-                                var $this = $("#comment_" + j);
-                                if ($this.data('open')) {
-                                    $("#showmore_comment_" + j).html("Read more");
-                                    $this.animate({height: '20px'});
-                                    $this.data('open', 0);
-                                    e.preventDefault();
-                                } else {
-                                    $("#showmore_comment_" + j).html("Show less");
-                                    $this.animate({height: '100%'});
-                                    $this.data('open', 1);
-                                    e.preventDefault();
-                                }
-                            });
-                            $("#div_comment_" + j).on("mouseover", function (e) {
-                                self.overCommentTest();
-                            });
-                            
-                        };
-                        
+                        $('#comment_' + j).css({height: '20px', overflow: 'hidden'});
+                        $('#showmore_comment_' + j).on('click', function (e) {
+                            var $this = $("#comment_" + j);
+                            if ($this.data('open')) {
+                                $("#showmore_comment_" + j).html("Read more");
+                                $this.animate({height: '20px'});
+                                $this.data('open', 0);
+                                e.preventDefault();
+                            } else {
+                                $("#showmore_comment_" + j).html("Show less");
+                                $this.animate({height: '100%'});
+                                $this.data('open', 1);
+                                e.preventDefault();
+                            }
+                        });
+                        $("#show_comment_" + j).on("mouseover", function (e) {
+                            self.overCommentTest();
+                        });
+                        $("#div_comment_" + j).on("mouseover", function (e) {
+                            $("#div_comment_" + j).css({backgroundColor: '#f2f2f2', borderLeft: '3px solid #ccff99'});
+                        });
+                        $("#div_comment_" + j).on("mouseout", function (e) {
+                            $("#div_comment_" + j).css({backgroundColor: '#fcfcfc', borderLeft: '3px solid #fcfcfc'});
+                        });
+
+                    }
+                    ;
+
                     for (var i = 1; i <= numberOfAnotations; i++) {
                         handleElement(i);
-                    };
+                    }
+                    ;
 
-                    
+
 
                     $("#buttonAddComment").click(
                             function (e) {
                                 $('#dialog1').ojDialog('open');
                             });
                             
-                    $('#anotation-filter').css({display:'block'});
-                    
-                    
+                    if (self.shownFilterBar){
+                         $('#annotation-filter').css({display: 'block'});
+                    }        
+                };
+
+                self.shownFilterBar = false;
+
+                self.toggleFilterAnnotationBar = function (e) {
+
+                    if ($('#annotation-filter').css('display') === 'none'){
+                        $('#annotation-filter').css({display: 'block'});
+                        self.shownFilterBar = true;
+                    }
+                    else{
+                        $('#annotation-filter').css({display: 'none'});
+                        self.shownFilterBar = false;
+                    }
                 };
 
                 self.searchInput = function () {};
 
-//                self.valRole = ko.observableArray(["Caregiver"]);
+                self.valRole = ko.observableArray(["Caregiver"]);
 //                self.valType = ko.observableArray(["Warning"]);
 
 //                self.currentRawValue = ko.observable();
@@ -188,12 +210,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 //                    $("#oj-inputsearch-choice-search-input").css("height", "42px");
 //                    $("#oj-select-choice-selectSort").css("height", "42px");
 //                };
-                
-                    
+
+
                 self.formats = ko.observableArray();
                 self.isChecked = ko.observable();
-                
-                    
+
+
             }
             return new detectionGesContentViewModel();
         });
