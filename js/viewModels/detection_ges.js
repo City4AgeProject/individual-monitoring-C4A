@@ -57,15 +57,17 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 
                 self.value = ko.observableArray(['Motility']);
 
-                self.valueArray = ko.observableArray([0, 13]);
 
-                self.min = ko.observable(0);
-                self.max = ko.observable(13);
+                /* */
+                self.min = ko.observable(10000);
+                self.max = ko.observable(20000);
                 self.step = ko.observable(1);
+                self.valueArray = ko.observableArray([0,0]);
+                /* */
+
 
                 self.optionChangeSlider = function (event, data) {
-                    $("#value1").html("Initial");
-                    $("#value2").html("Dec2016");
+                    console.log(data.value);
                 };
 
                 self.val = ko.observableArray(["Month"]);
@@ -81,6 +83,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                 });
 
 
+                self.postAnnotation = function () {
+
+
+
+
+                };
+
 
                 /*Test probe code*/
                 function getValue() {
@@ -88,11 +97,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                 }
                 self.overCommentTest = function () {
 
-                    var items = new Array();
-                    for (var g = 0; g < series[1].items.length; g++) {
-                        items.push(getValue());
-                        //console.log(items[g]);
-                    }
+//                    var items = new Array();
+//                    for (var g = 0; g < series[1].items.length; g++) {
+//                        items.push(getValue());
+//                        //console.log(items[g]);
+//                    }
                     var obj = {};
                     obj['name'] = 'Referenced';
                     obj['items'] = items;
@@ -111,9 +120,54 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                 };
                 /*End Test probe code*/
 
+
+                self.loadDiagram = function () {
+                    var groups = ['test'];
+                    self.groupsValue = groups;
+                    var obj = {};
+                    obj['name'] = 'Referenced';
+                    obj['items'] = [3.0];
+                    obj['source'] = "images/circle-423x400.png";
+                    obj['markerSize'] = 20;
+                    obj['lineType'] = 'none';
+                    obj['markerDisplayed'] = 'on';
+                    series = new Array();
+                    self.seriesValue(series);
+                    series.push(obj);
+                    self.seriesValue(series);
+                    return true;
+                }
+
+
+                //var self               
                 //Use to perform tasks after the View is inserted into the DOM.
                 self.handleAttached = function (info) {
+                    
+                    //screen initialization 
+                        
+                        //var selfObj = self;               
+                        //console.log(self);
+                        $.getJSON("http://localhost:8080/api/v1/charts/test", function (data) {
+                            
+                            //sequence onLoad 
+                                                        
+                            ///Initialize slider 
+                            self.min(data.start);
+                            self.max(data.end);                            
+                            if (self.valueArray()[0] === 0)
+                                self.valueArray([data.start, data.end]); // set 
+                            
+                            
+                            // console.log(self.min);
+                            // console.log('test self obj:');
+                            // console.log(selfObj.min);                            
+                            // console.log(data.diagramDataPointSets);                                                                                   
+                        });                    
+                    console.log('sekvenca broj 1 - ');
+                    //ucitavanje pozicija klizaca                    
 
+                    //
+                    self.loadDiagram();
                     $("#addAnnotation").click(
                             function (e) {
                                 $('#dialog1').ojDialog('open');
@@ -241,11 +295,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 
                 self.toggleFilterAnnotationBar = function (e) {
 
-                    if ($('#annotation-filter').css('display') === 'none'){
+                    if ($('#annotation-filter').css('display') === 'none') {
                         $('#annotation-filter').css({display: 'block'});
                         self.shownFilterBar = true;
-                    }
-                    else{
+                    } else {
                         $('#annotation-filter').css({display: 'none'});
                         self.shownFilterBar = false;
                     }

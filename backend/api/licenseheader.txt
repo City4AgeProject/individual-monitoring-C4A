@@ -1,0 +1,8 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}City4Age Project
+${licensePrefix}Horizon 2020 ${licensePrefix}
+<#if licenseLast??>
+${licenseLast}
+</#if>
