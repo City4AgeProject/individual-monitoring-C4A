@@ -78,7 +78,7 @@
                         <div id="slider-container1" align="left">
                             <div id="flex-container" >
                                 <span id="slider-label" style="margin-right: 10px" >Date range:</span>
-                                <span id="value1" data-bind="text: valueArray()[0]" style="margin-right: 4px"> </span>
+                                <span id="value1" style="margin-right: 4px"> </span> <!--data-bind="text: valueArray()[0]" -->
                                 <input id="slider1"
                                        data-bind="ojComponent: {
                             component: 'ojSlider', 
@@ -91,7 +91,7 @@
                             rootAttributes: {style:'max-width:60%; '}
                         }"/>
                                 <!--<span id="value2" data-bind="text: valueArray()[1]" style="margin-left: 4px"></span>-->
-                                <span>Dec 2016</span>
+                                <!--<span>Dec 2016</span>-->
                             </div> <!-- flex-container -->
                         </div>
                         <!-- end time slider -->
@@ -219,7 +219,7 @@
                                 component: 'ojButton', 
                                 chroming: 'full', 
                                 label: 'Post'},
-                                click: function(){$('#dialog1').ojDialog('close');}
+                                click: postAnnotation
                             ">
                     </button>
 
