@@ -4,6 +4,8 @@
  */
 package eu.city4age.dashboard.api.dto;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author misha
@@ -12,15 +14,14 @@ public class DiagramDataPoint {
 
     Long id;
     Float value;
-    Annotation annotation;
+    ArrayList<DiagramAnnotation> diagramAnnotations;
 
     public DiagramDataPoint() {
     }
 
-    public DiagramDataPoint(Long id, Float value, Annotation annotation) {
+    public DiagramDataPoint(Long id, Float value, ArrayList<DiagramAnnotation> diagramAnnotations) {
         this.id = id;
         this.value = value;
-        this.annotation = annotation;
     }
 
     public Long getId() {
@@ -39,12 +40,12 @@ public class DiagramDataPoint {
         this.value = value;
     }
 
-    public Annotation getAnnotation() {
-        return annotation;
+    public ArrayList<DiagramAnnotation> getDiagramAnnotations() {
+        return diagramAnnotations;
     }
 
-    public void setAnnotation(Annotation annotation) {
-        this.annotation = annotation;
+    public void setDiagramAnnotations(ArrayList<DiagramAnnotation> diagramAnnotations) {
+        this.diagramAnnotations = diagramAnnotations;
     }
 
 }

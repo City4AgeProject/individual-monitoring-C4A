@@ -3,7 +3,6 @@
  * Horizon 2020  * 
  */
 package eu.city4age.dashboard.api.dto;
-
 import java.util.ArrayList;
 
 /**

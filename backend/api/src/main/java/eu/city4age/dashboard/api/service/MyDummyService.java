@@ -39,14 +39,14 @@ public class MyDummyService {
 
         //Diagram DTO data
         DiagramMonthInterval diagramMonthInterval = new DiagramMonthInterval();
-        diagramMonthInterval.setStart(20000);
-        diagramMonthInterval.setEnd(30000);
-        DiagramDataPointSet diagramDataPointSet = new DiagramDataPointSet(dataPointSet);
+        diagramMonthInterval.setStart(20000); 
+        diagramMonthInterval.setEnd(30000);         
+        
+        DiagramDataPointSet diagramDataPointSet = new DiagramDataPointSet(dataPointSet.getId(), dataPointSet.getLabel());
         diagramMonthInterval.getDiagramDataPointSets().add(diagramDataPointSet);
 
         ///get list of data points from the model
-        ///////.......TODO
-        
+        ///////.......TODO        
         
         ///E.G. Filling diagram DTO objects
         //First point     
@@ -56,7 +56,7 @@ public class MyDummyService {
         diagramDataPointSet.getDiagramDataPoints().add(null);
 
         //Third point
-        //diagramDataPointSet.getDiagramDataPoints().add(new DiagramDataPoint(13l, 4.1f));
+        diagramDataPointSet.getDiagramDataPoints().add(new DiagramDataPoint(13l, 4.1f, null));
 
         ObjectMapper objectMapper = new ObjectMapper();
         String dtoAsString = objectMapper.writeValueAsString(diagramMonthInterval);

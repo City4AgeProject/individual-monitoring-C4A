@@ -4,7 +4,6 @@
  */
 package eu.city4age.dashboard.api.dto;
 
-import eu.city4age.dashboard.api.domain.DataPointSet;
 import java.util.ArrayList;
 
 /**
@@ -13,24 +12,17 @@ import java.util.ArrayList;
  */
 public class DiagramDataPointSet {
 
-    DataPointSet dataSet;
+    Long id;
+    String label;
     ArrayList<DiagramDataPoint> diagramDataPoints = new ArrayList<DiagramDataPoint>();
 
-    
-    public DiagramDataPointSet(){
-        
-    }
-    
-    public DiagramDataPointSet(DataPointSet dataSet) {
-        this.dataSet = dataSet;
+    public DiagramDataPointSet() {
+
     }
 
-    public DataPointSet getDataSet() {
-        return dataSet;
-    }
-
-    public void setDataSet(DataPointSet dataSet) {
-        this.dataSet = dataSet;
+    public DiagramDataPointSet(Long id, String label) {
+        this.id = id;
+        this.label = label;
     }
 
     public ArrayList<DiagramDataPoint> getDiagramDataPoints() {
