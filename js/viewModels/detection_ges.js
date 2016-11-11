@@ -179,8 +179,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                             
                     if (self.shownFilterBar){
                          $('#annotation-filter').css({display: 'block'});
-                    }     
-
+                    }
+                    
+                    
                     /* change default checked button background color of buttons for type of annotation */
                     $('#risk_warning').bind('change', function () {
                            if ($("#risk_warning").is(':checked')) {
@@ -270,7 +271,28 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                 self.formats = ko.observableArray();
                 self.isChecked = ko.observable();
 
+                
+                /* polar chart - uradjen za prvu grupu i to za mesece M1, M2 i M5 */
+                var lineSeriesPolar = [{name: groups[1], items: [series[0].items[1], series[1].items[1], series[2].items[1], series[3].items[1], series[4].items[1]], color: '#ED6647'},
+                    {name: groups[2], items: [series[0].items[2], series[1].items[2], series[2].items[2], series[3].items[2], series[4].items[2]], color: '#8561C8'},
+                    {name: groups[5], items: [series[0].items[5], series[1].items[5], series[2].items[5], series[3].items[5], series[4].items[5]], color: '#6DDBDB'}];
+                
+                var series1 = [{name: "Walking", items: [3.0, 1.5, 1.0, 2.2, 1.8, 3.1, 3.0, 3.6, 2.0, 2.5, 1.5, 3.8, 4.4]},
+                    {name: "Climbing stairs", items: [3.0, 4.2, 2.8, 2.2, 3.3, 2.8, 2.8, 1.9, 2.5, 3.4, 4.1, 2.7, 2.3]},
+                    {name: "Still/Moving", items: [3.0, 5.0, 3.7, 4.6, 4.5, 5.0, 4.8, 4.4, 3.9, 3.9, 5.0, 5.0, 5.0]},
+                    {name: "Moving across rooms", items: [3.0, 3.3, 3.8, 5.0, 4.5, 3.9, 3.7, 3.5, 4.1, 4.0, 3.6, 5.0, 4.5]},
+                    {name: "Gait balance", items: [3.0, 2.8, 2.8, 3.2, 2.9, 3.3, 2.7, 2.5, 3.0, 1.9, 2.3, 1.8, 2.6]}];
+                
+                var lineGroupsPolar = series1; //grupe su nazivi serija linijskog dijagrama bez alerta
 
+                self.stackValue = ko.observable('off');
+                self.typeValue = ko.observable('line');
+                self.polarGridShapeValue = ko.observable('polygon');
+                self.polarChartSeriesValue = ko.observableArray(lineSeriesPolar);
+                self.polarChartGroupsValue = ko.observableArray(lineGroupsPolar);
+
+                
+                
             }
             return new detectionGesContentViewModel();
         });

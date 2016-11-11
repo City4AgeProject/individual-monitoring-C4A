@@ -289,7 +289,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 /* polar chart - uradjen za prvu grupu i to za mesece M1 i M5 */
                 var lineSeriesPolar1 = [{name: groups[1], items: [lineSeries1[0].items[1], lineSeries1[1].items[1], lineSeries1[2].items[1], lineSeries1[3].items[1], lineSeries1[4].items[1], lineSeries1[5].items[1]], color: '#ED6647'},
                     {name: groups[5], items: [lineSeries1[0].items[5], lineSeries1[1].items[5], lineSeries1[2].items[5], lineSeries1[3].items[5], lineSeries1[4].items[5], lineSeries1[5].items[5]], color: '#6DDBDB'}];
-                var lineGroupsPolar1 = lineSeries1; //grupe su nazivi serija liniskog dijagrama
+                var lineGroupsPolar1 = lineSeries1; //grupe su nazivi serija linijskog dijagrama
 
                 self.stackValue = ko.observable('off');
                 self.typeValue = ko.observable('line');
@@ -301,7 +301,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 var lineSeriesPolar2 = [{name: groups[1], items: [lineSeries2[0].items[1], lineSeries2[1].items[1], lineSeries2[2].items[1], lineSeries2[3].items[1]], color: '#FAD55C'},
                     {name: groups[2], items: [lineSeries2[0].items[2], lineSeries2[1].items[2], lineSeries2[2].items[2], lineSeries2[3].items[2]], color: '#8561C8'},
                     {name: groups[5], items: [lineSeries2[0].items[5], lineSeries2[1].items[5], lineSeries2[2].items[5], lineSeries2[3].items[5]], color: '#1DDB1B'}];
-                var lineGroupsPolar2 = lineSeries2; //grupe su nazivi serija liniskog dijagrama
+                var lineGroupsPolar2 = lineSeries2; //grupe su nazivi serija linijskog dijagrama
 
                 self.polarGridShapeValue2 = ko.observable('polygon');
                 self.polarChartSeriesValue2 = ko.observableArray(lineSeriesPolar2);
