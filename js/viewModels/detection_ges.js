@@ -211,19 +211,18 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                             self.overCommentTest();
                         });
                         $("#div_comment_" + j).on("mouseover", function (e) {
-                            $("#div_comment_" + j).css({backgroundColor: '#f2f2f2', borderLeft: '3px solid #ccff99'});
+                            $("#div_comment_" + j).css({backgroundColor: '#f2f2f2', borderLeft: '3px solid #adebad'});
                         });
                         $("#div_comment_" + j).on("mouseout", function (e) {
                             $("#div_comment_" + j).css({backgroundColor: '#fcfcfc', borderLeft: '3px solid #fcfcfc'});
                         });
-
-                    }
-                    ;
+                        
+                        
+                    };
 
                     for (var i = 1; i <= numberOfAnotations; i++) {
                         handleElement(i);
-                    }
-                    ;
+                    };
 
 
 
@@ -231,10 +230,64 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                             function (e) {
                                 $('#dialog1').ojDialog('open');
                             });
+                            
+                    if (self.shownFilterBar){
+                         $('#annotation-filter').css({display: 'block'});
+                    }     
 
-                    if (self.shownFilterBar) {
-                        $('#annotation-filter').css({display: 'block'});
-                    }
+                    /* change default checked button background color of buttons for type of annotation */
+                    $('#risk_warning').bind('change', function () {
+                           if ($("#risk_warning").is(':checked')) {
+                               $("#risk_warning").ojButton("widget").css("background-color", "#d2d2d2");
+                               $("#risk_warning").ojButton("widget").css("border-color", "#c0c0c0");
+                           }
+                           else {
+                               $("#risk_warning").ojButton("widget").css("background-color", "#f6f6f6");
+                               $("#risk_warning").ojButton("widget").css("border-color", "none");
+                           }
+                    });
+                    $('#risk_alert').bind('change', function () {
+                           if ($("#risk_alert").is(':checked')) {
+                               $("#risk_alert").ojButton("widget").css("background-color", "#d2d2d2");
+                               $("#risk_alert").ojButton("widget").css("border-color", "#c0c0c0");
+                           }
+                           else {
+                               $("#risk_alert").ojButton("widget").css("background-color", "#f6f6f6");
+                               $("#risk_alert").ojButton("widget").css("border-color", "none");
+                           }
+                    });
+                    $('#questionable_data').bind('change', function () {
+                           if ($("#questionable_data").is(':checked')) {
+                               $("#questionable_data").ojButton("widget").css("background-color", "#d2d2d2");
+                               $("#questionable_data").ojButton("widget").css("border-color", "#c0c0c0");
+                           }
+                           else {
+                               $("#questionable_data").ojButton("widget").css("background-color", "#f6f6f6");
+                               $("#questionable_data").ojButton("widget").css("border-color", "none");
+                           }
+                    });
+                    $('#faulty_data').bind('change', function () {
+                           if ($("#faulty_data").is(':checked')) {
+                               $("#faulty_data").ojButton("widget").css("background-color", "#d2d2d2");
+                               $("#faulty_data").ojButton("widget").css("border-color", "#c0c0c0");
+                           }
+                           else {
+                               $("#faulty_data").ojButton("widget").css("background-color", "#f6f6f6");
+                               $("#faulty_data").ojButton("widget").css("border-color", "none");
+                           }
+                    });
+                    $('#comment').bind('change', function () {
+                           if ($("#comment").is(':checked')) {
+                               $("#comment").ojButton("widget").css("background-color", "#d2d2d2");
+                               $("#comment").ojButton("widget").css("border-color", "#c0c0c0");
+                           }
+                           else {
+                               $("#comment").ojButton("widget").css("background-color", "#f6f6f6");
+                               $("#comment").ojButton("widget").css("border-color", "none");
+                           }
+                    });
+                    /* change default checked button background color of buttons for type of annotation */
+                   
                 };
 
                 self.shownFilterBar = false;
@@ -250,6 +303,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                     }
                 };
 
+                
+                    
                 self.searchInput = function () {};
 
                 self.valRole = ko.observableArray(["Caregiver"]);
