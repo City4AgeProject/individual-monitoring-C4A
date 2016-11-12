@@ -13,7 +13,7 @@ import javax.ws.rs.ext.Provider;
 
 /**
  *
- * @author misha
+ * 
  */
 @Provider
 public class CORSResponseFilter implements ContainerResponseFilter {

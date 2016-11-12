@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author misha
+ * 
  */
 public class DiagramDataPointSet {
 
@@ -18,6 +18,22 @@ public class DiagramDataPointSet {
 
     public DiagramDataPointSet() {
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public DiagramDataPointSet(Long id, String label) {

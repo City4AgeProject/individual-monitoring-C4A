@@ -10,7 +10,7 @@ import javax.ws.rs.ext.Provider;
 
 /**
  *
- * @author misha
+ * 
  */
 @Provider
 public class EntityNotFoundMapper implements ExceptionMapper<javax.persistence.EntityNotFoundException> {

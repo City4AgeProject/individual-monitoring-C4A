@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author misha
+ * 
  */
 public class DiagramMonthInterval {
 
@@ -41,5 +41,4 @@ public class DiagramMonthInterval {
     public void setDiagramDataPointSets(ArrayList<DiagramDataPointSet> diagramDataPointSets) {
         this.diagramDataPointSets = diagramDataPointSets;
     }
-
 }

@@ -6,7 +6,7 @@ package eu.city4age.dashboard.api.domain;
 
 /**
  *
- * @author misha
+ * 
  */
 public class DataPoint {
 

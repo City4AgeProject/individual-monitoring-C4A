@@ -9,7 +9,7 @@ import javax.ws.rs.core.Application;
 
 /**
  *
- * @author misha
+ * 
  */
 @javax.ws.rs.ApplicationPath("v1")
 public class ApplicationConfig extends Application {

@@ -36,27 +36,35 @@ public class MyDummyService {
         DataPointSet dataPointSet = new DataPointSet();
         dataPointSet.setId(111l);
         dataPointSet.setLabel("Contextual");
-
+        
         //Diagram DTO data
         DiagramMonthInterval diagramMonthInterval = new DiagramMonthInterval();
-        diagramMonthInterval.setStart(20000); 
-        diagramMonthInterval.setEnd(30000);         
+        diagramMonthInterval.setStart(24180); 
+        diagramMonthInterval.setEnd(24183);         
         
         DiagramDataPointSet diagramDataPointSet = new DiagramDataPointSet(dataPointSet.getId(), dataPointSet.getLabel());
-        diagramMonthInterval.getDiagramDataPointSets().add(diagramDataPointSet);
+        diagramDataPointSet.setId(dataPointSet.getId());
+        diagramDataPointSet.setLabel(dataPointSet.getLabel());
+        diagramMonthInterval.getDiagramDataPointSets().add(diagramDataPointSet); 
 
         ///get list of data points from the model
         ///////.......TODO        
         
         ///E.G. Filling diagram DTO objects
         //First point     
-        diagramDataPointSet.getDiagramDataPoints().add(new DiagramDataPoint(12l, 3.0f, null));
+        diagramDataPointSet.getDiagramDataPoints().add(new DiagramDataPoint(12l, 3.0f, null)); 
 
         //for e.g. second point iz missing 
         diagramDataPointSet.getDiagramDataPoints().add(null);
 
         //Third point
-        diagramDataPointSet.getDiagramDataPoints().add(new DiagramDataPoint(13l, 4.1f, null));
+        diagramDataPointSet.getDiagramDataPoints().add(new DiagramDataPoint(13l, 4.1f, null)); 
+        
+        //4th point
+        diagramDataPointSet.getDiagramDataPoints().add(new DiagramDataPoint(15l, 5.1f, null)); 
+        
+        //4th point
+        diagramDataPointSet.getDiagramDataPoints().add(new DiagramDataPoint(15l, 5.1f, null)); 
 
         ObjectMapper objectMapper = new ObjectMapper();
         String dtoAsString = objectMapper.writeValueAsString(diagramMonthInterval);

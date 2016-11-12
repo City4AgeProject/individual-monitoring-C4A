@@ -4,14 +4,18 @@
  */
 package eu.city4age.dashboard.api.domain;
 
+import java.util.ArrayList;
+
 /**
  *
- * @author misha
+ * 
  */
 public class DataPointSet {
 
     Long id;
     String label;
+
+    ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
 
     public DataPointSet() {
 
@@ -31,6 +35,14 @@ public class DataPointSet {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public ArrayList<DataPoint> getDataPoints() {
+        return dataPoints;
+    }
+
+    public void setDataPoints(ArrayList<DataPoint> dataPoints) {
+        this.dataPoints = dataPoints;
     }
 
 }
