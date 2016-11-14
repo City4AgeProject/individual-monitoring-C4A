@@ -114,7 +114,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                     //var selfObj = self;               
                     //console.log(self);
                     $.getJSON("http://localhost:8080/api/v1/charts/test", function (data) {
-
                         //sequence onLoad 
 
                         ///Initialize slider 
