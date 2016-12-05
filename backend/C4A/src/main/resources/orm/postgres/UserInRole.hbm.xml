@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="UserInRole" table="user_in_role" optimistic-lock="version">
+
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+
+        <property name="pilotId" type="java.lang.Integer">
+            <column name="pilot_id" />
+        </property>
+        <property name="validFrom" type="timestamp">
+            <column name="valid_from" length="29" />
+        </property>
+        <property name="validTo" type="timestamp">
+            <column name="valid_to" length="29" />
+        </property>
+        <property name="userInSystemId" type="java.lang.Integer">
+            <column name="user_in_system_id" />
+        </property>
+        <property name="roleId" type="java.lang.Short">
+            <column name="role_id" />
+        </property>
+        <set name="activities" table="activity" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="user_in_role_id" not-null="true" />
+            </key>
+            <one-to-many class="Activity" />
+        </set>
+        <set name="sourceEvidences" table="source_evidence" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="author_id" />
+            </key>
+            <one-to-many class="SourceEvidence" />
+        </set>
+        <one-to-one name="careProfileById" class="CareProfile"></one-to-one>
+        <set name="careProfilesForLastUpdatedBy" table="care_profile" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="last_updated_by" />
+            </key>
+            <one-to-many class="CareProfile" />
+        </set>
+        <set name="numericIndicatorValues" table="numeric_indicator_value" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="user_in_role_id" />
+            </key>
+            <one-to-many class="NumericIndicatorValue" />
+        </set>
+        <set name="variationMeasureValues" table="variation_measure_value" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="user_in_role_id" not-null="true" />
+            </key>
+            <one-to-many class="VariationMeasureValue" />
+        </set>
+        <set name="assessments" table="assessment" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="author_id" />
+            </key>
+            <one-to-many class="Assessment" />
+        </set>
+        <set name="careProfilesForCreatedBy" table="care_profile" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="created_by" not-null="true" />
+            </key>
+            <one-to-many class="CareProfile" />
+        </set>
+        <set name="crProfiles" table="cr_profile" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="user_in_role_id" not-null="true" />
+            </key>
+            <one-to-many class="CrProfile" />
+        </set>
+        <set name="executedActions" table="executed_action" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="userinroleid" not-null="true" />
+            </key>
+            <one-to-many class="ExecutedAction" />
+        </set>
+        <set name="frailtyStatusTimelines" table="frailty_status_timeline" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="changed_by" not-null="true" />
+            </key>
+            <one-to-many class="FrailtyStatusTimeline" />
+        </set>
+    </class>
+</hibernate-mapping>

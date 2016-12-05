@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="Eam" table="eam">
+
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+
+        <many-to-one name="action" class="Action" fetch="select">
+            <column name="actionid" not-null="true" />
+        </many-to-one>
+        <many-to-one name="activity" class="Activity" fetch="select">
+            <column name="activityid" not-null="true" />
+        </many-to-one>
+        <property name="duration" type="java.lang.Integer">
+            <column name="duration" />
+        </property>
+        <set name="startranges" table="eam_startrange" inverse="false" lazy="false" fetch="select">
+            <key>
+                <column name="eam_id" not-null="true" />
+            </key>
+            <many-to-many entity-name="eu.city4age.dashboard.api.model.Startrange">
+                <column name="startrangeid" not-null="true" />
+            </many-to-many>
+        </set>
+ 
+	    <set name="simplelocations" lazy="false">
+	        <key column="eamid" />
+	        <one-to-many class="eu.city4age.dashboard.api.model.SimplelocationEam" />
+	    </set>
+        
+    </class>
+</hibernate-mapping>
