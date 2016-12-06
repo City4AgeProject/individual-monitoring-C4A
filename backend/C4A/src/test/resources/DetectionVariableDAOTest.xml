@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+
+    <cd_detection_variable id="1" detection_variable_name="Walking" detection_variable_type="GES" derived_detection_variable_id="1" />
+    <cd_detection_variable id="2" detection_variable_name="Climbing stairs" detection_variable_type="GES" derived_detection_variable_id="1" />
+    <cd_detection_variable id="3" detection_variable_name="Still/Moving" detection_variable_type="GES" derived_detection_variable_id="1" />
+    <cd_detection_variable id="4" detection_variable_name="Moving across rooms" detection_variable_type="GES" derived_detection_variable_id="1" />
+    <cd_detection_variable id="5" detection_variable_name="Gait balance" detection_variable_type="GES" derived_detection_variable_id="1" />
+    
+</dataset>

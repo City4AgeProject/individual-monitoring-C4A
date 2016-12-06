@@ -19,13 +19,13 @@ public class Assessment extends AbstractBaseEntity {
 	private Date created;
 	private Date updated;
 	private Set assessmentAudienceRoles = new HashSet(0);
-	private Set assessedSets = new HashSet(0);
+	private Set assessedGefValueSets = new HashSet(0);
 
 	public Assessment() {
 	}
 
 	public Assessment(UserInRole userInRole, String assessmentComment, Character riskStatus,
-			Character dataValidityStatus, Date created, Date updated, Set assessmentAudienceRoles, Set assessedSets) {
+			Character dataValidityStatus, Date created, Date updated, Set assessmentAudienceRoles, Set assessedGefValueSets) {
 		this.userInRole = userInRole;
 		this.assessmentComment = assessmentComment;
 		this.riskStatus = riskStatus;
@@ -33,7 +33,7 @@ public class Assessment extends AbstractBaseEntity {
 		this.created = created;
 		this.updated = updated;
 		this.assessmentAudienceRoles = assessmentAudienceRoles;
-		this.assessedSets = assessedSets;
+		this.assessedGefValueSets = assessedGefValueSets;
 	}
 
 	public UserInRole getUserInRole() {
@@ -92,12 +92,12 @@ public class Assessment extends AbstractBaseEntity {
 		this.assessmentAudienceRoles = assessmentAudienceRoles;
 	}
 
-	public Set getAssessedSets() {
-		return this.assessedSets;
+	public Set getAssessedGefValueSets() {
+		return assessedGefValueSets;
 	}
 
-	public void setAssessedSets(Set assessedSets) {
-		this.assessedSets = assessedSets;
+	public void setAssessedGefValueSets(Set assessedGefValueSets) {
+		this.assessedGefValueSets = assessedGefValueSets;
 	}
 
 }

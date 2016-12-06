@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+	<bean id="dataSource" class="org.unitils.database.UnitilsDataSourceFactoryBean" />
+	
+	
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="mappingLocations">
+			<value>classpath*:/orm/postgres/*.hbm.xml</value>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<prop key="hibernate.generate_statistics">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
+				<prop key="hibernate.bytecode.use_reflection_optimizer">false</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.use_sql_comments">true</prop>
+				<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+				<prop key="hibernate.jdbc.lob.non_contextual_creation">true</prop>
+				<prop key="hibernate.default_schema">testtest</prop>
+			</props>
+		</property>
+		<property name="dataSource" ref="dataSource" />
+		<property name="lobHandler"	ref="defaultLobHandler" />
+		<property name="eventListeners">
+			<map>
+				<entry key="merge">
+					<bean class="org.springframework.orm.hibernate3.support.IdTransferringMergeEventListener" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+ 
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+		<property name="sessionFactory" ref="sessionFactory" /> 
+	</bean>
+	
+	<!-- LobHandler for well-behaved JDBC drivers -->
+	<!-- (simply delegating to corresponding PreparedStatement and ResultSet methods) -->
+	<bean id="defaultLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" lazy-init="true"/>
+	
+	<bean id="baseDAOTarget" class="eu.city4age.dashboard.api.dao.hibernate.HibernateBaseDAO" abstract="true">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="assessmentDAO" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager"><ref bean="transactionManager"/></property>
+		<property name="target">
+			<bean class="eu.city4age.dashboard.api.dao.hibernate.HibernateAssessmentDAO" parent="baseDAOTarget"/>
+		</property>
+		<property name="transactionAttributes">
+			<props><prop key="*">PROPAGATION_REQUIRED</prop></props>
+		</property>
+	</bean>
+	
+	<bean id="detectionVariableDAO" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager"><ref bean="transactionManager"/></property>
+		<property name="target">
+			<bean class="eu.city4age.dashboard.api.dao.hibernate.HibernateDetectionVariableDAO" parent="baseDAOTarget"/>
+		</property>
+		<property name="transactionAttributes">
+			<props><prop key="*">PROPAGATION_REQUIRED</prop></props>
+		</property>
+	</bean>
+	
+	<bean id="timeIntervalDAO" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager"><ref bean="transactionManager"/></property>
+		<property name="target">
+			<bean class="eu.city4age.dashboard.api.dao.hibernate.HibernateTimeIntervalDAO" parent="baseDAOTarget"/>
+		</property>
+		<property name="transactionAttributes">
+			<props><prop key="*">PROPAGATION_REQUIRED</prop></props>
+		</property>
+	</bean>
+	
+</beans>

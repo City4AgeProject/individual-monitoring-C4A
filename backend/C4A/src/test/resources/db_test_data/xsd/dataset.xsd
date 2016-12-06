@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:dflt="testtest">
+	<xsd:import namespace="testtest" schemaLocation="testtest.xsd" />
+	<xsd:element name="dataset">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="activity" type="dflt:activity__type" />
+				<xsd:element name="cd_frailty_status" type="dflt:cd_frailty_status__type" />
+				<xsd:element name="cd_detection_variable_type" type="dflt:cd_detection_variable_type__type" />
+				<xsd:element name="variation_measure_value" type="dflt:variation_measure_value__type" />
+				<xsd:element name="cd_role" type="dflt:cd_role__type" />
+				<xsd:element name="dbmaintain_scripts" type="dflt:dbmaintain_scripts__type" />
+				<xsd:element name="time_interval" type="dflt:time_interval__type" />
+				<xsd:element name="frailty_status_timeline" type="dflt:frailty_status_timeline__type" />
+				<xsd:element name="eam" type="dflt:eam__type" />
+				<xsd:element name="assessment" type="dflt:assessment__type" />
+				<xsd:element name="user_in_system" type="dflt:user_in_system__type" />
+				<xsd:element name="inter_activity_behaviour_variation" type="dflt:inter_activity_behaviour_variation__type" />
+				<xsd:element name="care_profile" type="dflt:care_profile__type" />
+				<xsd:element name="action" type="dflt:action__type" />
+				<xsd:element name="cd_typical_period" type="dflt:cd_typical_period__type" />
+				<xsd:element name="user_in_role" type="dflt:user_in_role__type" />
+				<xsd:element name="geriatric_factor_value" type="dflt:geriatric_factor_value__type" />
+				<xsd:element name="pilot" type="dflt:pilot__type" />
+				<xsd:element name="assessed_gef_value_set" type="dflt:assessed_gef_value_set__type" />
+				<xsd:element name="cr_profile" type="dflt:cr_profile__type" />
+				<xsd:element name="source_evidence" type="dflt:source_evidence__type" />
+				<xsd:element name="cd_data_source_type" type="dflt:cd_data_source_type__type" />
+				<xsd:element name="executed_action" type="dflt:executed_action__type" />
+				<xsd:element name="numeric_indicator_value" type="dflt:numeric_indicator_value__type" />
+				<xsd:element name="cd_pilot_detection_variable" type="dflt:cd_pilot_detection_variable__type" />
+				<xsd:element name="cd_detection_variable" type="dflt:cd_detection_variable__type" />
+				<xsd:element name="location" type="dflt:location__type" />
+				<xsd:element name="assessment_audience_role" type="dflt:assessment_audience_role__type" />
+				<xsd:any namespace="testtest" />
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

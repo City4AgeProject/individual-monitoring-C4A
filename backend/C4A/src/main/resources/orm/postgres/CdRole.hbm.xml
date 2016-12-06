@@ -13,23 +13,29 @@
         <property name="roleName" type="string">
             <column name="role_name" length="50" />
         </property>
+
         <property name="roleAbbreviation" type="string">
             <column name="role_abbreviation" length="3" />
         </property>
+
         <property name="roleDescription" type="string">
             <column name="role_description" length="200" />
         </property>
+
         <property name="validFrom" type="timestamp">
             <column name="valid_from" length="29" />
         </property>
+
         <property name="validTo" type="timestamp">
             <column name="valid_to" length="29" />
         </property>
+
         <set name="assessmentAudienceRoles" table="assessment_audience_role" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="role_id" not-null="true" />
             </key>
             <one-to-many class="AssessmentAudienceRole" />
         </set>
+
     </class>
 </hibernate-mapping>

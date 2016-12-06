@@ -9,21 +9,25 @@
 	      <column name="id"/>
 	      <generator class="native"/>
 	    </id>
+	    
+        <property name="locationName" type="string">
+            <column name="location_name" length="50" />
+        </property>
+
+        <property name="indoor" type="java.lang.Short">
+            <column name="indoor" />
+        </property>
 
         <many-to-one name="pilot" class="Pilot" fetch="select">
             <column name="pilot_id" not-null="true" />
         </many-to-one>
-        <property name="locationName" type="string">
-            <column name="location_name" length="50" />
-        </property>
-        <property name="indoor" type="java.lang.Short">
-            <column name="indoor" />
-        </property>
+
         <set name="executedActions" table="executed_action" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="locationid" not-null="true" />
             </key>
             <one-to-many class="ExecutedAction" />
         </set>
+
     </class>
 </hibernate-mapping>

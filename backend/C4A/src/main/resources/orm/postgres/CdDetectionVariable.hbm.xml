@@ -13,17 +13,25 @@
         <property name="detectionVariableName" type="string">
             <column name="detection_variable_name" length="100" />
         </property>
+        
         <property name="detectionVariableType" type="string">
             <column name="detection_variable_type" length="3" />
         </property>
+        
         <property name="validFrom" type="timestamp">
             <column name="valid_from" length="29" />
         </property>
+        
         <property name="validTo" type="timestamp">
             <column name="valid_to" length="29" />
         </property>
+        
         <property name="parentId" type="java.lang.Short">
-            <column name="parent_id" />
+            <column name="derived_detection_variable_id" />
+        </property>
+        
+        <property name="derivationWeight" type="big_decimal">
+            <column name="derivation_weight" precision="3" />
         </property>
         
         <set name="variationMeasureValues" table="variation_measure_value" inverse="true" lazy="false" fetch="select">

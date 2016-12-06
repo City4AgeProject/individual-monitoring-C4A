@@ -13,9 +13,11 @@ public class FrailtyStatusTimeline extends AbstractBaseEntity {
 	private FrailtyStatusTimelineId frailtyStatusTimelineId;
 	private TimeInterval timeInterval;
 	private UserInRole userInRole;
+	private UserInRole changedBy;
 	private String frailtyStatus;
 	private String frailtyNotice;
 	private Date changed;
+	private CdFrailtyStatus cdFrailtyStatus;
 
 	public FrailtyStatusTimeline() {
 	}
@@ -31,17 +33,19 @@ public class FrailtyStatusTimeline extends AbstractBaseEntity {
 	}
 
 
-	public FrailtyStatusTimeline(TimeInterval timeInterval, UserInRole userInRole,
+	public FrailtyStatusTimeline(TimeInterval timeInterval, UserInRole userInRole, UserInRole changedBy,
 			String frailtyStatus) {
 		this.timeInterval = timeInterval;
 		this.userInRole = userInRole;
+		this.changedBy = changedBy;
 		this.frailtyStatus = frailtyStatus;
 	}
 
-	public FrailtyStatusTimeline(TimeInterval timeInterval, UserInRole userInRole,
+	public FrailtyStatusTimeline(TimeInterval timeInterval, UserInRole userInRole, UserInRole changedBy,
 			String frailtyStatus, String frailtyNotice) {
 		this.timeInterval = timeInterval;
 		this.userInRole = userInRole;
+		this.changedBy = changedBy;
 		this.frailtyStatus = frailtyStatus;
 		this.frailtyNotice = frailtyNotice;
 	}
@@ -62,6 +66,16 @@ public class FrailtyStatusTimeline extends AbstractBaseEntity {
 		this.userInRole = userInRole;
 	}
 
+	public UserInRole getChangedBy() {
+		return changedBy;
+	}
+
+
+	public void setChangedBy(UserInRole changedBy) {
+		this.changedBy = changedBy;
+	}
+
+
 	public String getFrailtyStatus() {
 		return this.frailtyStatus;
 	}
@@ -78,4 +92,26 @@ public class FrailtyStatusTimeline extends AbstractBaseEntity {
 		this.frailtyNotice = frailtyNotice;
 	}
 
+
+	public Date getChanged() {
+		return changed;
+	}
+
+
+	public void setChanged(Date changed) {
+		this.changed = changed;
+	}
+
+
+	public CdFrailtyStatus getCdFrailtyStatus() {
+		return cdFrailtyStatus;
+	}
+
+
+	public void setCdFrailtyStatus(CdFrailtyStatus cdFrailtyStatus) {
+		this.cdFrailtyStatus = cdFrailtyStatus;
+	}
+
+	
+	
 }

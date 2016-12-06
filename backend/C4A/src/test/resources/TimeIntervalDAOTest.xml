@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+
+    <time_interval id="1" interval_start="2016-01-01 00:00:00" interval_end="2016-02-01 00:00:00" typical_period="1" />
+    <time_interval id="2" interval_start="2016-02-01 00:00:00" interval_end="2016-03-01 00:00:00" typical_period="1" />
+    <time_interval id="3" interval_start="2016-03-01 00:00:00" interval_end="2016-04-01 00:00:00" typical_period="1" />
+    <time_interval id="4" interval_start="2016-04-01 00:00:00" interval_end="2016-05-01 00:00:00" typical_period="1" />
+    <time_interval id="5" interval_start="2016-05-01 00:00:00" interval_end="2016-06-01 00:00:00" typical_period="1" />
+    
+</dataset>

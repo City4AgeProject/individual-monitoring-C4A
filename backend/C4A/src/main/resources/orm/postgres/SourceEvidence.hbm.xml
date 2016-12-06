@@ -14,10 +14,6 @@
             <column name="geriatric_factor_id" not-null="true" />
         </many-to-one>
         
-        <many-to-one name="userInRole" class="UserInRole" update="false" insert="false" fetch="select">
-            <column name="author_id" />
-        </many-to-one>
-        
         <property name="textEvidence" type="string">
             <column name="text_evidence" />
         </property>
@@ -29,6 +25,10 @@
         <property name="uploaded" type="timestamp">
             <column name="uploaded" length="29" not-null="true" />
         </property>
+        
+        <many-to-one name="userInRole" class="UserInRole" update="false" insert="false" fetch="select">
+            <column name="author_id" />
+        </many-to-one>
         
     </class>
 </hibernate-mapping>

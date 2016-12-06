@@ -26,9 +26,13 @@
             <column name="data_source_type" length="3" />
         </property>
 
-	    <set name="assessedSets" lazy="false">
-	        <key column="data_point_id" />
-	        <one-to-many class="eu.city4age.dashboard.api.model.AssessedSet" />
+        <property name="derivationWeight" type="big_decimal">
+            <column name="derivation_weight" precision="3" />
+        </property>
+
+	    <set name="assessedGefValueSets" lazy="false">
+	        <key column="gef_value_id" />
+	        <one-to-many class="eu.city4age.dashboard.api.model.AssessedGefValueSet" />
 	    </set>
 
 	    <set name="sourceEvidences" lazy="false">

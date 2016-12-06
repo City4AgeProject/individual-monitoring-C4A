@@ -10,26 +10,33 @@
 	      <generator class="native"/>
 	    </id>
 
-        <many-to-one name="userInRole" class="UserInRole" fetch="select">
-            <column name="user_in_role_id" not-null="true" />
-        </many-to-one>
         <property name="refHeight" type="java.lang.Float">
             <column name="ref_height" precision="8" scale="8" />
         </property>
+
         <property name="refWeight" type="java.lang.Float">
             <column name="ref_weight" precision="8" scale="8" />
         </property>
+
         <property name="refMeanBloodPressure" type="big_decimal">
             <column name="ref_mean_blood_pressure" precision="5" />
         </property>
+
         <property name="date" type="time">
             <column name="date" length="15" />
         </property>
+
+        <many-to-one name="userInRole" class="UserInRole" fetch="select">
+            <column name="user_in_role_id" not-null="true" />
+        </many-to-one>
+
         <property name="birthDate" type="date">
             <column name="birth_date" length="13" not-null="true" />
         </property>
+
         <property name="gender" type="boolean">
             <column name="gender" not-null="true" />
         </property>
+
     </class>
 </hibernate-mapping>

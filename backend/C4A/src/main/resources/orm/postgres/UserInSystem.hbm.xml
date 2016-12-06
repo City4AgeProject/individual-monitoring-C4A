@@ -13,11 +13,14 @@
         <property name="username" type="string">
             <column name="username" length="25" unique="true" />
         </property>
+
         <property name="password" type="string">
             <column name="password" length="25" />
         </property>
+
         <property name="createdDate" type="timestamp">
             <column name="created_date" length="29" />
         </property>
+
     </class>
 </hibernate-mapping>

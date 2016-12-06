@@ -13,20 +13,24 @@
         <property name="actionName" type="string">
             <column name="action_name" length="50" />
         </property>
+        
         <property name="category" type="string">
             <column name="category" length="25" />
         </property>
+        
         <set name="eams" table="eam" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="actionid" not-null="true" />
             </key>
             <one-to-many class="Eam" />
         </set>
+        
         <set name="executedActions" table="executed_action" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="actionid" not-null="true" />
             </key>
             <one-to-many class="ExecutedAction" />
         </set>
+        
     </class>
 </hibernate-mapping>

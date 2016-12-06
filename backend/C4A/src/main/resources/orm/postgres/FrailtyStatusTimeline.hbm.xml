@@ -13,14 +13,26 @@
         <many-to-one name="timeInterval" class="TimeInterval" update="false" insert="false" fetch="select">
             <column name="time_interval_id" not-null="true" />
         </many-to-one>
-        <many-to-one name="userInRole" class="UserInRole" update="false" insert="false" fetch="select">
-            <column name="changed_by" not-null="true" />
-        </many-to-one>
-        <property name="frailtyStatus" type="string">
-            <column name="frailty_status" length="9" not-null="true" />
+
+        <property name="changed" type="timestamp">
+            <column name="changed" length="29" not-null="true" />
         </property>
+        
+        <many-to-one name="userInRole" class="UserInRole" update="false" insert="false" fetch="select">
+            <column name="user_in_role_id" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="cdFrailtyStatus" class="CdFrailtyStatus" update="false" insert="false" fetch="select">
+            <column name="frailty_status" length="9" not-null="true" />
+        </many-to-one>
+        
         <property name="frailtyNotice" type="string">
             <column name="frailty_notice" length="200" />
         </property>
+
+        <many-to-one name="changedBy" class="UserInRole" update="false" insert="false" fetch="select">
+            <column name="changed_by" not-null="true" />
+        </many-to-one>
+        
     </class>
 </hibernate-mapping>

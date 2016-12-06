@@ -1,5 +1,7 @@
 package eu.city4age.dashboard.api.model;
 
+import java.math.BigDecimal;
+
 // default package
 // Generated 24-Nov-2016 15:43:47 by Hibernate Tools 5.2.0.Beta1
 
@@ -17,6 +19,9 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 	private Date validFrom;
 	private Date validTo;
 	private Short parentId;
+	
+	private BigDecimal derivationWeight;
+	
 	private Set variationMeasureValues = new HashSet(0);
 	private Set cdPilotDetectionVariables = new HashSet(0);
 	private Set numericIndicatorValues = new HashSet(0);
@@ -27,7 +32,7 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 	}
 
 	public CdDetectionVariable(String detectionVariableName, String detectionVariableType, Date validFrom,
-			Date validTo, Short parentId, Set variationMeasureValues, Set cdPilotDetectionVariables,
+			Date validTo, Short parentId, BigDecimal derivationWeight, Set variationMeasureValues, Set cdPilotDetectionVariables,
 			Set numericIndicatorValues) {
 		this.detectionVariableName = detectionVariableName;
 		this.detectionVariableType = detectionVariableType;
@@ -111,4 +116,12 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 		this.pilots = pilots;
 	}
 
+	public BigDecimal getDerivationWeight() {
+		return derivationWeight;
+	}
+
+	public void setDerivationWeight(BigDecimal derivationWeight) {
+		this.derivationWeight = derivationWeight;
+	}
+	
 }

@@ -10,17 +10,21 @@
 	      <generator class="native"/>
 	    </id>
 
-        <many-to-one name="activityByRealActivityId" class="Activity" fetch="select">
-            <column name="real_activity_id" not-null="true" />
-        </many-to-one>
-        <many-to-one name="activityByExpectedActivityId" class="Activity" fetch="select">
-            <column name="expected_activity_id" not-null="true" />
-        </many-to-one>
-        <many-to-one name="numericIndicatorValue" class="NumericIndicatorValue" fetch="select">
-            <column name="numeric_indicator_id" not-null="true" />
-        </many-to-one>
         <property name="deviation" type="java.lang.Float">
             <column name="deviation" precision="8" scale="8" />
         </property>
+
+        <many-to-one name="activityByExpectedActivityId" class="Activity" fetch="select">
+            <column name="expected_activity_id" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="activityByRealActivityId" class="Activity" fetch="select">
+            <column name="real_activity_id" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="numericIndicatorValue" class="NumericIndicatorValue" fetch="select">
+            <column name="numeric_indicator_id" not-null="true" />
+        </many-to-one>
+
     </class>
 </hibernate-mapping>

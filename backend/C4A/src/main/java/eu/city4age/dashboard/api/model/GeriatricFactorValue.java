@@ -22,22 +22,25 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 	private CdDetectionVariable cdDetectionVariable;
 	private Integer userInRoleId;
 	private String dataSourceType;
+	
+	private BigDecimal derivationWeight;
+
 	private Set sourceEvidences = new HashSet(0);
 	
 	private Set<NumericIndicatorValue> numericIndicatorValues = new HashSet<NumericIndicatorValue>();
-	private Set<AssessedSet> assessedSets = new HashSet<AssessedSet>();
+	private Set<AssessedGefValueSet> assessedGefValueSets = new HashSet<AssessedGefValueSet>();
 
 	public GeriatricFactorValue() {
 	}
 
 	public GeriatricFactorValue(BigDecimal gefValue, TimeInterval timeInterval, CdDetectionVariable cdDetectionVariable, Integer userInRoleId,
-			String dataSourceType, Set<AssessedSet> assessedSets, Set nuiGefs, Set sourceEvidences) {
+			String dataSourceType, Set<AssessedGefValueSet> assessedGefValueSets, Set nuiGefs, Set sourceEvidences) {
 		this.gefValue = gefValue;
 		this.timeInterval = timeInterval;
 		this.cdDetectionVariable = cdDetectionVariable;
 		this.userInRoleId = userInRoleId;
 		this.dataSourceType = dataSourceType;
-		this.assessedSets = assessedSets;
+		this.assessedGefValueSets = assessedGefValueSets;
 		this.sourceEvidences = sourceEvidences;
 	}
 
@@ -82,6 +85,14 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 		this.dataSourceType = dataSourceType;
 	}
 
+	public BigDecimal getDerivationWeight() {
+		return derivationWeight;
+	}
+
+	public void setDerivationWeight(BigDecimal derivationWeight) {
+		this.derivationWeight = derivationWeight;
+	}
+
 	public Set getSourceEvidences() {
 		return this.sourceEvidences;
 	}
@@ -98,12 +109,12 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 		this.numericIndicatorValues = numericIndicatorValues;
 	}
 
-	public Set<AssessedSet> getAssessedSets() {
-		return assessedSets;
+	public Set<AssessedGefValueSet> getAssessedGefValueSets() {
+		return assessedGefValueSets;
 	}
 
-	public void setAssessedSets(Set<AssessedSet> assessedSets) {
-		this.assessedSets = assessedSets;
+	public void setAssessedGefValueSets(Set<AssessedGefValueSet> assessedGefValueSets) {
+		this.assessedGefValueSets = assessedGefValueSets;
 	}
 
 }

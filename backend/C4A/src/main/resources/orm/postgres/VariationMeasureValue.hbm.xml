@@ -13,26 +13,33 @@
         <many-to-one name="activity" class="Activity" fetch="select">
             <column name="activity_id" />
         </many-to-one>
-        <many-to-one name="cdDataSourceType" class="CdDataSourceType" fetch="select">
-            <column name="data_source_type" length="3" not-null="true" />
-        </many-to-one>
-        <many-to-one name="cdDetectionVariable" class="CdDetectionVariable" fetch="select">
-            <column name="measure_type_id" not-null="true" />
-        </many-to-one>
-        <many-to-one name="timeInterval" class="TimeInterval" fetch="select">
-            <column name="time_interval_id" not-null="true" />
-        </many-to-one>
+        
         <many-to-one name="userInRole" class="UserInRole" fetch="select">
             <column name="user_in_role_id" not-null="true" />
         </many-to-one>
+        
         <property name="measureValue" type="java.lang.Float">
             <column name="measure_value" precision="8" scale="8" />
         </property>
+
+        <many-to-one name="cdDetectionVariable" class="CdDetectionVariable" fetch="select">
+            <column name="measure_type_id" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="cdDataSourceType" class="CdDataSourceType" fetch="select">
+            <column name="data_source_type" length="3" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="timeInterval" class="TimeInterval" fetch="select">
+            <column name="time_interval_id" not-null="true" />
+        </many-to-one>
+
         <set name="numericIndicatorValues" table="numeric_indicator_value" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="variation_measure_id" not-null="true" />
             </key>
             <one-to-many class="NumericIndicatorValue" />
         </set>
+
     </class>
 </hibernate-mapping>

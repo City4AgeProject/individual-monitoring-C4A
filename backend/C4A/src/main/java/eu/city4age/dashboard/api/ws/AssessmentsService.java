@@ -188,7 +188,7 @@ public class AssessmentsService {
 	public String getDiagramData() throws JsonProcessingException {
     	
 		Timestamp start = Timestamp.valueOf("2016-01-01 00:00:00");
-		Timestamp end = Timestamp.valueOf("2016-04-01 00:00:00");
+		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
     	
     	DiagramDataDTO dto = new DiagramDataDTO();
     	
@@ -200,7 +200,7 @@ public class AssessmentsService {
     	dto.setMonthLabels(monthLabels);
     
     	
-    	List<String> gefLables = detectionVariableDAO.getAllDetectionVariableNamesForParentId(Short.valueOf("1"));
+    	List<String> gefLables = detectionVariableDAO.getAllDetectionVariableNamesForParentId(Short.valueOf("4"));
     	
 		dto.setGefLabels(gefLables);
     	

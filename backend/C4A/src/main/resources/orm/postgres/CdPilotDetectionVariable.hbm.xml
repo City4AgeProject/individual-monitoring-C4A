@@ -7,18 +7,18 @@
         
  
 		<composite-id name="cdPilotDetectionVariableId">
-			<key-property name="detectionVariableId" column="detection_variable_id" />
 			<key-property name="pilotId" column="pilot_id" />
+			<key-property name="detectionVariableId" column="detection_variable_id" />
 		</composite-id>
-        
-        <many-to-one name="cdDetectionVariable" class="CdDetectionVariable" update="false" insert="false" fetch="select">
-            <column name="detection_variable_id" not-null="true" />
-        </many-to-one>
-        
+		
         <many-to-one name="pilot" class="Pilot" update="false" insert="false" fetch="select">
             <column name="pilot_id" not-null="true" />
         </many-to-one>
         
+        <many-to-one name="cdDetectionVariable" class="CdDetectionVariable" update="false" insert="false" fetch="select">
+            <column name="detection_variable_id" not-null="true" />
+        </many-to-one>
+       
         <property name="detectionVariableDescriptionFormula" type="string">
             <column name="detection_variable_description_formula" not-null="true" />
         </property>

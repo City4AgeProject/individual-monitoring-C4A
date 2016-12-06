@@ -69,7 +69,7 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 		return castList(Assessment.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT a FROM Assessment a LEFT JOIN a.assessedSets AS assessedSets LEFT JOIN assessedSets.geriatricFactorValue AS geriatricFactorValue WHERE geriatricFactorValue.id = :geriatricFactorId ");
+				Query q = session.createQuery("SELECT a FROM Assessment a LEFT JOIN a.assessedGefValueSets AS assessedGefValueSets LEFT JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue WHERE geriatricFactorValue.id = :geriatricFactorId ");
 				q.setParameter("geriatricFactorId", geriatricFactorId);
 				return q.list();
 			}
@@ -81,7 +81,7 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 		return castList(Assessment.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT a FROM Assessment a LEFT JOIN a.assessedSets AS assessedSets LEFT JOIN assessedSets.geriatricFactorValue AS geriatricFactorValue WHERE geriatricFactorValue.id = :geriatricFactorId ");
+				Query q = session.createQuery("SELECT a FROM Assessment a LEFT JOIN a.assessedGefValueSets AS assessedGefValueSets LEFT JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue WHERE geriatricFactorValue.id = :geriatricFactorId ");
 				q.setParameter("geriatricFactorId", geriatricFactorId);
 				return q.list();
 			}

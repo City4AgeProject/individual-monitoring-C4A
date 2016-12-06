@@ -12,6 +12,7 @@ import java.util.Set;
 public class Pilot extends AbstractBaseEntity {
 
 	private String name;
+	private String pilotCode;
 	private Double populationSize;
 	private Set locations = new HashSet(0);
 	private Set cdPilotDetectionVariables = new HashSet(0);
@@ -19,8 +20,9 @@ public class Pilot extends AbstractBaseEntity {
 	public Pilot() {
 	}
 
-	public Pilot(String name, Double populationSize, Set locations, Set cdPilotDetectionVariables) {
+	public Pilot(String name, String pilotCode, Double populationSize, Set locations, Set cdPilotDetectionVariables) {
 		this.name = name;
+		this.pilotCode = pilotCode;
 		this.populationSize = populationSize;
 		this.locations = locations;
 		this.cdPilotDetectionVariables = cdPilotDetectionVariables;
@@ -32,6 +34,14 @@ public class Pilot extends AbstractBaseEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPilotCode() {
+		return pilotCode;
+	}
+
+	public void setPilotCode(String pilotCode) {
+		this.pilotCode = pilotCode;
 	}
 
 	public Double getPopulationSize() {

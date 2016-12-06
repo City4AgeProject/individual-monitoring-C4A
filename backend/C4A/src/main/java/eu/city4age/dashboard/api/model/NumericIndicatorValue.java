@@ -16,34 +16,29 @@ public class NumericIndicatorValue extends AbstractBaseEntity {
 	private CdDetectionVariable cdDetectionVariable;
 	private TimeInterval timeInterval;
 	private UserInRole userInRole;
-	private VariationMeasureValue variationMeasureValue;
 	private BigDecimal nuiValue;
 	private Set interActivityBehaviourVariations = new HashSet(0);
-	private Set assessedSets = new HashSet(0);
 
 	public NumericIndicatorValue() {
 	}
 
 	public NumericIndicatorValue(CdDataSourceType cdDataSourceType, CdDetectionVariable cdDetectionVariable,
-			TimeInterval timeInterval, VariationMeasureValue variationMeasureValue, BigDecimal nuiValue) {
+			TimeInterval timeInterval, BigDecimal nuiValue) {
 		this.cdDataSourceType = cdDataSourceType;
 		this.cdDetectionVariable = cdDetectionVariable;
 		this.timeInterval = timeInterval;
-		this.variationMeasureValue = variationMeasureValue;
 		this.nuiValue = nuiValue;
 	}
 
 	public NumericIndicatorValue(CdDataSourceType cdDataSourceType, CdDetectionVariable cdDetectionVariable,
-			TimeInterval timeInterval, UserInRole userInRole, VariationMeasureValue variationMeasureValue,
-			BigDecimal nuiValue, Set interActivityBehaviourVariations, Set assessedSets, Set nuiGefs) {
+			TimeInterval timeInterval, UserInRole userInRole,
+			BigDecimal nuiValue, Set interActivityBehaviourVariations, Set nuiGefs) {
 		this.cdDataSourceType = cdDataSourceType;
 		this.cdDetectionVariable = cdDetectionVariable;
 		this.timeInterval = timeInterval;
 		this.userInRole = userInRole;
-		this.variationMeasureValue = variationMeasureValue;
 		this.nuiValue = nuiValue;
 		this.interActivityBehaviourVariations = interActivityBehaviourVariations;
-		this.assessedSets = assessedSets;
 	}
 
 	public CdDataSourceType getCdDataSourceType() {
@@ -78,14 +73,6 @@ public class NumericIndicatorValue extends AbstractBaseEntity {
 		this.userInRole = userInRole;
 	}
 
-	public VariationMeasureValue getVariationMeasureValue() {
-		return this.variationMeasureValue;
-	}
-
-	public void setVariationMeasureValue(VariationMeasureValue variationMeasureValue) {
-		this.variationMeasureValue = variationMeasureValue;
-	}
-
 	public BigDecimal getNuiValue() {
 		return this.nuiValue;
 	}
@@ -100,14 +87,6 @@ public class NumericIndicatorValue extends AbstractBaseEntity {
 
 	public void setInterActivityBehaviourVariations(Set interActivityBehaviourVariations) {
 		this.interActivityBehaviourVariations = interActivityBehaviourVariations;
-	}
-
-	public Set getAssessedSets() {
-		return this.assessedSets;
-	}
-
-	public void setAssessedSets(Set assessedSets) {
-		this.assessedSets = assessedSets;
 	}
 	
 }

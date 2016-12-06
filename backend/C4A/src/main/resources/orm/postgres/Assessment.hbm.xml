@@ -10,35 +10,43 @@
 	      <generator class="native"/>
 	    </id>
 
-        <many-to-one name="userInRole" class="UserInRole" fetch="select">
-            <column name="author_id" />
-        </many-to-one>
         <property name="assessmentComment" type="string">
             <column name="assessment_comment" />
         </property>
+        
         <property name="riskStatus" type="java.lang.Character">
             <column name="risk_status" length="1" />
         </property>
+        
         <property name="dataValidityStatus" type="java.lang.Character">
             <column name="data_validity_status" length="1" />
         </property>
+        
         <property name="created" type="timestamp">
             <column name="created" length="29" not-null="true" />
         </property>
+        
         <property name="updated" type="timestamp">
             <column name="updated" length="29" />
         </property>
+        
+        <many-to-one name="userInRole" class="UserInRole" fetch="select">
+            <column name="author_id" />
+        </many-to-one>
+        
         <set name="assessmentAudienceRoles" table="assessment_audience_role" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="assessment_id" not-null="true" />
             </key>
             <one-to-many class="AssessmentAudienceRole" />
         </set>
-        <set name="assessedSets" table="assessed_set" inverse="true" lazy="false" fetch="select">
+        
+        <set name="assessedGefValueSets" table="assessed_gef_value_set" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="assessment_id" not-null="true" />
             </key>
-            <one-to-many class="AssessedSet" />
+            <one-to-many class="AssessedGefValueSet" />
         </set>
+        
     </class>
 </hibernate-mapping>

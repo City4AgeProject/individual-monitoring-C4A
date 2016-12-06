@@ -13,11 +13,14 @@
         <many-to-one name="assessment" class="Assessment" update="false" insert="false" fetch="select">
             <column name="assessment_id" not-null="true" />
         </many-to-one>
+        
         <many-to-one name="cdRole" class="CdRole" update="false" insert="false" fetch="select">
             <column name="role_id" not-null="true" />
         </many-to-one>
+        
         <property name="assigned" type="timestamp">
             <column name="assigned" length="29" not-null="true" />
         </property>
+        
     </class>
 </hibernate-mapping>
