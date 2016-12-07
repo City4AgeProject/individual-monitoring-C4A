@@ -76,7 +76,6 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 		}));
 	}
 
-	@Override
 	public List<Assessment> getAssessmentsByFilter(final Long geriatricFactorId, final String filter) {
 		return castList(Assessment.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
@@ -86,6 +85,10 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 				return q.list();
 			}
 		}));
+	}
+
+	public List<Assessment> getLastFiveAssessments() {
+		return null;
 	}
 
 }

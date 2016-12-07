@@ -7,7 +7,9 @@
 
 	    <id name="id" type="long">
 	      <column name="id"/>
-	      <generator class="native"/>
+	      <generator class="sequence">
+	      	<param name="sequence">assessment_id_seq</param>
+	      </generator>
 	    </id>
 
         <property name="assessmentComment" type="string">

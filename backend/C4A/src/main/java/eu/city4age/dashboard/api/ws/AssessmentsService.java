@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -18,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
@@ -28,14 +31,21 @@ import eu.city4age.dashboard.api.dto.DiagramDataDTO;
 import eu.city4age.dashboard.api.dto.DiagramDataPoint;
 import eu.city4age.dashboard.api.dto.DiagramDataPointSet;
 import eu.city4age.dashboard.api.dto.DiagramMonthInterval;
+import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
+import eu.city4age.dashboard.api.model.AssessedGefValueSet;
 import eu.city4age.dashboard.api.model.Assessment;
+import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
+import eu.city4age.dashboard.api.model.CdRole;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.UserInRole;
 	
 @Transactional("transactionManager")
 @Path("/assessments")
 public class AssessmentsService {
 	
 	static protected Logger logger = Logger.getLogger(AssessmentsService.class);
+	
+	static protected ObjectMapper objectMapper = new ObjectMapper();
 
 	@Autowired
     private AssessmentDAO assessmentDAO;
@@ -176,7 +186,6 @@ public class AssessmentsService {
         diagramDataPointSet7.getDiagramDataPoints().add(new DiagramDataPoint(29l, 1.8f, null));
         diagramDataPointSet8.getDiagramDataPoints().add(null);
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String dtoAsString = objectMapper.writeValueAsString(diagramMonthInterval);
         
         return dtoAsString;
@@ -207,22 +216,32 @@ public class AssessmentsService {
     	List<GeriatricFactorValue> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
     	
 		dto.setGefData(gefs);		
-		
-        ObjectMapper objectMapper = new ObjectMapper();
-        
+
 		String dtoAsString = objectMapper.writeValueAsString(dto);
         
         return dtoAsString;		
 
     }
 
+    @POST
+    @Path("/getLastFiveAssessments")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+	public String getLastFiveAssessments(String json) throws JsonProcessingException {
+    	
+    	List<Assessment> assessments = assessmentDAO.getLastFiveAssessments();
+
+		String dtoAsString = objectMapper.writeValueAsString(assessments);
+        
+        return json;		
+    }
 
 	
     @POST
     @Path("/getAssessmentsForSelectedDataSet")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public List<Assessment> getAssessmentsForSelectedDataSet(String test) {
+	public String getAssessmentsForSelectedDataSet(String json) throws JsonProcessingException {
     	
     	YearMonth ym = YearMonth.of(2016, Month.JANUARY);
 
@@ -235,41 +254,88 @@ public class AssessmentsService {
 			assessments.addAll(getAssessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
 
 		}
-		
-		return assessments;
+
+		String dtoAsString = objectMapper.writeValueAsString(assessments);
+        
+        return dtoAsString;		
 	}
 
     @POST
     @Path("/getAssessmentsByFiler")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Assessment> getAssessmentsByFiler(String test) {
+    public String getAssessmentsByFiler(String json) throws JsonProcessingException {
+    	
     	List<Assessment> assessments = new ArrayList<Assessment>();
     	String filter = "";
 		Long geriatricFactorId = Long.valueOf(1);
-		return assessmentDAO.getAssessmentsByFilter(geriatricFactorId, filter);
+		
+		assessments = assessmentDAO.getAssessmentsByFilter(geriatricFactorId, filter);
+
+		String dtoAsString = objectMapper.writeValueAsString(assessments);
+        
+        return dtoAsString;
     }
 
     @POST
     @Path("/addAssessmentsForSelectedDataSet")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void addAssessmentsForSelectedDataSet(String test) {
+    public void addAssessmentsForSelectedDataSet(String json) throws Exception {
+    	
+    	ObjectReader objectReader = objectMapper.reader(AddAssessmentWrapper.class);
+    	
+    	AddAssessmentWrapper data = objectReader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
  
-    	YearMonth ym = YearMonth.of(2016, Month.JANUARY);
+    	Assessment assessment = new Assessment();
 
-    	List<String> geriatricFactorIds = new ArrayList<String>();
+		assessment.setUserInRole(new UserInRole());
+		
+		assessment.getUserInRole().setId(data.getAuthorId());
     	
-    	List<Assessment> assessments = new ArrayList<Assessment>();
-    	
-		for (String geriatricFactorId : geriatricFactorIds) {
-
-			assessments.addAll(getAssessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
-
+		assessment.setAssessmentComment(data.getComment());
+		
+		assessment.setRiskStatus(data.getRiskStatus().toChar());
+		
+		assessment.setDataValidityStatus(data.getDataValidityStatus().toChar());
+		
+		assessment.setCreated(new Date());
+		
+		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
+		
+		for (int i = 0; i < data.getAudienceIds().size(); i++) {
+			
+			AssessmentAudienceRole assessmentAudienceRole = new AssessmentAudienceRole();
+			
+			assessmentAudienceRole.setAssessment(assessment);
+			
+			assessmentAudienceRole.setAssigned(new Date());
+			
+			assessmentAudienceRole.setCdRole(new CdRole());
+			
+			assessmentAudienceRole.getCdRole().setId(data.getAudienceIds().get(i));
+			
+			assessmentAudienceRoles.add(assessmentAudienceRole);
+		
 		}
 		
-    	for (int i = 0; i < assessments.size(); i++) {
-    		assessmentDAO.insertOrUpdate(assessments.get(i));
-    	}
+		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
+		
+		for (int i=0; i < data.getGeriatricFactorValueIds().size(); i++) {
+			
+			AssessedGefValueSet assessedGefValueSet = new AssessedGefValueSet();
+			
+			assessedGefValueSet.setAssessment(assessment);
+
+			assessedGefValueSet.setGeriatricFactorValue(new GeriatricFactorValue());
+			
+			assessedGefValueSet.getGeriatricFactorValue().setId(data.getGeriatricFactorValueIds().get(i));
+			
+			assessedGefValueSets.add(assessedGefValueSet);
+			
+		}
+
+    	assessmentDAO.insertOrUpdate(assessment);
+
   
     }
 

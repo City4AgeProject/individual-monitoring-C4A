@@ -118,6 +118,32 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
                     //screen initialization 
                     //var selfObj = self;               
                     //console.log(self);
+                	
+                	 var url = "http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/addAssessmentsForSelectedDataSet";
+                	 var data = {"userInRoleId":1,"comment":"My comment...","riskStatus":"RISK_ALERT","dataValidityStatus":"QUESTIONABLE_DATA","geriatricFactorValueIds":[1],"audienceIds":[1]};
+                	 $.ajax({
+                	   url: url,
+                	   type: 'POST',
+                	   contentType:'application/json',
+                	   data: JSON.stringify(data),
+                	   dataType:'json',
+                	   success: function(data){
+                	     //On ajax success do this
+                	     alert(data);
+                	      },
+                	   error: function(xhr, ajaxOptions, thrownError) {
+                	      //On error do this
+                	        if (xhr.status == 200) {
+
+                	            alert(ajaxOptions);
+                	        }
+                	        else {
+                	            alert(xhr.status);
+                	            alert(thrownError);
+                	        }
+                	    }
+                	 });
+                	
                     $.getJSON("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getDiagramData", function (data) {
                         //sequence onLoad 
 

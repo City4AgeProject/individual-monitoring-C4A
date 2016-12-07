@@ -30,7 +30,8 @@ DROP TABLE IF EXISTS testtest.time_interval;
 DROP TABLE IF EXISTS testtest.user_in_role;
 DROP TABLE IF EXISTS testtest.user_in_system;
 DROP TABLE IF EXISTS testtest.variation_measure_value;
-DROP sequence IF EXISTS hibernate_sequence;
+DROP sequence IF EXISTS testtest.hibernate_sequence;
+DROP sequence IF EXISTS testtest.assessment_id_seq;
 create table testtest.action (id int8 not null, action_name varchar(50), category varchar(25), primary key (id));
 create table testtest.activity (id int8 not null, activity_name varchar(50), user_in_role_id int8 not null, time_interval_id int8 not null, data_source_type varchar(3) not null, primary key (id));
 create table testtest.assessed_gef_value_set (gef_value_id int4 not null, assessment_id int4 not null, detection_variable_type varchar(3) not null, data_point_id int8, primary key (gef_value_id, assessment_id));
@@ -58,4 +59,5 @@ create table testtest.time_interval (id int8 not null, interval_start timestamp,
 create table testtest.user_in_role (id int8 not null, pilot_id int4, valid_from timestamp, valid_to timestamp, user_in_system_id int4, role_id int2, primary key (id));
 create table testtest.user_in_system (id int8 not null, username varchar(25) unique, password varchar(25), created_date timestamp, primary key (id));
 create table testtest.variation_measure_value (id int8 not null, activity_id int8, user_in_role_id int8 not null, measure_value float4, measure_type_id int8 not null, data_source_type varchar(3) not null, time_interval_id int8 not null, primary key (id));
-create sequence hibernate_sequence;
+create sequence testtest.hibernate_sequence;
+create sequence testtest.assessment_id_seq;

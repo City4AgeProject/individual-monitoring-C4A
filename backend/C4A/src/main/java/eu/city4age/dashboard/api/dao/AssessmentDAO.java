@@ -19,6 +19,8 @@ public interface AssessmentDAO extends BaseDAO {
 	
 	List<TimeInterval> getDiagramDataForUserInRoleId(final Integer userInRoleId);
 
+	List<Assessment> getLastFiveAssessments();
+	
 	List<Assessment> getAssessmentsForGeriatricFactorId(final Long geriatricFactorId);
 
 	List<Assessment> getAssessmentsByFilter(final Long geriatricFactorId, final String filter);
