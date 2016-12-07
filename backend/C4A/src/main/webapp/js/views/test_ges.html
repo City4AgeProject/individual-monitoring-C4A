@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<div class="oj-flex-item" >
+    <!-- line test chart -->
+    <div id="chart-test-container">
+        <div id="testChart" data-bind="ojComponent: {
+                    component: 'ojChart', 
+                    type: 'line', 
+                    series: seriesValue, 
+                    groups: groupsValue, 
+                    selectionMode: 'multiple',
+                    animationOnDisplay: 'auto',
+                    animationOnDataChange: 'auto',
+                    hideAndShowBehavior: 'withoutRescale',
+                    optionChange: chartOptionChange,
+                    orientation: orientationValue,
+                    hoverBehavior: 'dim',
+                    title: {text: 'This is a test chart', halign: 'center'},
+                    yAxis:{step:0.5},
+                    legend: {position: 'top'}                    
+                  }"  style="max-width:500px;width:100%;height:350px;" >
+        </div>
+    </div>  
+    <!-- end test chart drilling: 'on' -->
+
+    <!-- comment submit  -->
+    <div class="oj-flex-item" >
+        <div id="post_comment_section" >
+             <label for="comment-input">Insert comment here:</label>
+            <input id="comment-input" 
+                   type="text"
+                   data-bind="ojComponent: {component: 'ojInputText', 
+                                  value: commentText, placeholder: 'No comment yet.'}"/>
+            
+            <button id= "postComment"
+                    data-bind="click: bcPostComment, 
+                       ojComponent: { component: 'ojButton', label: 'Post comment' }">
+            </button>
+        </div>
+    </div>
+    
+    <!-- select point/s popup -->
+    <div id="popupWrapper1">
+        <div style="display:none" id="popup1"
+             data-bind="ojComponent:{component: 'ojPopup',
+                               rootAttributes: {style:'width:320px;height:320px;'}
+                              }">
+            <div class="demo-flex-display oj-flex-items-pad">
+                <div class="oj-flex oj-sm-flex-direction-column">
+                    <div class="oj-flex-item">
+                        <h3><span data-bind="text: dataPointsMarked">&nbsp;</span></h3>
+                        <button id="btnClose" class="oj-panel-remove-button" 
+                                data-bind="
+                                    ojComponent: {
+                                      component: 'ojButton', 
+                                      chroming: 'half',
+                                      display: 'icons', 
+                                      icons: {end: 'oj-panel-remove-icon'}, 
+                                      label: 'remove'},
+                                      click: function() {$('#popup1').ojPopup('close', '#btnClose');}">
+                        </button>
+                    </div>
+                    <div class="oj-flex-item oj-dialog-body" style="height:176px;">
+                        <!-- ko foreach: selectedAnotations -->
+                        <div class="oj-flex oj-sm-flex-direction-column"  >
+                            <div class="oj-flex-item" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
+                               <img data-bind="attr: { src: imgSrc, title: title }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
+                               <b><span data-bind="text: type"> </span></b> from <b><span data-bind="text: from"> </span></b><br>
+                               <span data-bind="text: shortComment"> </span>
+                            </div>
+                        </div>
+                         <!-- /ko -->
+                    </div>
+                    <div class="oj-flex-item" style="height:10px">
+                    </div>
+                    <div class="oj-flex-item oj-flex-items-pad">
+                        <div class="oj-flex">
+                            <div class="oj-flex-item">
+                                <a href="#" id="addAnnotation">
+                                    <img src="images/comment_add.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                                    Add annotation
+                                </a>
+                            </div>
+                            <div class="oj-flex-item" align="right">
+                                <a href="#">
+                                    <img src="images/comment_view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                                    View annotations
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>                    
+                    <div class="oj-flex-item oj-flex-items-pad">
+                        <div class="oj-flex">
+                            <div class="oj-flex-item">
+                                <a href="#">
+                                    <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                                    View daily measures
+                                </a> 
+                            </div>
+                            <div class="oj-flex-item" align="right">
+                                <a href="#">
+                                    <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                                    View NUIs
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end select point/s popup -->
+    
+   
+    
+</div>
