@@ -82,7 +82,7 @@ public class DataSet implements Serializable {
                 AssessedGefValueSet currentSet = (AssessedGefValueSet) iterator.next();
                 GeriatricFactorValue gefv = currentSet.getGeriatricFactorValue();
                 Serie foundSerie = findSerieByName(currentSerieName);
-                if(dataSetContains(gefv.getGefValue().floatValue(), currentSerieName))
+                if(dataSetContainsValueInOtherSeries(gefv.getGefValue().floatValue(), currentSerieName))
                     continue;
                 Item newItem = new Item(gefv.getId(), gefv.getGefValue().floatValue());
                 if(foundSerie==null) {
@@ -97,7 +97,7 @@ public class DataSet implements Serializable {
                         foundSerie.getItems().add(new Item());
                     }
                 }
-                int newIndex = findMatchingIndex(newItem.getValue(), foundSerie.getName());
+                int newIndex = findMatchingIndexOfValueInOtherSeries(newItem.getValue(), foundSerie.getName());
                 if(newIndex < 0)
                     continue;
                 foundSerie.getItems().set(newIndex, newItem);
@@ -116,7 +116,7 @@ public class DataSet implements Serializable {
         }
     }
     
-    private boolean dataSetContains(Float value, String serieName) {
+    private boolean dataSetContainsValueInOtherSeries(Float value, String serieName) {
         for(Serie serie : series) {
             for(Item item : serie.getItems()) {
                 if(item.getValue()==null && value==null)
@@ -133,7 +133,7 @@ public class DataSet implements Serializable {
         return false;
     }
     
-    private int findMatchingIndex(Float value, String serieName) {
+    private int findMatchingIndexOfValueInOtherSeries(Float value, String serieName) {
         for(Serie serie : series) {
             for(Item item : serie.getItems()) {
                 if(item.getValue()==null || value==null)
