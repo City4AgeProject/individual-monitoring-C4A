@@ -93,8 +93,14 @@ public class DataSet implements Serializable {
                 }
                 if (foundSerie.getItems() == null) {
                     foundSerie.setItems(new ArrayList<Item>());
+                    for(int i=0; i<groups.size(); i++) {
+                        foundSerie.getItems().add(new Item());
+                    }
                 }
-                foundSerie.getItems().add(newItem);
+                int newIndex = findMatchingIndex(newItem.getValue(), foundSerie.getName());
+                if(newIndex < 0)
+                    continue;
+                foundSerie.getItems().set(newIndex, newItem);
                 if (MARKABLE_SERIES_NAMES.contains(currentSerieName)) {
                     foundSerie.setColor(MARKABLE_COLORS.get(currentSerieName));
                     foundSerie.setSource("images/comment.png");
@@ -113,12 +119,31 @@ public class DataSet implements Serializable {
     private boolean dataSetContains(Float value, String serieName) {
         for(Serie serie : series) {
             for(Item item : serie.getItems()) {
-                if(serie.getName().equals(serieName) && item.getValue().equals(value)) {
+                if(item.getValue()==null && value==null)
+                    return true;
+                else if(item.getValue()!=null && value==null)
+                    continue;
+                else if(item.getValue()==null && value!=null)
+                    continue;
+                else if(serie.getName().equals(serieName) && item.getValue().equals(value)) {
                     return true;
                 }
             }
         }
         return false;
+    }
+    
+    private int findMatchingIndex(Float value, String serieName) {
+        for(Serie serie : series) {
+            for(Item item : serie.getItems()) {
+                if(item.getValue()==null || value==null)
+                    continue;
+                if(!serie.getName().equals(serieName) && item.getValue().equals(value)) {
+                    return serie.getItems().indexOf(item);
+                }
+            }
+        }
+        return Integer.MIN_VALUE;
     }
     
     private Serie findSerieByName(String serieName) {
