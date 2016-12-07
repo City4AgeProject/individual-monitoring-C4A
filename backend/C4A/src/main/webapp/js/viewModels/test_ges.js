@@ -80,9 +80,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     var i = 0;
                     for (var i=0;i<selectedPoints.length;i++) {
                         if(i===0)
-                            queryParams += 'selectedValue'+i+'='+selectedPoints[i].id;
+                            queryParams += 'sv'+i+'='+selectedPoints[i].id;
                         else
-                            queryParams += '&selectedValue'+i+'='+selectedPoints[i].id;
+                            queryParams += '&sv'+i+'='+selectedPoints[i].id;
                         
                     }
                     return queryParams === '' ? queryParams : '?' + queryParams;
