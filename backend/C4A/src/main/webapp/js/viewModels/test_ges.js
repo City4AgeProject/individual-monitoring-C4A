@@ -107,11 +107,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     }
                 };
 
-//                $("#addAnnotation").click(
-//                    function (e) {
-//                        $('#dialog1').ojDialog('open');
-//                    }
-//                );
+                $("#addAnnotation").click(
+                    function (e) {
+                        $('#dialog1').ojDialog('open');
+                    }
+                );
 
             }
             
