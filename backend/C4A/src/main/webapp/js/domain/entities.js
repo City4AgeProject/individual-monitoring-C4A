@@ -1,4 +1,4 @@
-// Domain objects aka. enitites
+// Domain objects aka. enitites.
 function Group() {
     this.name = '';
 }
@@ -6,6 +6,11 @@ function Group() {
 function Serie() {
     this.name = '';
     this.items = [];
+}
+
+function Item() {
+    this.id = null;
+    this.value = null;
 }
 
 function DataSet() {
@@ -56,6 +61,15 @@ Annotation.prototype.fromOther = function(other) {
                                     ? 27 
                                     : this.comment.length)
                         + '...';
+};
+
+function AddAssesment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds) {
+    this.authorId = authorId;
+    this.comment = comment;
+    this.riskStatus = riskStatus;
+    this.dataValidityStatus = dataValidityStatus;
+    this.geriatricFactorValueIds = geriatricFactorValueIds;
+    this.audienceIds = audienceIds;
 };
 
 // Static functions

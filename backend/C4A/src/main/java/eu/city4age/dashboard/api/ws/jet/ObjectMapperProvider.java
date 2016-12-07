@@ -12,13 +12,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
 
 /**
  *
  * @author mnou2
  */
-@Provider
 public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
     
     private ObjectMapper mapper;

@@ -32,51 +32,37 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Path(OJAnnotation.PATH)
 public class OJAnnotation {
-    
+
     public static final String PATH = "OJAnnotation";
-    
-    static protected Logger logger = Logger.getLogger(OJAnnotation.class);
-    
+
+    static Logger logger = Logger.getLogger(OJAnnotation.class);
+
     @Autowired
     private AssessmentDAO assessmentDAO;
 
-    @Autowired
-    private DetectionVariableDAO detectionVariableDAO;
-
-    @Autowired
-    private TimeIntervalDAO timeIntervalDAO;
-    
     @GET
     @Path("forDataPoints")
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectForDataPoints(@Context UriInfo ui) throws JsonProcessingException {
-    	List<Assessment> assessments = new ArrayList<Assessment>();
+        List<Assessment> assessments = new ArrayList<Assessment>();
         try {
             MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
-
             List<String> geriatricFactorIds = new ArrayList<String>();
-
-            Set<String> queryKeys = queryParams.keySet();
             for (Map.Entry entry : queryParams.entrySet()) {
-                LinkedList value = (LinkedList)entry.getValue();
+                LinkedList value = (LinkedList) entry.getValue();
                 geriatricFactorIds.add(value.getFirst().toString());
             }
-
-
-                    for (String geriatricFactorId : geriatricFactorIds) {
-
-                            assessments.addAll(assessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
-
-                    }
-        }
-        catch (Exception e) {
+            for (String geriatricFactorId : geriatricFactorIds) {
+                assessments.addAll(assessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
+            }
+        } catch (Exception e) {
             logger.error("in selecting annotations for data points ", e);
         }
         return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(assessments)).build();
     }
-    
-    	private List<Assessment> assessmentsForGeriatricFactorId(Long geriatricFactorId) {
-		return assessmentDAO.getAssessmentsForGeriatricFactorId(geriatricFactorId);
-	}
-    
+
+    private List<Assessment> assessmentsForGeriatricFactorId(Long geriatricFactorId) {
+        return assessmentDAO.getAssessmentsForGeriatricFactorId(geriatricFactorId);
+    }
+
 }

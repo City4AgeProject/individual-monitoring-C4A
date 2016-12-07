@@ -113,186 +113,186 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 
                 //var self               
                 //Use to perform tasks after the View is inserted into the DOM.
-                self.handleAttached = function (info) {
-
-                    //screen initialization 
-                    //var selfObj = self;               
-                    //console.log(self);
-                	
-                	 var url = "http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/addAssessmentsForSelectedDataSet";
-                	 var data = {"userInRoleId":1,"comment":"My comment...","riskStatus":"RISK_ALERT","dataValidityStatus":"QUESTIONABLE_DATA","geriatricFactorValueIds":[1],"audienceIds":[1]};
-                	 $.ajax({
-                	   url: url,
-                	   type: 'POST',
-                	   contentType:'application/json',
-                	   data: JSON.stringify(data),
-                	   dataType:'json',
-                	   success: function(data){
-                	     //On ajax success do this
-                	     alert(data);
-                	      },
-                	   error: function(xhr, ajaxOptions, thrownError) {
-                	      //On error do this
-                	        if (xhr.status == 200) {
-
-                	            alert(ajaxOptions);
-                	        }
-                	        else {
-                	            alert(xhr.status);
-                	            alert(thrownError);
-                	        }
-                	    }
-                	 });
-                	
-                    $.getJSON("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getDiagramData", function (data) {
-                        //sequence onLoad 
-
-                        ///Initialize slider 
-                    	
-                        self.min(data.start);
-                        self.max(data.end);
-                        if (self.valueArray()[0] === 0)
-                            self.valueArray([data.start, data.end]); // set 
-
-                        series = [];
-                        for (i = 0; i < data.diagramDataPointSets.length; i++) {
-                            var obj = {};
-                            obj['name'] = data.diagramDataPointSets[i].label;
-                            obj['items'] = [];
-                            for (j = 0; j < data.diagramDataPointSets[i].diagramDataPoints.length; j++)
-                                if (data.diagramDataPointSets[i].diagramDataPoints[j] !== null) {
-                                	obj['items'].push(data.diagramDataPointSets[i].diagramDataPoints[j].value);
-                                } else
-                                    obj['items'].push({});
-                            series.push(obj);
-                        }
-
-                        //TODO: convert to year to months
-//                        var startMonth = parseInt(data.start / 12);                                                                
-//                        var endMonth = parseInt(data.end / 12);
-                        groups = [];
-                        for (year = data.start; year <= data.end; year++)
-                            groups.push(year);
-
-                        self.seriesValue(series);
-                        console.log(self.groupsValue);
-                        self.groupsValue(groups);
-                    });
-
-
-
-                    console.log('sekvenca broj 1 - ');
-                    //ucitavanje pozicija klizaca                    
-
-                    //
-                    $("#addAnnotation").click(
-                            function (e) {
-                                $('#dialog1').ojDialog('open');
-                            });
-                    $('#summary').css({height: '20px', overflow: 'hidden'});
-                    $('#showmore').on('click', function () {
-                        var $this = $("#summary");
-                        if ($this.data('open')) {
-                            $("#showmore").html("Read more");
-                            $this.animate({height: '20px'});
-                            $this.data('open', 0);
-                        } else {
-                            $("#showmore").html("Show less");
-                            $this.animate({height: '100%'});
-                            $this.data('open', 1);
-                        }
-                    });
-                    var numberOfAnotations = $('div[id^="comment_"]').length;
-                    function handleElement(j) {
-                        $('#comment_' + j).css({height: '20px', overflow: 'hidden'});
-                        $('#showmore_comment_' + j).on('click', function (e) {
-                            var $this = $("#comment_" + j);
-                            if ($this.data('open')) {
-                                $("#showmore_comment_" + j).html("Read more");
-                                $this.animate({height: '20px'});
-                                $this.data('open', 0);
-                                e.preventDefault();
-                            } else {
-                                $("#showmore_comment_" + j).html("Show less");
-                                $this.animate({height: '100%'});
-                                $this.data('open', 1);
-                                e.preventDefault();
-                            }
-                        });
-                        $("#show_comment_" + j).on("mouseover", function (e) {
-                            self.overCommentTest();
-                        });
-                        $("#div_comment_" + j).on("mouseover", function (e) {
-                            $("#div_comment_" + j).css({backgroundColor: '#f2f2f2', borderLeft: '3px solid #adebad'});
-                        });
-                        $("#div_comment_" + j).on("mouseout", function (e) {
-                            $("#div_comment_" + j).css({backgroundColor: '#fcfcfc', borderLeft: '3px solid #fcfcfc'});
-                        });
-                    }
-                    ;
-                    for (var i = 1; i <= numberOfAnotations; i++) {
-                        handleElement(i);
-                    }
-                    ;
-                    $("#buttonAddComment").click(
-                            function (e) {
-                                $('#dialog1').ojDialog('open');
-                            });
-                    if (self.shownFilterBar) {
-                        $('#annotation-filter').css({display: 'block'});
-                    }
-
-
-                    /* change default checked button background color of buttons for type of annotation */
-                    $('#risk_warning').bind('change', function () {
-                        if ($("#risk_warning").is(':checked')) {
-                            $("#risk_warning").ojButton("widget").css("background-color", "#d2d2d2");
-                            $("#risk_warning").ojButton("widget").css("border-color", "#c0c0c0");
-                        } else {
-                            $("#risk_warning").ojButton("widget").css("background-color", "#f6f6f6");
-                            $("#risk_warning").ojButton("widget").css("border-color", "none");
-                        }
-                    });
-                    $('#risk_alert').bind('change', function () {
-                        if ($("#risk_alert").is(':checked')) {
-                            $("#risk_alert").ojButton("widget").css("background-color", "#d2d2d2");
-                            $("#risk_alert").ojButton("widget").css("border-color", "#c0c0c0");
-                        } else {
-                            $("#risk_alert").ojButton("widget").css("background-color", "#f6f6f6");
-                            $("#risk_alert").ojButton("widget").css("border-color", "none");
-                        }
-                    });
-                    $('#questionable_data').bind('change', function () {
-                        if ($("#questionable_data").is(':checked')) {
-                            $("#questionable_data").ojButton("widget").css("background-color", "#d2d2d2");
-                            $("#questionable_data").ojButton("widget").css("border-color", "#c0c0c0");
-                        } else {
-                            $("#questionable_data").ojButton("widget").css("background-color", "#f6f6f6");
-                            $("#questionable_data").ojButton("widget").css("border-color", "none");
-                        }
-                    });
-                    $('#faulty_data').bind('change', function () {
-                        if ($("#faulty_data").is(':checked')) {
-                            $("#faulty_data").ojButton("widget").css("background-color", "#d2d2d2");
-                            $("#faulty_data").ojButton("widget").css("border-color", "#c0c0c0");
-                        } else {
-                            $("#faulty_data").ojButton("widget").css("background-color", "#f6f6f6");
-                            $("#faulty_data").ojButton("widget").css("border-color", "none");
-                        }
-                    });
-                    $('#comment').bind('change', function () {
-                        if ($("#comment").is(':checked')) {
-                            $("#comment").ojButton("widget").css("background-color", "#d2d2d2");
-                            $("#comment").ojButton("widget").css("border-color", "#c0c0c0");
-                        } else {
-                            $("#comment").ojButton("widget").css("background-color", "#f6f6f6");
-                            $("#comment").ojButton("widget").css("border-color", "none");
-                        }
-                    });
-                    /* change default checked button background color of buttons for type of annotation */
-
-                }
-                ;
+//                self.handleAttached = function (info) {
+//
+//                    //screen initialization 
+//                    //var selfObj = self;               
+//                    //console.log(self);
+//                	
+//                	 var url = "http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/addAssessmentsForSelectedDataSet";
+//                	 var data = {"userInRoleId":1,"comment":"My comment...","riskStatus":"RISK_ALERT","dataValidityStatus":"QUESTIONABLE_DATA","geriatricFactorValueIds":[1],"audienceIds":[1]};
+//                	 $.ajax({
+//                	   url: url,
+//                	   type: 'POST',
+//                	   contentType:'application/json',
+//                	   data: JSON.stringify(data),
+//                	   dataType:'json',
+//                	   success: function(data){
+//                	     //On ajax success do this
+//                	     alert(data);
+//                	      },
+//                	   error: function(xhr, ajaxOptions, thrownError) {
+//                	      //On error do this
+//                	        if (xhr.status == 200) {
+//
+//                	            alert(ajaxOptions);
+//                	        }
+//                	        else {
+//                	            alert(xhr.status);
+//                	            alert(thrownError);
+//                	        }
+//                	    }
+//                	 });
+//                	
+//                    $.getJSON("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getDiagramData", function (data) {
+//                        //sequence onLoad 
+//
+//                        ///Initialize slider 
+//                    	
+//                        self.min(data.start);
+//                        self.max(data.end);
+//                        if (self.valueArray()[0] === 0)
+//                            self.valueArray([data.start, data.end]); // set 
+//
+//                        series = [];
+//                        for (i = 0; i < data.diagramDataPointSets.length; i++) {
+//                            var obj = {};
+//                            obj['name'] = data.diagramDataPointSets[i].label;
+//                            obj['items'] = [];
+//                            for (j = 0; j < data.diagramDataPointSets[i].diagramDataPoints.length; j++)
+//                                if (data.diagramDataPointSets[i].diagramDataPoints[j] !== null) {
+//                                	obj['items'].push(data.diagramDataPointSets[i].diagramDataPoints[j].value);
+//                                } else
+//                                    obj['items'].push({});
+//                            series.push(obj);
+//                        }
+//
+//                        //TODO: convert to year to months
+////                        var startMonth = parseInt(data.start / 12);                                                                
+////                        var endMonth = parseInt(data.end / 12);
+//                        groups = [];
+//                        for (year = data.start; year <= data.end; year++)
+//                            groups.push(year);
+//
+//                        self.seriesValue(series);
+//                        console.log(self.groupsValue);
+//                        self.groupsValue(groups);
+//                    });
+//
+//
+//
+//                    console.log('sekvenca broj 1 - ');
+//                    //ucitavanje pozicija klizaca                    
+//
+//                    //
+//                    $("#addAnnotation").click(
+//                            function (e) {
+//                                $('#dialog1').ojDialog('open');
+//                            });
+//                    $('#summary').css({height: '20px', overflow: 'hidden'});
+//                    $('#showmore').on('click', function () {
+//                        var $this = $("#summary");
+//                        if ($this.data('open')) {
+//                            $("#showmore").html("Read more");
+//                            $this.animate({height: '20px'});
+//                            $this.data('open', 0);
+//                        } else {
+//                            $("#showmore").html("Show less");
+//                            $this.animate({height: '100%'});
+//                            $this.data('open', 1);
+//                        }
+//                    });
+//                    var numberOfAnotations = $('div[id^="comment_"]').length;
+//                    function handleElement(j) {
+//                        $('#comment_' + j).css({height: '20px', overflow: 'hidden'});
+//                        $('#showmore_comment_' + j).on('click', function (e) {
+//                            var $this = $("#comment_" + j);
+//                            if ($this.data('open')) {
+//                                $("#showmore_comment_" + j).html("Read more");
+//                                $this.animate({height: '20px'});
+//                                $this.data('open', 0);
+//                                e.preventDefault();
+//                            } else {
+//                                $("#showmore_comment_" + j).html("Show less");
+//                                $this.animate({height: '100%'});
+//                                $this.data('open', 1);
+//                                e.preventDefault();
+//                            }
+//                        });
+//                        $("#show_comment_" + j).on("mouseover", function (e) {
+//                            self.overCommentTest();
+//                        });
+//                        $("#div_comment_" + j).on("mouseover", function (e) {
+//                            $("#div_comment_" + j).css({backgroundColor: '#f2f2f2', borderLeft: '3px solid #adebad'});
+//                        });
+//                        $("#div_comment_" + j).on("mouseout", function (e) {
+//                            $("#div_comment_" + j).css({backgroundColor: '#fcfcfc', borderLeft: '3px solid #fcfcfc'});
+//                        });
+//                    }
+//                    ;
+//                    for (var i = 1; i <= numberOfAnotations; i++) {
+//                        handleElement(i);
+//                    }
+//                    ;
+//                    $("#buttonAddComment").click(
+//                            function (e) {
+//                                $('#dialog1').ojDialog('open');
+//                            });
+//                    if (self.shownFilterBar) {
+//                        $('#annotation-filter').css({display: 'block'});
+//                    }
+//
+//
+//                    /* change default checked button background color of buttons for type of annotation */
+//                    $('#risk_warning').bind('change', function () {
+//                        if ($("#risk_warning").is(':checked')) {
+//                            $("#risk_warning").ojButton("widget").css("background-color", "#d2d2d2");
+//                            $("#risk_warning").ojButton("widget").css("border-color", "#c0c0c0");
+//                        } else {
+//                            $("#risk_warning").ojButton("widget").css("background-color", "#f6f6f6");
+//                            $("#risk_warning").ojButton("widget").css("border-color", "none");
+//                        }
+//                    });
+//                    $('#risk_alert').bind('change', function () {
+//                        if ($("#risk_alert").is(':checked')) {
+//                            $("#risk_alert").ojButton("widget").css("background-color", "#d2d2d2");
+//                            $("#risk_alert").ojButton("widget").css("border-color", "#c0c0c0");
+//                        } else {
+//                            $("#risk_alert").ojButton("widget").css("background-color", "#f6f6f6");
+//                            $("#risk_alert").ojButton("widget").css("border-color", "none");
+//                        }
+//                    });
+//                    $('#questionable_data').bind('change', function () {
+//                        if ($("#questionable_data").is(':checked')) {
+//                            $("#questionable_data").ojButton("widget").css("background-color", "#d2d2d2");
+//                            $("#questionable_data").ojButton("widget").css("border-color", "#c0c0c0");
+//                        } else {
+//                            $("#questionable_data").ojButton("widget").css("background-color", "#f6f6f6");
+//                            $("#questionable_data").ojButton("widget").css("border-color", "none");
+//                        }
+//                    });
+//                    $('#faulty_data').bind('change', function () {
+//                        if ($("#faulty_data").is(':checked')) {
+//                            $("#faulty_data").ojButton("widget").css("background-color", "#d2d2d2");
+//                            $("#faulty_data").ojButton("widget").css("border-color", "#c0c0c0");
+//                        } else {
+//                            $("#faulty_data").ojButton("widget").css("background-color", "#f6f6f6");
+//                            $("#faulty_data").ojButton("widget").css("border-color", "none");
+//                        }
+//                    });
+//                    $('#comment').bind('change', function () {
+//                        if ($("#comment").is(':checked')) {
+//                            $("#comment").ojButton("widget").css("background-color", "#d2d2d2");
+//                            $("#comment").ojButton("widget").css("border-color", "#c0c0c0");
+//                        } else {
+//                            $("#comment").ojButton("widget").css("background-color", "#f6f6f6");
+//                            $("#comment").ojButton("widget").css("border-color", "none");
+//                        }
+//                    });
+//                    /* change default checked button background color of buttons for type of annotation */
+//
+//                }
+//                ;
                 self.shownFilterBar = false;
                 self.toggleFilterAnnotationBar = function (e) {
 
