@@ -7,13 +7,17 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
             function ChartTest1(idCR, idLoggedUser, showDetailsId) {
                 var self = this;
                 
+                // Chart attributes 
                 self.orientationValue = ko.observable('vertical');
+                
+                // Chart values and selections
                 self.groupsValue = ko.observableArray();
                 self.seriesValue = ko.observableArray();
                 self.dataPointsMarked = ko.observable('No data points marked.');
-                self.commentText = ko.observable('');
                 self.selectedAnotations = ko.observableArray();
                 
+                // Add assesment popup
+                self.commentText = ko.observable('');
                 self.valRole = ko.observableArray([
                     "Caregiver"
                 ]);
@@ -25,8 +29,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     {riskStatus : 'QUESTIONABLE_DATA', riskStatusDescription : 'Questionable data', iconImage : 'images/questionable_data.png'}
                     ,{riskStatus : 'FAULTY_DATA', riskStatusDescription : 'Faulty data', iconImage : 'images/faulty_data.png'}
                 ]);
+                self.selectedTypePerRisk = ko.observable();
                 
-                
+                // Server interaction callbacks
                 var loadSucessCallback = function (data) {
                     self.groupsValue(data.groups);
                     self.seriesValue(data.series);
@@ -36,15 +41,17 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     console.log(error);
                 };
                 
+                var postCommentCallback = function(response) {
+                    console.log('posted comment ' + response);
+                };
+                
+                // Page handlers and intern funcrions
                 self.handleActivated = function (info) {
                     var jqXHR = $.getJSON(OJ_DATA_SET_FIND, loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
                 };
                 
-                var postCommentCallback = function(response) {
-                    console.log('posted comment ' + response);
-                };
                 
                 self.bcPostComment = function (data, event) {
                     var annotationToPost = new Annotation();
@@ -56,7 +63,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     jqXHR.fail(serverErrorCallback);
                     return true;
                 };
-
+                
+                /* TODO - fixme - remove listener.
+                 * Popup sudden relocation from mouse follower to
+                 * as set middle of chart.
+                 */
                 var clientX;
                 var clientY;
                 $(document).mouseover(function (e) {
@@ -114,7 +125,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                                     anno.shortComment = shortenText(anno.comment, 27) + '...';
                                 }
                                 self.selectedAnotations(data);
-                                self.dataPointsMarked(ui['value'].length + ' data points marked with ' + self.selectedAnotations().length + ' annotation(s)');
+                                self.dataPointsMarked(ui['value'].length 
+                                                        + ' data points marked with ' 
+                                                        + self.selectedAnotations().length 
+                                                        + ' annotation(s)');
                                 showAnnotationsPopup();
                             });
                         }
@@ -130,11 +144,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.postAnnotation = function (data, event) {
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
-                    var riskStatus = 'RISK_ALERT';
+                    var riskStatus = ko.toJS(self.selectedTypePerRisk);
                     var dataValidityStatus = 'QUESTIONABLE_DATA';
                     var geriatricFactorValueIds = [1,2];
                     var audienceIds = [1,2];
-                    var annotationToPost = new AddAssesment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
+                    var annotationToPost = new AddAssesment
+                        (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
                     
                     var jqXHR = $.postJSON(OJ_ANNOTATION_CREATE, 
                         JSON.stringify(annotationToPost),

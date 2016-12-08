@@ -36,7 +36,7 @@ public class OJDataSet {
 
     public static final String PATH = "OJDataSet";
 
-    static protected Logger logger = Logger.getLogger(OJDataSet.class);
+    private static Logger logger = Logger.getLogger(OJDataSet.class);
 
     @Autowired
     private AssessmentDAO assessmentDAO;

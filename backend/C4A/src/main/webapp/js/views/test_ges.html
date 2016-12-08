@@ -115,24 +115,21 @@
                                         <select id="selectTypePerRisk"
                                                 data-bind="ojComponent: {
                                                         component: 'ojSelect',
-                                                        list: 'typePerRisk',
-                                                        rootAttributes: {style:'width:165px'}}">
-                                        </select>
-                                        <ul id="typePerRisk" style="display: none">
-                                            <li> </li>
+                                                        rootAttributes: {style:'width:165px'},
+                                                        value: selectedTypePerRisk}">
                                             <!-- ko foreach: riskTypes -->
-                                                <li data-bind="attr: { oj-data-value: riskStatus }">
-                                                    <img data-bind="attr: { src: iconImage }" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                                                <option data-bind="value: riskStatus">
+                                                    <img data-bind="attr: { src: iconImage }" 
+                                                                        style="vertical-align:middle; width: 16px; height: 16px;"/>
                                                     <span data-bind="text: riskStatusDescription"></span>
-                                                </li>
+                                                </option>
                                             <!-- /ko -->
-                                        </ul>
+                                        </select>
                                         <select id="selectTypePerDataValidity"
                                                 data-bind="ojComponent: {
                                                         component: 'ojSelect',
                                                         list: 'typePerDataValidity',
-                                                        rootAttributes: {style:'width:165px'}
-                                            }">
+                                                        rootAttributes: {style:'width:165px'}}">
                                         </select>
                                         <ul id="typePerDataValidity" style="display: none">
                                             <li> </li>

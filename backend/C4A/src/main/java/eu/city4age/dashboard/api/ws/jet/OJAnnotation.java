@@ -48,7 +48,7 @@ public class OJAnnotation {
 
     public static final String PATH = "OJAnnotation";
 
-    static Logger logger = Logger.getLogger(OJAnnotation.class);
+    private static Logger logger = Logger.getLogger(OJAnnotation.class);
 
     @Autowired
     private AssessmentDAO assessmentDAO;
