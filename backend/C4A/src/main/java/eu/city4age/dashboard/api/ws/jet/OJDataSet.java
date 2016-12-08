@@ -10,7 +10,10 @@ import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
 import eu.city4age.dashboard.api.dao.TimeIntervalDAO;
 import eu.city4age.dashboard.api.dto.DiagramDataDTO;
+import eu.city4age.dashboard.api.model.AssessedGefValueSet;
+import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.ws.AssessmentsService;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,8 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import eu.city4age.dashboard.api.ws.jet.dto.DataSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  *
@@ -31,9 +36,9 @@ import eu.city4age.dashboard.api.ws.jet.dto.DataSet;
  */
 @Path(OJDataSet.PATH)
 public class OJDataSet {
-    
+
     public static final String PATH = "OJDataSet";
-    
+
     static protected Logger logger = Logger.getLogger(OJDataSet.class);
 
     @Autowired
@@ -44,6 +49,9 @@ public class OJDataSet {
 
     @Autowired
     private TimeIntervalDAO timeIntervalDAO;
+
+    @Autowired
+    private AssessmentsService assessmentsService;
     
     @GET
     @Path("find")
@@ -71,22 +79,36 @@ public class OJDataSet {
     	
     	List<Object[]> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
     	
-		dto.setData(gefs);	
-		
+		dto.setData(gefs);
+
+        // Initialize resulting DataSet.
         DataSet result = new DataSet(dto);
+
+        // Load related DataSet Assignments.
+        List<String> geriatricFactorIds = new ArrayList<String>();
+        for (Object[] obj : dto.getData()) {
+        	GeriatricFactorValue gefv = (GeriatricFactorValue) obj[0];
+            geriatricFactorIds.add(String.valueOf(gefv.getId()));
+        }
+        List<Assessment> assessments = new ArrayList<Assessment>();
+        for (String geriatricFactorId : geriatricFactorIds) {
+            assessments.addAll(assessmentDAO.getAssessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
+        }
+
+        result.addAssesmentsPointsToSeries(assessments);
+
         return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(result)).build();
-         
     }
-    
-    	private List<String> createMonthLabels(List<Object[]> months) {
-		List<String> monthLabels = new ArrayList<String>();
-    	
-    	for (int i = 0; i < months.size() ; i++) {
-    		monthLabels.add(((Timestamp)months.get(i)[0]).toString());
-    	}
-    	
-    	monthLabels.add(((Timestamp)months.get(months.size()-1)[1]).toString());
-		return monthLabels;
-	}
-    
+
+    private List<String> createMonthLabels(List<Object[]> months) {
+        List<String> monthLabels = new ArrayList<String>();
+
+        for (int i = 0; i < months.size(); i++) {
+            monthLabels.add(((Timestamp) months.get(i)[0]).toString());
+        }
+
+        monthLabels.add(((Timestamp) months.get(months.size() - 1)[1]).toString());
+        return monthLabels;
+    }
+
 }

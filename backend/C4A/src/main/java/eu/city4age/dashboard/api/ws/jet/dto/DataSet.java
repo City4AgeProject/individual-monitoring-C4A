@@ -6,6 +6,8 @@
 package eu.city4age.dashboard.api.ws.jet.dto;
 
 import eu.city4age.dashboard.api.dto.DiagramDataDTO;
+import eu.city4age.dashboard.api.model.AssessedGefValueSet;
+import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.model.TimeInterval;
 import java.io.Serializable;
@@ -14,8 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -27,13 +31,15 @@ public class DataSet implements Serializable {
     private List<String> groups;
     private List<Serie> series;
 
-    private static List<String> MARKABLE_SERIES_NAMES = Arrays.asList(new String[] {"Alerts","Warnings","Comments"});
+    private static List<String> MARKABLE_SERIES_NAMES = Arrays.asList(new String[] {"Assesments"});
+    
     private static Map<String, String> MARKABLE_COLORS = new HashMap<String, String>();
+    private static Map<String, String> MARKABLE_NAMES_FOR_RISK_STATUSES = new HashMap<String, String>();
     
     static {
-        MARKABLE_COLORS.put("Alerts", "#e83d17");
-        MARKABLE_COLORS.put("Warnings", "#ffff66");
-        MARKABLE_COLORS.put("Comments", "#ebebeb");
+        MARKABLE_COLORS.put("Assesments", "#e83d17");
+        //        MARKABLE_COLORS.put("Warnings", "#ffff66");
+        //        MARKABLE_COLORS.put("Comments", "#ebebeb");
     }
     
     public DataSet(DiagramDataDTO dto) {
@@ -62,11 +68,83 @@ public class DataSet implements Serializable {
                 foundSerie.setMarkerDisplayed("on");
                 foundSerie.setMarkerSize(20);
             }
-            String groupName = calculateGroupNameForTimeInterval(gefv.getTimeInterval());
+            String groupName = findGroupLabelForTimeInterval(gefv.getTimeInterval());
             if(!groups.contains(groupName)) {
                 groups.add(groupName);
             }
         }
+    }
+    
+    public void addAssesmentsPointsToSeries(List<Assessment> toMerge) {
+        String currentSerieName = MARKABLE_SERIES_NAMES.get(0);
+        for (Assessment currentAssesment : toMerge) {
+            Set assesedGEFValue = currentAssesment.getAssessedGefValueSets();
+            for (Iterator iterator = assesedGEFValue.iterator(); iterator.hasNext();) {
+                AssessedGefValueSet currentSet = (AssessedGefValueSet) iterator.next();
+                GeriatricFactorValue gefv = currentSet.getGeriatricFactorValue();
+                Serie foundSerie = findSerieByName(currentSerieName);
+                if(dataSetContainsValueInOtherSeries(gefv.getGefValue().floatValue(), currentSerieName))
+                    continue;
+                Item newItem = new Item(gefv.getId(), gefv.getGefValue().floatValue());
+                if(foundSerie==null) {
+                    Serie newSerie = new Serie();
+                    newSerie.setName(currentSerieName);
+                    series.add(newSerie);
+                    foundSerie = newSerie;
+                }
+                if (foundSerie.getItems() == null) {
+                    foundSerie.setItems(new ArrayList<Item>());
+                    for(int i=0; i<groups.size(); i++) {
+                        foundSerie.getItems().add(new Item());
+                    }
+                }
+                int newIndex = findMatchingIndexOfValueInOtherSeries(newItem.getValue(), foundSerie.getName());
+                if(newIndex < 0)
+                    continue;
+                foundSerie.getItems().set(newIndex, newItem);
+                if (MARKABLE_SERIES_NAMES.contains(currentSerieName)) {
+                    foundSerie.setColor(MARKABLE_COLORS.get(currentSerieName));
+                    foundSerie.setSource("images/comment.png");
+                    foundSerie.setLineType("none");
+                    foundSerie.setMarkerDisplayed("on");
+                    foundSerie.setMarkerSize(20);
+                }
+                String groupName = findGroupLabelForTimeInterval(gefv.getTimeInterval());
+                if (!groups.contains(groupName)) {
+                    groups.add(groupName);
+                }
+            }
+        }
+    }
+    
+    private boolean dataSetContainsValueInOtherSeries(Float value, String serieName) {
+        for(Serie serie : series) {
+            for(Item item : serie.getItems()) {
+                if(item.getValue()==null && value==null)
+                    return true;
+                else if(item.getValue()!=null && value==null)
+                    continue;
+                else if(item.getValue()==null && value!=null)
+                    continue;
+                else if(serie.getName().equals(serieName) && item.getValue().equals(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private int findMatchingIndexOfValueInOtherSeries(Float value, String serieName) {
+        for(Serie serie : series) {
+            for(Item item : serie.getItems()) {
+                if(item.getValue()==null || value==null)
+                    continue;
+                if(!serie.getName().equals(serieName) && item.getValue().equals(value)) {
+                    return serie.getItems().indexOf(item);
+                }
+            }
+        }
+        return Integer.MIN_VALUE;
     }
     
     private Serie findSerieByName(String serieName) {
@@ -79,7 +157,7 @@ public class DataSet implements Serializable {
         return null;
     }
     
-    private String calculateGroupNameForTimeInterval(TimeInterval source) {
+    private String findGroupLabelForTimeInterval(TimeInterval source) {
         if("MON".equals(source.getTypicalPeriod())) {
             return new SimpleDateFormat("MMM yyyy").format(source.getIntervalStart());
         }

@@ -5,11 +5,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
         function (oj, ko, $) {
 
             function ChartTest1(idCR, idLoggedUser, showDetailsId) {
-                
-                console.log('idCR ' + idCR);
-                console.log('idLoggedUser ' + idLoggedUser);
-                console.log('showDetailsId ' + showDetailsId);
-                
                 var self = this;
                 
                 self.orientationValue = ko.observable('vertical');
@@ -68,6 +63,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                         if(selectedDataPoint.series==='Comments');
                         else if(selectedDataPoint.series==='Warnings');
                         else if(selectedDataPoint.series==='Alerts');
+                        else if(selectedDataPoint.series==='Assesments');
                         else {
                             filteredSelection.push(selectedDataPoint);
                         }
@@ -111,11 +107,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     }
                 };
 
-//                $("#addAnnotation").click(
-//                    function (e) {
-//                        $('#dialog1').ojDialog('open');
-//                    }
-//                );
+                $("#addAnnotation").click(
+                    function (e) {
+                        $('#dialog1').ojDialog('open');
+                    }
+                );
 
             }
             

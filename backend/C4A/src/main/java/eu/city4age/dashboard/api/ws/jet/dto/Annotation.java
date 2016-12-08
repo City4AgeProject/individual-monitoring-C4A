@@ -5,6 +5,8 @@
  */
 package eu.city4age.dashboard.api.ws.jet.dto;
 
+import eu.city4age.dashboard.api.model.Assessment;
+
 /**
  *
  * @author mnou2
@@ -18,6 +20,21 @@ public class Annotation {
     private String comment;
     private String imgSrc;
 
+    public Annotation() {}
+    
+    public Annotation(Assessment toCreateFrom) {
+        id = toCreateFrom.getId();
+        title = toCreateFrom.getDataValidityStatus().toString();
+        type = toCreateFrom.getRiskStatus().toString();
+        from = toCreateFrom.getUserInRole().getRoleId().toString();
+        if("A".equals(toCreateFrom.getRiskStatus().toString()))
+            imgSrc = "images/risk_alert.png";
+        else if("W".equals(toCreateFrom.getRiskStatus().toString()))
+            imgSrc = "images/risk_warning.png";
+        else
+            imgSrc = "images/comment.png";
+    }
+    
     /**
      * @return the id
      */

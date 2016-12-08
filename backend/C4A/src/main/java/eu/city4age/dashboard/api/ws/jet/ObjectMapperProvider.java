@@ -7,18 +7,18 @@ package eu.city4age.dashboard.api.ws.jet;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
 
 /**
  *
  * @author mnou2
  */
-@Provider
 public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
     
     private ObjectMapper mapper;
@@ -38,6 +38,8 @@ public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
         mapper.configure( SerializationFeature.INDENT_OUTPUT, true );
         mapper.configure( SerializationFeature.WRITE_NULL_MAP_VALUES, true );
         mapper.setSerializationInclusion(Include.NON_NULL);
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm.sss"));
+        mapper.configure(SerializationFeature.EAGER_SERIALIZER_FETCH, false);
         return mapper;
     }
     

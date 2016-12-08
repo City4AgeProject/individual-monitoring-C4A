@@ -111,6 +111,113 @@
     </div>
     <!-- end select point/s popup -->
     
-   
+    <!-- add annotation window -->
+    <div id="dialogWrapper1">
+        <div style="display:none; " id="dialog1" title="Add annotation"  
+             data-bind="ojComponent:{
+                            component: 'ojDialog', 
+                            initialVisibility: 'hide',
+                            rootAttributes: {style: 'width: 360px; height: 480px;'}
+             }">
+            <div class="oj-dialog-body">
+
+                <div id="form-container">
+                    <div class="oj-form-layout">
+                        <div class="oj-form" >
+                            <div class="oj-flex"> 
+                                <div class="oj-flex-item">
+                                    <label id="selectgrouplabel">Choose type</label>
+                                    <div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
+                                        <select id="selectTypePerRisk"
+                                                data-bind="ojComponent: {
+                                                        component: 'ojSelect',
+                                                        list: 'typePerRisk',
+                                                        rootAttributes: {style:'width:165px'}
+
+                                            }">
+                                        </select>
+                                        <ul id="typePerRisk" style="display: none">
+                                            <li> </li>
+                                            <li oj-data-value="Risk warning"><img src="images/risk_warning.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Risk warning</li>
+                                            <li oj-data-value="Risk alert"><img src="images/risk_alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Risk alert</li>
+                                        </ul>
+                                        <select id="selectTypePerDataValidity"
+                                                data-bind="ojComponent: {
+                                                        component: 'ojSelect',
+                                                        list: 'typePerDataValidity',
+                                                        rootAttributes: {style:'width:165px'}
+                                            }">
+                                        </select>
+                                        <ul id="typePerDataValidity" style="display: none">
+                                            <li> </li>
+                                            <li oj-data-value="Questionable data"><img src="images/questionable_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Questionable data</li>
+                                            <li oj-data-value="Faulty data"><img src="images/faulty_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Faulty data</li>
+                                        </ul>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                            <div class="oj-flex"> 
+                                <div class="oj-flex-item">
+                                    <label for="selectRole">For (select multiple)</label>
+                                    <select id="selectRole" 
+                                            data-bind="ojComponent: {
+                                            component: 'ojSelect', 
+                                            value: valRole,
+                                            multiple: true,
+                                            rootAttributes: {style:'max-width:334px'}
+                                        }">
+
+                                        <option value="Caregiver">Caregiver</option>
+                                        <option value="Geriatrician">Geriatrician</option>
+                                        <option value="Intervention staff">Intervention staff</option>
+                                        <option value="City 4 Age staff">City 4 Age staff</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="oj-flex">
+                                <div class="oj-flex-item">
+                                    <label for="textareacontrol">Comment</label>
+                                    <textarea id="textareacontrol" rows="5"
+                                              data-bind="ojComponent: {
+                                                    component: 'ojTextArea',
+                                                    rootAttributes: {style:'max-width:334px'}
+                                                }">
+                                    </textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="oj-dialog-footer" style="padding-right: 15px;">
+                <div align="right">
+                    <button id= "okButton" 
+                            data-bind="ojComponent: { 
+                                component: 'ojButton', 
+                                chroming: 'full', 
+                                label: 'Post'},
+                                click: postAnnotation
+                            ">
+                    </button>
+
+                    <button id= "buttonCancel"
+                            data-bind="ojComponent: { 
+                                component: 'ojButton', 
+                                chroming: 'full', 
+                                label: 'Cancel'},
+                                click: function(){$('#dialog1').ojDialog('close');} 
+                            ">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end add annotation window -->
     
 </div>
