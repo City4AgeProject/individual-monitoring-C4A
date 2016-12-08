@@ -3,15 +3,7 @@ package eu.city4age.dashboard.api.dao;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.jackson.JacksonFeature;
 import org.junit.Assert;
 import org.junit.Test;
 import org.unitils.UnitilsJUnit4;
@@ -22,7 +14,6 @@ import org.unitils.spring.annotation.SpringBean;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
-import eu.city4age.dashboard.api.model.TimeInterval;
 
 @SpringApplicationContext("classpath:test-context-dao.xml")
 public class AssessmentDAOTest extends UnitilsJUnit4  {
@@ -67,7 +58,7 @@ public class AssessmentDAOTest extends UnitilsJUnit4  {
 		
 		Assert.assertEquals(2, ((Assessment)result.get(0)).getAssessmentAudienceRoles().size());
 		
-		Assert.assertEquals(3, ((AssessmentAudienceRole)((Assessment)result.get(0)).getAssessmentAudienceRoles().iterator().next()).getAssessmentAudienceRoleId().getUserInRoleId());
+		Assert.assertEquals(4, ((AssessmentAudienceRole)((Assessment)result.get(0)).getAssessmentAudienceRoles().iterator().next()).getAssessmentAudienceRoleId().getUserInRoleId());
 		
 		Assert.assertEquals(3, ((Assessment)result.get(0)).getAssessedGefValueSets().size());
 	}

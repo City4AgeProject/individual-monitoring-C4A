@@ -14,7 +14,7 @@
             <column name="assessment_id" not-null="true" />
         </many-to-one>
         
-        <many-to-one name="cdRole" class="CdRole" update="false" insert="false" fetch="select">
+        <many-to-one name="cdRole" class="CdRole" update="false" insert="false" lazy="no-proxy" fetch="join">
             <column name="role_id" not-null="true" />
         </many-to-one>
         

@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class Assessment extends AbstractBaseEntity {
 
 	private UserInRole userInRole;
-	
 	private String assessmentComment;
 	private Character riskStatus;
 	private Character dataValidityStatus;
