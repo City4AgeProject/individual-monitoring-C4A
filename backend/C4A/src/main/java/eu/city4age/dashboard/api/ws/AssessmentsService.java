@@ -1,8 +1,6 @@
 package eu.city4age.dashboard.api.ws;
 
 import java.sql.Timestamp;
-import java.time.Month;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module;
 
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
@@ -32,6 +31,7 @@ import eu.city4age.dashboard.api.dto.DiagramDataPoint;
 import eu.city4age.dashboard.api.dto.DiagramDataPointSet;
 import eu.city4age.dashboard.api.dto.DiagramMonthInterval;
 import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
+import eu.city4age.dashboard.api.json.GetAllAssessmentsWrapper;
 import eu.city4age.dashboard.api.model.AssessedGefValueSet;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
@@ -44,8 +44,6 @@ import eu.city4age.dashboard.api.model.UserInRole;
 public class AssessmentsService {
 	
 	static protected Logger logger = Logger.getLogger(AssessmentsService.class);
-	
-	static protected ObjectMapper objectMapper = new ObjectMapper();
 
 	@Autowired
     private AssessmentDAO assessmentDAO;
@@ -55,8 +53,8 @@ public class AssessmentsService {
 	
 	@Autowired
 	private TimeIntervalDAO timeIntervalDAO;
-	
-    @GET
+
+	@GET
     @Path("/getDiagramDataOld")
     @Produces(MediaType.APPLICATION_JSON)
 	public String getDiagramDataOld() throws JsonProcessingException {
@@ -64,8 +62,8 @@ public class AssessmentsService {
 		Timestamp start = Timestamp.valueOf("2016-01-01 00:00:00");
 		Timestamp end = Timestamp.valueOf("2016-04-01 00:00:00");
     
-		List<GeriatricFactorValue> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
-		String labelTest = ((GeriatricFactorValue)gefs.get(0)).getCdDetectionVariable().getDetectionVariableName();
+		List<Object[]> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
+		String labelTest = ((GeriatricFactorValue)gefs.get(0)[0]).getCdDetectionVariable().getDetectionVariableName();
     	
         //DataPointSet from domain
         DataPointSet dataPointSet1 = new DataPointSet();
@@ -186,6 +184,10 @@ public class AssessmentsService {
         diagramDataPointSet7.getDiagramDataPoints().add(new DiagramDataPoint(29l, 1.8f, null));
         diagramDataPointSet8.getDiagramDataPoints().add(null);
 
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		objectMapper.registerModule(new Hibernate3Module());
+        
         String dtoAsString = objectMapper.writeValueAsString(diagramMonthInterval);
         
         return dtoAsString;
@@ -213,10 +215,14 @@ public class AssessmentsService {
     	
 		dto.setGefLabels(gefLables);
     	
-    	List<GeriatricFactorValue> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
+    	List<Object[]> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
     	
-		dto.setGefData(gefs);		
+		dto.setData(gefs);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
 
+		objectMapper.registerModule(new Hibernate3Module());
+		
 		String dtoAsString = objectMapper.writeValueAsString(dto);
         
         return dtoAsString;		
@@ -227,13 +233,28 @@ public class AssessmentsService {
     @Path("/getLastFiveAssessments")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public String getLastFiveAssessments(String json) throws JsonProcessingException {
+	public String getLastFiveAssessments(String json) throws Exception {
     	
-    	List<Assessment> assessments = assessmentDAO.getLastFiveAssessments();
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		objectMapper.registerModule(new Hibernate3Module());
+    	
+    	ObjectReader objectReader = objectMapper.reader(GetAllAssessmentsWrapper.class);
+    	
+    	GetAllAssessmentsWrapper data = objectReader.readValue(json);
+
+    	List<Assessment> assessments = new ArrayList<Assessment>();
+    	
+		for (Long geriatricFactorId : data.getGeriatricFactorValueIds()) {
+
+			assessments.addAll(
+					getAssessmentsForGeriatricFactorId(geriatricFactorId));
+
+		}
 
 		String dtoAsString = objectMapper.writeValueAsString(assessments);
         
-        return json;		
+        return dtoAsString;			
     }
 
 	
@@ -241,17 +262,22 @@ public class AssessmentsService {
     @Path("/getAssessmentsForSelectedDataSet")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public String getAssessmentsForSelectedDataSet(String json) throws JsonProcessingException {
+	public String getAssessmentsForSelectedDataSet(String json) throws Exception {
     	
-    	YearMonth ym = YearMonth.of(2016, Month.JANUARY);
+		ObjectMapper objectMapper = new ObjectMapper();
 
-    	List<String> geriatricFactorIds = new ArrayList<String>();
+		objectMapper.registerModule(new Hibernate3Module());
+		
+    	ObjectReader objectReader = objectMapper.reader(GetAllAssessmentsWrapper.class);
     	
+    	GetAllAssessmentsWrapper data = objectReader.readValue(json);
+
     	List<Assessment> assessments = new ArrayList<Assessment>();
     	
-		for (String geriatricFactorId : geriatricFactorIds) {
+		for (Long geriatricFactorId : data.getGeriatricFactorValueIds()) {
 
-			assessments.addAll(getAssessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
+			assessments.addAll(
+					getAssessmentsForGeriatricFactorId(geriatricFactorId));
 
 		}
 
@@ -268,9 +294,13 @@ public class AssessmentsService {
     	
     	List<Assessment> assessments = new ArrayList<Assessment>();
     	String filter = "";
-		Long geriatricFactorId = Long.valueOf(1);
+		Long geriatricFactorId = 1L;
 		
 		assessments = assessmentDAO.getAssessmentsByFilter(geriatricFactorId, filter);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		objectMapper.registerModule(new Hibernate3Module());
 
 		String dtoAsString = objectMapper.writeValueAsString(assessments);
         
@@ -281,6 +311,10 @@ public class AssessmentsService {
     @Path("/addAssessmentsForSelectedDataSet")
     @Consumes(MediaType.APPLICATION_JSON)
     public void addAssessmentsForSelectedDataSet(String json) throws Exception {
+    	
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		objectMapper.registerModule(new Hibernate3Module());
     	
     	ObjectReader objectReader = objectMapper.reader(AddAssessmentWrapper.class);
     	

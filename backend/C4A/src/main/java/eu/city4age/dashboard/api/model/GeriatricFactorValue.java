@@ -28,6 +28,8 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 	private Set sourceEvidences = new HashSet(0);
 	
 	private Set<NumericIndicatorValue> numericIndicatorValues = new HashSet<NumericIndicatorValue>();
+
+	@JsonManagedReference
 	private Set<AssessedGefValueSet> assessedGefValueSets = new HashSet<AssessedGefValueSet>();
 
 	public GeriatricFactorValue() {

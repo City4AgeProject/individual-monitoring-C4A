@@ -2,15 +2,14 @@ package eu.city4age.dashboard.api.dto;
 
 import java.util.List;
 
-import eu.city4age.dashboard.api.model.GeriatricFactorValue;
-
 public class DiagramDataDTO {
+
 	
 	List<String> gefLabels;
 	
 	List<String> monthLabels;
 	
-	List<GeriatricFactorValue> gefData;
+	List<Object[]> data;
 	
 	
 
@@ -30,13 +29,12 @@ public class DiagramDataDTO {
 		this.monthLabels = monthLabels;
 	}
 
-	public List<GeriatricFactorValue> getGefData() {
-		return gefData;
+	public List<Object[]> getData() {
+		return data;
 	}
 
-	public void setGefData(List<GeriatricFactorValue> gefData) {
-		this.gefData = gefData;
+	public void setData(List<Object[]> data) {
+		this.data = data;
 	}
-	
 
 }

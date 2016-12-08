@@ -69,9 +69,9 @@ public class OJDataSet {
     	
 		dto.setGefLabels(gefLables);
     	
-    	List<GeriatricFactorValue> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
+    	List<Object[]> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
     	
-		dto.setGefData(gefs);	
+		dto.setData(gefs);	
 		
         DataSet result = new DataSet(dto);
         return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(result)).build();

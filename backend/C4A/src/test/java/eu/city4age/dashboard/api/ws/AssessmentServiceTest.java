@@ -59,7 +59,7 @@ public class AssessmentServiceTest {
 			WebTarget WebTarget = client
 					.target("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getLastFiveAssessments");
 
-			String input = "{\"authorId\":1,\"comment\":\"My comment...\",\"riskStatus\":\"RISK_ALERT\",\"dataValidityStatus\":\"QUESTIONABLE_DATA\",\"geriatricFactorValueIds\":[1,2],\"audienceIds\":[1,2]}";
+			String input = "{\"geriatricFactorValueIds\":[1,2,3]}";
 
 			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
 					.post(Entity.entity(input,MediaType.APPLICATION_JSON_TYPE), Response.class);
@@ -68,7 +68,7 @@ public class AssessmentServiceTest {
 				throw new RuntimeException("Failed : HTTP error code : "
 						+ response.getStatus());
 			}*/
-
+			
 			logger.info("Output from Server .... ");
 			String output = response.toString();
 			logger.info(output);
@@ -76,6 +76,7 @@ public class AssessmentServiceTest {
 			Object siftResult = response.readEntity(String.class);
 			logger.info("2: " + siftResult);
 
+			
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -97,12 +98,12 @@ public class AssessmentServiceTest {
 			WebTarget WebTarget = client
 					.target("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getAssessmentsForSelectedDataSet");
 
-			String input = "{\"factor\":\"Climbing stairs\",\"group\":\"Jan 2016\"}";
+			String input = "{\"geriatricFactorValueIds\":[1,2,3]}";
 
 			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
 					.post(Entity.entity(input,MediaType.APPLICATION_JSON_TYPE), Response.class);
 
-			/*if (response.getStatus() != 200) {
+			/*if (response.getStatus() != 204) {
 				throw new RuntimeException("Failed : HTTP error code : "
 						+ response.getStatus());
 			}*/
