@@ -108,11 +108,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     }
                 };
 
-                $('#addAnnotation').click(
-                    function () {
-                        $('#dialog1').ojDialog('open');
-                    }
-                );
+                self.lcAddPopup = function (data, event) {
+                    $('#dialog1').ojDialog();
+                    $('#dialog1').ojDialog('open');
+                    return true;
+                };
 
             }
             
