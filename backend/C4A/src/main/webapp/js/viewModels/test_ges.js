@@ -14,6 +14,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.commentText = ko.observable();
                 self.selectedAnotations = ko.observableArray();
                 
+                self.valRole = ko.observableArray(["Caregiver"]);
+                
                 var loadSucessCallback = function (data) {
                     self.groupsValue(data.groups);
                     self.seriesValue(data.series);
