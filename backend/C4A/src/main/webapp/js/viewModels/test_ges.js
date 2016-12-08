@@ -23,16 +23,51 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.valRole = ko.observableArray([
                     "Caregiver"
                 ]);
-                self.riskTypes = ko.observableArray([
-                    {riskStatus : "W", riskStatusDescription : "Risk warning", iconImage : "images/risk_warning.png"}
-                    ,{riskStatus : "A", riskStatusDescription : "Risk alert", iconImage : "images/risk_alert.png"}
-                ]);
+                
                 self.dataValidity = ko.observableArray([
                     {riskStatus : "Q", riskStatusDescription : "Questionable data", iconImage : "images/questionable_data.png"}
                     ,{riskStatus : "F", riskStatusDescription : "Faulty data", iconImage : "images/faulty_data.png"}
                     ,{riskStatus : "V", riskStatusDescription : "Valid data", iconImage : ""}
                 ]);
-                self.selectedTypePerRisk = ko.observableArray([""]);
+                
+                // Risks select
+                self.riskStatusesURL = OJ_CODE_BOOK_SELECT_ALL_RISKS;
+                self.risksCollection = ko.observable();
+                self.risksTags = ko.observableArray();       
+                self.selectedRiskStatus = ko.observable();
+
+                parseRisks = function (response) {
+                    return {
+                        riskStatus: response['riskStatus'],
+                        riskStatusDesc: response['riskStatusDesc'],
+                        imagePath: response['imagePath']};
+                };
+                
+                var collectionRisks = new oj.Collection.extend({
+                    url: self.riskStatusesURL,
+                    fetchSize: -1,
+                    model: new oj.Model.extend({
+                        idAttribute: 'riskStatus',
+                        parse: parseRisks
+                    })
+                });
+                
+                self.risksCollection(new collectionRisks());
+                self.risksCollection().fetch({
+                    success: function (collection, response, options) {
+                        if(self.risksTags.length === 0) {
+                            for (var i = 0; i < collection.size(); i++) {
+                                var riskModel = collection.at(i);
+                                self.risksTags.push({value: riskModel.attributes.riskStatus, label: riskModel.attributes.riskStatusDesc, imagePath: riskModel.attributes.imagePath});
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                    }
+                });
+                
+                // END assesment popup
+                
                 
                 // Server interaction callbacks
                 var loadSucessCallback = function (data) {
@@ -133,7 +168,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.postAnnotation = function (data, event) {
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
-                    var riskStatus = 'W';//ko.toJS(self.selectedTypePerRisk)[0];
+                    var riskStatus = ko.toJS(self.selectedRiskStatus)[0];
                     var dataValidityStatus = 'Q';
                     var geriatricFactorValueIds = [1,2];
                     var audienceIds = [1,2];

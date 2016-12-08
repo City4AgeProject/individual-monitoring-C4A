@@ -130,24 +130,21 @@
                                 <div class="oj-flex-item">
                                     <label id="selectgrouplabel">Choose type</label>
                                     <div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
-                                        
-                                        <ul id="riskTypesList" style="display: none">
-                                            <li data-bind="attr: {'oj-data-value': ''}">None</li>
-                                            <!-- ko foreach: riskTypes -->
-                                                <li data-bind="attr: {'oj-data-value': riskStatus}">
-                                                    <img data-bind="attr: { src: iconImage }"
-                                                         style="vertical-align:middle; width: 16px; height: 16px;"/>
-                                                    <span data-bind="text: riskStatusDescription"></span>
-                                                </li>
-                                            <!-- /ko -->
+                                        <ul id="riskList" style="display: none">
+                                            <!-- ko foreach: risksTags -->
+                                            <li data-bind="attr: {'oj-data-value': value}">
+                                                <img data-bind="attr: {src: imagePath}" 
+                                                     role="presentation" style="vertical-align:middle; width: 16px; height: 16px;"/> 
+                                                <span data-bind="text: label"></span>
+                                            </li>
+                                            <!-- /ko -->   
                                         </ul>
-                                        <select id="selectTypePerRisk"
-                                                data-bind="ojComponent: {component: 'ojSelect',
-                                                                renderMode: 'jet',
-                                                                multiple: true,
-                                                                list: 'riskTypesList', value: selectedTypePerRisk,           
-                                                                rootAttributes: {style:'width:165px'}">
-                                        </select>
+                                        <input id="inputJobSearch" placeholder="Choose risk..." required="true"
+                                               data-bind="ojComponent: {
+                                                            component: 'ojCombobox',
+                                                            value: selectedRiskStatus,
+                                                            list: 'riskList',
+                                                            rootAttributes: {style:'width:165px'}}">
                                         
                                         <select id="selectTypePerDataValidity"
                                                 data-bind="ojComponent: {
