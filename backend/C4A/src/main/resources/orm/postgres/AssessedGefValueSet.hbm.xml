@@ -14,7 +14,7 @@
             <column name="assessment_id" not-null="true" />
         </many-to-one>
         
-        <many-to-one name="geriatricFactorValue" class="GeriatricFactorValue" update="false" insert="false" fetch="select">
+        <many-to-one name="geriatricFactorValue" class="GeriatricFactorValue" update="false" insert="false" fetch="select" lazy="false">
             <column name="gef_value_id" not-null="true" />
         </many-to-one>
         
