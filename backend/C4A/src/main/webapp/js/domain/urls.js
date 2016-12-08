@@ -4,7 +4,13 @@ var port = '8080';
 var app = 'api-1.0-SNAPSHOT';
 var rest = 'v1';
 
-var root = protocol + server + ":" + port + '/' + app + '/' + rest + '/';
+var root = '';
+if(dynamicRoot) {
+    root = dynamicRoot + '/' + rest + '/';
+}
+else {
+    root = protocol + server + ":" + port + '/' + app + '/' + rest + '/';
+}
 
 var OJ_DATA_SET_SELECT_ALL = root + 'OJDataSet';
 var OJ_DATA_SET_FIND = root + 'OJDataSet/find';

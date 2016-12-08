@@ -32,7 +32,7 @@
             <column name="updated" length="29" />
         </property>
         
-        <many-to-one name="userInRole" class="UserInRole" fetch="select">
+        <many-to-one name="userInRole" class="UserInRole" fetch="select" lazy="false">
             <column name="author_id" />
         </many-to-one>
         
