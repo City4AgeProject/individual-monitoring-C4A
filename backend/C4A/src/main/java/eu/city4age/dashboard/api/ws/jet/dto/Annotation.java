@@ -28,6 +28,7 @@ public class Annotation {
         title = toCreateFrom.getDataValidityStatus().toString();
         type = toCreateFrom.getRiskStatus().toString();
         from = toCreateFrom.getUserInRole().getRoleId().toString();
+        comment = toCreateFrom.getAssessmentComment();
         if("A".equals(toCreateFrom.getRiskStatus().toString()))
             imgSrc = "images/risk_alert.png";
         else if("W".equals(toCreateFrom.getRiskStatus().toString()))
