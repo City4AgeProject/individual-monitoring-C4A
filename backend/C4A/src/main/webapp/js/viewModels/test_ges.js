@@ -11,10 +11,21 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.groupsValue = ko.observableArray();
                 self.seriesValue = ko.observableArray();
                 self.dataPointsMarked = ko.observable('No data points marked.');
-                self.commentText = ko.observable();
+                self.commentText = ko.observable('');
                 self.selectedAnotations = ko.observableArray();
                 
-                self.valRole = ko.observableArray(["Caregiver"]);
+                self.valRole = ko.observableArray([
+                    "Caregiver"
+                ]);
+                self.riskTypes = ko.observableArray([
+                    {riskStatus : 'RISK_WARNING', riskStatusDescription : 'Risk warning', iconImage : 'images/risk_warning.png'}
+                    ,{riskStatus : 'RISK_ALERT', riskStatusDescription : 'Risk alert', iconImage : 'images/risk_alert.png'}
+                ]);
+                self.dataValidity = ko.observableArray([
+                    {riskStatus : 'QUESTIONABLE_DATA', riskStatusDescription : 'Questionable data', iconImage : 'images/questionable_data.png'}
+                    ,{riskStatus : 'FAULTY_DATA', riskStatusDescription : 'Faulty data', iconImage : 'images/faulty_data.png'}
+                ]);
+                
                 
                 var loadSucessCallback = function (data) {
                     self.groupsValue(data.groups);
@@ -113,6 +124,23 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.lcAddPopup = function (data, event) {
                     $('#dialog1').ojDialog();
                     $('#dialog1').ojDialog('open');
+                    return true;
+                };
+
+                self.postAnnotation = function (data, event) {
+                    var authorId = 1;
+                    var comment = ko.toJS(self.commentText);
+                    var riskStatus = 'RISK_ALERT';
+                    var dataValidityStatus = 'QUESTIONABLE_DATA';
+                    var geriatricFactorValueIds = [1,2];
+                    var audienceIds = [1,2];
+                    var annotationToPost = new AddAssesment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
+                    
+                    var jqXHR = $.postJSON(OJ_ANNOTATION_CREATE, 
+                        JSON.stringify(annotationToPost),
+                        postCommentCallback
+                    );
+                    jqXHR.fail(serverErrorCallback);
                     return true;
                 };
 

@@ -11,6 +11,26 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'ojs/ojrouter', 'ojs/ojdialog',
     function AppControllerViewModel() {
       var self = this;
 
+    $.ajaxSetup({
+        contentType: "application/json; charset=utf-8"
+    });
+
+    jQuery["postJSON"] = function (url, data, callback) {
+        if (jQuery.isFunction(data)) {
+            callback = data;
+            data = undefined;
+        }
+
+        return jQuery.ajax({
+            url: url,
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: data,
+            success: callback
+        });
+    };
+
       // Router setup
       self.router = oj.Router.rootInstance;
       self.router.configure({

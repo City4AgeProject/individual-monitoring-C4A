@@ -6,17 +6,29 @@
 package eu.city4age.dashboard.api.ws.jet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectReader;
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
-import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
-import eu.city4age.dashboard.api.dao.TimeIntervalDAO;
+import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
+import eu.city4age.dashboard.api.model.AbstractBaseEntity;
+import eu.city4age.dashboard.api.model.AssessedGefValueSet;
 import eu.city4age.dashboard.api.model.Assessment;
+import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
+import eu.city4age.dashboard.api.model.CdRole;
+import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.UserInRole;
 import eu.city4age.dashboard.api.ws.jet.dto.Annotation;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -68,6 +80,42 @@ public class OJAnnotation {
             return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(annotations)).build();
     }
 
+    @POST
+    @Path("")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response create(String json) throws URISyntaxException, IOException {
+        ObjectReader objectReader = ObjectMapperProvider.produceMapper().reader(AddAssessmentWrapper.class);
+        AddAssessmentWrapper data = objectReader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+        Assessment assessment = new Assessment();
+        assessment.setUserInRole(new UserInRole());
+        assessment.getUserInRole().setId(data.getAuthorId());
+        assessment.setAssessmentComment(data.getComment());
+        assessment.setRiskStatus(data.getRiskStatus().toChar());
+        assessment.setDataValidityStatus(data.getDataValidityStatus().toChar());
+        assessment.setCreated(new Date());
+        List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
+        for (int i = 0; i < data.getAudienceIds().size(); i++) {
+            AssessmentAudienceRole assessmentAudienceRole = new AssessmentAudienceRole();
+            assessmentAudienceRole.setAssessment(assessment);
+            assessmentAudienceRole.setAssigned(new Date());
+            assessmentAudienceRole.setCdRole(new CdRole());
+            assessmentAudienceRole.getCdRole().setId(data.getAudienceIds().get(i));
+            assessmentAudienceRoles.add(assessmentAudienceRole);
+        }
+        List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
+        for (int i = 0; i < data.getGeriatricFactorValueIds().size(); i++) {
+            AssessedGefValueSet assessedGefValueSet = new AssessedGefValueSet();
+            assessedGefValueSet.setAssessment(assessment);
+            assessedGefValueSet.setGeriatricFactorValue(new GeriatricFactorValue());
+            assessedGefValueSet.getGeriatricFactorValue().setId(data.getGeriatricFactorValueIds().get(i));
+            assessedGefValueSets.add(assessedGefValueSet);
+        }
+        AbstractBaseEntity saved = assessmentDAO.insertOrUpdate(assessment);
+
+        return Response.created(new URI("/" + PATH + "/" + saved.getId())).build();
+    }
+    
     private List<Assessment> assessmentsForGeriatricFactorId(Long geriatricFactorId) {
         return assessmentDAO.getAssessmentsForGeriatricFactorId(geriatricFactorId);
     }
