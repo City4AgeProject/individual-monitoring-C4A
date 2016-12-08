@@ -19,13 +19,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     self.seriesValue(data.series);
                 };
                 
-                var loadErrorCallback = function (xhr, message, error) {
+                var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
                 };
                 
                 self.handleActivated = function (info) {
                     var jqXHR = $.getJSON(OJ_DATA_SET_FIND, loadSucessCallback);
-                    jqXHR.fail(loadErrorCallback);
+                    jqXHR.fail(serverErrorCallback);
                     return jqXHR;
                 };
                 
@@ -36,10 +36,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.bcPostComment = function (data, event) {
                     var annotationToPost = new Annotation();
                     annotationToPost.comment = ko.toJS(self.commentText);
-                    $.postJSON(OJ_ANNOTATION_CREATE, 
+                    var jqXHR = $.postJSON(OJ_ANNOTATION_CREATE, 
                         JSON.stringify(annotationToPost),
                         postCommentCallback
                     );
+                    jqXHR.fail(serverErrorCallback);
                     return true;
                 };
 
@@ -107,8 +108,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     }
                 };
 
-                $("#addAnnotation").click(
-                    function (e) {
+                $('#addAnnotation').click(
+                    function () {
                         $('#dialog1').ojDialog('open');
                     }
                 );
