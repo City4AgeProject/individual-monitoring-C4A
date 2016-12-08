@@ -45,13 +45,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     console.log('posted comment ' + response);
                 };
                 
-                // Page handlers and intern funcrions
+                // Page handlers and intern functions
                 self.handleActivated = function (info) {
                     var jqXHR = $.getJSON(OJ_DATA_SET_FIND, loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
                 };
-                
                 
                 self.bcPostComment = function (data, event) {
                     var annotationToPost = new Annotation();

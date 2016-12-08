@@ -23,9 +23,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -60,7 +62,7 @@ public class OJAnnotation {
             List<Assessment> assessments = new ArrayList<Assessment>();
             try {
                 MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
-                List<String> geriatricFactorIds = new ArrayList<String>();
+                Set<String> geriatricFactorIds = new HashSet<String>();
                 for (Map.Entry entry : queryParams.entrySet()) {
                     LinkedList value = (LinkedList) entry.getValue();
                     geriatricFactorIds.add(value.getFirst().toString());
@@ -72,7 +74,7 @@ public class OJAnnotation {
                 logger.error("in selecting annotations for data points ", e);
             }
             
-            List<Annotation> annotations = new ArrayList<>();
+            Set<Annotation> annotations = new HashSet<>();
             for(Assessment assessment : assessments) {
                 annotations.add(new Annotation(assessment));
             }
