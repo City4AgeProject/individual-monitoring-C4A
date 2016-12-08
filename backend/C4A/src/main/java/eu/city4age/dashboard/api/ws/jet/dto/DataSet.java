@@ -44,7 +44,7 @@ public class DataSet implements Serializable {
     
     public DataSet(DiagramDataDTO dto) {
         name = "";
-        List<GeriatricFactorValue> gefData = dto.getGefData();
+        List<Object[]> gefData = dto.getData();
         groups = new ArrayList<String>();
         series = new ArrayList<Serie>();
         for(String serieName : dto.getGefLabels()) {
@@ -53,8 +53,9 @@ public class DataSet implements Serializable {
             series.add(newSerie);
         }
         
-        for(GeriatricFactorValue gefv : gefData) {
-            Item newItem = new Item(gefv.getId(), gefv.getGefValue().floatValue());
+        for(Object[] obj : gefData) {
+            GeriatricFactorValue gefv = (GeriatricFactorValue) obj[0];
+        	Item newItem = new Item(gefv.getId(), gefv.getGefValue().floatValue());
             String currentSerieName = gefv.getCdDetectionVariable().getDetectionVariableName().trim();
             Serie foundSerie = findSerieByName(currentSerieName);
             if(foundSerie.getItems()==null)

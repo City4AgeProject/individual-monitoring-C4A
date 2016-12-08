@@ -56,29 +56,38 @@ public class OJDataSet {
     @GET
     @Path("find")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response find(@DefaultValue("2016-01-01 00:00:00") @QueryParam(value = "start") String startParam,
-                            @DefaultValue("2017-01-01 00:00:00") @QueryParam(value = "end") String endParam,
-                            @DefaultValue("4") @QueryParam(value = "parentId") Integer parentIdParam,
-                            @DefaultValue("1") @QueryParam(value = "userInRoleId") Integer userInRoleIdParam) throws JsonProcessingException {
-        
-        // Get query parameters and load DiagramDataDTO.
-        Timestamp start = Timestamp.valueOf(startParam);
-        Timestamp end = Timestamp.valueOf(endParam);
-        DiagramDataDTO dto = new DiagramDataDTO();
-        List<Object[]> months = timeIntervalDAO.getTimeIntervalsForPeriod(start, end);
-        List<String> monthLabels = createMonthLabels(months);
-        dto.setMonthLabels(monthLabels);
-        List<String> gefLables = detectionVariableDAO.getAllDetectionVariableNamesForParentId(parentIdParam.shortValue());
-        dto.setGefLabels(gefLables);
-        List<GeriatricFactorValue> gefs = assessmentDAO.getDiagramDataForUserInRoleId(userInRoleIdParam, start, end);
-        dto.setGefData(gefs);
+    public Response find(@DefaultValue("") @QueryParam(value = "selectGEF") String selectGEF,
+                            @DefaultValue("Month") @QueryParam(value = "period") String period,
+                            @DefaultValue("0") @QueryParam(value = "dateRangeStart") Integer dateRangeStart,
+                            @DefaultValue("10000") @QueryParam(value = "dateRangeEnd") Integer dateRangeEnd) throws JsonProcessingException {
+       		Timestamp start = Timestamp.valueOf("2016-01-01 00:00:00");
+		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
+    	
+    	DiagramDataDTO dto = new DiagramDataDTO();
+    	
+    
+    	List<Object[]> months = timeIntervalDAO.getTimeIntervalsForPeriod(start, end);
+    	
+    	List<String> monthLabels = createMonthLabels(months);
+    	
+    	dto.setMonthLabels(monthLabels);
+    
+    	
+    	List<String> gefLables = detectionVariableDAO.getAllDetectionVariableNamesForParentId(Short.valueOf("4"));
+    	
+		dto.setGefLabels(gefLables);
+    	
+    	List<Object[]> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
+    	
+		dto.setData(gefs);
 
         // Initialize resulting DataSet.
         DataSet result = new DataSet(dto);
 
         // Load related DataSet Assignments.
         List<String> geriatricFactorIds = new ArrayList<String>();
-        for (GeriatricFactorValue gefv : dto.getGefData()) {
+        for (Object[] obj : dto.getData()) {
+        	GeriatricFactorValue gefv = (GeriatricFactorValue) obj[0];
             geriatricFactorIds.add(String.valueOf(gefv.getId()));
         }
         List<Assessment> assessments = new ArrayList<Assessment>();

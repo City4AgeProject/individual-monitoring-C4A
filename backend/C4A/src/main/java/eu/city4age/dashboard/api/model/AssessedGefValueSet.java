@@ -1,5 +1,7 @@
 package eu.city4age.dashboard.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 // default package
 // Generated 24-Nov-2016 15:43:47 by Hibernate Tools 5.2.0.Beta1
 
@@ -9,7 +11,11 @@ package eu.city4age.dashboard.api.model;
 public class AssessedGefValueSet implements java.io.Serializable {
 
 	private AssessedGefValueSetId assessedGefValueSetId;
+
+	@JsonBackReference
 	private Assessment assessment;
+	
+	@JsonBackReference 
 	private GeriatricFactorValue geriatricFactorValue;
 
 	public AssessedGefValueSet() {
