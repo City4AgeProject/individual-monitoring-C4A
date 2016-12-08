@@ -1,3 +1,5 @@
+/* global OJ_ANNOTATION_FOR_DATA_POINTS, OJ_DATA_SET_FIND, OJ_ANNOTATION_CREATE */
+
 define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
     'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton', 'ojs/ojinputtext', 'ojs/ojmodule','ojs/ojmodel',
     'ojs/ojpopup', 'ojs/ojselectcombobox', 'ojs/ojrouter',
@@ -19,15 +21,19 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 // Add assesment popup
                 self.commentText = ko.observable('');
                 self.valRole = ko.observableArray([
-                    "Caregiver"
+                    "Caregiver",
+                    "Geriatrician",
+                    "Intervention staff",
+                    "City 4 Age staff"
                 ]);
                 self.riskTypes = ko.observableArray([
-                    {riskStatus : 'RISK_WARNING', riskStatusDescription : 'Risk warning', iconImage : 'images/risk_warning.png'}
-                    ,{riskStatus : 'RISK_ALERT', riskStatusDescription : 'Risk alert', iconImage : 'images/risk_alert.png'}
+                    {riskStatus : "W", riskStatusDescription : "Risk warning", iconImage : "images/risk_warning.png"}
+                    ,{riskStatus : "A", riskStatusDescription : "Risk alert", iconImage : "images/risk_alert.png"}
                 ]);
                 self.dataValidity = ko.observableArray([
-                    {riskStatus : 'QUESTIONABLE_DATA', riskStatusDescription : 'Questionable data', iconImage : 'images/questionable_data.png'}
-                    ,{riskStatus : 'FAULTY_DATA', riskStatusDescription : 'Faulty data', iconImage : 'images/faulty_data.png'}
+                    {riskStatus : "Q", riskStatusDescription : "Questionable data", iconImage : "images/questionable_data.png"}
+                    ,{riskStatus : "F", riskStatusDescription : "Faulty data", iconImage : "images/faulty_data.png"}
+                    ,{riskStatus : "V", riskStatusDescription : "Valid data", iconImage : ""}
                 ]);
                 self.selectedTypePerRisk = ko.observable();
                 
@@ -143,8 +149,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.postAnnotation = function (data, event) {
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
-                    var riskStatus = ko.toJS(self.selectedTypePerRisk);
-                    var dataValidityStatus = 'QUESTIONABLE_DATA';
+                    var riskStatus = 'W';//ko.toJS(self.selectedTypePerRisk);
+                    var dataValidityStatus = 'Q';
                     var geriatricFactorValueIds = [1,2];
                     var audienceIds = [1,2];
                     var annotationToPost = new AddAssesment
