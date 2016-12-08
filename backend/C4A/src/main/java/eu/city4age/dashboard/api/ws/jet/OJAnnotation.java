@@ -10,6 +10,7 @@ import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
 import eu.city4age.dashboard.api.dao.TimeIntervalDAO;
 import eu.city4age.dashboard.api.model.Assessment;
+import eu.city4age.dashboard.api.ws.jet.dto.Annotation;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,21 +45,27 @@ public class OJAnnotation {
     @Path("forDataPoints")
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectForDataPoints(@Context UriInfo ui) throws JsonProcessingException {
-        List<Assessment> assessments = new ArrayList<Assessment>();
-        try {
-            MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
-            List<String> geriatricFactorIds = new ArrayList<String>();
-            for (Map.Entry entry : queryParams.entrySet()) {
-                LinkedList value = (LinkedList) entry.getValue();
-                geriatricFactorIds.add(value.getFirst().toString());
+            List<Assessment> assessments = new ArrayList<Assessment>();
+            try {
+                MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
+                List<String> geriatricFactorIds = new ArrayList<String>();
+                for (Map.Entry entry : queryParams.entrySet()) {
+                    LinkedList value = (LinkedList) entry.getValue();
+                    geriatricFactorIds.add(value.getFirst().toString());
+                }
+                for (String geriatricFactorId : geriatricFactorIds) {
+                    assessments.addAll(assessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
+                }
+            } catch (Exception e) {
+                logger.error("in selecting annotations for data points ", e);
             }
-            for (String geriatricFactorId : geriatricFactorIds) {
-                assessments.addAll(assessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
+            
+            List<Annotation> annotations = new ArrayList<>();
+            for(Assessment assessment : assessments) {
+                annotations.add(new Annotation(assessment));
             }
-        } catch (Exception e) {
-            logger.error("in selecting annotations for data points ", e);
-        }
-        return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(assessments)).build();
+            
+            return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(annotations)).build();
     }
 
     private List<Assessment> assessmentsForGeriatricFactorId(Long geriatricFactorId) {

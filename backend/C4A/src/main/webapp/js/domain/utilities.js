@@ -1,6 +1,9 @@
 
 function shortenText(text, newlength) {
-    return text.substr(0, text.length>=newlength ? newlength : text.length);
+    if(text)
+        return text.substr(0, text.length>=newlength ? newlength : text.length);
+    else
+        return '';
 }
 
 remove_item = function (arr, value) {
