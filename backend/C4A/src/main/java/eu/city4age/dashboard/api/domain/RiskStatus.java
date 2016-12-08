@@ -3,8 +3,8 @@ package eu.city4age.dashboard.api.domain;
 public enum RiskStatus {
 	
 
-	RISK_WARNING('W'),
-	RISK_ALERT('A');
+	W('W'),
+	A('A');
 
 	private final Character c;
 
