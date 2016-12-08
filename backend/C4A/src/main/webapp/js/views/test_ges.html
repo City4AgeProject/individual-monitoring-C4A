@@ -1,4 +1,22 @@
-<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style>
+    a:link {
+        color: #3C9DBC;
+        text-decoration: none; 
+    } 
+    a:visited {
+        color: #3C9DBC;
+        text-decoration: none;
+    }
+    a:hover {
+        color: #3C9DBC;
+        text-decoration: underline;
+    }
+</style>
+
+<div id='dges-container'>
+    
 <div class="oj-flex-item" >
     <!-- line test chart -->
     <div id="chart-test-container">
@@ -112,19 +130,25 @@
                                 <div class="oj-flex-item">
                                     <label id="selectgrouplabel">Choose type</label>
                                     <div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
-                                        <select id="selectTypePerRisk"
-                                                data-bind="ojComponent: {
-                                                        component: 'ojSelect',
-                                                        rootAttributes: {style:'width:165px'},
-                                                        value: selectedTypePerRisk}">
+                                        
+                                        <ul id="riskTypesList" style="display: none">
+                                            <li data-bind="attr: {'oj-data-value': ''}">None</li>
                                             <!-- ko foreach: riskTypes -->
-                                                <option data-bind="value: riskStatus">
-                                                    <img data-bind="attr: { src: iconImage }" 
-                                                                        style="vertical-align:middle; width: 16px; height: 16px;"/>
+                                                <li data-bind="attr: {'oj-data-value': riskStatus}">
+                                                    <img data-bind="attr: { src: iconImage }"
+                                                         style="vertical-align:middle; width: 16px; height: 16px;"/>
                                                     <span data-bind="text: riskStatusDescription"></span>
-                                                </option>
+                                                </li>
                                             <!-- /ko -->
+                                        </ul>
+                                        <select id="selectTypePerRisk"
+                                                data-bind="ojComponent: {component: 'ojSelect',
+                                                                renderMode: 'jet',
+                                                                multiple: true,
+                                                                list: 'riskTypesList', value: selectedTypePerRisk,           
+                                                                rootAttributes: {style:'width:165px'}">
                                         </select>
+                                        
                                         <select id="selectTypePerDataValidity"
                                                 data-bind="ojComponent: {
                                                         component: 'ojSelect',
@@ -201,4 +225,5 @@
     </div>
     <!-- end add annotation window -->
     
+</div>
 </div>

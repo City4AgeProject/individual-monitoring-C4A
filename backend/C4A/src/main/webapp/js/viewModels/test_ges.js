@@ -21,10 +21,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 // Add assesment popup
                 self.commentText = ko.observable('');
                 self.valRole = ko.observableArray([
-                    "Caregiver",
-                    "Geriatrician",
-                    "Intervention staff",
-                    "City 4 Age staff"
+                    "Caregiver"
                 ]);
                 self.riskTypes = ko.observableArray([
                     {riskStatus : "W", riskStatusDescription : "Risk warning", iconImage : "images/risk_warning.png"}
@@ -35,7 +32,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     ,{riskStatus : "F", riskStatusDescription : "Faulty data", iconImage : "images/faulty_data.png"}
                     ,{riskStatus : "V", riskStatusDescription : "Valid data", iconImage : ""}
                 ]);
-                self.selectedTypePerRisk = ko.observable();
+                self.selectedTypePerRisk = ko.observableArray([""]);
                 
                 // Server interaction callbacks
                 var loadSucessCallback = function (data) {
@@ -56,17 +53,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                     var jqXHR = $.getJSON(OJ_DATA_SET_FIND, loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
-                };
-                
-                self.bcPostComment = function (data, event) {
-                    var annotationToPost = new Annotation();
-                    annotationToPost.comment = ko.toJS(self.commentText);
-                    var jqXHR = $.postJSON(OJ_ANNOTATION_CREATE, 
-                        JSON.stringify(annotationToPost),
-                        postCommentCallback
-                    );
-                    jqXHR.fail(serverErrorCallback);
-                    return true;
                 };
                 
                 /* TODO - fixme - remove listener.
@@ -109,7 +95,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                             queryParams += 'sv'+i+'='+selectedPoints[i].id;
                         else
                             queryParams += '&sv'+i+'='+selectedPoints[i].id;
-                        
                     }
                     return queryParams === '' ? queryParams : '?' + queryParams;
                 }
@@ -117,13 +102,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.chartOptionChange = function (event, ui) {
                     if (ui['option'] === 'selection') {
                         if (ui['value'].length > 0) {
-                            
                             if($('#popup1').ojPopup( "isOpen" ))
                                 $('#popup1').ojPopup('close');
-                            
+                            // Avoid assesment selections as points
                             var onlyDataPoints = removeCurrentAnnotationsFromSelection(ui['value']);
+                            // Compose selections in get query parameters
                             var queryParams = calculateQueryParamsFromSelection(onlyDataPoints);
-                            
                             $.getJSON(OJ_ANNOTATION_FOR_DATA_POINTS + queryParams, function(data) {
                                 for (var i=0; i<data.length; i++) {
                                     var anno = data[i];
@@ -149,13 +133,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 self.postAnnotation = function (data, event) {
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
-                    var riskStatus = 'W';//ko.toJS(self.selectedTypePerRisk);
+                    var riskStatus = 'W';//ko.toJS(self.selectedTypePerRisk)[0];
                     var dataValidityStatus = 'Q';
                     var geriatricFactorValueIds = [1,2];
                     var audienceIds = [1,2];
                     var annotationToPost = new AddAssesment
                         (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
-                    
                     var jqXHR = $.postJSON(OJ_ANNOTATION_CREATE, 
                         JSON.stringify(annotationToPost),
                         postCommentCallback
