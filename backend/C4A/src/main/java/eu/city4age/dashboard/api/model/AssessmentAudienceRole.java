@@ -19,6 +19,7 @@ public class AssessmentAudienceRole implements Serializable {
 	@JsonBackReference
 	private Assessment assessment;
 
+	@JsonBackReference
 	private CdRole cdRole;
 	private Date assigned;
 

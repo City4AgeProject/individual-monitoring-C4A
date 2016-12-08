@@ -8,13 +8,11 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.model.Assessment;
-import eu.city4age.dashboard.api.model.TimeInterval;
 
 /** Hibernate implementacija dao-a za asesment.
  *
@@ -42,7 +40,7 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 		return castList(Assessment.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT DISTINCT a FROM Assessment a LEFT JOIN a.assessedGefValueSets AS assessedGefValueSets LEFT JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue LEFT JOIN a.assessmentAudienceRoles AS assessmentAudienceRoles WHERE geriatricFactorValue.id = :geriatricFactorId ");
+				Query q = session.createQuery("SELECT DISTINCT a FROM Assessment a LEFT JOIN FETCH a.userInRole AS userInRole INNER JOIN a.assessedGefValueSets AS assessedGefValueSets INNER JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue INNER JOIN a.assessmentAudienceRoles AS assessmentAudienceRoles WHERE geriatricFactorValue.id = :geriatricFactorId ");
 				q.setParameter("geriatricFactorId", geriatricFactorId);
 				return q.list();
 			}
@@ -53,7 +51,7 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 		return castList(Assessment.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT a FROM Assessment a LEFT JOIN a.assessedGefValueSets AS assessedGefValueSets LEFT JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue WHERE geriatricFactorValue.id = :geriatricFactorId ");
+				Query q = session.createQuery("SELECT a FROM Assessment a INNER JOIN a.assessedGefValueSets AS assessedGefValueSets INNER JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue WHERE geriatricFactorValue.id = :geriatricFactorId ");
 				q.setParameter("geriatricFactorId", geriatricFactorId);
 				return q.list();
 			}
