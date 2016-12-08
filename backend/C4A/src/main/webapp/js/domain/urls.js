@@ -23,4 +23,4 @@ var OJ_ANNOTATION_FIND = root + 'OJAnnotation/find';
 var OJ_ANNOTATION_FOR_DATA_POINTS = root + 'OJAnnotation/forDataPoints';
 var OJ_ANNOTATION_CREATE = root + 'OJAnnotation';
 
-var OJ_CODE_BOOK_SELECT_ALL_ = root + 'OJCodeBook/';
+var OJ_CODE_BOOK_SELECT_ALL_RISKS = root + 'OJCodeBook/selectAllRisks';

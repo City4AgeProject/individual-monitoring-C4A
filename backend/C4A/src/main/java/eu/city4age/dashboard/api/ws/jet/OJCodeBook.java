@@ -10,10 +10,8 @@ import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import org.apache.log4j.Logger;
 
 /**
@@ -44,8 +42,8 @@ public class OJCodeBook {
 
         List<OJCodeBook.CdRiskStatus> list = new ArrayList<OJCodeBook.CdRiskStatus>();
         //TODO : use query to get all risk statuses or some other service ...
-        list.add(new OJCodeBook.CdRiskStatus("W", "Warning", "images/warning_risk.png"));
-        list.add(new OJCodeBook.CdRiskStatus("A", "Alert", "images/alert_risk.png"));
+        list.add(new OJCodeBook.CdRiskStatus("W", "Warning", "images/risk_warning.png"));
+        list.add(new OJCodeBook.CdRiskStatus("A", "Alert", "images/risk_alert.png"));
         return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(list)).build();
     }
 
