@@ -3,7 +3,6 @@ package eu.city4age.dashboard.api.json;
 import java.util.List;
 
 import eu.city4age.dashboard.api.domain.DataValidityStatus;
-import eu.city4age.dashboard.api.domain.RiskStatus;
 
 public class AddAssessmentWrapper {
 	
@@ -11,7 +10,7 @@ public class AddAssessmentWrapper {
 
 	String comment;
 	
-	RiskStatus riskStatus;
+	Character riskStatus;
 	
 	DataValidityStatus dataValidityStatus;
 	
@@ -44,11 +43,11 @@ public class AddAssessmentWrapper {
 		this.geriatricFactorValueIds = geriatricFactorValueIds;
 	}
 
-	public RiskStatus getRiskStatus() {
+	public Character getRiskStatus() {
 		return riskStatus;
 	}
 
-	public void setRiskStatus(RiskStatus riskStatus) {
+	public void setRiskStatus(Character riskStatus) {
 		this.riskStatus = riskStatus;
 	}
 
