@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 05-Dec-2016 15:33:07 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="CdFrailtyStatus" table="cd_frailty_status" optimistic-lock="version">
+
+        <id name="frailtyStatus" type="string">
+            <column name="frailty_status" length="9" />
+            <generator class="assigned" />
+        </id>
+
+        <property name="frailtyStatusDescription" type="string">
+            <column name="frailty_status_description" />
+        </property>
+ 
+        <set name="frailtyStatusTimelines" table="frailty_status_timeline" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="frailty_status" length="9" not-null="true" />
+            </key>
+            <one-to-many class="FrailtyStatusTimeline" />
+        </set>
+
+    </class>
+</hibernate-mapping>

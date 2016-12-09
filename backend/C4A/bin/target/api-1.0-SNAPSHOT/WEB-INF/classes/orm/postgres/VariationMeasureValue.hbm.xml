@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="VariationMeasureValue" table="variation_measure_value" optimistic-lock="version">
+
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+
+        <many-to-one name="activity" class="Activity" fetch="select">
+            <column name="activity_id" />
+        </many-to-one>
+        
+        <many-to-one name="userInRole" class="UserInRole" fetch="select">
+            <column name="user_in_role_id" not-null="true" />
+        </many-to-one>
+        
+        <property name="measureValue" type="java.lang.Float">
+            <column name="measure_value" precision="8" scale="8" />
+        </property>
+
+        <many-to-one name="cdDetectionVariable" class="CdDetectionVariable" fetch="select">
+            <column name="measure_type_id" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="cdDataSourceType" class="CdDataSourceType" fetch="select">
+            <column name="data_source_type" length="3" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="timeInterval" class="TimeInterval" fetch="select">
+            <column name="time_interval_id" not-null="true" />
+        </many-to-one>
+
+        <set name="numericIndicatorValues" table="numeric_indicator_value" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="variation_measure_id" not-null="true" />
+            </key>
+            <one-to-many class="NumericIndicatorValue" />
+        </set>
+
+    </class>
+</hibernate-mapping>

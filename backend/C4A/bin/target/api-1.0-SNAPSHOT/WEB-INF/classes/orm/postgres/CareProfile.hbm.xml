@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="CareProfile" table="care_profile" optimistic-lock="version">
+    
+        <id name="userInRoleId" type="long">
+            <column name="user_in_role_id" />
+            <generator class="foreign">
+                <param name="property">userInRoleById</param>
+            </generator>
+        </id>
+        
+        <one-to-one name="userInRoleById" class="UserInRole" constrained="true"></one-to-one>
+        
+        <property name="individualSummary" type="string">
+            <column name="individual_summary" not-null="true" />
+        </property>
+        
+        <property name="attentionStatus" type="java.lang.Character">
+            <column name="attention_status" length="1" />
+        </property>
+        
+        <property name="interventionStatus" type="java.lang.Character">
+            <column name="intervention_status" length="1" />
+        </property>
+        
+        <property name="lastInterventionDate" type="date">
+            <column name="last_intervention_date" length="13" />
+        </property>
+        
+        <property name="created" type="timestamp">
+            <column name="created" length="29" not-null="true" />
+        </property>
+        
+        <property name="lastUpdated" type="timestamp">
+            <column name="last_updated" length="29" />
+        </property>
+        
+        <many-to-one name="userInRoleByCreatedBy" class="UserInRole" fetch="select">
+            <column name="created_by" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="userInRoleByLastUpdatedBy" class="UserInRole" fetch="select">
+            <column name="last_updated_by" />
+        </many-to-one>
+        
+    </class>
+</hibernate-mapping>

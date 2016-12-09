@@ -5,6 +5,22 @@
  */
 package eu.city4age.dashboard.api.ws.jet;
 
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectReader;
+import eu.city4age.dashboard.api.dao.AssessmentDAO;
+import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
+import eu.city4age.dashboard.api.model.AbstractBaseEntity;
+import eu.city4age.dashboard.api.model.AssessedGefValueSet;
+import eu.city4age.dashboard.api.model.Assessment;
+import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
+import eu.city4age.dashboard.api.model.CdRole;
+import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.UserInRole;
+import eu.city4age.dashboard.api.ws.AssessmentsService;
+import eu.city4age.dashboard.api.ws.jet.dto.Annotation;
+>>>>>>> 66b51f1161a0fcf558d6283ac66e5a2da232b7b2
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -58,7 +74,9 @@ public class OJAnnotation {
 
     @Autowired
     private AssessmentDAO assessmentDAO;
-
+    
+    @Autowired AssessmentsService assessmentsService;
+    
     @GET
     @Path("forDataPoints")
     @Produces(MediaType.APPLICATION_JSON)
@@ -86,6 +104,13 @@ public class OJAnnotation {
             return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(annotations)).build();
     }
 
+    /**
+     * 
+     * @param json
+     * @return
+     * @throws URISyntaxException
+     * @throws IOException 
+     */
     @POST
     @Path("")
     @Consumes(MediaType.APPLICATION_JSON)
