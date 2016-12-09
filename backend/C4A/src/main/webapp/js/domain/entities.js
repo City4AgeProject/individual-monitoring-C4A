@@ -6,6 +6,7 @@ function Group() {
 function Serie() {
     this.name = '';
     this.items = [];
+    this.source = '';
 }
 
 function Item() {
