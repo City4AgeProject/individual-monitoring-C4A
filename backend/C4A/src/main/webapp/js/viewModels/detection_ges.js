@@ -53,13 +53,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (data) {
                         for (var i = 0; i < data.length; i++) {
                             var annotationsSerie = new Serie();
+                            annotationsSerie.name = 'Assesments';
                             var annotationeSerieItems = [];
-                            for(var j = 0; i < anno.assessedGefValueSets.length; j++) {
-                                var assessedGefValueSet = anno.assessedGefValueSets[j];
+                            for(var j = 0; j < data[i].assessedGefValueSets.length; j++) {
+                                var assessedGefValueSet = data[i].assessedGefValueSets[j];
                                 var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
                                 var id = geriatricFactorValue.gefValue;
                                 var gefValue = geriatricFactorValue.gefValue;
-                                
                                 var item = new Item();
                                 item.id = id;
                                 item.value = gefValue;
