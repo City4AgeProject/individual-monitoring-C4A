@@ -1,0 +1,150 @@
+<meta charset="utf-8">
+
+<!--
+ Copyright (c) 2014, 2016, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+ 
+ <style>
+.avatar
+{
+  border-radius: 50%; 
+  background-size: 35px 35px; 
+  width: 35px; height: 35px; 
+  display: inline-block;
+}
+
+.container
+{
+  display: inline-block;
+  margin: 0 10px;
+  vertical-align: top;
+}
+
+.name
+{
+  font-weight: bold;
+}
+</style>
+
+
+<h1>People</h1>
+<div>
+  <ul id="listview" aria-label="list with static hierarchical data" 
+       data-bind="ojComponent: {component: 'ojListView', selectionMode: 'single', expanded: ['a', 'b', 'c'], item: {selectable: itemOnly}}">
+    <li id="a">
+        <span>A</span>
+        <ul>
+            <li id="amybartlet" data-bind="click: function(){$root.router.go('detection_gef');}">
+                <span class="avatar" style="background-image: url('images/12.png')"></span>
+                <div class="container">
+                    <div>
+                        <span class="name">Amy Bartlet</span>
+                    </div>
+                    <div>
+                        <span class="oj-text-xs oj-text-secondary-color">Vice President</span>
+                    </div>
+                </div>
+            </li>
+            <li id="andyjones">
+                <span class="avatar" style="background-image: url('images/10.png')"></span>
+                <div class="container">
+                    <div>
+                        <span class="name">Andy Jones</span>
+                    </div>
+                    <div>
+                        <span class="oj-text-xs oj-text-secondary-color">Director</span>
+                    </div>
+                </div>
+            </li>
+            <li id="andrewbugsy">
+                <span class="avatar" style="background-image: url('images/11.png')"></span>
+                <div class="container">
+                    <div>
+                        <span class="name">Andrew Bugsy</span>
+                    </div>
+                    <div>
+                        <span class="oj-text-xs oj-text-secondary-color">Individual Contributer</span>
+                    </div>
+                </div>
+            </li>
+            <li id="annettbarnes">
+                <span class="avatar" style="background-image: url('images/14.png')"></span>
+                <div class="container">
+                    <div>
+                        <span class="name">Annett Barnes</span>
+                    </div>
+                    <div>
+                        <span class="oj-text-xs oj-text-secondary-color">Individual Contributer</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li id="b">
+        <span>B</span>
+        <ul>
+            <li id="bobjones">
+                <span class="avatar" style="background-image: url('images/1.png')"></span>
+                <div class="container">
+                    <div>
+                        <span class="name">Bob Jones</span>
+                    </div>
+                    <div>
+                        <span class="oj-text-xs oj-text-secondary-color">Salesman</span>
+                    </div>
+                </div>
+            </li>
+            <li id="bartbuckler">
+                <span class="avatar" style="background-image: url('images/13.png')"></span>
+                <div class="container">
+                    <div>
+                        <span class="name">Bart Buckler</span>
+                    </div>
+                    <div>
+                        <span class="oj-text-xs oj-text-secondary-color">Purchasing</span>
+                    </div>
+                </div>
+            </li>
+            <li id="bobbyfisher">
+                <span class="avatar" style="background-image: url('images/2.png')"></span>
+                <div class="container">
+                    <div>
+                        <span class="name">Bobby Fisher</span>
+                    </div>
+                    <div>
+                        <span class="oj-text-xs oj-text-secondary-color">Individual Contributer</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li id="c">
+        <span>C</span>
+        <ul>
+            <li id="cathyjones">
+                <span class="avatar" style="background-image: url('images/3.png')"></span>
+                <div class="container">
+                <div>
+                    <span class="name">Cathy Jones</span>
+                </div>
+                <div>
+                    <span class="oj-text-xs oj-text-secondary-color">Director</span>
+                </div>
+                </div>
+            </li>
+            <li id="carollsmith">
+                <span class="avatar" style="background-image: url('images/4.png')"></span>
+                <div class="container">
+                <div>
+                    <span class="name">Cody Smith</span>
+                </div>
+                <div>
+                    <span class="oj-text-xs oj-text-secondary-color">Purchasing</span>
+                </div>
+                </div>
+            </li>
+        </ul>
+    </li>
+</ul>
+</div>

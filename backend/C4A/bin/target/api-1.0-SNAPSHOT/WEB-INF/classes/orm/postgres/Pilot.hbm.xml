@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+
+    <class name="Pilot" table="pilot" optimistic-lock="version">
+    
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+        
+        <property name="name" type="string">
+            <column name="name" length="50" />
+        </property>
+
+        <property name="pilotCode" type="string">
+            <column name="pilot_code" length="50" />
+        </property>
+        
+        <property name="populationSize" type="java.lang.Double">
+            <column name="population_size" precision="17" scale="17" />
+        </property>
+        
+        <set name="locations" table="location" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="pilot_id" not-null="true" />
+            </key>
+            <one-to-many class="Location" />
+        </set>
+        
+        <set name="cdPilotDetectionVariables" table="cd_pilot_detection_variable" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="pilot_id" not-null="true" />
+            </key>
+            <one-to-many class="CdPilotDetectionVariable" />
+        </set>
+        
+    </class>
+</hibernate-mapping>

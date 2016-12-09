@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="InterActivityBehaviourVariation" table="inter_activity_behaviour_variation" optimistic-lock="version">
+
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+
+        <property name="deviation" type="java.lang.Float">
+            <column name="deviation" precision="8" scale="8" />
+        </property>
+
+        <many-to-one name="activityByExpectedActivityId" class="Activity" fetch="select">
+            <column name="expected_activity_id" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="activityByRealActivityId" class="Activity" fetch="select">
+            <column name="real_activity_id" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="numericIndicatorValue" class="NumericIndicatorValue" fetch="select">
+            <column name="numeric_indicator_id" not-null="true" />
+        </many-to-one>
+
+    </class>
+</hibernate-mapping>

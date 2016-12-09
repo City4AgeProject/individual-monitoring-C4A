@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="CdDataSourceType" table="cd_data_source_type" optimistic-lock="version">
+    
+        <id name="dataSourceType" type="string">
+            <column name="data_source_type" length="3" />
+            <generator class="assigned" />
+        </id>
+        
+        <property name="dataSourceTypeDescription" type="string">
+            <column name="data_source_type_description" length="250" not-null="true" />
+        </property>
+        
+        <set name="variationMeasureValues" table="variation_measure_value" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="data_source_type" length="3" not-null="true" />
+            </key>
+            <one-to-many class="VariationMeasureValue" />
+        </set>
+        
+        <set name="activities" table="activity" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="data_source_type" length="3" not-null="true" />
+            </key>
+            <one-to-many class="Activity" />
+        </set>
+        
+        <set name="numericIndicatorValues" table="numeric_indicator_value" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="data_source_type" length="3" not-null="true" />
+            </key>
+            <one-to-many class="NumericIndicatorValue" />
+        </set>
+        
+    </class>
+</hibernate-mapping>

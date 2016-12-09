@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="Activity" table="activity" optimistic-lock="version">
+   
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+	    
+        <property name="activityName" type="string">
+            <column name="activity_name" length="50" />
+        </property>
+        
+        <many-to-one name="userInRole" class="UserInRole" fetch="select">
+            <column name="user_in_role_id" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="timeInterval" class="TimeInterval" fetch="select">
+            <column name="time_interval_id" not-null="true" />
+        </many-to-one>
+	    
+        <many-to-one name="cdDataSourceType" class="CdDataSourceType" fetch="select">
+            <column name="data_source_type" length="3" not-null="true" />
+        </many-to-one>
+        
+        <set name="executedActions" table="executed_action" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="activityid" />
+            </key>
+            <one-to-many class="ExecutedAction" />
+        </set>
+        
+        <set name="interActivityBehaviourVariationsForRealActivityId" table="inter_activity_behaviour_variation" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="real_activity_id" not-null="true" />
+            </key>
+            <one-to-many class="InterActivityBehaviourVariation" />
+        </set>
+        
+        <set name="variationMeasureValues" table="variation_measure_value" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="activity_id" />
+            </key>
+            <one-to-many class="VariationMeasureValue" />
+        </set>
+        
+        <set name="eams" table="eam" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="activityid" not-null="true" />
+            </key>
+            <one-to-many class="Eam" />
+        </set>
+        
+        <set name="interActivityBehaviourVariationsForExpectedActivityId" table="inter_activity_behaviour_variation" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="expected_activity_id" not-null="true" />
+            </key>
+            <one-to-many class="InterActivityBehaviourVariation" />
+        </set>
+        
+    </class>
+</hibernate-mapping>
