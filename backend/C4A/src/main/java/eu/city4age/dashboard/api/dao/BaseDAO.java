@@ -16,7 +16,7 @@ public interface BaseDAO {
 
     void update(AbstractBaseEntity entity);
 
-    AbstractBaseEntity insertOrUpdate(AbstractBaseEntity entity);
+    Object insertOrUpdate(Object entity);
 
     AbstractBaseEntity getById(Class<? extends AbstractBaseEntity> clazz, Serializable id);
 
@@ -26,6 +26,8 @@ public interface BaseDAO {
     
     void delete(AbstractBaseEntity entity);
     
-    void insertOrUpdateAll(List<AbstractBaseEntity> entities);
+    void insertOrUpdateAll(List<?> entities);
+    
+    void flush();
 
 }

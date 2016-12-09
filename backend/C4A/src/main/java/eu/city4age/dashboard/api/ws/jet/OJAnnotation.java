@@ -5,19 +5,6 @@
  */
 package eu.city4age.dashboard.api.ws.jet;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectReader;
-import eu.city4age.dashboard.api.dao.AssessmentDAO;
-import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
-import eu.city4age.dashboard.api.model.AbstractBaseEntity;
-import eu.city4age.dashboard.api.model.AssessedGefValueSet;
-import eu.city4age.dashboard.api.model.Assessment;
-import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
-import eu.city4age.dashboard.api.model.CdRole;
-import eu.city4age.dashboard.api.model.GeriatricFactorValue;
-import eu.city4age.dashboard.api.model.UserInRole;
-import eu.city4age.dashboard.api.ws.jet.dto.Annotation;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,8 +26,24 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectReader;
+
+import eu.city4age.dashboard.api.dao.AssessmentDAO;
+import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
+import eu.city4age.dashboard.api.model.AbstractBaseEntity;
+import eu.city4age.dashboard.api.model.AssessedGefValueSet;
+import eu.city4age.dashboard.api.model.Assessment;
+import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
+import eu.city4age.dashboard.api.model.CdRole;
+import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.UserInRole;
+import eu.city4age.dashboard.api.ws.jet.dto.Annotation;
 
 /**
  *
@@ -113,7 +117,7 @@ public class OJAnnotation {
             assessedGefValueSet.getGeriatricFactorValue().setId(data.getGeriatricFactorValueIds().get(i));
             assessedGefValueSets.add(assessedGefValueSet);
         }
-        AbstractBaseEntity saved = assessmentDAO.insertOrUpdate(assessment);
+        AbstractBaseEntity saved = null; //assessmentDAO.insertOrUpdate(assessment);
 
         return Response.created(new URI("/" + PATH + "/" + saved.getId())).build();
     }
