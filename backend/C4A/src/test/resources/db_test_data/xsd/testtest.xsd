@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns="testtest" targetNamespace="testtest">
+	<xsd:element name="activity" type="activity__type" />
+	<xsd:element name="cd_frailty_status" type="cd_frailty_status__type" />
+	<xsd:element name="cd_detection_variable_type" type="cd_detection_variable_type__type" />
+	<xsd:element name="variation_measure_value" type="variation_measure_value__type" />
+	<xsd:element name="cd_role" type="cd_role__type" />
+	<xsd:element name="dbmaintain_scripts" type="dbmaintain_scripts__type" />
+	<xsd:element name="time_interval" type="time_interval__type" />
+	<xsd:element name="frailty_status_timeline" type="frailty_status_timeline__type" />
+	<xsd:element name="eam" type="eam__type" />
+	<xsd:element name="assessment" type="assessment__type" />
+	<xsd:element name="user_in_system" type="user_in_system__type" />
+	<xsd:element name="inter_activity_behaviour_variation" type="inter_activity_behaviour_variation__type" />
+	<xsd:element name="care_profile" type="care_profile__type" />
+	<xsd:element name="action" type="action__type" />
+	<xsd:element name="cd_typical_period" type="cd_typical_period__type" />
+	<xsd:element name="user_in_role" type="user_in_role__type" />
+	<xsd:element name="geriatric_factor_value" type="geriatric_factor_value__type" />
+	<xsd:element name="pilot" type="pilot__type" />
+	<xsd:element name="assessed_gef_value_set" type="assessed_gef_value_set__type" />
+	<xsd:element name="cr_profile" type="cr_profile__type" />
+	<xsd:element name="source_evidence" type="source_evidence__type" />
+	<xsd:element name="cd_data_source_type" type="cd_data_source_type__type" />
+	<xsd:element name="executed_action" type="executed_action__type" />
+	<xsd:element name="numeric_indicator_value" type="numeric_indicator_value__type" />
+	<xsd:element name="cd_pilot_detection_variable" type="cd_pilot_detection_variable__type" />
+	<xsd:element name="cd_detection_variable" type="cd_detection_variable__type" />
+	<xsd:element name="location" type="location__type" />
+	<xsd:element name="assessment_audience_role" type="assessment_audience_role__type" />
+	<xsd:complexType name="activity__type">
+		<xsd:attribute name="activity_name" use="optional" />
+		<xsd:attribute name="user_in_role_id" use="optional" />
+		<xsd:attribute name="time_interval_id" use="optional" />
+		<xsd:attribute name="data_source_type" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cd_frailty_status__type">
+		<xsd:attribute name="frailty_status_description" use="optional" />
+		<xsd:attribute name="frailty_status" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cd_detection_variable_type__type">
+		<xsd:attribute name="detection_variable_type" use="optional" />
+		<xsd:attribute name="detection_variable_type_description" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="variation_measure_value__type">
+		<xsd:attribute name="measure_value" use="optional" />
+		<xsd:attribute name="measure_type_id" use="optional" />
+		<xsd:attribute name="user_in_role_id" use="optional" />
+		<xsd:attribute name="time_interval_id" use="optional" />
+		<xsd:attribute name="activity_id" use="optional" />
+		<xsd:attribute name="data_source_type" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cd_role__type">
+		<xsd:attribute name="role_name" use="optional" />
+		<xsd:attribute name="role_abbreviation" use="optional" />
+		<xsd:attribute name="valid_to" use="optional" />
+		<xsd:attribute name="valid_from" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="role_description" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="dbmaintain_scripts__type">
+		<xsd:attribute name="file_name" use="optional" />
+		<xsd:attribute name="executed_at" use="optional" />
+		<xsd:attribute name="checksum" use="optional" />
+		<xsd:attribute name="file_last_modified_at" use="optional" />
+		<xsd:attribute name="version" use="optional" />
+		<xsd:attribute name="succeeded" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="time_interval__type">
+		<xsd:attribute name="interval_end" use="optional" />
+		<xsd:attribute name="typical_period" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="interval_start" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="frailty_status_timeline__type">
+		<xsd:attribute name="frailty_notice" use="optional" />
+		<xsd:attribute name="user_in_role_id" use="optional" />
+		<xsd:attribute name="changed_by" use="optional" />
+		<xsd:attribute name="time_interval_id" use="optional" />
+		<xsd:attribute name="frailty_status" use="optional" />
+		<xsd:attribute name="changed" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="eam__type">
+		<xsd:attribute name="duration" use="optional" />
+		<xsd:attribute name="activityid" use="optional" />
+		<xsd:attribute name="actionid" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="assessment__type">
+		<xsd:attribute name="risk_status" use="optional" />
+		<xsd:attribute name="created" use="optional" />
+		<xsd:attribute name="data_validity_status" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="assessment_comment" use="optional" />
+		<xsd:attribute name="author_id" use="optional" />
+		<xsd:attribute name="updated" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="user_in_system__type">
+		<xsd:attribute name="password" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="created_date" use="optional" />
+		<xsd:attribute name="username" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="inter_activity_behaviour_variation__type">
+		<xsd:attribute name="expected_activity_id" use="optional" />
+		<xsd:attribute name="numeric_indicator_id" use="optional" />
+		<xsd:attribute name="deviation" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="real_activity_id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="care_profile__type">
+		<xsd:attribute name="attention_status" use="optional" />
+		<xsd:attribute name="intervention_status" use="optional" />
+		<xsd:attribute name="last_updated" use="optional" />
+		<xsd:attribute name="last_updated_by" use="optional" />
+		<xsd:attribute name="user_in_role_id" use="optional" />
+		<xsd:attribute name="created" use="optional" />
+		<xsd:attribute name="individual_summary" use="optional" />
+		<xsd:attribute name="last_intervention_date" use="optional" />
+		<xsd:attribute name="created_by" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="action__type">
+		<xsd:attribute name="action_name" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="category" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cd_typical_period__type">
+		<xsd:attribute name="typical_duration" use="optional" />
+		<xsd:attribute name="typical_period" use="optional" />
+		<xsd:attribute name="period_description" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="user_in_role__type">
+		<xsd:attribute name="role_id" use="optional" />
+		<xsd:attribute name="valid_to" use="optional" />
+		<xsd:attribute name="valid_from" use="optional" />
+		<xsd:attribute name="user_in_system_id" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="pilot_id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="geriatric_factor_value__type">
+		<xsd:attribute name="gef_type_id" use="optional" />
+		<xsd:attribute name="user_in_role_id" use="optional" />
+		<xsd:attribute name="time_interval_id" use="optional" />
+		<xsd:attribute name="derivation_weight" use="optional" />
+		<xsd:attribute name="gef_value" use="optional" />
+		<xsd:attribute name="data_source_type" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="pilot__type">
+		<xsd:attribute name="population_size" use="optional" />
+		<xsd:attribute name="pilot_code" use="optional" />
+		<xsd:attribute name="name" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="assessed_gef_value_set__type">
+		<xsd:attribute name="detection_variable_type" use="optional" />
+		<xsd:attribute name="assessment_id" use="optional" />
+		<xsd:attribute name="gef_value_id" use="optional" />
+		<xsd:attribute name="data_point_id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cr_profile__type">
+		<xsd:attribute name="date" use="optional" />
+		<xsd:attribute name="ref_mean_blood_pressure" use="optional" />
+		<xsd:attribute name="user_in_role_id" use="optional" />
+		<xsd:attribute name="gender" use="optional" />
+		<xsd:attribute name="ref_height" use="optional" />
+		<xsd:attribute name="birth_date" use="optional" />
+		<xsd:attribute name="ref_weight" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="source_evidence__type">
+		<xsd:attribute name="text_evidence" use="optional" />
+		<xsd:attribute name="geriatric_factor_id" use="optional" />
+		<xsd:attribute name="uploaded" use="optional" />
+		<xsd:attribute name="author_id" use="optional" />
+		<xsd:attribute name="multimedia_evidence" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cd_data_source_type__type">
+		<xsd:attribute name="data_source_type" use="optional" />
+		<xsd:attribute name="data_source_type_description" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="executed_action__type">
+		<xsd:attribute name="date" use="optional" />
+		<xsd:attribute name="sensor_id" use="optional" />
+		<xsd:attribute name="activityid" use="optional" />
+		<xsd:attribute name="userinroleid" use="optional" />
+		<xsd:attribute name="extra_information" use="optional" />
+		<xsd:attribute name="payload" use="optional" />
+		<xsd:attribute name="locationid" use="optional" />
+		<xsd:attribute name="rating" use="optional" />
+		<xsd:attribute name="actionid" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="numeric_indicator_value__type">
+		<xsd:attribute name="user_in_role_id" use="optional" />
+		<xsd:attribute name="time_interval_id" use="optional" />
+		<xsd:attribute name="data_source_type" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="nui_value" use="optional" />
+		<xsd:attribute name="nui_type_id" use="optional" />
+		<xsd:attribute name="variation_measure_id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cd_pilot_detection_variable__type">
+		<xsd:attribute name="detection_variable_description_formula" use="optional" />
+		<xsd:attribute name="detection_variable_id" use="optional" />
+		<xsd:attribute name="pilot_id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cd_detection_variable__type">
+		<xsd:attribute name="detection_variable_type" use="optional" />
+		<xsd:attribute name="valid_to" use="optional" />
+		<xsd:attribute name="derivation_weight" use="optional" />
+		<xsd:attribute name="valid_from" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="detection_variable_name" use="optional" />
+		<xsd:attribute name="derived_detection_variable_id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="location__type">
+		<xsd:attribute name="location_name" use="optional" />
+		<xsd:attribute name="indoor" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="pilot_id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="assessment_audience_role__type">
+		<xsd:attribute name="role_id" use="optional" />
+		<xsd:attribute name="assessment_id" use="optional" />
+		<xsd:attribute name="assigned" use="optional" />
+	</xsd:complexType>
+</xsd:schema>

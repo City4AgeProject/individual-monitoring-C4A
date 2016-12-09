@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="ExecutedAction" table="executed_action" optimistic-lock="version">
+
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+
+        <property name="date" type="timestamp">
+            <column name="date" length="29" not-null="true" />
+        </property>
+
+        <many-to-one name="location" class="Location" fetch="select">
+            <column name="locationid" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="action" class="Action" fetch="select">
+            <column name="actionid" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="activity" class="Activity" fetch="select">
+            <column name="activityid" />
+        </many-to-one>
+
+        <many-to-one name="userInRole" class="UserInRole" fetch="select">
+            <column name="userinroleid" not-null="true" />
+        </many-to-one>
+
+        <property name="rating" type="java.lang.Integer">
+            <column name="rating" />
+        </property>
+
+        <property name="sensorId" type="int">
+            <column name="sensor_id" not-null="true" />
+        </property>
+
+        <property name="payload" type="string">
+            <column name="payload" length="50" not-null="true" />
+        </property>
+
+        <property name="extraInformation" type="string">
+            <column name="extra_information" />
+        </property>
+
+    </class>
+</hibernate-mapping>

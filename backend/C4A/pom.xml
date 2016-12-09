@@ -1,0 +1,323 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>eu.city4age.dashboard.api</groupId>
+    <artifactId>api</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>api</name>
+
+    <properties>
+        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <glassfish.home>C:\glassfish-4.1.1\glassfish4</glassfish.home>
+        <glassfish.domain>domain1</glassfish.domain>
+        <glassfish.domain.username>admin</glassfish.domain.username>
+        <glassfish.passwordFile>C:\glassfish-4.1.1\glassfish4\glassfish\domains\domain1\config\domain-passwords</glassfish.passwordFile>
+        <spring.version>4.1.4.RELEASE</spring.version>
+        <unitils.version>3.4.3</unitils.version>
+        <jersey.version>2.14</jersey.version>
+    </properties>
+
+    <dependencies>
+
+  		<!-- Jersey -->
+ 		<!-- Jersey-Spring http://mvnrepository.com/artifact/org.glassfish.jersey.ext/jersey-spring3/2.4.1 -->
+		<dependency>
+			<groupId>org.glassfish.jersey.ext</groupId>
+			<artifactId>jersey-spring3</artifactId>
+			<version>${jersey.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>	
+		<dependency>
+			<groupId>org.glassfish.jersey.ext</groupId>
+			<artifactId>jersey-entity-filtering</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-annotations</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.datatype</groupId>
+		    <artifactId>jackson-datatype-hibernate3</artifactId>
+		    <version>2.3.2</version>
+		</dependency>
+					
+
+		<!-- Spring 4 dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+			   <exclusion>
+			      <groupId>commons-logging</groupId>
+			      <artifactId>commons-logging</artifactId>
+			   </exclusion>
+			</exclusions>			
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-aspects</artifactId>
+		    <version>${spring.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-beans</artifactId>
+		    <version>${spring.version}</version>
+		</dependency>
+		
+		<!-- Hibernate -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-core</artifactId>
+		    <version>3.6.10.Final</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-commons-annotations</artifactId>
+		    <version>3.2.0.Final</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-validator</artifactId>
+		    <version>4.2.0.Final</version>
+		</dependency>
+	
+    
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>3.1.0</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>9.4.1212</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>commons-collections</groupId>
+		    <artifactId>commons-collections</artifactId>
+		    <version>3.2.1</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.jadira.usertype</groupId>
+		    <artifactId>usertype.core</artifactId>
+		    <version>3.0.0.GA</version>
+		</dependency>
+
+
+		<!-- Logging -->
+		<dependency>
+		    <groupId>log4j</groupId>
+		    <artifactId>log4j</artifactId>
+		    <version>1.2.17</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>1.7.21</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-simple</artifactId>
+		    <version>1.7.21</version>
+		</dependency>	
+
+		<!-- Testing -->
+		<!-- Unitils -->
+		<dependency>
+		    <groupId>org.unitils</groupId>
+		    <artifactId>unitils-core</artifactId>
+		    <version>${unitils.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.unitils</groupId>
+		    <artifactId>unitils-orm</artifactId>
+		    <version>${unitils.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.unitils</groupId>
+		    <artifactId>unitils-spring</artifactId>
+		    <version>${unitils.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.unitils</groupId>
+		    <artifactId>unitils-dbunit</artifactId>
+		    <version>${unitils.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.unitils</groupId>
+		    <artifactId>unitils-database</artifactId>
+		    <version>${unitils.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.unitils</groupId>
+		    <artifactId>unitils-dbmaintainer</artifactId>
+		    <version>${unitils.version}</version>
+		    <scope>test</scope>
+		</dependency>
+
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>4.12</version>
+		    <scope>test</scope>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.dbunit</groupId>
+		    <artifactId>dbunit</artifactId>
+		    <version>2.5.3</version>
+		    <scope>test</scope>
+		</dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+			<plugin>
+			  <groupId>org.eclipse.jetty</groupId>
+			  <artifactId>jetty-maven-plugin</artifactId>
+			  <version>9.3.14.v20161028</version>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <compilerArguments>
+                        <endorseddirs>${endorsed.dir}</endorseddirs>
+                    </compilerArguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${endorsed.dir}</outputDirectory>
+                            <silent>true</silent>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>javax</groupId>
+                                    <artifactId>javaee-endorsed-api</artifactId>
+                                    <version>7.0</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.glassfish.maven.plugin</groupId>
+                <artifactId>maven-glassfish-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <glassfishDirectory>${glassfish.home}</glassfishDirectory>
+                    <user>${glassfish.domain.username}</user>
+                    <passwordFile>${glassfish.passwordFile}</passwordFile>
+			        <domain>
+			            <name>${glassfish.domain}</name>
+			            <httpPort>8080</httpPort>
+		            	<adminPort>4848</adminPort>
+			        </domain>
+                    <components>
+                        <component>
+                            <name>${project.artifactId}</name>
+                            <artifact>${project.build.directory}/${project.build.finalName}.war</artifact>
+                        </component>
+                    </components>
+                </configuration>
+            </plugin>
+
+      </plugins>
+    </build>
+</project>

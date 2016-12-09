@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="CrProfile" table="cr_profile" optimistic-lock="version">
+
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+
+        <property name="refHeight" type="java.lang.Float">
+            <column name="ref_height" precision="8" scale="8" />
+        </property>
+
+        <property name="refWeight" type="java.lang.Float">
+            <column name="ref_weight" precision="8" scale="8" />
+        </property>
+
+        <property name="refMeanBloodPressure" type="big_decimal">
+            <column name="ref_mean_blood_pressure" precision="5" />
+        </property>
+
+        <property name="date" type="time">
+            <column name="date" length="15" />
+        </property>
+
+        <many-to-one name="userInRole" class="UserInRole" fetch="select">
+            <column name="user_in_role_id" not-null="true" />
+        </many-to-one>
+
+        <property name="birthDate" type="date">
+            <column name="birth_date" length="13" not-null="true" />
+        </property>
+
+        <property name="gender" type="boolean">
+            <column name="gender" not-null="true" />
+        </property>
+
+    </class>
+</hibernate-mapping>

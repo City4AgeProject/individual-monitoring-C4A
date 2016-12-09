@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Middle tier application context definition for the image database.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+	<!-- 
+		Configurer that replaces ${...} placeholders with values from a properties file
+	   (in this case, JDBC-related settings for the dataSource definition below)
+	-->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>		
+			</list>
+		</property>
+	</bean>
+
+	<!--
+		Activates various annotations to be detected in bean classes:
+		Spring's @Required and @Autowired, as well as JSR 250's @Resource.
+	-->
+	<context:annotation-config />
+	<context:component-scan base-package="eu.city4age.dashboard.api.*" />
+	
+	<bean id="assessmentService" class="eu.city4age.dashboard.api.ws.AssessmentsService" />
+
+	<bean id="assessmentDAO" class="eu.city4age.dashboard.api.dao.hibernate.HibernateAssessmentDAO" parent="baseDAO"/>
+	
+	<bean id="detectionVariableDAO" class="eu.city4age.dashboard.api.dao.hibernate.HibernateDetectionVariableDAO" parent="baseDAO"/>
+	
+	<bean id="timeIntervalDAO" class="eu.city4age.dashboard.api.dao.hibernate.HibernateTimeIntervalDAO" parent="baseDAO"/>
+	 
+	<bean id="baseDAO" class="eu.city4age.dashboard.api.dao.hibernate.HibernateBaseDAO" abstract="true"
+										p:sessionFactory="sessionFactory" p:sessionFactory-ref="sessionFactory" />
+	
+</beans>
