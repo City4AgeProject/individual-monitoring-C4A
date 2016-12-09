@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="CdRole" table="cd_role" optimistic-lock="version">
+
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+
+        <property name="roleName" type="string">
+            <column name="role_name" length="50" />
+        </property>
+
+        <property name="roleAbbreviation" type="string">
+            <column name="role_abbreviation" length="3" />
+        </property>
+
+        <property name="roleDescription" type="string">
+            <column name="role_description" length="200" />
+        </property>
+
+        <property name="validFrom" type="timestamp">
+            <column name="valid_from" length="29" />
+        </property>
+
+        <property name="validTo" type="timestamp">
+            <column name="valid_to" length="29" />
+        </property>
+
+        <set name="assessmentAudienceRoles" table="assessment_audience_role" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="role_id" not-null="true" />
+            </key>
+            <one-to-many class="AssessmentAudienceRole" />
+        </set>
+
+    </class>
+</hibernate-mapping>
