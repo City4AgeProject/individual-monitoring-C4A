@@ -10,7 +10,6 @@ import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
 import eu.city4age.dashboard.api.dao.TimeIntervalDAO;
 import eu.city4age.dashboard.api.dto.DiagramDataDTO;
-import eu.city4age.dashboard.api.model.AssessedGefValueSet;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.ws.AssessmentsService;
@@ -27,8 +26,6 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import eu.city4age.dashboard.api.ws.jet.dto.DataSet;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  *
@@ -39,7 +36,7 @@ public class OJDataSet {
 
     public static final String PATH = "OJDataSet";
 
-    static protected Logger logger = Logger.getLogger(OJDataSet.class);
+    private static Logger logger = Logger.getLogger(OJDataSet.class);
 
     @Autowired
     private AssessmentDAO assessmentDAO;

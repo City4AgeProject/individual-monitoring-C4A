@@ -6,6 +6,7 @@ public enum RiskStatus {
 	RISK_WARNING('W'),
 	RISK_ALERT('A');
 
+
 	private final Character c;
 
 	private RiskStatus(Character ch) {

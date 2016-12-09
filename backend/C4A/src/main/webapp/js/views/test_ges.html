@@ -1,4 +1,22 @@
-<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style>
+    a:link {
+        color: #3C9DBC;
+        text-decoration: none; 
+    } 
+    a:visited {
+        color: #3C9DBC;
+        text-decoration: none;
+    }
+    a:hover {
+        color: #3C9DBC;
+        text-decoration: underline;
+    }
+</style>
+
+<div id='dges-container'>
+    
 <div class="oj-flex-item" >
     <!-- line test chart -->
     <div id="chart-test-container">
@@ -21,22 +39,6 @@
         </div>
     </div>  
     <!-- end test chart drilling: 'on' -->
-
-    <!-- comment submit  -->
-    <div class="oj-flex-item" >
-        <div id="post_comment_section" >
-             <label for="comment-input">Insert comment here:</label>
-            <input id="comment-input" 
-                   type="text"
-                   data-bind="ojComponent: {component: 'ojInputText', 
-                                  value: commentText, placeholder: 'No comment yet.'}"/>
-            
-            <button id= "postComment"
-                    data-bind="click: bcPostComment, 
-                       ojComponent: { component: 'ojButton', label: 'Post comment' }">
-            </button>
-        </div>
-    </div>
     
     <!-- select point/s popup -->
     <div id="popupWrapper1">
@@ -68,14 +70,14 @@
                                <span data-bind="text: shortComment"> </span>
                             </div>
                         </div>
-                         <!-- /ko -->
+                        <!-- /ko -->
                     </div>
                     <div class="oj-flex-item" style="height:10px">
                     </div>
                     <div class="oj-flex-item oj-flex-items-pad">
                         <div class="oj-flex">
                             <div class="oj-flex-item">
-                                <a href="#" id="addAnnotation">
+                                <a href="#" id="addAnnotation" data-bind="click: lcAddPopup">
                                     <img src="images/comment_add.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
                                     Add annotation
                                 </a>
@@ -128,34 +130,34 @@
                                 <div class="oj-flex-item">
                                     <label id="selectgrouplabel">Choose type</label>
                                     <div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
-                                        <select id="selectTypePerRisk"
-                                                data-bind="ojComponent: {
-                                                        component: 'ojSelect',
-                                                        list: 'typePerRisk',
-                                                        rootAttributes: {style:'width:165px'}
-
-                                            }">
-                                        </select>
-                                        <ul id="typePerRisk" style="display: none">
-                                            <li> </li>
-                                            <li oj-data-value="Risk warning"><img src="images/risk_warning.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Risk warning</li>
-                                            <li oj-data-value="Risk alert"><img src="images/risk_alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Risk alert</li>
+                                        <ul id="riskList" style="display: none">
+                                            <!-- ko foreach: risksTags -->
+                                            <li data-bind="attr: {'oj-data-value': value}">
+                                                <img data-bind="attr: {src: imagePath}" 
+                                                     role="presentation" style="vertical-align:middle; width: 16px; height: 16px;"/> 
+                                                <span data-bind="text: label"></span>
+                                            </li>
+                                            <!-- /ko -->   
                                         </ul>
+                                        <input id="inputJobSearch" placeholder="Choose risk..." required="true"
+                                               data-bind="ojComponent: {
+                                                            component: 'ojCombobox',
+                                                            value: selectedRiskStatus,
+                                                            list: 'riskList',
+                                                            rootAttributes: {style:'width:165px'}}">
+                                        
                                         <select id="selectTypePerDataValidity"
                                                 data-bind="ojComponent: {
                                                         component: 'ojSelect',
                                                         list: 'typePerDataValidity',
-                                                        rootAttributes: {style:'width:165px'}
-                                            }">
+                                                        rootAttributes: {style:'width:165px'}}">
                                         </select>
                                         <ul id="typePerDataValidity" style="display: none">
                                             <li> </li>
-                                            <li oj-data-value="Questionable data"><img src="images/questionable_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Questionable data</li>
-                                            <li oj-data-value="Faulty data"><img src="images/faulty_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Faulty data</li>
+<!--                                        <li oj-data-value="Questionable data"><img src="images/questionable_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Questionable data</li>
+                                            <li oj-data-value="Faulty data"><img src="images/faulty_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Faulty data</li>-->
                                         </ul>
                                     </div>
-
-
 
                                 </div>
                             </div>
@@ -185,8 +187,9 @@
                                     <textarea id="textareacontrol" rows="5"
                                               data-bind="ojComponent: {
                                                     component: 'ojTextArea',
-                                                    rootAttributes: {style:'max-width:334px'}
-                                                }">
+                                                    rootAttributes: {style:'max-width:334px'}, 
+                                                    value: commentText,
+                                                    placeholder: 'No comment yet.'}">
                                     </textarea>
                                 </div>
                             </div>
@@ -202,8 +205,7 @@
                                 component: 'ojButton', 
                                 chroming: 'full', 
                                 label: 'Post'},
-                                click: postAnnotation
-                            ">
+                                click: postAnnotation">
                     </button>
 
                     <button id= "buttonCancel"
@@ -220,4 +222,5 @@
     </div>
     <!-- end add annotation window -->
     
+</div>
 </div>

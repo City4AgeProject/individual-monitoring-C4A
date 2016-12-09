@@ -132,7 +132,93 @@
 	        </div>
 	    </div>
 	
-	    <!-- add annotation window -->
+	    <!-- select point/s popup -->
+	    <div id="popupWrapper1">
+	        <div style="display:none" id="popup1"
+	             data-bind="ojComponent:{component: 'ojPopup',
+	                               rootAttributes: {style:'width:320px;height:250px;'}
+	                              }">
+	            <div class="demo-flex-display oj-flex-items-pad">
+	                <div class="oj-flex oj-sm-flex-direction-column">
+	                    <div class="oj-flex-item">
+	                        <h3>3 data point marked</h3>
+	                        <button id="btnClose" class="oj-panel-remove-button" 
+	                                data-bind="
+	                    ojComponent: {
+	                      component: 'ojButton', 
+	                      chroming: 'half',
+	                      display: 'icons', 
+	                      icons: {end: 'oj-panel-remove-icon'}, 
+	                      label: 'remove'},
+	                      click: function()
+	                      {
+	                          $('#popup1').ojPopup('close', '#btnClose');
+	                      }">
+	                        </button>
+	                    </div>
+	                    <div class="oj-flex-item oj-dialog-body" style="height:126px; ">
+	                        <div class="oj-flex oj-sm-flex-direction-column">
+	                            <div class="oj-flex-item" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
+	                                <img src="images/risk_alert.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Risk alert"/> 
+	                                <b>Warning</b> from <b>Geriatrician</b><br>
+	                                Socialization declining...
+	                            </div>
+	                            <div class="oj-flex-item" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
+	                                <img src="images/comment.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Comment"/> 
+	                                <b>Comment</b> from <b>Caregiver</b><br>
+	                                Wide social circle of the CR...
+	                            </div>
+	                            <div class="oj-flex-item" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
+	                                <img src="images/risk_warning.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Risk warning"/> 
+	                                <b>Warning</b> from <b>Geriatrician</b><br>
+	                                Wide social circle of the CR...
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="oj-flex-item" style="height:10px">
+	                    </div>
+	                    <div class="oj-flex-item oj-flex-items-pad">
+	                        <div class="oj-flex">
+	                            <div class="oj-flex-item">
+	                                <a href="#" id="addAnnotation" data-bind="click: clickShowPopupAddAnnotation">
+	                                    <img src="images/comment_add.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+	                                    Add annotation
+	                                </a>
+	                            </div>
+	                            <div class="oj-flex-item" align="right">
+	                                <a href="#">
+	                                    <img src="images/comment_view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+	                                    View annotations
+	                                </a>
+	
+	                            </div>
+	                        </div>
+	                    </div>                    
+	                    <div class="oj-flex-item oj-flex-items-pad">
+	                        <div class="oj-flex">
+	                            <div class="oj-flex-item">
+	                                <a href="#">
+	                                    <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+	                                    View daily measures
+	                                </a> 
+	                            </div>
+	                            <div class="oj-flex-item" align="right">
+	                                <a href="#">
+	                                    <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+	                                    View NUIs
+	                                </a>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <!-- end select point/s popup -->
+	</div>
+	<!-- end main graph panel -->
+	
+        <!-- add annotation window -->
 	    <div id="dialogWrapper1">
 	        <div style="display:none; " id="dialog1" title="Add annotation"  
 	             data-bind="ojComponent:{
@@ -147,21 +233,25 @@
 	                        <div class="oj-form" >
 	                            <div class="oj-flex"> 
 	                                <div class="oj-flex-item">
-	                                    <label id="selectgrouplabel">Choose type</label>
+	                                    <label id="selectgrouplabel">Choose risk status</label>
 	                                    <div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
-	                                        <select id="selectTypePerRisk"
-	                                                data-bind="ojComponent: {
-	                                                        component: 'ojSelect',
-	                                                        list: 'typePerRisk',
-	                                                        rootAttributes: {style:'width:165px'}
-	                                                        
-	                                            }">
-	                                        </select>
-	                                        <ul id="typePerRisk" style="display: none">
-	                                            <li> </li>
-	                                            <li oj-data-value="Risk warning"><img src="images/risk_warning.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Risk warning</li>
-	                                            <li oj-data-value="Risk alert"><img src="images/risk_alert.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Risk alert</li>
-	                                        </ul>
+                                                <ul id="riskList" style="display: none">
+                                                    <!-- ko foreach: risksTags -->
+                                                    <li data-bind="attr: {'oj-data-value': value}">
+                                                        <img data-bind="attr: {src: imagePath}" 
+                                                             role="presentation" style="vertical-align:middle; width: 16px; height: 16px;"/> 
+                                                        <span data-bind="text: label"></span>
+                                                    </li>
+                                                    <!-- /ko -->   
+                                                </ul>
+                                                <input id="inputJobSearch" placeholder="Choose risk..." required="true"
+                                                        data-bind="ojComponent: {
+                                                            component: 'ojCombobox',
+                                                            value: selectedRiskStatus,
+                                                            list: 'riskList',
+                                                            
+                                                            rootAttributes: {style:'width:165px'}}">
+                                                
 	                                        <select id="selectTypePerDataValidity"
 	                                                data-bind="ojComponent: {
 	                                                        component: 'ojSelect',
@@ -240,93 +330,7 @@
 	        </div>
 	    </div>
 	    <!-- end add annotation window -->
-	
-	    <!-- select point/s popup -->
-	    <div id="popupWrapper1">
-	        <div style="display:none" id="popup1"
-	             data-bind="ojComponent:{component: 'ojPopup',
-	                               rootAttributes: {style:'width:320px;height:250px;'}
-	                              }">
-	            <div class="demo-flex-display oj-flex-items-pad">
-	                <div class="oj-flex oj-sm-flex-direction-column">
-	                    <div class="oj-flex-item">
-	                        <h3>3 data point marked</h3>
-	                        <button id="btnClose" class="oj-panel-remove-button" 
-	                                data-bind="
-	                    ojComponent: {
-	                      component: 'ojButton', 
-	                      chroming: 'half',
-	                      display: 'icons', 
-	                      icons: {end: 'oj-panel-remove-icon'}, 
-	                      label: 'remove'},
-	                      click: function()
-	                      {
-	                          $('#popup1').ojPopup('close', '#btnClose');
-	                      }">
-	                        </button>
-	                    </div>
-	                    <div class="oj-flex-item oj-dialog-body" style="height:126px; ">
-	                        <div class="oj-flex oj-sm-flex-direction-column">
-	                            <div class="oj-flex-item" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
-	                                <img src="images/risk_alert.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Risk alert"/> 
-	                                <b>Warning</b> from <b>Geriatrician</b><br>
-	                                Socialization declining...
-	                            </div>
-	                            <div class="oj-flex-item" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
-	                                <img src="images/comment.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Comment"/> 
-	                                <b>Comment</b> from <b>Caregiver</b><br>
-	                                Wide social circle of the CR...
-	                            </div>
-	                            <div class="oj-flex-item" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
-	                                <img src="images/risk_warning.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Risk warning"/> 
-	                                <b>Warning</b> from <b>Geriatrician</b><br>
-	                                Wide social circle of the CR...
-	                            </div>
-	                        </div>
-	                    </div>
-	                    <div class="oj-flex-item" style="height:10px">
-	                    </div>
-	                    <div class="oj-flex-item oj-flex-items-pad">
-	                        <div class="oj-flex">
-	                            <div class="oj-flex-item">
-	                                <a href="#" id="addAnnotation">
-	                                    <img src="images/comment_add.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-	                                    Add annotation
-	                                </a>
-	                            </div>
-	                            <div class="oj-flex-item" align="right">
-	                                <a href="#">
-	                                    <img src="images/comment_view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-	                                    View annotations
-	                                </a>
-	
-	                            </div>
-	                        </div>
-	                    </div>                    
-	                    <div class="oj-flex-item oj-flex-items-pad">
-	                        <div class="oj-flex">
-	                            <div class="oj-flex-item">
-	                                <a href="#">
-	                                    <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-	                                    View daily measures
-	                                </a> 
-	                            </div>
-	                            <div class="oj-flex-item" align="right">
-	                                <a href="#">
-	                                    <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-	                                    View NUIs
-	                                </a>
-	                            </div>
-	                        </div>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
-	    <!-- end select point/s popup -->
-	</div>
-	<!-- end main graph panel -->
-	
+        
 	<div class="oj-flex-item">
 	    <div class="oj-flex-item">
 	
@@ -356,6 +360,7 @@
 	                                                data-bind="ojComponent: {
 	                                                    component:'ojButton',
 	                                                    label: 'Add',
+                                                            click: clickShowPopupAddAnnotation,
 	                                                    rootAttributes: {style:'margin-bottom:0px; margin-top:10px;'}
 	                                                }">
 	                                        </button>
@@ -605,5 +610,5 @@
 	    </div>
 	
 	</div>
-
+         
 </div>
