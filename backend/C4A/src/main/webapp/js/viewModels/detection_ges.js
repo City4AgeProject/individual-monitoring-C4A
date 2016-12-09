@@ -13,6 +13,16 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 var loadSucessCallback = function (data) {
                     self.groupsValue(data.groups);
                     self.seriesValue(data.series);
+                    
+                    var chartPointsIds = [];
+                    var pointIds = [];
+                    for (var i = 0; i < data.series.length ;  i++) {
+                        for (var j = 0; j < data.series[i].items.length;  j++) {
+                            chartPointsIds.push( data.series[i].items[j]);
+                            pointIds.push(data.series[i].items[j].id);
+                        }
+                    }
+                    loadAssessments({geriatricFactorValueIds : pointIds});
                 };
                 
                 var serverErrorCallback = function (xhr, message, error) {
@@ -27,11 +37,43 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var jqXHR = $.getJSON(OJ_DATA_SET_FIND, loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
-                }
+                };
+                
+                loadAnnotations = function (queryParams) {
+                    return $.getJSON(OJ_ANNOTATION_FOR_DATA_POINTS + queryParams, function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var anno = data[i];
+                            anno.shortComment = shortenText(anno.comment, 27) + '...';
+                        }
+                    });
+                };
+                
+                loadAssessments = function (ids) {
+                    var idsArray = JSON.stringify(ids);
+                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var annotationsSerie = new Serie();
+                            var annotationeSerieItems = [];
+                            for(var j = 0; i < anno.assessedGefValueSets.length; j++) {
+                                var assessedGefValueSet = anno.assessedGefValueSets[j];
+                                var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
+                                var id = geriatricFactorValue.gefValue;
+                                var gefValue = geriatricFactorValue.gefValue;
+                                
+                                var item = new Item();
+                                item.id = id;
+                                item.value = gefValue;
+                                annotationeSerieItems.push(item);
+                            }
+                            self.seriesValue.push(annotationsSerie);
+                        }
+                    });
+                };
                 
                 // Page handlers and intern functions
                 self.handleActivated = function (info) {
-                    return loadDataSet();
+                    var response = loadDataSet();
+                    return response;
                 };
                 
                 /*Mouse handles .. should be deleted when we found better way to fix popup position */
@@ -100,18 +142,14 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             var onlyDataPoints = removeCurrentAnnotationsFromSelection(ui['value']);
                             // Compose selections in get query parameters
                             var queryParams = calculateQueryParamsFromSelection(onlyDataPoints);
-                            $.getJSON(OJ_ANNOTATION_FOR_DATA_POINTS + queryParams, function(data) {
-                                for (var i=0; i<data.length; i++) {
-                                    var anno = data[i];
-                                    anno.shortComment = shortenText(anno.comment, 27) + '...';
-                                }
-                                self.selectedAnotations(data);
-                                self.dataPointsMarked(ui['value'].length 
-                                                        + ' data points marked with ' 
-                                                        + self.selectedAnotations().length 
-                                                        + ' annotation(s)');
-                                showAnnotationsPopup();
-                            });
+                            loadAnnotations(queryParams);
+                            
+                            self.selectedAnotations(data);
+                            self.dataPointsMarked(ui['value'].length
+                                    + ' data points marked with '
+                                    + self.selectedAnotations().length
+                                    + ' annotation(s)');
+                            showAnnotationsPopup();
                         }
                     }
                 };
