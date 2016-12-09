@@ -31,7 +31,9 @@ import eu.city4age.dashboard.api.dto.DiagramDataPoint;
 import eu.city4age.dashboard.api.dto.DiagramDataPointSet;
 import eu.city4age.dashboard.api.dto.DiagramMonthInterval;
 import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
-import eu.city4age.dashboard.api.json.GetAllAssessmentsWrapper;
+import eu.city4age.dashboard.api.json.GetAllSelectedAssessmentsWrapper;
+import eu.city4age.dashboard.api.json.GetAssessmentsByFilterWrapper;
+import eu.city4age.dashboard.api.json.GetLastFiveAssessmentsWrapper;
 import eu.city4age.dashboard.api.model.AssessedGefValueSet;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
@@ -203,13 +205,11 @@ public class AssessmentsService {
     	
     	DiagramDataDTO dto = new DiagramDataDTO();
     	
-    
     	List<Object[]> months = timeIntervalDAO.getTimeIntervalsForPeriod(start, end);
     	
     	List<String> monthLabels = createMonthLabels(months);
     	
     	dto.setMonthLabels(monthLabels);
-    
     	
     	List<String> gefLables = detectionVariableDAO.getAllDetectionVariableNamesForParentId(Short.valueOf("4"));
     	
@@ -230,31 +230,27 @@ public class AssessmentsService {
     }
 
     @POST
-    @Path("/getLastFiveAssessments")
+    @Path("/getLastFiveAssessmentsForDiagram")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public String getLastFiveAssessments(String json) throws Exception {
-    	
+	public String getLastFiveAssessmentsForDiagram(String json) throws Exception {
+
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		objectMapper.registerModule(new Hibernate3Module());
+		
+    	ObjectReader objectReader = objectMapper.reader(GetLastFiveAssessmentsWrapper.class);
     	
-    	ObjectReader objectReader = objectMapper.reader(GetAllAssessmentsWrapper.class);
+    	GetLastFiveAssessmentsWrapper data = objectReader.readValue(json);
     	
-    	GetAllAssessmentsWrapper data = objectReader.readValue(json);
-
-    	List<Assessment> assessments = new ArrayList<Assessment>();
+		Timestamp start = Timestamp.valueOf(data.getTimestampStart());
+		Timestamp end = Timestamp.valueOf(data.getTimestampEnd());
+		
+		List<Object[]> assessments = assessmentDAO.
+						getLastFiveAssessmentsForDiagram(data.getPatientId(), start, end);
     	
-		for (Long geriatricFactorId : data.getGeriatricFactorValueIds()) {
-
-			assessments.addAll(
-					getAssessmentsForGeriatricFactorId(geriatricFactorId));
-
-		}
-
-		String dtoAsString = objectMapper.writeValueAsString(assessments);
-        
-        return dtoAsString;			
+		return objectMapper.writeValueAsString(assessments);
+	
     }
 
 	
@@ -268,18 +264,15 @@ public class AssessmentsService {
 
 		objectMapper.registerModule(new Hibernate3Module());
 		
-    	ObjectReader objectReader = objectMapper.reader(GetAllAssessmentsWrapper.class);
+    	ObjectReader objectReader = objectMapper.reader(GetAllSelectedAssessmentsWrapper.class);
     	
-    	GetAllAssessmentsWrapper data = objectReader.readValue(json);
+    	GetAllSelectedAssessmentsWrapper data = objectReader.readValue(json);
 
     	List<Assessment> assessments = new ArrayList<Assessment>();
     	
-		for (Long geriatricFactorId : data.getGeriatricFactorValueIds()) {
-
+		for (Long geriatricFactorId : data.getGeriatricFactorValueIds())
 			assessments.addAll(
 					getAssessmentsForGeriatricFactorId(geriatricFactorId));
-
-		}
 
 		String dtoAsString = objectMapper.writeValueAsString(assessments);
         
@@ -290,15 +283,24 @@ public class AssessmentsService {
     @Path("/getAssessmentsByFiler")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String getAssessmentsByFiler(String json) throws JsonProcessingException {
+    public String getAssessmentsByFiler(String json) throws Exception {
     	
-    	List<Assessment> assessments = new ArrayList<Assessment>();
-    	String filter = "";
-		Long geriatricFactorId = 1L;
-		
-		assessments = assessmentDAO.getAssessmentsByFilter(geriatricFactorId, filter);
-		
 		ObjectMapper objectMapper = new ObjectMapper();
+
+		objectMapper.registerModule(new Hibernate3Module());
+    	
+    	ObjectReader objectReader = objectMapper.reader(GetAssessmentsByFilterWrapper.class);
+    	
+    	GetAssessmentsByFilterWrapper data = objectReader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+
+    	List<Object[]> assessments = new ArrayList<Object[]>();
+    	
+    	for (Long geriatricFactorId : data.getGeriatricFactorValueIds())
+    		assessments.addAll(
+    				assessmentDAO.getAssessmentsByFilter(
+    						geriatricFactorId, data.getStatus(), data.getAuthorRoleId(), data.getOrderBy()));
+		
+		objectMapper = new ObjectMapper();
 
 		objectMapper.registerModule(new Hibernate3Module());
 

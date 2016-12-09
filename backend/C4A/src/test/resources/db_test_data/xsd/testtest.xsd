@@ -226,6 +226,5 @@
 		<xsd:attribute name="role_id" use="optional" />
 		<xsd:attribute name="assessment_id" use="optional" />
 		<xsd:attribute name="assigned" use="optional" />
-		<xsd:attribute name="id" use="optional" />
 	</xsd:complexType>
 </xsd:schema>

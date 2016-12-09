@@ -3,8 +3,8 @@ package eu.city4age.dashboard.api.domain;
 public enum DataValidityStatus {
 	
 
-	QUESTIONABLE_DATA('1'),
-	FAULTY_DATA('2');
+	QUESTIONABLE_DATA('V'),
+	FAULTY_DATA('F');
 
 	private final Character c;
 

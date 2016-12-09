@@ -57,9 +57,9 @@ public class AssessmentServiceTest {
 			Client client = ClientBuilder.newClient().register(JacksonFeature.class);
 
 			WebTarget WebTarget = client
-					.target("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getLastFiveAssessments");
+					.target("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getLastFiveAssessmentsForDiagram");
 
-			String input = "{\"geriatricFactorValueIds\":[1,2,3]}";
+			String input = "{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"patientId\":1}";
 
 			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
 					.post(Entity.entity(input,MediaType.APPLICATION_JSON_TYPE), Response.class);
@@ -134,7 +134,7 @@ public class AssessmentServiceTest {
 			WebTarget WebTarget = client
 					.target("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getAssessmentsByFiler");
 			
-			String input = "{\"factor\":\"Climbing stairs\",\"group\":\"Jan 2016\"}";
+			String input = "{\"geriatricFactorValueIds\":[1,2,3],\"status\":[1,2,3],\"authorRoleId\":1,\"orderBy\":\"AUTHOR_NAME_ASC\"}";
 
 			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
 					.post(Entity.entity(input,MediaType.APPLICATION_JSON_TYPE), Response.class);

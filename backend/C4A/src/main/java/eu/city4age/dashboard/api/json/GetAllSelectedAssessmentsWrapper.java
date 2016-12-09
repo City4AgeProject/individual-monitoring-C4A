@@ -2,7 +2,7 @@ package eu.city4age.dashboard.api.json;
 
 import java.util.List;
 
-public class GetAllAssessmentsWrapper {
+public class GetAllSelectedAssessmentsWrapper {
 	
 	List<Long> geriatricFactorValueIds;
 
