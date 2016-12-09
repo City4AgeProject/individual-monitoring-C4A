@@ -100,7 +100,7 @@ public class OJAnnotation {
         assessment.setUserInRole(new UserInRole());
         assessment.getUserInRole().setId(data.getAuthorId());
         assessment.setAssessmentComment(data.getComment());
-        assessment.setRiskStatus(data.getRiskStatus().toChar());
+        assessment.setRiskStatus(data.getRiskStatus().charValue());
         assessment.setDataValidityStatus(data.getDataValidityStatus().toChar());
         assessment.setCreated(new Date());
         List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();

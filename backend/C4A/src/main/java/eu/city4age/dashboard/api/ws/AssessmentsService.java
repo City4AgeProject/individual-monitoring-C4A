@@ -330,7 +330,7 @@ public class AssessmentsService {
     	
 		assessment.setAssessmentComment(data.getComment());
 		
-		assessment.setRiskStatus(data.getRiskStatus().toChar());
+		assessment.setRiskStatus(data.getRiskStatus().charValue());
 		
 		assessment.setDataValidityStatus(data.getDataValidityStatus().toChar());
 		
