@@ -47,7 +47,20 @@ public class OJCodeBook {
         return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(list)).build();
     }
 
-    //TODO  : this class should be in domain and mapped by "cd_risk_status" table
+    @GET
+    @Path("selectDataValidities")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response selectAllDataValidities() throws JsonProcessingException {
+
+        List<OJCodeBook.CdDataValidity> list = new ArrayList<OJCodeBook.CdDataValidity>();
+        //TODO : use query to get all risk statuses or some other service ...
+        list.add(new OJCodeBook.CdDataValidity("Q", "Questionable data", "images/questionable_data.png"));
+        list.add(new OJCodeBook.CdDataValidity("F", "Faulty data", "images/faulty_data.png"));
+        list.add(new OJCodeBook.CdDataValidity("V", "Valid data", ""));
+        return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(list)).build();
+    }
+    
+    //TODO  : theese classes should be in domain and mapped by codebook tables
     public class CdRiskStatus {
 
         private String riskStatus;
@@ -104,4 +117,59 @@ public class OJCodeBook {
 
     }
 
+    public class CdDataValidity {
+        
+        private String dataValidity;
+        private String dataValidityDesc;
+        private String imagePath;
+        
+        public CdDataValidity(String dataValidity, String dataValidityDesc, String imagePath) {
+            this.dataValidity = dataValidity;
+            this.dataValidityDesc = dataValidityDesc;
+            this.imagePath = imagePath;
+        }
+
+        /**
+         * @return the dataValidity
+         */
+        public String getDataValidity() {
+            return dataValidity;
+        }
+
+        /**
+         * @param dataValidity the dataValidity to set
+         */
+        public void setDataValidity(String dataValidity) {
+            this.dataValidity = dataValidity;
+        }
+
+        /**
+         * @return the dataValidityDesc
+         */
+        public String getDataValidityDesc() {
+            return dataValidityDesc;
+        }
+
+        /**
+         * @param dataValidityDesc the dataValidityDesc to set
+         */
+        public void setDataValidityDesc(String dataValidityDesc) {
+            this.dataValidityDesc = dataValidityDesc;
+        }
+
+        /**
+         * @return the imagePath
+         */
+        public String getImagePath() {
+            return imagePath;
+        }
+
+        /**
+         * @param imagePath the imagePath to set
+         */
+        public void setImagePath(String imagePath) {
+            this.imagePath = imagePath;
+        }
+    }
+    
 }
