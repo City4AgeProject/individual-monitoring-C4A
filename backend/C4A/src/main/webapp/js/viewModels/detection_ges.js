@@ -49,13 +49,22 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     });
                 };
                 
+                function matchSeriesIndexByItemValue(item) {
+                    var series = self.seriesValue();
+                    for(var i = 0; i < series.length; i++) {
+                        for(var j = 0; j < series[i].items.length; j++) {
+                            if(series[i].items[j].value == item.value)
+                                return j;
+                        }
+                    }
+                    return -1;
+                }
+                
                 var loadAssessments = function (ids) {
                     var idsArray = JSON.stringify(ids);
                     return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (assesments) {
                         var annotationsSerie = new Serie();
                         annotationsSerie.name = 'Assesments';
-                        annotationsSerie.type = 'none';
-                        annotationsSerie.source = 'images/comment.png';
                         var annotationeSerieItems = [];
                         for (var i = 0; i < assesments.length; i++) {
                             if (assesments[i]) {
@@ -67,12 +76,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                     var item = new Item();
                                     item.id = id;
                                     item.value = gefValue;
-                                    annotationeSerieItems.push(item);
+                                    var matchedIndex = matchSeriesIndexByItemValue(item);
+                                    if(matchedIndex>=0)
+                                        annotationeSerieItems[matchedIndex] = item;
                                 }
-                            }
-                            else {
-                                var item = new Item();
-                                annotationeSerieItems.push(item);
                             }
                         }
                         annotationsSerie.items = annotationeSerieItems;
