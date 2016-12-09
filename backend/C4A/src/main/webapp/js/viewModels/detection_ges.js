@@ -50,23 +50,29 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 
                 loadAssessments = function (ids) {
                     var idsArray = JSON.stringify(ids);
-                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            var annotationsSerie = new Serie();
-                            annotationsSerie.name = 'Assesments';
+                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (assesments) {
+                        var annotationsSerie = new Serie();
+                        annotationsSerie.name = 'Assesments';
+                        for (var i = 0; i < assesments.length; i++) {
                             var annotationeSerieItems = [];
-                            for(var j = 0; j < data[i].assessedGefValueSets.length; j++) {
-                                var assessedGefValueSet = data[i].assessedGefValueSets[j];
-                                var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
-                                var id = geriatricFactorValue.gefValue;
-                                var gefValue = geriatricFactorValue.gefValue;
+                            if (assesments[i]) {
+                                for (var j = 0; j < assesments[i].assessedGefValueSets.length; j++) {
+                                    var assessedGefValueSet = assesments[i].assessedGefValueSets[j];
+                                    var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
+                                    var gefValue = geriatricFactorValue.gefValue;
+                                    var id = geriatricFactorValue.id;
+                                    var item = new Item();
+                                    item.id = id;
+                                    item.value = gefValue;
+                                    annotationeSerieItems.push(item);
+                                }
+                            }
+                            else {
                                 var item = new Item();
-                                item.id = id;
-                                item.value = gefValue;
                                 annotationeSerieItems.push(item);
                             }
-                            self.seriesValue.push(annotationsSerie);
                         }
+                        self.seriesValue.push(annotationsSerie);
                     });
                 };
                 
