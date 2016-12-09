@@ -23,11 +23,15 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     console.log('posted comment ' + response);
                 };
                 
-                // Page handlers and intern functions
-                self.handleActivated = function (info) {
+                loadDataSet = function(data) {
                     var jqXHR = $.getJSON(OJ_DATA_SET_FIND, loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
+                }
+                
+                // Page handlers and intern functions
+                self.handleActivated = function (info) {
+                    return loadDataSet();
                 };
                 
                 /*Mouse handles .. should be deleted when we found better way to fix popup position */
@@ -48,6 +52,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 self.seriesValue = ko.observableArray();
                 self.dataPointsMarked = ko.observable('No data points marked.');
                 self.selectedAnotations = ko.observableArray();
+                self.dataPointsMarkedIds = ko.observableArray();
                 
                 function showAnnotationsPopup() {
                     $('#popup1').ojPopup( "option", "position", {} );
@@ -74,12 +79,15 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 function calculateQueryParamsFromSelection(selectedPoints) {
                     var queryParams = '';
                     var i = 0;
+                    var idsArray = [];
                     for (var i=0;i<selectedPoints.length;i++) {
                         if(i===0)
                             queryParams += 'sv'+i+'='+selectedPoints[i].id;
                         else
                             queryParams += '&sv'+i+'='+selectedPoints[i].id;
+                        idsArray.push(selectedPoints[i].id);
                     }
+                    self.dataPointsMarkedIds(idsArray);
                     return queryParams === '' ? queryParams : '?' + queryParams;
                 }
 
@@ -128,35 +136,28 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
                     var riskStatus = ko.toJS(self.selectedRiskStatus)[0];
-                    //TODO: should be get from combobox
-                    var dataValidityStatus = 'Q';
+                    var dataValidityStatus = ko.toJS(self.selectedDataValidity)[0];
                     //TODO: should be get from selected nodes from chart -- what if no selection ?? validation ??
-                    var geriatricFactorValueIds = [1,2];
+                    var geriatricFactorValueIds = ko.toJS(self.dataPointsMarkedIds);
                     //TODO: should be get from miltiselect combobox for role
                     var audienceIds = [1,2];
                     var annotationToPost = new AddAssesment
                         (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
                     var jqXHR = $.postJSON(OJ_ANNOTATION_CREATE, 
                         JSON.stringify(annotationToPost),
-                        postCommentCallback
+                        loadDataSet
                     );
                     jqXHR.fail(serverErrorCallback);
                     return true;
                 };
 
                  // Add assesment popup
-                self.commentText = ko.observable();
+                self.commentText = ko.observable('');
                 //TODO: get from rest services
                 self.valRole = ko.observableArray([
                     "Caregiver"
                 ]);
                 
-                self.dataValidity = ko.observableArray([
-                    {riskStatus : "Q", riskStatusDescription : "Questionable data", iconImage : "images/questionable_data.png"}
-                    ,{riskStatus : "F", riskStatusDescription : "Faulty data", iconImage : "images/faulty_data.png"}
-                    ,{riskStatus : "V", riskStatusDescription : "Valid data", iconImage : ""}
-                ]);
-
                 /* Risks select */
                 self.riskStatusesURL = OJ_CODE_BOOK_SELECT_ALL_RISKS;
                 self.risksCollection = ko.observable();
@@ -193,6 +194,42 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     }
                 });
                 /* End Risks select */
+                
+                /* Data validities */
+                self.dataValiditiesCollection = ko.observable();
+                self.dataValiditiesTags = ko.observableArray();       
+                self.selectedDataValidity = ko.observable();
+
+                parseDataValidities = function (response) {
+                    return {
+                        dataValidity: response['dataValidity'],
+                        dataValidityDesc: response['dataValidityDesc'],
+                        imagePath: response['imagePath']};
+                };
+                
+                var collectionDataValidities = new oj.Collection.extend({
+                    url: OJ_CODE_BOOK_SELECT_ALL_DATA_VALIDITIES,
+                    fetchSize: -1,
+                    model: new oj.Model.extend({
+                        idAttribute: 'dataValidity',
+                        parse: parseDataValidities
+                    })
+                });
+                
+                self.dataValiditiesCollection(new collectionDataValidities());
+                self.dataValiditiesCollection().fetch({
+                    success: function (collection, response, options) {
+                        if(self.dataValiditiesTags.length === 0) {
+                            for (var i = 0; i < collection.size(); i++) {
+                                var dataValidityModel = collection.at(i);
+                                self.dataValiditiesTags.push({value: dataValidityModel.attributes.dataValidity, label: dataValidityModel.attributes.dataValidityDesc, imagePath: dataValidityModel.attributes.imagePath});
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                    }
+                });
+                /* End Data validities */
                 
                 self.shownFilterBar = false;
                 self.toggleFilterAnnotationBar = function (e) {

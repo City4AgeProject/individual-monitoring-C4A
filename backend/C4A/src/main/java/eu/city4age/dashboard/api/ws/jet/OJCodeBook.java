@@ -54,9 +54,9 @@ public class OJCodeBook {
 
         List<OJCodeBook.CdDataValidity> list = new ArrayList<OJCodeBook.CdDataValidity>();
         //TODO : use query to get all risk statuses or some other service ...
-        list.add(new OJCodeBook.CdDataValidity("Q", "Questionable data", "images/questionable_data.png"));
-        list.add(new OJCodeBook.CdDataValidity("F", "Faulty data", "images/faulty_data.png"));
-        list.add(new OJCodeBook.CdDataValidity("V", "Valid data", ""));
+        list.add(new OJCodeBook.CdDataValidity("QUESTIONABLE_DATA", "Questionable data", "images/questionable_data.png"));
+        list.add(new OJCodeBook.CdDataValidity("FAULTY_DATA", "Faulty data", "images/faulty_data.png"));
+        list.add(new OJCodeBook.CdDataValidity("VALID_DATA", "Valid data", ""));
         return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(list)).build();
     }
     
