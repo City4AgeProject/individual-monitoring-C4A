@@ -27,7 +27,7 @@ public class HibernateBaseDAO extends HibernateDaoSupport implements BaseDAO {
         getHibernateTemplate().update(entity);
     }
 
-    public AbstractBaseEntity insertOrUpdate(AbstractBaseEntity entity) {
+    public Object insertOrUpdate(Object entity) {
         getHibernateTemplate().saveOrUpdate(entity);
         return entity;
     }
@@ -51,10 +51,14 @@ public class HibernateBaseDAO extends HibernateDaoSupport implements BaseDAO {
 		getHibernateTemplate().delete(entity);
 	}
 	
-	public void insertOrUpdateAll(List<AbstractBaseEntity> entities) {
-		for (Iterator<AbstractBaseEntity> it = entities.iterator(); it.hasNext();) {
+	public void insertOrUpdateAll(List<?> entities) {
+		for (Iterator<?> it = entities.iterator(); it.hasNext();) {
 			getHibernateTemplate().saveOrUpdate(it.next());
 		}
+	}
+
+	public void flush() {
+		getHibernateTemplate().flush();
 	}
 	
 }

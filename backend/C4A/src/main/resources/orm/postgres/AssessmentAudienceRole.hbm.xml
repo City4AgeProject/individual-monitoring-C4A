@@ -5,7 +5,7 @@
 <hibernate-mapping package="eu.city4age.dashboard.api.model">
     <class name="AssessmentAudienceRole" table="assessment_audience_role" optimistic-lock="version">
 	    
-		<composite-id name="assessmentAudienceRoleId">
+		<composite-id name="assessmentAudienceRoleId" class="eu.city4age.dashboard.api.model.AssessmentAudienceRoleId">
 			<key-property name="assessmentId" column="assessment_id" />
 			<key-property name="userInRoleId" column="role_id" />
 		</composite-id>

@@ -5,7 +5,7 @@
 <hibernate-mapping package="eu.city4age.dashboard.api.model">
     <class name="AssessedGefValueSet" table="assessed_gef_value_set" optimistic-lock="version">
 
-		<composite-id name="assessedGefValueSetId">
+		<composite-id name="assessedGefValueSetId" class="eu.city4age.dashboard.api.model.AssessedGefValueSetId">
 			<key-property name="gefValueId" column="gef_value_id" />
 			<key-property name="assessmentId" column="assessment_id" />
 		</composite-id>

@@ -3,6 +3,7 @@ package eu.city4age.dashboard.api.ws;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -35,9 +36,10 @@ import eu.city4age.dashboard.api.json.GetAllSelectedAssessmentsWrapper;
 import eu.city4age.dashboard.api.json.GetAssessmentsByFilterWrapper;
 import eu.city4age.dashboard.api.json.GetLastFiveAssessmentsWrapper;
 import eu.city4age.dashboard.api.model.AssessedGefValueSet;
+import eu.city4age.dashboard.api.model.AssessedGefValueSetId;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
-import eu.city4age.dashboard.api.model.CdRole;
+import eu.city4age.dashboard.api.model.AssessmentAudienceRoleId;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.model.UserInRole;
 	
@@ -338,17 +340,16 @@ public class AssessmentsService {
 		
 		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
 		
+		assessmentDAO.insertOrUpdate(assessment);
+		assessmentDAO.flush();
+		
 		for (int i = 0; i < data.getAudienceIds().size(); i++) {
 			
-			AssessmentAudienceRole assessmentAudienceRole = new AssessmentAudienceRole();
-			
-			assessmentAudienceRole.setAssessment(assessment);
+			AssessmentAudienceRole assessmentAudienceRole = new AssessmentAudienceRole();	
 			
 			assessmentAudienceRole.setAssigned(new Date());
 			
-			assessmentAudienceRole.setCdRole(new CdRole());
-			
-			assessmentAudienceRole.getCdRole().setId(data.getAudienceIds().get(i));
+			assessmentAudienceRole.setAssessmentAudienceRoleId(new AssessmentAudienceRoleId(assessment.getId().intValue(), data.getAudienceIds().get(i).intValue()));
 			
 			assessmentAudienceRoles.add(assessmentAudienceRole);
 		
@@ -360,19 +361,16 @@ public class AssessmentsService {
 			
 			AssessedGefValueSet assessedGefValueSet = new AssessedGefValueSet();
 			
-			assessedGefValueSet.setAssessment(assessment);
-
-			assessedGefValueSet.setGeriatricFactorValue(new GeriatricFactorValue());
-			
-			assessedGefValueSet.getGeriatricFactorValue().setId(data.getGeriatricFactorValueIds().get(i));
+			assessedGefValueSet.setAssessedGefValueSetId(new AssessedGefValueSetId(data.getGeriatricFactorValueIds().get(i).intValue(), assessment.getId().intValue()));
 			
 			assessedGefValueSets.add(assessedGefValueSet);
 			
 		}
-
-    	assessmentDAO.insertOrUpdate(assessment);
-
-  
+		
+		assessmentDAO.insertOrUpdateAll(assessedGefValueSets);
+		
+		assessmentDAO.insertOrUpdateAll(assessmentAudienceRoles);
+	 
     }
 
 	private List<Assessment> getAssessmentsForGeriatricFactorId(Long geriatricFactorId) {
