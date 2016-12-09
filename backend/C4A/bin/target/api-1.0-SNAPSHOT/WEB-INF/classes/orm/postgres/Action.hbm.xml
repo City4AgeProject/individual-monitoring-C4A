@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="Action" table="action" optimistic-lock="version">
+
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+	    
+        <property name="actionName" type="string">
+            <column name="action_name" length="50" />
+        </property>
+        
+        <property name="category" type="string">
+            <column name="category" length="25" />
+        </property>
+        
+        <set name="eams" table="eam" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="actionid" not-null="true" />
+            </key>
+            <one-to-many class="Eam" />
+        </set>
+        
+        <set name="executedActions" table="executed_action" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="actionid" not-null="true" />
+            </key>
+            <one-to-many class="ExecutedAction" />
+        </set>
+        
+    </class>
+</hibernate-mapping>

@@ -17,6 +17,7 @@ import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.model.CdRole;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.model.UserInRole;
+import eu.city4age.dashboard.api.ws.AssessmentsService;
 import eu.city4age.dashboard.api.ws.jet.dto.Annotation;
 import java.io.IOException;
 import java.net.URI;
@@ -54,7 +55,9 @@ public class OJAnnotation {
 
     @Autowired
     private AssessmentDAO assessmentDAO;
-
+    
+    @Autowired AssessmentsService assessmentsService;
+    
     @GET
     @Path("forDataPoints")
     @Produces(MediaType.APPLICATION_JSON)
@@ -93,36 +96,9 @@ public class OJAnnotation {
     @Path("")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(String json) throws URISyntaxException, IOException {
-        ObjectReader objectReader = ObjectMapperProvider.produceMapper().reader(AddAssessmentWrapper.class);
-        AddAssessmentWrapper data = objectReader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
-        Assessment assessment = new Assessment();
-        assessment.setUserInRole(new UserInRole());
-        assessment.getUserInRole().setId(data.getAuthorId());
-        assessment.setAssessmentComment(data.getComment());
-        assessment.setRiskStatus(data.getRiskStatus().charValue());
-        assessment.setDataValidityStatus(data.getDataValidityStatus().toChar());
-        assessment.setCreated(new Date());
-        List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
-        for (int i = 0; i < data.getAudienceIds().size(); i++) {
-            AssessmentAudienceRole assessmentAudienceRole = new AssessmentAudienceRole();
-            assessmentAudienceRole.setAssessment(assessment);
-            assessmentAudienceRole.setAssigned(new Date());
-            assessmentAudienceRole.setCdRole(new CdRole());
-            assessmentAudienceRole.getCdRole().setId(data.getAudienceIds().get(i));
-            assessmentAudienceRoles.add(assessmentAudienceRole);
-        }
-        List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
-        for (int i = 0; i < data.getGeriatricFactorValueIds().size(); i++) {
-            AssessedGefValueSet assessedGefValueSet = new AssessedGefValueSet();
-            assessedGefValueSet.setAssessment(assessment);
-            assessedGefValueSet.setGeriatricFactorValue(new GeriatricFactorValue());
-            assessedGefValueSet.getGeriatricFactorValue().setId(data.getGeriatricFactorValueIds().get(i));
-            assessedGefValueSets.add(assessedGefValueSet);
-        }
-        AbstractBaseEntity saved = assessmentDAO.insertOrUpdate(assessment);
-
-        return Response.created(new URI("/" + PATH + "/" + saved.getId())).build();
+    public Response create(String json) throws URISyntaxException, IOException, Exception {
+        assessmentsService.addAssessmentsForSelectedDataSet(json);
+        return Response.created(new URI("/" + PATH + "/" + 1)).build();
     }
     
     private List<Assessment> assessmentsForGeriatricFactorId(Long geriatricFactorId) {

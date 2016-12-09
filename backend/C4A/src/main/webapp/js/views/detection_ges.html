@@ -217,17 +217,21 @@
                                                             list: 'riskList',
                                                             rootAttributes: {style:'width:165px'}}">
                                         
-                                        <select id="selectTypePerDataValidity"
-                                                data-bind="ojComponent: {
-                                                        component: 'ojSelect',
-                                                        list: 'typePerDataValidity',
-                                                        rootAttributes: {style:'width:165px'}}">
-                                        </select>
-                                        <ul id="typePerDataValidity" style="display: none">
-                                            <li> </li>
-<!--                                        <li oj-data-value="Questionable data"><img src="images/questionable_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Questionable data</li>
-                                            <li oj-data-value="Faulty data"><img src="images/faulty_data.png" style="vertical-align:middle; width: 16px; height: 16px;"/> Faulty data</li>-->
+                                        <ul id="dataValiditiesList" style="display: none">
+                                            <!-- ko foreach: dataValiditiesTags -->
+                                            <li data-bind="attr: {'oj-data-value': value}">
+                                                <img data-bind="attr: {src: imagePath}" 
+                                                     role="presentation" style="vertical-align:middle; width: 16px; height: 16px;"/> 
+                                                <span data-bind="text: label"></span>
+                                            </li>
+                                            <!-- /ko -->   
                                         </ul>
+                                        <input id="dataValiditySelection" placeholder="Choose data validity..." required="true"
+                                               data-bind="ojComponent: {
+                                                            component: 'ojCombobox',
+                                                            value: selectedDataValidity,
+                                                            list: 'dataValiditiesList',
+                                                            rootAttributes: {style:'width:165px'}}">
                                     </div>
 
                                 </div>

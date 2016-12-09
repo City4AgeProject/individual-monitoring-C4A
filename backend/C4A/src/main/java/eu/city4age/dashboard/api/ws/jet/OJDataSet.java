@@ -92,7 +92,7 @@ public class OJDataSet {
             assessments.addAll(assessmentDAO.getAssessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
         }
 
-        result.addAssesmentsPointsToSeries(assessments);
+//        result.addAssesmentsPointsToSeries(assessments);
 
         return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(result)).build();
     }

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="Location" table="location" optimistic-lock="version">
+
+	    <id name="id" type="long">
+	      <column name="id"/>
+	      <generator class="native"/>
+	    </id>
+	    
+        <property name="locationName" type="string">
+            <column name="location_name" length="50" />
+        </property>
+
+        <property name="indoor" type="java.lang.Short">
+            <column name="indoor" />
+        </property>
+
+        <many-to-one name="pilot" class="Pilot" fetch="select">
+            <column name="pilot_id" not-null="true" />
+        </many-to-one>
+
+        <set name="executedActions" table="executed_action" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="locationid" not-null="true" />
+            </key>
+            <one-to-many class="ExecutedAction" />
+        </set>
+
+    </class>
+</hibernate-mapping>

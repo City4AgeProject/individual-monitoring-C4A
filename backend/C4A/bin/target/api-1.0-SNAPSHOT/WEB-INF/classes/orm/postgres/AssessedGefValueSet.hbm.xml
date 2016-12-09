@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-Nov-2016 15:43:48 by Hibernate Tools 5.2.0.Beta1 -->
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="AssessedGefValueSet" table="assessed_gef_value_set" optimistic-lock="version">
+
+		<composite-id name="assessedGefValueSetId">
+			<key-property name="gefValueId" column="gef_value_id" />
+			<key-property name="assessmentId" column="assessment_id" />
+		</composite-id>
+
+        <many-to-one name="assessment" class="Assessment" update="false" insert="false" fetch="select">
+            <column name="assessment_id" not-null="true" />
+        </many-to-one>
+        
+        <many-to-one name="geriatricFactorValue" class="GeriatricFactorValue" update="false" insert="false" fetch="select" lazy="false">
+            <column name="gef_value_id" not-null="true" />
+        </many-to-one>
+        
+    </class>
+</hibernate-mapping>
