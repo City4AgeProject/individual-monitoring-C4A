@@ -40,12 +40,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 };
                 
                 var loadAnnotations = function (queryParams) {
-                    return $.getJSON(OJ_ANNOTATION_FOR_DATA_POINTS + queryParams, function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            var anno = data[i];
+                    return $.getJSON(OJ_ANNOTATION_FOR_DATA_POINTS + queryParams, function (annotations) {
+                        for (var i = 0; i < annotations.length; i++) {
+                            var anno = annotations[i];
                             anno.shortComment = shortenText(anno.comment, 27) + '...';
                         }
-                        self.selectedAnotations(data);
+                        self.selectedAnotations(annotations);
                     });
                 };
                 
@@ -194,7 +194,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var dataValidityStatus = ko.toJS(self.selectedDataValidity)[0];
                     var geriatricFactorValueIds = ko.toJS(self.dataPointsMarkedIds);
                     //TODO: should be get from miltiselect combobox for role
-                    var audienceIds = [1,2];
+                    var audienceIds = [1,2];//ko.toJS(self.selectedAudienceIds)
                     var annotationToPost = new AddAssesment
                         (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
                     var jqXHR = $.postJSON(OJ_ANNOTATION_CREATE, 
@@ -284,6 +284,18 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     }
                 });
                 /* End Data validities */
+                
+                /* Audience ids */
+                
+                self.audienceIds = ko.observableArray([
+                    {id : "Caregiver", name : "Caregiver"},
+                    {id : "Geriatrician", name : "Geriatrician"},
+                    {id : "Intervention staff", name : "Intervention staff"},
+                    {id : "City 4 Age staff", name : "City 4 Age staff"}
+                ]);
+                self.selectedAudienceIds = ko.observableArray();
+                
+                /* End Audience ids */
                 
                 self.shownFilterBar = false;
                 self.toggleFilterAnnotationBar = function (e) {
