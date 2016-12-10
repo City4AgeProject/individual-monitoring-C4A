@@ -128,9 +128,9 @@ public class OJAnnotation {
             assessedGefValueSet.getGeriatricFactorValue().setId(data.getGeriatricFactorValueIds().get(i));
             assessedGefValueSets.add(assessedGefValueSet);
         }
-        AbstractBaseEntity saved = null; //assessmentDAO.insertOrUpdate(assessment);
+        assessmentDAO.insertOrUpdate(assessment);
 
-        return Response.created(new URI("/" + PATH + "/" + saved.getId())).build();
+        return Response.created(new URI("/" + PATH + "/" + "id")).build();
     }
     
     private List<Assessment> assessmentsForGeriatricFactorId(Long geriatricFactorId) {
