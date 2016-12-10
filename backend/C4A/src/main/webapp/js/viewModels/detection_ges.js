@@ -67,9 +67,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                         annotationsSerie.name = 'Assesments';
                         var annotationeSerieItems = [];
                         for (var i = 0; i < assesments.length; i++) {
-                            if (assesments[i]) {
-                                for (var j = 0; j < assesments[i].assessedGefValueSets.length; j++) {
-                                    var assessedGefValueSet = assesments[i].assessedGefValueSets[j];
+                            var assesment = assesments[i];
+                            if (assesment) {
+                                for (var j = 0; j < assesment.assessedGefValueSets.length; j++) {
+                                    var assessedGefValueSet = assesment.assessedGefValueSets[j];
                                     var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
                                     var gefValue = geriatricFactorValue.gefValue;
                                     var id = geriatricFactorValue.id;
@@ -191,7 +192,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var comment = ko.toJS(self.commentText);
                     var riskStatus = ko.toJS(self.selectedRiskStatus)[0];
                     var dataValidityStatus = ko.toJS(self.selectedDataValidity)[0];
-                    //TODO: should be get from selected nodes from chart -- what if no selection ?? validation ??
                     var geriatricFactorValueIds = ko.toJS(self.dataPointsMarkedIds);
                     //TODO: should be get from miltiselect combobox for role
                     var audienceIds = [1,2];
