@@ -3,6 +3,7 @@ package eu.city4age.dashboard.api.model;
 // default package
 // Generated 24-Nov-2016 15:43:47 by Hibernate Tools 5.2.0.Beta1
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 	
 	private Set<NumericIndicatorValue> numericIndicatorValues = new HashSet<NumericIndicatorValue>();
 
-	@JsonManagedReference
+	@JsonBackReference
 	private Set<AssessedGefValueSet> assessedGefValueSets = new HashSet<AssessedGefValueSet>();
 
 	public GeriatricFactorValue() {

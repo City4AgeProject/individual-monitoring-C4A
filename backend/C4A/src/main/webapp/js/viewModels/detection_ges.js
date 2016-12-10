@@ -33,40 +33,57 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     console.log('posted comment ' + response);
                 };
                 
-                loadDataSet = function(data) {
+                var loadDataSet = function(data) {
                     var jqXHR = $.getJSON(OJ_DATA_SET_FIND, loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
                 };
                 
-                loadAnnotations = function (queryParams) {
+                var loadAnnotations = function (queryParams) {
                     return $.getJSON(OJ_ANNOTATION_FOR_DATA_POINTS + queryParams, function (data) {
                         for (var i = 0; i < data.length; i++) {
                             var anno = data[i];
                             anno.shortComment = shortenText(anno.comment, 27) + '...';
                         }
+                        self.selectedAnotations(data);
                     });
                 };
                 
-                loadAssessments = function (ids) {
-                    var idsArray = JSON.stringify(ids);
-                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            var annotationsSerie = new Serie();
-                            annotationsSerie.name = 'Assesments';
-                            var annotationeSerieItems = [];
-                            for(var j = 0; j < data[i].assessedGefValueSets.length; j++) {
-                                var assessedGefValueSet = data[i].assessedGefValueSets[j];
-                                var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
-                                var id = geriatricFactorValue.gefValue;
-                                var gefValue = geriatricFactorValue.gefValue;
-                                var item = new Item();
-                                item.id = id;
-                                item.value = gefValue;
-                                annotationeSerieItems.push(item);
-                            }
-                            self.seriesValue.push(annotationsSerie);
+                function matchSeriesIndexByItemValue(item) {
+                    var series = self.seriesValue();
+                    for(var i = 0; i < series.length; i++) {
+                        for(var j = 0; j < series[i].items.length; j++) {
+                            if(series[i].items[j].value == item.value)
+                                return j;
                         }
+                    }
+                    return -1;
+                }
+                
+                var loadAssessments = function (ids) {
+                    var idsArray = JSON.stringify(ids);
+                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (assesments) {
+                        var annotationsSerie = new Serie();
+                        annotationsSerie.name = 'Assesments';
+                        var annotationeSerieItems = [];
+                        for (var i = 0; i < assesments.length; i++) {
+                            if (assesments[i]) {
+                                for (var j = 0; j < assesments[i].assessedGefValueSets.length; j++) {
+                                    var assessedGefValueSet = assesments[i].assessedGefValueSets[j];
+                                    var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
+                                    var gefValue = geriatricFactorValue.gefValue;
+                                    var id = geriatricFactorValue.id;
+                                    var item = new Item();
+                                    item.id = id;
+                                    item.value = gefValue;
+                                    var matchedIndex = matchSeriesIndexByItemValue(item);
+                                    if(matchedIndex>=0)
+                                        annotationeSerieItems[matchedIndex] = item;
+                                }
+                            }
+                        }
+                        annotationsSerie.items = annotationeSerieItems;
+                        self.seriesValue.push(annotationsSerie);
                     });
                 };
                 
@@ -144,7 +161,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             var queryParams = calculateQueryParamsFromSelection(onlyDataPoints);
                             loadAnnotations(queryParams);
                             
-                            self.selectedAnotations(data);
                             self.dataPointsMarked(ui['value'].length
                                     + ' data points marked with '
                                     + self.selectedAnotations().length
