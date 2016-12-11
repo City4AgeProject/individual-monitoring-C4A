@@ -6,6 +6,7 @@
 package eu.city4age.dashboard.api.ws.jet.dto;
 
 import eu.city4age.dashboard.api.model.Assessment;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 /**
@@ -20,6 +21,7 @@ public class Annotation {
     private String from;
     private String comment;
     private String imgSrc;
+    private String dateAndTime;
 
     public Annotation() {}
     
@@ -35,6 +37,8 @@ public class Annotation {
             imgSrc = "images/risk_warning.png";
         else
             imgSrc = "images/comment.png";
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+        dateAndTime =  sdf.format( toCreateFrom.getCreated());
     }
     
     /**
@@ -120,6 +124,20 @@ public class Annotation {
     public void setImgSrc(String imgSrc) {
         this.imgSrc = imgSrc;
     }
+    
+    /**
+     * @return the dateAndTime
+     */
+    public String getDateAndTime() {
+        return dateAndTime;
+    }
+
+    /**
+     * @param dateAndTime the dateAndTime to set
+     */
+    public void setDateAndTime(String dateAndTime) {
+        this.dateAndTime = dateAndTime;
+    }
 
     @Override
     public int hashCode() {
@@ -145,5 +163,7 @@ public class Annotation {
         }
         return true;
     }
+
+    
     
 }

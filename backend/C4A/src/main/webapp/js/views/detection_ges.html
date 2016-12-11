@@ -210,7 +210,7 @@
                                             </li>
                                             <!-- /ko -->   
                                         </ul>
-                                        <input id="inputJobSearch" placeholder="Choose risk..." required="true"
+                                        <input id="riskSelect" placeholder="Choose risk..." required="true"
                                                data-bind="ojComponent: {
                                                             component: 'ojCombobox',
                                                             value: selectedRiskStatus,
@@ -317,7 +317,7 @@
 	                            <div class="oj-flex-bar">
 	                                <div class="oj-flex-bar-middle">
 	                                    <div>
-                                                <span data-bind="text: self.selectedAnotations().length + ' annotations/assessments' "> </span> 
+                                                <span data-bind="text: selectedAnotations().length + ' annotations/assessments' "> </span> 
 	                                    </div>
 	                                </div>
 	                                <div class="oj-flex-bar-end">
@@ -434,23 +434,24 @@
 	                    <!-- view annotations -->
 	                    <div class="oj-panel oj-panel-shadow-sm oj-dialog-body" style="border:none; background-color: #fcfcfc; height: 250px;">
 	                        <div class="demo-flex-display oj-flex-items-pad" >
-	                            <div class="oj-flex" id="div_comment_1" style="border-left: 3px solid #fcfcfc;">
+	                           <!-- ko foreach: selectedAnotations -->
+                                    <div class="oj-flex" id="div_comment_1" style="border-left: 3px solid #fcfcfc;">
 	                                <div class="oj-flex-item">
 	                                    <div class="oj-flex oj-flex-items-pad" style="height: 28px;">
 	                                        <div class="oj-flex-item">
-	                                            <img src="images/questionable_data.png" style="vertical-align: middle; width: 18px; height: 18px;"/>
-	                                            <b>Dr John Doe</b>
+	                                            <img data-bind="attr: { src: imgSrc, title: title }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
+                                                    <b><span data-bind="text: from"></span></b>
 	                                        </div>
 	                                        <div class="oj-flex-item" style="max-width: 150px; color: #3C9DBC;" align="right" id="show_comment_1">
 	                                            <a href="#"><img src="images/target.png" style="vertical-align: middle; width: 16px; height: 16px;"/>Show on diagram</a>
 	                                        </div>
 	                                        <div class="oj-flex-item" style="max-width: 146px;" align="right">
-	                                            <b>Oct 10, 2016  14:18</b>
+                                                    <b><span data-bind="text: dateAndTime"></span></b>
 	                                        </div>
 	                                    </div>
 	                                </div>
 	                                <div class="oj-flex-item">
-	                                    <div style="height:20px; overflow:hidden" id="comment_1">Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
+	                                    <div style="height:20px; overflow:hidden" id="comment_1"><span data-bind="text: comment"></span></div>
 	
 	                                </div>
 	                                <div class="oj-flex-item">
@@ -459,85 +460,7 @@
 	                                <div class="oj-flex-item" style="min-height: 30px;">
 	                                </div>
 	                            </div>
-	
-	                            <div class="oj-flex" id="div_comment_2" style="border-left: 3px solid #fcfcfc;">
-	                                <div class="oj-flex-item">
-	                                    <div class="oj-flex oj-flex-items-pad" style="height: 28px;">
-	                                        <div class="oj-flex-item">
-	                                            <img src="images/risk_alert.png" style="vertical-align: middle; width: 18px; height: 18px;"/>
-	                                            <b>Dr Maria Bela</b>
-	                                        </div>
-	                                        <div class="oj-flex-item" style="max-width: 150px; color: #3C9DBC;" align="right" id="show_comment_2">
-	                                            <a href="#"><img src="images/target.png" style="vertical-align: middle; width: 16px; height: 16px;"/>Show on diagram</a>
-	                                        </div>
-	                                        <div class="oj-flex-item" style="max-width: 146px; " align="right">
-	                                            <b>Oct 11, 2016  10:23</b>
-	                                        </div>
-	                                    </div>
-	                                </div>
-	                                <div class="oj-flex-item">
-	                                    <div style="height:20px; overflow:hidden" id="comment_2">Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
-	
-	                                </div>
-	                                <div class="oj-flex-item">
-	                                    <a href="#" id="showmore_comment_2">Read more</a>
-	                                </div>
-	                                <div class="oj-flex-item" style="min-height: 30px;">
-	                                </div>
-	                            </div>
-	
-	                            <div class="oj-flex" id="div_comment_3" style="border-left: 3px solid #fcfcfc;">
-	                                <div class="oj-flex-item">
-	                                    <div class="oj-flex oj-flex-items-pad" style="height: 28px;">
-	                                        <div class="oj-flex-item">
-	                                            <img src="images/comment.png" style="vertical-align: middle; width: 18px; height: 18px;"/>
-	                                            <b>Dr Maria Bela</b>
-	                                        </div>
-	                                        <div class="oj-flex-item" style="max-width: 150px; color: #3C9DBC;" align="right" id="show_comment_3">
-	                                            <a href="#"><img src="images/target.png" style="vertical-align: middle; width: 16px; height: 16px;"/>Show on diagram</a>
-	                                        </div>
-	                                        <div class="oj-flex-item" style="max-width: 146px; " align="right">
-	                                            <b>Oct 13, 2016  09:04</b>
-	                                        </div>
-	                                    </div>
-	                                </div>
-	                                <div class="oj-flex-item">
-	                                    <div style="height:20px; overflow:hidden" id="comment_3">Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
-	
-	                                </div>
-	                                <div class="oj-flex-item">
-	                                    <a href="#" id="showmore_comment_3">Read more</a>
-	                                </div>
-	                                <div class="oj-flex-item" style="min-height: 30px;">
-	                                </div>
-	                            </div>
-	
-	                            <div class="oj-flex" id="div_comment_4" style="border-left: 3px solid #fcfcfc;">
-	                                <div class="oj-flex-item">
-	                                    <div class="oj-flex oj-flex-items-pad" style="height: 28px;">
-	                                        <div class="oj-flex-item">
-	                                            <img src="images/risk_warning.png" style="vertical-align: middle; width: 18px; height: 18px;"/>
-	                                            <img src="images/faulty_data.png" style="vertical-align: middle; width: 18px; height: 18px;"/>
-	                                            <b>Dr Leonardo Mutti</b>
-	                                        </div>
-	                                        <div class="oj-flex-item" style="max-width: 150px; color: #3C9DBC;" align="right" id="show_comment_4">
-	                                            <a href="#"><img src="images/target.png" style="vertical-align: middle; width: 16px; height: 16px;"/>Show on diagram</a>
-	                                        </div>
-	                                        <div class="oj-flex-item" style="max-width: 146px; " align="right">
-	                                            <b>Oct 13, 2016  12:14</b>
-	                                        </div>
-	                                    </div>
-	                                </div>
-	                                <div class="oj-flex-item">
-	                                    <div style="height:20px; overflow:hidden" id="comment_4">Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
-	
-	                                </div>
-	                                <div class="oj-flex-item">
-	                                    <a href="#" id="showmore_comment_4">Read more</a>
-	                                </div>
-	                                <div class="oj-flex-item" style="min-height: 30px;">
-	                                </div>
-	                            </div>
+                                   <!-- /ko  --> 
 	                        </div>
 	                    </div>
 	                    <!-- end view annotations -->

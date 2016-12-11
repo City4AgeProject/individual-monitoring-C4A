@@ -197,7 +197,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var audienceIds = [1,2];//ko.toJS(self.selectedAudienceIds)
                     var annotationToPost = new AddAssesment
                         (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
-                    var jqXHR = $.postJSON(OJ_ANNOTATION_CREATE, 
+                    var jqXHR = $.postJSON(ASSESSMENTS_ADD_FOR_DATA_POINTS, 
                         JSON.stringify(annotationToPost),
                         loadDataSet
                     );

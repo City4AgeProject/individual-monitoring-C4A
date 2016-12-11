@@ -5,7 +5,6 @@
  */
 package eu.city4age.dashboard.api.ws.jet;
 
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,8 +38,10 @@ import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
 import eu.city4age.dashboard.api.model.AbstractBaseEntity;
 import eu.city4age.dashboard.api.model.AssessedGefValueSet;
+import eu.city4age.dashboard.api.model.AssessedGefValueSetId;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
+import eu.city4age.dashboard.api.model.AssessmentAudienceRoleId;
 import eu.city4age.dashboard.api.model.CdRole;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.model.UserInRole;
@@ -60,42 +61,43 @@ public class OJAnnotation {
 
     @Autowired
     private AssessmentDAO assessmentDAO;
-    
-    @Autowired AssessmentsService assessmentsService;
-    
+
+    @Autowired
+    AssessmentsService assessmentsService;
+
     @GET
     @Path("forDataPoints")
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectForDataPoints(@Context UriInfo ui) throws JsonProcessingException {
-            List<Assessment> assessments = new ArrayList<Assessment>();
-            try {
-                MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
-                Set<String> geriatricFactorIds = new HashSet<String>();
-                for (Map.Entry entry : queryParams.entrySet()) {
-                    LinkedList value = (LinkedList) entry.getValue();
-                    geriatricFactorIds.add(value.getFirst().toString());
-                }
-                for (String geriatricFactorId : geriatricFactorIds) {
-                    assessments.addAll(assessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
-                }
-            } catch (Exception e) {
-                logger.error("in selecting annotations for data points ", e);
+        List<Assessment> assessments = new ArrayList<Assessment>();
+        try {
+            MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
+            Set<String> geriatricFactorIds = new HashSet<String>();
+            for (Map.Entry entry : queryParams.entrySet()) {
+                LinkedList value = (LinkedList) entry.getValue();
+                geriatricFactorIds.add(value.getFirst().toString());
             }
-            
-            Set<Annotation> annotations = new HashSet<>();
-            for(Assessment assessment : assessments) {
-                annotations.add(new Annotation(assessment));
+            for (String geriatricFactorId : geriatricFactorIds) {
+                assessments.addAll(assessmentsForGeriatricFactorId(Long.valueOf(geriatricFactorId)));
             }
-            
-            return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(annotations)).build();
+        } catch (Exception e) {
+            logger.error("in selecting annotations for data points ", e);
+        }
+
+        Set<Annotation> annotations = new HashSet<>();
+        for (Assessment assessment : assessments) {
+            annotations.add(new Annotation(assessment));
+        }
+
+        return Response.ok(ObjectMapperProvider.produceMapper().writeValueAsString(annotations)).build();
     }
 
     /**
-     * 
+     *
      * @param json
      * @return
      * @throws URISyntaxException
-     * @throws IOException 
+     * @throws IOException
      */
     @POST
     @Path("")
@@ -112,27 +114,25 @@ public class OJAnnotation {
         assessment.setDataValidityStatus(data.getDataValidityStatus().toChar());
         assessment.setCreated(new Date());
         List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
+        assessmentDAO.insertOrUpdate(assessment);
+        assessmentDAO.flush();
         for (int i = 0; i < data.getAudienceIds().size(); i++) {
             AssessmentAudienceRole assessmentAudienceRole = new AssessmentAudienceRole();
-            assessmentAudienceRole.setAssessment(assessment);
             assessmentAudienceRole.setAssigned(new Date());
-            assessmentAudienceRole.setCdRole(new CdRole());
-            assessmentAudienceRole.getCdRole().setId(data.getAudienceIds().get(i));
+            assessmentAudienceRole.setAssessmentAudienceRoleId(new AssessmentAudienceRoleId(assessment.getId().intValue(), data.getAudienceIds().get(i).intValue()));
             assessmentAudienceRoles.add(assessmentAudienceRole);
         }
         List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
         for (int i = 0; i < data.getGeriatricFactorValueIds().size(); i++) {
             AssessedGefValueSet assessedGefValueSet = new AssessedGefValueSet();
-            assessedGefValueSet.setAssessment(assessment);
-            assessedGefValueSet.setGeriatricFactorValue(new GeriatricFactorValue());
-            assessedGefValueSet.getGeriatricFactorValue().setId(data.getGeriatricFactorValueIds().get(i));
+            assessedGefValueSet.setAssessedGefValueSetId(new AssessedGefValueSetId(data.getGeriatricFactorValueIds().get(i).intValue(), assessment.getId().intValue()));
             assessedGefValueSets.add(assessedGefValueSet);
         }
-        assessmentDAO.insertOrUpdate(assessment);
-
+        assessmentDAO.insertOrUpdateAll(assessedGefValueSets);
+        assessmentDAO.insertOrUpdateAll(assessmentAudienceRoles);
         return Response.created(new URI("/" + PATH + "/" + "id")).build();
     }
-    
+
     private List<Assessment> assessmentsForGeriatricFactorId(Long geriatricFactorId) {
         return assessmentDAO.getAssessmentsForGeriatricFactorId(geriatricFactorId);
     }
