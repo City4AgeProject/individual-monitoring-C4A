@@ -65,6 +65,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (assesments) {
                         var annotationsSerie = new Serie();
                         annotationsSerie.name = 'Assesments';
+                        annotationsSerie.source = 'images/flag-red.png';
                         var annotationeSerieItems = [];
                         for (var i = 0; i < assesments.length; i++) {
                             var assesment = assesments[i];
