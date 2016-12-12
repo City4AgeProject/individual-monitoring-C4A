@@ -193,7 +193,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                             if(filteredSelectedSeries.length===1) {
                                 // Show "Behavioural" tab if only "Behavioural" values are selected.
                                 if(GROUP1_SERIES_NAME === filteredSelectedSeries[0]) {
-                                    $('#tabs').ojTabs( "option", "selected", "tabs-1\" );
+                                    $('#tabs').ojTabs( "option", "selected", "tabs-1" );
                                 }
                                 // Show "Contextual" tab if only "Contextual" values are selected.
                                 else if(GROUP2_SERIES_NAME === filteredSelectedSeries[0]) {
