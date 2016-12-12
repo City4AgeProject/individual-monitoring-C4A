@@ -157,7 +157,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 /* detectionGEFGroupsLineChart popup and selection manipulation*/
                 self.showMorphologyButtonClick = function (data, event) {
                     //console.log($("#detectionGEFGroupsLineChart").ojChart("getDataItem", 0, 0));
-                    //$("#tabs").ojTabs("option", "selected", "showMorphologyTab");
+                    $("#tabs").ojTabs("option", "selected", "showMorphologyTab");
                     $('#showMorphologyPopup').ojPopup('close');
                     return true;
                 };
@@ -170,6 +170,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 self.chartOptionChangeDetectionGEFGroupsLineChart = function (event, ui) {
                     var filteredSelectedValues = [];
                     var filteredSelectedSeries = [];
+                    var showMorphologyPopup = false;
                     //console.log(ui);
                     if (ui['option'] === 'selection') {
                         if (ui['value'].length > 0) {
@@ -194,10 +195,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                                 // Show "Behavioural" tab if only "Behavioural" values are selected.
                                 if(GROUP1_SERIES_NAME === filteredSelectedSeries[0]) {
                                     $('#tabs').ojTabs( "option", "selected", "tabs-1" );
+                                    $('#showMorphologyPopup').ojPopup('close');
                                 }
                                 // Show "Contextual" tab if only "Contextual" values are selected.
                                 else if(GROUP2_SERIES_NAME === filteredSelectedSeries[0]) {
                                     $('#tabs').ojTabs( "option", "selected", "tabs-2" );
+                                    $('#showMorphologyPopup').ojPopup('close');
                                 }
                             }
                             // Show "Morphology" tab if only "Behavioural and Contextual" values are selected.
@@ -208,9 +211,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                                 }
                             }
                             closeMorphologyPopupScheduled = true;
-                            $('#showMorphologyPopup').ojPopup('open', "#detectionGEFGroupsLineChart");
-                            $("#showMorphologyPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
-                            $("#showMorphologyPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
+                            if(showMorphologyPopup) {
+                                $('#showMorphologyPopup').ojPopup('open', "#detectionGEFGroupsLineChart");
+                                $("#showMorphologyPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
+                                $("#showMorphologyPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
+                            }
                         } else if (ui['value'].length === 0) {
                             //close popup scheduled for 1.5 seconds
                             setTimeout(function (event) {
