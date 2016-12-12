@@ -108,9 +108,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return -1;
                 }
                 
+                self.initialAssessments = ko.observableArray([]);
                 var loadAssessments = function (ids) {
                     var idsArray = JSON.stringify(ids);
                     return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (assesments) {
+                        //insert to quick read later on mous over popup
+                        self.initialAssessments(assesments);
                         var annotationsSerie = new Serie();
                         annotationsSerie.name = 'Assesments';
                         annotationsSerie.source = 'images/flag-red.png';
@@ -272,80 +275,80 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 ]);
                 
                 /* Risks select */
-                self.riskStatusesURL = OJ_CODE_BOOK_SELECT_ALL_RISKS;
+                //self.riskStatusesURL = OJ_CODE_BOOK_SELECT_ALL_RISKS;
                 self.risksCollection = ko.observable();
                 // TODO: remove mock data when service is available
-                self.risksTags = ko.observableArray([{ riskStatus: 'A', riskStatusDesc: 'Risk alert' ,  imagePath: 'images/risk_alert.png' }, 
-                                                       { riskStatus: 'W', riskStatusDesc: 'Risk warning' ,  imagePath: 'images/risk_warning.png' }]);       
+                self.risksTags = ko.observableArray([{ value: 'A', label: 'Risk alert' ,  imagePath: 'images/risk_alert.png' }, 
+                                                       { value: 'W', label: 'Risk warning' ,  imagePath: 'images/risk_warning.png' }]);       
                 self.selectedRiskStatus = ko.observable();
 
-                parseRisks = function (response) {
-                    return {
-                        riskStatus: response['riskStatus'],
-                        riskStatusDesc: response['riskStatusDesc'],
-                        imagePath: response['imagePath']};
-                };
-                
-                var collectionRisks = new oj.Collection.extend({
-                    url: self.riskStatusesURL,
-                    fetchSize: -1,
-                    model: new oj.Model.extend({
-                        idAttribute: 'riskStatus',
-                        parse: parseRisks
-                    })
-                });
-                
-                self.risksCollection(new collectionRisks());
-                self.risksCollection().fetch({
-                    success: function (collection, response, options) {
-                        if(self.risksTags.length === 0) {
-                            for (var i = 0; i < collection.size(); i++) {
-                                var riskModel = collection.at(i);
-                                self.risksTags.push({value: riskModel.attributes.riskStatus, label: riskModel.attributes.riskStatusDesc, imagePath: riskModel.attributes.imagePath});
-                            }
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                    }
-                });
+//                parseRisks = function (response) {
+//                    return {
+//                        riskStatus: response['riskStatus'],
+//                        riskStatusDesc: response['riskStatusDesc'],
+//                        imagePath: response['imagePath']};
+//                };
+//                
+//                var collectionRisks = new oj.Collection.extend({
+//                    url: self.riskStatusesURL,
+//                    fetchSize: -1,
+//                    model: new oj.Model.extend({
+//                        idAttribute: 'riskStatus',
+//                        parse: parseRisks
+//                    })
+//                });
+//                
+//                self.risksCollection(new collectionRisks());
+//                self.risksCollection().fetch({
+//                    success: function (collection, response, options) {
+//                        if(self.risksTags.length === 0) {
+//                            for (var i = 0; i < collection.size(); i++) {
+//                                var riskModel = collection.at(i);
+//                                self.risksTags.push({value: riskModel.attributes.riskStatus, label: riskModel.attributes.riskStatusDesc, imagePath: riskModel.attributes.imagePath});
+//                            }
+//                        }
+//                    },
+//                    error: function (jqXHR, textStatus, errorThrown) {
+//                    }
+//                });
                 /* End Risks select */
                 
                 /* Data validities */
-                self.dataValiditiesCollection = ko.observable();
-                self.dataValiditiesTags = ko.observableArray([ { dataValidity: 'Q', dataValidityDesc: 'Questionable data' ,  imagePath: 'images/questionable_data.png' },
-                                                            { dataValidity: 'F', dataValidityDesc: 'Faulty data' ,  imagePath: 'images/faulty_data.png' },
-                                                         { dataValidity: 'V', dataValidityDesc: 'Valid data' ,  imagePath: 'images/faulty_data.png' }]);       
+                //self.dataValiditiesCollection = ko.observable();
+                self.dataValiditiesTags = ko.observableArray([ { value: 'Q', label: 'Questionable data' ,  imagePath: 'images/questionable_data.png' },
+                                                            { value: 'F', label: 'Faulty data' ,  imagePath: 'images/faulty_data.png' },
+                                                         { value: 'V', label: 'Valid data' ,  imagePath: 'images/faulty_data.png' }]);       
                 self.selectedDataValidity = ko.observable();
 
-                parseDataValidities = function (response) {
-                    return {
-                        dataValidity: response['dataValidity'],
-                        dataValidityDesc: response['dataValidityDesc'],
-                        imagePath: response['imagePath']};
-                };
-                
-                var collectionDataValidities = new oj.Collection.extend({
-                    url: OJ_CODE_BOOK_SELECT_ALL_DATA_VALIDITIES,
-                    fetchSize: -1,
-                    model: new oj.Model.extend({
-                        idAttribute: 'dataValidity',
-                        parse: parseDataValidities
-                    })
-                });
-                
-                self.dataValiditiesCollection(new collectionDataValidities());
-                self.dataValiditiesCollection().fetch({
-                    success: function (collection, response, options) {
-                        if(self.dataValiditiesTags.length === 0) {
-                            for (var i = 0; i < collection.size(); i++) {
-                                var dataValidityModel = collection.at(i);
-                                self.dataValiditiesTags.push({value: dataValidityModel.attributes.dataValidity, label: dataValidityModel.attributes.dataValidityDesc, imagePath: dataValidityModel.attributes.imagePath});
-                            }
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                    }
-                });
+//                parseDataValidities = function (response) {
+//                    return {
+//                        dataValidity: response['dataValidity'],
+//                        dataValidityDesc: response['dataValidityDesc'],
+//                        imagePath: response['imagePath']};
+//                };
+//                
+//                var collectionDataValidities = new oj.Collection.extend({
+//                    url: OJ_CODE_BOOK_SELECT_ALL_DATA_VALIDITIES,
+//                    fetchSize: -1,
+//                    model: new oj.Model.extend({
+//                        idAttribute: 'dataValidity',
+//                        parse: parseDataValidities
+//                    })
+//                });
+//                
+//                self.dataValiditiesCollection(new collectionDataValidities());
+//                self.dataValiditiesCollection().fetch({
+//                    success: function (collection, response, options) {
+//                        if(self.dataValiditiesTags.length === 0) {
+//                            for (var i = 0; i < collection.size(); i++) {
+//                                var dataValidityModel = collection.at(i);
+//                                self.dataValiditiesTags.push({value: dataValidityModel.attributes.dataValidity, label: dataValidityModel.attributes.dataValidityDesc, imagePath: dataValidityModel.attributes.imagePath});
+//                            }
+//                        }
+//                    },
+//                    error: function (jqXHR, textStatus, errorThrown) {
+//                    }
+//                });
                 /* End Data validities */
                 
                 /* Audience ids */
