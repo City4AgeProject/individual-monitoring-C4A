@@ -10,6 +10,7 @@ import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
 import eu.city4age.dashboard.api.dao.TimeIntervalDAO;
 import eu.city4age.dashboard.api.dto.DiagramDataDTO;
+import eu.city4age.dashboard.api.dto.DiagramQuerryDTO;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.ws.AssessmentsService;
@@ -74,18 +75,16 @@ public class OJDataSet {
     	
 		dto.setGefLabels(gefLables);
     	
-    	List<Object[]> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
-    	
-		dto.setData(gefs);
+    	List<DiagramQuerryDTO> gefs = assessmentDAO.getDiagramDataForUserInRoleId(1, start, end);
 
         // Initialize resulting DataSet.
         DataSet result = new DataSet(dto);
 
         // Load related DataSet Assignments.
         List<String> geriatricFactorIds = new ArrayList<String>();
-        for (Object[] obj : dto.getData()) {
-        	GeriatricFactorValue gefv = (GeriatricFactorValue) obj[0];
-            geriatricFactorIds.add(String.valueOf(gefv.getId()));
+        for (GeriatricFactorValue gef : dto.getGefs()) {
+        	dto.getGefs().add(gef);
+            geriatricFactorIds.add(String.valueOf(gef.getId()));
         }
         List<Assessment> assessments = new ArrayList<Assessment>();
         for (String geriatricFactorId : geriatricFactorIds) {

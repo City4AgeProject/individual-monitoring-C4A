@@ -6,6 +6,7 @@
 package eu.city4age.dashboard.api.ws.jet.dto;
 
 import eu.city4age.dashboard.api.dto.DiagramDataDTO;
+import eu.city4age.dashboard.api.dto.DiagramQuerryDTO;
 import eu.city4age.dashboard.api.model.AssessedGefValueSet;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
@@ -44,7 +45,6 @@ public class DataSet implements Serializable {
     
     public DataSet(DiagramDataDTO dto) {
         name = "";
-        List<Object[]> gefData = dto.getData();
         groups = new ArrayList<String>();
         series = new ArrayList<Serie>();
         for(String serieName : dto.getGefLabels()) {
@@ -53,8 +53,7 @@ public class DataSet implements Serializable {
             series.add(newSerie);
         }
         
-        for(Object[] obj : gefData) {
-            GeriatricFactorValue gefv = (GeriatricFactorValue) obj[0];
+        for(GeriatricFactorValue gefv : dto.getGefs()) {
         	Item newItem = new Item(gefv.getId(), gefv.getGefValue().floatValue());
             String currentSerieName = gefv.getCdDetectionVariable().getDetectionVariableName().trim();
             Serie foundSerie = findSerieByName(currentSerieName);

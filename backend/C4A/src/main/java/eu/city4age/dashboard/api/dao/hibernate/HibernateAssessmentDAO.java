@@ -8,12 +8,16 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.domain.OrderBy;
+import eu.city4age.dashboard.api.dto.DiagramDataDTO;
+import eu.city4age.dashboard.api.dto.DiagramQuerryDTO;
 import eu.city4age.dashboard.api.model.Assessment;
+import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 
 /** Hibernate implementacija dao-a za asesment.
  *
@@ -24,27 +28,42 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 	@Autowired
 	protected SessionFactory sessionFactory;
 
-    public List<Object[]> getDiagramDataForUserInRoleId(final Integer patientId, final Timestamp start, final Timestamp end) {
-		return castList(Object[].class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+    public List<DiagramQuerryDTO> getDiagramDataForUserInRoleId(final Integer crId, final Timestamp start, final Timestamp end) {
+		return castList(DiagramQuerryDTO.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT DISTINCT g, g.timeInterval.intervalStart, g.cdDetectionVariable.id FROM GeriatricFactorValue g LEFT JOIN g.timeInterval AS timeInterval LEFT JOIN g.cdDetectionVariable AS cdDetectionVariable WHERE g.userInRoleId = :userInRoleId AND g.timeInterval.intervalStart >= :start AND g.timeInterval.intervalEnd <= :end ORDER BY g.timeInterval.intervalStart ASC, g.cdDetectionVariable.id ASC");
-				q.setParameter("userInRoleId", patientId);
+				Query q = session.createQuery("SELECT DISTINCT g as gef, g.timeInterval.intervalStart as intervalStart, g.cdDetectionVariable.id as cdvId FROM GeriatricFactorValue g LEFT JOIN g.timeInterval AS timeInterval LEFT JOIN g.cdDetectionVariable AS cdDetectionVariable WHERE g.userInRoleId = :userInRoleId AND g.timeInterval.intervalStart >= :start AND g.timeInterval.intervalEnd <= :end ORDER BY g.timeInterval.intervalStart ASC, g.cdDetectionVariable.id ASC");
+				q.setParameter("userInRoleId", crId);
 				q.setParameter("start", start);
 				q.setParameter("end", end);
+				q.setResultTransformer(Transformers.aliasToBean(DiagramQuerryDTO.class));
 				return q.list();
 			}
 		}));	
     }
     
-	public List<Object[]> getLastFiveAssessmentsForDiagram(final Integer patientId, final Timestamp start, final Timestamp end) {
+	public List<GeriatricFactorValue> getDiagramDataForUserInRoleId(final Integer crId, final Short dvParentId, final Timestamp start, final Timestamp end) {
+		return castList(GeriatricFactorValue.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+			public List<?> doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query q = session.createQuery("SELECT DISTINCT g as gef FROM GeriatricFactorValue g RIGHT JOIN g.timeInterval AS timeInterval INNER JOIN g.cdDetectionVariable AS cdDetectionVariable WHERE g.userInRoleId = :userInRoleId AND cdDetectionVariable.parentId = :parentId AND g.timeInterval.intervalStart >= :start AND g.timeInterval.intervalEnd <= :end");
+				q.setParameter("userInRoleId", crId);
+				q.setParameter("parentId", dvParentId);
+				q.setParameter("start", start);
+				q.setParameter("end", end);
+				return q.list();
+			}
+		}));	
+	}
+    
+	public List<Object[]> getLastFiveAssessmentsForDiagram(final Integer crId, final Timestamp start, final Timestamp end) {
 		return castList(Object[].class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
 				Query q = session.createQuery("SELECT DISTINCT a, a.created FROM Assessment a LEFT JOIN FETCH a.userInRole AS userInRole INNER JOIN a.assessedGefValueSets AS assessedGefValueSets INNER JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue LEFT JOIN geriatricFactorValue.timeInterval AS timeInterval WHERE geriatricFactorValue.userInRoleId = :userInRoleId AND geriatricFactorValue.timeInterval.intervalStart >= :start AND geriatricFactorValue.timeInterval.intervalEnd <= :end ORDER BY a.created DESC LIMIT '0' '5'");
 				q.setParameter("start", start);
 				q.setParameter("end", end);
-				q.setParameter("userInRoleId", patientId);
+				q.setParameter("userInRoleId", crId);
 				return q.list();
 			}
 		}));

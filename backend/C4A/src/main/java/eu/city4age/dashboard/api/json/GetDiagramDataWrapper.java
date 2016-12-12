@@ -1,13 +1,14 @@
 package eu.city4age.dashboard.api.json;
 
-public class GetLastFiveAssessmentsWrapper {
+public class GetDiagramDataWrapper {
 	
 	String timestampStart;
 	
 	String timestampEnd;
 	
 	Integer crId;
-
+	
+	Short dvParentId;
 
 	public String getTimestampStart() {
 		return timestampStart;
@@ -31,6 +32,14 @@ public class GetLastFiveAssessmentsWrapper {
 
 	public void setCrId(Integer crId) {
 		this.crId = crId;
+	}
+
+	public Short getDvParentId() {
+		return dvParentId;
+	}
+
+	public void setDvParentId(Short dvParentId) {
+		this.dvParentId = dvParentId;
 	}
 
 }

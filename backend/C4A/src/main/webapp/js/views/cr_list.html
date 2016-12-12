@@ -35,7 +35,8 @@
     <li id="a">
         <span>A</span>
         <ul>
-            <li id="amybartlet" data-bind="click: function(){$root.router.go('detection_gef');}">
+            <!-- TODO replace mocked care recipient id with obtained after getting list from service. -->
+            <li id="amybartlet" data-bind="click: function(){$root.router.store('1'); $root.router.go('detection_gef');}">
                 <span class="avatar" style="background-image: url('images/12.png')"></span>
                 <div class="container">
                     <div>
@@ -46,7 +47,7 @@
                     </div>
                 </div>
             </li>
-            <li id="andyjones">
+            <li id="andyjones" data-bind="click: function(){$root.router.store('2'); $root.router.go('detection_gef');}">
                 <span class="avatar" style="background-image: url('images/10.png')"></span>
                 <div class="container">
                     <div>
@@ -57,7 +58,7 @@
                     </div>
                 </div>
             </li>
-            <li id="andrewbugsy">
+            <li id="andrewbugsy" data-bind="click: function(){$root.router.store('3'); $root.router.go('detection_gef');}">
                 <span class="avatar" style="background-image: url('images/11.png')"></span>
                 <div class="container">
                     <div>
@@ -68,7 +69,7 @@
                     </div>
                 </div>
             </li>
-            <li id="annettbarnes">
+            <li id="annettbarnes" data-bind="click: function(){$root.router.store('4'); $root.router.go('detection_gef');}">
                 <span class="avatar" style="background-image: url('images/14.png')"></span>
                 <div class="container">
                     <div>
@@ -84,7 +85,7 @@
     <li id="b">
         <span>B</span>
         <ul>
-            <li id="bobjones">
+            <li id="bobjones" data-bind="click: function(){$root.router.store('5'); $root.router.go('detection_gef');}">
                 <span class="avatar" style="background-image: url('images/1.png')"></span>
                 <div class="container">
                     <div>
@@ -95,7 +96,7 @@
                     </div>
                 </div>
             </li>
-            <li id="bartbuckler">
+            <li id="bartbuckler" data-bind="click: function(){$root.router.store('6'); $root.router.go('detection_gef');}">
                 <span class="avatar" style="background-image: url('images/13.png')"></span>
                 <div class="container">
                     <div>
@@ -106,7 +107,7 @@
                     </div>
                 </div>
             </li>
-            <li id="bobbyfisher">
+            <li id="bobbyfisher" data-bind="click: function(){$root.router.store('7'); $root.router.go('detection_gef');}">>
                 <span class="avatar" style="background-image: url('images/2.png')"></span>
                 <div class="container">
                     <div>
@@ -122,7 +123,7 @@
     <li id="c">
         <span>C</span>
         <ul>
-            <li id="cathyjones">
+            <li id="cathyjones" data-bind="click: function(){$root.router.store('8'); $root.router.go('detection_gef');}">
                 <span class="avatar" style="background-image: url('images/3.png')"></span>
                 <div class="container">
                 <div>
@@ -133,7 +134,7 @@
                 </div>
                 </div>
             </li>
-            <li id="carollsmith">
+            <li id="carollsmith" data-bind="click: function(){$root.router.store('9'); $root.router.go('detection_gef');}">
                 <span class="avatar" style="background-image: url('images/4.png')"></span>
                 <div class="container">
                 <div>
