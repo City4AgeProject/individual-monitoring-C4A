@@ -200,17 +200,22 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
 
                 function removeCurrentAnnotationsFromSelection(dataSelection) {
                     var filteredSelection = [];
+                    //add all anotation if choosed only one point and if is from Assesments series
+                    if( dataSelection.selectionData.length === 1 && dataSelection.selectionData[0].seriesData.name==='Assesments'){
+                        filteredSelection.push(dataSelection.selectionData[0].data.assessmentObjects);
+                        return filteredSelection;
+                    }
+                    //if selected more than one
                     for (var i=0;i<dataSelection.selectionData.length;i++) {
                         var selectedDataPoint = dataSelection.selectionData[i];
-                        if(selectedDataPoint.seriesData.name==='Comments');
-                        else if(selectedDataPoint.seriesData.name==='Warnings');
-                        else if(selectedDataPoint.seriesData.name==='Alerts');
-                        else if(selectedDataPoint.seriesData.name==='Assesments'){
-                            filteredSelection.push(selectedDataPoint.data.assessmentObjects);
+                        //skip assessment
+                        if(selectedDataPoint.seriesData.name==='Assesments'){
+                            
                         }
                         else {
-                            filteredSelection.push(selectedDataPoint);
+                            filteredSelection.push(selectedDataPoint.data.id);
                         }
+                        
                     }
                     return filteredSelection;
                 }
@@ -221,10 +226,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var idsArray = [];
                     for (var i=0;i<selectedPoints.length;i++) {
                         if(i===0)
-                            queryParams += 'sv'+i+'='+selectedPoints[i].id;
+                            queryParams += 'sv'+i+'='+selectedPoints[i];
                         else
-                            queryParams += '&sv'+i+'='+selectedPoints[i].id;
-                        idsArray.push(selectedPoints[i].id);
+                            queryParams += '&sv'+i+'='+selectedPoints[i];
+                        idsArray.push(selectedPoints[i]);
                     }
                     self.dataPointsMarkedIds(idsArray);
                     return queryParams === '' ? queryParams : '?' + queryParams;
@@ -234,7 +239,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var i = 0;
                     var idsArray = [];
                     for (var i=0;i<selectedPoints.length;i++) {
-                        idsArray.push(selectedPoints[i].id);
+                        idsArray.push(selectedPoints[i]);
                     }
                     self.dataPointsMarkedIds(idsArray);
                     return idsArray;
@@ -249,14 +254,15 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             // Avoid assesment selections as points
                             var onlyDataPoints = removeCurrentAnnotationsFromSelection(ui['optionMetadata']);
                             if(onlyDataPoints.length === 1 && onlyDataPoints[0][0].id ){
+                                self.dataPointsMarked('1 data point marked ');
                                 loadCachedAnnotations(onlyDataPoints);
                             }else{
                                 // Compose selections in get query parameters
                                 var queryParams = calculateSelectedIds(onlyDataPoints);
+                                self.dataPointsMarked(onlyDataPoints.length
+                                    + ' data points marked ');
                                 loadAnnotations(queryParams);
                             }
-                            self.dataPointsMarked(ui['value'].length
-                                    + ' data points marked ');
                             showAnnotationsPopup();
                         }
                     }
