@@ -66,6 +66,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                         var annotationsSerie = new Serie();
                         annotationsSerie.name = 'Assesments';
                         annotationsSerie.source = 'images/flag-red.png';
+                        annotationsSerie.markerSize = 20;
                         var annotationeSerieItems = [];
                         for (var i = 0; i < assesments.length; i++) {
                             var assesment = assesments[i];
@@ -164,9 +165,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             loadAnnotations(queryParams);
                             
                             self.dataPointsMarked(ui['value'].length
-                                    + ' data points marked with '
-                                    + self.selectedAnotations().length
-                                    + ' annotation(s)');
+                                    + ' data points marked with ');
                             showAnnotationsPopup();
                         }
                     }
@@ -323,6 +322,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
 
                 self.formats = ko.observableArray();
                 self.isChecked = ko.observable();
+                self.checkedFilterRiskStatus = ko.observableArray();
+                self.checkedFilterValidityData = ko.observableArray();
+               
+                
+                
                 /* polar chart - uradjen za prvu grupu i to za mesece M1, M2 i M5 */
                 var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
                  var series = [{name: "Walking", items: [3.0, 1.5, 1.0, 2.2, 1.8, 3.1, 3.0, 3.6, 2.0, 2.5, 1.5, 3.8, 4.4]},
