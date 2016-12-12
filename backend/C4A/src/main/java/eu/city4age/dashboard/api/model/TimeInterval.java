@@ -13,6 +13,8 @@ public class TimeInterval extends AbstractBaseEntity {
 
 	private Timestamp intervalStart;
 	private Timestamp intervalEnd;
+	private String start;
+	private String end;	
 	private String typicalPeriod;
 	private Set activities = new HashSet(0);
 	private Set numericIndicatorValues = new HashSet(0);
@@ -43,6 +45,7 @@ public class TimeInterval extends AbstractBaseEntity {
 
 	public void setIntervalStart(Timestamp intervalStart) {
 		this.intervalStart = intervalStart;
+		this.start = intervalStart.toString();
 	}
 
 	public Timestamp getIntervalEnd() {
@@ -51,6 +54,7 @@ public class TimeInterval extends AbstractBaseEntity {
 
 	public void setIntervalEnd(Timestamp intervalEnd) {
 		this.intervalEnd = intervalEnd;
+		this.end = intervalEnd.toString();
 	}
 
 	public String getTypicalPeriod() {
@@ -100,7 +104,21 @@ public class TimeInterval extends AbstractBaseEntity {
 	public void setGeriatricFactorValues(Set<GeriatricFactorValue> geriatricFactorValues) {
 		this.geriatricFactorValues = geriatricFactorValues;
 	}
-	
 
+	public String getStart() {
+		return start;
+	}
+
+	public void setStart(String start) {
+		this.start = start;
+	}
+
+	public String getEnd() {
+		return end;
+	}
+
+	public void setEnd(String end) {
+		this.end = end;
+	}
 
 }

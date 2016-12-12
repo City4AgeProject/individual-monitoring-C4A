@@ -24,8 +24,10 @@ public class AssessmentServiceTest {
 			WebTarget WebTarget = client
 					.target("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getDiagramData");
 			
+			String input = "{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"crId\":1,\"dvParentId\":4}";
+
 			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
-					.get(Response.class);
+					.post(Entity.entity(input,MediaType.APPLICATION_JSON_TYPE), Response.class);
 
 			/*if (response.getStatus() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : "
@@ -59,7 +61,7 @@ public class AssessmentServiceTest {
 			WebTarget WebTarget = client
 					.target("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getLastFiveAssessmentsForDiagram");
 
-			String input = "{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"patientId\":1}";
+			String input = "{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"crId\":1}";
 
 			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
 					.post(Entity.entity(input,MediaType.APPLICATION_JSON_TYPE), Response.class);

@@ -34,12 +34,13 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'ojs/ojrouter', 'ojs/ojdialog',
       // Router setup
       self.router = oj.Router.rootInstance;
       self.router.configure({
-        'cr_list': {label: 'Care Recipient'},
+        //'cr_list': {label: 'Care Recipient'},
 //        'people': {label: 'People'},
 //        'library': {label: 'Library'},
         'detection_ges': {label: 'Detection GES', isDefault: true},
         'detection_gef': {label: 'Detection GEF'},
-        'test_ges': {label: 'Test GES'}
+        'test_ges': {label: 'Test GES'},
+        'detection_ges_mil': {label: 'Detection GES'}
       });
       oj.Router.defaults['urlAdapter'] = new oj.Router.urlParamAdapter();
 

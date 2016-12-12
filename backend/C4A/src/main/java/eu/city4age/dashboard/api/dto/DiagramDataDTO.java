@@ -1,6 +1,10 @@
 package eu.city4age.dashboard.api.dto;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.TimeInterval;
 
 public class DiagramDataDTO {
 
@@ -9,8 +13,9 @@ public class DiagramDataDTO {
 	
 	List<String> monthLabels;
 	
-	List<Object[]> data;
+	List<GeriatricFactorValue> gefs = new ArrayList<GeriatricFactorValue>();
 	
+	List<TimeInterval> tis = new ArrayList<TimeInterval>();
 	
 
 	public List<String> getGefLabels() {
@@ -29,12 +34,20 @@ public class DiagramDataDTO {
 		this.monthLabels = monthLabels;
 	}
 
-	public List<Object[]> getData() {
-		return data;
+	public List<GeriatricFactorValue> getGefs() {
+		return gefs;
 	}
 
-	public void setData(List<Object[]> data) {
-		this.data = data;
+	public void setGefs(List<GeriatricFactorValue> gefs) {
+		this.gefs = gefs;
+	}
+
+	public List<TimeInterval> getTis() {
+		return tis;
+	}
+
+	public void setTis(List<TimeInterval> tis) {
+		this.tis = tis;
 	}
 
 }
