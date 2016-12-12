@@ -1,5 +1,6 @@
 // Domain objects aka. enitites.
 function Group() {
+    this.id = '';
     this.name = '';
 }
 
@@ -7,7 +8,8 @@ function Serie() {
     this.name = '';
     this.items = [];
     this.source = '';
-}
+    this.imgSize = '20px'; //default size for chart
+ }
 
 function Item() {
     this.id = null;

@@ -8,6 +8,5 @@ public interface TimeIntervalDAO extends BaseDAO {
 	
 	public List<Object[]> getTimeIntervalsForPeriod(final Timestamp start, final Timestamp end);
         
-        public List<TimeInterval> getTimeIntervals(final Timestamp start, final Timestamp end);
 
 }

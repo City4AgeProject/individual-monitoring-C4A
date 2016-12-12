@@ -137,27 +137,8 @@ public class AssessmentsService {
             assessments.addAll(
                     getAssessmentsForGeriatricFactorId(geriatricFactorId));
         }
-        Timestamp start = Timestamp.valueOf("2016-01-01 00:00:00");
-        Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
-
-        // Rewrite results ordered by time intervals andd with zero pads.
-        List<TimeInterval> months = timeIntervalDAO.getTimeIntervals(start, end);
-
-        Map<TimeInterval, Assessment> orderedByMonthsResult = new HashMap<TimeInterval, Assessment>();
-        for (TimeInterval m : months) {
-            orderedByMonthsResult.put(m, null);
-            for (Assessment a : assessments) {
-                for (Object gef : a.getAssessedGefValueSets()) {
-                    if (((AssessedGefValueSet) gef).getGeriatricFactorValue().getTimeInterval().getId().equals(m.getId())) {
-                        orderedByMonthsResult.put(m, a);
-
-                    }
-                }
-            }
-        }
-        ArrayList<Assessment> al = new ArrayList<Assessment>(orderedByMonthsResult.values());
-
-        String dtoAsString = objectMapper.writeValueAsString(al);
+        
+        String dtoAsString = objectMapper.writeValueAsString(assessments);
         return dtoAsString;
     }
 

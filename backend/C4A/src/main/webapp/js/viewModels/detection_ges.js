@@ -11,15 +11,47 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 
                  // Server interaction callbacks
                 var loadSucessCallback = function (data) {
-                    self.groupsValue(data.groups);
-                    self.seriesValue(data.series);
+                    var countMonths = data.monthLabels.length;
+                    var countGefs = data.gefLabels.length;
+
+                    var nullfill=[];
+
+                    var series = [];
+
+                    groups = data.monthLabels;
+
+                    for (i = 0; i < countGefs; i++) {
+                        nullfill=[],j=0;for(;j<countMonths;)nullfill[j++]=null;
+                        var s = new Serie();
+                        s.name = data.gefLabels[i];
+                        s.items = nullfill;
+                        series[i] = s;
+                    }
+
+                    for (i = 0; i < series.length; i++) {
+                        for (j = 0; j < groups.length; j++) {
+                                //MAIN PART OF CODE FOR INTEGRATION WITH GREEK WEB SERIVICES
+                                //(Change 3rd loop so it reads objects from greek ws)
+                                for (k = 0; k < data.gefs.length; k++) {    	    			
+                                         if((data.gefs[k].cdDetectionVariable.detectionVariableName == series[i].name) && (data.gefs[k].timeInterval.start == groups[j])) {
+                                                var newItem = new Item();
+                                                newItem.id = data.gefs[k].id;
+                                                newItem.value = data.gefs[k].gefValue;
+                                                series[i].items[j] = 	newItem;                	    					 
+                                         } 
+                                 }
+                        }
+                    }
+                    
+                    self.groupsValue(groups);
+                    self.seriesValue(series);
                     
                     var chartPointsIds = [];
                     var pointIds = [];
-                    for (var i = 0; i < data.series.length ;  i++) {
-                        for (var j = 0; j < data.series[i].items.length;  j++) {
-                            chartPointsIds.push( data.series[i].items[j]);
-                            pointIds.push(data.series[i].items[j].id);
+                    for (var i = 0; i < series.length ;  i++) {
+                        for (var j = 0; j < series[i].items.length;  j++) {
+                            chartPointsIds.push( series[i].items[j]);
+                            pointIds.push(series[i].items[j].id);
                         }
                     }
                     loadAssessments({geriatricFactorValueIds : pointIds});
@@ -34,7 +66,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 };
                 
                 var loadDataSet = function(data) {
-                    var jqXHR = $.getJSON(OJ_DATA_SET_FIND, loadSucessCallback);
+                    //TODO: remove hardcoded values when real data available
+                    var jqXHR = $.postJSON(ASSESSMENTS_DIAGRAM_DATA,"{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"crId\":1,\"dvParentId\":4}" , loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
                 };
@@ -215,7 +248,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 /* Risks select */
                 self.riskStatusesURL = OJ_CODE_BOOK_SELECT_ALL_RISKS;
                 self.risksCollection = ko.observable();
-                self.risksTags = ko.observableArray();       
+                // TODO: remove mock data when service is available
+                self.risksTags = ko.observableArray([{ riskStatus: 'A', riskStatusDesc: 'Risk alert' ,  imagePath: 'images/risk_alert.png' }, 
+                                                       { riskStatus: 'W', riskStatusDesc: 'Risk warning' ,  imagePath: 'images/risk_warning.png' }]);       
                 self.selectedRiskStatus = ko.observable();
 
                 parseRisks = function (response) {
@@ -251,7 +286,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 
                 /* Data validities */
                 self.dataValiditiesCollection = ko.observable();
-                self.dataValiditiesTags = ko.observableArray();       
+                self.dataValiditiesTags = ko.observableArray([ { dataValidity: 'Q', dataValidityDesc: 'Questionable data' ,  imagePath: 'images/questionable_data.png' },
+                                                            { dataValidity: 'F', dataValidityDesc: 'Faulty data' ,  imagePath: 'images/faulty_data.png' },
+                                                         { dataValidity: 'V', dataValidityDesc: 'Valid data' ,  imagePath: 'images/faulty_data.png' }]);       
                 self.selectedDataValidity = ko.observable();
 
                 parseDataValidities = function (response) {
