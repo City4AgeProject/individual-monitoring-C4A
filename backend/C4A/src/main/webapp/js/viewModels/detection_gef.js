@@ -203,7 +203,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                                     $('#showMorphologyPopup').ojPopup('close');
                                 }
                             }
-                            // Show "Morphology" tab if only "Behavioural and Contextual" values are selected.
+                            // Show "Morphology" tab if both "Behavioural and Contextual" values are selected.
                             else if(filteredSelectedSeries.length===2) {
                                 if($.inArray(GROUP1_SERIES_NAME, filteredSelectedSeries) >= 0
                                         && $.inArray(GROUP2_SERIES_NAME, filteredSelectedSeries) >= 0) {

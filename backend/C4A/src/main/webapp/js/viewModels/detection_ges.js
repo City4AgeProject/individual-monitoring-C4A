@@ -72,13 +72,28 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return jqXHR;
                 };
                 
-                var loadAnnotations = function (queryParams) {
-                    return $.getJSON(OJ_ANNOTATION_FOR_DATA_POINTS + queryParams, function (annotations) {
-                        for (var i = 0; i < annotations.length; i++) {
-                            var anno = annotations[i];
-                            anno.shortComment = shortenText(anno.comment, 27) + '...';
+                var loadAnnotations = function (pointIds) {
+                    var pointIdsJson = JSON.stringify({geriatricFactorValueIds : pointIds});
+                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assesments) {
+                        var annotations = [];
+                        for (var i = 0; i < assesments.length; i++) {
+                            var assessment = assesments[i];
+                            var annotation = new Annotation();
+                            annotation.id = assessment.id;
+                            annotation.comment = assessment.assessmentComment;
+                            annotation.shortComment = shortenText(assessment.assessmentComment, 27);
+                            annotation.from = assessment.userInRole.id;
+                            annotation.dateAndTime = assessment.created;
+                            annotation.type = assessment.riskStatus;
+                            annotation.imgSrc = 'comment.png';
+                            if('W'== annotation.type)
+                                annotation.imgSrc = 'images/risk_warning.png';
+                            else if('A'== annotation.type)
+                                annotation.imgSrc = 'images/risk_alert.png';
+                            annotations.push(annotation);
                         }
                         self.selectedAnotations(annotations);
+                        self.dataPointsMarked(dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
                     });
                 };
                 
@@ -150,7 +165,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 self.dataPointsMarkedIds = ko.observableArray();
                 
                 function showAnnotationsPopup() {
-                    $('#popup1').ojPopup( "option", "position", {} );
+                    $('#popup1').ojPopup("option", "position", {} );
                     $('#popup1').ojPopup('open');
                     $("#popup1").ojPopup("widget").css("left", clientX + 2  + "px");
                     $("#popup1").ojPopup("widget").css("top", clientY + 2 + "px");
@@ -186,19 +201,30 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return queryParams === '' ? queryParams : '?' + queryParams;
                 }
 
+                function calculateSelectedIds(selectedPoints) {
+                    var i = 0;
+                    var idsArray = [];
+                    for (var i=0;i<selectedPoints.length;i++) {
+                        idsArray.push(selectedPoints[i].id);
+                    }
+                    self.dataPointsMarkedIds(idsArray);
+                    return idsArray;
+                }
+
                 self.chartOptionChange = function (event, ui) {
                     if (ui['option'] === 'selection') {
                         if (ui['value'].length > 0) {
+                            $('#popup1').ojPopup();
                             if($('#popup1').ojPopup( "isOpen" ))
                                 $('#popup1').ojPopup('close');
                             // Avoid assesment selections as points
                             var onlyDataPoints = removeCurrentAnnotationsFromSelection(ui['value']);
                             // Compose selections in get query parameters
-                            var queryParams = calculateQueryParamsFromSelection(onlyDataPoints);
+                            var queryParams = calculateSelectedIds(onlyDataPoints);
                             loadAnnotations(queryParams);
                             
                             self.dataPointsMarked(ui['value'].length
-                                    + ' data points marked with ');
+                                    + ' data points marked with ...');
                             showAnnotationsPopup();
                         }
                     }
@@ -220,7 +246,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 
                 /* ojButton postAnnotation */
                 self.postAnnotation = function (data, event) {
-                    //shpuld be logged user ID
+                    //should be logged user ID
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
                     var riskStatus = ko.toJS(self.selectedRiskStatus)[0];
@@ -356,13 +382,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
 //                    $("#oj-select-choice-selectSort").css("height", "42px");
 //                };
 
-
                 self.formats = ko.observableArray();
                 self.isChecked = ko.observable();
                 self.checkedFilterRiskStatus = ko.observableArray();
                 self.checkedFilterValidityData = ko.observableArray();
-               
-                
                 
                 /* polar chart - uradjen za prvu grupu i to za mesece M1, M2 i M5 */
                 var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];

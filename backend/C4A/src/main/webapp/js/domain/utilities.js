@@ -1,7 +1,7 @@
 
 function shortenText(text, newlength) {
     if(text)
-        return text.substr(0, text.length>=newlength ? newlength : text.length);
+        return text.substr(0, text.length>=newlength ? newlength : text.length) + '...';
     else
         return '';
 }
