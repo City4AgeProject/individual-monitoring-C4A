@@ -27,3 +27,4 @@ var OJ_CODE_BOOK_SELECT_ALL_RISKS = root + 'OJCodeBook/selectAllRisks';
 var OJ_CODE_BOOK_SELECT_ALL_DATA_VALIDITIES = root + 'OJCodeBook/selectDataValidities';
 
 var ASSESSMENTS_FOR_DATA_POINTS = root + 'assessments/getAssessmentsForSelectedDataSet';
+var ASSESSMENTS_ADD_FOR_DATA_POINTS = root + 'assessments/addAssessmentsForSelectedDataSet';

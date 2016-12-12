@@ -33,40 +33,59 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     console.log('posted comment ' + response);
                 };
                 
-                loadDataSet = function(data) {
+                var loadDataSet = function(data) {
                     var jqXHR = $.getJSON(OJ_DATA_SET_FIND, loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
                 };
                 
-                loadAnnotations = function (queryParams) {
-                    return $.getJSON(OJ_ANNOTATION_FOR_DATA_POINTS + queryParams, function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            var anno = data[i];
+                var loadAnnotations = function (queryParams) {
+                    return $.getJSON(OJ_ANNOTATION_FOR_DATA_POINTS + queryParams, function (annotations) {
+                        for (var i = 0; i < annotations.length; i++) {
+                            var anno = annotations[i];
                             anno.shortComment = shortenText(anno.comment, 27) + '...';
                         }
+                        self.selectedAnotations(annotations);
                     });
                 };
                 
-                loadAssessments = function (ids) {
-                    var idsArray = JSON.stringify(ids);
-                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            var annotationsSerie = new Serie();
-                            var annotationeSerieItems = [];
-                            for(var j = 0; i < anno.assessedGefValueSets.length; j++) {
-                                var assessedGefValueSet = anno.assessedGefValueSets[j];
-                                var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
-                                var id = geriatricFactorValue.gefValue;
-                                var gefValue = geriatricFactorValue.gefValue;
-                                
-                                var item = new Item();
-                                item.id = id;
-                                item.value = gefValue;
-                                annotationeSerieItems.push(item);
-                            }
-                            self.seriesValue.push(annotationsSerie);
+                function matchSeriesIndexByItemValue(item) {
+                    var series = self.seriesValue();
+                    for(var i = 0; i < series.length; i++) {
+                        for(var j = 0; j < series[i].items.length; j++) {
+                            if(series[i].items[j].value == item.value)
+                                return j;
                         }
+                    }
+                    return -1;
+                }
+                
+                var loadAssessments = function (ids) {
+                    var idsArray = JSON.stringify(ids);
+                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (assesments) {
+                        var annotationsSerie = new Serie();
+                        annotationsSerie.name = 'Assesments';
+                        annotationsSerie.source = 'images/flag-red.png';
+                        var annotationeSerieItems = [];
+                        for (var i = 0; i < assesments.length; i++) {
+                            var assesment = assesments[i];
+                            if (assesment) {
+                                for (var j = 0; j < assesment.assessedGefValueSets.length; j++) {
+                                    var assessedGefValueSet = assesment.assessedGefValueSets[j];
+                                    var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
+                                    var gefValue = geriatricFactorValue.gefValue;
+                                    var id = geriatricFactorValue.id;
+                                    var item = new Item();
+                                    item.id = id;
+                                    item.value = gefValue;
+                                    var matchedIndex = matchSeriesIndexByItemValue(item);
+                                    if(matchedIndex>=0)
+                                        annotationeSerieItems[matchedIndex] = item;
+                                }
+                            }
+                        }
+                        annotationsSerie.items = annotationeSerieItems;
+                        self.seriesValue.push(annotationsSerie);
                     });
                 };
                 
@@ -144,7 +163,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             var queryParams = calculateQueryParamsFromSelection(onlyDataPoints);
                             loadAnnotations(queryParams);
                             
-                            self.selectedAnotations(data);
                             self.dataPointsMarked(ui['value'].length
                                     + ' data points marked with '
                                     + self.selectedAnotations().length
@@ -175,13 +193,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var comment = ko.toJS(self.commentText);
                     var riskStatus = ko.toJS(self.selectedRiskStatus)[0];
                     var dataValidityStatus = ko.toJS(self.selectedDataValidity)[0];
-                    //TODO: should be get from selected nodes from chart -- what if no selection ?? validation ??
                     var geriatricFactorValueIds = ko.toJS(self.dataPointsMarkedIds);
                     //TODO: should be get from miltiselect combobox for role
-                    var audienceIds = [1,2];
+                    var audienceIds = [1,2];//ko.toJS(self.selectedAudienceIds)
                     var annotationToPost = new AddAssesment
                         (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
-                    var jqXHR = $.postJSON(OJ_ANNOTATION_CREATE, 
+                    var jqXHR = $.postJSON(ASSESSMENTS_ADD_FOR_DATA_POINTS, 
                         JSON.stringify(annotationToPost),
                         loadDataSet
                     );
@@ -268,6 +285,18 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     }
                 });
                 /* End Data validities */
+                
+                /* Audience ids */
+                
+                self.audienceIds = ko.observableArray([
+                    {id : "Caregiver", name : "Caregiver"},
+                    {id : "Geriatrician", name : "Geriatrician"},
+                    {id : "Intervention staff", name : "Intervention staff"},
+                    {id : "City 4 Age staff", name : "City 4 Age staff"}
+                ]);
+                self.selectedAudienceIds = ko.observableArray();
+                
+                /* End Audience ids */
                 
                 self.shownFilterBar = false;
                 self.toggleFilterAnnotationBar = function (e) {

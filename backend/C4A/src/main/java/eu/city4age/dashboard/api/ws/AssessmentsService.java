@@ -35,15 +35,18 @@ import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRoleId;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.TimeInterval;
 import eu.city4age.dashboard.api.model.UserInRole;
-	
+import java.util.HashMap;
+import java.util.Map;
+
 @Transactional("transactionManager")
 @Path("/assessments")
 public class AssessmentsService {
-	
-	static protected Logger logger = Logger.getLogger(AssessmentsService.class);
 
-	@Autowired
+    static protected Logger logger = Logger.getLogger(AssessmentsService.class);
+
+    @Autowired
     private AssessmentDAO assessmentDAO;
 
 	@Autowired
@@ -88,9 +91,8 @@ public class AssessmentsService {
 		String dtoAsString = objectMapper.writeValueAsString(dto);
         
         return dtoAsString;		
-
-    }
-
+	}
+ 
     @POST
     @Path("/getLastFiveAssessmentsForDiagram")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -112,40 +114,59 @@ public class AssessmentsService {
 						getLastFiveAssessmentsForDiagram(data.getCrId(), start, end);
     	
 		return objectMapper.writeValueAsString(assessments);
-	
+
     }
 
-	
     @POST
     @Path("/getAssessmentsForSelectedDataSet")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public String getAssessmentsForSelectedDataSet(String json) throws Exception {
-    	
-		ObjectMapper objectMapper = new ObjectMapper();
+    public String getAssessmentsForSelectedDataSet(String json) throws Exception {
 
-		objectMapper.registerModule(new Hibernate3Module());
-		
-    	ObjectReader objectReader = objectMapper.reader(GetAllSelectedAssessmentsWrapper.class);
-    	
-    	GetAllSelectedAssessmentsWrapper data = objectReader.readValue(json);
+        ObjectMapper objectMapper = new ObjectMapper();
 
-    	List<Assessment> assessments = new ArrayList<Assessment>();
-    	
-		for (Long geriatricFactorId : data.getGeriatricFactorValueIds())
-			assessments.addAll(
-					getAssessmentsForGeriatricFactorId(geriatricFactorId));
+        objectMapper.registerModule(new Hibernate3Module());
 
-		String dtoAsString = objectMapper.writeValueAsString(assessments);
-        
-        return dtoAsString;		
-	}
+        ObjectReader objectReader = objectMapper.reader(GetAllSelectedAssessmentsWrapper.class);
+
+        GetAllSelectedAssessmentsWrapper data = objectReader.readValue(json);
+
+        List<Assessment> assessments = new ArrayList<Assessment>();
+
+        for (Long geriatricFactorId : data.getGeriatricFactorValueIds()) {
+            assessments.addAll(
+                    getAssessmentsForGeriatricFactorId(geriatricFactorId));
+        }
+        Timestamp start = Timestamp.valueOf("2016-01-01 00:00:00");
+        Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
+
+        // Rewrite results ordered by time intervals andd with zero pads.
+        List<TimeInterval> months = timeIntervalDAO.getTimeIntervals(start, end);
+
+        Map<TimeInterval, Assessment> orderedByMonthsResult = new HashMap<TimeInterval, Assessment>();
+        for (TimeInterval m : months) {
+            orderedByMonthsResult.put(m, null);
+            for (Assessment a : assessments) {
+                for (Object gef : a.getAssessedGefValueSets()) {
+                    if (((AssessedGefValueSet) gef).getGeriatricFactorValue().getTimeInterval().getId().equals(m.getId())) {
+                        orderedByMonthsResult.put(m, a);
+
+                    }
+                }
+            }
+        }
+        ArrayList<Assessment> al = new ArrayList<Assessment>(orderedByMonthsResult.values());
+
+        String dtoAsString = objectMapper.writeValueAsString(al);
+        return dtoAsString;
+    }
 
     @POST
     @Path("/getAssessmentsByFiler")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String getAssessmentsByFiler(String json) throws Exception {
+
     	
 		ObjectMapper objectMapper = new ObjectMapper();
 
@@ -257,5 +278,6 @@ public class AssessmentsService {
 		this.timeIntervalDAO = timeIntervalDAO;
 	}
 	
+
 
 }

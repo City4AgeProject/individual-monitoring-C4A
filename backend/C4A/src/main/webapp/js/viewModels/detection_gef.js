@@ -1,9 +1,9 @@
 
 define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'ojs/ojchart', 'ojs/ojtabs', 'ojs/ojlegend',
-    'ojs/ojpopup', 'ojs/ojslider', 'ojs/ojmenu', 'ojs/ojdialog'],
+    'ojs/ojpopup', 'ojs/ojslider', 'ojs/ojmenu', 'ojs/ojdialog', 'ojs/ojrouter'],
         function (oj, ko, $) {
 
-            function graphicsContentViewModel() {
+            function graphicsContentViewModel(careRecipientId) {
                 var self = this;
                 var OVERALL_SERIES_NAME = 'Overall';
                 var PRE_FRAIL_SERIES_NAME = 'Pre-Frail';
@@ -312,7 +312,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
 
             }
 
-            return new graphicsContentViewModel();
+            var selectedCareRecipientId = oj.Router.rootInstance.retrieve();
+            return new graphicsContentViewModel(selectedCareRecipientId);
         }
 
 

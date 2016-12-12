@@ -6,6 +6,7 @@ function Group() {
 function Serie() {
     this.name = '';
     this.items = [];
+    this.source = '';
 }
 
 function Item() {
@@ -30,6 +31,7 @@ function Annotation() {
     this.comment = '';
     this.imgSrc = '';
     this.shortComment = '';
+    this.dateAndTime = '';
 };
 
 Annotation.prototype.toJson = function() {
@@ -56,6 +58,7 @@ Annotation.prototype.fromOther = function(other) {
     this.from = other.from;
     this.comment = other.comment;
     this.imgSrc = other.imgSrc;
+    this.dateAndTime = other.dateAndTime;
     this.shortComment = this.comment
                             .substr(0, this.comment.length>=27 
                                     ? 27 

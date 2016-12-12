@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 // default package
 // Generated 24-Nov-2016 15:43:47 by Hibernate Tools 5.2.0.Beta1
@@ -20,7 +21,7 @@ public class AssessedGefValueSet implements Serializable {
 	@JsonBackReference
 	private Assessment assessment;
 	
-	@JsonBackReference 
+	@JsonManagedReference 
 	private GeriatricFactorValue geriatricFactorValue;
 
 	public AssessedGefValueSet() {
