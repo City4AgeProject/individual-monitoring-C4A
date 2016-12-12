@@ -88,8 +88,3 @@ function prepareAnnotationsForPrintout(annotations) {
 }
 
 // Navigation parameters wrappers
-function ChartTest1Params(idCR, idLoggedUser, showDetailsId) {
-    this.idCR = idCR;
-    this.idLoggedUser = idLoggedUser;
-    this.showDetailsId = showDetailsId;
-};
