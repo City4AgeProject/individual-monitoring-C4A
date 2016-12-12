@@ -97,6 +97,29 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     });
                 };
                 
+                var loadCachedAnnotations = function (assessments) {
+                        var annotations = [];
+                        for (var i = 0; i < assessments.length; i++) {
+                            var assessment = assessments[i];
+                            var annotation = new Annotation();
+                            annotation.id = assessment[0].id;
+                            annotation.comment = assessment[0].assessmentComment;
+                            annotation.shortComment = shortenText(assessment[0].assessmentComment, 27);
+                            annotation.from = assessment[0].userInRole.id;
+                            annotation.dateAndTime = assessment[0].created;
+                            annotation.type = assessment[0].riskStatus;
+                            annotation.imgSrc = 'comment.png';
+                            if('W'== annotation.type)
+                                annotation.imgSrc = 'images/risk_warning.png';
+                            else if('A'== annotation.type)
+                                annotation.imgSrc = 'images/risk_alert.png';
+                            annotations.push(annotation);
+                        }
+                        self.selectedAnotations(annotations);
+                        self.dataPointsMarked(self.dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
+                   
+                };
+                
                 function matchSeriesIndexByItemValue(item) {
                     var series = self.seriesValue();
                     for(var i = 0; i < series.length; i++) {
@@ -130,6 +153,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                     var item = new Item();
                                     item.id = id;
                                     item.value = gefValue;
+                                    item.assessmentObjects.push(assesments[i]);
                                     var matchedIndex = matchSeriesIndexByItemValue(item);
                                     if(matchedIndex>=0)
                                         annotationeSerieItems[matchedIndex] = item;
@@ -176,12 +200,14 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
 
                 function removeCurrentAnnotationsFromSelection(dataSelection) {
                     var filteredSelection = [];
-                    for (var i=0;i<dataSelection.length;i++) {
-                        var selectedDataPoint = dataSelection[i];
-                        if(selectedDataPoint.series==='Comments');
-                        else if(selectedDataPoint.series==='Warnings');
-                        else if(selectedDataPoint.series==='Alerts');
-                        else if(selectedDataPoint.series==='Assesments');
+                    for (var i=0;i<dataSelection.selectionData.length;i++) {
+                        var selectedDataPoint = dataSelection.selectionData[i];
+                        if(selectedDataPoint.seriesData.name==='Comments');
+                        else if(selectedDataPoint.seriesData.name==='Warnings');
+                        else if(selectedDataPoint.seriesData.name==='Alerts');
+                        else if(selectedDataPoint.seriesData.name==='Assesments'){
+                            filteredSelection.push(selectedDataPoint.data.assessmentObjects);
+                        }
                         else {
                             filteredSelection.push(selectedDataPoint);
                         }
@@ -221,13 +247,16 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             if($('#popup1').ojPopup( "isOpen" ))
                                 $('#popup1').ojPopup('close');
                             // Avoid assesment selections as points
-                            var onlyDataPoints = removeCurrentAnnotationsFromSelection(ui['value']);
-                            // Compose selections in get query parameters
-                            var queryParams = calculateSelectedIds(onlyDataPoints);
-                            loadAnnotations(queryParams);
-                            
+                            var onlyDataPoints = removeCurrentAnnotationsFromSelection(ui['optionMetadata']);
+                            if(onlyDataPoints.length === 1 && onlyDataPoints[0][0].id ){
+                                loadCachedAnnotations(onlyDataPoints);
+                            }else{
+                                // Compose selections in get query parameters
+                                var queryParams = calculateSelectedIds(onlyDataPoints);
+                                loadAnnotations(queryParams);
+                            }
                             self.dataPointsMarked(ui['value'].length
-                                    + ' data points marked with ...');
+                                    + ' data points marked ');
                             showAnnotationsPopup();
                         }
                     }
