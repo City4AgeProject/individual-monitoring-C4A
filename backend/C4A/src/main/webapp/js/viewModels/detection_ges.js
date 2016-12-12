@@ -93,7 +93,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             annotations.push(annotation);
                         }
                         self.selectedAnotations(annotations);
-                        self.dataPointsMarked(dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
+                        self.dataPointsMarked(self.dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
                     });
                 };
                 
