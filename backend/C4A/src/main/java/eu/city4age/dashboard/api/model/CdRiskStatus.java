@@ -7,7 +7,7 @@ public class CdRiskStatus implements Serializable {
 	
 	
 	
-	private String riskStatus;
+	private Character riskStatus;
 	
 	private String riskStatusDescription;
 	
@@ -15,13 +15,13 @@ public class CdRiskStatus implements Serializable {
 	
 	private byte[] iconImage;
 
-	
-	
-	public String getRiskStatus() {
+
+
+	public Character getRiskStatus() {
 		return riskStatus;
 	}
 
-	public void setRiskStatus(String riskStatus) {
+	public void setRiskStatus(Character riskStatus) {
 		this.riskStatus = riskStatus;
 	}
 
