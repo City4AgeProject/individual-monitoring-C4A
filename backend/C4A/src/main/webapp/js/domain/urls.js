@@ -25,7 +25,7 @@ else {
 
 var CODELIST_SELECT_ALL_RISKS = root + 'codeList/getAllRiskStatus';
 var CODELIST_SELECT_ROLES_FOR_STAKEHOLDER = root + 'codeList/getAllRolesForStakeholderAbbr';
-var CODELIST_SELECT_ALL_RISKS = root + 'codeList/getAllDataValitidityStatus';
+var CODELIST_SELECT_DATA_VALIDITY_STATUS = root + 'codeList/getAllDataValitidityStatus';
 
 var ASSESSMENTS_FOR_DATA_POINTS = root + 'assessments/getAssessmentsForSelectedDataSet';
 var ASSESSMENTS_ADD_FOR_DATA_POINTS = root + 'assessments/addAssessmentsForSelectedDataSet';
