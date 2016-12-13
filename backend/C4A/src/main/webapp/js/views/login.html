@@ -1,0 +1,40 @@
+<div id="form-container">
+    <div class="oj-form-layout">
+        <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline">  
+            <div class="oj-flex">  
+                <div class="oj-flex-item">
+                    <label for="control1">username:</label>
+                </div>
+                <div class="oj-flex-item">
+                    <input id="control1" 
+                           data-bind="ojComponent: {component: 'ojInputText', 
+                                          value: loginValue, required: true}">
+                </div>
+            </div>
+            <div class="oj-flex"> 
+                <div class="oj-flex-item">
+
+                    <label for="password">password</label>
+                </div>
+                <div class="oj-flex-item">
+
+                    <input type="password" 
+                           id="password"
+                           data-bind="ojComponent: {component: 'ojInputPassword', 
+                                  value: passwordValue,required: true}"/>
+                </div>
+  
+            </div>
+            <div class="oj-flex"> 
+                <div class="oj-flex-item">
+                    <button id="loginBtn" class="oj-button"
+                        data-bind="click: loginUser, ojComponent: { component: 'ojButton', 
+                                                    label: 'Login',
+                                                    chroming:'outlined'
+                                                   }">
+                    </button>
+                </div>
+            </div>
+        </div>    
+    </div>
+</div>
