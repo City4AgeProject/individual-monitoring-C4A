@@ -1,6 +1,6 @@
 // Domain objects aka. enitites.
 function Group() {
-    this.id = '';
+    this.id = null;
     this.name = '';
 }
 
