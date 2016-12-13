@@ -13,14 +13,16 @@ public class UserInSystem extends AbstractBaseEntity {
 	private String username;
 	private String password;
 	private Date createdDate;
+	private String diplayName;
 
 	public UserInSystem() {
 	}
 
-	public UserInSystem(String username, String password, Date createdDate) {
+	public UserInSystem(String username, String password, Date createdDate, String diplayName) {
 		this.username = username;
 		this.password = password;
 		this.createdDate = createdDate;
+		this.diplayName = diplayName;
 	}
 
 	public String getUsername() {
@@ -45,6 +47,14 @@ public class UserInSystem extends AbstractBaseEntity {
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public String getDiplayName() {
+		return diplayName;
+	}
+
+	public void setDiplayName(String diplayName) {
+		this.diplayName = diplayName;
 	}
 
 }
