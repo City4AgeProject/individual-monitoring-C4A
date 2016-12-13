@@ -1,8 +1,6 @@
 package eu.city4age.dashboard.api.domain;
 
 public enum DataValidityStatus {
-	
-
 
 	QUESTIONABLE_DATA('Q'),
 	FAULTY_DATA('F'),
@@ -17,5 +15,6 @@ public enum DataValidityStatus {
 	public Character toChar() {
 		return c;
 	}
+	
 
 }

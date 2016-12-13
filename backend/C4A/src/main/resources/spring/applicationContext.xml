@@ -35,8 +35,6 @@
 	<context:component-scan base-package="eu.city4age.dashboard.api.*" />
 	
 	<bean id="assessmentService" class="eu.city4age.dashboard.api.ws.AssessmentsService" />
-	
-	<bean id="sifarnikService" class="eu.city4age.dashboard.api.service.impl.SifarnikServiceImpl" />
 
 	<bean id="assessmentDAO" class="eu.city4age.dashboard.api.dao.hibernate.HibernateAssessmentDAO" parent="baseDAO"/>
 	
