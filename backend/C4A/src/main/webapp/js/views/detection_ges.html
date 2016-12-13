@@ -354,25 +354,34 @@
 	                                    <div class="oj-flex-item" style="width: 240px" id='buttons-container'>
 	                                        <div class="oj-flex  oj-sm-flex-direction-column oj-flex-items-pad">
 	                                            <div class="oj-flex-item">
-	                                                Show type
+	                                                Risk and data type
 	                                            </div>
-	                                            <div class="oj-flex-item" id="formatset"  style="margin-top: 3px; "
+	                                            <div class="oj-flex-item" id="checkFilterRisk"  style="margin-top: 3px; "
 	                                                 data-bind="ojComponent: {
 	                                                        component: 'ojButtonset', 
 	                                                        chroming: 'outlined',
-	                                                        checked: formats
+	                                                        checked: checkedFilterRiskStatus
 	                                                    }">
-	                                                <label for="risk_warning"><img src="images/risk_warning.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Risk warning"/></label>
-	                                                <input type="checkbox" value="risk_warning" id="risk_warning"/>
-	                                                <label for="risk_alert"><img src="images/risk_alert.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Risk alert"/></label>
-	                                                <input type="checkbox" value="risk_alert" id="risk_alert"/>
-	                                                <label for="questionable_data"><img src="images/questionable_data.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Questionable data"/></label>
-	                                                <input type="checkbox" value="questionable_data" id="questionable_data"/>
-	                                                <label for="faulty_data"><img src="images/faulty_data.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Faulty data"/></label>
-	                                                <input type="checkbox" value="faulty_data" id="faulty_data"/>
-	                                                <label for="comment"><img src="images/comment.png" style="vertical-align:bottom; width: 20px; height: 20px;" title="Comment"/></label>
-	                                                <input type="checkbox" value="comment" id="comment"/>
+	                                                <!-- ko foreach: risksTags -->
+                                                        <label data-bind="attr: {for: value}"><img data-bind="attr: {src: imagePath, title: label}"  style="vertical-align:bottom; width: 20px; height: 20px;" /></label>
+                                                        <input type="checkbox"  data-bind="attr: {value: value, id: value}" />
+                                                        <!-- /ko --> 
+                                                        
 	                                            </div>
+                                                    
+                                                    
+                                                    <div class="oj-flex-item" id="checkFilterValidityData"  style="margin-top: 3px; "
+                                                         data-bind="ojComponent: {
+	                                                        component: 'ojButtonset', 
+	                                                        chroming: 'outlined',
+	                                                        checked: checkedFilterValidityData
+	                                                    }">
+                                                        <!-- ko foreach: dataValiditiesTags -->
+                                                        <label data-bind="attr: {for: value}"><img data-bind="attr: {src: imagePath, title: label}"  style="vertical-align:bottom; width: 20px; height: 20px;" /></label>
+                                                        <input type="checkbox"  data-bind="attr: {value: value, id: value}" />
+                                                        <!-- /ko --> 
+
+                                                    </div>
 	                                        </div>
 	
 	                                    </div>

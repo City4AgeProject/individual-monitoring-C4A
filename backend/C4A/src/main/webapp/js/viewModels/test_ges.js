@@ -3,7 +3,7 @@
 define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
     'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton', 'ojs/ojinputtext', 'ojs/ojmodule','ojs/ojmodel',
     'ojs/ojpopup', 'ojs/ojselectcombobox', 'ojs/ojrouter',
-    'urls', 'entities', 'utilities'],
+    'urls', 'entities'],
         function (oj, ko, $) {
 
             function ChartTest1(idCR, idLoggedUser, showDetailsId) {
@@ -183,11 +183,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout',
                 };
 
             }
-            
-//            var chartTest1Params = oj.Router.rootInstance.retrieve();
-//            var idCR = chartTest1Params.idCR;
-//            var idLoggedUser = chartTest1Params.idLoggedUser;
-//            var showDetailsId = chartTest1Params.showDetailsId;
             
             var chartTest1 = new ChartTest1(1, 1, 1);
             return chartTest1;

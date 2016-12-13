@@ -141,7 +141,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                     //console.log(data);
                     $("#value1").html("Initial");
                     $("#value2").html("Dec2016");
-                }
+                };
                 /*End Slider 1 configuration and event hendlers*/
 
                 ///if user used scroll all popups will be closed immidiately 
@@ -157,10 +157,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 /* detectionGEFGroupsLineChart popup and selection manipulation*/
                 self.showMorphologyButtonClick = function (data, event) {
                     //console.log($("#detectionGEFGroupsLineChart").ojChart("getDataItem", 0, 0));
-                    //$("#tabs").ojTabs("option", "selected", "showMorphologyTab");
+                    $("#tabs").ojTabs("option", "selected", "showMorphologyTab");
                     $('#showMorphologyPopup').ojPopup('close');
                     return true;
-                }
+                };
 
 
 
@@ -169,6 +169,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 var closeMorphologyPopupScheduled = false;
                 self.chartOptionChangeDetectionGEFGroupsLineChart = function (event, ui) {
                     var filteredSelectedValues = [];
+                    var filteredSelectedSeries = [];
+                    var showMorphologyPopup = false;
                     //console.log(ui);
                     if (ui['option'] === 'selection') {
                         if (ui['value'].length > 0) {
@@ -178,16 +180,42 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                                         (ui['value'][i].series !== FRAIL_SERIES_NAME) &&
                                         (ui['value'][i].series !== FIT_SERIES_NAME)) {
                                     filteredSelectedValues.push(ui['value'][i]);
+                                    
+                                    if($.inArray(ui['value'][i].series, filteredSelectedSeries) < 0) {
+                                        filteredSelectedSeries.push(ui['value'][i].series);
+                                    }
                                 }
                             }
                             //stop recursive propagation of event, only set when this condition is reached
                             if (filteredSelectedValues.length !== ui['value'].length) {
                                 self.selectionArrayDetectionGEFGroupsLineChart(filteredSelectedValues);
                             }
+                            
+                            if(filteredSelectedSeries.length===1) {
+                                // Show "Behavioural" tab if only "Behavioural" values are selected.
+                                if(GROUP1_SERIES_NAME === filteredSelectedSeries[0]) {
+                                    $('#tabs').ojTabs( "option", "selected", "tabs-1" );
+                                    $('#showMorphologyPopup').ojPopup('close');
+                                }
+                                // Show "Contextual" tab if only "Contextual" values are selected.
+                                else if(GROUP2_SERIES_NAME === filteredSelectedSeries[0]) {
+                                    $('#tabs').ojTabs( "option", "selected", "tabs-2" );
+                                    $('#showMorphologyPopup').ojPopup('close');
+                                }
+                            }
+                            // Show "Morphology" tab if both "Behavioural and Contextual" values are selected.
+                            else if(filteredSelectedSeries.length===2) {
+                                if($.inArray(GROUP1_SERIES_NAME, filteredSelectedSeries) >= 0
+                                        && $.inArray(GROUP2_SERIES_NAME, filteredSelectedSeries) >= 0) {
+                                    $('#tabs').ojTabs( "option", "selected", "showMorphologyTab" );
+                                }
+                            }
                             closeMorphologyPopupScheduled = true;
-                            $('#showMorphologyPopup').ojPopup('open', "#detectionGEFGroupsLineChart");
-                            $("#showMorphologyPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
-                            $("#showMorphologyPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
+                            if(showMorphologyPopup) {
+                                $('#showMorphologyPopup').ojPopup('open', "#detectionGEFGroupsLineChart");
+                                $("#showMorphologyPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
+                                $("#showMorphologyPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
+                            }
                         } else if (ui['value'].length === 0) {
                             //close popup scheduled for 1.5 seconds
                             setTimeout(function (event) {
@@ -198,7 +226,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                             }, 1500);
                         }
                     }
-                }
+                };
                 /*End detectionGEFGroupsLineChart popup and selection manipulation*/
 
                 /* detectionGEFLineChart popup manipulation*/
@@ -234,7 +262,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                             var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup1FactorsLineChart", ui['value'][0]);
 
                             var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
-                                    "</b></h3>"
+                                    "</b></h3>";
                             closeGEFDetailsShowPopupScheduled = true;
                             $('#GEFDetailsShowPopupData1').html(popupText);
                         } else if (ui['value'].length === 0) {
@@ -267,7 +295,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                             var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup2FactorsLineChart", ui['value'][0]);
 
                             var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
-                                    "</b></h3>"
+                                    "</b></h3>";
                             closeGEFDetailsShowPopupScheduled = false;
                             $('#GEFDetailsShowPopupData2').html(popupText);
                         } else if (ui['value'].length === 0) {

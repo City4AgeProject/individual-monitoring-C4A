@@ -23,8 +23,7 @@ requirejs.config({
     'text': 'libs/require/text',
     
     'entities': 'domain/entities',
-    'urls': 'domain/urls',
-    'utilities': 'domain/utilities'
+    'urls': 'domain/urls'
   }
   //endinjector
   ,

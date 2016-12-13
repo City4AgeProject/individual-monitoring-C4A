@@ -1,5 +1,6 @@
 // Domain objects aka. enitites.
 function Group() {
+    this.id = null;
     this.name = '';
 }
 
@@ -7,11 +8,13 @@ function Serie() {
     this.name = '';
     this.items = [];
     this.source = '';
-}
+    this.imgSize = '20px'; //default size for chart
+ }
 
 function Item() {
     this.id = null;
     this.value = null;
+    this.assessmentObjects = [];
 }
 
 function DataSet() {
@@ -44,11 +47,7 @@ Annotation.prototype.fromJson = function(json) {
 };
 
 Annotation.prototype.shortComment = function() {
-    return this.comment
-               .substr(0, this.comment.length>=27 
-                       ? 27 : 
-                       this.comment.length)
-           + '...';
+    return shortenText(this.comment, 27);
 };
 
 Annotation.prototype.fromOther = function(other) {
@@ -59,11 +58,7 @@ Annotation.prototype.fromOther = function(other) {
     this.comment = other.comment;
     this.imgSrc = other.imgSrc;
     this.dateAndTime = other.dateAndTime;
-    this.shortComment = this.comment
-                            .substr(0, this.comment.length>=27 
-                                    ? 27 
-                                    : this.comment.length)
-                        + '...';
+    this.shortComment = shortenText(this.comment, 27);
 };
 
 function AddAssesment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds) {
@@ -75,7 +70,26 @@ function AddAssesment(authorId, comment, riskStatus, dataValidityStatus, geriatr
     this.audienceIds = audienceIds;
 };
 
-// Static functions
+// Few static functions
+
+function shortenText(text, newlength) {
+    if(text)
+        return text.substr(0, text.length>=newlength ? newlength : text.length);
+    else
+        return '';
+}
+
+function remove_item(arr, value) {
+    var b = '';
+    for (b in arr) {
+        if (arr[b] === value) {
+            arr.splice(b, 1);
+            break;
+        }
+    }
+    return arr;
+}
+
 function prepareAnnotationsForPrintout(annotations) {
     var preparedAnnotations = [];
     for (var i=0; i<annotations.length; i++) {
@@ -86,8 +100,3 @@ function prepareAnnotationsForPrintout(annotations) {
 }
 
 // Navigation parameters wrappers
-function ChartTest1Params(idCR, idLoggedUser, showDetailsId) {
-    this.idCR = idCR;
-    this.idLoggedUser = idLoggedUser;
-    this.showDetailsId = showDetailsId;
-};
