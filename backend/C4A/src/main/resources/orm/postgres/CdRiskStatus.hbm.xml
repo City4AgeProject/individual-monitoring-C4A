@@ -4,8 +4,8 @@
 <hibernate-mapping package="eu.city4age.dashboard.api.model">
     <class name="CdRiskStatus" table="cd_risk_status" optimistic-lock="version">
 
-        <id name="riskStatus" type="string">
-            <column name="risk_status" length="3" />
+        <id name="riskStatus" type="java.lang.Character">
+            <column name="risk_status" length="1" />
             <generator class="assigned" />
         </id>
         
