@@ -122,26 +122,44 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var series = self.seriesValue();
                     for(var i = 0; i < series.length; i++) {
                         for(var j = 0; j < series[i].items.length; j++) {
-                            if(series[i].items[j].id == item.id)
+                            if(series[i].items[j].id === item.id)
                                 return j;
                         }
                     }
                     return -1;
                 }
                 
+                var containsAlert = function(item) {
+                    for(var i=0; i<item.assessmentObjects.length; i++) {
+                        if('A'===item.assessmentObjects[i].riskStatus)
+                            return true;
+                    }
+                    return false;
+                }
+                
+                var containsWarning = function(item) {
+                    for(var i=0; i<item.assessmentObjects.length; i++) {
+                        if('W'===item.assessmentObjects[i].riskStatus)
+                            return true;
+                    }
+                    return false;
+                }
+                
                 self.initialAssessments = ko.observableArray([]);
                 var loadAssessments = function (ids) {
                     var idsArray = JSON.stringify(ids);
                     return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (assesments) {
-                        //insert to quick read later on mous over popup
+                        //insert to quick read later on mouse over popup
                         self.initialAssessments(assesments);
-                        var annotationsSerie = new Serie();
-                        annotationsSerie.name = 'Assesments';
-                        annotationsSerie.source = 'images/flag-red.png';
-                        annotationsSerie.markerSize = 20;
-                        annotationsSerie.markerDisplayed = 'on';
-                        annotationsSerie.lineType = 'none';
-                        var annotationeSerieItems = [];
+                        
+                        var annotationsSerieAlerts = Serie.produceAlert();
+                        var annotationsSerieWarnings = Serie.produceWarning();
+                        var annotationsSerieComments = Serie.produceComment();
+                        
+                        var serieAlertsItems = [];
+                        var serieWarningsItems = [];
+                        var serieCommentsItems = [];
+                        
                         for (var i = 0; i < assesments.length; i++) {
                             var assesment = assesments[i];
                             if (assesment) {
@@ -155,13 +173,28 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                     item.value = gefValue;
                                     item.assessmentObjects.push(assesments[i]);
                                     var matchedIndex = matchSeriesIndexByItemValue(item);
-                                    if(matchedIndex>=0)
-                                        annotationeSerieItems[matchedIndex] = item;
+                                    if(matchedIndex>=0) {
+                                        if(containsAlert(item)) {
+                                            serieAlertsItems[matchedIndex] = item;
+                                        }
+                                        else if(containsWarning(item)) {
+                                            serieWarningsItems[matchedIndex] = item;
+                                        }
+                                        else {
+                                            serieCommentsItems[matchedIndex] = item;
+                                        }
+                                    }
                                 }
                             }
                         }
-                        annotationsSerie.items = annotationeSerieItems;
-                        self.seriesValue.push(annotationsSerie);
+                        
+                        annotationsSerieAlerts.items = serieAlertsItems;
+                        annotationsSerieWarnings.items = serieWarningsItems;
+                        annotationsSerieComments.items = serieCommentsItems;
+                        
+                        self.seriesValue.push(annotationsSerieAlerts);
+                        self.seriesValue.push(annotationsSerieWarnings);
+                        self.seriesValue.push(annotationsSerieComments);
                     });
                 };
                 
