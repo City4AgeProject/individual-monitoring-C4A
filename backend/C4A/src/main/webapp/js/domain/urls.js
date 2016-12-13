@@ -23,8 +23,9 @@ else {
 //var OJ_ANNOTATION_FOR_DATA_POINTS = root + 'OJAnnotation/forDataPoints';
 //var OJ_ANNOTATION_CREATE = root + 'OJAnnotation';
 
-var ASSESSMENTS_SELECT_ALL_RISKS = root + 'assessments/getAllRiskStatus';
-var OJ_CODE_BOOK_SELECT_ALL_DATA_VALIDITIES = root + 'OJCodeBook/selectDataValidities';
+var CODELIST_SELECT_ALL_RISKS = root + 'codeList/getAllRiskStatus';
+var CODELIST_SELECT_ROLES_FOR_STAKEHOLDER = root + 'codeList/getAllRolesForStakeholderAbbr';
+var CODELIST_SELECT_ALL_RISKS = root + 'codeList/getAllDataValitidityStatus';
 
 var ASSESSMENTS_FOR_DATA_POINTS = root + 'assessments/getAssessmentsForSelectedDataSet';
 var ASSESSMENTS_ADD_FOR_DATA_POINTS = root + 'assessments/addAssessmentsForSelectedDataSet';

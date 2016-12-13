@@ -67,6 +67,15 @@ function Annotation() {
     this.dateAndTime = '';
 };
 
+function CdRole(){
+    
+    this.id = null;
+    this.roleName = '';
+    this.roleAbbreviation = '';
+    this.roleDescription= '';
+    this.stakeholderAbbreviation= '';
+}
+
 Annotation.prototype.toJson = function() {
     return JSON.stringify(this);
 };
