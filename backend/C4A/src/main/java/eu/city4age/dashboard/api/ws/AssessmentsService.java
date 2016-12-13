@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -22,6 +23,8 @@ import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module;
 
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
+import eu.city4age.dashboard.api.dao.RiskStatusDAO;
+import eu.city4age.dashboard.api.dao.StakeholderDao;
 import eu.city4age.dashboard.api.dao.TimeIntervalDAO;
 import eu.city4age.dashboard.api.dto.DiagramDataDTO;
 import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
@@ -34,11 +37,10 @@ import eu.city4age.dashboard.api.model.AssessedGefValueSetId;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRoleId;
+import eu.city4age.dashboard.api.model.CdRiskStatus;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
-import eu.city4age.dashboard.api.model.TimeInterval;
+import eu.city4age.dashboard.api.model.Stakeholder;
 import eu.city4age.dashboard.api.model.UserInRole;
-import java.util.HashMap;
-import java.util.Map;
 
 @Transactional("transactionManager")
 @Path("/assessments")
@@ -54,6 +56,40 @@ public class AssessmentsService {
 	
 	@Autowired
 	private TimeIntervalDAO timeIntervalDAO;
+	
+	@Autowired
+	private RiskStatusDAO riskStatusDAO;
+	
+	@Autowired
+	private StakeholderDao stakeholderDAO;
+	
+	@GET
+    @Path("/getAllRiskStatus")
+    @Produces(MediaType.APPLICATION_JSON)
+	public String getAllRiskStatus() throws Exception {
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		List<CdRiskStatus> riskStatus = riskStatusDAO.getAllRiskStatus();
+		
+		String dtoAsString = objectMapper.writeValueAsString(riskStatus);
+        
+        return dtoAsString;
+	}
+	
+	@GET
+    @Path("/getAllStockholders")
+    @Produces(MediaType.APPLICATION_JSON)
+	public String getAllStockholders() throws Exception {
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		List<Stakeholder> stakeholders = stakeholderDAO.getAllStockholders();
+		
+		String dtoAsString = objectMapper.writeValueAsString(stakeholders);
+        
+        return dtoAsString;		
+	}
 	
 	@POST
     @Path("/getDiagramData")
