@@ -59,7 +59,7 @@ create table testtest.pilot (id int8 not null, name varchar(50), pilot_code varc
 create table testtest.source_evidence (geriatric_factor_id int4 not null, author_id int4 not null, text_evidence varchar(255), multimedia_evidence bytea, uploaded timestamp not null, primary key (geriatric_factor_id, author_id));
 create table testtest.time_interval (id int8 not null, interval_start timestamp, interval_end timestamp, typical_period varchar(3), primary key (id));
 create table testtest.user_in_role (id int8 not null, pilot_id int4, valid_from timestamp, valid_to timestamp, user_in_system_id int4, role_id int2, primary key (id));
-create table testtest.user_in_system (id int8 not null, username varchar(25) unique, password varchar(25), created_date timestamp, primary key (id));
+create table testtest.user_in_system (id int8 not null, username varchar(25) unique, password varchar(25), created_date timestamp, diplay_name varchar(255), primary key (id));
 create table testtest.variation_measure_value (id int8 not null, activity_id int8, user_in_role_id int8 not null, measure_value float4, measure_type_id int8 not null, data_source_type varchar(3) not null, time_interval_id int8 not null, primary key (id));
 create table testtest.cd_risk_status (risk_status varchar(3) not null, risk_status_description varchar(50), confidence_rating numeric(3, 2), icon_image bytea, primary key (risk_status));
 create table testtest.stakeholder (stakeholder_abbreviation varchar(3) not null, stakeholder_name varchar(50) not null, stakeholder_description varchar(50), valid_from timestamp not null, valid_to timestamp, primary key (stakeholder_abbreviation));
