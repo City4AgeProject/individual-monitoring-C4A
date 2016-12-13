@@ -59,9 +59,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     console.log(error);
                 };
                 
-                var postCommentCallback = function(response) {
-                    console.log('posted comment ' + response);
-                };
                 
                 var loadDataSet = function(data) {
                     //TODO: remove hardcoded values when real data available
@@ -288,6 +285,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return true;
                 };
                 
+                var postAnnotationCallback = function(data) {
+                    console.log(data);
+                    $('#dialog1').ojDialog('close');
+                    //TODO: reload only assessments
+                    loadDataSet();
+                };
+                
                 /* ojButton postAnnotation */
                 self.postAnnotation = function (data, event) {
                     //should be logged user ID
@@ -297,12 +301,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var dataValidityStatus = ko.toJS(self.selectedDataValidity)[0];
                     var geriatricFactorValueIds = ko.toJS(self.dataPointsMarkedIds);
                     //TODO: should be get from miltiselect combobox for role
-                    var audienceIds = [1,2];//ko.toJS(self.selectedAudienceIds)
+                    var audienceIds = ko.toJS(self.selectedRoles);
                     var annotationToPost = new AddAssesment
                         (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
                     var jqXHR = $.postJSON(ASSESSMENTS_ADD_FOR_DATA_POINTS, 
                         JSON.stringify(annotationToPost),
-                        loadDataSet
+                        postAnnotationCallback
                     );
                     jqXHR.fail(serverErrorCallback);
                     return true;
@@ -310,15 +314,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
 
                  // Add assesment popup
                 self.commentText = ko.observable('');
-                //TODO: get from rest services
-                self.valRole = ko.observableArray([
-                    "Caregiver"
-                ]);
                 
                 /* Risks select */
-                self.riskStatusesURL = ASSESSMENTS_SELECT_ALL_RISKS;
+                self.riskStatusesURL = CODELIST_SELECT_ALL_RISKS;
                 self.risksCollection = ko.observable();
-                // TODO: remove mock data when service is available
                 self.risksTags = ko.observableArray([]);       
                 self.selectedRiskStatus = ko.observable();
 
@@ -391,7 +390,39 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
 //                });
                 /* End Data validities */
                 
-                /* Audience ids */
+                /* Audience ids -> CdRole*/
+                self.rolesForStakeHoldersURL = CODELIST_SELECT_ROLES_FOR_STAKEHOLDER;
+                self.rolesCollection = ko.observable();
+                self.roleTags = ko.observableArray([]);       
+                self.selectedRoles = ko.observableArray();
+
+                var role = new oj.Collection.extend({
+                    url: self.rolesForStakeHoldersURL,
+                    fetchSize: -1,
+                    model: new oj.Model.extend({
+                        idAttribute: 'id',
+                        parse: function(response){
+                             return response.result;
+                        }
+                    })
+                });
+                self.rolesCollection(new role());
+                self.rolesCollection().fetch({
+                    data: "{\"stakeholderAbbr\":\"GES\"}", 
+                    type: 'POST',
+                    success: function (collection, response, options) {
+                        if(self.roleTags.length === 0) {
+                            for (var i = 0; i < response.length; i++) {
+                                var roleModel = response[i];
+                                self.roleTags.push({value: roleModel.id, label: roleModel.roleName});
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                    }
+                });
+               
+                
                 
                 self.audienceIds = ko.observableArray([
                     {id : "Caregiver", name : "Caregiver"},
