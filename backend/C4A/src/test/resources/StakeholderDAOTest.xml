@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<stakeholder stakeholder_abbreviation="CGS" stakeholder_name="Caregivers" stakeholder_description="All caregiver types." />
+	<stakeholder stakeholder_abbreviation="GES" stakeholder_name="Geriatricians" stakeholder_description="All geriatricians." />
+	<stakeholder stakeholder_abbreviation="GPS" stakeholder_name="General practice doctors" stakeholder_description="General practiotioner team." />
+</dataset>

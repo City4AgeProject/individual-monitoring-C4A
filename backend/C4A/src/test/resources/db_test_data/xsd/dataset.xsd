@@ -11,6 +11,7 @@
 				<xsd:element name="cd_role" type="dflt:cd_role__type" />
 				<xsd:element name="dbmaintain_scripts" type="dflt:dbmaintain_scripts__type" />
 				<xsd:element name="time_interval" type="dflt:time_interval__type" />
+				<xsd:element name="stakeholder" type="dflt:stakeholder__type" />
 				<xsd:element name="frailty_status_timeline" type="dflt:frailty_status_timeline__type" />
 				<xsd:element name="eam" type="dflt:eam__type" />
 				<xsd:element name="assessment" type="dflt:assessment__type" />
@@ -30,6 +31,7 @@
 				<xsd:element name="numeric_indicator_value" type="dflt:numeric_indicator_value__type" />
 				<xsd:element name="cd_pilot_detection_variable" type="dflt:cd_pilot_detection_variable__type" />
 				<xsd:element name="cd_detection_variable" type="dflt:cd_detection_variable__type" />
+				<xsd:element name="cd_risk_status" type="dflt:cd_risk_status__type" />
 				<xsd:element name="location" type="dflt:location__type" />
 				<xsd:element name="assessment_audience_role" type="dflt:assessment_audience_role__type" />
 				<xsd:any namespace="testtest" />

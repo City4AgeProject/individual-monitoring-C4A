@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
@@ -14,10 +15,10 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.domain.OrderBy;
-import eu.city4age.dashboard.api.dto.DiagramDataDTO;
 import eu.city4age.dashboard.api.dto.DiagramQuerryDTO;
 import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.TimeInterval;
 
 /** Hibernate implementacija dao-a za asesment.
  *
@@ -56,11 +57,12 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 		}));	
 	}
     
-	public List<Object[]> getLastFiveAssessmentsForDiagram(final Integer crId, final Timestamp start, final Timestamp end) {
-		return castList(Object[].class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+	public List<GeriatricFactorValue> getLastFiveAssessmentsForDiagram(final Integer crId, final Timestamp start, final Timestamp end) {
+		return castList(GeriatricFactorValue.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT DISTINCT a, a.created FROM Assessment a LEFT JOIN FETCH a.userInRole AS userInRole INNER JOIN a.assessedGefValueSets AS assessedGefValueSets INNER JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue LEFT JOIN geriatricFactorValue.timeInterval AS timeInterval WHERE geriatricFactorValue.userInRoleId = :userInRoleId AND geriatricFactorValue.timeInterval.intervalStart >= :start AND geriatricFactorValue.timeInterval.intervalEnd <= :end ORDER BY a.created DESC LIMIT '0' '5'");
+				SQLQuery q = session.createSQLQuery("SELECT DISTINCT gfv.* FROM geriatric_factor_value AS gfv RIGHT JOIN time_interval AS ti ON (gfv.time_interval_id=ti.id) INNER JOIN assessed_gef_value_set AS agvs ON (agvs.gef_value_id = gfv.id) RIGHT JOIN assessment AS a ON (agvs.assessment_id = a.id) WHERE a.id IN (SELECT a.id FROM assessment a ORDER BY created DESC FETCH FIRST 5 ROWS ONLY) AND gfv.user_in_role_id = :userInRoleId AND ti.interval_start >= :start AND ti.interval_end <= :end ");
+				q.addEntity("gfv", GeriatricFactorValue.class);
 				q.setParameter("start", start);
 				q.setParameter("end", end);
 				q.setParameter("userInRoleId", crId);

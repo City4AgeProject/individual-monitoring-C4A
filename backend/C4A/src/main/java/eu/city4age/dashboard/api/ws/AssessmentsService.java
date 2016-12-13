@@ -110,10 +110,10 @@ public class AssessmentsService {
 		Timestamp start = Timestamp.valueOf(data.getTimestampStart());
 		Timestamp end = Timestamp.valueOf(data.getTimestampEnd());
 		
-		List<Object[]> assessments = assessmentDAO.
+		List<GeriatricFactorValue> gefs = assessmentDAO.
 						getLastFiveAssessmentsForDiagram(data.getCrId(), start, end);
     	
-		return objectMapper.writeValueAsString(assessments);
+		return objectMapper.writeValueAsString(gefs);
 
     }
 

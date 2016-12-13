@@ -67,14 +67,16 @@ public class AssessmentDAOTest extends UnitilsJUnit4  {
 	@DataSet({"AssessmentDAOTest.getLastFiveAssessments.xml"})
 	public void testGetLastFiveAssessments() throws Exception {
 	
-		Timestamp start = Timestamp.valueOf("2016-01-01 00:00:00");
+		Timestamp start = Timestamp.valueOf("2015-01-01 00:00:00");
 		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
 		
-		List<Object[]> result = assessmentDAO.getLastFiveAssessmentsForDiagram(1, start, end);
+		List<GeriatricFactorValue> result = assessmentDAO.getLastFiveAssessmentsForDiagram(1, start, end);
 		
 		Assert.assertNotNull(result);
 		
-		Assert.assertEquals(5, result.size());
+		Assert.assertEquals(3, result.size());
+		
+		Assert.assertEquals(2, result.get(0).getAssessedGefValueSets().size());
 	}
 	
 	@Test
@@ -86,9 +88,7 @@ public class AssessmentDAOTest extends UnitilsJUnit4  {
 		Assert.assertNotNull(result);
 		
 		Assert.assertEquals(2, result.size());
-		
-		Assert.assertEquals(Long.valueOf(2), ((Assessment)result.get(0)).getId());
-		
+				
 		Assert.assertEquals(0, ((Assessment)result.get(0)).getAssessmentAudienceRoles().size()); //!!!!
 		
 		//Assert.assertEquals(4, ((AssessmentAudienceRole)((Assessment)result.get(0)).getAssessmentAudienceRoles().iterator().next()).getAssessmentAudienceRoleId().getUserInRoleId());

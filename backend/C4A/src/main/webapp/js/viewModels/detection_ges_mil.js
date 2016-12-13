@@ -154,7 +154,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 	                	    
 	                	    for (i = 0; i < series.length; i++) {
 	                	    	for (j = 0; j < groups.length; j++) {
-	                	    		//MAIN PART OF CODE FOR INTEGRATION WITH GREEK WEB SERIVICES
+	                	    		//MAIN PART OF CODE FOR INTEGRATION WITH GREEK WEB SERVICES
 	                	    		//(Change 3rd loop so it reads objects from greek ws)
 	                	    		for (k = 0; k < data.gefs.length; k++) {    	    			
 	                	    			 if((data.gefs[k].cdDetectionVariable.detectionVariableName == series[i].name) && (data.gefs[k].timeInterval.start == groups[j])) {
@@ -184,8 +184,31 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojchart', 'oj
 			           	                	
 				                	    for (i = countGefs; i < series.length; i++) {
 				                	    	for (j = 0; j < groups.length; j++) {	    		
-				                	    		for (k = 0; k < data.length; k++) {
-				                	    			series[i].items[j] = null;
+				                	    		for (k = 0; k < data.length; k++) {				                	    			
+				                	    			for (l = 0; l < data[k].length; l++) {
+				                	    				
+				                	    				/*
+				                	    				if(data[k][l].assessedGefValueSets != null) {
+					                	    				for (m = 0; m < data[k][l].assessedGefValueSets.length; m++) {
+					                	    					if(data[k][l].assessedGefValueSets != null && data[k][l].assessedGefValueSets[m] != null) {
+						                	    					alert(JSON.stringify((data[k][l].assessedGefValueSets[m].geriatricFactorValue)));					                	    					
+						                	    					if(data[k][l].assessedGefValueSets[m].geriatricFactorValue.timeInterval.start == groups[j]) {
+						                	    						if(data[k][l].riskStatus == 'A') {
+						                	    							series[countGefs].items[j] = data[k][l].assessedGefValueSets[m].geriatricFactorValue.gefValue;
+						                	    						}
+						                	    						if(data[k][l].riskStatus == 'W') {
+						                	    							series[countGefs+1].items[j] = data[k][l].assessedGefValueSets[m].geriatricFactorValue.gefValue;
+						                	    						}
+						                	    						if(data[k][l].assessmentComment != null) {
+						                	    							series[countGefs+2].items[j] = data[k][l].assessedGefValueSets[m].geriatricFactorValue.gefValue;
+						                	    						}
+					                	    						}
+					                	    					}
+					                	    				}
+				                	    				}*/
+				                	    			
+				                	    			
+				                	    			}
 				                	    		}
 				                	    	}
 				                	    }

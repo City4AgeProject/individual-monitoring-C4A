@@ -18,7 +18,7 @@ public interface AssessmentDAO extends BaseDAO {
 	
 	List<GeriatricFactorValue> getDiagramDataForUserInRoleId(final Integer crId, final Short dvParentId, final Timestamp start, final Timestamp end);
 
-	List<Object[]> getLastFiveAssessmentsForDiagram(final Integer crId, final Timestamp start, final Timestamp end);
+	List<GeriatricFactorValue> getLastFiveAssessmentsForDiagram(final Integer crId, final Timestamp start, final Timestamp end);
 	
 	List<Assessment> getAssessmentsForGeriatricFactorId(final Long geriatricFactorId);
 
