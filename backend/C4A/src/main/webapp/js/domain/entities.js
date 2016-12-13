@@ -14,6 +14,7 @@ function Serie() {
 function Item() {
     this.id = null;
     this.value = null;
+    this.assessmentObjects = [];
 }
 
 function DataSet() {
