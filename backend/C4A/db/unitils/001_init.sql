@@ -45,7 +45,7 @@ create table testtest.cd_detection_variable (id int8 not null, detection_variabl
 create table testtest.cd_detection_variable_type (detection_variable_type varchar(3) not null, detection_variable_type_description varchar(50), primary key (detection_variable_type));
 create table testtest.cd_frailty_status (frailty_status varchar(9) not null, frailty_status_description varchar(255), primary key (frailty_status));
 create table testtest.cd_pilot_detection_variable (pilot_id int4 not null, detection_variable_id int2 not null, detection_variable_description_formula varchar(255) not null, primary key (pilot_id, detection_variable_id));
-create table testtest.cd_role (id int8 not null, role_name varchar(50), role_abbreviation varchar(3), role_description varchar(200), valid_from timestamp, valid_to timestamp, primary key (id));
+create table testtest.cd_role (id int8 not null, role_name varchar(50), role_abbreviation varchar(3), role_description varchar(200), valid_from timestamp, valid_to timestamp, stakeholder_abbreviation varchar(3), primary key (id));
 create table testtest.cd_typical_period (typical_period varchar(3) not null, period_description varchar(50), typical_duration time, primary key (typical_period));
 create table testtest.cr_profile (id int8 not null, ref_height float4, ref_weight float4, ref_mean_blood_pressure numeric(5, 2), date time, user_in_role_id int8 not null, birth_date date not null, gender bool not null, primary key (id));
 create table testtest.eam (id int8 not null, duration int4, actionid int8 not null, activityid int8 not null, primary key (id));

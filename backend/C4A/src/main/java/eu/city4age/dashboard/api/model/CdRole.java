@@ -19,6 +19,7 @@ public class CdRole extends AbstractBaseEntity {
 	private String roleDescription;
 	private Date validFrom;
 	private Date validTo;
+	private String stakeholderAbbreviation;
 	
 	@JsonBackReference
 	private Set assessmentAudienceRoles = new HashSet(0);
@@ -27,13 +28,14 @@ public class CdRole extends AbstractBaseEntity {
 	}
 
 	public CdRole(String roleName, String roleAbbreviation, String roleDescription, Date validFrom,
-			Date validTo, Set assessmentAudienceRoles) {
+			Date validTo, Set assessmentAudienceRoles, String stakeholderAbbreviation) {
 		this.roleName = roleName;
 		this.roleAbbreviation = roleAbbreviation;
 		this.roleDescription = roleDescription;
 		this.validFrom = validFrom;
 		this.validTo = validTo;
 		this.assessmentAudienceRoles = assessmentAudienceRoles;
+		this.stakeholderAbbreviation = stakeholderAbbreviation;
 	}
 
 	public String getRoleName() {
@@ -74,6 +76,14 @@ public class CdRole extends AbstractBaseEntity {
 
 	public void setValidTo(Date validTo) {
 		this.validTo = validTo;
+	}
+
+	public String getStakeholderAbbreviation() {
+		return stakeholderAbbreviation;
+	}
+
+	public void setStakeholderAbbreviation(String stakeholderAbbreviation) {
+		this.stakeholderAbbreviation = stakeholderAbbreviation;
 	}
 
 	public Set getAssessmentAudienceRoles() {

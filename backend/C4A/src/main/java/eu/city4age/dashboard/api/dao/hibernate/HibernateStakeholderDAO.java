@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import eu.city4age.dashboard.api.dao.StakeholderDao;
+import eu.city4age.dashboard.api.model.CdRole;
 import eu.city4age.dashboard.api.model.Stakeholder;
 
 public class HibernateStakeholderDAO extends HibernateBaseDAO implements StakeholderDao {
@@ -23,6 +24,18 @@ public class HibernateStakeholderDAO extends HibernateBaseDAO implements Stakeho
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
 				Query q = session.createQuery("SELECT s FROM Stakeholder AS s");
+				return q.list();
+			}
+		}));
+	}
+
+	@Override
+	public List<CdRole> getAllRolesForStakeholderAbbr(final String stakeholderAbbr) {
+        return castList(CdRole.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+			public List<?> doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query q = session.createQuery("SELECT r FROM CdRole AS r WHERE r.stakeholderAbbreviation = :stakeholderAbbr");
+				q.setParameter("stakeholderAbbr", stakeholderAbbr);
 				return q.list();
 			}
 		}));

@@ -29,6 +29,10 @@
         <property name="validTo" type="timestamp">
             <column name="valid_to" length="29" />
         </property>
+        
+        <property name="stakeholderAbbreviation" type="string">
+            <column name="stakeholder_abbreviation" length="3" />
+        </property>
 
         <set name="assessmentAudienceRoles" table="assessment_audience_role" inverse="true" lazy="false" fetch="select">
             <key>

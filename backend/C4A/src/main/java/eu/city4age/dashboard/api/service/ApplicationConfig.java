@@ -29,6 +29,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(eu.city4age.dashboard.api.ws.AssessmentsService.class);
+        resources.add(eu.city4age.dashboard.api.ws.SifarnikService.class);
     }
     
 }
