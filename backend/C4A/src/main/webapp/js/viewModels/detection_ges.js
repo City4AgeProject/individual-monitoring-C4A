@@ -197,8 +197,14 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     $("#popup1").ojPopup("widget").css("left", clientX + 2  + "px");
                     $("#popup1").ojPopup("widget").css("top", clientY + 2 + "px");
                 }
-
-                function removeCurrentAnnotationsFromSelection(dataSelection) {
+                /**
+                 * 
+                 * @param {type} dataSelection this is ui['optionMetadata'] for selected value(s)
+                 * @returns {Array} Array of id-s for selected points of chart. <br/>
+                 * In case that only selected one point of Assessment serie <br/>
+                 * return will be Array of Assessment regarding selected point
+                 */
+                function filteredSelectionBetweenAssessmentSeriesAndOtherPoints(dataSelection) {
                     var filteredSelection = [];
                     //add all anotation if choosed only one point and if is from Assesments series
                     if( dataSelection.selectionData.length === 1 && dataSelection.selectionData[0].seriesData.name==='Assesments'){
@@ -243,7 +249,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     }
                     self.dataPointsMarkedIds(idsArray);
                     return idsArray;
-                }
+                } 
 
                 self.chartOptionChange = function (event, ui) {
                     if (ui['option'] === 'selection') {
@@ -252,7 +258,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             if($('#popup1').ojPopup( "isOpen" ))
                                 $('#popup1').ojPopup('close');
                             // Avoid assesment selections as points
-                            var onlyDataPoints = removeCurrentAnnotationsFromSelection(ui['optionMetadata']);
+                            var onlyDataPoints = filteredSelectionBetweenAssessmentSeriesAndOtherPoints(ui['optionMetadata']);
                             if(onlyDataPoints.length === 1 && onlyDataPoints[0][0].id ){
                                 self.dataPointsMarked('1 data point marked ');
                                 loadCachedAnnotations(onlyDataPoints);
