@@ -30,8 +30,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
 
                     for (i = 0; i < series.length; i++) {
                         for (j = 0; j < groups.length; j++) {
-                                //MAIN PART OF CODE FOR INTEGRATION WITH GREEK WEB SERIVICES
-                                //(Change 3rd loop so it reads objects from greek ws)
                                 for (k = 0; k < data.gefs.length; k++) {    	    			
                                          if((data.gefs[k].cdDetectionVariable.detectionVariableName == series[i].name) && (data.gefs[k].timeInterval.start == groups[j])) {
                                                 var newItem = new Item();
@@ -124,7 +122,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var series = self.seriesValue();
                     for(var i = 0; i < series.length; i++) {
                         for(var j = 0; j < series[i].items.length; j++) {
-                            if(series[i].items[j].value == item.value)
+                            if(series[i].items[j].id == item.id)
                                 return j;
                         }
                     }
@@ -141,6 +139,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                         annotationsSerie.name = 'Assesments';
                         annotationsSerie.source = 'images/flag-red.png';
                         annotationsSerie.markerSize = 20;
+                        annotationsSerie.markerDisplayed = 'on';
+                        annotationsSerie.lineType = 'none';
                         var annotationeSerieItems = [];
                         for (var i = 0; i < assesments.length; i++) {
                             var assesment = assesments[i];
@@ -316,49 +316,48 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 ]);
                 
                 /* Risks select */
-                //self.riskStatusesURL = OJ_CODE_BOOK_SELECT_ALL_RISKS;
+                self.riskStatusesURL = ASSESSMENTS_SELECT_ALL_RISKS;
                 self.risksCollection = ko.observable();
                 // TODO: remove mock data when service is available
-                self.risksTags = ko.observableArray([{ value: 'A', label: 'Risk alert' ,  imagePath: 'images/risk_alert.png' }, 
-                                                       { value: 'W', label: 'Risk warning' ,  imagePath: 'images/risk_warning.png' }]);       
+                self.risksTags = ko.observableArray([]);       
                 self.selectedRiskStatus = ko.observable();
 
-//                parseRisks = function (response) {
-//                    return {
-//                        riskStatus: response['riskStatus'],
-//                        riskStatusDesc: response['riskStatusDesc'],
-//                        imagePath: response['imagePath']};
-//                };
-//                
-//                var collectionRisks = new oj.Collection.extend({
-//                    url: self.riskStatusesURL,
-//                    fetchSize: -1,
-//                    model: new oj.Model.extend({
-//                        idAttribute: 'riskStatus',
-//                        parse: parseRisks
-//                    })
-//                });
-//                
-//                self.risksCollection(new collectionRisks());
-//                self.risksCollection().fetch({
-//                    success: function (collection, response, options) {
-//                        if(self.risksTags.length === 0) {
-//                            for (var i = 0; i < collection.size(); i++) {
-//                                var riskModel = collection.at(i);
-//                                self.risksTags.push({value: riskModel.attributes.riskStatus, label: riskModel.attributes.riskStatusDesc, imagePath: riskModel.attributes.imagePath});
-//                            }
-//                        }
-//                    },
-//                    error: function (jqXHR, textStatus, errorThrown) {
-//                    }
-//                });
+                parseRisks = function (response) {
+                    return {
+                        riskStatus: response['riskStatus'],
+                        riskStatusDesc: response['riskStatusDescription'],
+                        imagePath: response['imagePath']};
+                };
+                
+                var collectionRisks = new oj.Collection.extend({
+                    url: self.riskStatusesURL,
+                    fetchSize: -1,
+                    model: new oj.Model.extend({
+                        idAttribute: 'riskStatus',
+                        parse: parseRisks
+                    })
+                });
+                
+                self.risksCollection(new collectionRisks());
+                self.risksCollection().fetch({
+                    success: function (collection, response, options) {
+                        if(self.risksTags.length === 0) {
+                            for (var i = 0; i < collection.size(); i++) {
+                                var riskModel = collection.at(i);
+                                self.risksTags.push({value: riskModel.attributes.riskStatus, label: riskModel.attributes.riskStatusDesc, imagePath: riskModel.attributes.imagePath});
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                    }
+                });
                 /* End Risks select */
                 
                 /* Data validities */
                 //self.dataValiditiesCollection = ko.observable();
-                self.dataValiditiesTags = ko.observableArray([ { value: 'Q', label: 'Questionable data' ,  imagePath: 'images/questionable_data.png' },
-                                                            { value: 'F', label: 'Faulty data' ,  imagePath: 'images/faulty_data.png' },
-                                                         { value: 'V', label: 'Valid data' ,  imagePath: 'images/faulty_data.png' }]);       
+                self.dataValiditiesTags = ko.observableArray([ { value: 'QUESTIONABLE_DATA', label: 'Questionable data' ,  imagePath: 'images/questionable_data.png' },
+                                                            { value: 'FAULTY_DATA', label: 'Faulty data' ,  imagePath: 'images/faulty_data.png' },
+                                                         { value: 'VALID_DATA', label: 'Valid data' ,  imagePath: 'images/valid_data.png' }]);       
                 self.selectedDataValidity = ko.observable();
 
 //                parseDataValidities = function (response) {
