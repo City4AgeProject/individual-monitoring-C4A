@@ -15,6 +15,7 @@ import org.unitils.spring.annotation.SpringBean;
 import eu.city4age.dashboard.api.domain.OrderBy;
 import eu.city4age.dashboard.api.dto.DiagramQuerryDTO;
 import eu.city4age.dashboard.api.model.Assessment;
+import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 
 @SpringApplicationContext("classpath:test-context-dao.xml")
@@ -89,11 +90,11 @@ public class AssessmentDAOTest extends UnitilsJUnit4  {
 		
 		Assert.assertEquals(2, result.size());
 				
-		Assert.assertEquals(0, ((Assessment)result.get(0)).getAssessmentAudienceRoles().size()); //!!!!
+		Assert.assertEquals(2, ((Assessment)result.get(0)).getAssessmentAudienceRoles().size());
 		
-		//Assert.assertEquals(4, ((AssessmentAudienceRole)((Assessment)result.get(0)).getAssessmentAudienceRoles().iterator().next()).getAssessmentAudienceRoleId().getUserInRoleId());
+		Assert.assertEquals(4, ((AssessmentAudienceRole)((Assessment)result.get(0)).getAssessmentAudienceRoles().iterator().next()).getAssessmentAudienceRoleId().getUserInRoleId());
 		
-		Assert.assertEquals(1, ((Assessment)result.get(0)).getAssessedGefValueSets().size());
+		Assert.assertEquals(3, ((Assessment)result.get(0)).getAssessedGefValueSets().size());
 	}
 
 	@Test

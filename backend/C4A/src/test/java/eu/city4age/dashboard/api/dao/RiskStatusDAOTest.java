@@ -19,7 +19,7 @@ public class RiskStatusDAOTest extends UnitilsJUnit4  {
 
 	@Test
 	@DataSet({"RiskStatusDAOTest.xml"})
-	public void test() throws Exception {
+	public void testGetAllRiskStatus() throws Exception {
 		
 		List<CdRiskStatus> result = riskStatusDAO.getAllRiskStatus();
 		

@@ -9,6 +9,7 @@ import org.unitils.dbunit.annotation.DataSet;
 import org.unitils.spring.annotation.SpringApplicationContext;
 import org.unitils.spring.annotation.SpringBean;
 
+import eu.city4age.dashboard.api.model.CdRole;
 import eu.city4age.dashboard.api.model.Stakeholder;
 
 @SpringApplicationContext("classpath:test-context-dao.xml")
@@ -19,14 +20,24 @@ public class StakeholderDAOTest extends UnitilsJUnit4  {
 
 	@Test
 	@DataSet({"StakeholderDAOTest.xml"})
-	public void test() throws Exception {
+	public void testGetAllStockholders() throws Exception {
 		
 		List<Stakeholder> result = stakeholderDAO.getAllStockholders();
 		
 		Assert.assertNotNull(result);
 		
-		Assert.assertEquals(3, result.size());
+		Assert.assertEquals(4, result.size());
 
+	}
+	
+	@Test
+	@DataSet({"StakeholderDAOTest.xml"})
+	public void testGetAllRolesForStakeholderAbbr() throws Exception {
+		List<CdRole> result = stakeholderDAO.getAllRolesForStakeholderAbbr("DRL");
+		
+		Assert.assertNotNull(result);
+		
+		Assert.assertEquals(4, result.size());
 	}
 	
 
