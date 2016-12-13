@@ -259,7 +259,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                 $('#popup1').ojPopup('close');
                             // Avoid assesment selections as points
                             var onlyDataPoints = filteredSelectionBetweenAssessmentSeriesAndOtherPoints(ui['optionMetadata']);
-                            if(onlyDataPoints.length === 1 && onlyDataPoints[0][0].id ){
+                            if(onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id ){
                                 self.dataPointsMarked('1 data point marked ');
                                 loadCachedAnnotations(onlyDataPoints);
                             }else{
