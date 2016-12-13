@@ -243,15 +243,12 @@
                                     <select id="selectRole" 
                                             data-bind="ojComponent: {
                                             component: 'ojSelect', 
-                                            value: valRole,
+                                            value: selectedRoles,
                                             multiple: true,
+                                            options: roleTags,
                                             rootAttributes: {style:'max-width:334px'}
                                         }">
 
-                                        <option value="Caregiver">Caregiver</option>
-                                        <option value="Geriatrician">Geriatrician</option>
-                                        <option value="Intervention staff">Intervention staff</option>
-                                        <option value="City 4 Age staff">City 4 Age staff</option>
                                     </select>
                                 </div>
                             </div>
