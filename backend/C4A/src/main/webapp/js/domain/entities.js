@@ -11,6 +11,36 @@ function Serie() {
     this.imgSize = '20px'; //default size for chart
  }
 
+Serie.produceAlert = function() {
+    var annotationsSerieAlerts = new Serie();
+    annotationsSerieAlerts.name = 'Alerts';
+    annotationsSerieAlerts.source = 'images/flag-red.png';
+    annotationsSerieAlerts.markerSize = 20;
+    annotationsSerieAlerts.markerDisplayed = 'on';
+    annotationsSerieAlerts.lineType = 'none';
+    return annotationsSerieAlerts;
+};
+
+Serie.produceWarning = function() {
+    var annotationsSerieWarnings = new Serie();
+    annotationsSerieWarnings.name = 'Warnings';
+    annotationsSerieWarnings.source = 'images/flag-beige.png';
+    annotationsSerieWarnings.markerSize = 20;
+    annotationsSerieWarnings.markerDisplayed = 'on';
+    annotationsSerieWarnings.lineType = 'none';
+    return annotationsSerieWarnings;
+};
+
+Serie.produceComment = function() {
+    var annotationsSerieComments = new Serie();
+    annotationsSerieComments.name = 'Comments';
+    annotationsSerieComments.source = 'images/flag-gray.png';
+    annotationsSerieComments.markerSize = 20;
+    annotationsSerieComments.markerDisplayed = 'on';
+    annotationsSerieComments.lineType = 'none';
+    return annotationsSerieComments;
+};
+
 function Item() {
     this.id = null;
     this.value = null;
