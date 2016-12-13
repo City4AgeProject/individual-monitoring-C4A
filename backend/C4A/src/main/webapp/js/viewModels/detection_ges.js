@@ -85,7 +85,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                 annotation.imgSrc = 'images/risk_warning.png';
                             else if('A'== annotation.type)
                                 annotation.imgSrc = 'images/risk_alert.png';
-                            annotations.push(annotation);
+                            if(!Annotation.arrayContains(annotations, annotation))
+                                annotations.push(annotation);
                         }
                         self.selectedAnotations(annotations);
                         self.dataPointsMarked(self.dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
@@ -108,11 +109,19 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                 annotation.imgSrc = 'images/risk_warning.png';
                             else if('A'== annotation.type)
                                 annotation.imgSrc = 'images/risk_alert.png';
-                            annotations.push(annotation);
+                            if(!Annotation.arrayContains(annotations, annotation))
+                                annotations.push(annotation);
                         }
                         self.selectedAnotations(annotations);
-                        self.dataPointsMarked(self.dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
-                   
+                        
+                        if(self.dataPointsMarked()===0 && annotations.length>0)
+                            self.dataPointsMarked('No datapoints and no annotations.');
+                        else if(self.dataPointsMarked()===0 && annotations.length>0)
+                            self.dataPointsMarked(annotations.length + ' annotation(s) marked');
+                        else if(self.dataPointsMarked()>0 && annotations.length===0)
+                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
+                        else if(self.dataPointsMarked()>0 && annotations.length>0)
+                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
                 };
                 
                 function matchSeriesIndexByItemValue(item) {
@@ -126,21 +135,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return -1;
                 }
                 
-                var containsAlert = function(item) {
+                var assessmentsContainsWeight = function(item, weight) {
                     for(var i=0; i<item.assessmentObjects.length; i++) {
-                        if('A'===item.assessmentObjects[i].riskStatus)
+                        if(weight===item.assessmentObjects[i].riskStatus)
                             return true;
                     }
                     return false;
-                }
-                
-                var containsWarning = function(item) {
-                    for(var i=0; i<item.assessmentObjects.length; i++) {
-                        if('W'===item.assessmentObjects[i].riskStatus)
-                            return true;
-                    }
-                    return false;
-                }
+                };
                 
                 self.initialAssessments = ko.observableArray([]);
                 var loadAssessments = function (ids) {
@@ -171,10 +172,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                     item.assessmentObjects.push(assesments[i]);
                                     var matchedIndex = matchSeriesIndexByItemValue(item);
                                     if(matchedIndex>=0) {
-                                        if(containsAlert(item)) {
+                                        if('A'===assesments[i].riskStatus) {
                                             serieAlertsItems[matchedIndex] = item;
                                         }
-                                        else if(containsWarning(item)) {
+                                        else if('W'===assesments[i].riskStatus) {
                                             serieWarningsItems[matchedIndex] = item;
                                         }
                                         else {
@@ -189,9 +190,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                         annotationsSerieWarnings.items = serieWarningsItems;
                         annotationsSerieComments.items = serieCommentsItems;
                         
-                        self.seriesValue.push(annotationsSerieAlerts);
-                        self.seriesValue.push(annotationsSerieWarnings);
                         self.seriesValue.push(annotationsSerieComments);
+                        self.seriesValue.push(annotationsSerieWarnings);
+                        self.seriesValue.push(annotationsSerieAlerts);
                     });
                 };
                 
@@ -236,16 +237,21 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                  */
                 function filteredSelectionBetweenAssessmentSeriesAndOtherPoints(dataSelection) {
                     var filteredSelection = [];
-                    //add all anotation if choosed only one point and if is from Assesments series
-                    if( dataSelection.selectionData.length === 1 && dataSelection.selectionData[0].seriesData.name==='Assesments'){
-                        filteredSelection.push(dataSelection.selectionData[0].data.assessmentObjects);
+                    //add all anotation if choosed only one point and if is from Assessments series
+                    if( dataSelection.selectionData.length === 1 && (dataSelection.selectionData[0].seriesData.name==='Assessments')){
+                        try {
+                            filteredSelection.push(dataSelection.selectionData[0].data.assessmentObjects);
+                        }
+                        catch (error) {
+                            self.dataPointsMarked('1 annotation marked ');
+                        }
                         return filteredSelection;
                     }
                     //if selected more than one
                     for (var i=0;i<dataSelection.selectionData.length;i++) {
                         var selectedDataPoint = dataSelection.selectionData[i];
                         //skip assessment
-                        if(selectedDataPoint.seriesData.name==='Assesments'){
+                        if(selectedDataPoint.seriesData.name==='Assessments'){
                             
                         }
                         else {
@@ -289,7 +295,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                 $('#popup1').ojPopup('close');
                             // Avoid assesment selections as points
                             var onlyDataPoints = filteredSelectionBetweenAssessmentSeriesAndOtherPoints(ui['optionMetadata']);
-                            if(onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id ){
+                            if(onlyDataPoints.length === 0)
+                                ;
+                            else if(onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id ){
                                 self.dataPointsMarked('1 data point marked ');
                                 loadCachedAnnotations(onlyDataPoints);
                             }else{

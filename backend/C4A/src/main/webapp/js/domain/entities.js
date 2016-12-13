@@ -1,4 +1,7 @@
 // Domain objects aka. enitites.
+
+var ASSESMENTS_SERIES_NAMES = ['Alerts', 'Warnings', 'Comments'];
+
 function Group() {
     this.id = null;
     this.name = '';
@@ -13,9 +16,10 @@ function Serie() {
 
 Serie.produceAlert = function() {
     var annotationsSerieAlerts = new Serie();
-    annotationsSerieAlerts.name = 'Alerts';
+    annotationsSerieAlerts.name = 'Assessments';
     annotationsSerieAlerts.source = 'images/flag-red.png';
     annotationsSerieAlerts.markerSize = 20;
+    annotationsSerieAlerts.markerStyle = 'position: absolute; z-index: 1;';
     annotationsSerieAlerts.markerDisplayed = 'on';
     annotationsSerieAlerts.lineType = 'none';
     return annotationsSerieAlerts;
@@ -23,9 +27,10 @@ Serie.produceAlert = function() {
 
 Serie.produceWarning = function() {
     var annotationsSerieWarnings = new Serie();
-    annotationsSerieWarnings.name = 'Warnings';
+    annotationsSerieWarnings.name = 'Assessments';
     annotationsSerieWarnings.source = 'images/flag-beige.png';
     annotationsSerieWarnings.markerSize = 20;
+    annotationsSerieWarnings.markerStyle = 'position: absolute; z-index: 2;';
     annotationsSerieWarnings.markerDisplayed = 'on';
     annotationsSerieWarnings.lineType = 'none';
     return annotationsSerieWarnings;
@@ -33,9 +38,10 @@ Serie.produceWarning = function() {
 
 Serie.produceComment = function() {
     var annotationsSerieComments = new Serie();
-    annotationsSerieComments.name = 'Comments';
+    annotationsSerieComments.name = 'Assessments';
     annotationsSerieComments.source = 'images/flag-gray.png';
     annotationsSerieComments.markerSize = 20;
+    annotationsSerieComments.markerStyle = 'position: absolute; z-index: 3;';
     annotationsSerieComments.markerDisplayed = 'on';
     annotationsSerieComments.lineType = 'none';
     return annotationsSerieComments;
@@ -67,8 +73,14 @@ function Annotation() {
     this.dateAndTime = '';
 };
 
+Annotation.arrayContains = function(array, item) {
+    for(var i=0; i<array.length; i++)
+        if(array[i].id===item.id)
+            return true;
+    return false;
+};
+
 function CdRole(){
-    
     this.id = null;
     this.roleName = '';
     this.roleAbbreviation = '';
