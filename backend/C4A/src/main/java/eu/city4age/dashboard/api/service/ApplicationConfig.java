@@ -29,10 +29,6 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(eu.city4age.dashboard.api.ws.AssessmentsService.class);
-        resources.add(eu.city4age.dashboard.api.ws.jet.CORSResponseFilter.class);
-        resources.add(eu.city4age.dashboard.api.ws.jet.OJAnnotation.class);
-        resources.add(eu.city4age.dashboard.api.ws.jet.OJCodeBook.class);
-        resources.add(eu.city4age.dashboard.api.ws.jet.OJDataSet.class);
     }
     
 }

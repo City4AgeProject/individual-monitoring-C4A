@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<cd_risk_status risk_status="W" risk_status_description="Risk warning" />
+	<cd_risk_status risk_status="A" risk_status_description="Risk alert" />
+</dataset>

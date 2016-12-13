@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="eu.city4age.dashboard.api.model">
+    <class name="Stakeholder" table="stakeholder" optimistic-lock="version">
+
+        <id name="stakeholderAbbreviation" type="string">
+            <column name="stakeholder_abbreviation" length="3" not-null="true" />
+            <generator class="assigned" />
+        </id>
+        
+        <property name="stakeholderName" type="string">
+            <column name="stakeholder_name" length="50" not-null="true" />
+        </property>
+        
+        <property name="stakeholderDescription" type="string">
+            <column name="stakeholder_description" length="50" />
+        </property>
+        
+        <property name="validFrom" type="timestamp">
+            <column name="valid_from" length="29" not-null="true" />
+        </property>
+   
+        <property name="validTo" type="timestamp">
+            <column name="valid_to" length="29" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

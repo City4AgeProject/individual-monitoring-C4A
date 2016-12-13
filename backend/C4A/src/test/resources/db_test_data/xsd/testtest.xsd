@@ -7,6 +7,7 @@
 	<xsd:element name="cd_role" type="cd_role__type" />
 	<xsd:element name="dbmaintain_scripts" type="dbmaintain_scripts__type" />
 	<xsd:element name="time_interval" type="time_interval__type" />
+	<xsd:element name="stakeholder" type="stakeholder__type" />
 	<xsd:element name="frailty_status_timeline" type="frailty_status_timeline__type" />
 	<xsd:element name="eam" type="eam__type" />
 	<xsd:element name="assessment" type="assessment__type" />
@@ -26,6 +27,7 @@
 	<xsd:element name="numeric_indicator_value" type="numeric_indicator_value__type" />
 	<xsd:element name="cd_pilot_detection_variable" type="cd_pilot_detection_variable__type" />
 	<xsd:element name="cd_detection_variable" type="cd_detection_variable__type" />
+	<xsd:element name="cd_risk_status" type="cd_risk_status__type" />
 	<xsd:element name="location" type="location__type" />
 	<xsd:element name="assessment_audience_role" type="assessment_audience_role__type" />
 	<xsd:complexType name="activity__type">
@@ -73,6 +75,13 @@
 		<xsd:attribute name="typical_period" use="optional" />
 		<xsd:attribute name="id" use="optional" />
 		<xsd:attribute name="interval_start" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="stakeholder__type">
+		<xsd:attribute name="stakeholder_abbreviation" use="optional" />
+		<xsd:attribute name="stakeholder_name" use="optional" />
+		<xsd:attribute name="valid_to" use="optional" />
+		<xsd:attribute name="valid_from" use="optional" />
+		<xsd:attribute name="stakeholder_description" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="frailty_status_timeline__type">
 		<xsd:attribute name="frailty_notice" use="optional" />
@@ -215,6 +224,12 @@
 		<xsd:attribute name="id" use="optional" />
 		<xsd:attribute name="detection_variable_name" use="optional" />
 		<xsd:attribute name="derived_detection_variable_id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cd_risk_status__type">
+		<xsd:attribute name="risk_status" use="optional" />
+		<xsd:attribute name="confidence_rating" use="optional" />
+		<xsd:attribute name="icon_image" use="optional" />
+		<xsd:attribute name="risk_status_description" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="location__type">
 		<xsd:attribute name="location_name" use="optional" />
