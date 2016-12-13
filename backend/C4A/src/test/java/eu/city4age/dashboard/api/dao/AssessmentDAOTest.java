@@ -93,7 +93,7 @@ public class AssessmentDAOTest extends UnitilsJUnit4  {
 		
 		//Assert.assertEquals(4, ((AssessmentAudienceRole)((Assessment)result.get(0)).getAssessmentAudienceRoles().iterator().next()).getAssessmentAudienceRoleId().getUserInRoleId());
 		
-		Assert.assertEquals(3, ((Assessment)result.get(0)).getAssessedGefValueSets().size());
+		Assert.assertEquals(1, ((Assessment)result.get(0)).getAssessedGefValueSets().size());
 	}
 
 	@Test
