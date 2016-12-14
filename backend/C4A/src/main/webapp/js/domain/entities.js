@@ -18,7 +18,7 @@ Serie.produceAlert = function() {
     var annotationsSerieAlerts = new Serie();
     annotationsSerieAlerts.name = 'Assessments';
     annotationsSerieAlerts.source = 'images/flag-red.png';
-    annotationsSerieAlerts.markerSize = 20;
+    annotationsSerieAlerts.markerSize = 16;
     annotationsSerieAlerts.markerDisplayed = 'on';
     annotationsSerieAlerts.lineType = 'none';
     return annotationsSerieAlerts;
@@ -28,7 +28,7 @@ Serie.produceWarning = function() {
     var annotationsSerieWarnings = new Serie();
     annotationsSerieWarnings.name = 'Assessments';
     annotationsSerieWarnings.source = 'images/flag-beige.png';
-    annotationsSerieWarnings.markerSize = 20;
+    annotationsSerieWarnings.markerSize = 16;
     annotationsSerieWarnings.markerDisplayed = 'on';
     annotationsSerieWarnings.lineType = 'none';
     return annotationsSerieWarnings;
@@ -38,7 +38,7 @@ Serie.produceComment = function() {
     var annotationsSerieComments = new Serie();
     annotationsSerieComments.name = 'Assessments';
     annotationsSerieComments.source = 'images/flag-gray.png';
-    annotationsSerieComments.markerSize = 20;
+    annotationsSerieComments.markerSize = 16;
     annotationsSerieComments.markerDisplayed = 'on';
     annotationsSerieComments.lineType = 'none';
     return annotationsSerieComments;
@@ -115,6 +115,16 @@ Assessment.prototype.fromOther = function(other) {
     this.shortComment = shortenText(this.comment, 27);
 };
 
+/**
+ * This is a object to post new assessement
+ * @param {type} authorId
+ * @param {type} comment
+ * @param {type} riskStatus
+ * @param {type} dataValidityStatus
+ * @param {type} geriatricFactorValueIds
+ * @param {type} audienceIds
+ * @returns {AddAssessment}
+ */
 function AddAssessment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds) {
     this.authorId = authorId;
     this.comment = comment;

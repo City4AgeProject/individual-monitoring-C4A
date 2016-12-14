@@ -137,14 +137,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return -1;
                 }
                 
-                var assessmentsContainsWeight = function(item, weight) {
-                    for(var i=0; i<item.assessmentObjects.length; i++) {
-                        if(weight===item.assessmentObjects[i].riskStatus)
-                            return true;
-                    }
-                    return false;
-                };
-                
                 self.initialAssessments = ko.observableArray([]);
                 var loadAssessmentsCached = function (ids) {
                     var pointIdsJson = JSON.stringify(ids);
@@ -196,9 +188,14 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                         assessmentsSerieWarnings.items = serieWarningsItems;
                         assessmentsSerieComments.items = serieCommentsItems;
                         
-                        self.seriesValue.push(assessmentsSerieComments);
-                        self.seriesValue.push(assessmentsSerieWarnings);
-                        self.seriesValue.push(assessmentsSerieAlerts);
+                        if(assessmentsSerieComments.items.length>0)
+                            self.seriesValue.push(assessmentsSerieComments);
+                        
+                        if(assessmentsSerieWarnings.items.length>0)
+                            self.seriesValue.push(assessmentsSerieWarnings);
+                        
+                        if(assessmentsSerieAlerts.items.length>0)
+                            self.seriesValue.push(assessmentsSerieAlerts);
                     });
                 };
                 
@@ -222,13 +219,15 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 /*Motility morphology - line chart*/
                 // Chart values and selections
                 self.orientationValue = ko.observable('vertical');
-                self.groupsValue = ko.observableArray();
-                self.seriesValue = ko.observableArray();
+                self.groupsValue = ko.observableArray([]);
+                self.seriesValue = ko.observableArray([]);
                 self.dataPointsMarked = ko.observable('No data points marked.');
                 self.selectedAnotations = ko.observableArray();
                 self.dataPointsMarkedIds = ko.observableArray();
                 
                 function showAssessmentsPopup() {
+                    //clear previus assessments if exists;
+                    self.selectedAnotations([]);
                     $('#popup1').ojPopup("option", "position", {} );
                     $('#popup1').ojPopup('open');
                     $("#popup1").ojPopup("widget").css("left", clientX + 2  + "px");
@@ -334,10 +333,18 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 
                 /* Show popup dialog for adding new assessment */
                 self.clickShowPopupAddAssessment = function (data, event) {
+                    resetAddAssessment();
                     $('#dialog1').ojDialog();
                     $('#dialog1').ojDialog('open');
                     return true;
                 };
+                
+                function resetAddAssessment(){
+                    self.commentText('');
+                    self.selectedRiskStatus([]);
+                    self.selectedDataValidity([]);
+                    self.selectedRoles([]);
+                }
                 
                 var postAssessmentCallback = function(data) {
                     console.log(data);
@@ -474,16 +481,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     error: function (jqXHR, textStatus, errorThrown) {
                     }
                 });
-               
-                
-                
-                self.audienceIds = ko.observableArray([
-                    {id : "Caregiver", name : "Caregiver"},
-                    {id : "Geriatrician", name : "Geriatrician"},
-                    {id : "Intervention staff", name : "Intervention staff"},
-                    {id : "City 4 Age staff", name : "City 4 Age staff"}
-                ]);
-                self.selectedAudienceIds = ko.observableArray();
                 
                 /* End Audience ids */
                 
@@ -499,15 +496,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     }
                 };
                 self.searchInput = function () {};
-                self.valRole = ko.observableArray(["Caregiver"]);
-//                self.valType = ko.observableArray(["Warning"]);
+                 self.nowrap = ko.observable(false);
 
-//                self.currentRawValue = ko.observable();
-                self.nowrap = ko.observable(false);
-//                self.handleTransitionCompleted = function (info) {
-//                    $("#oj-inputsearch-choice-search-input").css("height", "42px");
-//                    $("#oj-select-choice-selectSort").css("height", "42px");
-//                };
 
                 self.formats = ko.observableArray();
                 self.isChecked = ko.observable();
