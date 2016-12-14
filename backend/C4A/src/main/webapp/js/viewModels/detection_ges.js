@@ -294,7 +294,14 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             if($('#popup1').ojPopup( "isOpen" ))
                                 $('#popup1').ojPopup('close');
                             // Avoid assessment selections as points
-                            var onlyDataPoints = filteredSelectionBetweenAssessmentSeriesAndOtherPoints(ui['optionMetadata']);
+                            var onlyDataPoints = [];
+                                onlyDataPoints = filteredSelectionBetweenAssessmentSeriesAndOtherPoints(ui['optionMetadata']);
+                            if(onlyDataPoints.length === 0) {
+                                for(var i=0; i<ui['value'].length; i++) {
+                                    onlyDataPoints.push(ui['value'][i].id);
+                                }
+                            }
+                            
                             if(onlyDataPoints.length === 0)
                                 ;
                             else if(onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id ){
