@@ -52,7 +52,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             pointIds.push(series[i].items[j].id);
                         }
                     }
-                    loadAssessments({geriatricFactorValueIds : pointIds});
+                    loadAssessmentsCached({geriatricFactorValueIds : pointIds});
                 };
                 
                 var serverErrorCallback = function (xhr, message, error) {
@@ -144,9 +144,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 };
                 
                 self.initialAssessments = ko.observableArray([]);
-                var loadAssessments = function (ids) {
-                    var idsArray = JSON.stringify(ids);
-                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (assessments) {
+                var loadAssessmentsCached = function (ids) {
+                    var pointIdsJson = JSON.stringify(ids);
+                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
                         //insert to quick read later on mouse over popup
                         self.initialAssessments(assessments);
                         
