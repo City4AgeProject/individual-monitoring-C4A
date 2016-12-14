@@ -85,11 +85,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                 newAssessment.imgSrc = 'images/risk_warning.png';
                             else if('A'== assessment.type)
                                 newAssessment.imgSrc = 'images/risk_alert.png';
-                            if(!Assessment.arrayContains(assessments, newAssessment))
+                            if(!Assessment.arrayContains(assessmentsResult, newAssessment))
                                 assessmentsResult.push(newAssessment);
                         }
                         self.selectedAnotations(assessmentsResult);
-                        self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessments.length + ' assessment(s)');
+                        self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
                     });
                 };
                 
@@ -109,19 +109,19 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                 newAssesment.imgSrc = 'images/risk_warning.png';
                             else if('A'== newAssesment.type)
                                 newAssesment.imgSrc = 'images/risk_alert.png';
-                            if(!Assessment.arrayContains(assessments, newAssesment))
+                            if(!Assessment.arrayContains(assessmentsResult, newAssesment))
                                 assessmentsResult.push(newAssesment);
                         }
                         self.selectedAnotations(assessmentsResult);
                         
-                        if(self.dataPointsMarked()===0 && assessments.length>0)
+                        if(self.dataPointsMarked()===0 && assessmentsResult.length>0)
                             self.dataPointsMarked('No datapoints and no assessments.');
-                        else if(self.dataPointsMarked()===0 && assessments.length>0)
-                            self.dataPointsMarked(assessments.length + ' assessment(s) marked');
-                        else if(self.dataPointsMarked()>0 && assessments.length===0)
-                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessments.length + ' assessment(s)');
-                        else if(self.dataPointsMarked()>0 && assessments.length>0)
-                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessments.length + ' assessment(s)');
+                        else if(self.dataPointsMarked()===0 && assessmentsResult.length>0)
+                            self.dataPointsMarked(assessmentsResult.length + ' assessment(s) marked');
+                        else if(self.dataPointsMarked()>0 && assessmentsResult.length===0)
+                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
+                        else if(self.dataPointsMarked()>0 && assessmentsResult.length>0)
+                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
                 };
                 
                 function matchSeriesIndexByItemValue(item) {
