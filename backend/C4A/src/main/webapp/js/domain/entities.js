@@ -83,14 +83,6 @@ Assessment.arrayContains = function(array, item) {
     return false;
 };
 
-function CdRole(){
-    this.id = null;
-    this.roleName = '';
-    this.roleAbbreviation = '';
-    this.roleDescription= '';
-    this.stakeholderAbbreviation= '';
-}
-
 Assessment.prototype.toJson = function() {
     return JSON.stringify(this);
 };
@@ -133,6 +125,14 @@ function AddAssessment(authorId, comment, riskStatus, dataValidityStatus, geriat
     this.geriatricFactorValueIds = geriatricFactorValueIds;
     this.audienceIds = audienceIds;
 };
+
+function CdRole(){
+    this.id = null;
+    this.roleName = '';
+    this.roleAbbreviation = '';
+    this.roleDescription= '';
+    this.stakeholderAbbreviation= '';
+}
 
 // Few static functions
 
