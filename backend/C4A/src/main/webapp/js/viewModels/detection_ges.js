@@ -80,10 +80,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             newAssessment.from = assessment.userInRole.id;
                             newAssessment.dateAndTime = assessment.created;
                             newAssessment.type = assessment.riskStatus;
-                            newAssessment.imgSrc = 'comment.png';
-                            if('W'== assessment.type)
+                            newAssessment.imgSrc = 'images/comment.png';
+                            if('W'== newAssessment.type)
                                 newAssessment.imgSrc = 'images/risk_warning.png';
-                            else if('A'== assessment.type)
+                            else if('A'== newAssessment.type)
                                 newAssessment.imgSrc = 'images/risk_alert.png';
                             if(!Assessment.arrayContains(assessmentsResult, newAssessment))
                                 assessmentsResult.push(newAssessment);
