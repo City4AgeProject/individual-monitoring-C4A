@@ -128,7 +128,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var series = self.seriesValue();
                     for(var i = 0; i < series.length; i++) {
                         for(var j = 0; j < series[i].items.length; j++) {
-                            if(series[i].items[j].value === item.value)
+                            if(series[i].items[j].id === item.id)
                                 return j;
                         }
                     }
@@ -161,12 +161,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                         for (var i = 0; i < assessments.length; i++) {
                             var assessment = assessments[i];
                             if (assessment) {
+                                var item = new Item();
                                 for (var j = 0; j < assessment.assessedGefValueSets.length; j++) {
                                     var assessedGefValueSet = assessment.assessedGefValueSets[j];
                                     var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
                                     var gefValue = geriatricFactorValue.gefValue;
                                     var id = geriatricFactorValue.id;
-                                    var item = new Item();
+                                    
                                     item.id = id;
                                     item.value = gefValue;
                                     item.assessmentObjects.push(assessments[i]);
@@ -293,7 +294,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             $('#popup1').ojPopup();
                             if($('#popup1').ojPopup( "isOpen" ))
                                 $('#popup1').ojPopup('close');
-                            // Avoid assessment selections as points
+                            
                             var onlyDataPoints = [];
                                 onlyDataPoints = filteredSelectionBetweenAssessmentSeriesAndOtherPoints(ui['optionMetadata']);
                             if(onlyDataPoints.length === 0) {
