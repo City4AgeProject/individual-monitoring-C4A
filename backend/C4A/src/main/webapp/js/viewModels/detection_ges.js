@@ -214,8 +214,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 /*Motility morphology - line chart*/
                 // Chart values and selections
                 self.orientationValue = ko.observable('vertical');
-                self.groupsValue = ko.observableArray();
-                self.seriesValue = ko.observableArray();
+                self.groupsValue = ko.observableArray([]);
+                self.seriesValue = ko.observableArray([]);
                 self.dataPointsMarked = ko.observable('No data points marked.');
                 self.selectedAnotations = ko.observableArray();
                 self.dataPointsMarkedIds = ko.observableArray();
@@ -492,15 +492,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     }
                 };
                 self.searchInput = function () {};
-                self.valRole = ko.observableArray(["Caregiver"]);
-//                self.valType = ko.observableArray(["Warning"]);
+                 self.nowrap = ko.observable(false);
 
-//                self.currentRawValue = ko.observable();
-                self.nowrap = ko.observable(false);
-//                self.handleTransitionCompleted = function (info) {
-//                    $("#oj-inputsearch-choice-search-input").css("height", "42px");
-//                    $("#oj-select-choice-selectSort").css("height", "42px");
-//                };
 
                 self.formats = ko.observableArray();
                 self.isChecked = ko.observable();

@@ -211,7 +211,7 @@
                                             </li>
                                             <!-- /ko -->   
                                         </ul>
-                                        <input id="riskSelect" placeholder="Choose risk..." required="true"
+                                        <input id="riskSelect" placeholder="Choose risk..." 
                                                data-bind="ojComponent: {
                                                             component: 'ojCombobox',
                                                             value: selectedRiskStatus,
@@ -324,9 +324,8 @@
 	                                                data-bind="ojComponent: {
 	                                                    component:'ojButton',
 	                                                    label: 'Add',
-                                                            click: clickShowPopupAddAssessment,
-	                                                    rootAttributes: {style:'margin-bottom:0px; margin-top:10px;'}
-	                                                }">
+                                                            rootAttributes: {style:'margin-bottom:0px; margin-top:10px;'}
+	                                                }, click: clickShowPopupAddAssessment ">
 	                                        </button>
 	                                        <button data-bind="ojComponent: {
 	                                                    component:'ojButton',
@@ -345,7 +344,7 @@
 	                    <!-- end buttons for annotations -->
 	
 	                    <!-- filter annotations -->
-	                    <div id="annotation-filter" class="oj-panel oj-panel-shadow-sm" style="display: none; border:none; background-color: #f6f6f6">
+	                    <div id="assessment-filter" class="oj-panel oj-panel-shadow-sm" style="display: none; border:none; background-color: #f6f6f6">
 	                        <div id="form-container3" style="width: 100%; ">
 	                            <div class="demo-flex-display oj-flex-items-pad">
 	                                <div class="oj-flex  oj-sm-flex-items-initial oj-lg-justify-content-space-between oj-lg-align-items-flex-start" data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
@@ -392,18 +391,17 @@
 	                                    </div>
 	
 	                                    <div class="oj-flex-item" style="width: 180px;">
-	                                        <label for="selectFrom" >From</label>
-	                                        <select id="selectFrom" 
-	                                                data-bind="ojComponent: {
-	                                                        component: 'ojSelect', 
-	                                                        value: 'All'
-	                                                }">
-	                                            <option value="All">All</option>
-	                                            <option value="Caregiver">Caregiver</option>
-	                                            <option value="Geriatrician">Geriatrician</option>
-	                                            <option value="Intervention staff">Intervention staff</option>
-	                                            <option value="City 4 Age staff">City 4 Age staff</option>
-	                                        </select>
+	                                        <label for="selectRole" >From</label>
+                                                <select id="selectRole" 
+                                                        data-bind="ojComponent: {
+                                                        component: 'ojSelect', 
+                                                        value: selectedRoles,
+                                                        multiple: false,
+                                                        options: roleTags,
+                                                        rootAttributes: {style:'max-width:334px'}
+                                                    }">
+
+                                                </select>
 	                                    </div>
 	
 	                                    <div class="oj-flex-item" style="width: 180px;">
