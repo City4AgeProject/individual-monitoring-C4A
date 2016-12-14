@@ -19,7 +19,6 @@ Serie.produceAlert = function() {
     annotationsSerieAlerts.name = 'Assessments';
     annotationsSerieAlerts.source = 'images/flag-red.png';
     annotationsSerieAlerts.markerSize = 20;
-    annotationsSerieAlerts.markerStyle = 'position: absolute; z-index: 1;';
     annotationsSerieAlerts.markerDisplayed = 'on';
     annotationsSerieAlerts.lineType = 'none';
     return annotationsSerieAlerts;
@@ -30,7 +29,6 @@ Serie.produceWarning = function() {
     annotationsSerieWarnings.name = 'Assessments';
     annotationsSerieWarnings.source = 'images/flag-beige.png';
     annotationsSerieWarnings.markerSize = 20;
-    annotationsSerieWarnings.markerStyle = 'position: absolute; z-index: 2;';
     annotationsSerieWarnings.markerDisplayed = 'on';
     annotationsSerieWarnings.lineType = 'none';
     return annotationsSerieWarnings;
@@ -41,7 +39,6 @@ Serie.produceComment = function() {
     annotationsSerieComments.name = 'Assessments';
     annotationsSerieComments.source = 'images/flag-gray.png';
     annotationsSerieComments.markerSize = 20;
-    annotationsSerieComments.markerStyle = 'position: absolute; z-index: 3;';
     annotationsSerieComments.markerDisplayed = 'on';
     annotationsSerieComments.lineType = 'none';
     return annotationsSerieComments;
@@ -71,6 +68,12 @@ function Assessment() {
     this.imgSrc = '';
     this.shortComment = '';
     this.dateAndTime = '';
+    this.dateAndTimeText = '';
+};
+
+Assessment.prototype.formatDateAndTimeText = function() {
+    this.dateAndTimeText = new Date(this.dateAndTime).toLocaleDateString() 
+                            + ' ' + new Date(this.dateAndTime).toLocaleTimeString();
 };
 
 Assessment.arrayContains = function(array, item) {

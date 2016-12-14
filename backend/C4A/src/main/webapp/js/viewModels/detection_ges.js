@@ -79,6 +79,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             newAssessment.shortComment = shortenText(assessment.assessmentComment, 27);
                             newAssessment.from = assessment.userInRole.id;
                             newAssessment.dateAndTime = assessment.created;
+                            newAssessment.formatDateAndTimeText();
                             newAssessment.type = assessment.riskStatus;
                             newAssessment.imgSrc = 'images/comment.png';
                             if('W'== newAssessment.type)
@@ -103,8 +104,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             newAssesment.shortComment = shortenText(assessment[0].assessmentComment, 27);
                             newAssesment.from = assessment[0].userInRole.id;
                             newAssesment.dateAndTime = assessment[0].created;
+                            newAssesment.formatDateAndTimeText();
                             newAssesment.type = assessment[0].riskStatus;
-                            newAssesment.imgSrc = 'comment.png';
+                            newAssesment.imgSrc = 'images/comment.png';
                             if('W'== newAssesment.type)
                                 newAssesment.imgSrc = 'images/risk_warning.png';
                             else if('A'== newAssesment.type)
@@ -175,9 +177,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                     if(matchedIndex>=0) {
                                         if('A'===assessments[i].riskStatus) {
                                             serieAlertsItems[matchedIndex] = item;
+                                            serieWarningsItems[matchedIndex] = null;
+                                            serieCommentsItems[matchedIndex] = null;
                                         }
                                         else if('W'===assessments[i].riskStatus) {
                                             serieWarningsItems[matchedIndex] = item;
+                                            serieCommentsItems[matchedIndex] = null;
                                         }
                                         else {
                                             serieCommentsItems[matchedIndex] = item;
@@ -349,7 +354,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var riskStatus = ko.toJS(self.selectedRiskStatus)[0];
                     var dataValidityStatus = ko.toJS(self.selectedDataValidity)[0];
                     var geriatricFactorValueIds = ko.toJS(self.dataPointsMarkedIds);
-                    //TODO: should be get from miltiselect combobox for role
                     var audienceIds = ko.toJS(self.selectedRoles);
                     var assessmentToPost = new AddAssessment
                         (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
