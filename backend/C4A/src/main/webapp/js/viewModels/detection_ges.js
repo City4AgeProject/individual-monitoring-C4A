@@ -161,13 +161,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                         for (var i = 0; i < assessments.length; i++) {
                             var assessment = assessments[i];
                             if (assessment) {
-                                var item = new Item();
+                                
                                 for (var j = 0; j < assessment.assessedGefValueSets.length; j++) {
                                     var assessedGefValueSet = assessment.assessedGefValueSets[j];
                                     var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
                                     var gefValue = geriatricFactorValue.gefValue;
                                     var id = geriatricFactorValue.id;
-                                    
+                                    var item = new Item();
                                     item.id = id;
                                     item.value = gefValue;
                                     item.assessmentObjects.push(assessments[i]);
@@ -342,7 +342,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 };
                 
                 /* ojButton postAssessment */
-                self.postAssesment = function (data, event) {
+                self.postAssessment = function (data, event) {
                     //should be logged user ID
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
