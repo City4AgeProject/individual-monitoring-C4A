@@ -1,6 +1,6 @@
 // Domain objects aka. enitites.
 
-var ASSESMENTS_SERIES_NAMES = ['Alerts', 'Warnings', 'Comments'];
+var ASSESSMENTS_SERIES_NAMES = ['Alerts', 'Warnings', 'Comments'];
 
 function Group() {
     this.id = null;
@@ -62,7 +62,7 @@ DataSet.prototype.toJson = function() {
     return JSON.stringify(this);
 };
 
-function Annotation() {
+function Assessment() {
     this.id = null;
     this.title = '';
     this.type = '';
@@ -73,7 +73,7 @@ function Annotation() {
     this.dateAndTime = '';
 };
 
-Annotation.arrayContains = function(array, item) {
+Assessment.arrayContains = function(array, item) {
     for(var i=0; i<array.length; i++)
         if(array[i].id===item.id)
             return true;
@@ -88,20 +88,20 @@ function CdRole(){
     this.stakeholderAbbreviation= '';
 }
 
-Annotation.prototype.toJson = function() {
+Assessment.prototype.toJson = function() {
     return JSON.stringify(this);
 };
 
-Annotation.prototype.fromJson = function(json) {
+Assessment.prototype.fromJson = function(json) {
     var other = JSON.parse(json);
     this.fromOther(other);
 };
 
-Annotation.prototype.shortComment = function() {
+Assessment.prototype.shortComment = function() {
     return shortenText(this.comment, 27);
 };
 
-Annotation.prototype.fromOther = function(other) {
+Assessment.prototype.fromOther = function(other) {
     this.id = other.id;
     this.title = other.title;
     this.type = other.type;
@@ -112,7 +112,7 @@ Annotation.prototype.fromOther = function(other) {
     this.shortComment = shortenText(this.comment, 27);
 };
 
-function AddAssesment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds) {
+function AddAssessment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds) {
     this.authorId = authorId;
     this.comment = comment;
     this.riskStatus = riskStatus;
@@ -141,13 +141,13 @@ function remove_item(arr, value) {
     return arr;
 }
 
-function prepareAnnotationsForPrintout(annotations) {
-    var preparedAnnotations = [];
+function prepareAssessmentsForPrintout(annotations) {
+    var preparedAssessments = [];
     for (var i=0; i<annotations.length; i++) {
-        var anno = new Annotation().fromOther(annotations[i]);
-        preparedAnnotations.push(anno);
+        var anno = new Assessment().fromOther(annotations[i]);
+        preparedAssessments.push(anno);
     }
-    return preparedAnnotations;
+    return preparedAssessments;
 }
 
 // Navigation parameters wrappers
