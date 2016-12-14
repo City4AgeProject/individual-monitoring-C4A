@@ -358,7 +358,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return {
                         riskStatus: response['riskStatus'],
                         riskStatusDesc: response['riskStatusDescription'],
-                        imagePath: response['imagePath']};
+                        imagePath: response['iconImage']};
                 };
                 
                 var collectionRisks = new oj.Collection.extend({
