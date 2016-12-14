@@ -320,7 +320,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 self.valueArray = ko.observableArray([0, 0]);
                 
                 /* Show popup dialog for adding new assessment */
-                self.clickShowPopupAddAssessment = function (data, event) {
+                self.postAssessment = function (data, event) {
                     $('#dialog1').ojDialog();
                     $('#dialog1').ojDialog('open');
                     return true;
@@ -334,7 +334,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 };
                 
                 /* ojButton postAssessment */
-                self.postAssessment = function (data, event) {
+                self.clickShowPopupAddAssessment = function (data, event) {
                     //should be logged user ID
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
