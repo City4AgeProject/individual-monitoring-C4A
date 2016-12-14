@@ -52,7 +52,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             pointIds.push(series[i].items[j].id);
                         }
                     }
-                    loadAssessments({geriatricFactorValueIds : pointIds});
+                    loadAssessmentsCached({geriatricFactorValueIds : pointIds});
                 };
                 
                 var serverErrorCallback = function (xhr, message, error) {
@@ -67,52 +67,61 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return jqXHR;
                 };
                 
-                var loadAnnotations = function (pointIds) {
+                var loadAssessments = function (pointIds) {
                     var pointIdsJson = JSON.stringify({geriatricFactorValueIds : pointIds});
-                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assesments) {
-                        var annotations = [];
-                        for (var i = 0; i < assesments.length; i++) {
-                            var assessment = assesments[i];
-                            var annotation = new Annotation();
-                            annotation.id = assessment.id;
-                            annotation.comment = assessment.assessmentComment;
-                            annotation.shortComment = shortenText(assessment.assessmentComment, 27);
-                            annotation.from = assessment.userInRole.id;
-                            annotation.dateAndTime = assessment.created;
-                            annotation.type = assessment.riskStatus;
-                            annotation.imgSrc = 'comment.png';
-                            if('W'== annotation.type)
-                                annotation.imgSrc = 'images/risk_warning.png';
-                            else if('A'== annotation.type)
-                                annotation.imgSrc = 'images/risk_alert.png';
-                            annotations.push(annotation);
+                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
+                        var assessmentsResult = [];
+                        for (var i = 0; i < assessments.length; i++) {
+                            var assessment = assessments[i];
+                            var newAssessment = new Assessment();
+                            newAssessment.id = assessment.id;
+                            newAssessment.comment = assessment.assessmentComment;
+                            newAssessment.shortComment = shortenText(assessment.assessmentComment, 27);
+                            newAssessment.from = assessment.userInRole.id;
+                            newAssessment.dateAndTime = assessment.created;
+                            newAssessment.type = assessment.riskStatus;
+                            newAssessment.imgSrc = 'images/comment.png';
+                            if('W'== newAssessment.type)
+                                newAssessment.imgSrc = 'images/risk_warning.png';
+                            else if('A'== newAssessment.type)
+                                newAssessment.imgSrc = 'images/risk_alert.png';
+                            if(!Assessment.arrayContains(assessmentsResult, newAssessment))
+                                assessmentsResult.push(newAssessment);
                         }
-                        self.selectedAnotations(annotations);
-                        self.dataPointsMarked(self.dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
+                        self.selectedAnotations(assessmentsResult);
+                        self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
                     });
                 };
                 
-                var loadCachedAnnotations = function (assessments) {
-                        var annotations = [];
+                var loadCachedAssessments = function (assessments) {
+                        var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var assessment = assessments[i];
-                            var annotation = new Annotation();
-                            annotation.id = assessment[0].id;
-                            annotation.comment = assessment[0].assessmentComment;
-                            annotation.shortComment = shortenText(assessment[0].assessmentComment, 27);
-                            annotation.from = assessment[0].userInRole.id;
-                            annotation.dateAndTime = assessment[0].created;
-                            annotation.type = assessment[0].riskStatus;
-                            annotation.imgSrc = 'comment.png';
-                            if('W'== annotation.type)
-                                annotation.imgSrc = 'images/risk_warning.png';
-                            else if('A'== annotation.type)
-                                annotation.imgSrc = 'images/risk_alert.png';
-                            annotations.push(annotation);
+                            var newAssesment = new Assessment();
+                            newAssesment.id = assessment[0].id;
+                            newAssesment.comment = assessment[0].assessmentComment;
+                            newAssesment.shortComment = shortenText(assessment[0].assessmentComment, 27);
+                            newAssesment.from = assessment[0].userInRole.id;
+                            newAssesment.dateAndTime = assessment[0].created;
+                            newAssesment.type = assessment[0].riskStatus;
+                            newAssesment.imgSrc = 'comment.png';
+                            if('W'== newAssesment.type)
+                                newAssesment.imgSrc = 'images/risk_warning.png';
+                            else if('A'== newAssesment.type)
+                                newAssesment.imgSrc = 'images/risk_alert.png';
+                            if(!Assessment.arrayContains(assessmentsResult, newAssesment))
+                                assessmentsResult.push(newAssesment);
                         }
-                        self.selectedAnotations(annotations);
-                        self.dataPointsMarked(self.dataPointsMarked() + ' with ' + annotations.length + ' annotation(s)');
-                   
+                        self.selectedAnotations(assessmentsResult);
+                        
+                        if(self.dataPointsMarked()===0 && assessmentsResult.length>0)
+                            self.dataPointsMarked('No datapoints and no assessments.');
+                        else if(self.dataPointsMarked()===0 && assessmentsResult.length>0)
+                            self.dataPointsMarked(assessmentsResult.length + ' assessment(s) marked');
+                        else if(self.dataPointsMarked()>0 && assessmentsResult.length===0)
+                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
+                        else if(self.dataPointsMarked()>0 && assessmentsResult.length>0)
+                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
                 };
                 
                 function matchSeriesIndexByItemValue(item) {
@@ -126,55 +135,47 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     return -1;
                 }
                 
-                var containsAlert = function(item) {
+                var assessmentsContainsWeight = function(item, weight) {
                     for(var i=0; i<item.assessmentObjects.length; i++) {
-                        if('A'===item.assessmentObjects[i].riskStatus)
+                        if(weight===item.assessmentObjects[i].riskStatus)
                             return true;
                     }
                     return false;
-                }
-                
-                var containsWarning = function(item) {
-                    for(var i=0; i<item.assessmentObjects.length; i++) {
-                        if('W'===item.assessmentObjects[i].riskStatus)
-                            return true;
-                    }
-                    return false;
-                }
+                };
                 
                 self.initialAssessments = ko.observableArray([]);
-                var loadAssessments = function (ids) {
-                    var idsArray = JSON.stringify(ids);
-                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, idsArray, function (assesments) {
+                var loadAssessmentsCached = function (ids) {
+                    var pointIdsJson = JSON.stringify(ids);
+                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
                         //insert to quick read later on mouse over popup
-                        self.initialAssessments(assesments);
+                        self.initialAssessments(assessments);
                         
-                        var annotationsSerieAlerts = Serie.produceAlert();
-                        var annotationsSerieWarnings = Serie.produceWarning();
-                        var annotationsSerieComments = Serie.produceComment();
+                        var assessmentsSerieAlerts = Serie.produceAlert();
+                        var assessmentsSerieWarnings = Serie.produceWarning();
+                        var assessmentsSerieComments = Serie.produceComment();
                         
                         var serieAlertsItems = [];
                         var serieWarningsItems = [];
                         var serieCommentsItems = [];
                         
-                        for (var i = 0; i < assesments.length; i++) {
-                            var assesment = assesments[i];
-                            if (assesment) {
-                                for (var j = 0; j < assesment.assessedGefValueSets.length; j++) {
-                                    var assessedGefValueSet = assesment.assessedGefValueSets[j];
+                        for (var i = 0; i < assessments.length; i++) {
+                            var assessment = assessments[i];
+                            if (assessment) {
+                                for (var j = 0; j < assessment.assessedGefValueSets.length; j++) {
+                                    var assessedGefValueSet = assessment.assessedGefValueSets[j];
                                     var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
                                     var gefValue = geriatricFactorValue.gefValue;
                                     var id = geriatricFactorValue.id;
                                     var item = new Item();
                                     item.id = id;
                                     item.value = gefValue;
-                                    item.assessmentObjects.push(assesments[i]);
+                                    item.assessmentObjects.push(assessments[i]);
                                     var matchedIndex = matchSeriesIndexByItemValue(item);
                                     if(matchedIndex>=0) {
-                                        if(containsAlert(item)) {
+                                        if('A'===assessments[i].riskStatus) {
                                             serieAlertsItems[matchedIndex] = item;
                                         }
-                                        else if(containsWarning(item)) {
+                                        else if('W'===assessments[i].riskStatus) {
                                             serieWarningsItems[matchedIndex] = item;
                                         }
                                         else {
@@ -185,13 +186,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             }
                         }
                         
-                        annotationsSerieAlerts.items = serieAlertsItems;
-                        annotationsSerieWarnings.items = serieWarningsItems;
-                        annotationsSerieComments.items = serieCommentsItems;
+                        assessmentsSerieAlerts.items = serieAlertsItems;
+                        assessmentsSerieWarnings.items = serieWarningsItems;
+                        assessmentsSerieComments.items = serieCommentsItems;
                         
-                        self.seriesValue.push(annotationsSerieAlerts);
-                        self.seriesValue.push(annotationsSerieWarnings);
-                        self.seriesValue.push(annotationsSerieComments);
+                        self.seriesValue.push(assessmentsSerieComments);
+                        self.seriesValue.push(assessmentsSerieWarnings);
+                        self.seriesValue.push(assessmentsSerieAlerts);
                     });
                 };
                 
@@ -221,7 +222,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 self.selectedAnotations = ko.observableArray();
                 self.dataPointsMarkedIds = ko.observableArray();
                 
-                function showAnnotationsPopup() {
+                function showAssessmentsPopup() {
                     $('#popup1').ojPopup("option", "position", {} );
                     $('#popup1').ojPopup('open');
                     $("#popup1").ojPopup("widget").css("left", clientX + 2  + "px");
@@ -236,16 +237,21 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                  */
                 function filteredSelectionBetweenAssessmentSeriesAndOtherPoints(dataSelection) {
                     var filteredSelection = [];
-                    //add all anotation if choosed only one point and if is from Assesments series
-                    if( dataSelection.selectionData.length === 1 && dataSelection.selectionData[0].seriesData.name==='Assesments'){
-                        filteredSelection.push(dataSelection.selectionData[0].data.assessmentObjects);
+                    //add all anotation if choosed only one point and if is from Assessments series
+                    if( dataSelection.selectionData.length === 1 && (dataSelection.selectionData[0].seriesData.name==='Assessments')){
+                        try {
+                            filteredSelection.push(dataSelection.selectionData[0].data.assessmentObjects);
+                        }
+                        catch (error) {
+                            self.dataPointsMarked('1 assessment marked ');
+                        }
                         return filteredSelection;
                     }
                     //if selected more than one
                     for (var i=0;i<dataSelection.selectionData.length;i++) {
                         var selectedDataPoint = dataSelection.selectionData[i];
                         //skip assessment
-                        if(selectedDataPoint.seriesData.name==='Assesments'){
+                        if(selectedDataPoint.seriesData.name==='Assessments'){
                             
                         }
                         else {
@@ -287,19 +293,21 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             $('#popup1').ojPopup();
                             if($('#popup1').ojPopup( "isOpen" ))
                                 $('#popup1').ojPopup('close');
-                            // Avoid assesment selections as points
+                            // Avoid assessment selections as points
                             var onlyDataPoints = filteredSelectionBetweenAssessmentSeriesAndOtherPoints(ui['optionMetadata']);
-                            if(onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id ){
+                            if(onlyDataPoints.length === 0)
+                                ;
+                            else if(onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id ){
                                 self.dataPointsMarked('1 data point marked ');
-                                loadCachedAnnotations(onlyDataPoints);
+                                loadCachedAssessments(onlyDataPoints);
                             }else{
                                 // Compose selections in get query parameters
                                 var queryParams = calculateSelectedIds(onlyDataPoints);
                                 self.dataPointsMarked(onlyDataPoints.length
                                     + ' data points marked ');
-                                loadAnnotations(queryParams);
+                                loadAssessments(queryParams);
                             }
-                            showAnnotationsPopup();
+                            showAssessmentsPopup();
                         }
                     }
                 };
@@ -311,22 +319,22 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 self.step = ko.observable(1);
                 self.valueArray = ko.observableArray([0, 0]);
                 
-                /* Show popup dialog for adding new annotation */
-                self.clickShowPopupAddAnnotation = function (data, event) {
+                /* Show popup dialog for adding new assessment */
+                self.postAssessment = function (data, event) {
                     $('#dialog1').ojDialog();
                     $('#dialog1').ojDialog('open');
                     return true;
                 };
                 
-                var postAnnotationCallback = function(data) {
+                var postAssessmentCallback = function(data) {
                     console.log(data);
                     $('#dialog1').ojDialog('close');
                     //TODO: reload only assessments
                     loadDataSet();
                 };
                 
-                /* ojButton postAnnotation */
-                self.postAnnotation = function (data, event) {
+                /* ojButton postAssessment */
+                self.clickShowPopupAddAssessment = function (data, event) {
                     //should be logged user ID
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
@@ -335,17 +343,17 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var geriatricFactorValueIds = ko.toJS(self.dataPointsMarkedIds);
                     //TODO: should be get from miltiselect combobox for role
                     var audienceIds = ko.toJS(self.selectedRoles);
-                    var annotationToPost = new AddAssesment
+                    var assessmentToPost = new AddAssessment
                         (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
                     var jqXHR = $.postJSON(ASSESSMENTS_ADD_FOR_DATA_POINTS, 
-                        JSON.stringify(annotationToPost),
-                        postAnnotationCallback
+                        JSON.stringify(assessmentToPost),
+                        postAssessmentCallback
                     );
                     jqXHR.fail(serverErrorCallback);
                     return true;
                 };
 
-                 // Add assesment popup
+                 // Add assessment popup
                 self.commentText = ko.observable('');
                 
                 /* Risks select */
@@ -468,13 +476,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 /* End Audience ids */
                 
                 self.shownFilterBar = false;
-                self.toggleFilterAnnotationBar = function (e) {
+                self.toggleFilterAssessmentBar = function (e) {
 
-                    if ($('#annotation-filter').css('display') === 'none') {
-                        $('#annotation-filter').css({display: 'block'});
+                    if ($('#assessment-filter').css('display') === 'none') {
+                        $('#assessment-filter').css({display: 'block'});
                         self.shownFilterBar = true;
                     } else {
-                        $('#annotation-filter').css({display: 'none'});
+                        $('#assessment-filter').css({display: 'none'});
                         self.shownFilterBar = false;
                     }
                 };

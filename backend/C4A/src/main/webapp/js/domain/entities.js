@@ -1,4 +1,7 @@
 // Domain objects aka. enitites.
+
+var ASSESSMENTS_SERIES_NAMES = ['Alerts', 'Warnings', 'Comments'];
+
 function Group() {
     this.id = null;
     this.name = '';
@@ -13,9 +16,10 @@ function Serie() {
 
 Serie.produceAlert = function() {
     var annotationsSerieAlerts = new Serie();
-    annotationsSerieAlerts.name = 'Alerts';
+    annotationsSerieAlerts.name = 'Assessments';
     annotationsSerieAlerts.source = 'images/flag-red.png';
     annotationsSerieAlerts.markerSize = 20;
+    annotationsSerieAlerts.markerStyle = 'position: absolute; z-index: 1;';
     annotationsSerieAlerts.markerDisplayed = 'on';
     annotationsSerieAlerts.lineType = 'none';
     return annotationsSerieAlerts;
@@ -23,9 +27,10 @@ Serie.produceAlert = function() {
 
 Serie.produceWarning = function() {
     var annotationsSerieWarnings = new Serie();
-    annotationsSerieWarnings.name = 'Warnings';
+    annotationsSerieWarnings.name = 'Assessments';
     annotationsSerieWarnings.source = 'images/flag-beige.png';
     annotationsSerieWarnings.markerSize = 20;
+    annotationsSerieWarnings.markerStyle = 'position: absolute; z-index: 2;';
     annotationsSerieWarnings.markerDisplayed = 'on';
     annotationsSerieWarnings.lineType = 'none';
     return annotationsSerieWarnings;
@@ -33,9 +38,10 @@ Serie.produceWarning = function() {
 
 Serie.produceComment = function() {
     var annotationsSerieComments = new Serie();
-    annotationsSerieComments.name = 'Comments';
+    annotationsSerieComments.name = 'Assessments';
     annotationsSerieComments.source = 'images/flag-gray.png';
     annotationsSerieComments.markerSize = 20;
+    annotationsSerieComments.markerStyle = 'position: absolute; z-index: 3;';
     annotationsSerieComments.markerDisplayed = 'on';
     annotationsSerieComments.lineType = 'none';
     return annotationsSerieComments;
@@ -56,7 +62,7 @@ DataSet.prototype.toJson = function() {
     return JSON.stringify(this);
 };
 
-function Annotation() {
+function Assessment() {
     this.id = null;
     this.title = '';
     this.type = '';
@@ -67,8 +73,14 @@ function Annotation() {
     this.dateAndTime = '';
 };
 
+Assessment.arrayContains = function(array, item) {
+    for(var i=0; i<array.length; i++)
+        if(array[i].id===item.id)
+            return true;
+    return false;
+};
+
 function CdRole(){
-    
     this.id = null;
     this.roleName = '';
     this.roleAbbreviation = '';
@@ -76,20 +88,20 @@ function CdRole(){
     this.stakeholderAbbreviation= '';
 }
 
-Annotation.prototype.toJson = function() {
+Assessment.prototype.toJson = function() {
     return JSON.stringify(this);
 };
 
-Annotation.prototype.fromJson = function(json) {
+Assessment.prototype.fromJson = function(json) {
     var other = JSON.parse(json);
     this.fromOther(other);
 };
 
-Annotation.prototype.shortComment = function() {
+Assessment.prototype.shortComment = function() {
     return shortenText(this.comment, 27);
 };
 
-Annotation.prototype.fromOther = function(other) {
+Assessment.prototype.fromOther = function(other) {
     this.id = other.id;
     this.title = other.title;
     this.type = other.type;
@@ -100,7 +112,7 @@ Annotation.prototype.fromOther = function(other) {
     this.shortComment = shortenText(this.comment, 27);
 };
 
-function AddAssesment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds) {
+function AddAssessment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds) {
     this.authorId = authorId;
     this.comment = comment;
     this.riskStatus = riskStatus;
@@ -129,13 +141,13 @@ function remove_item(arr, value) {
     return arr;
 }
 
-function prepareAnnotationsForPrintout(annotations) {
-    var preparedAnnotations = [];
+function prepareAssessmentsForPrintout(annotations) {
+    var preparedAssessments = [];
     for (var i=0; i<annotations.length; i++) {
-        var anno = new Annotation().fromOther(annotations[i]);
-        preparedAnnotations.push(anno);
+        var anno = new Assessment().fromOther(annotations[i]);
+        preparedAssessments.push(anno);
     }
-    return preparedAnnotations;
+    return preparedAssessments;
 }
 
 // Navigation parameters wrappers

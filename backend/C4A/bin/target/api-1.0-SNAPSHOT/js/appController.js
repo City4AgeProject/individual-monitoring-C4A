@@ -39,7 +39,6 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'ojs/ojrouter', 'ojs/ojdialog',
 //        'library': {label: 'Library'},
         'detection_ges': {label: 'Detection GES', isDefault: true},
         'detection_gef': {label: 'Detection GEF'},
-        'test_ges': {label: 'Test GES'},
         'detection_ges_mil': {label: 'Detection GES'},
       });
       oj.Router.defaults['urlAdapter'] = new oj.Router.urlParamAdapter();

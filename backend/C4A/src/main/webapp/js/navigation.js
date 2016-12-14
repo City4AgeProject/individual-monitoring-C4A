@@ -25,8 +25,6 @@ define(['ojs/ojcore', 'ojs/ojarraytabledatasource'],
           iconClass: 'demo-chart-icon-24  demo-icon-font-24 oj-navigationlist-item-icon'},
         {name: 'Detection GES', id: 'detection_ges',
           iconClass: 'demo-chart-icon-24 demo-icon-font-24 oj-navigationlist-item-icon'},
-        {name: 'Test GES', id: 'test_ges',
-          iconClass: 'demo-chart-icon-24 demo-icon-font-24 oj-navigationlist-item-icon'},
         {name: 'Detection GES', id: 'detection_ges_mil',
           iconClass: 'demo-chart-icon-24 demo-icon-font-24 oj-navigationlist-item-icon'}
       ];
