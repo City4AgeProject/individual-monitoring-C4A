@@ -70,7 +70,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 var loadAssessments = function (pointIds) {
                     var pointIdsJson = JSON.stringify({geriatricFactorValueIds : pointIds});
                     return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
-                        var assessments = [];
+                        var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var assessment = assessments[i];
                             var newAssessment = new Assessment();
@@ -85,34 +85,34 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                                 newAssessment.imgSrc = 'images/risk_warning.png';
                             else if('A'== assessment.type)
                                 newAssessment.imgSrc = 'images/risk_alert.png';
-                            if(!Assessment.arrayContains(assessments, assessment))
-                                assessments.push(newAssessment);
+                            if(!Assessment.arrayContains(assessments, newAssessment))
+                                assessmentsResult.push(newAssessment);
                         }
-                        self.selectedAnotations(assessments);
+                        self.selectedAnotations(assessmentsResult);
                         self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessments.length + ' assessment(s)');
                     });
                 };
                 
                 var loadCachedAssessments = function (assessments) {
-                        var assessments = [];
+                        var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var assessment = assessments[i];
-                            var assessment = new Assessment();
-                            assessment.id = assessment[0].id;
-                            assessment.comment = assessment[0].assessmentComment;
-                            assessment.shortComment = shortenText(assessment[0].assessmentComment, 27);
-                            assessment.from = assessment[0].userInRole.id;
-                            assessment.dateAndTime = assessment[0].created;
-                            assessment.type = assessment[0].riskStatus;
-                            assessment.imgSrc = 'comment.png';
-                            if('W'== assessment.type)
-                                assessment.imgSrc = 'images/risk_warning.png';
-                            else if('A'== assessment.type)
-                                assessment.imgSrc = 'images/risk_alert.png';
-                            if(!Assessment.arrayContains(assessments, assessment))
-                                assessments.push(assessment);
+                            var newAssesment = new Assessment();
+                            newAssesment.id = assessment[0].id;
+                            newAssesment.comment = assessment[0].assessmentComment;
+                            newAssesment.shortComment = shortenText(assessment[0].assessmentComment, 27);
+                            newAssesment.from = assessment[0].userInRole.id;
+                            newAssesment.dateAndTime = assessment[0].created;
+                            newAssesment.type = assessment[0].riskStatus;
+                            newAssesment.imgSrc = 'comment.png';
+                            if('W'== newAssesment.type)
+                                newAssesment.imgSrc = 'images/risk_warning.png';
+                            else if('A'== newAssesment.type)
+                                newAssesment.imgSrc = 'images/risk_alert.png';
+                            if(!Assessment.arrayContains(assessments, newAssesment))
+                                assessmentsResult.push(newAssesment);
                         }
-                        self.selectedAnotations(assessments);
+                        self.selectedAnotations(assessmentsResult);
                         
                         if(self.dataPointsMarked()===0 && assessments.length>0)
                             self.dataPointsMarked('No datapoints and no assessments.');
