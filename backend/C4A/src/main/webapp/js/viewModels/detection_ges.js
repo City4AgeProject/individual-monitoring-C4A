@@ -128,7 +128,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     var series = self.seriesValue();
                     for(var i = 0; i < series.length; i++) {
                         for(var j = 0; j < series[i].items.length; j++) {
-                            if(series[i].items[j].id === item.id)
+                            if(series[i].items[j].value === item.value)
                                 return j;
                         }
                     }
@@ -327,7 +327,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 self.valueArray = ko.observableArray([0, 0]);
                 
                 /* Show popup dialog for adding new assessment */
-                self.postAssessment = function (data, event) {
+                self.clickShowPopupAddAssessment = function (data, event) {
                     $('#dialog1').ojDialog();
                     $('#dialog1').ojDialog('open');
                     return true;
@@ -341,7 +341,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 };
                 
                 /* ojButton postAssessment */
-                self.clickShowPopupAddAssessment = function (data, event) {
+                self.postAssesment = function (data, event) {
                     //should be logged user ID
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
