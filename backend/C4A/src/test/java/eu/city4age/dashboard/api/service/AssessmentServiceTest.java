@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.ws;
+package eu.city4age.dashboard.api.service;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -100,7 +100,7 @@ public class AssessmentServiceTest {
 			WebTarget WebTarget = client
 					.target("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getAssessmentsForSelectedDataSet");
 
-			String input = "{\"geriatricFactorValueIds\":[1,2,3]}";
+			String input = "{\"geriatricFactorValueIds\":[1,2,3],\"status\":[true,false,true,false,true],\"authorRoleId\":1,\"orderBy\":\"AUTHOR_NAME_ASC\"}";
 
 			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
 					.post(Entity.entity(input,MediaType.APPLICATION_JSON_TYPE), Response.class);
@@ -125,42 +125,6 @@ public class AssessmentServiceTest {
 		
 	}
 
-	@Test
-	public void getAssessmentsByFilerTest() {
-	
-
-		try {
-
-			Client client = ClientBuilder.newClient().register(JacksonFeature.class);
-
-			WebTarget WebTarget = client
-					.target("http://localhost:8080/api-1.0-SNAPSHOT/v1/assessments/getAssessmentsByFiler");
-			
-			String input = "{\"geriatricFactorValueIds\":[1,2,3],\"status\":[1,2,3],\"authorRoleId\":1,\"orderBy\":\"AUTHOR_NAME_ASC\"}";
-
-			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
-					.post(Entity.entity(input,MediaType.APPLICATION_JSON_TYPE), Response.class);
-
-			/*if (response.getStatus() != 200) {
-				throw new RuntimeException("Failed : HTTP error code : "
-						+ response.getStatus());
-			}*/
-
-			logger.info("Output from Server .... ");
-			String output = response.toString();
-			logger.info(output);
-
-			Object siftResult = response.readEntity(String.class);
-			logger.info("4: " + siftResult);
-
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-
-		}
-
-	}
 
 	@Test
 	public void addAssessmentsForSelectedDataSetTest() {

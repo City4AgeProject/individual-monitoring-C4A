@@ -1,13 +1,14 @@
 package eu.city4age.dashboard.api.model;
 
-// default package
-// Generated 24-Nov-2016 15:43:47 by Hibernate Tools 5.2.0.Beta1
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+// default package
+// Generated 24-Nov-2016 15:43:47 by Hibernate Tools 5.2.0.Beta1
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
@@ -17,7 +18,7 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 
 	private BigDecimal gefValue;
 	
-	@JsonManagedReference
+	@JsonBackReference
 	private TimeInterval timeInterval;
 	
 	private CdDetectionVariable cdDetectionVariable;
@@ -30,8 +31,11 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 	
 	private Set<NumericIndicatorValue> numericIndicatorValues = new HashSet<NumericIndicatorValue>();
 
-	@JsonBackReference
+	@JsonManagedReference 
 	private Set<AssessedGefValueSet> assessedGefValueSets = new HashSet<AssessedGefValueSet>();
+	
+	@JsonIgnore
+	private Set<Assessment> assessment = new HashSet<Assessment>();
 
 	public GeriatricFactorValue() {
 	}
@@ -118,6 +122,18 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 
 	public void setAssessedGefValueSets(Set<AssessedGefValueSet> assessedGefValueSets) {
 		this.assessedGefValueSets = assessedGefValueSets;
+	}
+
+	public Set<Assessment> getAssessment() {
+		return assessment;
+	}
+
+	public void setAssessment(Set<Assessment> assessment) {
+		this.assessment = assessment;
+	}
+	
+	public void addAssessment(Assessment assessment) {
+		this.assessment.add(assessment);
 	}
 
 }

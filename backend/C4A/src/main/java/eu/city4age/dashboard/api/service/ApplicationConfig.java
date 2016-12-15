@@ -5,6 +5,7 @@
 package eu.city4age.dashboard.api.service;
 
 import java.util.Set;
+
 import javax.ws.rs.core.Application;
 
 /**
@@ -28,8 +29,8 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(eu.city4age.dashboard.api.ws.AssessmentsService.class);
-        resources.add(eu.city4age.dashboard.api.ws.SifarnikService.class);
+        resources.add(eu.city4age.dashboard.api.service.AssessmentsService.class);
+        resources.add(eu.city4age.dashboard.api.service.CodeListService.class);
     }
     
 }

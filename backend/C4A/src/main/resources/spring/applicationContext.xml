@@ -34,7 +34,9 @@
 	<context:annotation-config />
 	<context:component-scan base-package="eu.city4age.dashboard.api.*" />
 	
-	<bean id="assessmentService" class="eu.city4age.dashboard.api.ws.AssessmentsService" />
+	<bean id="assessmentService" class="eu.city4age.dashboard.api.service.AssessmentsService" />
+	
+	<bean id="codeListService" class="eu.city4age.dashboard.api.service.CodeListService" />
 
 	<bean id="assessmentDAO" class="eu.city4age.dashboard.api.dao.hibernate.HibernateAssessmentDAO" parent="baseDAO"/>
 	

@@ -22,10 +22,10 @@ public class Assessment extends AbstractBaseEntity {
 	private Date created;
 	private Date updated;
 	
-	@JsonManagedReference
+	@JsonBackReference
 	private Set assessmentAudienceRoles = new HashSet(0);
 	
-	@JsonManagedReference
+	@JsonBackReference
 	private Set assessedGefValueSets = new HashSet(0);
 
 	public Assessment() {

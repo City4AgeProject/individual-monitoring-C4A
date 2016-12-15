@@ -1,5 +1,6 @@
 package eu.city4age.dashboard.api.json;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.city4age.dashboard.api.domain.OrderBy;
@@ -8,7 +9,7 @@ public class GetAssessmentsByFilterWrapper {
 	
 	List<Long> geriatricFactorValueIds;
 	
-	List<Boolean> status;
+	List<Boolean> status = new ArrayList<Boolean>(5);
 	
 	Short authorRoleId;
 

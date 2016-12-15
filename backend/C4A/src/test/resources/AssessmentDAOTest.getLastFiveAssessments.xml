@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<dataset>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="db_test_data/xsd/dataset.xsd">
 
     <geriatric_factor_value id="1" gef_value="5" time_interval_id="1" user_in_role_id="1" gef_type_id="1" />
     <geriatric_factor_value id="2" gef_value="3.9" time_interval_id="2" user_in_role_id="1" gef_type_id="2" />
@@ -41,6 +41,7 @@
     <assessment id="3" />
     <assessment id="4" />
     <assessment id="5" />
+    <assessment id="6" />
     
     <assessed_gef_value_set assessment_id="1" gef_value_id="1" />
     <assessed_gef_value_set assessment_id="2" gef_value_id="1" />

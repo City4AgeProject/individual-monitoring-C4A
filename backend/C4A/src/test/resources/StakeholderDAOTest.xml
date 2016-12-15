@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<dataset>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="db_test_data/xsd/dataset.xsd">
+
 	<stakeholder stakeholder_abbreviation="CGS" stakeholder_name="Caregivers" stakeholder_description="All caregiver types." />
 	<stakeholder stakeholder_abbreviation="GES" stakeholder_name="Geriatricians" stakeholder_description="All geriatricians." />
 	<stakeholder stakeholder_abbreviation="GPS" stakeholder_name="General practice doctors" stakeholder_description="General practiotioner team." />
@@ -9,4 +10,5 @@
 	<cd_role id="2" role_name="Geriatrician" role_abbreviation="GER" stakeholder_abbreviation="DRL" />
 	<cd_role id="3" role_name="Intervention staff" role_abbreviation="INS" stakeholder_abbreviation="DRL" />
 	<cd_role id="4" role_name="City 4 Age staff" role_abbreviation="C4S" stakeholder_abbreviation="DRL" />
+
 </dataset>

@@ -2,12 +2,12 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns="testtest" targetNamespace="testtest">
 	<xsd:element name="activity" type="activity__type" />
 	<xsd:element name="cd_frailty_status" type="cd_frailty_status__type" />
-	<xsd:element name="cd_detection_variable_type" type="cd_detection_variable_type__type" />
 	<xsd:element name="variation_measure_value" type="variation_measure_value__type" />
+	<xsd:element name="cd_detection_variable_type" type="cd_detection_variable_type__type" />
 	<xsd:element name="cd_role" type="cd_role__type" />
 	<xsd:element name="dbmaintain_scripts" type="dbmaintain_scripts__type" />
-	<xsd:element name="time_interval" type="time_interval__type" />
 	<xsd:element name="stakeholder" type="stakeholder__type" />
+	<xsd:element name="time_interval" type="time_interval__type" />
 	<xsd:element name="frailty_status_timeline" type="frailty_status_timeline__type" />
 	<xsd:element name="eam" type="eam__type" />
 	<xsd:element name="assessment" type="assessment__type" />
@@ -20,8 +20,8 @@
 	<xsd:element name="geriatric_factor_value" type="geriatric_factor_value__type" />
 	<xsd:element name="pilot" type="pilot__type" />
 	<xsd:element name="assessed_gef_value_set" type="assessed_gef_value_set__type" />
-	<xsd:element name="cr_profile" type="cr_profile__type" />
 	<xsd:element name="source_evidence" type="source_evidence__type" />
+	<xsd:element name="cr_profile" type="cr_profile__type" />
 	<xsd:element name="cd_data_source_type" type="cd_data_source_type__type" />
 	<xsd:element name="executed_action" type="executed_action__type" />
 	<xsd:element name="numeric_indicator_value" type="numeric_indicator_value__type" />
@@ -41,10 +41,6 @@
 		<xsd:attribute name="frailty_status_description" use="optional" />
 		<xsd:attribute name="frailty_status" use="optional" />
 	</xsd:complexType>
-	<xsd:complexType name="cd_detection_variable_type__type">
-		<xsd:attribute name="detection_variable_type" use="optional" />
-		<xsd:attribute name="detection_variable_type_description" use="optional" />
-	</xsd:complexType>
 	<xsd:complexType name="variation_measure_value__type">
 		<xsd:attribute name="measure_value" use="optional" />
 		<xsd:attribute name="measure_type_id" use="optional" />
@@ -53,6 +49,10 @@
 		<xsd:attribute name="activity_id" use="optional" />
 		<xsd:attribute name="data_source_type" use="optional" />
 		<xsd:attribute name="id" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="cd_detection_variable_type__type">
+		<xsd:attribute name="detection_variable_type" use="optional" />
+		<xsd:attribute name="detection_variable_type_description" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="cd_role__type">
 		<xsd:attribute name="role_name" use="optional" />
@@ -71,18 +71,18 @@
 		<xsd:attribute name="version" use="optional" />
 		<xsd:attribute name="succeeded" use="optional" />
 	</xsd:complexType>
-	<xsd:complexType name="time_interval__type">
-		<xsd:attribute name="interval_end" use="optional" />
-		<xsd:attribute name="typical_period" use="optional" />
-		<xsd:attribute name="id" use="optional" />
-		<xsd:attribute name="interval_start" use="optional" />
-	</xsd:complexType>
 	<xsd:complexType name="stakeholder__type">
 		<xsd:attribute name="stakeholder_abbreviation" use="optional" />
 		<xsd:attribute name="stakeholder_name" use="optional" />
 		<xsd:attribute name="valid_to" use="optional" />
 		<xsd:attribute name="valid_from" use="optional" />
 		<xsd:attribute name="stakeholder_description" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="time_interval__type">
+		<xsd:attribute name="interval_end" use="optional" />
+		<xsd:attribute name="typical_period" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="interval_start" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="frailty_status_timeline__type">
 		<xsd:attribute name="frailty_notice" use="optional" />
@@ -171,6 +171,13 @@
 		<xsd:attribute name="gef_value_id" use="optional" />
 		<xsd:attribute name="data_point_id" use="optional" />
 	</xsd:complexType>
+	<xsd:complexType name="source_evidence__type">
+		<xsd:attribute name="text_evidence" use="optional" />
+		<xsd:attribute name="geriatric_factor_id" use="optional" />
+		<xsd:attribute name="uploaded" use="optional" />
+		<xsd:attribute name="author_id" use="optional" />
+		<xsd:attribute name="multimedia_evidence" use="optional" />
+	</xsd:complexType>
 	<xsd:complexType name="cr_profile__type">
 		<xsd:attribute name="date" use="optional" />
 		<xsd:attribute name="ref_mean_blood_pressure" use="optional" />
@@ -180,13 +187,6 @@
 		<xsd:attribute name="birth_date" use="optional" />
 		<xsd:attribute name="ref_weight" use="optional" />
 		<xsd:attribute name="id" use="optional" />
-	</xsd:complexType>
-	<xsd:complexType name="source_evidence__type">
-		<xsd:attribute name="text_evidence" use="optional" />
-		<xsd:attribute name="geriatric_factor_id" use="optional" />
-		<xsd:attribute name="uploaded" use="optional" />
-		<xsd:attribute name="author_id" use="optional" />
-		<xsd:attribute name="multimedia_evidence" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="cd_data_source_type__type">
 		<xsd:attribute name="data_source_type" use="optional" />
@@ -231,6 +231,7 @@
 		<xsd:attribute name="risk_status" use="optional" />
 		<xsd:attribute name="confidence_rating" use="optional" />
 		<xsd:attribute name="icon_image" use="optional" />
+		<xsd:attribute name="icon_image_path" use="optional" />
 		<xsd:attribute name="risk_status_description" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="location__type">

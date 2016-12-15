@@ -26,9 +26,10 @@
             <column name="data_source_type" length="3" />
         </property>
 
+		<!--
         <property name="derivationWeight" type="big_decimal">
             <column name="derivation_weight" precision="3" />
-        </property>
+        </property>  -->
 
 	    <set name="assessedGefValueSets" lazy="false">
 	        <key column="gef_value_id" />

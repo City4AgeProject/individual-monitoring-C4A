@@ -21,5 +21,9 @@
             <column name="icon_image" />
         </property> 
         
+        <property name="iconImagePath" type="string">
+            <column name="icon_image_path" />
+        </property>
+        
     </class>
 </hibernate-mapping>

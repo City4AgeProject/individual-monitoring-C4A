@@ -9,14 +9,12 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.transform.Transformers;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.domain.OrderBy;
-import eu.city4age.dashboard.api.dto.DiagramQuerryDTO;
-import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.model.TimeInterval;
 
@@ -28,107 +26,84 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 	
 	@Autowired
 	protected SessionFactory sessionFactory;
-
-    public List<DiagramQuerryDTO> getDiagramDataForUserInRoleId(final Integer crId, final Timestamp start, final Timestamp end) {
-		return castList(DiagramQuerryDTO.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
-			public List<?> doInHibernate(Session session)
-					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT DISTINCT g as gef, g.timeInterval.intervalStart as intervalStart, g.cdDetectionVariable.id as cdvId FROM GeriatricFactorValue g LEFT JOIN g.timeInterval AS timeInterval LEFT JOIN g.cdDetectionVariable AS cdDetectionVariable WHERE g.userInRoleId = :userInRoleId AND g.timeInterval.intervalStart >= :start AND g.timeInterval.intervalEnd <= :end ORDER BY g.timeInterval.intervalStart ASC, g.cdDetectionVariable.id ASC");
-				q.setParameter("userInRoleId", crId);
-				q.setParameter("start", start);
-				q.setParameter("end", end);
-				q.setResultTransformer(Transformers.aliasToBean(DiagramQuerryDTO.class));
-				return q.list();
-			}
-		}));	
-    }
     
-	public List<GeriatricFactorValue> getDiagramDataForUserInRoleId(final Integer crId, final Short dvParentId, final Timestamp start, final Timestamp end) {
-		return castList(GeriatricFactorValue.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+	public List<TimeInterval> getDiagramDataForUserInRoleId(final Integer crId, final Short dvParentId, final Timestamp start, final Timestamp end) {
+		return castList(TimeInterval.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT DISTINCT g as gef FROM GeriatricFactorValue g RIGHT JOIN g.timeInterval AS timeInterval INNER JOIN g.cdDetectionVariable AS cdDetectionVariable WHERE g.userInRoleId = :userInRoleId AND cdDetectionVariable.parentId = :parentId AND g.timeInterval.intervalStart >= :start AND g.timeInterval.intervalEnd <= :end");
+				Query q = session.createQuery("SELECT ti FROM TimeInterval ti LEFT JOIN ti.geriatricFactorValues AS geriatricFactorValues INNER JOIN geriatricFactorValues.cdDetectionVariable AS cdDetectionVariable WHERE geriatricFactorValues.userInRoleId = :userInRoleId AND cdDetectionVariable.parentId = :parentId AND ti.intervalStart >= :start AND ti.intervalEnd <= :end");
 				q.setParameter("userInRoleId", crId);
 				q.setParameter("parentId", dvParentId);
 				q.setParameter("start", start);
 				q.setParameter("end", end);
+				q.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
 				return q.list();
 			}
 		}));	
 	}
     
-	public List<GeriatricFactorValue> getLastFiveAssessmentsForDiagram(final Integer crId, final Timestamp start, final Timestamp end) {
-		return castList(GeriatricFactorValue.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+	public List<TimeInterval> getLastFiveAssessmentsForDiagram(final Integer crId, final Timestamp start, final Timestamp end) {
+		return castList(TimeInterval.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				SQLQuery q = session.createSQLQuery("SELECT DISTINCT gfv.* FROM geriatric_factor_value AS gfv RIGHT JOIN time_interval AS ti ON (gfv.time_interval_id=ti.id) INNER JOIN assessed_gef_value_set AS agvs ON (agvs.gef_value_id = gfv.id) RIGHT JOIN assessment AS a ON (agvs.assessment_id = a.id) WHERE a.id IN (SELECT a.id FROM assessment a ORDER BY created DESC FETCH FIRST 5 ROWS ONLY) AND gfv.user_in_role_id = :userInRoleId AND ti.interval_start >= :start AND ti.interval_end <= :end ");
-				q.addEntity("gfv", GeriatricFactorValue.class);
+				SQLQuery q = session.createSQLQuery("SELECT {ti.*} FROM time_interval AS ti LEFT OUTER JOIN (geriatric_factor_value AS gfv LEFT OUTER JOIN (assessed_gef_value_set AS agvs INNER JOIN assessment AS aa ON agvs.assessment_id = aa.id) ON agvs.gef_value_id = gfv.id) ON gfv.time_interval_id=ti.id WHERE ti.interval_start >= :start AND ti.interval_end <= :end AND (aa.id IN (SELECT id FROM (SELECT DISTINCT a1.id,a1.created FROM assessment a1 INNER JOIN assessed_gef_value_set AS agvs1 ON agvs1.assessment_id = a1.id WHERE agvs1.gef_value_id = agvs.gef_value_id ORDER BY a1.created DESC FETCH FIRST 5 ROWS ONLY) t) OR aa.id IS NULL) AND (gfv.user_in_role_id = :userInRoleId OR gfv.id IS NULL) ORDER BY ti.id"); 
+				q.addEntity("ti", TimeInterval.class);
 				q.setParameter("start", start);
 				q.setParameter("end", end);
 				q.setParameter("userInRoleId", crId);
+				q.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
 				return q.list();
 			}
 		}));
 	}
 
-	public List<Assessment> getAssessmentsForGeriatricFactorId(final Long geriatricFactorId) {
-		return castList(Assessment.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+	public List<GeriatricFactorValue> getAssessmentsForSelectedDataSet(final List<Long> geriatricFactorIds, final List<Boolean> status, final Short authorRoleId, final OrderBy orderBy) {
+		return castList(GeriatricFactorValue.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT DISTINCT a FROM Assessment a LEFT JOIN FETCH a.userInRole AS userInRole INNER JOIN a.assessedGefValueSets AS assessedGefValueSets INNER JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue INNER JOIN a.assessmentAudienceRoles AS assessmentAudienceRoles WHERE geriatricFactorValue.id = :geriatricFactorId ");
-				q.setParameter("geriatricFactorId", geriatricFactorId);
-				return q.list();
-			}
-		}));
-	}
-
-	public List<Object[]> getAssessmentsByFilter(final Long geriatricFactorId, final List<Boolean> status, final Short authorRoleId, final OrderBy orderBy) {
-		return castList(Object[].class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
-			public List<?> doInHibernate(Session session)
-					throws HibernateException, SQLException {
-				StringBuilder sql = new StringBuilder("SELECT DISTINCT a, a.created, a.userInRole.userInSystemId, a.userInRole.roleId FROM Assessment a LEFT JOIN FETCH a.userInRole AS userInRole INNER JOIN a.assessedGefValueSets AS assessedGefValueSets INNER JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue INNER JOIN a.assessmentAudienceRoles AS assessmentAudienceRoles WHERE geriatricFactorValue.id = :geriatricFactorId ");
+				StringBuilder sql = new StringBuilder("SELECT g FROM GeriatricFactorValue g INNER JOIN g.assessedGefValueSets AS assessedGefValueSets INNER JOIN  assessedGefValueSets.assessment AS assessment INNER JOIN assessment.assessmentAudienceRoles AS assessmentAudienceRoles WHERE g.id IN :geriatricFactorIds ");
 				if(status.get(0) && !status.get(1))
-					sql.append(" AND a.riskStatus = :riskWarning ");
+					sql.append(" AND assessment.riskStatus = :riskWarning ");
 				if(status.get(1) && !status.get(0))
-					sql.append(" AND a.riskStatus = :riskAlert ");
+					sql.append(" AND assessment.riskStatus = :riskAlert ");
 				if(status.get(0) && status.get(1))
-					sql.append(" AND (a.riskStatus = :riskWarning OR a.riskStatus = :riskAlert) ");
+					sql.append(" AND (assessment.riskStatus = :riskWarning OR assessment.riskStatus = :riskAlert) ");
 				if(status.get(2) && !status.get(3))
-					sql.append(" AND a.dataValidityStatus = :questionableData ");
+					sql.append(" AND assessment.dataValidityStatus = :questionableData ");
 				if(status.get(3) && !status.get(2))
-					sql.append(" AND a.dataValidityStatus = :faultyData ");
+					sql.append(" AND assessment.dataValidityStatus = :faultyData ");
 				if(status.get(2) && status.get(3))
-					sql.append(" AND (a.dataValidityStatus = :questionableData OR a.dataValidityStatus = :faultyData) ");
+					sql.append(" AND (assessment.dataValidityStatus = :questionableData OR assessment.dataValidityStatus = :faultyData) ");
 				if(status.get(4) && !status.get(0) && !status.get(1) && !status.get(2) && !status.get(3))
-					sql.append(" AND a.assessmentComment != NULL ");
+					sql.append(" AND assessment.assessmentComment != NULL ");
 				if(status.get(4) && (status.get(0) || !status.get(1) ||status.get(2) || status.get(3)))
-					sql.append(" OR a.assessmentComment != NULL ");
+					sql.append(" OR assessment.assessmentComment != NULL ");
 				if(authorRoleId != null)
-					sql.append(" AND a.userInRole.roleId = :userInRoleId ");
+					sql.append(" AND assessment.userInRole.roleId = :userInRoleId ");
 				if(orderBy != null)
 					sql.append(" ORDER BY ");
 		        switch (orderBy) {
 	            case DATE_ASC:  
-	            	sql.append(" a.created ASC ");
+	            	sql.append(" assessment.created ASC ");
 	                     break;
 	            case DATE_DESC:  
-	            	sql.append(" a.created DESC ");
+	            	sql.append(" assessment.created DESC ");
 	                     break;
 	            case AUTHOR_NAME_ASC:  
-	            	sql.append(" a.userInRole.userInSystemId ASC ");
+	            	sql.append(" assessment.userInRole.userInSystemId ASC ");
 	                     break;
 	            case AUTHOR_NAME_DESC:  
-	            	sql.append(" a.userInRole.userInSystemId DESC ");
+	            	sql.append(" assessment.userInRole.userInSystemId DESC ");
 	                     break;
 	            case AUTHOR_ROLE_ASC:  
-	            	sql.append(" a.userInRole.roleId ASC ");
+	            	sql.append(" assessment.userInRole.roleId ASC ");
 	                     break;
 	            case AUTHOR_ROLE_DESC:  
-	            	sql.append(" a.userInRole.roleId DESC ");
+	            	sql.append(" assessment.userInRole.roleId DESC ");
 	                     break;
 		        }
 				Query q = session.createQuery(sql.toString());
-				q.setParameter("geriatricFactorId", geriatricFactorId);
+				q.setParameterList("geriatricFactorIds", geriatricFactorIds);
 				if(status.get(0))
 					q.setParameter("riskWarning", 'W');
 				if(status.get(1))
@@ -139,6 +114,7 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 					q.setParameter("faultyData", 'F');
 				if(authorRoleId != null)
 					q.setParameter("userInRoleId", authorRoleId);
+				q.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
 				return q.list();
 			}
 		}));
