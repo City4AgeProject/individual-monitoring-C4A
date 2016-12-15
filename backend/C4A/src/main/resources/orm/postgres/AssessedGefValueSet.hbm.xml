@@ -10,7 +10,7 @@
 			<key-property name="assessmentId" column="assessment_id" />
 		</composite-id>
 
-        <many-to-one name="assessment" class="Assessment" update="false" insert="false" fetch="select">
+        <many-to-one name="assessment" class="Assessment" update="false" insert="false" fetch="select" lazy="false">
             <column name="assessment_id" not-null="true" />
         </many-to-one>
         

@@ -14,6 +14,8 @@ public class CdRiskStatus implements Serializable {
 	private BigDecimal confidenceRating;
 	
 	private byte[] iconImage;
+	
+	private String iconImagePath;
 
 
 
@@ -48,7 +50,13 @@ public class CdRiskStatus implements Serializable {
 	public void setIconImage(byte[] iconImage) {
 		this.iconImage = iconImage;
 	}
-	
 
+	public String getIconImagePath() {
+		return iconImagePath;
+	}
+
+	public void setIconImagePath(String iconImagePath) {
+		this.iconImagePath = iconImagePath;
+	}
 
 }

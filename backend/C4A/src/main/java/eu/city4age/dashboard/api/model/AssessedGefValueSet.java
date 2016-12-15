@@ -18,10 +18,10 @@ public class AssessedGefValueSet implements Serializable {
 
 	private AssessedGefValueSetId assessedGefValueSetId;
 
-	@JsonBackReference
+	@JsonManagedReference
 	private Assessment assessment;
 	
-	@JsonManagedReference 
+	@JsonBackReference
 	private GeriatricFactorValue geriatricFactorValue;
 
 	public AssessedGefValueSet() {
@@ -46,6 +46,9 @@ public class AssessedGefValueSet implements Serializable {
 
 	public void setAssessment(Assessment assessment) {
 		this.assessment = assessment;
+		if(this.geriatricFactorValue != null) {
+			this.geriatricFactorValue.addAssessment(assessment);
+		}
 	}
 
 	public GeriatricFactorValue getGeriatricFactorValue() {

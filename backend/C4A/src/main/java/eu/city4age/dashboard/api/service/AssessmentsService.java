@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.ws;
+package eu.city4age.dashboard.api.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -23,9 +23,11 @@ import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module;
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
 import eu.city4age.dashboard.api.dao.TimeIntervalDAO;
+import eu.city4age.dashboard.api.domain.DataIdValue;
+import eu.city4age.dashboard.api.domain.Serie;
 import eu.city4age.dashboard.api.dto.DiagramDataDTO;
+import eu.city4age.dashboard.api.dto.OJDiagramDTO;
 import eu.city4age.dashboard.api.json.AddAssessmentWrapper;
-import eu.city4age.dashboard.api.json.GetAllSelectedAssessmentsWrapper;
 import eu.city4age.dashboard.api.json.GetAssessmentsByFilterWrapper;
 import eu.city4age.dashboard.api.json.GetDiagramDataWrapper;
 import eu.city4age.dashboard.api.json.GetLastFiveAssessmentsWrapper;
@@ -35,6 +37,7 @@ import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.model.AssessmentAudienceRoleId;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.TimeInterval;
 import eu.city4age.dashboard.api.model.UserInRole;
 
 @Transactional("transactionManager")
@@ -82,9 +85,9 @@ public class AssessmentsService {
     	
 		dto.setGefLabels(gefLables);
     	
-    	List<GeriatricFactorValue> gefs = assessmentDAO.getDiagramDataForUserInRoleId(data.getCrId(), data.getDvParentId(), start, end);
+    	List<TimeInterval> tis = assessmentDAO.getDiagramDataForUserInRoleId(data.getCrId(), data.getDvParentId(), start, end);
     	
-    	dto.setGefs(gefs);
+    	dto.setTis(tis);
 		
 		String dtoAsString = objectMapper.writeValueAsString(dto);
         
@@ -108,43 +111,20 @@ public class AssessmentsService {
 		Timestamp start = Timestamp.valueOf(data.getTimestampStart());
 		Timestamp end = Timestamp.valueOf(data.getTimestampEnd());
 		
-		List<GeriatricFactorValue> gefs = assessmentDAO.
+		List<TimeInterval> tis = assessmentDAO.
 						getLastFiveAssessmentsForDiagram(data.getCrId(), start, end);
+		
+		OJDiagramDTO dto = transformToDto(tis);
     	
-		return objectMapper.writeValueAsString(gefs);
+		return objectMapper.writeValueAsString(tis);
 
     }
 
-    @POST
+	@POST
     @Path("/getAssessmentsForSelectedDataSet")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String getAssessmentsForSelectedDataSet(String json) throws Exception {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        objectMapper.registerModule(new Hibernate3Module());
-
-        ObjectReader objectReader = objectMapper.reader(GetAllSelectedAssessmentsWrapper.class);
-
-        GetAllSelectedAssessmentsWrapper data = objectReader.readValue(json);
-
-        List<Assessment> assessments = new ArrayList<Assessment>();
-
-        for (Long geriatricFactorId : data.getGeriatricFactorValueIds()) {
-            assessments.addAll(
-                    getAssessmentsForGeriatricFactorId(geriatricFactorId));
-        }
-        
-        String dtoAsString = objectMapper.writeValueAsString(assessments);
-        return dtoAsString;
-    }
-
-    @POST
-    @Path("/getAssessmentsByFiler")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getAssessmentsByFiler(String json) throws Exception {
 
     	
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -155,14 +135,10 @@ public class AssessmentsService {
     	
     	GetAssessmentsByFilterWrapper data = objectReader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
-    	List<Object[]> assessments = new ArrayList<Object[]>();
-    	
-    	for (Long geriatricFactorId : data.getGeriatricFactorValueIds())
-    		assessments.addAll(
-    				assessmentDAO.getAssessmentsByFilter(
-    						geriatricFactorId, data.getStatus(), data.getAuthorRoleId(), data.getOrderBy()));
+    	List<GeriatricFactorValue> gefs = assessmentDAO.getAssessmentsForSelectedDataSet(
+    						data.getGeriatricFactorValueIds(), data.getStatus(), data.getAuthorRoleId(), data.getOrderBy());
 
-		String dtoAsString = objectMapper.writeValueAsString(assessments);
+		String dtoAsString = objectMapper.writeValueAsString(gefs);
         
         return dtoAsString;
     }
@@ -188,7 +164,8 @@ public class AssessmentsService {
     	
 		assessment.setAssessmentComment(data.getComment());
 		
-		assessment.setRiskStatus(data.getRiskStatus().charValue());
+		if(data.getRiskStatus() != null)
+			assessment.setRiskStatus(data.getRiskStatus().charValue());
 		
 		assessment.setDataValidityStatus(data.getDataValidityStatus().toChar());
 		
@@ -230,9 +207,6 @@ public class AssessmentsService {
 	 
     }
 
-	private List<Assessment> getAssessmentsForGeriatricFactorId(Long geriatricFactorId) {
-		return assessmentDAO.getAssessmentsForGeriatricFactorId(geriatricFactorId);
-	}
 	
 	private List<String> createMonthLabels(List<Object[]> months) {
 		List<String> monthLabels = new ArrayList<String>();
@@ -242,6 +216,50 @@ public class AssessmentsService {
     	}
 
 		return monthLabels;
+	}
+	
+    private OJDiagramDTO transformToDto(List<TimeInterval> tis) {
+		OJDiagramDTO dto = new OJDiagramDTO();
+		for(TimeInterval ti: tis) {
+			dto.getGroups().add(new DataIdValue(ti.getId(), ti.getStart()));
+		}
+	    dto.getSeries().add(new Serie("Alerts","#e83d17","images/alert.png",new ArrayList<DataIdValue>(),"none","on",20));
+		dto.getSeries().add(new Serie("Warnings","#ffff66","images/warning-icon.png",new ArrayList<DataIdValue>(),"none","on",20));
+		dto.getSeries().add(new Serie("Comments","#ebebeb","images/comment-gray.png",new ArrayList<DataIdValue>(),"none","on",20));
+		for(Serie serie:dto.getSeries()) {
+			for(int i = 0; i < tis.size(); i++) {
+				serie.getItems().add(null);
+			}
+		}
+		for(TimeInterval ti: tis) {
+			for(GeriatricFactorValue gef:ti.getGeriatricFactorValues()) {
+				for(int i = 0; i < dto.getGroups().size(); i++) {
+					if(gef.getTimeInterval().getStart().equals(dto.getGroups().get(i).getValue())) {
+						if(gef.getAssessedGefValueSets() != null) {
+							for(AssessedGefValueSet agvs:gef.getAssessedGefValueSets()) {
+								if(gef.getTimeInterval().getStart().equals(dto.getGroups().get(i).getValue())) {
+									if(agvs.getAssessment().getRiskStatus() != null && agvs.getAssessment().getRiskStatus().equals('A')) {
+										DataIdValue item = new DataIdValue(gef.getId(), gef.getGefValue().toString()+" "+agvs.getAssessment().getId());
+										//dto.getSeries().get(2).getItems().remove(i);
+										dto.getSeries().get(0).getItems().add(i, item);
+									} else if (agvs.getAssessment().getRiskStatus() != null && agvs.getAssessment().getRiskStatus().equals('W')) {
+										DataIdValue item = new DataIdValue(gef.getId(), gef.getGefValue().toString()+" "+agvs.getAssessment().getId());
+										//dto.getSeries().get(2).getItems().remove(i);
+										dto.getSeries().get(1).getItems().add(i, item);
+									} else if (agvs.getAssessment().getAssessmentComment() != null) {
+										DataIdValue item = new DataIdValue(gef.getId(), gef.getGefValue().toString()+" "+agvs.getAssessment().getId());
+										//dto.getSeries().get(2).getItems().remove(i);
+										dto.getSeries().get(2).getItems().add(i, item);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+		}
+		return dto;
 	}
 
 	public void setAssessmentDAO(AssessmentDAO assessmentDAO) {
@@ -257,6 +275,4 @@ public class AssessmentsService {
 		this.timeIntervalDAO = timeIntervalDAO;
 	}
 	
-
-
 }

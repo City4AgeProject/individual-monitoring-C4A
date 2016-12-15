@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<dataset>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="db_test_data/xsd/dataset.xsd">
 
     <cd_detection_variable id="1" detection_variable_name="Walking" detection_variable_type="GES" derived_detection_variable_id="1" />
     <cd_detection_variable id="2" detection_variable_name="Climbing stairs" detection_variable_type="GES" derived_detection_variable_id="1" />
