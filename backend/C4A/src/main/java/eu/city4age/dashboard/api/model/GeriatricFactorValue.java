@@ -35,6 +35,9 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 	@JsonManagedReference 
 	private Set<AssessedGefValueSet> assessedGefValueSets = new HashSet<AssessedGefValueSet>();
 	
+	@Transient
+	private Set<Assessment> assessments = new HashSet<Assessment>();
+
 	public GeriatricFactorValue() {
 	}
 
@@ -120,6 +123,18 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 
 	public void setAssessedGefValueSets(Set<AssessedGefValueSet> assessedGefValueSets) {
 		this.assessedGefValueSets = assessedGefValueSets;
+	}
+	
+	public Set<Assessment> getAssessments() {
+		return assessments;
+	}
+
+	public void setAssessments(Set<Assessment> assessments) {
+		this.assessments = assessments;
+	}
+
+	public void addAssessment(Assessment assessment) {
+		this.assessments.add(assessment);
 	}
 
 }
