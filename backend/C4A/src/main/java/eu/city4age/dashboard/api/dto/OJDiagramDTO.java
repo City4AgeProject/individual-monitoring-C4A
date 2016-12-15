@@ -5,14 +5,15 @@ import java.util.List;
 
 import eu.city4age.dashboard.api.domain.DataIdValue;
 import eu.city4age.dashboard.api.domain.Serie;
+import eu.city4age.dashboard.api.model.TimeInterval;
 
 public class OJDiagramDTO {
 	
 	List<DataIdValue> groups = new ArrayList<DataIdValue>();
 	
-	List<Serie> series = new ArrayList<Serie>();
-
-
+	Serie serie;
+	
+	List<TimeInterval> tis = new ArrayList<TimeInterval>();
 
 	public List<DataIdValue> getGroups() {
 		return groups;
@@ -22,13 +23,20 @@ public class OJDiagramDTO {
 		this.groups = groups;
 	}
 
-	public List<Serie> getSeries() {
-		return series;
+	public Serie getSerie() {
+		return serie;
 	}
 
-	public void setSeries(List<Serie> series) {
-		this.series = series;
+	public void setSerie(Serie serie) {
+		this.serie = serie;
 	}
 
+	public List<TimeInterval> getTis() {
+		return tis;
+	}
+
+	public void setTis(List<TimeInterval> tis) {
+		this.tis = tis;
+	}
 
 }

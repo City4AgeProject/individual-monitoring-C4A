@@ -116,7 +116,7 @@ public class AssessmentsService {
 		
 		OJDiagramDTO dto = transformToDto(tis);
     	
-		return objectMapper.writeValueAsString(tis);
+		return objectMapper.writeValueAsString(dto);
 
     }
 
@@ -223,42 +223,20 @@ public class AssessmentsService {
 		for(TimeInterval ti: tis) {
 			dto.getGroups().add(new DataIdValue(ti.getId(), ti.getStart()));
 		}
-	    dto.getSeries().add(new Serie("Alerts","#e83d17","images/alert.png",new ArrayList<DataIdValue>(),"none","on",20));
-		dto.getSeries().add(new Serie("Warnings","#ffff66","images/warning-icon.png",new ArrayList<DataIdValue>(),"none","on",20));
-		dto.getSeries().add(new Serie("Comments","#ebebeb","images/comment-gray.png",new ArrayList<DataIdValue>(),"none","on",20));
-		for(Serie serie:dto.getSeries()) {
-			for(int i = 0; i < tis.size(); i++) {
-				serie.getItems().add(null);
-			}
-		}
-		for(TimeInterval ti: tis) {
-			for(GeriatricFactorValue gef:ti.getGeriatricFactorValues()) {
-				for(int i = 0; i < dto.getGroups().size(); i++) {
-					if(gef.getTimeInterval().getStart().equals(dto.getGroups().get(i).getValue())) {
-						if(gef.getAssessedGefValueSets() != null) {
-							for(AssessedGefValueSet agvs:gef.getAssessedGefValueSets()) {
-								if(gef.getTimeInterval().getStart().equals(dto.getGroups().get(i).getValue())) {
-									if(agvs.getAssessment().getRiskStatus() != null && agvs.getAssessment().getRiskStatus().equals('A')) {
-										DataIdValue item = new DataIdValue(gef.getId(), gef.getGefValue().toString()+" "+agvs.getAssessment().getId());
-										//dto.getSeries().get(2).getItems().remove(i);
-										dto.getSeries().get(0).getItems().add(i, item);
-									} else if (agvs.getAssessment().getRiskStatus() != null && agvs.getAssessment().getRiskStatus().equals('W')) {
-										DataIdValue item = new DataIdValue(gef.getId(), gef.getGefValue().toString()+" "+agvs.getAssessment().getId());
-										//dto.getSeries().get(2).getItems().remove(i);
-										dto.getSeries().get(1).getItems().add(i, item);
-									} else if (agvs.getAssessment().getAssessmentComment() != null) {
-										DataIdValue item = new DataIdValue(gef.getId(), gef.getGefValue().toString()+" "+agvs.getAssessment().getId());
-										//dto.getSeries().get(2).getItems().remove(i);
-										dto.getSeries().get(2).getItems().add(i, item);
-									}
-								}
-							}
-						}
-					}
-				}
+	    dto.setSerie(new Serie("Assessments","#e83d17","images/flag.png",new ArrayList<DataIdValue>(),"none","on",20));
+		for(int i = 0; i < tis.size(); i++) {
+			if(tis.get(i).getGeriatricFactorValues().iterator().hasNext()) {
+				GeriatricFactorValue gef = tis.get(i).getGeriatricFactorValues().iterator().next();
+				if(gef.getAssessedGefValueSets() != null && gef.getAssessedGefValueSets().size() > 0) {
+					DataIdValue item = new DataIdValue(gef.getId(), gef.getGefValue().toString());
+					dto.getSerie().getItems().add(i, item);
+				} 
+			} else {
+				dto.getSerie().getItems().add(i, null);
 			}
 			
 		}
+		dto.setTis(tis);
 		return dto;
 	}
 
