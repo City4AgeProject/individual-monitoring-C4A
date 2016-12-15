@@ -76,16 +76,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             var newAssessment = new Assessment();
                             newAssessment.id = assessment.id;
                             newAssessment.comment = assessment.assessmentComment;
-                            newAssessment.shortComment = shortenText(assessment.assessmentComment, 27);
                             newAssessment.from = assessment.userInRole.id;
                             newAssessment.dateAndTime = assessment.created;
-                            newAssessment.formatDateAndTimeText();
-                            newAssessment.type = assessment.riskStatus;
-                            newAssessment.imgSrc = 'images/comment.png';
-                            if('W'== newAssessment.type)
-                                newAssessment.imgSrc = 'images/risk_warning.png';
-                            else if('A'== newAssessment.type)
-                                newAssessment.imgSrc = 'images/risk_alert.png';
+                            newAssessment.riskStatus = assessment.riskStatus;
+                            newAssessment.dataValidity = assessment.dataValidityStatus;
+                            
+                            newAssessment.formatAssessmentData();  
                             if(!Assessment.arrayContains(assessmentsResult, newAssessment))
                                 assessmentsResult.push(newAssessment);
                         }
@@ -98,21 +94,17 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                         var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var assessment = assessments[i];
-                            var newAssesment = new Assessment();
-                            newAssesment.id = assessment[0].id;
-                            newAssesment.comment = assessment[0].assessmentComment;
-                            newAssesment.shortComment = shortenText(assessment[0].assessmentComment, 27);
-                            newAssesment.from = assessment[0].userInRole.id;
-                            newAssesment.dateAndTime = assessment[0].created;
-                            newAssesment.formatDateAndTimeText();
-                            newAssesment.type = assessment[0].riskStatus;
-                            newAssesment.imgSrc = 'images/comment.png';
-                            if('W'== newAssesment.type)
-                                newAssesment.imgSrc = 'images/risk_warning.png';
-                            else if('A'== newAssesment.type)
-                                newAssesment.imgSrc = 'images/risk_alert.png';
-                            if(!Assessment.arrayContains(assessmentsResult, newAssesment))
-                                assessmentsResult.push(newAssesment);
+                            var newAssessment = new Assessment();
+                            newAssessment.id = assessment[0].id;
+                            newAssessment.comment = assessment[0].assessmentComment;
+                            newAssessment.from = assessment[0].userInRole.id;
+                            newAssessment.dateAndTime = assessment[0].created;
+                            newAssessment.riskStatus = assessment[0].riskStatus;
+                            newAssessment.dataValidity = assessment[0].dataValidityStatus;
+                            
+                            newAssessment.formatAssessmentData();                          
+                            if(!Assessment.arrayContains(assessmentsResult, newAssessment))
+                                assessmentsResult.push(newAssessment);
                         }
                         self.selectedAnotations(assessmentsResult);
                         
@@ -265,21 +257,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                         
                     }
                     return filteredSelection;
-                }
-
-                function calculateQueryParamsFromSelection(selectedPoints) {
-                    var queryParams = '';
-                    var i = 0;
-                    var idsArray = [];
-                    for (var i=0;i<selectedPoints.length;i++) {
-                        if(i===0)
-                            queryParams += 'sv'+i+'='+selectedPoints[i];
-                        else
-                            queryParams += '&sv'+i+'='+selectedPoints[i];
-                        idsArray.push(selectedPoints[i]);
-                    }
-                    self.dataPointsMarkedIds(idsArray);
-                    return queryParams === '' ? queryParams : '?' + queryParams;
                 }
 
                 function calculateSelectedIds(selectedPoints) {

@@ -61,20 +61,62 @@ DataSet.prototype.toJson = function() {
 
 function Assessment() {
     this.id = null;
-    this.title = '';
-    this.type = '';
+    
     this.from = '';
     this.comment = '';
-    this.imgSrc = '';
     this.shortComment = '';
     this.dateAndTime = '';
     this.dateAndTimeText = '';
+    
+    this.riskStatus = '';
+    this.riskStatusDesc = '';
+    this.riskStatusImage = 'images/comment.png';
+    
+    this.dataValidity = '';
+    this.dataValidityDesc = '';
+    this.dataValidityImage = '';
+    
 };
 
 Assessment.prototype.formatDateAndTimeText = function() {
     this.dateAndTimeText = new Date(this.dateAndTime).toLocaleDateString() 
                             + ' ' + new Date(this.dateAndTime).toLocaleTimeString();
 };
+
+Assessment.prototype.formatRiskStatusDescAndImage = function () {
+    if('Q' === this.dataValidity){
+        this.dataValidityDesc = 'Questionable data';
+        this.dataValidityImage = 'images/questionable_data.png';
+    }else if('F' === this.dataValidity){
+        this.dataValidityDesc = 'Faulty data';
+        this.dataValidityImage = 'images/faulty_data.png';
+    }else if('V' === this.dataValidity){
+        this.dataValidityDesc = 'Valid data';
+        this.dataValidityImage = 'images/valid_data.png';
+    }
+}
+
+Assessment.prototype.formatValidityDataDescAndImage = function () {
+    if('A' === this.riskStatus){
+        this.riskStatusDesc = 'Alert status';
+        this.riskStatusImage = 'images/risk_alert.png';
+    }else if('W' === this.riskStatus){
+        this.riskStatusDesc = 'Warning status';
+        this.riskStatusImage = 'images/risk_warning.png';
+    }
+}
+
+Assessment.prototype.shortenComment = function() {
+    return this.shortComment = shortenText(this.comment, 27);
+};
+Assessment.prototype.formatAssessmentData = function () {
+    this.formatDateAndTimeText();
+    this.formatRiskStatusDescAndImage();
+    this.formatValidityDataDescAndImage();
+    this.shortenComment();
+}
+
+
 
 Assessment.arrayContains = function(array, item) {
     for(var i=0; i<array.length; i++)
@@ -87,25 +129,6 @@ Assessment.prototype.toJson = function() {
     return JSON.stringify(this);
 };
 
-Assessment.prototype.fromJson = function(json) {
-    var other = JSON.parse(json);
-    this.fromOther(other);
-};
-
-Assessment.prototype.shortComment = function() {
-    return shortenText(this.comment, 27);
-};
-
-Assessment.prototype.fromOther = function(other) {
-    this.id = other.id;
-    this.title = other.title;
-    this.type = other.type;
-    this.from = other.from;
-    this.comment = other.comment;
-    this.imgSrc = other.imgSrc;
-    this.dateAndTime = other.dateAndTime;
-    this.shortComment = shortenText(this.comment, 27);
-};
 
 /**
  * This is a object to post new assessement
