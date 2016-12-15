@@ -30,6 +30,7 @@ public class AssessedGefValueSet implements Serializable {
 	public AssessedGefValueSet(Assessment assessment, GeriatricFactorValue geriatricFactorValue) {
 		this.assessment = assessment;
 		this.geriatricFactorValue = geriatricFactorValue;
+		this.geriatricFactorValue.addAssessment(assessment);
 	}
 
 	public AssessedGefValueSetId getAssessedGefValueSetId() {
@@ -46,6 +47,8 @@ public class AssessedGefValueSet implements Serializable {
 
 	public void setAssessment(Assessment assessment) {
 		this.assessment = assessment;
+		if(this.geriatricFactorValue != null)
+			this.geriatricFactorValue.addAssessment(assessment);
 	}
 
 	public GeriatricFactorValue getGeriatricFactorValue() {
@@ -54,6 +57,8 @@ public class AssessedGefValueSet implements Serializable {
 
 	public void setGeriatricFactorValue(GeriatricFactorValue geriatricFactorValue) {
 		this.geriatricFactorValue = geriatricFactorValue;
+		if(this.assessment != null)
+			this.geriatricFactorValue.addAssessment(this.assessment);
 	}
 
 }

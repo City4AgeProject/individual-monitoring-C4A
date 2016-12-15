@@ -227,14 +227,13 @@ public class AssessmentsService {
 		for(int i = 0; i < tis.size(); i++) {
 			if(tis.get(i).getGeriatricFactorValues().iterator().hasNext()) {
 				GeriatricFactorValue gef = tis.get(i).getGeriatricFactorValues().iterator().next();
-				if(gef.getAssessedGefValueSets() != null && gef.getAssessedGefValueSets().size() > 0) {
-					DataIdValue item = new DataIdValue(gef.getId(), gef.getGefValue().toString());
-					dto.getSerie().getItems().add(i, item);
-				} 
+					if(gef.getAssessments() != null) {
+						DataIdValue item = new DataIdValue(gef.getId(), gef.getGefValue().toString());
+						dto.getSerie().getItems().add(i, item);
+					} 
 			} else {
 				dto.getSerie().getItems().add(i, null);
-			}
-			
+			}	
 		}
 		dto.setTis(tis);
 		return dto;
