@@ -31,7 +31,7 @@
         </property>
 
         <many-to-one name="changedBy" class="UserInRole" update="false" insert="false" fetch="select">
-            <column name="changed_by" not-null="true" />
+            <column name="changed_by" />
         </many-to-one>
         
     </class>
