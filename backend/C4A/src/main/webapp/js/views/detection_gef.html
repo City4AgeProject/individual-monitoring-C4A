@@ -1,168 +1,112 @@
-<meta charset="utf-8">
-
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
-    <span>Care recipient: <b>L_1567, age: 78, sex: male</b></span> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <span>Assign Geriatrician: <b>Dr Leonardo Mutti</b></span> <!--class="oj-header-border"-->
-    <br>                     
-    <div style="height:20px;overflow:hidden" id="summary"><b>Summary:</b> Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
-    <a href="#" id="showmore">Show more</a>
-</div>  
 
+    <div style="width:70%" class="oj-flex-item" align="left">
+        <span style="font-size: 16px">Care recipient: <span  data-bind="text: oj.Router.rootInstance.retrieve()"></span></span> 
+        <span style="font-size: 16px;padding-left: 20px;">Age: <span  data-bind="text: userAge"></span></span> 
+        <!--<span>Gender: <b  data-bind="text: userGender"></b></span>--> 
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span style="font-size: 16px">Assign Geriatrician: <span data-bind="text:$root.userLogin" > </span></span> <!--class="oj-header-border"-->
+        <br>                     
+        <div style="height:19px;overflow:hidden;padding-top:10px;width:60%" id="summary"><span style="font-size: 16px">Summary:</span> <span data-bind="text:textline"></span></div>
+    </div>
+    <div style="text-align: center">
+        <a href="#" id="showmore" style="color: #0fb5b5 ">Show more</a>
+    </div>
+    <div class="visualization-drop oj-flex-item" align="right">
+        <button class="demo-button-aqua" style="min-width: 100px;"
+                data-bind="ojComponent: { component: 'ojButton', 
+                                                    label: 'Visualisations',
+                                                    chroming:'outlined',
+                                                    menu: '#visualizationMenu',
+                                                    rootAttributes: {class: 'demo-button-aqua'},
+                                                    icons: {end:'oj-component-icon oj-button-menu-dropdown-icon'}}">
+        </button>
+        <ul id="visualizationMenu" style="display:none" aria-label="Order Actions"
+            data-bind="ojComponent: {component: 'ojMenu', 
+                                                    select: frailtyMenuItemSelect}" >
+            <li id="lineChart">
+                <a href="#">Line chart</a>
+            </li>
+            <li id="morphology">
+                <a href="#">Morphology</a>
+            </li>
+        </ul>
+    </div>
 
-<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
     <div class="demo-flex-display oj-flex-items-pad">
         <div class="oj-flex oj-sm-flex-direction-column ">
-
-
-            <div class="oj-flex-item" align="right">
-                <button id= "frailtyButton" class="oj-button-confirm" style="min-width: 100px;"
-                        data-bind="ojComponent: { component: 'ojButton', 
-                                                    label: 'Fit',
-                                                    menu: '#frailtyMenu',
-                                                    icons: {end:'oj-component-icon oj-button-menu-dropdown-icon'}}">
-                </button>
-
-                <ul id="frailtyMenu" style="display:none" aria-label="Order Actions"
-                    data-bind="ojComponent: {component: 'ojMenu', 
-                                                    select: frailtyMenuItemSelect
-                                                    }" >
-                    <li id="fit">
-                        <a href="#">Fit</a>
-                    </li>
-                    <li id="prefrail">
-                        <a href="#">Pre-frail</a>
-                    </li>
-                    <li id="frail">
-                        <a href="#">Frail</a>
-                    </li>
-                </ul>
-
-            </div>
             <div class="oj-flex-item" >
+                <!-- from-to date filter -->
+                <div id="filteringDate" >
+                    <label for="fromDate">From</label>
+                    <input id="fromDate" 
+                           data-bind=" ojComponent: {component: 'ojInputDate', 
+                                  datePicker: {changeMonth: 'none', changeYear: 'none'},
+                                   converter: {type:'datetime', options: {year: 'numeric', month: 'numeric'}},
+                                  value: fromValue}"/><br/>
 
-                <!-- slider -->
-                <div id="slider-container" align="left">
-                    <div id="flex-container" >
-                        <span id="slider-label" style="margin-right: 10px" >Date range:</span>
-                        <span id="value1" data-bind="text: slider1ValueArray()[0]" style="margin-right: 4px"> </span>
-                        <input id="slider1"
-                               data-bind="ojComponent: {
-                            component: 'ojSlider', 
-                            type: 'range',
-                            max:slider1Max, 
-                            min:slider1Min, 
-                            step:slider1Step, 
-                            value: slider1ValueArray,
-                            optionChange:optionChangeSlider,
-                            rootAttributes: {style:'max-width:30%; '}
-                        }"/>
-                        <!--<span id="value2" data-bind="text: slider1ValueArray()[1]" style="margin-left: 4px"></span>-->
-                        <span>Dec 2016</span>
-                    </div> <!-- flex-container -->
+                    <label for="toDate">To</label>
+                    <input id="toDate" 
+                           data-bind="ojComponent: {component: 'ojInputDate', 
+                                  datePicker: {numberOfMonths: 2},
+                                    converter: {type:'datetime', options: {year: 'numeric', month: 'numeric'}},
+                                  value: toValue}"/>  
                 </div>
-                <!-- end slider -->
+                <span class="oj-label">Current component value is: </span>
+  <span data-bind="text: fromValue"></span>
+                <!-- end from-to date filter -->
+
+
+               	<div class="assesmentBtn" >
+                    <button class="demo-aqua-full" id="menuButton"
+                            data-bind=" ojComponent:{component: 'ojButton', label: 'Add Assesment',
+            chroming: 'half'}">
+                    </button>
+                </div>
+
 
             </div>
         </div>
-
-
         <!-- end context menu for Detection chart -->
 
         <div class="oj-flex-item">
-
+            <form style="position: absolute;	z-index: 10;	right: 25px;	margin-top: 5px;" id="formId" class="formShow">
+                <div >
+                    <input style="vertical-align: text-bottom;" id="checkcontrol" type="checkbox" class="oj-checkbox-nocomp"
+                           data-bind="checked: checkbox"/>
+                    <label for="checkcontrol" class="oj-checkbox-label-nocomp">
+                        Show frailty status
+                    </label>
+                </div>
+            </form>
             <!-- chart for overall situation with two groups of geriatric factors -->
+            <!--detectionGEFGroupsLineChart-->
             <div id="detectionGEFGroupsLineChart" class="oj-flex-item" data-bind="ojComponent: {
                 component: 'ojChart', 
-                type: 'line', 
+                type: 'line',
+                drilling: 'on', 
                 series: seriesValue, 
                 groups: groupsValue, 
-                selectionMode: 'multiple',
-                selection: selectionArrayDetectionGEFGroupsLineChart,
                 animationOnDisplay: 'auto',
                 animationOnDataChange: 'auto',
+                drill: chartDrill,
                 hideAndShowBehavior: 'withoutRescale',
                 orientation: 'vertical',
                 hoverBehavior: 'dim',
-                optionChange: chartOptionChangeDetectionGEFGroupsLineChart,
                 title: {text: 'Behavioural & Contextual Geriatric group factors', halign: 'center'},
                 yAxis:{step:0.5},
-                legend: {position: 'top'}
+                legend: {position: 'bottom'}
                 }"
-                 style="width:100%;height:350px;">
+                 style="width:100%;">
             </div> 
         </div>
 
     </div>
 
 
-    <div class="oj-flex-item"><br><br></div>
-
-
-    <div class="oj-flex-item">
+    <div id="polarChart-container" class="oj-flex"  data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
         <div class="oj-flex-item">
-
-            <!-- tabs with two line charts and two polar charts -->
-            <div id="tabs-container" class="oj-flex-item">
-                <div id="tabs" data-bind="ojComponent:{component: 'ojTabs',
-                                               edge: 'top'}">
-                    <!-- tab bar -->
-                    <ul>
-                        <li><span>Behavioural Geriatric factors</span></li>
-                        <li><span>Contextual Geriatric factors</span></li>
-                        <li><span>Morphology</span></li>
-                    </ul>
-                    <!-- tab contents -->
-                    <div id="tabs-1">
-                        <!-- chart for group 1 -->
-                        <div id="detectionGEFGroup1FactorsLineChart"  data-bind="ojComponent: {
-                    component: 'ojChart', 
-                    type: 'line', 
-                    series: lineSeries1Value, 
-                    groups: groupsValue, 
-                    selectionMode: 'single',
-                    animationOnDisplay: 'auto',
-                    animationOnDataChange: 'auto',
-                    hideAndShowBehavior: 'withoutRescale',
-                    orientation: 'vertical',
-                    hoverBehavior: 'dim',
-                    drilling: 'on',
-                    optionChange: chartOptionChangeFactorsGroup1,
-                    title: {text: 'Behavioural Geriatric factors', halign: 'center'},
-                    yAxis:{step:0.5},
-                    legend: {position: 'top'}
-                    }"
-                             style="width:100%;height:400px;">
-                        </div>
-                    </div>
-                    <div id="tabs-2">
-                        <!-- chart for group 2 -->
-                        <div id="detectionGEFGroup2FactorsLineChart" data-bind="ojComponent: {
-                    component: 'ojChart', 
-                    type: 'line', 
-                    series: lineSeries2Value, 
-                    groups: groupsValue, 
-                    selectionMode: 'single',
-                    animationOnDisplay: 'auto',
-                    animationOnDataChange: 'auto',
-                    hideAndShowBehavior: 'withoutRescale',
-                    orientation: 'vertical',
-                    hoverBehavior: 'dim',
-                    drilling: 'on',
-                    optionChange: chartOptionChangeFactorsGroup2,
-                    title: {text: 'Contextual Geriatric factors', halign: 'center'},
-                    yAxis:{step:0.5},
-                    legend: {position: 'top'}
-                    }"
-                             style="width:100%;height:400px;">
-                        </div>
-
-                    </div>
-                    <div id="showMorphologyTab">
-                        <div id="polarChart-container" class="oj-flex"  data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
-                            <div class="oj-flex-item">
-                                <!-- polar chart for Group 1 -->
-                                <div id="polarChart1" data-bind="ojComponent: {
+            <div id="polarChart1" data-bind="ojComponent: {
                             component: 'ojChart', 
                             coordinateSystem: 'polar',
                             type: typeValue,
@@ -173,15 +117,16 @@
                             animationOnDisplay: 'auto',
                             hideAndShowBehavior: 'withoutRescale',
                             hoverBehavior: 'dim',
+                            drilling: 'on',
                             title: {text: 'Behavioural', halign: 'center'},
                             legend: {position: 'top'}
                             }"
-                                     style="width:100%;height:400px;">
-                                </div>
-                            </div>
-                            <div class="oj-flex-item">
-                                <!-- polar chart for Group 2 -->
-                                <div id="polarChart2" data-bind="ojComponent: {
+                 style="width:100%;">
+            </div>
+        </div>
+        <div class="oj-flex-item">
+            <!-- polar chart for Group 2 -->
+            <div id="polarChart2" data-bind="ojComponent: {
                             component: 'ojChart', 
                             coordinateSystem: 'polar',
                             type: typeValue,
@@ -195,60 +140,36 @@
                             title: {text: 'Contextual', halign: 'center'},
                             legend: {position: 'top'}
                             }"
-                                     style="width:100%;height:400px;">
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                    </div>
-
-                </div>
-                <!--   <div style="height:30px;">
-                       <label id="currentText" style="float:left;color:#737373;font-weight:bolder;"></label>
-                       <label id="currentText2" style="padding-left:8px;float:left;color:#737373;font-weight:bold;"></label>
-                   </div>  -->
-
+                 style="width:100%;height:400px;">
             </div>
-
         </div>
 
     </div>
 
-</div>
-
-<!-- context menu for Detection chart -->
-<div id="menu-container">
-    <ul id="morphologyMenu" style="display:none" aria-label="Edit"
-        data-bind="ojComponent: {
-            component: 'ojMenu'}" >
-        <li id="action1">
-            <a href="#">
-                Show morphology
-            </a>
-        </li>
-    </ul>
-</div>
-
-<!-- popup for main detection (Group1 & Group2 factors) chart -->
-<div style="display:none" id="showMorphologyPopup" 
-     data-bind="ojComponent:{
-            component: 'ojPopup', 
-            modality: 'modeless'}">
-    <!-- popup panel -->
-    <div align="center" style="padding: 8px 0px 8px 0px;">
-        <label for="buttonDetails"></label>
-        <button id="buttonDetails" 
-                data-bind="click: showMorphologyButtonClick,
-                        ojComponent: {
-                        component:'ojButton', 
-                        label: 'Show morphology'
-        }"/></button>
+    <div class="oj-flex-item">
+        <div  id="detectionGEFGroup1FactorsLineChart"  data-bind="ojComponent: {
+                    component: 'ojChart', 
+                    type: 'line', 
+                    series: lineSeriesValue, 
+                    groups: groupsValue, 
+                    selectionMode: 'single',
+                    animationOnDisplay: 'auto',
+                    animationOnDataChange: 'auto',
+                    hideAndShowBehavior: 'withoutRescale',
+                    orientation: 'vertical',
+                    hoverBehavior: 'dim',
+                    drilling: 'on',
+                    optionChange: chartOptionChangeFactorsGroup1,
+                    title: {text: ko.toJS(titleValue), halign: 'center'},
+                    yAxis:{step:0.5},
+                    legend: {position: 'top'}
+                    }"
+              style="width:100%;height:400px;">
+        </div>
     </div>
-    <!-- end popup panel -->
 </div>
-<!--  -->
+
+
 
 <!-- popup for Group 1 GEF charts -->
 <div style="display:none" id="GEFGroup1DetailsShowPopup" 

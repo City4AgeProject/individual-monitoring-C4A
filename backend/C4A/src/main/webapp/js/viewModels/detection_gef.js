@@ -1,16 +1,24 @@
+define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'ojs/ojchart', 'ojs/ojtabs', 'ojs/ojlegend',
+    'ojs/ojpopup', 'ojs/ojslider', 'ojs/ojmenu', 'ojs/ojdialog', 'ojs/ojdatetimepicker', 'ojs/ojtimezonedata', 'ojs/ojcheckboxset'],
+        function (oj, ko, sp, $) {
 
-define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'ojs/ojchart', 'ojs/ojtabs', 'ojs/ojlegend',
-    'ojs/ojpopup', 'ojs/ojslider', 'ojs/ojmenu', 'ojs/ojdialog', 'ojs/ojrouter'],
-        function (oj, ko, $) {
-
-            function graphicsContentViewModel(careRecipientId) {
+            function GraphicsContentViewModel() {
                 var self = this;
-                var OVERALL_SERIES_NAME = 'Overall';
+                var url = sp.baseUrl + sp.groupsMethod;
+                var lineColors = ['#ea97f1', '#5dd6c9', '#b4b2b2', '#e4d70d', '#82ef46', '#29a4e4'];
+
                 var PRE_FRAIL_SERIES_NAME = 'Pre-Frail';
                 var FRAIL_SERIES_NAME = 'Frail';
                 var FIT_SERIES_NAME = 'Fit';
-                var GROUP1_SERIES_NAME = 'Behavioural';
-                var GROUP2_SERIES_NAME = 'Contextual';
+//                var OVERALL_SERIES_NAME = 'Overall';
+//                var GROUP1_SERIES_NAME = 'Behavioural';
+//                var GROUP2_SERIES_NAME = 'Contextual';
+
+
+                self.userAge = sp.userAge;
+                self.userGender = sp.userGender;
+                self.textline = sp.userTextline;
+
 
                 /* tracking mouse position when do mouseover and mouseup/touchend event*/
                 var clientX;
@@ -33,24 +41,71 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 });
                 /* End: tracking mouse position when do mouseover and mouseup/touchend event */
 
-                /* Detection GEF Groups Line Chart configuration with dummy data */
-                var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
+                /*filter data by date */
+
+                self.fromValue = ko.observable("");
+                self.toValue = ko.observable();
+                self.checkbox = ko.observable(false);
+
+                /* ************ */
 
                 function getValue() {
                     return Math.random() * 4 + 1;
                 }
 
-                var series = [{name: GROUP1_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
-                    {name: GROUP2_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
-                    {name: PRE_FRAIL_SERIES_NAME, items: [0.1, 0.1, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'},
-                    {name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'},
-                    {name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'},
-                    {name: OVERALL_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], color: '#999999', lineWidth: 5}];
+//                var series = [{name: GROUP1_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+//                    {name: GROUP2_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
+//                    {name: PRE_FRAIL_SERIES_NAME, items: [0.1, 0.1, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'},
+//                    {name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'},
+//                    {name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'},
+//                    {name: OVERALL_SERIES_NAME, items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], color: '#999999', lineWidth: 5}];
+//
+//                self.seriesValue = ko.observableArray(series);
+//                self.groupsValue = ko.observableArray(groups);
 
-                self.seriesValue = ko.observableArray(series);
-                self.groupsValue = ko.observableArray(groups);
 
-                /* End Detection GEF Groups Line Chart configuration with dummy data */
+                /*  Detection FGR Groups Line Chart configuration  */
+                self.seriesValue = ko.observableArray();
+                self.groupsValue = ko.observableArray();
+
+//                self.careReceiverId = oj.Router.rootInstance.retrieve();
+
+                self.careReceiverId = 4;
+
+                function createItems(id, value) {
+                    return {id: id,
+                        value: value
+                    };
+                }
+
+                $(".loader-hover").show();
+                $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=-1")
+                        .then(function (radarData) {
+
+//                            console.log("fata ", JSON.stringify(radarData));
+                            $.each(radarData.itemList, function (i, list) {
+                                var nodes = [];
+                                $.each(list.items[0].itemList, function (j, itemList) {
+                                    nodes.push(createItems(list.items[0].idList[j], itemList));
+                                });
+                                self.seriesValue.push({
+                                    name: list.items[0].groupName,
+                                    items: nodes,
+                                    color: lineColors[i]
+                                });
+                            });
+
+                            $.each(radarData.itemList[0].items[0].dateList, function (j, dateItem) {
+                                self.groupsValue.push(dateItem);
+                            });
+                            self.seriesValue.push({name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'});
+                            self.seriesValue.push({name: PRE_FRAIL_SERIES_NAME, items: [null, null, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
+                            self.seriesValue.push({name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
+                            $(".loader-hover").hide();
+                        });
+                /* End Detection FGR Groups Line Chart configuration  */
+
+                var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
 
                 /* Group 1 and Group 2 Line Chart configuration with dummy data */
                 /* Group 1 */
@@ -67,170 +122,135 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                     {name: "Health – physical", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5},
                     {name: "Health – cognitive", items: [3, getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue(), getValue()], lineWidth: 3.5}];
 
-                self.lineSeries1Value = ko.observableArray(lineSeries1);
-                self.lineSeries2Value = ko.observableArray(lineSeries2);
-                self.lineGroupsValue = ko.observableArray(groups);
                 /* End: Group 1 and Group 2 Line Chart configuration with dummy data */
 
-                /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
-                self.handleAttached = function (info) {
-                    //console.log('handleAttached');                    
 
-                    /* Assign summary Show more/Show less  */
-                    $('#summary').css({height: '20px', overflow: 'hidden'});
-                    $('#showmore').on('click', function () {
-                        var $this = $("#summary");
-                        if ($this.data('open')) {
-                            $("#showmore").html("Show more");
-                            $this.animate({height: '20px'});
-                            $this.data('open', 0);
+                /* Group 1 and Group 2 Line Chart configuration with dynamic data */
+                var gefData;
+                $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=1")
+                        .then(function (behavData) {
+                            gefData = behavData;
+//                       console.log("gefData data ", JSON.stringify(gefData));    
+                        });
+                /* End: Group 1 and Group 2 Line Chart configuration with dynamic data */
 
-                        } else {
-                            $("#showmore").html("Show less");
-                            $this.animate({height: '100%'});
-                            $this.data('open', 1);
+                /*  Detection GEF Groups Line Chart configuration*/
+                self.lineSeriesValue = ko.observableArray();
+                self.lineSeries2Value = ko.observableArray();
+                self.groupsValue2 = ko.observableArray();
+                self.titleValue = ko.observable("");
+                self.chartDrill = function (event, ui) {
+                    var seriesValue = ui['series'];
+                    document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-                        }
-                    });
-                    /*End: Assign summary Show more/Show less */
+                    graphicsContentViewModel.groupsValue2.removeAll();
+                    graphicsContentViewModel.lineSeriesValue.removeAll();
+
+                    /* Behavioural group */
+                    if (seriesValue.indexOf("Behavioural") !== -1) {
+                        $.each(gefData.itemList, function (i, list) {
+                            if (list.parentGroupName.indexOf("Behavioural") !== -1) {
+                                graphicsContentViewModel.lineSeriesValue.push({
+                                    name: list.items[0].groupName,
+                                    items: list.items[0].itemList,
+                                    color: lineColors[i]
+                                });
+                            }
+                        });
+                        $.each(gefData.itemList[0].items[0].dateList, function (j, dateItem) {
+                            graphicsContentViewModel.groupsValue2.push(dateItem);
+                        });
+//                        graphicsContentViewModel.lineSeriesValue(lineSeries3);
+                        graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
+                        /* Contextual group */
+                    } else if (seriesValue.indexOf("Contextual") !== -1) {
+                        $.each(gefData.itemList, function (i, list) {
+                            if (list.parentGroupName.indexOf("Contextual") !== -1) {
+                                graphicsContentViewModel.lineSeriesValue.push({
+                                    name: list.items[0].groupName,
+                                    items: list.items[0].itemList,
+                                    color: lineColors[i]
+                                });
+                            }
+                        });
+                        $.each(gefData.itemList[0].items[0].dateList, function (j, dateItem) {
+                            graphicsContentViewModel.groupsValue2.push(dateItem);
+                        });
+//                        graphicsContentViewModel.lineSeriesValue(lineSeries4);
+                        graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
+                        /* Overall group */
+                    } else if (seriesValue.indexOf("overall") !== -1) {
+                        console.log("overall ", seriesValue);
+                        /* none group */
+                    } else {
+                        console.log("nothing ", seriesValue);
+                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
+                    }
                 };
-                /* End: handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
+                /* End Detection GEF Groups Line Chart configuration*/
 
+                /* polar chart - uradjen za drugu grupu i to za mesece M1, M2 i M5 */
+                var lineSeriesPolar1 = [{name: groups[1], items: [lineSeries1[0].items[1], lineSeries1[1].items[1], lineSeries1[2].items[1], lineSeries1[3].items[1], lineSeries1[4].items[1], lineSeries1[5].items[1]], color: '#ED6647'},
+                    {name: groups[5], items: [lineSeries1[0].items[5], lineSeries1[1].items[5], lineSeries1[2].items[5], lineSeries1[3].items[5], lineSeries1[4].items[5], lineSeries1[5].items[5]], color: '#6DDBDB'}];
+//                var lineGroupsPolar1 = lineSeries1; //grupe su nazivi serija linijskog dijagrama
+
+                var lineSeriesPolar2 = [{name: groups[1], items: [lineSeries2[0].items[1], lineSeries2[1].items[1], lineSeries2[2].items[1], lineSeries2[3].items[1]], color: '#FAD55C'},
+                    {name: groups[2], items: [lineSeries2[0].items[2], lineSeries2[1].items[2], lineSeries2[2].items[2], lineSeries2[3].items[2]], color: '#8561C8'},
+                    {name: groups[5], items: [lineSeries2[0].items[5], lineSeries2[1].items[5], lineSeries2[2].items[5], lineSeries2[3].items[5]], color: '#1DDB1B'}];
+//                var lineGroupsPolar2 = lineSeries2; //grupe su nazivi serija linijskog dijagrama
+
+                self.polarGridShapeValue1 = ko.observable();
+                self.polarChartSeriesValue1 = ko.observableArray();
+                self.polarChartGroupsValue1 = ko.observableArray();
+
+                self.polarGridShapeValue2 = ko.observable();
+                self.polarChartSeriesValue2 = ko.observableArray();
+                self.polarChartGroupsValue2 = ko.observableArray();
+
+                self.stackValue = ko.observable('off');
+                self.typeValue = ko.observable('line');
                 self.frailtyMenuItemSelect = function (event, ui) {
-                    var launcherId = $(event.target).ojMenu("getCurrentOpenOptions").launcher.attr("id");
-                    self.selectedItem[launcherId](ui.item.children("a").text());
-                };
+                    var launcherId = ui.item.children("a").text();
+                    if (launcherId.indexOf("Morphology") !== -1) {
 
-                /*update values*/
-                /*       self.updateButtonClick = function(data, event) {
-                 for (var s = 0; s < series.length; s++) {
-                 for (var g = 1; g < series[s].items.length; g++) {
-                 if (Math.random() < 0.3)
-                 series[s].items[g] = getValue();
-                 }
-                 }
-                 for (var s = 0; s < lineSeries1.length; s++) {
-                 for (var g = 1; g < lineSeries1[s].items.length; g++) {
-                 if (Math.random() < 0.3)
-                 lineSeries1[s].items[g] = getValue();
-                 }
-                 }
-                 for (var s = 0; s < lineSeries2.length; s++) {
-                 for (var g = 1; g < lineSeries2[s].items.length; g++) {
-                 if (Math.random() < 0.3)
-                 lineSeries2[s].items[g] = getValue();
-                 }
-                 }
-                 
-                 
-                 self.seriesValue(series);
-                 self.lineSeries1Value(lineSeries1);
-                 self.lineSeries2Value(lineSeries2);
-                 return true;
-                 };*/
-
-
-                /*Slider 1 configuration and event hendlers*/
-                self.slider1ValueArray = ko.observableArray([0, 13]);
-                self.slider1Min = ko.observable(0);
-                self.slider1Max = ko.observable(13);
-                self.slider1Step = ko.observable(1);
-
-                self.optionChangeSlider = function (event, data) {
-                    //console.log("option that changed is: ");
-                    //console.log(data);
-                    $("#value1").html("Initial");
-                    $("#value2").html("Dec2016");
-                };
-                /*End Slider 1 configuration and event hendlers*/
-
-                ///if user used scroll all popups will be closed immidiately 
-                $(document).on("scroll", function (e) {
-                    try {
-                        $('#showMorphologyPopup').ojPopup('close');
-                        $('#GEFGroup1DetailsShowPopup').ojPopup('close');
-                    } catch (e) {
-
-                    }
-                });
-
-                /* detectionGEFGroupsLineChart popup and selection manipulation*/
-                self.showMorphologyButtonClick = function (data, event) {
-                    //console.log($("#detectionGEFGroupsLineChart").ojChart("getDataItem", 0, 0));
-                    $("#tabs").ojTabs("option", "selected", "showMorphologyTab");
-                    $('#showMorphologyPopup').ojPopup('close');
-                    return true;
-                };
-
-
-
-
-                self.selectionArrayDetectionGEFGroupsLineChart = ko.observableArray();
-                var closeMorphologyPopupScheduled = false;
-                self.chartOptionChangeDetectionGEFGroupsLineChart = function (event, ui) {
-                    var filteredSelectedValues = [];
-                    var filteredSelectedSeries = [];
-                    var showMorphologyPopup = false;
-                    //console.log(ui);
-                    if (ui['option'] === 'selection') {
-                        if (ui['value'].length > 0) {
-                            for (var i = 0; i < ui['value'].length; i++) {
-                                if ((ui['value'][i].series !== OVERALL_SERIES_NAME) &&
-                                        (ui['value'][i].series !== PRE_FRAIL_SERIES_NAME) &&
-                                        (ui['value'][i].series !== FRAIL_SERIES_NAME) &&
-                                        (ui['value'][i].series !== FIT_SERIES_NAME)) {
-                                    filteredSelectedValues.push(ui['value'][i]);
-                                    
-                                    if($.inArray(ui['value'][i].series, filteredSelectedSeries) < 0) {
-                                        filteredSelectedSeries.push(ui['value'][i].series);
-                                    }
-                                }
+                        $.each(gefData.itemList, function (i, list) {
+                            if (list.parentGroupName.indexOf("Behavioural") !== -1) {
+                                graphicsContentViewModel.polarChartGroupsValue1.push({
+                                    name: list.items[0].groupName,
+                                    items: list.items[0].itemList
+                                });
+                            } else if (list.parentGroupName.indexOf("Contextual") !== -1) {
+                                graphicsContentViewModel.polarChartGroupsValue2.push({
+                                    name: list.items[0].groupName,
+                                    items: list.items[0].itemList
+                                });
                             }
-                            //stop recursive propagation of event, only set when this condition is reached
-                            if (filteredSelectedValues.length !== ui['value'].length) {
-                                self.selectionArrayDetectionGEFGroupsLineChart(filteredSelectedValues);
-                            }
-                            
-                            if(filteredSelectedSeries.length===1) {
-                                // Show "Behavioural" tab if only "Behavioural" values are selected.
-                                if(GROUP1_SERIES_NAME === filteredSelectedSeries[0]) {
-                                    $('#tabs').ojTabs( "option", "selected", "tabs-1" );
-                                    $('#showMorphologyPopup').ojPopup('close');
-                                }
-                                // Show "Contextual" tab if only "Contextual" values are selected.
-                                else if(GROUP2_SERIES_NAME === filteredSelectedSeries[0]) {
-                                    $('#tabs').ojTabs( "option", "selected", "tabs-2" );
-                                    $('#showMorphologyPopup').ojPopup('close');
-                                }
-                            }
-                            // Show "Morphology" tab if both "Behavioural and Contextual" values are selected.
-                            else if(filteredSelectedSeries.length===2) {
-                                if($.inArray(GROUP1_SERIES_NAME, filteredSelectedSeries) >= 0
-                                        && $.inArray(GROUP2_SERIES_NAME, filteredSelectedSeries) >= 0) {
-                                    $('#tabs').ojTabs( "option", "selected", "showMorphologyTab" );
-                                }
-                            }
-                            closeMorphologyPopupScheduled = true;
-                            if(showMorphologyPopup) {
-                                $('#showMorphologyPopup').ojPopup('open', "#detectionGEFGroupsLineChart");
-                                $("#showMorphologyPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
-                                $("#showMorphologyPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
-                            }
-                        } else if (ui['value'].length === 0) {
-                            //close popup scheduled for 1.5 seconds
-                            setTimeout(function (event) {
-                                if (closeMorphologyPopupScheduled) {
-                                    $('#showMorphologyPopup').ojPopup('close');
-                                    closeMorphologyPopupScheduled = false;
-                                }
-                            }, 1500);
-                        }
+                        });
+
+                        document.getElementById('detectionGEFGroupsLineChart').style.display = 'none';
+                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
+
+                        graphicsContentViewModel.polarGridShapeValue1('polygon');
+                        graphicsContentViewModel.polarChartSeriesValue1(lineSeriesPolar1);
+//                        graphicsContentViewModel.polarChartGroupsValue1(lineGroupsPolar1);
+
+                        graphicsContentViewModel.polarGridShapeValue2('polygon');
+                        graphicsContentViewModel.polarChartSeriesValue2(lineSeriesPolar2);
+//                        graphicsContentViewModel.polarChartGroupsValue2(lineGroupsPolar2);
+
+                        document.getElementById('polarChart1').style.display = 'block';
+                        document.getElementById('polarChart2').style.display = 'block';
+
+                    } else {
+                        document.getElementById('detectionGEFGroupsLineChart').style.display = 'block';
+                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
+                        document.getElementById('polarChart1').style.display = 'none';
+                        document.getElementById('polarChart2').style.display = 'none';
                     }
                 };
-                /*End detectionGEFGroupsLineChart popup and selection manipulation*/
+                self.nowrap = ko.observable(false);
 
                 /* detectionGEFLineChart popup manipulation*/
-
                 self.findGEFColorLineBySeriesName = function (lineChartID, seriesName) {
                     //find GEF color
                     var foundColor = "#fafafa";
@@ -249,7 +269,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                 self.chartOptionChangeFactorsGroup1 = function (event, ui) {
                     //console.log(ui);
                     if (ui['option'] === 'highlightedCategories') {
-                        if ((ui['value'].length > 0)&& (!closeGEFDetailsShowPopupScheduled)) {
+                        if ((ui['value'].length > 0) && (!closeGEFDetailsShowPopupScheduled)) {
                             //alert('testi self.selectionValueChange = function(event, data) {');                            
                             //console.log('Izvrsena selekcija linije na donjem dijagramu');
                             $('#GEFGroup1DetailsShowPopup').ojPopup('open');
@@ -262,7 +282,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                             var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup1FactorsLineChart", ui['value'][0]);
 
                             var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
-                                    "</b></h3>";
+                                    "</b></h3>"
                             closeGEFDetailsShowPopupScheduled = true;
                             $('#GEFDetailsShowPopupData1').html(popupText);
                         } else if (ui['value'].length === 0) {
@@ -279,74 +299,33 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'o
                     }
                 };
 
-                self.chartOptionChangeFactorsGroup2 = function (event, ui) {
-                    //console.log(ui);
-                    if (ui['option'] === 'highlightedCategories') {
-                        if (ui['value'].length > 0) {
-                            //alert('testi self.selectionValueChange = function(event, data) {');                            
-                            //console.log('Izvrsena selekcija linije na donjem dijagramu');
-                            $('#GEFGroup2DetailsShowPopup').ojPopup('open');
-                            $("#GEFGroup2DetailsShowPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
-                            $("#GEFGroup2DetailsShowPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
-                            var selectedGEF = "";
-                            if (ui['value'][0])
-                                selectedGEF = ui['value'][0];
-                            //console.log(ui['value'][0]);
-                            var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup2FactorsLineChart", ui['value'][0]);
 
-                            var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
-                                    "</b></h3>";
-                            closeGEFDetailsShowPopupScheduled = false;
-                            $('#GEFDetailsShowPopupData2').html(popupText);
-                        } else if (ui['value'].length === 0) {
-                            //close popup scheduled for 1.5 seconds
-                            closeGEFDetailsShowPopupScheduled = true;
-                            setTimeout(function (event) {
-                                if (closeGEFDetailsShowPopupScheduled) {
-                                    $('#GEFGroup2DetailsShowPopup').ojPopup('close');
-                                }
-                            }, 1500);
+                /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
+                self.handleAttached = function (info) {
+                    //console.log('handleAttached');                    
+
+                    /* Assign summary Show more/Show less  */
+                    $('#summary').css({height: '20px', overflow: 'hidden'});
+                    $('#showmore').on('click', function () {
+                        console.log("clicked");
+                        var $this = $("#summary");
+                        if ($this.data('open')) {
+                            $("#showmore").html("Read more");
+                            $this.animate({height: '20px'});
+                            $this.data('open', 0);
+
+                        } else {
+                            $("#showmore").html("Read less");
+                            $this.animate({height: '100%'});
+                            $this.data('open', 1);
+
                         }
-                    }
+                    });
+                    /*End: Assign summary Show more/Show less */
                 };
-
-
-                /*End: detectionGEFLineChart popup manipulation*/
-
-
-                /* polar chart - uradjen za prvu grupu i to za mesece M1 i M5 */
-                var lineSeriesPolar1 = [{name: groups[1], items: [lineSeries1[0].items[1], lineSeries1[1].items[1], lineSeries1[2].items[1], lineSeries1[3].items[1], lineSeries1[4].items[1], lineSeries1[5].items[1]], color: '#ED6647'},
-                    {name: groups[5], items: [lineSeries1[0].items[5], lineSeries1[1].items[5], lineSeries1[2].items[5], lineSeries1[3].items[5], lineSeries1[4].items[5], lineSeries1[5].items[5]], color: '#6DDBDB'}];
-                var lineGroupsPolar1 = lineSeries1; //grupe su nazivi serija linijskog dijagrama
-
-                self.stackValue = ko.observable('off');
-                self.typeValue = ko.observable('line');
-                self.polarGridShapeValue1 = ko.observable('polygon');
-                self.polarChartSeriesValue1 = ko.observableArray(lineSeriesPolar1);
-                self.polarChartGroupsValue1 = ko.observableArray(lineGroupsPolar1);
-
-                /* polar chart - uradjen za drugu grupu i to za mesece M1, M2 i M5 */
-                var lineSeriesPolar2 = [{name: groups[1], items: [lineSeries2[0].items[1], lineSeries2[1].items[1], lineSeries2[2].items[1], lineSeries2[3].items[1]], color: '#FAD55C'},
-                    {name: groups[2], items: [lineSeries2[0].items[2], lineSeries2[1].items[2], lineSeries2[2].items[2], lineSeries2[3].items[2]], color: '#8561C8'},
-                    {name: groups[5], items: [lineSeries2[0].items[5], lineSeries2[1].items[5], lineSeries2[2].items[5], lineSeries2[3].items[5]], color: '#1DDB1B'}];
-                var lineGroupsPolar2 = lineSeries2; //grupe su nazivi serija linijskog dijagrama
-
-                self.polarGridShapeValue2 = ko.observable('polygon');
-                self.polarChartSeriesValue2 = ko.observableArray(lineSeriesPolar2);
-                self.polarChartGroupsValue2 = ko.observableArray(lineGroupsPolar2);
-
-
-                self.nowrap = ko.observable(false);
+                /* End: handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
 
             }
-
-            var selectedCareRecipientId = oj.Router.rootInstance.retrieve();
-            return new graphicsContentViewModel(selectedCareRecipientId);
-        }
-
-
-);
-
-
-
-
+            var graphicsContentViewModel = new GraphicsContentViewModel();
+            return  graphicsContentViewModel;
+        });
