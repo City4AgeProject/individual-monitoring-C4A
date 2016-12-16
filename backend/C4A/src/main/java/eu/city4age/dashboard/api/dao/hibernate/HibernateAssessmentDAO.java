@@ -15,6 +15,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.domain.OrderBy;
+import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.model.TimeInterval;
 
@@ -57,49 +58,49 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 		}));
 	}
 
-	public List<GeriatricFactorValue> getAssessmentsForSelectedDataSet(final List<Long> geriatricFactorIds, final List<Boolean> status, final Short authorRoleId, final OrderBy orderBy) {
-		return castList(GeriatricFactorValue.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+	public List<Assessment> getAssessmentsForSelectedDataSet(final List<Long> geriatricFactorIds, final List<Boolean> status, final Short authorRoleId, final OrderBy orderBy) {
+		return castList(Assessment.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				StringBuilder sql = new StringBuilder("SELECT g FROM GeriatricFactorValue g INNER JOIN g.assessedGefValueSets AS assessedGefValueSets INNER JOIN  assessedGefValueSets.assessment AS assessment INNER JOIN assessment.assessmentAudienceRoles AS assessmentAudienceRoles WHERE g.id IN :geriatricFactorIds ");
+				StringBuilder sql = new StringBuilder("SELECT a FROM Assessment a INNER JOIN a.assessedGefValueSets AS assessedGefValueSets INNER JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue INNER JOIN a.assessmentAudienceRoles AS assessmentAudienceRoles WHERE geriatricFactorValue.id IN :geriatricFactorIds ");
 				if(status.get(0) && !status.get(1))
-					sql.append(" AND assessment.riskStatus = :riskWarning ");
+					sql.append(" AND a.riskStatus = :riskWarning ");
 				if(status.get(1) && !status.get(0))
-					sql.append(" AND assessment.riskStatus = :riskAlert ");
+					sql.append(" AND a.riskStatus = :riskAlert ");
 				if(status.get(0) && status.get(1))
-					sql.append(" AND (assessment.riskStatus = :riskWarning OR assessment.riskStatus = :riskAlert) ");
+					sql.append(" AND (a.riskStatus = :riskWarning OR a.riskStatus = :riskAlert) ");
 				if(status.get(2) && !status.get(3))
-					sql.append(" AND assessment.dataValidityStatus = :questionableData ");
+					sql.append(" AND a.dataValidityStatus = :questionableData ");
 				if(status.get(3) && !status.get(2))
-					sql.append(" AND assessment.dataValidityStatus = :faultyData ");
+					sql.append(" AND a.dataValidityStatus = :faultyData ");
 				if(status.get(2) && status.get(3))
-					sql.append(" AND (assessment.dataValidityStatus = :questionableData OR assessment.dataValidityStatus = :faultyData) ");
+					sql.append(" AND (a.dataValidityStatus = :questionableData OR a.dataValidityStatus = :faultyData) ");
 				if(status.get(4) && !status.get(0) && !status.get(1) && !status.get(2) && !status.get(3))
-					sql.append(" AND assessment.assessmentComment != NULL ");
+					sql.append(" AND a.assessmentComment != NULL ");
 				if(status.get(4) && (status.get(0) || !status.get(1) ||status.get(2) || status.get(3)))
-					sql.append(" OR assessment.assessmentComment != NULL ");
+					sql.append(" OR a.assessmentComment != NULL ");
 				if(authorRoleId != null)
-					sql.append(" AND assessment.userInRole.roleId = :userInRoleId ");
+					sql.append(" AND a.userInRole.roleId = :userInRoleId ");
 				if(orderBy != null)
 					sql.append(" ORDER BY ");
 		        switch (orderBy) {
 	            case DATE_ASC:  
-	            	sql.append(" assessment.created ASC ");
+	            	sql.append(" a.created ASC ");
 	                     break;
 	            case DATE_DESC:  
-	            	sql.append(" assessment.created DESC ");
+	            	sql.append(" a.created DESC ");
 	                     break;
 	            case AUTHOR_NAME_ASC:  
-	            	sql.append(" assessment.userInRole.userInSystem.id ASC ");
+	            	sql.append(" a.userInRole.userInSystem.id ASC ");
 	                     break;
 	            case AUTHOR_NAME_DESC:  
-	            	sql.append(" assessment.userInRole.userInSystem.id DESC ");
+	            	sql.append(" a.userInRole.userInSystem.id DESC ");
 	                     break;
 	            case AUTHOR_ROLE_ASC:  
-	            	sql.append(" assessment.userInRole.roleId ASC ");
+	            	sql.append(" a.userInRole.roleId ASC ");
 	                     break;
 	            case AUTHOR_ROLE_DESC:  
-	            	sql.append(" assessment.userInRole.roleId DESC ");
+	            	sql.append(" a.userInRole.roleId DESC ");
 	                     break;
 		        }
 				Query q = session.createQuery(sql.toString());

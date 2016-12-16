@@ -135,10 +135,10 @@ public class AssessmentsService {
     	
     	GetAssessmentsByFilterWrapper data = objectReader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
-    	List<GeriatricFactorValue> gefs = assessmentDAO.getAssessmentsForSelectedDataSet(
+    	List<Assessment> ass = assessmentDAO.getAssessmentsForSelectedDataSet(
     						data.getGeriatricFactorValueIds(), data.getStatus(), data.getAuthorRoleId(), data.getOrderBy());
 
-		String dtoAsString = objectMapper.writeValueAsString(gefs);
+		String dtoAsString = objectMapper.writeValueAsString(ass);
         
         return dtoAsString;
     }
