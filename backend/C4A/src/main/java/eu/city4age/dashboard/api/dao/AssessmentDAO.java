@@ -13,7 +13,7 @@ import eu.city4age.dashboard.api.model.TimeInterval;
  */
 public interface AssessmentDAO extends BaseDAO {
 
-	List<TimeInterval> getDiagramDataForUserInRoleId(final Integer crId, final Short dvParentId, final Timestamp start, final Timestamp end);
+	List<TimeInterval> getDiagramDataForUserInRoleId(final Long crId, final Long dvParentId, final Timestamp start, final Timestamp end);
 
 	List<TimeInterval> getLastFiveAssessmentsForDiagram(final Integer crId, final Timestamp start, final Timestamp end);
 

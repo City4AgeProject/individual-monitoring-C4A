@@ -21,10 +21,10 @@
         <property name="validTo" type="timestamp">
             <column name="valid_to" length="29" />
         </property>
-
-        <property name="userInSystemId" type="java.lang.Integer">
+        
+        <many-to-one name="userInSystem" class="UserInSystem" fetch="select">
             <column name="user_in_system_id" />
-        </property>
+        </many-to-one>
 
         <property name="roleId" type="java.lang.Short">
             <column name="role_id" />

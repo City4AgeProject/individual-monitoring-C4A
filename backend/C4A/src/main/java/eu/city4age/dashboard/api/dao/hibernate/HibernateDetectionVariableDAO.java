@@ -18,22 +18,22 @@ public class HibernateDetectionVariableDAO extends HibernateBaseDAO implements D
 	@Autowired
 	protected SessionFactory sessionFactory;
 
-	public List<String> getAllDetectionVariableNamesForParentId(final Short parentId) {
+	public List<String> getAllDetectionVariableNamesForParentId(final Long parentId) {
 		return castList(String.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT dv.detectionVariableName FROM CdDetectionVariable AS dv WHERE dv.parentId = :parentId");
+				Query q = session.createQuery("SELECT dv.detectionVariableName FROM CdDetectionVariable AS dv WHERE dv.derivedDetectionVariable.id = :parentId");
 				q.setParameter("parentId", parentId);
 				return q.list();
 			}
 		}));
 	}
 	
-	public List<CdDetectionVariable> getAllDetectionVariableNames(final Short parentId) {
+	public List<CdDetectionVariable> getAllDetectionVariableNames(final Long parentId) {
 		return castList(CdDetectionVariable.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT dv.detectionVariableName FROM CdDetectionVariable AS dv WHERE dv.parentId = :parentId");
+				Query q = session.createQuery("SELECT dv.detectionVariableName FROM CdDetectionVariable AS dv WHERE dv.derivedDetectionVariable.id = :parentId");
 				q.setParameter("parentId", parentId);
 				return q.list();
 			}

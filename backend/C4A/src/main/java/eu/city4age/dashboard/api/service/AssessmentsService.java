@@ -75,7 +75,7 @@ public class AssessmentsService {
     	
     	DiagramDataDTO dto = new DiagramDataDTO();
     	
-    	List<Object[]> months = timeIntervalDAO.getTimeIntervalsForPeriod(start, end);
+    	List<TimeInterval> months = timeIntervalDAO.getTimeIntervalsForPeriod(start, end);
     	
     	List<String> monthLabels = createMonthLabels(months);
     	
@@ -85,7 +85,7 @@ public class AssessmentsService {
     	
 		dto.setGefLabels(gefLables);
     	
-    	List<TimeInterval> tis = assessmentDAO.getDiagramDataForUserInRoleId(data.getCrId(), data.getDvParentId(), start, end);
+    	List<TimeInterval> tis = assessmentDAO.getDiagramDataForUserInRoleId(Long.valueOf(data.getCrId()), Long.valueOf(data.getDvParentId()), start, end);
     	
     	dto.setTis(tis);
 		
@@ -208,11 +208,11 @@ public class AssessmentsService {
     }
 
 	
-	private List<String> createMonthLabels(List<Object[]> months) {
+	private List<String> createMonthLabels(List<TimeInterval> months) {
 		List<String> monthLabels = new ArrayList<String>();
     	
     	for (int i = 0; i < months.size() ; i++) {
-    		monthLabels.add(((Timestamp)months.get(i)[0]).toString());
+    		monthLabels.add(months.get(i).getStart());
     	}
 
 		return monthLabels;

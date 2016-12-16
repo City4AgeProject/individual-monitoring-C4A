@@ -46,6 +46,10 @@ public class HibernateBaseDAO extends HibernateDaoSupport implements BaseDAO {
 	      r.add(clazz.cast(o));
 	    return r;
 	}
+	
+	public <T> T cast(Class<? extends T> clazz, T o) {
+		return clazz.cast(o);
+	}
 
 	public void delete(AbstractBaseEntity entity) {
 		getHibernateTemplate().delete(entity);

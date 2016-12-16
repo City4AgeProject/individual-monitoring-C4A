@@ -15,10 +15,8 @@ import java.util.Set;
 public class CdDetectionVariable extends AbstractBaseEntity {
 
 	private String detectionVariableName;
-	private String detectionVariableType;
 	private Date validFrom;
 	private Date validTo;
-	private Short parentId;
 	
 	private BigDecimal derivationWeight;
 	
@@ -27,21 +25,25 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 	private Set numericIndicatorValues = new HashSet(0);
 	
 	private Set<Pilot> pilots = new HashSet<Pilot>();
+	
+	private CdDetectionVariable derivedDetectionVariable;
+	
+	private  CdDetectionVariableType detectionVariableType;
 
 	public CdDetectionVariable() {
 	}
 
-	public CdDetectionVariable(String detectionVariableName, String detectionVariableType, Date validFrom,
-			Date validTo, Short parentId, BigDecimal derivationWeight, Set variationMeasureValues, Set cdPilotDetectionVariables,
-			Set numericIndicatorValues) {
+	public CdDetectionVariable(String detectionVariableName, CdDetectionVariableType detectionVariableType, Date validFrom,
+			Date validTo, BigDecimal derivationWeight, Set variationMeasureValues, Set cdPilotDetectionVariables,
+			Set numericIndicatorValues, CdDetectionVariable derivedDetectionVariable) {
 		this.detectionVariableName = detectionVariableName;
 		this.detectionVariableType = detectionVariableType;
 		this.validFrom = validFrom;
 		this.validTo = validTo;
-		this.parentId = parentId;
 		this.variationMeasureValues = variationMeasureValues;
 		this.cdPilotDetectionVariables = cdPilotDetectionVariables;
 		this.numericIndicatorValues = numericIndicatorValues;
+		this.derivedDetectionVariable = derivedDetectionVariable;
 	}
 
 	public String getDetectionVariableName() {
@@ -52,11 +54,11 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 		this.detectionVariableName = detectionVariableName;
 	}
 
-	public String getDetectionVariableType() {
-		return this.detectionVariableType;
+	public CdDetectionVariableType getDetectionVariableType() {
+		return detectionVariableType;
 	}
 
-	public void setDetectionVariableType(String detectionVariableType) {
+	public void setDetectionVariableType(CdDetectionVariableType detectionVariableType) {
 		this.detectionVariableType = detectionVariableType;
 	}
 
@@ -76,12 +78,12 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 		this.validTo = validTo;
 	}
 
-	public Short getParentId() {
-		return this.parentId;
+	public CdDetectionVariable getDerivedDetectionVariable() {
+		return derivedDetectionVariable;
 	}
 
-	public void setParentId(Short parentId) {
-		this.parentId = parentId;
+	public void setDerivedDetectionVariable(CdDetectionVariable derivedDetectionVariable) {
+		this.derivedDetectionVariable = derivedDetectionVariable;
 	}
 
 	public Set getVariationMeasureValues() {
@@ -122,6 +124,10 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 
 	public void setDerivationWeight(BigDecimal derivationWeight) {
 		this.derivationWeight = derivationWeight;
+	}
+
+	public CdDetectionVariable getDerivedDetectionVariableId() {
+		return this.derivedDetectionVariable;
 	}
 	
 }

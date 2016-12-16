@@ -32,7 +32,7 @@ public class AssessmentDAOTest extends UnitilsJUnit4  {
 		Timestamp start = Timestamp.valueOf("2015-01-01 00:00:00");
 		Timestamp end = Timestamp.valueOf("2018-01-01 00:00:00");
 		
-		List<TimeInterval> result = assessmentDAO.getDiagramDataForUserInRoleId(1, Short.valueOf("1"), start, end);
+		List<TimeInterval> result = assessmentDAO.getDiagramDataForUserInRoleId(1L, 1L, start, end);
 		
 		Assert.assertNotNull(result);
 
