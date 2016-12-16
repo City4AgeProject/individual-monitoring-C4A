@@ -75,7 +75,6 @@ function Assessment() {
     this.dataValidity = '';
     this.dataValidityDesc = '';
     this.dataValidityImage = '';
-    
 };
 
 Assessment.prototype.formatDateAndTimeText = function() {
@@ -94,7 +93,7 @@ Assessment.prototype.formatRiskStatusDescAndImage = function () {
         this.dataValidityDesc = 'Valid data';
         this.dataValidityImage = 'images/valid_data.png';
     }
-}
+};
 
 Assessment.prototype.formatValidityDataDescAndImage = function () {
     if('A' === this.riskStatus){
@@ -104,7 +103,7 @@ Assessment.prototype.formatValidityDataDescAndImage = function () {
         this.riskStatusDesc = 'Warning status';
         this.riskStatusImage = 'images/risk_warning.png';
     }
-}
+};
 
 Assessment.prototype.shortenComment = function() {
     return this.shortComment = shortenText(this.comment, 27);
@@ -114,7 +113,7 @@ Assessment.prototype.formatAssessmentData = function () {
     this.formatRiskStatusDescAndImage();
     this.formatValidityDataDescAndImage();
     this.shortenComment();
-}
+};
 
 
 
