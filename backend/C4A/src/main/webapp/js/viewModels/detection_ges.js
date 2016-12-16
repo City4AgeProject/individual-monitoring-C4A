@@ -1,14 +1,14 @@
-define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
+define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout','ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 'urls','entities'],
-        function (oj, ko, $) {
+        function (oj, ko, $, sp) {
 
 
             function detectionGesContentViewModel() {
 
                 
                 var self = this;
-                
+                var url = sp.baseUrl + sp.groupsMethod;
                  // Server interaction callbacks
                 var loadSucessCallback = function (data) {
                     var countMonths = data.monthLabels.length;
@@ -59,12 +59,40 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                     console.log(error);
                 };
                 
+                function createItems(id, value) {
+                    return {id: id,
+                        value: value
+                    };
+                }
+                
+                var loadDiagramDataCallback = function (data) {
+                     $.each(data.itemList, function (i, list) {
+                                var nodes = [];
+                                $.each(list.items[0].itemList, function (j, itemList) {
+                                    nodes.push(createItems(list.items[0].idList[j], itemList));
+                                });
+                                self.seriesValue.push({
+                                    name: list.items[0].groupName,
+                                    items: nodes
+                                });
+                            });
+                        
+
+                    $.each(data.itemList[0].items[0].dateList, function (j, dateItem) {
+                        self.groupsValue.push(dateItem);
+                    });
+                   
+                };
                 
                 var loadDataSet = function(data) {
                     //TODO: remove hardcoded values when real data available
-                    var jqXHR = $.postJSON(ASSESSMENTS_DIAGRAM_DATA,
-                        JSON.stringify({timestampStart:'2016-01-01 00:00:00',timestampEnd:'2017-01-01 00:00:00',crId:1,dvParentId:4})
-                        , loadSucessCallback);
+//                    var jqXHR = $.postJSON(ASSESSMENTS_DIAGRAM_DATA,
+//                        JSON.stringify({timestampStart:'2016-01-01 00:00:00',timestampEnd:'2017-01-01 00:00:00',crId:1,dvParentId:4})
+//                        , loadSucessCallback);
+//                    jqXHR.fail(serverErrorCallback);
+                    
+                    var jqXHR = $.getJSON(url + "?careReceiverId=1" + "&parentFactorId=4",
+                         loadDiagramDataCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
                 };
@@ -87,6 +115,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                             if(!Assessment.arrayContains(assessmentsResult, newAssessment))
                                 assessmentsResult.push(newAssessment);
                         }
+                        
                         self.selectedAnotations(assessmentsResult);
                         self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
                     });
