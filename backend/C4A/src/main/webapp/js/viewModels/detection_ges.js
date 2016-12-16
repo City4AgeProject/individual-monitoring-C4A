@@ -63,7 +63,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 var loadDataSet = function(data) {
                     //TODO: remove hardcoded values when real data available
                     var jqXHR = $.postJSON(ASSESSMENTS_DIAGRAM_DATA,
-                        "{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"crId\":1,\"dvParentId\":4}" 
+                        JSON.stringify({timestampStart:'2016-01-01 00:00:00',timestampEnd:'2017-01-01 00:00:00',crId:1,dvParentId:4})
                         , loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
