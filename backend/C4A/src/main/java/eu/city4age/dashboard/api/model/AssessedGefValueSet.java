@@ -18,10 +18,8 @@ public class AssessedGefValueSet implements Serializable {
 
 	private AssessedGefValueSetId assessedGefValueSetId;
 
-	@JsonManagedReference
 	private Assessment assessment;
 	
-	@JsonBackReference
 	private GeriatricFactorValue geriatricFactorValue;
 
 	public AssessedGefValueSet() {

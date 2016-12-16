@@ -2,6 +2,8 @@ package eu.city4age.dashboard.api.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Glavna klasa za nasledjivanje domenskih objekta.
  *
@@ -24,6 +26,7 @@ public abstract class AbstractBaseEntity implements Serializable {
         this.id = id;
     }
 
+    @JsonIgnore
     public boolean isWithoutId() {
             return (this.id == null || this.id.equals(0L));
     }

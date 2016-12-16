@@ -22,7 +22,6 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 
 	private BigDecimal gefValue;
 	
-	@JsonBackReference
 	private TimeInterval timeInterval;
 	
 	private CdDetectionVariable cdDetectionVariable;
@@ -35,7 +34,6 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 	
 	private Set<NumericIndicatorValue> numericIndicatorValues = new HashSet<NumericIndicatorValue>();
 
-	@JsonManagedReference 
 	private Set<AssessedGefValueSet> assessedGefValueSets = new HashSet<AssessedGefValueSet>();
 	
 	@Transient
