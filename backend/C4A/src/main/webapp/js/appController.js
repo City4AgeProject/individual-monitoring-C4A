@@ -20,7 +20,8 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
 //        'people': {label: 'People'},
 //        'library': {label: 'Library'},
                     'detection_ges': {label: 'Detection GES'},
-                    'detection_gef': {label: 'Detection GEF'}
+                    'detection_gef': {label: 'Detection GEF'},
+                    'detection_ges_mil': {label: 'Detection GEF mil'}
                 });
                 oj.Router.defaults['urlAdapter'] = new oj.Router.urlParamAdapter();
 
