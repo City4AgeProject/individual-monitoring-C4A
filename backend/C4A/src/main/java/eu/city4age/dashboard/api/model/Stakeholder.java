@@ -3,6 +3,8 @@ package eu.city4age.dashboard.api.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Stakeholder implements Serializable {
 	
 	
@@ -12,8 +14,10 @@ public class Stakeholder implements Serializable {
 	
 	private String stakeholderDescription;
 	
+	@JsonIgnore
 	private Timestamp validFrom;
 	
+	@JsonIgnore
 	private Timestamp validTo;
 
 	
