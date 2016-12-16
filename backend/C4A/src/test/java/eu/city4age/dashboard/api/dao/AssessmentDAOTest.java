@@ -13,7 +13,7 @@ import org.unitils.spring.annotation.SpringApplicationContext;
 import org.unitils.spring.annotation.SpringBean;
 
 import eu.city4age.dashboard.api.domain.OrderBy;
-import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.Assessment;
 import eu.city4age.dashboard.api.model.TimeInterval;
 
 @SpringApplicationContext("classpath:test-context-dao.xml")
@@ -77,7 +77,7 @@ public class AssessmentDAOTest extends UnitilsJUnit4  {
 		gefIds.add(3L);
 
 		Short roleId = Short.valueOf("1");
-		List<GeriatricFactorValue> result = assessmentDAO.getAssessmentsForSelectedDataSet(gefIds, status, roleId, OrderBy.AUTHOR_ROLE_ASC);
+		List<Assessment> result = assessmentDAO.getAssessmentsForSelectedDataSet(gefIds, status, roleId, OrderBy.AUTHOR_ROLE_ASC);
 		
 		Assert.assertNotNull(result);
 		Assert.assertEquals(0, result.size());
