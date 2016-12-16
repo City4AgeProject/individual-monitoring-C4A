@@ -62,7 +62,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 
                 var loadDataSet = function(data) {
                     //TODO: remove hardcoded values when real data available
-                    var jqXHR = $.postJSON(ASSESSMENTS_DIAGRAM_DATA,"{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"crId\":1,\"dvParentId\":4}" , loadSucessCallback);
+                    var jqXHR = $.postJSON(ASSESSMENTS_DIAGRAM_DATA,
+                        "{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"crId\":1,\"dvParentId\":4}" 
+                        , loadSucessCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
                 };
@@ -446,6 +448,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout','ojs/ojmodule','ojs
                 self.rolesCollection(new role());
                 self.rolesCollection().fetch({
                     data: "{\"stakeholderAbbr\":\"GES\"}", 
+                    contentType: 'application/json',
                     type: 'POST',
                     success: function (collection, response, options) {
                         if(self.roleTags.length === 0) {
