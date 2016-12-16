@@ -8,7 +8,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
 
                 
                 var self = this;
-                var url = sp.baseUrl + sp.groupsMethod;
+                var url = sp.baseUrl + sp.diagramDataMethod;
                  // Server interaction callbacks
                 var loadSucessCallback = function (data) {
                     var countMonths = data.monthLabels.length;
