@@ -9,51 +9,51 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 
                 var self = this;
                 var url = sp.baseUrl + sp.diagramDataMethod;
-                 // Server interaction callbacks
-                var loadSucessCallback = function (data) {
-                    var countMonths = data.monthLabels.length;
-                    var countGefs = data.gefLabels.length;
-
-                    var nullfill=[];
-
-                    var series = [];
-
-                    groups = data.monthLabels;
-
-                    for (i = 0; i < countGefs; i++) {
-                        nullfill=[],j=0;for(;j<countMonths;)nullfill[j++]=null;
-                        var s = new Serie();
-                        s.name = data.gefLabels[i];
-                        s.items = nullfill;
-                        series[i] = s;
-                    }
-
-                    for (i = 0; i < series.length; i++) {
-                        for (j = 0; j < groups.length; j++) {
-                                for (k = 0; k < data.gefs.length; k++) {    	    			
-                                         if((data.gefs[k].cdDetectionVariable.detectionVariableName == series[i].name) && (data.gefs[k].timeInterval.start == groups[j])) {
-                                                var newItem = new Item();
-                                                newItem.id = data.gefs[k].id;
-                                                newItem.value = data.gefs[k].gefValue;
-                                                series[i].items[j] = 	newItem;                	    					 
-                                         } 
-                                 }
-                        }
-                    }
-                    
-                    self.groupsValue(groups);
-                    self.seriesValue(series);
-                    
-                    var chartPointsIds = [];
-                    var pointIds = [];
-                    for (var i = 0; i < series.length ;  i++) {
-                        for (var j = 0; j < series[i].items.length;  j++) {
-                            chartPointsIds.push( series[i].items[j]);
-                            pointIds.push(series[i].items[j].id);
-                        }
-                    }
-                    loadAssessmentsCached({geriatricFactorValueIds : pointIds});
-                };
+                 
+//                var loadSucessCallback = function (data) {
+//                    var countMonths = data.monthLabels.length;
+//                    var countGefs = data.gefLabels.length;
+//
+//                    var nullfill=[];
+//
+//                    var series = [];
+//
+//                    groups = data.monthLabels;
+//
+//                    for (i = 0; i < countGefs; i++) {
+//                        nullfill=[],j=0;for(;j<countMonths;)nullfill[j++]=null;
+//                        var s = new Serie();
+//                        s.name = data.gefLabels[i];
+//                        s.items = nullfill;
+//                        series[i] = s;
+//                    }
+//
+//                    for (i = 0; i < series.length; i++) {
+//                        for (j = 0; j < groups.length; j++) {
+//                                for (k = 0; k < data.gefs.length; k++) {    	    			
+//                                         if((data.gefs[k].cdDetectionVariable.detectionVariableName == series[i].name) && (data.gefs[k].timeInterval.start == groups[j])) {
+//                                                var newItem = new Item();
+//                                                newItem.id = data.gefs[k].id;
+//                                                newItem.value = data.gefs[k].gefValue;
+//                                                series[i].items[j] = 	newItem;                	    					 
+//                                         } 
+//                                 }
+//                        }
+//                    }
+//                    
+//                    self.groupsValue(groups);
+//                    self.seriesValue(series);
+//                    
+//                    var chartPointsIds = [];
+//                    var pointIds = [];
+//                    for (var i = 0; i < series.length ;  i++) {
+//                        for (var j = 0; j < series[i].items.length;  j++) {
+//                            chartPointsIds.push( series[i].items[j]);
+//                            pointIds.push(series[i].items[j].id);
+//                        }
+//                    }
+//                    loadAssessmentsCached({geriatricFactorValueIds : pointIds});
+//                };
                 
                 var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
@@ -66,7 +66,9 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 }
                 
                 var loadDiagramDataCallback = function (data) {
-                     $.each(data.itemList, function (i, list) {
+                     self.seriesValue([]);
+                     self.groupsValue([]);
+                    $.each(data.itemList, function (i, list) {
                                 var nodes = [];
                                 $.each(list.items[0].itemList, function (j, itemList) {
                                     nodes.push(createItems(list.items[0].idList[j], itemList));
@@ -81,7 +83,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     $.each(data.itemList[0].items[0].dateList, function (j, dateItem) {
                         self.groupsValue.push(dateItem);
                     });
-                   
+                    //TODO : here load assessment on chart
                 };
                 
                 var loadDataSet = function(data) {
