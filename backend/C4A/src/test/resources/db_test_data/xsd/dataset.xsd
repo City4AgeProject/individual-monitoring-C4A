@@ -10,8 +10,8 @@
 				<xsd:element name="cd_detection_variable_type" type="dflt:cd_detection_variable_type__type" />
 				<xsd:element name="cd_role" type="dflt:cd_role__type" />
 				<xsd:element name="dbmaintain_scripts" type="dflt:dbmaintain_scripts__type" />
-				<xsd:element name="stakeholder" type="dflt:stakeholder__type" />
 				<xsd:element name="time_interval" type="dflt:time_interval__type" />
+				<xsd:element name="stakeholder" type="dflt:stakeholder__type" />
 				<xsd:element name="frailty_status_timeline" type="dflt:frailty_status_timeline__type" />
 				<xsd:element name="eam" type="dflt:eam__type" />
 				<xsd:element name="assessment" type="dflt:assessment__type" />

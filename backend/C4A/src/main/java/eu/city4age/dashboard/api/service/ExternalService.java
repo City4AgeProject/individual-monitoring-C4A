@@ -21,7 +21,6 @@ import eu.city4age.dashboard.api.dao.ExternalDAO;
 import eu.city4age.dashboard.api.external.C4AGroupsResponse;
 import eu.city4age.dashboard.api.external.C4ServiceGetOverallScoreListResponse;
 import eu.city4age.dashboard.api.model.CdDetectionVariable;
-import eu.city4age.dashboard.api.model.FrailtyStatusTimeline;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 
 @Transactional("transactionManager")
@@ -32,8 +31,6 @@ public class ExternalService {
 	
 	@Autowired
 	private ExternalDAO externalDAO;
-	
-	private List<String> dateList;
 	
     @GET
     @Path("/getGroups")
@@ -113,11 +110,6 @@ public class ExternalService {
         return dtoAsString;
 
     }//end method
-
-	public void setDateList(List<String> dateList) {
-		this.dateList = dateList;
-	}
-    
 
 
 }

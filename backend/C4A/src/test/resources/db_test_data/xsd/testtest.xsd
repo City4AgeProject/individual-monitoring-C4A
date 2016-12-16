@@ -6,8 +6,8 @@
 	<xsd:element name="cd_detection_variable_type" type="cd_detection_variable_type__type" />
 	<xsd:element name="cd_role" type="cd_role__type" />
 	<xsd:element name="dbmaintain_scripts" type="dbmaintain_scripts__type" />
-	<xsd:element name="stakeholder" type="stakeholder__type" />
 	<xsd:element name="time_interval" type="time_interval__type" />
+	<xsd:element name="stakeholder" type="stakeholder__type" />
 	<xsd:element name="frailty_status_timeline" type="frailty_status_timeline__type" />
 	<xsd:element name="eam" type="eam__type" />
 	<xsd:element name="assessment" type="assessment__type" />
@@ -71,18 +71,18 @@
 		<xsd:attribute name="version" use="optional" />
 		<xsd:attribute name="succeeded" use="optional" />
 	</xsd:complexType>
+	<xsd:complexType name="time_interval__type">
+		<xsd:attribute name="interval_end" use="optional" />
+		<xsd:attribute name="typical_period" use="optional" />
+		<xsd:attribute name="id" use="optional" />
+		<xsd:attribute name="interval_start" use="optional" />
+	</xsd:complexType>
 	<xsd:complexType name="stakeholder__type">
 		<xsd:attribute name="stakeholder_abbreviation" use="optional" />
 		<xsd:attribute name="stakeholder_name" use="optional" />
 		<xsd:attribute name="valid_to" use="optional" />
 		<xsd:attribute name="valid_from" use="optional" />
 		<xsd:attribute name="stakeholder_description" use="optional" />
-	</xsd:complexType>
-	<xsd:complexType name="time_interval__type">
-		<xsd:attribute name="interval_end" use="optional" />
-		<xsd:attribute name="typical_period" use="optional" />
-		<xsd:attribute name="id" use="optional" />
-		<xsd:attribute name="interval_start" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="frailty_status_timeline__type">
 		<xsd:attribute name="frailty_notice" use="optional" />

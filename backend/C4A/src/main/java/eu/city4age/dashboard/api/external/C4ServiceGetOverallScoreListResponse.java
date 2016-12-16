@@ -63,26 +63,36 @@ public class C4ServiceGetOverallScoreListResponse {
 		Serie frail = new Serie("Frail", new ArrayList<eu.city4age.dashboard.api.external.DataIdValue>());
 		Serie fit = new Serie("Fit", new ArrayList<eu.city4age.dashboard.api.external.DataIdValue>());
 
-		for(int i = 0; i < fs.size(); i++) {
+		int i = 0;
+		for(FrailtyStatusTimeline frailty:fs) {
 			
-			switch(fs.get(i).getCdFrailtyStatus().getFrailtyStatus()) {
-
-				case "Pre-frail":
-					preFrail.getItems().add(i, new eu.city4age.dashboard.api.external.DataIdValue(fs.get(i).getId(), 0.1));
-					break;
-				case "Frail":
-					frail.getItems().add(i, new eu.city4age.dashboard.api.external.DataIdValue(fs.get(i).getId(), 0.1));
-					break;
-				case "Fit":
-					fit.getItems().add(i, new eu.city4age.dashboard.api.external.DataIdValue(fs.get(i).getId(), 0.1));
-					break;
-				default:
-					preFrail.getItems().add(i, new eu.city4age.dashboard.api.external.DataIdValue(fs.get(i).getId(), null));
-					frail.getItems().add(i, new eu.city4age.dashboard.api.external.DataIdValue(fs.get(i).getId(), null));
-					fit.getItems().add(i, new eu.city4age.dashboard.api.external.DataIdValue(fs.get(i).getId(), null));
+			if(frailty != null && frailty.getCdFrailtyStatus() != null) {
+				switch(frailty.getCdFrailtyStatus().getFrailtyStatus()) {
 	
+					case "Pre-frail":
+						preFrail.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), 0.1));
+						frail.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), null));
+						fit.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), null));
+						break;
+					case "Frail":
+						frail.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), 0.1));
+						preFrail.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), null));
+						fit.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), null));
+						break;
+					case "Fit":
+						fit.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), 0.1));
+						preFrail.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), null));
+						frail.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), null));
+						break;
+					default:
+						preFrail.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), null));
+						frail.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), null));
+						fit.getItems().add(new eu.city4age.dashboard.api.external.DataIdValue(frailty.getTimeInterval().getId(), null));
+						break;
+		
+				}	
 			}
-
+			i++;
 		}
 
 		dto.getSeries().add(preFrail);
