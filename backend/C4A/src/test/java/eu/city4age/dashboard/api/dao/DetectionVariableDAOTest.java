@@ -19,7 +19,7 @@ public class DetectionVariableDAOTest extends UnitilsJUnit4  {
 	@DataSet({"DetectionVariableDAOTest.xml"})
 	public void testGetDiagramDataForUserInRoleId() throws Exception {
 		
-		List<String> result = detectionVariableDAO.getAllDetectionVariableNamesForParentId(Short.valueOf("1"));
+		List<String> result = detectionVariableDAO.getAllDetectionVariableNamesForParentId(1L);
 		
 		Assert.assertNotNull(result);
 		

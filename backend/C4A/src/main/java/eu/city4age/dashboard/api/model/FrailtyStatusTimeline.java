@@ -14,7 +14,6 @@ public class FrailtyStatusTimeline extends AbstractBaseEntity {
 	private TimeInterval timeInterval;
 	private UserInRole userInRole;
 	private UserInRole changedBy;
-	private String frailtyStatus;
 	private String frailtyNotice;
 	private Date changed;
 	private CdFrailtyStatus cdFrailtyStatus;
@@ -33,20 +32,16 @@ public class FrailtyStatusTimeline extends AbstractBaseEntity {
 	}
 
 
-	public FrailtyStatusTimeline(TimeInterval timeInterval, UserInRole userInRole, UserInRole changedBy,
-			String frailtyStatus) {
+	public FrailtyStatusTimeline(TimeInterval timeInterval, UserInRole userInRole, UserInRole changedBy) {
 		this.timeInterval = timeInterval;
 		this.userInRole = userInRole;
 		this.changedBy = changedBy;
-		this.frailtyStatus = frailtyStatus;
 	}
 
-	public FrailtyStatusTimeline(TimeInterval timeInterval, UserInRole userInRole, UserInRole changedBy,
-			String frailtyStatus, String frailtyNotice) {
+	public FrailtyStatusTimeline(TimeInterval timeInterval, UserInRole userInRole, UserInRole changedBy, String frailtyNotice) {
 		this.timeInterval = timeInterval;
 		this.userInRole = userInRole;
 		this.changedBy = changedBy;
-		this.frailtyStatus = frailtyStatus;
 		this.frailtyNotice = frailtyNotice;
 	}
 
@@ -73,15 +68,6 @@ public class FrailtyStatusTimeline extends AbstractBaseEntity {
 
 	public void setChangedBy(UserInRole changedBy) {
 		this.changedBy = changedBy;
-	}
-
-
-	public String getFrailtyStatus() {
-		return this.frailtyStatus;
-	}
-
-	public void setFrailtyStatus(String frailtyStatus) {
-		this.frailtyStatus = frailtyStatus;
 	}
 
 	public String getFrailtyNotice() {

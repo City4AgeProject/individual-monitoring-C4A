@@ -31,6 +31,7 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(eu.city4age.dashboard.api.service.AssessmentsService.class);
         resources.add(eu.city4age.dashboard.api.service.CodeListService.class);
+        resources.add(eu.city4age.dashboard.api.service.ExternalService.class);
     }
     
 }

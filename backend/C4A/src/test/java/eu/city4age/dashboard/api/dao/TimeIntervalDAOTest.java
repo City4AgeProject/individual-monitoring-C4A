@@ -10,6 +10,8 @@ import org.unitils.dbunit.annotation.DataSet;
 import org.unitils.spring.annotation.SpringApplicationContext;
 import org.unitils.spring.annotation.SpringBean;
 
+import eu.city4age.dashboard.api.model.TimeInterval;
+
 @SpringApplicationContext("classpath:test-context-dao.xml")
 public class TimeIntervalDAOTest extends UnitilsJUnit4  {
 	
@@ -23,13 +25,13 @@ public class TimeIntervalDAOTest extends UnitilsJUnit4  {
 		Timestamp start = Timestamp.valueOf("2016-01-01 00:00:00");
 		Timestamp end = Timestamp.valueOf("2016-04-01 00:00:00");
 		
-		List<Object[]> result = timeIntervalDAO.getTimeIntervalsForPeriod(start, end);
+		List<TimeInterval> result = timeIntervalDAO.getTimeIntervalsForPeriod(start, end);
 		
 		Assert.assertNotNull(result);
 		
 		Assert.assertEquals(3, result.size());
 		
-		Assert.assertEquals(Timestamp.valueOf("2016-01-01 00:00:00.0"), result.get(0)[0]);
+		Assert.assertEquals("2016-01-01 00:00:00.0", result.get(0).getStart());
 	}
 	
 

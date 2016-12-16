@@ -13,10 +13,10 @@
         <property name="detectionVariableName" type="string">
             <column name="detection_variable_name" length="100" />
         </property>
-        
-        <property name="detectionVariableType" type="string">
-            <column name="detection_variable_type" length="3" />
-        </property>
+ 
+        <many-to-one name="detectionVariableType" class="CdDetectionVariableType" fetch="select">
+            <column name="detection_variable_type" />
+        </many-to-one>
         
         <property name="validFrom" type="timestamp">
             <column name="valid_from" length="29" />
@@ -25,10 +25,10 @@
         <property name="validTo" type="timestamp">
             <column name="valid_to" length="29" />
         </property>
-        
-        <property name="parentId" type="java.lang.Short">
+      
+        <many-to-one name="derivedDetectionVariable" class="CdDetectionVariable" fetch="select">
             <column name="derived_detection_variable_id" />
-        </property>
+        </many-to-one>
         
         <property name="derivationWeight" type="big_decimal">
             <column name="derivation_weight" precision="3" />

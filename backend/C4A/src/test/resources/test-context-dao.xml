@@ -105,4 +105,14 @@
 		</property>
 	</bean>
 	
+	<bean id="externalDAO" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager"><ref bean="transactionManager"/></property>
+		<property name="target">
+			<bean class="eu.city4age.dashboard.api.dao.hibernate.HibernateExternalDAO" parent="baseDAOTarget"/>
+		</property>
+		<property name="transactionAttributes">
+			<props><prop key="*">PROPAGATION_REQUIRED</prop></props>
+		</property>
+	</bean>
+	
 </beans>

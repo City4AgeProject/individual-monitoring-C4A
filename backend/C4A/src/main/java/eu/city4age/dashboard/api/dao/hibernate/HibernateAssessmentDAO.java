@@ -27,11 +27,11 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 	@Autowired
 	protected SessionFactory sessionFactory;
     
-	public List<TimeInterval> getDiagramDataForUserInRoleId(final Integer crId, final Short dvParentId, final Timestamp start, final Timestamp end) {
+	public List<TimeInterval> getDiagramDataForUserInRoleId(final Long crId, final Long dvParentId, final Timestamp start, final Timestamp end) {
 		return castList(TimeInterval.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT ti FROM TimeInterval ti LEFT JOIN ti.geriatricFactorValues AS geriatricFactorValues INNER JOIN geriatricFactorValues.cdDetectionVariable AS cdDetectionVariable WHERE geriatricFactorValues.userInRoleId = :userInRoleId AND cdDetectionVariable.parentId = :parentId AND ti.intervalStart >= :start AND ti.intervalEnd <= :end");
+				Query q = session.createQuery("SELECT ti FROM TimeInterval ti LEFT JOIN ti.geriatricFactorValues AS geriatricFactorValues INNER JOIN geriatricFactorValues.cdDetectionVariable AS cdDetectionVariable WHERE geriatricFactorValues.userInRole.id = :userInRoleId AND cdDetectionVariable.derivedDetectionVariable.id = :parentId AND ti.intervalStart >= :start AND ti.intervalEnd <= :end");
 				q.setParameter("userInRoleId", crId);
 				q.setParameter("parentId", dvParentId);
 				q.setParameter("start", start);
@@ -90,10 +90,10 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 	            	sql.append(" assessment.created DESC ");
 	                     break;
 	            case AUTHOR_NAME_ASC:  
-	            	sql.append(" assessment.userInRole.userInSystemId ASC ");
+	            	sql.append(" assessment.userInRole.userInSystem.id ASC ");
 	                     break;
 	            case AUTHOR_NAME_DESC:  
-	            	sql.append(" assessment.userInRole.userInSystemId DESC ");
+	            	sql.append(" assessment.userInRole.userInSystem.id DESC ");
 	                     break;
 	            case AUTHOR_ROLE_ASC:  
 	            	sql.append(" assessment.userInRole.roleId ASC ");

@@ -8,10 +8,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import eu.city4age.dashboard.api.dao.TimeIntervalDAO;
+import eu.city4age.dashboard.api.model.TimeInterval;
 
 public class HibernateTimeIntervalDAO extends HibernateBaseDAO implements TimeIntervalDAO {
 
@@ -19,13 +21,14 @@ public class HibernateTimeIntervalDAO extends HibernateBaseDAO implements TimeIn
 	protected SessionFactory sessionFactory;
 	
 	@Override
-	public List<Object[]> getTimeIntervalsForPeriod(final Timestamp start, final Timestamp end) {
-		return castList(Object[].class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+	public List<TimeInterval> getTimeIntervalsForPeriod(final Timestamp start, final Timestamp end) {
+		return castList(TimeInterval.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT ti.intervalStart AS intervalStart, ti.intervalEnd AS intervalEnd FROM TimeInterval AS ti WHERE ti.intervalStart >= :start AND ti.intervalEnd <= :end ");
+				Query q = session.createQuery("SELECT ti FROM TimeInterval AS ti WHERE ti.intervalStart >= :start AND ti.intervalEnd <= :end ");
 				q.setParameter("start", start);
 				q.setParameter("end", end);
+				q.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
 				return q.list();
 			}
 		}));

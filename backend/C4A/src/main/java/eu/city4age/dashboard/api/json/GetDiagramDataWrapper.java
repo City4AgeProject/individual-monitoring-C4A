@@ -8,7 +8,7 @@ public class GetDiagramDataWrapper {
 	
 	Integer crId;
 	
-	Short dvParentId;
+	Long dvParentId;
 
 	public String getTimestampStart() {
 		return timestampStart;
@@ -34,11 +34,11 @@ public class GetDiagramDataWrapper {
 		this.crId = crId;
 	}
 
-	public Short getDvParentId() {
+	public Long getDvParentId() {
 		return dvParentId;
 	}
 
-	public void setDvParentId(Short dvParentId) {
+	public void setDvParentId(Long dvParentId) {
 		this.dvParentId = dvParentId;
 	}
 
