@@ -19,3 +19,5 @@ var CODELIST_SELECT_DATA_VALIDITY_STATUS = root + 'codeList/getAllDataValitidity
 var ASSESSMENTS_FOR_DATA_POINTS = root + 'assessments/getAssessmentsForSelectedDataSet';
 var ASSESSMENTS_ADD_FOR_DATA_POINTS = root + 'assessments/addAssessmentsForSelectedDataSet';
 var ASSESSMENTS_DIAGRAM_DATA = root + 'assessments/getDiagramData';
+
+var OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL = root + 'OJAssesment/lastFiveForInterval'; 

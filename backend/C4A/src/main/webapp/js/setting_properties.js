@@ -20,7 +20,8 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
          */
         self.receiversMethod = "/getCareReceivers";
         self.groupsMethod = "/getGroups";
-         self.loginMethod = "/login";
+        self.loginMethod = "/login";
+        self.diagramDataMethod = "/getDiagramData";
 
         self.userId = ko.observable();
         self.setUserId = function (userId) {

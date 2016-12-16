@@ -59,6 +59,27 @@ DataSet.prototype.toJson = function() {
     return JSON.stringify(this);
 };
 
+DataSet.produceFromOther = function(other) {
+    var result = new DataSet();
+    result.groups = other.groups;
+    result.series = other.series;
+    return result;
+};
+
+DataSet.prototype.getAssessments = function() {
+    var allAssesments = [];
+    for(var i=0; i<this.series.length; i++) {
+        var serie  = this.series[i];
+        for(var j=0; j<serie.items.length; j++) {
+            var item = serie.items[j];
+            for(var k=0; k<item.assessmentObjects.length; k++) {
+                allAssesments.push(item.assessmentObjects[k]);
+            }
+        }
+    }
+    return allAssesments;
+};
+
 function Assessment() {
     this.id = null;
     
@@ -115,8 +136,6 @@ Assessment.prototype.formatAssessmentData = function () {
     this.shortenComment();
 };
 
-
-
 Assessment.arrayContains = function(array, item) {
     for(var i=0; i<array.length; i++)
         if(array[i].id===item.id)
@@ -127,7 +146,6 @@ Assessment.arrayContains = function(array, item) {
 Assessment.prototype.toJson = function() {
     return JSON.stringify(this);
 };
-
 
 /**
  * This is a object to post new assessement
