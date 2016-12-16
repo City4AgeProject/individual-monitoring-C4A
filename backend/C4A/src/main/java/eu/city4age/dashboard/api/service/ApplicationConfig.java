@@ -32,6 +32,7 @@ public class ApplicationConfig extends Application {
         resources.add(eu.city4age.dashboard.api.service.AssessmentsService.class);
         resources.add(eu.city4age.dashboard.api.service.CodeListService.class);
         resources.add(eu.city4age.dashboard.api.service.ExternalService.class);
+        resources.add(rs.belit.c4a.jetrest.OJAssesment.class);
     }
     
 }

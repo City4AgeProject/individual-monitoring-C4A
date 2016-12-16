@@ -83,7 +83,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     $.each(data.itemList[0].items[0].dateList, function (j, dateItem) {
                         self.groupsValue.push(dateItem);
                     });
-                    //TODO : here load assessment on chart
+                    loadAssessmentsCached();
                 };
                 
                 var loadDataSet = function(data) {
@@ -165,8 +165,12 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.initialAssessments = ko.observableArray([]);
                 var loadAssessmentsCached = function (ids) {
                     var pointIdsJson = JSON.stringify(ids);
-                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
+                    return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId=1', function (dataSet) {
                         //insert to quick read later on mouse over popup
+                        
+                        var assesmentsDataSet = DataSet.produceFromOther(dataSet);
+                        var assessments = assesmentsDataSet.getAssessments();
+                        
                         self.initialAssessments(assessments);
                         
                         var assessmentsSerieAlerts = Serie.produceAlert();
@@ -177,19 +181,10 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                         var serieWarningsItems = [];
                         var serieCommentsItems = [];
                         
-                        for (var i = 0; i < assessments.length; i++) {
-                            var assessment = assessments[i];
-                            if (assessment) {
-                                
-                                for (var j = 0; j < assessment.assessedGefValueSets.length; j++) {
-                                    var assessedGefValueSet = assessment.assessedGefValueSets[j];
-                                    var geriatricFactorValue = assessedGefValueSet.geriatricFactorValue;
-                                    var gefValue = geriatricFactorValue.gefValue;
-                                    var id = geriatricFactorValue.id;
-                                    var item = new Item();
-                                    item.id = id;
-                                    item.value = gefValue;
-                                    item.assessmentObjects.push(assessments[i]);
+                        for (var i = 0; i < assesmentsDataSet.series.length; i++) {
+                            var serie = assesmentsDataSet.series[i];
+                                for (var j = 0; j < serie.items.length; j++) {
+                                    var item = serie.items[j];
                                     var matchedIndex = matchSeriesIndexByItemValue(item);
                                     if(matchedIndex>=0) {
                                         if('A'===assessments[i].riskStatus) {
@@ -206,7 +201,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                                         }
                                     }
                                 }
-                            }
                         }
                         
                         assessmentsSerieAlerts.items = serieAlertsItems;
