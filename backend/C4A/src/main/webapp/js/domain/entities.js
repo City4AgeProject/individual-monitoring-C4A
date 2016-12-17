@@ -184,6 +184,18 @@ function CdDetectionVariable() {
     this.derivationWeight;
 }
 
+CdDetectionVariable.produceFromOther = function(other) {
+    var result = new CdDetectionVariable();
+    result.id = other.id;
+    result.detectionVariableName = other.detectionVariableName;
+    result.detectionVariableType = other.detectionVariableType;
+    result.validFrom = other.validFrom;
+    result.validTo = other.validTo;
+    result.derivedDetectionVariableId = other.derivedDetectionVariableId;
+    result.derivationWeight = other.derivationWeight;
+    return result;
+};
+
 CdDetectionVariable.produceFromTable = function(table) {
     var list = [];
     for(var i=0; i<table.length; i++) {
@@ -200,6 +212,14 @@ CdDetectionVariable.produceFromTable = function(table) {
     return list;
 };
 
+CdDetectionVariable.parentFactorId = function(list, factorId) {
+    for(var i=0; i<list.length; i++) {
+        var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
+        if(currentDetectionVariable.id === factorId) {
+            return currentDetectionVariable.derivedDetectionVariableId;
+        } 
+    }
+};
 // Few static functions
 
 function shortenText(text, newlength) {
