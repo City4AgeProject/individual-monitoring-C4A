@@ -20,4 +20,5 @@ var ASSESSMENTS_FOR_DATA_POINTS = root + 'assessments/getAssessmentsForSelectedD
 var ASSESSMENTS_ADD_FOR_DATA_POINTS = root + 'assessments/addAssessmentsForSelectedDataSet';
 var ASSESSMENTS_DIAGRAM_DATA = root + 'assessments/getDiagramData';
 
+var OJ_CODEBOOK_SELECT = root + 'OJCodeBook/selectTable'; 
 var OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL = root + 'OJAssesment/lastFiveForInterval'; 
