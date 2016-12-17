@@ -12,9 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import eu.city4age.dashboard.api.dao.ExternalDAO;
+import eu.city4age.dashboard.api.model.CareProfile;
 import eu.city4age.dashboard.api.model.CdDetectionVariable;
+import eu.city4age.dashboard.api.model.CrProfile;
 import eu.city4age.dashboard.api.model.FrailtyStatusTimeline;
 import eu.city4age.dashboard.api.model.GeriatricFactorValue;
+import eu.city4age.dashboard.api.model.UserInRole;
+import eu.city4age.dashboard.api.model.UserInSystem;
 
 public class HibernateExternalDAO extends HibernateBaseDAO implements ExternalDAO {
 
@@ -90,6 +94,73 @@ public class HibernateExternalDAO extends HibernateBaseDAO implements ExternalDA
 				q.setParameterList("timeintervalIds", timeintervalIds);
 				q.setParameter("userId", uId);
 				return q.list();
+			}
+		}));
+	}
+
+	public List<UserInRole> getUserInRoleByRoleId(final Long roleId) {
+		return castList(UserInRole.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+			public List<?> doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query q = session.createQuery("SELECT u FROM UserInRole u Where u.roleId.id = :roleId");
+				q.setParameter("roleId", roleId);
+				return q.list();
+			}
+		}));
+	}
+
+	public List<CrProfile> getProfileByUserInRoleId(final Long userId) {
+		return castList(CrProfile.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+			public List<?> doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query q = session.createQuery("SELECT c FROM CrProfile c Where c.userInRoleId.id = :userId");
+				q.setParameter("userId", userId);
+				return q.list();
+			}
+		}));
+	}
+
+	public List<CareProfile> getCareProfileByUserInRoleId(final Long userId) {
+		return castList(CareProfile.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+			public List<?> doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query q = session.createQuery("SELECT c FROM CareProfile c WHERE c.userInRole.id = :userId ");
+				q.setParameter("userId", userId);
+				return q.list();
+			}
+		}));
+	}
+
+	public List<FrailtyStatusTimeline> getFrailtyStatusByUserInRoleId(final Long userId) {
+		return castList(FrailtyStatusTimeline.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
+			public List<?> doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query q = session.createQuery("SELECT f FROM FrailtyStatusTimeline f WHERE f.frailtyStatusTimelinePK.userInRoleId = :userId ");
+				q.setParameter("userId", userId);
+				return q.list();
+			}
+		}));
+	}
+
+	public UserInSystem getUserInSystem(final String username, final String password) {
+		return cast(UserInSystem.class, getHibernateTemplate().execute(new HibernateCallback<UserInSystem>() {
+			public UserInSystem doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query q = session.createQuery("SELECT u FROM UserInSystem u Where u.username = :username and u.password=:password");
+				q.setParameter("username", username);
+				q.setParameter("password", password);
+				return (UserInSystem) q.uniqueResult();
+			}
+		}));
+	}
+
+	public UserInRole getUserInRoleByUserInSystemId(final Long uisId) {
+		return cast(UserInRole.class, getHibernateTemplate().execute(new HibernateCallback<UserInRole>() {
+			public UserInRole doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query q = session.createQuery("SELECT u FROM UserInRole u Where u.userInSystemId.id = :uisId");
+				q.setParameter("uisId", uisId);
+				return (UserInRole) q.uniqueResult();
 			}
 		}));
 	}

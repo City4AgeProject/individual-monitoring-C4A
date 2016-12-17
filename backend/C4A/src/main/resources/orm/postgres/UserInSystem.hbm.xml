@@ -22,8 +22,8 @@
             <column name="created_date" length="29" />
         </property>
         
-        <property name="diplayName" type="string">
-            <column name="diplay_name" />
+        <property name="displayName" type="string">
+            <column name="display_name" />
         </property>
 
     </class>
