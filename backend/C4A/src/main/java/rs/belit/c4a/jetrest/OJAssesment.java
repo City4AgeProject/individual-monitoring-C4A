@@ -137,27 +137,56 @@ public class OJAssesment {
         for (Group g : groups) {
             
             for (AssesmentForLastFives as : toLose) {
-                Assessment assesment = new Assessment();
+                Assessment assesment = createFromFlat(as);
+                
+                 if (as.getId().equals(g.getId())) {
+                    Item item = new Item();
+                    item.setId(as.getGef_id());
+                    item.setValue(as.getGef_value());
+               
+                    item.getAssessmentObjects().add(assesment);
+                    //add other possible annotations to item
+                    for (AssesmentForLastFives as2 : toLose) {
+                        if(as2.getId().equals(g.getId()) && !assesment.getId().equals(as2.getAssessment_id()) && as.getGef_value().equals(as2.getGef_value())){ // maybe check gef_value
+                            Assessment a2 = createFromFlat(as2);
+                            item.getAssessmentObjects().add(a2);
+                        }
+                    }
+                    
+                    if ("A".equals(assesment.getRiskStatus())) {
+                        alertSerie.getItems().add(item);
+                    }else if ("W".equals(assesment.getRiskStatus())) {
+                        warningSerie.getItems().add(item);
+                    }else{
+                        commentSerie.getItems().add(item);
+                    }
+
+                }
+
+            }
+
+        }
+
+        forClient.setGroups(new ArrayList<Group>(groups));
+        forClient.setSeries(series);
+
+        return Response.ok(new ObjectMapper().writeValueAsString(forClient)).build();
+    }
+    
+    private Assessment createFromFlat(AssesmentForLastFives as){
+        Assessment assesment = new Assessment();
                 assesment.setRiskStatus(as.getRisk_status());
                 assesment.setDataValidity(as.getData_validity_status());
                 assesment.setFrom(String.valueOf(as.getAuthor_id()));
                 assesment.setComment(as.getAssessment_comment());
                 assesment.setId(as.getAssessment_id());
-                Item item = new Item();
-                item.setId(as.getGef_id());
-                item.setValue(as.getGef_value());
-                if (as.getId().equals(g.getId())) {
-                    item.getAssessmentObjects().add(assesment);
-                    if ("A".equals(assesment.getRiskStatus())) {
-                        alertSerie.getItems().add(item);
+                 if ("A".equals(assesment.getRiskStatus())) {
                         assesment.setRiskStatusDesc("Alert");
                         assesment.setRiskStatusImage("images/risk_alert.png");
                     }else if ("W".equals(assesment.getRiskStatus())) {
-                        warningSerie.getItems().add(item);
                         assesment.setRiskStatusDesc("Warning");
                         assesment.setRiskStatusImage("images/risk_warning.png");
                     }else{
-                        commentSerie.getItems().add(item);
                         assesment.setRiskStatusDesc("Comment");
                         assesment.setRiskStatusImage("images/comment.png");
                     }
@@ -174,16 +203,7 @@ public class OJAssesment {
                         assesment.setDataValidityDesc("Valid data");
                         assesment.setDataValidityImage("images/valid_data.png");
                     }
-                }
-
-            }
-
-        }
-
-        forClient.setGroups(new ArrayList<Group>(groups));
-        forClient.setSeries(series);
-
-        return Response.ok(new ObjectMapper().writeValueAsString(forClient)).build();
+                return assesment;
     }
 
 }
