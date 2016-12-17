@@ -72,9 +72,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 self.careReceiverId = 4;
 
-                function createItems(id, value) {
+                function createItems(id, value, gefTypeId) {
+                    console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value);
                     return {id: id,
-                        value: value
+                        value: value, gefTypeId: gefTypeId
                     };
                 }
 
@@ -85,8 +86,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 //                            console.log("fata ", JSON.stringify(radarData));
                             $.each(radarData.itemList, function (i, list) {
                                 var nodes = [];
+                                var gtId = list.gefTypeId;
                                 $.each(list.items[0].itemList, function (j, itemList) {
-                                    nodes.push(createItems(list.items[0].idList[j], itemList));
+                                    nodes.push(createItems(list.items[0].idList[j], itemList, gtId ));
                                 });
                                 self.seriesValue.push({
                                     name: list.items[0].groupName,
@@ -150,9 +152,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     if (seriesValue.indexOf("Behavioural") !== -1) {
                         $.each(gefData.itemList, function (i, list) {
                             if (list.parentGroupName.indexOf("Behavioural") !== -1) {
+                                var nodes = [];
+                                $.each(list.items[0].itemList, function (j, itemList) {
+                                    nodes.push(createItems(list.items[0].idList[j], itemList, list.gefTypeId ));
+                                });
                                 graphicsContentViewModel.lineSeriesValue.push({
                                     name: list.items[0].groupName,
-                                    items: list.items[0].itemList,
+                                    items: nodes,
                                     color: lineColors[i]
                                 });
                             }
@@ -166,9 +172,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     } else if (seriesValue.indexOf("Contextual") !== -1) {
                         $.each(gefData.itemList, function (i, list) {
                             if (list.parentGroupName.indexOf("Contextual") !== -1) {
+                                var nodes = [];
+                                $.each(list.items[0].itemList, function (j, itemList) {
+                                    nodes.push(createItems(list.items[0].idList[j], itemList, list.gefTypeId ));
+                                });
                                 graphicsContentViewModel.lineSeriesValue.push({
                                     name: list.items[0].groupName,
-                                    items: list.items[0].itemList,
+                                    items: nodes,
                                     color: lineColors[i]
                                 });
                             }
