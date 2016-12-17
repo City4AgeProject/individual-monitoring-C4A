@@ -194,13 +194,4 @@ function remove_item(arr, value) {
     return arr;
 }
 
-function prepareAssessmentsForPrintout(annotations) {
-    var preparedAssessments = [];
-    for (var i=0; i<annotations.length; i++) {
-        var anno = new Assessment().fromOther(annotations[i]);
-        preparedAssessments.push(anno);
-    }
-    return preparedAssessments;
-}
-
 // Navigation parameters wrappers
