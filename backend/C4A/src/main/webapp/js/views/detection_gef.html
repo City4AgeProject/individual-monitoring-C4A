@@ -1,17 +1,15 @@
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
 
-    <div style="width:70%" class="oj-flex-item" align="left">
-        <span style="font-size: 16px">Care recipient: <span  data-bind="text: oj.Router.rootInstance.retrieve()"></span></span> 
-        <span style="font-size: 16px;padding-left: 20px;">Age: <span  data-bind="text: userAge"></span></span> 
-        <!--<span>Gender: <b  data-bind="text: userGender"></b></span>--> 
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <span style="font-size: 16px">Assign Geriatrician: <span data-bind="text:$root.userLogin" > </span></span> <!--class="oj-header-border"-->
-        <br>                     
-        <div style="height:19px;overflow:hidden;padding-top:10px;width:60%" id="summary"><span style="font-size: 16px">Summary:</span> <span data-bind="text:textline"></span></div>
-    </div>
-    <div style="text-align: center">
-        <a href="#" id="showmore" style="color: #0fb5b5 ">Show more</a>
-    </div>
+    <!-- CR info -->
+	<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
+            <span>Care recipient: <b> <span  data-bind="text: oj.Router.rootInstance.retrieve()"></span> , age:  <span  data-bind="text: userAge"></span>, sex: male</b></span> 
+	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>Assign Geriatrician: <b><span data-bind="text:$root.userLogin" ></span></b></span> <!--class="oj-header-border"-->
+	    <br>                     
+	    <div style="height:20px;overflow:hidden" id="summary"><b>Summary:</b><span data-bind="text:textline"></span></div>
+	    <a href="#" id="showmore">Read more</a>
+	</div>  
+	<!-- end CR info -->
     <div class="visualization-drop oj-flex-item" align="right">
         <button class="demo-button-aqua" style="min-width: 100px;"
                 data-bind="ojComponent: { component: 'ojButton', 

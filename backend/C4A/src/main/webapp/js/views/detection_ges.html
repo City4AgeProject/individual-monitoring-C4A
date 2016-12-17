@@ -19,15 +19,18 @@
 	
 	<!-- CR info -->
 	<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
-	    <span>Care recipient: <b>L_1567, age: 78, sex: male</b></span> 
+            <span>Care recipient: <b> <span  data-bind="text: oj.Router.rootInstance.retrieve()"></span> , age:  <span  data-bind="text: userAge"></span>, sex: male</b></span> 
 	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	    <span>Assign Geriatrician: <b>Dr Leonardo Mutti</b></span> <!--class="oj-header-border"-->
+            <span>Assign Geriatrician: <b><span data-bind="text:$root.userLogin" ></span></b></span> <!--class="oj-header-border"-->
 	    <br>                     
-	    <div style="height:20px;overflow:hidden" id="summary"><b>Summary:</b> Lorem ipsum dolor sit amet, eleifend condimentum semper elit consequat, pretium inventore laboriosam non fermentum facilisis, fusce vel sit vivamus praesent posuere ut. Vel non orci class mauris, neque pellentesque placerat, suspendisse quisque nec voluptate at orci, pellentesque turpis nec venenatis semper vestibulum consectetuer, ultricies magnis fermentum eget aliquam iaculis. At arcu maecenas ac, ipsum ad. Malesuada id turpis risus hac mattis, turpis wisi quis, nec nunc tortor sem wisi. Lorem sociosqu pellentesque. Dolores vitae lorem vel, montes lacus convallis ut natoque urna, aliquam sem nam in fusce duis cras. Libero ipsum wisi est, leo tellus nullam similique. Elementum sed, eu veritatis pellentesque integer, non tortor erat ullamcorper voluptas scelerisque a, nec gravida porttitor maecenas non integer. Sed ligula at at in, malesuada tristique penatibus, fames morbi molestie suscipit erat in, sit consectetuer lectus lectus. Pulvinar fusce habitant tincidunt amet vehicula elit, id mauris est in augue nunc tellus, at orci.</div>
+	    <div style="height:20px;overflow:hidden" id="summary"><b>Summary:</b><span data-bind="text:textline"></span></div>
 	    <a href="#" id="showmore">Read more</a>
 	</div>  
 	<!-- end CR info -->
 	
+        
+    </div>
+        
 	<!-- main graph panel -->
 	<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">    
 	    <div class="demo-flex-display oj-flex-items-pad">
