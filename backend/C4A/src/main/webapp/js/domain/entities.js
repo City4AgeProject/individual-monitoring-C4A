@@ -174,6 +174,32 @@ function CdRole(){
     this.stakeholderAbbreviation= '';
 }
 
+function CdDetectionVariable() {
+    this.id;
+    this.detectionVariableName;
+    this.detectionVariableType;
+    this.validFrom;
+    this.validTo;
+    this.derivedDetectionVariableId;
+    this.derivationWeight;
+}
+
+CdDetectionVariable.produceFromTable = function(table) {
+    var list = [];
+    for(var i=0; i<table.length; i++) {
+        var result = new CdDetectionVariable();
+        result.id = table[i][0];
+        result.detectionVariableName = table[i][1];
+        result.detectionVariableType = table[i][2];
+        result.validFrom = table[i][3];
+        result.validTo = table[i][4];
+        result.derivedDetectionVariableId = table[i][5];
+        result.derivationWeight = table[i][6];
+        list.push(result);
+    }
+    return list;
+};
+
 // Few static functions
 
 function shortenText(text, newlength) {
