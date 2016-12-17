@@ -521,7 +521,7 @@
           <password>admin</password> 
         </configuration> 
       </plugin>  
-      <plugin> 
+      <!--<plugin> 
         <groupId>org.jetbrains.kotlin</groupId>  
         <artifactId>kotlin-maven-plugin</artifactId>  
         <version>1.0.4</version>  
@@ -541,7 +541,7 @@
             </goals> 
           </execution> 
         </executions> 
-      </plugin> 
+      </plugin>-->
     </plugins> 
   </build> 
 </project>
