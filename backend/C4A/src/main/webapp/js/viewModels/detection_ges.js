@@ -109,7 +109,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                             var newAssessment = new Assessment();
                             newAssessment.id = assessment.id;
                             newAssessment.comment = assessment.assessmentComment;
-                           // newAssessment.from = assessment.userInRole.id;
+                            newAssessment.from = assessment.userInRole.id;
                             newAssessment.dateAndTime = assessment.created;
                             newAssessment.riskStatus = assessment.riskStatus;
                             newAssessment.dataValidity = assessment.dataValidityStatus;
