@@ -1,38 +1,41 @@
-<div id="form-container">
-    <div class="oj-form-layout">
-        <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline">  
+<div id="form-container" style='position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);background-color: white; overflow: auto;'>
+    <div>
+        <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline">
             <div class="oj-flex">  
+                <div class="oj-flex-item"/>
                 <div class="oj-flex-item">
-                    <label for="control1">username:</label>
+                    <img src="images/City4AgeLogo_noBackground1.png"/>
                 </div>
                 <div class="oj-flex-item">
-                    <input id="control1" 
+                    <label for="username">User:</label>
+                </div>
+                <div class="oj-flex-item">
+                    <input id="username" 
                            data-bind="ojComponent: {component: 'ojInputText', 
-                                          value: loginValue, required: true}">
-                </div>
-            </div>
-            <div class="oj-flex"> 
-                <div class="oj-flex-item">
-
-                    <label for="password">password</label>
+                                          value: loginValue, required: true
+                            }">
                 </div>
                 <div class="oj-flex-item">
-
+                    <label for="password">Pass:</label>
+                </div>
+                <div class="oj-flex-item">
                     <input type="password" 
                            id="password"
                            data-bind="ojComponent: {component: 'ojInputPassword', 
-                                  value: passwordValue,required: true}"/>
+                                            value: passwordValue,required: true
+                            }"/>
                 </div>
-  
-            </div>
-            <div class="oj-flex"> 
+                <div class="oj-flex-item"/>
                 <div class="oj-flex-item">
                     <button id="loginBtn" class="oj-button"
-                        data-bind="click: loginUser, ojComponent: { component: 'ojButton', 
+                            data-bind="click: loginUser, ojComponent: { component: 'ojButton', 
                                                     label: 'Login',
-                                                    chroming:'outlined'
-                                                   }">
-                    </button>
+                                                    chroming:'outlined'}"/>
+                                            <span>&nbsp;&nbsp;</span>
+                    <button id="resetBtn" class="oj-button"
+                            data-bind="click: resetForm, ojComponent: { component: 'ojButton', 
+                                                    label: 'Reset',
+                                                    chroming:'outlined'}"/>
                 </div>
             </div>
         </div>    

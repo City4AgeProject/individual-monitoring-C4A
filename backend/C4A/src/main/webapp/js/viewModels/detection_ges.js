@@ -93,7 +93,8 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
 //                        , loadSucessCallback);
 //                    jqXHR.fail(serverErrorCallback);
                     
-                    var jqXHR = $.getJSON(url + "?careReceiverId=1" + "&parentFactorId=4",
+                     
+                    var jqXHR = $.getJSON(url + "?careReceiverId=" +self.careReceiverId()+ "&parentFactorId=" + self.parentFactorId(),
                          loadDiagramDataCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
@@ -108,7 +109,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                             var newAssessment = new Assessment();
                             newAssessment.id = assessment.id;
                             newAssessment.comment = assessment.assessmentComment;
-                            newAssessment.from = assessment.userInRole.id;
+                           // newAssessment.from = assessment.userInRole.id;
                             newAssessment.dateAndTime = assessment.created;
                             newAssessment.riskStatus = assessment.riskStatus;
                             newAssessment.dataValidity = assessment.dataValidityStatus;
@@ -123,40 +124,22 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     });
                 };
                 
-                var loadCachedAssessments = function (assessments) {
-                        var assessmentsResult = [];
-                        for (var i = 0; i < assessments.length; i++) {
-                            var assessment = assessments[i];
-                            var newAssessment = new Assessment();
-                            newAssessment.id = assessment[0].id;
-                            newAssessment.comment = assessment[0].assessmentComment;
-                            newAssessment.from = assessment[0].userInRole.id;
-                            newAssessment.dateAndTime = assessment[0].created;
-                            newAssessment.riskStatus = assessment[0].riskStatus;
-                            newAssessment.dataValidity = assessment[0].dataValidityStatus;
-                            
-                            newAssessment.formatAssessmentData();                          
-                            if(!Assessment.arrayContains(assessmentsResult, newAssessment))
-                                assessmentsResult.push(newAssessment);
-                        }
-                        self.selectedAnotations(assessmentsResult);
-                        
-                        if(self.dataPointsMarked()===0 && assessmentsResult.length>0)
-                            self.dataPointsMarked('No datapoints and no assessments.');
-                        else if(self.dataPointsMarked()===0 && assessmentsResult.length>0)
-                            self.dataPointsMarked(assessmentsResult.length + ' assessment(s) marked');
-                        else if(self.dataPointsMarked()>0 && assessmentsResult.length===0)
-                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
-                        else if(self.dataPointsMarked()>0 && assessmentsResult.length>0)
-                            self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
-                };
-                
                 function matchSeriesIndexByItemValue(item) {
                     var series = self.seriesValue();
                     for(var i = 0; i < series.length; i++) {
                         for(var j = 0; j < series[i].items.length; j++) {
-                            if(series[i].items[j].id === item.id)
+                            if(series[i].items[j].id === item.id){    
+                                //series[i].markerDisplayed='on';
+                                series[i].items[j].markerDisplayed='on';
+                                series[i].items[j].markerSize='16';
+                                series[i].items[j].source='images/comment.png';
+                                series[i].items[j].height='16';
+                                series[i].items[j].width='16';
+                                series[i].items[j].x=j;
+                                series[i].items[j].y=series[i].items[j].value;
+                                series[i].items[j].assessmentObjects=item.assessmentObjects;
                                 return j;
+                            }
                         }
                     }
                     return -1;
@@ -165,55 +148,26 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.initialAssessments = ko.observableArray([]);
                 var loadAssessmentsCached = function (ids) {
                     var pointIdsJson = JSON.stringify(ids);
-                    return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId=1', function (dataSet) {
+                    return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId='+self.careReceiverId(), function (dataSet) {
                         //insert to quick read later on mouse over popup
-                        
                         var assesmentsDataSet = DataSet.produceFromOther(dataSet);
-                        var assessments = assesmentsDataSet.getAssessments();
-                        
-                        self.initialAssessments(assessments);
-                        
+//                        var assessments = assesmentsDataSet.getAssessments();
                         var assessmentsSerieAlerts = Serie.produceAlert();
-                        var assessmentsSerieWarnings = Serie.produceWarning();
-                        var assessmentsSerieComments = Serie.produceComment();
-                        
                         var serieAlertsItems = [];
-                        var serieWarningsItems = [];
-                        var serieCommentsItems = [];
-                        
-                        for (var i = 0; i < assesmentsDataSet.series.length; i++) {
-                            var serie = assesmentsDataSet.series[i];
-                                for (var j = 0; j < serie.items.length; j++) {
-                                    var item = serie.items[j];
-                                    var matchedIndex = matchSeriesIndexByItemValue(item);
-                                    if(matchedIndex>=0) {
-                                        if('A'===assessments[i].riskStatus) {
-                                            serieAlertsItems[matchedIndex] = item;
-                                            serieWarningsItems[matchedIndex] = null;
-                                            serieCommentsItems[matchedIndex] = null;
-                                        }
-                                        else if('W'===assessments[i].riskStatus) {
-                                            serieWarningsItems[matchedIndex] = item;
-                                            serieCommentsItems[matchedIndex] = null;
-                                        }
-                                        else {
-                                            serieCommentsItems[matchedIndex] = item;
-                                        }
-                                    }
-                                }
-                        }
-                        
+                         for(var i=0; i<assesmentsDataSet.series.length; i++){
+                             var serie = assesmentsDataSet.series[i];
+                             for (var j = 0; j < serie.items.length; j++) {
+                                var item = serie.items[j];
+                                 var matchedIndex = matchSeriesIndexByItemValue(item); 
+                                 if(matchedIndex>=0) {
+                                    // za sada da ih rasporedim samo pa onda da ih razvrstavam po bojama
+                                    console.log(item.id +' -> ' + item.value + ' na index '+matchedIndex  );
+                                   // serieAlertsItems[matchedIndex] = item;
+                                 }
+                             }
+                         }
                         assessmentsSerieAlerts.items = serieAlertsItems;
-                        assessmentsSerieWarnings.items = serieWarningsItems;
-                        assessmentsSerieComments.items = serieCommentsItems;
-                        
-                        if(assessmentsSerieComments.items.length>0)
-                            self.seriesValue.push(assessmentsSerieComments);
-                        
-                        if(assessmentsSerieWarnings.items.length>0)
-                            self.seriesValue.push(assessmentsSerieWarnings);
-                        
-                        if(assessmentsSerieAlerts.items.length>0)
+                        //if(assessmentsSerieAlerts.items.length>0)
                             self.seriesValue.push(assessmentsSerieAlerts);
                     });
                 };
@@ -243,6 +197,8 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.dataPointsMarked = ko.observable('No data points marked.');
                 self.selectedAnotations = ko.observableArray();
                 self.dataPointsMarkedIds = ko.observableArray();
+                self.parentFactorId = ko.observable(4); // get from params 
+                self.careReceiverId = ko.observable(1); // get from params 
                 
                 function showAssessmentsPopup() {
                     //clear previus assessments if exists;
@@ -298,6 +254,14 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
 
                 self.chartOptionChange = function (event, ui) {
                     if (ui['option'] === 'selection') {
+                        //if click or select only one point and that is Assessment 
+                        // do preload and show preloaded assesments
+                        if (ui['value'].length === 1 && ui['value'][0].series === 'Assessment') {
+                            self.selectedAnotations( ui['optionMetadata'].selectionData[0].data.assessmentObjects);
+                            showAssessmentsPopup();
+                            return;
+                        }
+                        
                         if (ui['value'].length > 0) {
                             $('#popup1').ojPopup();
                             if($('#popup1').ojPopup( "isOpen" ))
@@ -315,7 +279,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                                 ;
                             else if(onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id ){
                                 self.dataPointsMarked('1 data point marked ');
-                                loadCachedAssessments(onlyDataPoints);
+                                self.selectedAnotations(onlyDataPoints);
                             }else{
                                 // Compose selections in get query parameters
                                 var queryParams = calculateSelectedIds(onlyDataPoints);
