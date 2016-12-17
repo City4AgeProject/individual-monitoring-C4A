@@ -135,7 +135,7 @@ public class OJAssesment {
         series.add(commentSerie);
 
         for (Group g : groups) {
-            Item item = new Item();
+            
             for (AssesmentForLastFives as : toLose) {
                 Assessment assesment = new Assessment();
                 assesment.setRiskStatus(as.getRisk_status());
@@ -143,7 +143,7 @@ public class OJAssesment {
                 assesment.setFrom(String.valueOf(as.getAuthor_id()));
                 assesment.setComment(as.getAssessment_comment());
                 assesment.setId(as.getAssessment_id());
-
+                Item item = new Item();
                 item.setId(as.getGef_id());
                 item.setValue(as.getGef_value());
                 if (as.getId().equals(g.getId())) {
