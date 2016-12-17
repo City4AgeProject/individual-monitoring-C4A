@@ -169,52 +169,68 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                         //insert to quick read later on mouse over popup
                         
                         var assesmentsDataSet = DataSet.produceFromOther(dataSet);
-                        var assessments = assesmentsDataSet.getAssessments();
-                        
-                        self.initialAssessments(assessments);
-                        
+//                        var assessments = assesmentsDataSet.getAssessments();
                         var assessmentsSerieAlerts = Serie.produceAlert();
-                        var assessmentsSerieWarnings = Serie.produceWarning();
-                        var assessmentsSerieComments = Serie.produceComment();
-                        
                         var serieAlertsItems = [];
-                        var serieWarningsItems = [];
-                        var serieCommentsItems = [];
-                        
-                        for (var i = 0; i < assesmentsDataSet.series.length; i++) {
-                            var serie = assesmentsDataSet.series[i];
-                                for (var j = 0; j < serie.items.length; j++) {
-                                    var item = serie.items[j];
-                                    var matchedIndex = matchSeriesIndexByItemValue(item);
-                                    if(matchedIndex>=0) {
-                                        if('A'===assessments[i].riskStatus) {
-                                            serieAlertsItems[matchedIndex] = item;
-                                            serieWarningsItems[matchedIndex] = null;
-                                            serieCommentsItems[matchedIndex] = null;
-                                        }
-                                        else if('W'===assessments[i].riskStatus) {
-                                            serieWarningsItems[matchedIndex] = item;
-                                            serieCommentsItems[matchedIndex] = null;
-                                        }
-                                        else {
-                                            serieCommentsItems[matchedIndex] = item;
-                                        }
-                                    }
-                                }
-                        }
-                        
+                         for(var i=0; i<assesmentsDataSet.series.length; i++){
+                             var serie = assesmentsDataSet.series[i];
+                             for (var j = 0; j < serie.items.length; j++) {
+                                var item = serie.items[j];
+                                 var matchedIndex = matchSeriesIndexByItemValue(item); 
+                                 if(matchedIndex>=0) {
+                                    // za sada da ih rasporedim samo pa onda da ih razvrstavam po bojama
+                                    console.log(item.id +' -> ' + item.value + ' na index '+matchedIndex  );
+                                    serieAlertsItems[matchedIndex] = item;
+                                 }
+                             }
+                         }
                         assessmentsSerieAlerts.items = serieAlertsItems;
-                        assessmentsSerieWarnings.items = serieWarningsItems;
-                        assessmentsSerieComments.items = serieCommentsItems;
-                        
-                        if(assessmentsSerieComments.items.length>0)
-                            self.seriesValue.push(assessmentsSerieComments);
-                        
-                        if(assessmentsSerieWarnings.items.length>0)
-                            self.seriesValue.push(assessmentsSerieWarnings);
-                        
                         if(assessmentsSerieAlerts.items.length>0)
                             self.seriesValue.push(assessmentsSerieAlerts);
+//                        self.initialAssessments(assessments);
+//                        
+//                        var assessmentsSerieAlerts = Serie.produceAlert();
+//                        var assessmentsSerieWarnings = Serie.produceWarning();
+//                        var assessmentsSerieComments = Serie.produceComment();
+//                        
+//                        var serieAlertsItems = [];
+//                        var serieWarningsItems = [];
+//                        var serieCommentsItems = [];
+//                        
+//                        for (var i = 0; i < assesmentsDataSet.series.length; i++) {
+//                            var serie = assesmentsDataSet.series[i];
+//                                for (var j = 0; j < serie.items.length; j++) {
+//                                    var item = serie.items[j];
+//                                    var matchedIndex = matchSeriesIndexByItemValue(item);
+//                                    if(matchedIndex>=0) {
+//                                        if('A'===assessments[i].riskStatus) {
+//                                            serieAlertsItems[matchedIndex] = item;
+//                                            serieWarningsItems[matchedIndex] = null;
+//                                            serieCommentsItems[matchedIndex] = null;
+//                                        }
+//                                        else if('W'===assessments[i].riskStatus) {
+//                                            serieWarningsItems[matchedIndex] = item;
+//                                            serieCommentsItems[matchedIndex] = null;
+//                                        }
+//                                        else {
+//                                            serieCommentsItems[matchedIndex] = item;
+//                                        }
+//                                    }
+//                                }
+//                        }
+//                        
+//                        assessmentsSerieAlerts.items = serieAlertsItems;
+//                        assessmentsSerieWarnings.items = serieWarningsItems;
+//                        assessmentsSerieComments.items = serieCommentsItems;
+//                        
+//                        if(assessmentsSerieComments.items.length>0)
+//                            self.seriesValue.push(assessmentsSerieComments);
+//                        
+//                        if(assessmentsSerieWarnings.items.length>0)
+//                            self.seriesValue.push(assessmentsSerieWarnings);
+//                        
+//                        if(assessmentsSerieAlerts.items.length>0)
+//                            self.seriesValue.push(assessmentsSerieAlerts);
                     });
                 };
                 
