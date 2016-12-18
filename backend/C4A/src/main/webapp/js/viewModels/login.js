@@ -24,8 +24,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                     sp.setStorageData(self.loginValue(), users.displayName);
 
                                     $('#appHeader').css({display: 'block'});
-                                    $('#mainContent').css({'background-color': '#ffffff'});
-                                    $('#mainContent').css({'border-color': '#d6dfe6'});
+//                                    $('#mainContent').css({'background-color': '#ffffff'});
+//                                    $('#mainContent').css({'border-color': '#d6dfe6'});
+                                    $('.user-menu').css({display: 'block'});
 
                                     oj.Router.rootInstance.go("cr_list_full");
                                     app.userLogin(users.displayName);
@@ -49,12 +50,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     self.passwordValue('');
                 };
                 
-                self.handleActivated = function (info) {
-                    $('#appHeader').css({display: 'none'});
-                    $('#mainContent').css({'background-color': '#99e6ff'});
-                    $('#mainContent').css({'border-color': '#99e6ff'});
-                    document.body.style.display = 'block';
-                };
+//                self.handleActivated = function (info) {
+//                    $('#appHeader').css({display: 'none'});
+                    $('#mainContent').css({'background-color': '#f1f1f1'});
+                    $('#mainContent').css({'border-color': '#f1f1f1'});
+//                    document.body.style.display = 'block';
+//                };
             }
             var loginViewModel = new LoginViewModel();
             return  loginViewModel;
