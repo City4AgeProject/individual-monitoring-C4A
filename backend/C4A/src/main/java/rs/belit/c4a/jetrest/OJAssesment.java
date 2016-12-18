@@ -197,7 +197,7 @@ public class OJAssesment {
                 SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
                 assesment.setDateAndTime(sdf.format(as.getCreated()));
                 assesment.setDateAndTimeText(sdf.format(as.getCreated()));
-                assesment.setFrom(as.getDisplay_name() == null ? "No display name for Creator" :  as.getDisplay_name());
+                assesment.setFrom(as.getDisplay_name() == null ? "No display name" :  as.getDisplay_name());
                  if ("A".equals(assesment.getRiskStatus())) {
                         assesment.setRiskStatusDesc("Alert");
                         assesment.setRiskStatusImage("images/risk_alert.png");
