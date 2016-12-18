@@ -15,7 +15,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -216,6 +219,47 @@ public class OJAssesment {
                         assesment.setDataValidityImage("images/valid_data.png");
                     }
                 return assesment;
+    }
+    
+    
+    @POST
+    @Path("forDataPoints")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response forDataSet(@FormParam(value = "geriatricFactorValueIds") List <Long> gefIds) throws JsonProcessingException {
+        Session session = sessionFactory.openSession();
+        Query q = session.createSQLQuery("SELECT distinct "
+                + " ass.id as assessment_id, assessment_comment, risk_status, data_validity_status , ass.author_id, ass.created, uis.display_name "
+                + "FROM assessment ass "
+                + "JOIN assessed_gef_value_set ags on ags.assessment_id = as.id "
+                + "JOIN user_in_system uis on uis.id = ass.author_id "
+                + "WHERE ags.gef_value_id in :gefIds "
+                + "  ");
+        
+        q.setParameter("userInRoleId", gefIds);
+       
+        List<Assessment> forClient = new ArrayList<Assessment>();
+        for (Object[] objects : (List<Object[]>) q.list()) {
+            AssesmentForLastFives aflf = new AssesmentForLastFives();
+            
+            aflf.setAssessment_id(((BigInteger) objects[0]).longValue());
+            aflf.setAssessment_comment((String) objects[1]);
+            aflf.setRisk_status(String.valueOf((Character) objects[2]));
+            aflf.setData_validity_status(String.valueOf((Character) objects[3]));
+            aflf.setAuthor_id(((BigInteger) objects[4]).longValue());
+            Timestamp cre = ((Timestamp) objects[5]);
+            Date d = new Date(cre.getTime());
+            aflf.setCreated(d);
+            aflf.setDisplay_name((String) objects[6]);
+           
+            
+            Assessment assesment = createFromFlat(aflf);
+            forClient.add(assesment);
+            
+        }
+        
+        return Response.ok(new ObjectMapper().writeValueAsString(forClient)).build();
+    
     }
 
 }

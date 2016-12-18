@@ -22,3 +22,4 @@ var ASSESSMENTS_DIAGRAM_DATA = root + 'assessments/getDiagramData';
 
 var OJ_CODEBOOK_SELECT = root + 'OJCodeBook/selectTable'; 
 var OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL = root + 'OJAssesment/lastFiveForInterval'; 
+var OJ_ASSESSMENTS_FOR_DATA_POINTS = root + 'OJAssesment/forDataPoints'; //just temporary .. should be use other one
