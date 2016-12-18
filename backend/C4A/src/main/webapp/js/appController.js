@@ -31,6 +31,20 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
             });
         };
 
+        jQuery["postJSONForm"] = function (url, data, callback) {
+            if (jQuery.isFunction(data)) {
+                callback = data;
+                data = undefined;
+            }
+
+            return jQuery.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                data: data,
+                success: callback
+            });
+        };
 
                 // Router setup
                 self.router = oj.Router.rootInstance;

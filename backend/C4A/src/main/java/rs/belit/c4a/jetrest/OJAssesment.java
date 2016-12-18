@@ -6,6 +6,10 @@ package rs.belit.c4a.jetrest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module;
+import eu.city4age.dashboard.api.json.GetDiagramDataWrapper;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -16,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -226,18 +229,20 @@ public class OJAssesment {
     @Path("forDataPoints")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response forDataSet(@FormParam(value = "geriatricFactorValueIds") List <Long> gefIds) throws JsonProcessingException {
+    public Response forDataSet(String json) throws JsonProcessingException, IOException {
         Session session = sessionFactory.openSession();
         Query q = session.createSQLQuery("SELECT distinct "
                 + " ass.id as assessment_id, assessment_comment, risk_status, data_validity_status , ass.author_id, ass.created, uis.display_name "
                 + "FROM assessment ass "
                 + "JOIN assessed_gef_value_set ags on ags.assessment_id = as.id "
                 + "JOIN user_in_system uis on uis.id = ass.author_id "
-                + "WHERE ags.gef_value_id in :gefIds "
+                + "WHERE ags.gef_value_id in (:gefIds) "
                 + "  ");
         
-        q.setParameter("userInRoleId", gefIds);
-       
+        
+        
+        q.setParameter("gefIds", json.replace("[", "").replace("]", ""));
+
         List<Assessment> forClient = new ArrayList<Assessment>();
         for (Object[] objects : (List<Object[]>) q.list()) {
             AssesmentForLastFives aflf = new AssesmentForLastFives();

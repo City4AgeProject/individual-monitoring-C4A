@@ -60,8 +60,8 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 };
                 
                 var loadAssessments = function (pointIds) {
-                    var pointIdsJson = JSON.stringify({geriatricFactorValueIds : pointIds});
-                    return $.postJSON(ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
+                    var pointIdsJson = JSON.stringify(pointIds);
+                    return $.postJSON(OJ_ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
                         var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var assessment = assessments[i];
