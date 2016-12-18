@@ -73,7 +73,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.careReceiverId = 4;
 
                 function createItems(id, value, gefTypeId) {
-                    console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value);
+                    //console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value);
                     return {id: id,
                         value: value, gefTypeId: gefTypeId
                     };
