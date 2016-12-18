@@ -1,5 +1,5 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'ojs/ojchart', 'ojs/ojtabs', 'ojs/ojlegend',
-    'ojs/ojpopup', 'ojs/ojslider', 'ojs/ojmenu', 'ojs/ojdialog', 'ojs/ojdatetimepicker', 'ojs/ojtimezonedata', 'ojs/ojcheckboxset'],
+    'ojs/ojpopup', 'ojs/ojslider', 'ojs/ojmenu', 'ojs/ojdialog', 'ojs/ojdatetimepicker', 'ojs/ojtimezonedata', 'ojs/ojcheckboxset', 'urls','entities'],
         function (oj, ko, sp, $) {
 
             function GraphicsContentViewModel() {
@@ -73,7 +73,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.careReceiverId = 4;
 
                 function createItems(id, value, gefTypeId) {
-                    console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value);
+                    console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value 
+                            + " parentFactorId=" + CdDetectionVariable.parentFactorId(self.cdDetectionVariables,gefTypeId));
                     return {id: id,
                         value: value, gefTypeId: gefTypeId
                     };
