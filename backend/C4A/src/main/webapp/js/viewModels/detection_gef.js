@@ -1,5 +1,5 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojbutton', 'ojs/ojchart', 'ojs/ojtabs', 'ojs/ojlegend',
-    'ojs/ojpopup', 'ojs/ojslider', 'ojs/ojmenu', 'ojs/ojdialog', 'ojs/ojdatetimepicker', 'ojs/ojtimezonedata', 'ojs/ojcheckboxset'],
+    'ojs/ojpopup', 'ojs/ojslider', 'ojs/ojmenu', 'ojs/ojdialog', 'ojs/ojdatetimepicker', 'ojs/ojtimezonedata', 'ojs/ojcheckboxset', 'urls','entities'],
         function (oj, ko, sp, $) {
 
             function GraphicsContentViewModel() {
@@ -334,7 +334,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     /*End: Assign summary Show more/Show less */
                 };
                 /* End: handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
-
             }
             var graphicsContentViewModel = new GraphicsContentViewModel();
             return  graphicsContentViewModel;
