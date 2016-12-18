@@ -234,20 +234,16 @@ public class OJAssesment {
         Query q = session.createSQLQuery("SELECT distinct "
                 + " ass.id as assessment_id, assessment_comment, risk_status, data_validity_status , ass.author_id, ass.created, uis.display_name "
                 + "FROM assessment ass "
-                + "JOIN assessed_gef_value_set ags on ags.assessment_id = as.id "
+                + "JOIN assessed_gef_value_set ags on ags.assessment_id = ass.id "
                 + "JOIN user_in_system uis on uis.id = ass.author_id "
-                + "WHERE ags.gef_value_id in (:gefIds) "
+                + "WHERE cast ( ags.gef_value_id  as integer ) in " + json.replace("[", "(").replace("]", ")")
                 + "  ");
         
-        
-        
-        q.setParameter("gefIds", json.replace("[", "").replace("]", ""));
-
         List<Assessment> forClient = new ArrayList<Assessment>();
         for (Object[] objects : (List<Object[]>) q.list()) {
             AssesmentForLastFives aflf = new AssesmentForLastFives();
             
-            aflf.setAssessment_id(((BigInteger) objects[0]).longValue());
+            aflf.setAssessment_id(((Integer) objects[0]).longValue());
             aflf.setAssessment_comment((String) objects[1]);
             aflf.setRisk_status(String.valueOf((Character) objects[2]));
             aflf.setData_validity_status(String.valueOf((Character) objects[3]));
