@@ -71,7 +71,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                             newAssessment.from = assessment.from;
                             newAssessment.dateAndTime = assessment.dateAndTime;
                             newAssessment.riskStatus = assessment.riskStatus;
-                            newAssessment.dataValidity = assessment.dataValidityStatus;
+                            newAssessment.dataValidity = assessment.dataValidity;
                             
                             newAssessment.formatAssessmentData();  
                             if(!Assessment.arrayContains(assessmentsResult, newAssessment))
@@ -213,14 +213,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
 
                 self.chartOptionChange = function (event, ui) {
                     if (ui['option'] === 'selection') {
-                        //if click or select only one point and that is Assessment 
-                        // do preload and show preloaded assesments
-                        if (ui['value'].length === 1 && ui['value'][0].series === 'Assessment') {
-                            self.selectedAnotations( ui['optionMetadata'].selectionData[0].data.assessmentObjects);
-                            showAssessmentsPopup();
-                            return;
-                        }
-                        
                         if (ui['value'].length > 0) {
                             $('#popup1').ojPopup();
                             if($('#popup1').ojPopup( "isOpen" ))
@@ -312,7 +304,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     return {
                         riskStatus: response['riskStatus'],
                         riskStatusDesc: response['riskStatusDescription'],
-                        imagePath: response['iconImage']};
+                        imagePath: response['iconImagePath']};
                 };
                 
                 var collectionRisks = new oj.Collection.extend({

@@ -103,7 +103,7 @@ Assessment.prototype.formatDateAndTimeText = function() {
                             + ' ' + new Date(this.dateAndTime).toLocaleTimeString();
 };
 
-Assessment.prototype.formatRiskStatusDescAndImage = function () {
+Assessment.prototype.formatValidityDataDescAndImage = function () {
     if('Q' === this.dataValidity){
         this.dataValidityDesc = 'Questionable data';
         this.dataValidityImage = 'images/questionable_data.png';
@@ -116,7 +116,7 @@ Assessment.prototype.formatRiskStatusDescAndImage = function () {
     }
 };
 
-Assessment.prototype.formatValidityDataDescAndImage = function () {
+Assessment.prototype.formatRiskStatusDescAndImage = function () {
     if('A' === this.riskStatus){
         this.riskStatusDesc = 'Alert status';
         this.riskStatusImage = 'images/risk_alert.png';
