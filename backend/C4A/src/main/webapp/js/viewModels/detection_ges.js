@@ -96,6 +96,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                                 series[i].items[j].width='16';
                                 series[i].items[j].x=j;
                                 series[i].items[j].y=series[i].items[j].value;
+                                
                                 series[i].items[j].assessmentObjects=item.assessmentObjects;
                                 return j;
                             }
@@ -119,7 +120,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                                 var item = serie.items[j];
                                  var matchedIndex = matchSeriesIndexByItemValue(item); 
                                  if(matchedIndex>=0) {
-                                    // za sada da ih rasporedim samo pa onda da ih razvrstavam po bojama
+                                    
                                     console.log(item.id +' -> ' + item.value + ' na index '+matchedIndex  );
                                    // serieAlertsItems[matchedIndex] = item;
                                  }
@@ -127,7 +128,26 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                          }
                         assessmentsSerieAlerts.items = serieAlertsItems;
                         //if(assessmentsSerieAlerts.items.length>0)
-                            self.seriesValue.push(assessmentsSerieAlerts);
+                        //choose marker in rang
+                        var series = self.seriesValue();
+                        for(var i = 0; i < series.length; i++) {
+                            for(var j = 0; j < series[i].items.length; j++) {
+                                if(series[i].items[j].assessmentObjects && series[i].items[j].assessmentObjects.length > 0){
+                                    for(var k = 0; k < series[i].items[j].assessmentObjects.length; j++) {
+                                        if('A' === series[i].items[j].assessmentObjects[k].riskStatus ){
+                                            series[i].items[j].source='images/risk_alert.png';
+                                            break;
+                                        }
+                                        if('W' === series[i].items[j].assessmentObjects[k].riskStatus ){
+                                            series[i].items[j].source='images/risk_warning.png';
+                                            break;
+                                        }
+                                    }
+                                } 
+                            }
+                        }
+                        self.seriesValue.push(assessmentsSerieAlerts);
+                        
                     });
                 };
                 
