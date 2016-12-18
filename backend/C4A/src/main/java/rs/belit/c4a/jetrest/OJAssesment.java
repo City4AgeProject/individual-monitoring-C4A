@@ -9,7 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +51,8 @@ public class OJAssesment {
             @QueryParam(value = "intervalEnd") String intervalEnd,
             @QueryParam(value = "userInRoleId") Long userInRoleId) throws JsonProcessingException {
         Session session = sessionFactory.openSession();
-        Query q = session.createSQLQuery("SELECT distinct ti.id, ti.interval_start, gfv.id as gef_id, gef_value, assessment_id, assessment_comment, risk_status, data_validity_status ,author_id "
+        Query q = session.createSQLQuery("SELECT distinct ti.id as time_interval_id , ti.interval_start, gfv.id as gef_id, gef_value,"
+                + " assessment_id, assessment_comment, risk_status, data_validity_status ,author_id, created, uis.display_name "
                 + "FROM time_interval AS ti "
                 + "JOIN (geriatric_factor_value AS gfv "
                 + "JOIN (assessed_gef_value_set AS agvs "
@@ -59,6 +62,7 @@ public class OJAssesment {
                 + "ON agvs.gef_value_id = gfv.id "
                 + ") "
                 + "ON gfv.time_interval_id=ti.id "
+                + "JOIN user_in_system uis on uis.id=author_id "
                 + "WHERE ti.interval_start >= cast ( :intervalStart as timestamp ) "
                 + "AND ti.interval_end <= cast ( :intervalEnd as timestamp ) "
                 + "AND "
@@ -75,14 +79,14 @@ public class OJAssesment {
                 + "gfv.user_in_role_id = cast ( :userInRoleId as bigint ) "
                 + "OR gfv.id IS NULL "
                 + ") "
-                + "ORDER BY ti.id");
+                + "ORDER BY time_interval_id");
         q.setParameter("intervalStart", intervalStart);
         q.setParameter("intervalEnd", intervalEnd);
         q.setParameter("userInRoleId", userInRoleId);
         List<AssesmentForLastFives> toLose = new ArrayList<AssesmentForLastFives>();
         for (Object[] objects : (List<Object[]>) q.list()) {
             AssesmentForLastFives aflf = new AssesmentForLastFives();
-            aflf.setId(((BigInteger) objects[0]).longValue());
+            aflf.setTime_interval_id(((BigInteger) objects[0]).longValue());
             aflf.setInterval_start(((Timestamp) objects[1]).toString());
             aflf.setGef_id(((BigInteger) objects[2]).longValue());
             aflf.setGef_value(((BigDecimal) objects[3]).floatValue());
@@ -91,6 +95,10 @@ public class OJAssesment {
             aflf.setRisk_status(String.valueOf((Character) objects[6]));
             aflf.setData_validity_status(String.valueOf((Character) objects[7]));
             aflf.setAuthor_id(((BigInteger) objects[8]).longValue());
+            Timestamp cre = ((Timestamp) objects[9]);
+            Date d = new Date(cre.getTime());
+            aflf.setCreated(d);
+            aflf.setDisplay_name((String) objects[10]);
             toLose.add(aflf);
         }
 
@@ -100,7 +108,7 @@ public class OJAssesment {
 
         for (AssesmentForLastFives assesmentForLastFives : toLose) {
             Group g = new Group();
-            g.setId(assesmentForLastFives.getId());
+            g.setId(assesmentForLastFives.getTime_interval_id());
             g.setName(assesmentForLastFives.getInterval_start());
             groups.add(g);
         }
@@ -139,7 +147,7 @@ public class OJAssesment {
             for (AssesmentForLastFives as : toLose) {
                 Assessment assesment = createFromFlat(as);
                 
-                 if (as.getId().equals(g.getId())) {
+                 if (as.getTime_interval_id().equals(g.getId())) {
                     Item item = new Item();
                     item.setId(as.getGef_id());
                     item.setValue(as.getGef_value());
@@ -147,7 +155,7 @@ public class OJAssesment {
                     item.getAssessmentObjects().add(assesment);
                     //add other possible annotations to item
                     for (AssesmentForLastFives as2 : toLose) {
-                        if(as2.getId().equals(g.getId()) && !assesment.getId().equals(as2.getAssessment_id()) && as.getGef_value().equals(as2.getGef_value())){ // maybe check gef_value
+                        if(as2.getTime_interval_id().equals(g.getId()) && !assesment.getId().equals(as2.getAssessment_id()) && as.getGef_value().equals(as2.getGef_value())){ // maybe check gef_value
                             Assessment a2 = createFromFlat(as2);
                             item.getAssessmentObjects().add(a2);
                         }
@@ -180,6 +188,10 @@ public class OJAssesment {
                 assesment.setFrom(String.valueOf(as.getAuthor_id()));
                 assesment.setComment(as.getAssessment_comment());
                 assesment.setId(as.getAssessment_id());
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+                assesment.setDateAndTime(sdf.format(as.getCreated()));
+                assesment.setDateAndTimeText(sdf.format(as.getCreated()));
+                assesment.setFrom(as.getDisplay_name() == null ? "No display name for Creator" :  as.getDisplay_name());
                  if ("A".equals(assesment.getRiskStatus())) {
                         assesment.setRiskStatusDesc("Alert");
                         assesment.setRiskStatusImage("images/risk_alert.png");
