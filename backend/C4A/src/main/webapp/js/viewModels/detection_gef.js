@@ -73,8 +73,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.careReceiverId = 4;
 
                 function createItems(id, value, gefTypeId) {
-                    console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value 
-                            + " parentFactorId=" + CdDetectionVariable.parentFactorId(self.cdDetectionVariables,gefTypeId));
+                    console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value);
                     return {id: id,
                         value: value, gefTypeId: gefTypeId
                     };
@@ -333,18 +332,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                         }
                     });
                     /*End: Assign summary Show more/Show less */
-                    loadCdDetectionVariables();
                 };
                 /* End: handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
-
-                self.cdDetectionVariables = [];
-
-                function loadCdDetectionVariables() {
-                    $.getJSON(OJ_CODEBOOK_SELECT + '?tableName=cd_detection_variable', function(data) {
-                        self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
-                    });
-                }
-
             }
             var graphicsContentViewModel = new GraphicsContentViewModel();
             return  graphicsContentViewModel;
