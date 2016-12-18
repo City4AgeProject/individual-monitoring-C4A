@@ -326,7 +326,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                         } else {
                             $("#showmore").html("Read less");
-                            $this.animate({height: '100%'});
+                            $this.animate({height: '200px'});
                             $this.data('open', 1);
 
                         }

@@ -154,7 +154,31 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 // Page handlers and intern functions
                 self.handleActivated = function (info) {
                     var response = loadDataSet();
+                    
                     return response;
+                };
+                /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
+                self.handleAttached = function (info) {
+                    //console.log('handleAttached');                    
+
+                    /* Assign summary Show more/Show less  */
+                    $('#summary').css({height: '20px', overflow: 'hidden'});
+                    $('#showmore').on('click', function () {
+                        console.log("clicked");
+                        var $this = $("#summary");
+                        if ($this.data('open')) {
+                            $("#showmore").html("Read more");
+                            $this.animate({height: '20px'});
+                            $this.data('open', 0);
+
+                        } else {
+                            $("#showmore").html("Read less");
+                            $this.animate({height: '200px'});
+                            $this.data('open', 1);
+
+                        }
+                    });
+                    /*End: Assign summary Show more/Show less */
                 };
                 
                 /*Mouse handles .. should be deleted when we found better way to fix popup position */
@@ -191,27 +215,14 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                  * 
                  * @param {type} dataSelection this is ui['optionMetadata'] for selected value(s)
                  * @returns {Array} Array of id-s for selected points of chart. <br/>
-                 * In case that only selected one point of Assessment serie <br/>
-                 * return will be Array of Assessment regarding selected point
+                 * 
                  */
                 function filteredSelectionBetweenAssessmentSeriesAndOtherPoints(dataSelection) {
                     var filteredSelection = [];
-                    //add all anotation if choosed only one point and if is from Assessments series
-                    if( dataSelection.selectionData.length === 1 && (dataSelection.selectionData[0].seriesData.name==='Assessments')){
-                        try {
-                            filteredSelection.push(dataSelection.selectionData[0].data.assessmentObjects);
-                        }
-                        catch (error) {
-                            self.dataPointsMarked('1 assessment marked ');
-                        }
-                        return filteredSelection;
-                    }
-                    //if selected more than one
                     for (var i=0;i<dataSelection.selectionData.length;i++) {
                         var selectedDataPoint = dataSelection.selectionData[i];
                         //skip assessment
                         if(selectedDataPoint.seriesData.name==='Assessments'){
-                            
                         }
                         else {
                             filteredSelection.push(selectedDataPoint.data.id);
