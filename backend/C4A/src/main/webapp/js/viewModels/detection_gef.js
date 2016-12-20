@@ -18,7 +18,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.userAge = sp.userAge;
                 self.userGender = sp.userGender;
                 self.textline = sp.userTextline;
-
+                self.selectedGefName = "";
 
                 /* tracking mouse position when do mouseover and mouseup/touchend event*/
                 var clientX;
@@ -286,8 +286,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             $("#GEFGroup1DetailsShowPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
                             $("#GEFGroup1DetailsShowPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
                             var selectedGEF = "";
-                            if (ui['value'][0])
+                            if (ui['value'][0]) {
                                 selectedGEF = ui['value'][0];
+                                self.selectedGefName = selectedGEF;
+                            }
                             //console.log(ui['value'][0]);
                             var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup1FactorsLineChart", ui['value'][0]);
 
@@ -332,8 +334,24 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                         }
                     });
                     /*End: Assign summary Show more/Show less */
+                    loadCdDetectionVariables();
                 };
                 /* End: handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
+
+                self.cdDetectionVariables = [];
+
+                function loadCdDetectionVariables() {
+                    $.getJSON(OJ_CODEBOOK_SELECT + '?tableName=cd_detection_variable', function(data) {
+                        self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
+                    });
+                }
+                
+                self.bShowDetailsClick = function() {
+                    var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
+                    oj.Router.rootInstance.store(selectedDetectionVariable);
+                    oj.Router.rootInstance.go('detection_ges');
+                };
+                
             }
             var graphicsContentViewModel = new GraphicsContentViewModel();
             return  graphicsContentViewModel;

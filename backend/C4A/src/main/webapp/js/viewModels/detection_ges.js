@@ -4,7 +4,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
         function (oj, ko, $, sp) {
 
 
-            function detectionGesContentViewModel() {
+            function detectionGesContentViewModel(detectionVariable) {
 
                 
                 var self = this;
@@ -282,7 +282,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     }
                 };
                 
-                self.subFactorName = ko.observable('SubFactorNameFromPrevView');
+                self.subFactorName = ko.observable(detectionVariable.detectionVariableName);
                 /* */
                 self.min = ko.observable(10000);
                 self.max = ko.observable(20000);
@@ -455,7 +455,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     }
                 };
                 self.searchInput = function () {};
-                 self.nowrap = ko.observable(false);
+                self.nowrap = ko.observable(false);
 
 
                 self.formats = ko.observableArray();
@@ -489,6 +489,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.polarChartSeriesValue = ko.observableArray(lineSeriesPolar);
                 self.polarChartGroupsValue = ko.observableArray(lineGroupsPolar);
             }
-
-            return new detectionGesContentViewModel();
+            
+            var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
+            return new detectionGesContentViewModel(selectedDetectionVariable);
         });
