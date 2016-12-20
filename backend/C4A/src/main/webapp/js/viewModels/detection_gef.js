@@ -20,6 +20,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.textline = sp.userTextline;
                 self.selectedGefName = "";
                 self.careReceiverId = null;
+                self.parentFactorId = ko.observable(null);
 
                 /* tracking mouse position when do mouseover and mouseup/touchend event*/
                 var clientX;
@@ -318,13 +319,20 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 
                 self.bShowDetailsClick = function() {
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
+                    self.parentFactorId(selectedDetectionVariable.id);
+                    loadGefData();
+                    loadRadarData();
+                };
+
+                self.bGotoGESClick = function() {
+                    var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
                     oj.Router.rootInstance.store([self.careReceiverId, selectedDetectionVariable]);
                     oj.Router.rootInstance.go('detection_ges');
                 };
 
                 function loadRadarData() {
                     $(".loader-hover").show();
-                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=-1")
+                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" + (self.parentFactorId()?self.parentFactorId():'-1'))
                         .then(function (radarData) {
                             $.each(radarData.itemList, function (i, list) {
                                 var nodes = [];
@@ -350,7 +358,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 }
                 
                 function loadGefData() {
-                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=1")
+                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" +  + (self.parentFactorId()?self.parentFactorId():'-1'))
                         .then(function (behavData) {
                             gefData = behavData;
 //                       console.log("gefData data ", JSON.stringify(gefData));    
