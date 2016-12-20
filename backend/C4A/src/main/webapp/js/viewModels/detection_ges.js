@@ -4,7 +4,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
         function (oj, ko, $, sp) {
 
 
-            function detectionGesContentViewModel(detectionVariable) {
+            function detectionGesContentViewModel() {
 
                 
                 var self = this;
@@ -107,7 +107,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 
                 self.initialAssessments = ko.observableArray([]);
                 var loadAssessmentsCached = function (ids) {
-                    var pointIdsJson = JSON.stringify(ids);
                     return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId='+self.careReceiverId(), function (dataSet) {
                         //insert to quick read later on mouse over popup
                         var assesmentsDataSet = DataSet.produceFromOther(dataSet);
@@ -167,6 +166,10 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 };
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
                 self.handleAttached = function (info) {
+                    
+                    var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
+                    self.subFactorName = ko.observable(selectedDetectionVariable.detectionVariableName);
+                    
                     //console.log('handleAttached');                    
 
                     /* Assign summary Show more/Show less  */
@@ -282,7 +285,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     }
                 };
                 
-                self.subFactorName = ko.observable(detectionVariable.detectionVariableName);
+                self.subFactorName = ko.observable();
                 /* */
                 self.min = ko.observable(10000);
                 self.max = ko.observable(20000);
@@ -490,6 +493,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.polarChartGroupsValue = ko.observableArray(lineGroupsPolar);
             }
             
-            var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
-            return new detectionGesContentViewModel(selectedDetectionVariable);
+            
+            return new detectionGesContentViewModel();
         });
