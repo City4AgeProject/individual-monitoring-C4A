@@ -289,8 +289,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
                 self.handleAttached = function (info) {
                     //console.log('handleAttached');                    
-
                     self.careReceiverId = oj.Router.rootInstance.retrieve();
+                    
+                    self.lineSeriesValue = ko.observableArray();
+                    self.lineSeries2Value = ko.observableArray();
+                    self.groupsValue2 = ko.observableArray();
+                    self.seriesValue = ko.observableArray();
+                    self.groupsValue = ko.observableArray();
 
                     /* Assign summary Show more/Show less  */
                     $('#summary').css({height: '20px', overflow: 'hidden'});
