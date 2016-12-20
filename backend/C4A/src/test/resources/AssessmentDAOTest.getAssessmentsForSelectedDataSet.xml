@@ -1,61 +1,57 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="db_test_data/xsd/dataset.xsd">
 
-    <geriatric_factor_value id="1" gef_value="5" time_interval_id="1" user_in_role_id="1" gef_type_id="1" />
-    <geriatric_factor_value id="2" gef_value="3.9" time_interval_id="2" user_in_role_id="1" gef_type_id="2" />
-    <geriatric_factor_value id="3" gef_value="3.3" time_interval_id="3" user_in_role_id="1" gef_type_id="3" />
-    <geriatric_factor_value id="4" gef_value="2.5" time_interval_id="4" user_in_role_id="1" gef_type_id="4" />
-    <geriatric_factor_value id="5" gef_value="3.9" time_interval_id="5" user_in_role_id="1" gef_type_id="5" />
-    <geriatric_factor_value id="6" gef_value="4.1" time_interval_id="1" user_in_role_id="1" gef_type_id="1" />
-    <geriatric_factor_value id="7" gef_value="3" time_interval_id="2" user_in_role_id="1" gef_type_id="2" />
-    <geriatric_factor_value id="8" gef_value="3.1" time_interval_id="3" user_in_role_id="1" gef_type_id="3" />
-    <geriatric_factor_value id="9" gef_value="3" time_interval_id="4" user_in_role_id="1" gef_type_id="4" />
-    <geriatric_factor_value id="10" gef_value="2.8" time_interval_id="5" user_in_role_id="1" gef_type_id="5" />
+    <geriatric_factor_value id="1" gef_value="5" user_in_role_id="1" />
+    <geriatric_factor_value id="2" gef_value="3.9" user_in_role_id="1" />
+    <geriatric_factor_value id="7" gef_value="3" user_in_role_id="1" />
+ 
+    <assessment id="184" author_id="1" />
+    <assessment id="185" author_id="2" />
+    <assessment id="187" author_id="1" />
+    <assessment id="191" author_id="1" />
     
-    <time_interval id="1" interval_start="2016-01-01 00:00:00" interval_end="2016-02-01 00:00:00" typical_period="1" />
-    <time_interval id="2" interval_start="2016-02-01 00:00:00" interval_end="2016-03-01 00:00:00" typical_period="1" />
-    <time_interval id="3" interval_start="2016-03-01 00:00:00" interval_end="2016-04-01 00:00:00" typical_period="1" />
-    <time_interval id="4" interval_start="2016-04-01 00:00:00" interval_end="2016-05-01 00:00:00" typical_period="1" />
-    <time_interval id="5" interval_start="2016-05-01 00:00:00" interval_end="2016-06-01 00:00:00" typical_period="1" />
+    <assessment id="196" author_id="2" />
     
-    <cd_typical_period typical_period="1" period_description="month" />
+    <assessment id="190" author_id="2" />
     
-    <cd_detection_variable id="1" detection_variable_name="Walking" detection_variable_type="GES" />
-    <cd_detection_variable id="2" detection_variable_name="Climbing stairs" detection_variable_type="GES" />
-    <cd_detection_variable id="3" detection_variable_name="Still/Moving" detection_variable_type="GES" />
-    <cd_detection_variable id="4" detection_variable_name="Moving across rooms" detection_variable_type="GES" />
-    <cd_detection_variable id="5" detection_variable_name="Gait balance" detection_variable_type="GES" />
+    <assessed_gef_value_set assessment_id="184" gef_value_id="1" />
+    <assessed_gef_value_set assessment_id="185" gef_value_id="1" />
+    <assessed_gef_value_set assessment_id="187" gef_value_id="1" />
+    <assessed_gef_value_set assessment_id="191" gef_value_id="1" />
+    <assessed_gef_value_set assessment_id="184" gef_value_id="2" />
+    <assessed_gef_value_set assessment_id="185" gef_value_id="2" />
+    <assessed_gef_value_set assessment_id="187" gef_value_id="2" />
+    <assessed_gef_value_set assessment_id="191" gef_value_id="2" />
     
-    <cd_pilot_detection_variable pilot_id="1" detection_variable_id="1" detection_variable_description_formula="Desc 1" />
-    <cd_pilot_detection_variable pilot_id="1" detection_variable_id="2" detection_variable_description_formula="Desc 2" />
-    <cd_pilot_detection_variable pilot_id="1" detection_variable_id="3" detection_variable_description_formula="Desc 3" />
-    <cd_pilot_detection_variable pilot_id="1" detection_variable_id="4" detection_variable_description_formula="Desc 4" />
-    <cd_pilot_detection_variable pilot_id="1" detection_variable_id="5" detection_variable_description_formula="Desc 5" />
+    <assessed_gef_value_set assessment_id="196" gef_value_id="1" />
+    <assessed_gef_value_set assessment_id="196" gef_value_id="2" />
     
-    <pilot id="1" name="Test" population_size="500" />
+    <assessed_gef_value_set assessment_id="190" gef_value_id="7" />
     
-    <assessment id="1" />
-    <assessment id="2" />
-    <assessment id="3" />
-    <assessment id="4" />
-    <assessment id="5" />
+    <assessment_audience_role assessment_id="184" role_id="1" />
+    <assessment_audience_role assessment_id="184" role_id="2" />
+    <assessment_audience_role assessment_id="185" role_id="1" />
+    <assessment_audience_role assessment_id="185" role_id="2" />
+    <assessment_audience_role assessment_id="187" role_id="1" />
+    <assessment_audience_role assessment_id="187" role_id="2" />
+    <assessment_audience_role assessment_id="191" role_id="1" />
+    <assessment_audience_role assessment_id="191" role_id="2" />
     
-    <assessed_gef_value_set assessment_id="1" gef_value_id="1" />
-    <assessed_gef_value_set assessment_id="2" gef_value_id="1" />
-    <assessed_gef_value_set assessment_id="2" gef_value_id="2" />
-    <assessed_gef_value_set assessment_id="2" gef_value_id="3" />
-    <assessed_gef_value_set assessment_id="3" gef_value_id="3" />
+    <assessment_audience_role assessment_id="196" role_id="1" />
+    <assessment_audience_role assessment_id="196" role_id="2" />
     
-    <assessment_audience_role assessment_id="1" role_id="1" />
-    <assessment_audience_role assessment_id="1" role_id="2" />
-    <assessment_audience_role assessment_id="1" role_id="3" />
-    <assessment_audience_role assessment_id="2" role_id="3" />
-    <assessment_audience_role assessment_id="2" role_id="4" />
-    <assessment_audience_role assessment_id="3" role_id="4" />
-    <assessment_audience_role assessment_id="4" role_id="4" />
+    <assessment_audience_role assessment_id="190" role_id="7" />
     
-    <user_in_role id="1" />
-    <user_in_role id="2" />
-    <user_in_role id="3" />
+    <cd_role id="1" />
+    <cd_role id="2" />
+    <cd_role id="7" />
+    
+    <user_in_role id="1" user_in_system_id="1" />
+    <user_in_role id="2" user_in_system_id="2" />
+    <user_in_role id="7" user_in_system_id="3" />
+    
+    <user_in_system id="1" />
+    <user_in_system id="2" />
+    <user_in_system id="3" />
     
 </dataset>

@@ -43,13 +43,6 @@
             <one-to-many class="VariationMeasureValue" />
         </set>
         
-        <set name="frailtyStatusTimelines" table="frailty_status_timeline" inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="time_interval_id" not-null="true" />
-            </key>
-            <one-to-many class="FrailtyStatusTimeline" />
-        </set>
-        
       	<set name="geriatricFactorValues" inverse="true" lazy="false" fetch="select">
 	        <key column="time_interval_id" />
 	        <one-to-many class="GeriatricFactorValue" />

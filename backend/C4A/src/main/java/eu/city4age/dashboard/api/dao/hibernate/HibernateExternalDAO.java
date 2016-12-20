@@ -75,17 +75,6 @@ public class HibernateExternalDAO extends HibernateBaseDAO implements ExternalDA
 		}));
 	}
 
-	public String getParentGroupName(final Long gefId) {
-		return cast(String.class, getHibernateTemplate().execute(new HibernateCallback<String>() {
-			public String doInHibernate(Session session)
-					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT g.cdDetectionVariable.derivedDetectionVariable.detectionVariableName FROM GeriatricFactorValue g WHERE g.id = :gefId");
-				q.setParameter("gefId", gefId);
-				return (String) q.uniqueResult();
-			}
-		}));
-	}
-
 	public List<FrailtyStatusTimeline> getFrailtyStatus(final List<Long> timeintervalIds, final Long uId) {
 		return castList(FrailtyStatusTimeline.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
@@ -98,11 +87,11 @@ public class HibernateExternalDAO extends HibernateBaseDAO implements ExternalDA
 		}));
 	}
 
-	public List<UserInRole> getUserInRoleByRoleId(final Long roleId) {
+	public List<UserInRole> getUserInRoleByRoleId(final Short roleId) {
 		return castList(UserInRole.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT u FROM UserInRole u Where u.roleId.id = :roleId");
+				Query q = session.createQuery("SELECT u FROM UserInRole u Where u.roleId = :roleId");
 				q.setParameter("roleId", roleId);
 				return q.list();
 			}
@@ -113,7 +102,7 @@ public class HibernateExternalDAO extends HibernateBaseDAO implements ExternalDA
 		return castList(CrProfile.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT c FROM CrProfile c Where c.userInRoleId.id = :userId");
+				Query q = session.createQuery("SELECT c FROM CrProfile c Where c.userInRole.id = :userId");
 				q.setParameter("userId", userId);
 				return q.list();
 			}
@@ -124,7 +113,7 @@ public class HibernateExternalDAO extends HibernateBaseDAO implements ExternalDA
 		return castList(CareProfile.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT c FROM CareProfile c WHERE c.userInRole.id = :userId ");
+				Query q = session.createQuery("SELECT c FROM CareProfile c WHERE c.userInRoleId = :userId ");
 				q.setParameter("userId", userId);
 				return q.list();
 			}
@@ -135,7 +124,7 @@ public class HibernateExternalDAO extends HibernateBaseDAO implements ExternalDA
 		return castList(FrailtyStatusTimeline.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT f FROM FrailtyStatusTimeline f WHERE f.frailtyStatusTimelinePK.userInRoleId = :userId ");
+				Query q = session.createQuery("SELECT fst FROM FrailtyStatusTimeline fst WHERE fst.userInRole.id = :userId ");
 				q.setParameter("userId", userId);
 				return q.list();
 			}
@@ -146,7 +135,7 @@ public class HibernateExternalDAO extends HibernateBaseDAO implements ExternalDA
 		return cast(UserInSystem.class, getHibernateTemplate().execute(new HibernateCallback<UserInSystem>() {
 			public UserInSystem doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT u FROM UserInSystem u Where u.username = :username and u.password=:password");
+				Query q = session.createQuery("SELECT u FROM UserInSystem u WHERE u.username = :username AND u.password=:password");
 				q.setParameter("username", username);
 				q.setParameter("password", password);
 				return (UserInSystem) q.uniqueResult();
@@ -158,9 +147,20 @@ public class HibernateExternalDAO extends HibernateBaseDAO implements ExternalDA
 		return cast(UserInRole.class, getHibernateTemplate().execute(new HibernateCallback<UserInRole>() {
 			public UserInRole doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				Query q = session.createQuery("SELECT u FROM UserInRole u Where u.userInSystemId.id = :uisId");
+				Query q = session.createQuery("SELECT u FROM UserInRole u WHERE u.userInSystem.id = :uisId");
 				q.setParameter("uisId", uisId);
 				return (UserInRole) q.uniqueResult();
+			}
+		}));
+	}
+
+	public String getUserInSystemUsernameByUserInRoleId(final Long uId) {
+		return cast(String.class, getHibernateTemplate().execute(new HibernateCallback<String>() {
+			public String doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				Query q = session.createQuery("SELECT u.userInSystem.username FROM UserInRole u WHERE u.id = :uId");
+				q.setParameter("uId", uId);
+				return (String) q.uniqueResult();
 			}
 		}));
 	}

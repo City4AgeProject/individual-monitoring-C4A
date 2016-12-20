@@ -31,9 +31,9 @@
             <column name="derivation_weight" precision="3" />
         </property>  -->
 
-	    <set name="assessedGefValueSets" lazy="false">
+	    <set name="assessments" table="assessed_gef_value_set" lazy="false">
 	        <key column="gef_value_id" />
-	        <one-to-many class="eu.city4age.dashboard.api.model.AssessedGefValueSet" />
+	        <many-to-many class="eu.city4age.dashboard.api.model.Assessment" column="assessment_id" unique="true" />
 	    </set>
 
 		<!--

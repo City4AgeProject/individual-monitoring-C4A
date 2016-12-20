@@ -33,25 +33,6 @@
         <property name="derivationWeight" type="big_decimal">
             <column name="derivation_weight" precision="3" />
         </property>
-        
-        <set name="variationMeasureValues" table="variation_measure_value" inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="measure_type_id" not-null="true" />
-            </key>
-            <one-to-many class="VariationMeasureValue" />
-        </set>
-        
-        <set name="numericIndicatorValues" table="numeric_indicator_value" inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="nui_type_id" not-null="true" />
-            </key>
-            <one-to-many class="NumericIndicatorValue" />
-        </set>
-        
-	    <set name="pilots" lazy="false">
-	        <key column="detection_variable_id" />
-	        <one-to-many class="eu.city4age.dashboard.api.model.CdPilotDetectionVariable" />
-	    </set>
 	   
     </class>
 </hibernate-mapping>

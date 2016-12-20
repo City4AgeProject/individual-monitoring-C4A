@@ -7,14 +7,16 @@
 
 		<composite-id name="frailtyStatusTimelineId">
 			<key-property name="timeIntervalId" column="time_interval_id" />
-			<key-property name="changedById" column="changed_by" />
+			<key-property name="changed" column="changed" />
+			<key-property name="userInRoleId" column="user_in_role_id" />
+			<key-property name="frailtyStatus" column="frailty_status" />
 		</composite-id>
 
         <many-to-one name="timeInterval" class="TimeInterval" update="false" insert="false" fetch="select">
             <column name="time_interval_id" not-null="true" />
         </many-to-one>
 
-        <property name="changed" type="timestamp">
+        <property name="changed" type="timestamp" update="false" insert="false">
             <column name="changed" length="29" not-null="true" />
         </property>
         

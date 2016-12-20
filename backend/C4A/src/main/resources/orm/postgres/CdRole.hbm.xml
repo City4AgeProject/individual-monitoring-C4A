@@ -34,12 +34,5 @@
             <column name="stakeholder_abbreviation" length="3" />
         </property>
 
-        <set name="assessmentAudienceRoles" table="assessment_audience_role" inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="role_id" not-null="true" />
-            </key>
-            <one-to-many class="AssessmentAudienceRole" />
-        </set>
-
     </class>
 </hibernate-mapping>

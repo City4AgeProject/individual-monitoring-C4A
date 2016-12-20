@@ -66,8 +66,8 @@
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/4.1.4.RELEASE/spring-web-4.1.4.RELEASE.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/jersey/containers/jersey-container-servlet-core/2.14/jersey-container-servlet-core-2.14.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/jersey/core/jersey-server/2.14/jersey-server-2.14.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.3.2/jackson-core-2.3.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.3.2/jackson-databind-2.3.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.4.6/jackson-core-2.4.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.4.6/jackson-databind-2.4.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/hk2/2.4.0-b06/hk2-2.4.0-b06.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/spring-bridge/2.4.0-b06/spring-bridge-2.4.0-b06.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/hk2-api/2.4.0-b06/hk2-api-2.4.0-b06.jar"/>
@@ -75,16 +75,16 @@
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/external/javax.inject/2.4.0-b06/javax.inject-2.4.0-b06.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/hk2-locator/2.4.0-b06/hk2-locator-2.4.0-b06.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/hk2-utils/2.4.0-b06/hk2-utils-2.4.0-b06.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/2.3.2/jackson-jaxrs-json-provider-2.3.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.3.2/jackson-module-jaxb-annotations-2.3.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/jaxrs/jackson-jaxrs-base/2.3.2/jackson-jaxrs-base-2.3.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/2.4.6/jackson-jaxrs-json-provider-2.4.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.4.6/jackson-module-jaxb-annotations-2.4.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/jaxrs/jackson-jaxrs-base/2.4.6/jackson-jaxrs-base-2.4.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/external/aopalliance-repackaged/2.4.0-b06/aopalliance-repackaged-2.4.0-b06.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.3/commons-lang-2.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-pool/commons-pool/1.5.4/commons-pool-1.5.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-aspects/4.1.4.RELEASE/spring-aspects-4.1.4.RELEASE.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.3.2/jackson-annotations-2.3.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.4.6/jackson-annotations-2.4.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

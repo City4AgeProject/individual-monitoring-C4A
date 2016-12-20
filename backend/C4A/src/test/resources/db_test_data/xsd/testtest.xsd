@@ -109,9 +109,9 @@
 	</xsd:complexType>
 	<xsd:complexType name="user_in_system__type">
 		<xsd:attribute name="password" use="optional" />
-		<xsd:attribute name="diplay_name" use="optional" />
 		<xsd:attribute name="id" use="optional" />
 		<xsd:attribute name="created_date" use="optional" />
+		<xsd:attribute name="display_name" use="optional" />
 		<xsd:attribute name="username" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="inter_activity_behaviour_variation__type">

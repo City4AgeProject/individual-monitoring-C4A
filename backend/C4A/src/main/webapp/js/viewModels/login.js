@@ -6,7 +6,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 $(".loader-hover").hide();
                 var self = this;
 
-                var url = sp.baseUrl + sp.loginMethod;
+                var url = "http://localhost:8080/api-1.0-SNAPSHOT/v1/careReceiversData" + sp.loginMethod;
 
                 self.passwordValue = ko.observable();
                 self.loginValue = ko.observable();

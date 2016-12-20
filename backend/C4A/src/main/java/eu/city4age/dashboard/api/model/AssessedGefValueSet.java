@@ -5,7 +5,9 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 // default package
 // Generated 24-Nov-2016 15:43:47 by Hibernate Tools 5.2.0.Beta1
@@ -18,8 +20,10 @@ public class AssessedGefValueSet implements Serializable {
 
 	private AssessedGefValueSetId assessedGefValueSetId;
 
+	@JsonBackReference
 	private Assessment assessment;
 	
+	@JsonManagedReference
 	private GeriatricFactorValue geriatricFactorValue;
 
 	public AssessedGefValueSet() {
@@ -28,7 +32,6 @@ public class AssessedGefValueSet implements Serializable {
 	public AssessedGefValueSet(Assessment assessment, GeriatricFactorValue geriatricFactorValue) {
 		this.assessment = assessment;
 		this.geriatricFactorValue = geriatricFactorValue;
-		this.geriatricFactorValue.addAssessment(assessment);
 	}
 
 	public AssessedGefValueSetId getAssessedGefValueSetId() {
@@ -45,8 +48,6 @@ public class AssessedGefValueSet implements Serializable {
 
 	public void setAssessment(Assessment assessment) {
 		this.assessment = assessment;
-		if(this.geriatricFactorValue != null)
-			this.geriatricFactorValue.addAssessment(assessment);
 	}
 
 	public GeriatricFactorValue getGeriatricFactorValue() {
@@ -55,8 +56,6 @@ public class AssessedGefValueSet implements Serializable {
 
 	public void setGeriatricFactorValue(GeriatricFactorValue geriatricFactorValue) {
 		this.geriatricFactorValue = geriatricFactorValue;
-		if(this.assessment != null)
-			this.geriatricFactorValue.addAssessment(this.assessment);
 	}
 
 }

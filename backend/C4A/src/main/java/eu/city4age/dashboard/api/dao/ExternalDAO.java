@@ -12,19 +12,31 @@ import eu.city4age.dashboard.api.model.UserInSystem;
 
 public interface ExternalDAO extends BaseDAO {
 
+	
+	/*
+	 * 
+	 * getGroups dao methods
+	 *
+	 */
 	List<CdDetectionVariable> getDetectionVariableForDetectionVariableType(List<String> parentFactors);
 	
 	List<CdDetectionVariable> getDetectionVariableForDetectionVariableType(String parentFactor);
 
 	List<GeriatricFactorValue> getGeriatricFactorValueForDetectionVariableId(Long dvId, Long cdId);
 
-	String getUserInSystemUsername(Long gefId);
+	String getUserInSystemUsername(Long gefId); //++++
 
-	String getParentGroupName(Long gefId);
-	
 	List<FrailtyStatusTimeline> getFrailtyStatus(List<Long> timeintervalIds, Long uId);
-
-	List<UserInRole> getUserInRoleByRoleId(Long roleId);
+	
+	
+	/*
+	 * 
+	 * getCareReceivers dao methods
+	 *
+	 */
+	List<UserInRole> getUserInRoleByRoleId(Short roleId);
+	
+	String getUserInSystemUsernameByUserInRoleId(Long uId); //++++
 
 	List<CrProfile> getProfileByUserInRoleId(Long id);
 
@@ -32,8 +44,15 @@ public interface ExternalDAO extends BaseDAO {
 
 	List<FrailtyStatusTimeline> getFrailtyStatusByUserInRoleId(Long id);
 
+	
+	/*
+	 * 
+	 * login dao methods
+	 * 
+	 */
 	UserInSystem getUserInSystem(String username, String password);
 
 	UserInRole getUserInRoleByUserInSystemId(Long uisId);
+	
 
 }

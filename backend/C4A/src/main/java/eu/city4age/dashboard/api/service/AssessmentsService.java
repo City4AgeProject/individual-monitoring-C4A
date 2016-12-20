@@ -16,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.datatype.hibernate3.Hibernate3Module;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.dao.DetectionVariableDAO;
@@ -55,6 +56,8 @@ public class AssessmentsService {
 	@Autowired
 	private TimeIntervalDAO timeIntervalDAO;
 	
+	private static final CustomObjectMapper objectMapper = new CustomObjectMapper();
+	
 
 	@POST
     @Path("/getDiagramData")
@@ -62,10 +65,6 @@ public class AssessmentsService {
     @Produces(MediaType.APPLICATION_JSON)
 	public String getDiagramData(String json) throws Exception {
     	
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		objectMapper.registerModule(new Hibernate3Module());
-		
     	ObjectReader objectReader = objectMapper.reader(GetDiagramDataWrapper.class);
     	
     	GetDiagramDataWrapper data = objectReader.readValue(json);
@@ -100,10 +99,6 @@ public class AssessmentsService {
     @Produces(MediaType.APPLICATION_JSON)
 	public String getLastFiveAssessmentsForDiagram(String json) throws Exception {
 
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		objectMapper.registerModule(new Hibernate3Module());
-		
     	ObjectReader objectReader = objectMapper.reader(GetLastFiveAssessmentsWrapper.class);
     	
     	GetLastFiveAssessmentsWrapper data = objectReader.readValue(json);
@@ -125,12 +120,7 @@ public class AssessmentsService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String getAssessmentsForSelectedDataSet(String json) throws Exception {
-
-    	
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		objectMapper.registerModule(new Hibernate3Module());
-    	
+	
     	ObjectReader objectReader = objectMapper.reader(GetAssessmentsByFilterWrapper.class);
     	
     	GetAssessmentsByFilterWrapper data = objectReader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
@@ -138,19 +128,14 @@ public class AssessmentsService {
     	List<Assessment> ass = assessmentDAO.getAssessmentsForSelectedDataSet(
     						data.getGeriatricFactorValueIds(), data.getStatus(), data.getAuthorRoleId(), data.getOrderBy());
 
-		String dtoAsString = objectMapper.writeValueAsString(ass);
-        
-        return dtoAsString;
+		return objectMapper.writeValueAsString(ass);
+   
     }
 
     @POST
     @Path("/addAssessmentsForSelectedDataSet")
     @Consumes(MediaType.APPLICATION_JSON)
     public void addAssessmentsForSelectedDataSet(String json) throws Exception {
-    	
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		objectMapper.registerModule(new Hibernate3Module());
     	
     	ObjectReader objectReader = objectMapper.reader(AddAssessmentWrapper.class);
     	

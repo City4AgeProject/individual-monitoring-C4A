@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class CareProfile implements Serializable {
 
-	private int userInRoleId;
+	private Long userInRoleId;
 	private UserInRole userInRoleById;
 	private UserInRole userInRoleByLastUpdatedBy;
 	private UserInRole userInRoleByCreatedBy;
@@ -56,11 +56,11 @@ public class CareProfile implements Serializable {
 		this.lastUpdated = lastUpdated;
 	}
 
-	public int getUserInRoleId() {
-		return this.userInRoleId;
+	public Long getUserInRoleId() {
+		return userInRoleId;
 	}
 
-	public void setUserInRoleId(int userInRoleId) {
+	public void setUserInRoleId(Long userInRoleId) {
 		this.userInRoleId = userInRoleId;
 	}
 

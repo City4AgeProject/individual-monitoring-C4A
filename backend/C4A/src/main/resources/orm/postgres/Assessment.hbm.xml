@@ -36,19 +36,15 @@
             <column name="author_id" />
         </many-to-one>
         
-        <set name="assessmentAudienceRoles" table="assessment_audience_role" inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="assessment_id" not-null="true" />
-            </key>
-            <one-to-many class="AssessmentAudienceRole" />
-        </set>
+       	<set name="roles" table="assessment_audience_role" lazy="false">
+	        <key column="assessment_id" />
+	        <many-to-many class="eu.city4age.dashboard.api.model.CdRole" column="role_id" unique="true" />
+	    </set>
         
-        <set name="assessedGefValueSets" table="assessed_gef_value_set" inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="assessment_id" not-null="true" />
-            </key>
-            <one-to-many class="AssessedGefValueSet" />
-        </set>
+	    <join table="assessed_gef_value_set" inverse="true" optional="false">
+	        <key column="assessment_id" unique="true" not-null="true" />
+	        <many-to-one name="geriatricFactorValue" column="gef_value_id" not-null="true"/>
+	    </join>
         
     </class>
 </hibernate-mapping>

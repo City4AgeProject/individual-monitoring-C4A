@@ -17,7 +17,7 @@
     <spring.version>4.1.4.RELEASE</spring.version>  
     <unitils.version>3.4.3</unitils.version>  
     <jersey.version>2.14</jersey.version>  
-    <jackson.version>2.3.5</jackson.version> 
+    <jackson.version>2.4.6</jackson.version> 
   </properties>  
   <dependencies> 
     <!-- Jersey -->  
@@ -171,7 +171,8 @@
       <groupId>org.postgresql</groupId>  
       <artifactId>postgresql</artifactId>  
       <version>9.4.1212</version> 
-    </dependency>  
+    </dependency>
+      
     <!-- Apache Commons -->  
     <dependency> 
       <groupId>commons-collections</groupId>  

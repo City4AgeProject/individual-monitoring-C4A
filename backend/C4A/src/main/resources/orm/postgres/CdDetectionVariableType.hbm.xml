@@ -14,12 +14,13 @@
             <column name="detection_variable_type_description" length="50" />
         </property>
         
+        <!-- 
         <set name="assessedSets" table="assessed_gef_value_set" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="detection_variable_type" length="3" not-null="true" />
             </key>
             <one-to-many class="AssessedGefValueSet" />
-        </set>
+        </set> -->
         
     </class>
 </hibernate-mapping>

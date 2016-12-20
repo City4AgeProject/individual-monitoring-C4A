@@ -39,7 +39,7 @@ public class C4ServiceGetOverallScoreListResponse {
 	        
 	         ItemList.add(factors.getGefValue().floatValue());
 	         idList.add(factors.getId());
-	         String date = sdf.format(factors.getTimeIntervalId().getIntervalStart());
+	         String date = sdf.format(factors.getTimeInterval().getIntervalStart());
 	
 	         dateList.add(date);
 	         months.add(new DataIdValue(factors.getTimeInterval().getId(), date));

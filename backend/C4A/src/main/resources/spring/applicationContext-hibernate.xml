@@ -72,7 +72,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	
 	<aop:config proxy-target-class="true">
-		<aop:pointcut id="serviceMethods" expression="execution(* eu.city4age.dashboard.api.ws.*.*(..))"/>
+		<aop:pointcut id="serviceMethods" expression="execution(* eu.city4age.dashboard.api.service.*.*(..))"/>
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
 	</aop:config>
 	

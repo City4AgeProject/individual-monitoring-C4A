@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="db_test_data/xsd/dataset.xsd">
+
+	<user_in_role id="1" role_id="1" user_in_system_id="1" />
+	<user_in_role id="2" role_id="1" />
+	<user_in_role id="3" role_id="1" />
+	<user_in_role id="4" role_id="1" />
+	<user_in_role id="5" role_id="1" />
+	<user_in_role id="6" role_id="1" />
+	<user_in_role id="7" role_id="1" />
+	
+	<cd_role id="1" />
+	
+	<frailty_status_timeline user_in_role_id="1" time_interval_id="1" changed_by="1" changed="2015-01-01 00:00:00" frailty_status="XXX" />
+	
+	<time_interval id="1" />
+	
+	<cr_profile id="1" user_in_role_id="1" gender="true" />
+	<cr_profile id="2" user_in_role_id="1" gender="false" />
+	<cr_profile id="3" user_in_role_id="1" gender="true" />
+	
+	<care_profile user_in_role_id="1" />
+	
+	<user_in_system id="1" username="admin" />
+	
+	<cd_frailty_status frailty_status="XXX" />
+	
+</dataset>

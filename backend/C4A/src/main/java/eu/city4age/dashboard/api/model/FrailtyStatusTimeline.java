@@ -2,6 +2,8 @@ package eu.city4age.dashboard.api.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // default package
 // Generated 24-Nov-2016 15:43:47 by Hibernate Tools 5.2.0.Beta1
 
@@ -10,12 +12,21 @@ import java.util.Date;
  */
 public class FrailtyStatusTimeline extends AbstractBaseEntity {
 
+	@JsonIgnore
 	private FrailtyStatusTimelineId frailtyStatusTimelineId;
+	
 	private TimeInterval timeInterval;
+
 	private UserInRole userInRole;
+	
+	@JsonIgnore
 	private UserInRole changedBy;
+
 	private String frailtyNotice;
+	
+	@JsonIgnore
 	private Date changed;
+	
 	private CdFrailtyStatus cdFrailtyStatus;
 
 	public FrailtyStatusTimeline() {

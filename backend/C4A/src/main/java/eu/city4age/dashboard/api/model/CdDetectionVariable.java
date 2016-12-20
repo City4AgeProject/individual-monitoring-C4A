@@ -25,30 +25,26 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 	private Date validTo;
 	
 	private BigDecimal derivationWeight;
-	
-	private Set variationMeasureValues = new HashSet(0);
-	private Set cdPilotDetectionVariables = new HashSet(0);
-	private Set numericIndicatorValues = new HashSet(0);
-	
-	private Set<Pilot> pilots = new HashSet<Pilot>();
-	
+
+	private Set<CdPilotDetectionVariable> cdPilotDetectionVariables = new HashSet<CdPilotDetectionVariable>(0);
+
+	@JsonIgnore
 	private CdDetectionVariable derivedDetectionVariable;
 	
+	@JsonIgnore
 	private  CdDetectionVariableType detectionVariableType;
 
 	public CdDetectionVariable() {
 	}
 
 	public CdDetectionVariable(String detectionVariableName, CdDetectionVariableType detectionVariableType, Date validFrom,
-			Date validTo, BigDecimal derivationWeight, Set variationMeasureValues, Set cdPilotDetectionVariables,
-			Set numericIndicatorValues, CdDetectionVariable derivedDetectionVariable) {
+			Date validTo, BigDecimal derivationWeight, Set<CdPilotDetectionVariable> cdPilotDetectionVariables,
+			CdDetectionVariable derivedDetectionVariable) {
 		this.detectionVariableName = detectionVariableName;
 		this.detectionVariableType = detectionVariableType;
 		this.validFrom = validFrom;
 		this.validTo = validTo;
-		this.variationMeasureValues = variationMeasureValues;
 		this.cdPilotDetectionVariables = cdPilotDetectionVariables;
-		this.numericIndicatorValues = numericIndicatorValues;
 		this.derivedDetectionVariable = derivedDetectionVariable;
 	}
 
@@ -84,36 +80,12 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 		this.derivedDetectionVariable = derivedDetectionVariable;
 	}
 
-	public Set getVariationMeasureValues() {
-		return this.variationMeasureValues;
-	}
-
-	public void setVariationMeasureValues(Set variationMeasureValues) {
-		this.variationMeasureValues = variationMeasureValues;
-	}
-
-	public Set getCdPilotDetectionVariables() {
+	public Set<CdPilotDetectionVariable> getCdPilotDetectionVariables() {
 		return this.cdPilotDetectionVariables;
 	}
 
-	public void setCdPilotDetectionVariables(Set cdPilotDetectionVariables) {
+	public void setCdPilotDetectionVariables(Set<CdPilotDetectionVariable> cdPilotDetectionVariables) {
 		this.cdPilotDetectionVariables = cdPilotDetectionVariables;
-	}
-
-	public Set getNumericIndicatorValues() {
-		return this.numericIndicatorValues;
-	}
-
-	public void setNumericIndicatorValues(Set numericIndicatorValues) {
-		this.numericIndicatorValues = numericIndicatorValues;
-	}
-
-	public Set<Pilot> getPilots() {
-		return pilots;
-	}
-
-	public void setPilots(Set<Pilot> pilots) {
-		this.pilots = pilots;
 	}
 
 	public BigDecimal getDerivationWeight() {
@@ -122,10 +94,6 @@ public class CdDetectionVariable extends AbstractBaseEntity {
 
 	public void setDerivationWeight(BigDecimal derivationWeight) {
 		this.derivationWeight = derivationWeight;
-	}
-
-	public CdDetectionVariable getDerivedDetectionVariableId() {
-		return this.derivedDetectionVariable;
 	}
 
 	public Date getValidFrom() {

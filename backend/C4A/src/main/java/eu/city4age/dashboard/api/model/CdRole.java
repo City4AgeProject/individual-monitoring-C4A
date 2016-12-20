@@ -16,7 +16,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class CdRole extends AbstractBaseEntity {
 
 	private String roleName;
+
 	private String roleAbbreviation;
+
 	private String roleDescription;
 	
 	@JsonIgnore
@@ -27,20 +29,16 @@ public class CdRole extends AbstractBaseEntity {
 	
 	private String stakeholderAbbreviation;
 	
-	@JsonBackReference
-	private Set assessmentAudienceRoles = new HashSet(0);
-
 	public CdRole() {
 	}
 
 	public CdRole(String roleName, String roleAbbreviation, String roleDescription, Date validFrom,
-			Date validTo, Set assessmentAudienceRoles, String stakeholderAbbreviation) {
+			Date validTo, String stakeholderAbbreviation) {
 		this.roleName = roleName;
 		this.roleAbbreviation = roleAbbreviation;
 		this.roleDescription = roleDescription;
 		this.validFrom = validFrom;
 		this.validTo = validTo;
-		this.assessmentAudienceRoles = assessmentAudienceRoles;
 		this.stakeholderAbbreviation = stakeholderAbbreviation;
 	}
 
@@ -82,14 +80,6 @@ public class CdRole extends AbstractBaseEntity {
 
 	public void setStakeholderAbbreviation(String stakeholderAbbreviation) {
 		this.stakeholderAbbreviation = stakeholderAbbreviation;
-	}
-
-	public Set getAssessmentAudienceRoles() {
-		return this.assessmentAudienceRoles;
-	}
-
-	public void setAssessmentAudienceRoles(Set assessmentAudienceRoles) {
-		this.assessmentAudienceRoles = assessmentAudienceRoles;
 	}
 
 	public Date getValidFrom() {

@@ -32,7 +32,8 @@
 		Spring's @Required and @Autowired, as well as JSR 250's @Resource.
 	-->
 	<context:annotation-config />
-	<context:component-scan base-package="eu.city4age.dashboard.api.*" />
+	<context:component-scan base-package="eu.city4age.dashboard.api.dao.hibernate" />
+	<context:component-scan base-package="eu.city4age.dashboard.api.service" />
 	
 	<bean id="assessmentService" class="eu.city4age.dashboard.api.service.AssessmentsService" />
 	

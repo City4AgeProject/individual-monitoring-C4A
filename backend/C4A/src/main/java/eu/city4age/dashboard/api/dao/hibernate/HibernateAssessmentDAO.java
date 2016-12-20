@@ -16,7 +16,6 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import eu.city4age.dashboard.api.dao.AssessmentDAO;
 import eu.city4age.dashboard.api.domain.OrderBy;
 import eu.city4age.dashboard.api.model.Assessment;
-import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.model.TimeInterval;
 
 /** Hibernate implementacija dao-a za asesment.
@@ -62,58 +61,59 @@ public class HibernateAssessmentDAO extends HibernateBaseDAO implements Assessme
 		return castList(Assessment.class, getHibernateTemplate().execute(new HibernateCallback<List<?>>() {
 			public List<?> doInHibernate(Session session)
 					throws HibernateException, SQLException {
-				StringBuilder sql = new StringBuilder("SELECT a FROM Assessment a INNER JOIN a.assessedGefValueSets AS assessedGefValueSets INNER JOIN assessedGefValueSets.geriatricFactorValue AS geriatricFactorValue INNER JOIN a.assessmentAudienceRoles AS assessmentAudienceRoles WHERE geriatricFactorValue.id IN :geriatricFactorIds ");
+				StringBuilder sql = new StringBuilder("SELECT aa.id, aa.assessment_comment, aa.risk_status, aa.data_validity_status, aa.created, aa.updated, aa.author_id, agvs.gef_value_id FROM (((assessment AS aa INNER JOIN (assessed_gef_value_set AS agvs INNER JOIN geriatric_factor_value AS gfv ON gfv.id = agvs.gef_value_id) ON agvs.assessment_id = aa.id)) INNER JOIN assessment_audience_role AS aar ON aar.assessment_id = aa.id LEFT JOIN user_in_role AS uir ON uir.id = aa.author_id) LEFT JOIN user_in_system AS uis ON uis.id = uir.user_in_system_id WHERE gfv.id IN :geriatricFactorIds");
 				if(status != null && status.size() > 0) {
 					if(status.get(0) && !status.get(1))
-						sql.append(" AND a.riskStatus = :riskWarning ");
+						sql.append(" AND aa.risk_status = :riskWarning ");
 					if(status.get(1) && !status.get(0))
-						sql.append(" AND a.riskStatus = :riskAlert ");
+						sql.append(" AND aa.risk_status = :riskAlert ");
 					if(status.get(0) && status.get(1))
-						sql.append(" AND (a.riskStatus = :riskWarning OR a.riskStatus = :riskAlert) ");
+						sql.append(" AND (aa.risk_status = :riskWarning OR aa.risk_status = :riskAlert) ");
 					if(status.get(2) && !status.get(3))
-						sql.append(" AND a.dataValidityStatus = :questionableData ");
+						sql.append(" AND aa.data_validity_status = :questionableData ");
 					if(status.get(3) && !status.get(2))
-						sql.append(" AND a.dataValidityStatus = :faultyData ");
+						sql.append(" AND aa.data_validity_status = :faultyData ");
 					if(status.get(2) && status.get(3))
-						sql.append(" AND (a.dataValidityStatus = :questionableData OR a.dataValidityStatus = :faultyData) ");
+						sql.append(" AND (aa.data_validity_status = :questionableData OR aa.data_validity_status = :faultyData) ");
 					if(status.get(4) && !status.get(0) && !status.get(1) && !status.get(2) && !status.get(3))
-						sql.append(" AND a.assessmentComment != NULL ");
+						sql.append(" AND aa.assessment_comment != NULL ");
 					if(status.get(4) && (status.get(0) || !status.get(1) ||status.get(2) || status.get(3)))
-						sql.append(" OR a.assessmentComment != NULL ");
+						sql.append(" OR aa.assessment_comment != NULL ");
 				}
 				if(authorRoleId != null)
-					sql.append(" AND a.userInRole.roleId = :userInRoleId ");
+					sql.append(" AND uir.id = :userInRoleId ");
 				if(orderBy != null) {
 						sql.append(" ORDER BY ");
 			        switch (orderBy) {
 		            case DATE_ASC:  
-		            	sql.append(" a.created ASC ");
+		            	sql.append(" aa.created ASC ");
 		                     break;
 		            case DATE_DESC:  
-		            	sql.append(" a.created DESC ");
+		            	sql.append(" aa.created DESC ");
 		                     break;
 		            case AUTHOR_NAME_ASC:  
-		            	sql.append(" a.userInRole.userInSystem.id ASC ");
+		            	sql.append(" uis.id ASC ");
 		                     break;
 		            case AUTHOR_NAME_DESC:  
-		            	sql.append(" a.userInRole.userInSystem.id DESC ");
+		            	sql.append(" uis.id DESC ");
 		                     break;
 		            case AUTHOR_ROLE_ASC:  
-		            	sql.append(" a.userInRole.roleId ASC ");
+		            	sql.append(" uir.role_id ASC ");
 		                     break;
 		            case AUTHOR_ROLE_DESC:  
-		            	sql.append(" a.userInRole.roleId DESC ");
+		            	sql.append(" uir.role_id DESC ");
 		                     break;
 			        }
 				}
-				Query q = session.createQuery(sql.toString());
+				SQLQuery q = session.createSQLQuery(sql.toString());
+				q.addEntity("aa", Assessment.class);
 				q.setParameterList("geriatricFactorIds", geriatricFactorIds);
 				if(status != null && status.size() > 0 && status.get(0))
 					q.setParameter("riskWarning", 'W');
 				if(status != null && status.size() > 1 && status.get(1))
 					q.setParameter("riskAlert", 'A');
 				if(status != null && status.size() > 2 && status.get(2))
-					q.setParameter("questionableData", 'V');
+					q.setParameter("questionableData", 'Q');
 				if(status != null && status.size() > 3 && status.get(3))
 					q.setParameter("faultyData", 'F');
 				if(authorRoleId != null)

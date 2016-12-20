@@ -36,13 +36,13 @@ public class CodeListService {
 	@Autowired
 	private StakeholderDao stakeholderDAO;
 	
+	private static final CustomObjectMapper objectMapper = new CustomObjectMapper();
+	
 	@GET
     @Path("/getAllRiskStatus")
     @Produces(MediaType.APPLICATION_JSON)
 	public String getAllRiskStatus() throws Exception {
-		
-		ObjectMapper objectMapper = new ObjectMapper();
-		
+
 		List<CdRiskStatus> riskStatus = riskStatusDAO.getAllRiskStatus();
 		
 		String dtoAsString = objectMapper.writeValueAsString(riskStatus);
@@ -54,9 +54,7 @@ public class CodeListService {
     @Path("/getAllStockholders")
     @Produces(MediaType.APPLICATION_JSON)
 	public String getAllStockholders() throws Exception {
-		
-		ObjectMapper objectMapper = new ObjectMapper();
-		
+
 		List<Stakeholder> stakeholders = stakeholderDAO.getAllStockholders();
 		
 		String dtoAsString = objectMapper.writeValueAsString(stakeholders);
@@ -70,8 +68,6 @@ public class CodeListService {
     @Produces(MediaType.APPLICATION_JSON)
 	public String getAllRolesForStakeholderAbbr(String json) throws Exception {
 		
-		ObjectMapper objectMapper = new ObjectMapper();
-
 		objectMapper.registerModule(new Hibernate3Module());
 		
     	ObjectReader objectReader = objectMapper.reader(GetAllRolesWrapper.class);

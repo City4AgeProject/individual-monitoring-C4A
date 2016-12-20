@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,8 +17,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.dao.ExternalDAO;
 import eu.city4age.dashboard.api.external.C4ACareReceiverListResponse;
@@ -35,7 +32,7 @@ import eu.city4age.dashboard.api.model.GeriatricFactorValue;
 import eu.city4age.dashboard.api.model.UserInRole;
 import eu.city4age.dashboard.api.model.UserInSystem;
 
-@Transactional("transactionManager")
+
 @Path("careReceiversData")
 public class ExternalService {
 
@@ -44,6 +41,9 @@ public class ExternalService {
 	@Autowired
 	private ExternalDAO externalDAO;
 	
+	private static final CustomObjectMapper objectMapper = new CustomObjectMapper();
+
+	@Transactional("transactionManager")
     @GET
     @Path("/getGroups")
     @Consumes("application/json")
@@ -53,8 +53,6 @@ public class ExternalService {
          * ****************Variables*************
          */
         C4AGroupsResponse response = new C4AGroupsResponse();
-        
-        ObjectMapper objectMapper = new ObjectMapper();
 
         List<GeriatricFactorValue> gereatricfactparamsList = new ArrayList<GeriatricFactorValue>();
         List<CdDetectionVariable> detectionvarsparamsList = new ArrayList<CdDetectionVariable>();
@@ -77,9 +75,7 @@ public class ExternalService {
         if (detectionvarsparamsList.isEmpty()) {
             response.setMessage("No detection variables found");
             response.setResponseCode(0);
-            String dtoAsString = objectMapper.writeValueAsString(response);
-            
-            return dtoAsString;
+            return objectMapper.writeValueAsString(response);
         } else {
             itemList = new ArrayList<C4ServiceGetOverallScoreListResponse>();
             for (CdDetectionVariable types : detectionvarsparamsList) {
@@ -100,6 +96,8 @@ public class ExternalService {
                     response.setResponseCode(10);
 
                     response.setCareReceiverName(externalDAO.getUserInSystemUsername(gereatricfactparamsList.get(0).getId()));
+                    		
+                    		//gereatricfactparamsList.get(0).getUserInRole().getUserInSystem().getUsername());
              
                     List<Long> timeintervalIds = new ArrayList<Long>();
                     
@@ -107,8 +105,12 @@ public class ExternalService {
                     	timeintervalIds.add(gef.getTimeInterval().getId());
                     }
          
-                    itemList.add(new C4ServiceGetOverallScoreListResponse(gereatricfactparamsList,
-                    		externalDAO.getParentGroupName(gereatricfactparamsList.get(0).getId()),
+                    String parentGroupName = "";
+                    if (gereatricfactparamsList.get(0).getGefTypeId().getDerivedDetectionVariable() !=  null) {
+                        parentGroupName = gereatricfactparamsList.get(0).getGefTypeId().getDerivedDetectionVariable().getDetectionVariableName();
+                    }
+					itemList.add(new C4ServiceGetOverallScoreListResponse(gereatricfactparamsList,
+                    		parentGroupName,
                     		externalDAO.getFrailtyStatus(timeintervalIds, gereatricfactparamsList.get(0).getUserInRole().getId())));
 
                 }
@@ -117,17 +119,16 @@ public class ExternalService {
             response.setItemList(itemList);
         }//end detectionVariables is empty
         
-        String dtoAsString = objectMapper.writeValueAsString(response);
-        
-        return dtoAsString;
+        return objectMapper.writeValueAsString(response);
 
     }//end method
 
+	@Transactional("transactionManager")
     @GET
     @Path("getCareReceivers")
     @Consumes("application/json")
     @Produces("application/json")
-    public C4ACareReceiversResponse getJson() throws IOException {
+    public String getJson() throws IOException {
         /**
          * ****************Variables*************
          */
@@ -144,19 +145,20 @@ public class ExternalService {
          * ****************Action*************
          */
 
-        userinroleparamsList = externalDAO.getUserInRoleByRoleId(1L);
+        userinroleparamsList = externalDAO.getUserInRoleByRoleId(Short.valueOf("1"));
 
         if (userinroleparamsList.isEmpty()) {
             response.setMessage("No users found");
             response.setResponseCode(0);
-            return response;
+            return objectMapper.writeValueAsString(response);
         } else {
             itemList = new ArrayList<C4ACareReceiverListResponse>();
             for (UserInRole users : userinroleparamsList) {
                 response.setMessage("success");
                 response.setResponseCode(10);
                 System.out.println("id " + users.getId()
-                        + "name " + users.getUserInSystem().getUsername());
+                        + "name " + externalDAO.getUserInSystemUsernameByUserInRoleId(users.getId()));
+                        //users.getUserInSystem().getUsername());
 
                 //we use list to avoid "not found" exception
                 crprofileparamsList = externalDAO.getProfileByUserInRoleId(users.getId());
@@ -188,8 +190,8 @@ public class ExternalService {
                 }
 
                 frailtyparamsList = externalDAO.getFrailtyStatusByUserInRoleId(users.getId());
-                if (!frailtyparamsList.isEmpty()) {
-                    frailtyStatus = frailtyparamsList.get(0).getCdFrailtyStatus().getFrailtyStatus();
+                if (frailtyparamsList != null && frailtyparamsList.size() > 0) {
+                	frailtyStatus = frailtyparamsList.get(0).getCdFrailtyStatus().getFrailtyStatus();
                     frailtyNotice = frailtyparamsList.get(0).getFrailtyNotice();
                 }
 
@@ -200,10 +202,11 @@ public class ExternalService {
 
         }//end detectionVariables is empty
 
-        return response;
+        return objectMapper.writeValueAsString(response);
 
     }//end method
 
+	@Transactional("transactionManager")
     @GET
     @Path("login")
     @Consumes("application/json")
@@ -220,7 +223,7 @@ public class ExternalService {
         try {
 
         	user = externalDAO.getUserInSystem(username, password);
-
+        
             if (user == null) {
                 response.setMessage("wrong credentials");
                 response.setResponseCode(0);
