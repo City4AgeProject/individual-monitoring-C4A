@@ -14,6 +14,9 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.userGender = sp.userGender;
                 self.textline = sp.userTextline;
                 
+                self.subFactorName = ko.observable();
+                self.careReceiverId = ko.observable();
+                
                 var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
                 };
@@ -160,15 +163,15 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 
                 // Page handlers and intern functions
                 self.handleActivated = function (info) {
+                    var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
+                    self.careReceiverId = ko.observable(selectedDetectionVariable[0]);
+                    self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
                     var response = loadDataSet();
                     
                     return response;
                 };
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
                 self.handleAttached = function (info) {
-                    
-                    var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
-                    self.subFactorName = ko.observable(selectedDetectionVariable.detectionVariableName);
                     
                     //console.log('handleAttached');                    
 
@@ -285,7 +288,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     }
                 };
                 
-                self.subFactorName = ko.observable();
                 /* */
                 self.min = ko.observable(10000);
                 self.max = ko.observable(20000);

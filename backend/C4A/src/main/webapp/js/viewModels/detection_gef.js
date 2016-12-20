@@ -19,6 +19,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.userGender = sp.userGender;
                 self.textline = sp.userTextline;
                 self.selectedGefName = "";
+                self.careReceiverId = null;
 
                 /* tracking mouse position when do mouseover and mouseup/touchend event*/
                 var clientX;
@@ -68,10 +69,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.seriesValue = ko.observableArray();
                 self.groupsValue = ko.observableArray();
 
-//                self.careReceiverId = oj.Router.rootInstance.retrieve();
-
-                self.careReceiverId = 4;
-
                 function createItems(id, value, gefTypeId) {
                     //console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value);
                     return {id: id,
@@ -96,10 +93,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                     color: lineColors[i]
                                 });
                             });
-
-                            $.each(radarData.itemList[0].items[0].dateList, function (j, dateItem) {
-                                self.groupsValue.push(dateItem);
-                            });
+                            if(radarData && radarData.itemList && radarData.itemList.length>0)
+                                $.each(radarData.itemList[0].items[0].dateList, function (j, dateItem) {
+                                    self.groupsValue.push(dateItem);
+                                });
                             self.seriesValue.push({name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'});
                             self.seriesValue.push({name: PRE_FRAIL_SERIES_NAME, items: [null, null, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
                             self.seriesValue.push({name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
@@ -316,6 +313,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.handleAttached = function (info) {
                     //console.log('handleAttached');                    
 
+                    self.careReceiverId = oj.Router.rootInstance.retrieve();
+
                     /* Assign summary Show more/Show less  */
                     $('#summary').css({height: '20px', overflow: 'hidden'});
                     $('#showmore').on('click', function () {
@@ -348,7 +347,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 
                 self.bShowDetailsClick = function() {
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
-                    oj.Router.rootInstance.store(selectedDetectionVariable);
+                    oj.Router.rootInstance.store([self.careReceiverId, selectedDetectionVariable]);
                     oj.Router.rootInstance.go('detection_ges');
                 };
                 
