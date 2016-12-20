@@ -106,6 +106,8 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                     oj.Router.rootInstance.go("login");
                 }
 
+                self.age = ko.observable("");
+                self.textline = ko.observable("");
 
                 // Dropdown menu states
                 self.menuItemSelect = function (event, ui) {
