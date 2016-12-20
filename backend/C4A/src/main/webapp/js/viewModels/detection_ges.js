@@ -14,6 +14,9 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.userGender = sp.userGender;
                 self.textline = sp.userTextline;
                 
+                self.subFactorName = ko.observable();
+                self.careReceiverId = ko.observable();
+                
                 var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
                 };
@@ -107,7 +110,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 
                 self.initialAssessments = ko.observableArray([]);
                 var loadAssessmentsCached = function (ids) {
-                    var pointIdsJson = JSON.stringify(ids);
                     return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId='+self.careReceiverId(), function (dataSet) {
                         //insert to quick read later on mouse over popup
                         var assesmentsDataSet = DataSet.produceFromOther(dataSet);
@@ -159,12 +161,16 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 
                 // Page handlers and intern functions
                 self.handleActivated = function (info) {
+                    var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
+                    self.careReceiverId = ko.observable(selectedDetectionVariable[0]);
+                    self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
                     var response = loadDataSet();
                     
                     return response;
                 };
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
                 self.handleAttached = function (info) {
+                    
                     //console.log('handleAttached');                    
 
                     /* Assign summary Show more/Show less  */
@@ -280,7 +286,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     }
                 };
                 
-                self.subFactorName = ko.observable('SubFactorNameFromPrevView');
                 /* */
                 self.min = ko.observable(10000);
                 self.max = ko.observable(20000);
@@ -453,7 +458,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     }
                 };
                 self.searchInput = function () {};
-                 self.nowrap = ko.observable(false);
+                self.nowrap = ko.observable(false);
 
 
                 self.formats = ko.observableArray();
@@ -487,6 +492,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.polarChartSeriesValue = ko.observableArray(lineSeriesPolar);
                 self.polarChartGroupsValue = ko.observableArray(lineGroupsPolar);
             }
-
+            
+            
             return new detectionGesContentViewModel();
         });

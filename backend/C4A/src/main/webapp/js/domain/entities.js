@@ -220,6 +220,16 @@ CdDetectionVariable.parentFactorId = function(list, factorId) {
         } 
     }
 };
+
+CdDetectionVariable.findByDetectionVariableName = function(list, detectionVariableName) {
+    for(var i=0; i<list.length; i++) {
+        var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
+        if(currentDetectionVariable.detectionVariableName === detectionVariableName) {
+            return currentDetectionVariable;
+        } 
+    }
+};
+
 // Few static functions
 
 function shortenText(text, newlength) {

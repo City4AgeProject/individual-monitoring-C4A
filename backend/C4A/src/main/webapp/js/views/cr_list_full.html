@@ -76,7 +76,7 @@
         </button>
         <!-- To handle menu item selection, use a select listener as shown, not a click listener. -->
         <ul id="myMenu" style="display:none " 
-            data-bind=" ojComponent: {component: 'ojMenu', select: 'menuItemSelect'}">      
+            data-bind=" ojComponent: {component: 'ojMenu', select: 'menuItemSelect', }">      
             <li id="view_more_det">
                 <a data-bind="click: function(){$parent.viewGef(cr_id,textline,age);}" href="#">View more details</a>
             </li>
