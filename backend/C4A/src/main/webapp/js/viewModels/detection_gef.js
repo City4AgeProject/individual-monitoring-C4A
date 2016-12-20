@@ -282,7 +282,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.handleAttached = function (info) {
                     //console.log('handleAttached');                    
 
-                    self.careReceiverId(oj.Router.rootInstance.retrieve());
+                    self.careReceiverId = oj.Router.rootInstance.retrieve();
 
                     /* Assign summary Show more/Show less  */
                     $('#summary').css({height: '20px', overflow: 'hidden'});
