@@ -8,9 +8,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 var url = sp.baseUrl + sp.receiversMethod;
 
-
-
-
                 $.getJSON(url).
                         then(function (users) {
                             $.each(users.itemList, function () {
@@ -38,15 +35,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             });
                         });
 
-
-
                 self.dataSource = new oj.ArrayTableDataSource(
 //                        data, {
                         self.data, {
                             idAttribute: "cr_id"
                         });
 
-                self.listMenuItemSelect = function (event, ui) {
+                self.menuItemSelect = function (event, ui) {
                     var currentRow = $('#table').ojTable('option', 'currentRow');
 //                    console.log("currentRow ", currentRow);
                     var selectData = self.data()[currentRow['rowIndex']];
@@ -73,6 +68,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                         default:
                     }
                 };
+
+                self.navigateToGef = function() {
+                    var currentTableRow = $( "#table" ).ojTable("option", "currentRow");
+                    var crData = self.data()[currentTableRow.rowIndex];
+                    self.viewGef(crData.cr_id,crData.textline,crData.age);
+                }
 
                 self.viewGef = function (userId, textline, age) {
                     oj.Router.rootInstance.store(userId);
