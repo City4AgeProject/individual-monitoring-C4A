@@ -14,12 +14,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 //                var GROUP1_SERIES_NAME = 'Behavioural';
 //                var GROUP2_SERIES_NAME = 'Contextual';
 
-
-                self.userAge = sp.userAge;
-                self.userGender = sp.userGender;
-                self.textline = sp.userTextline;
-
-
                 /* tracking mouse position when do mouseover and mouseup/touchend event*/
                 var clientX;
                 var clientY;
@@ -68,9 +62,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.seriesValue = ko.observableArray();
                 self.groupsValue = ko.observableArray();
 
-//                self.careReceiverId = oj.Router.rootInstance.retrieve();
-
-                self.careReceiverId = 4;
+                self.careReceiverId = 4;//oj.Router.rootInstance.retrieve();
+                console.log(" self.careReceiverId  ", self.careReceiverId );
 
                 function createItems(id, value, gefTypeId) {
                     //console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value);
@@ -93,6 +86,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                 self.seriesValue.push({
                                     name: list.items[0].groupName,
                                     items: nodes,
+                                    lineWidth: 3.5,
+                                    id:gtId,
                                     color: lineColors[i]
                                 });
                             });
@@ -104,6 +99,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             self.seriesValue.push({name: PRE_FRAIL_SERIES_NAME, items: [null, null, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
                             self.seriesValue.push({name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
                             $(".loader-hover").hide();
+                            
+                            $.each(self.seriesValue(), function (i, s) {
+                                    if("Overall" === s.name){
+                                        s.lineWidth = 5;
+                                        s.selectionMode = 'none';
+                                        s.color= '#999999';
+                                    }
+                            });
+                            
                         });
                 /* End Detection FGR Groups Line Chart configuration  */
 
@@ -143,13 +147,14 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.titleValue = ko.observable("");
                 self.chartDrill = function (event, ui) {
                     var seriesValue = ui['series'];
+                    var seriesData = ui['seriesData'];
                     document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
                     graphicsContentViewModel.groupsValue2.removeAll();
                     graphicsContentViewModel.lineSeriesValue.removeAll();
 
                     /* Behavioural group */
-                    if (seriesValue.indexOf("Behavioural") !== -1) {
+                    if (seriesData.name === "Behavioural") {
                         $.each(gefData.itemList, function (i, list) {
                             if (list.parentGroupName.indexOf("Behavioural") !== -1) {
                                 var nodes = [];
@@ -159,6 +164,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                 graphicsContentViewModel.lineSeriesValue.push({
                                     name: list.items[0].groupName,
                                     items: nodes,
+                                    id: list.gefTypeId,
                                     color: lineColors[i]
                                 });
                             }
@@ -169,7 +175,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 //                        graphicsContentViewModel.lineSeriesValue(lineSeries3);
                         graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
                         /* Contextual group */
-                    } else if (seriesValue.indexOf("Contextual") !== -1) {
+                    } else if (seriesData.name === "Contextual") {
                         $.each(gefData.itemList, function (i, list) {
                             if (list.parentGroupName.indexOf("Contextual") !== -1) {
                                 var nodes = [];
@@ -179,6 +185,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                 graphicsContentViewModel.lineSeriesValue.push({
                                     name: list.items[0].groupName,
                                     items: nodes,
+                                    id: list.gefTypeId,
                                     color: lineColors[i]
                                 });
                             }
@@ -189,7 +196,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 //                        graphicsContentViewModel.lineSeriesValue(lineSeries4);
                         graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
                         /* Overall group */
-                    } else if (seriesValue.indexOf("overall") !== -1) {
+                    } else if (seriesData.name === "overall") {
                         console.log("overall ", seriesValue);
                         /* none group */
                     } else {
@@ -275,6 +282,14 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     return foundColor;
                 };
 
+                self.gfgOptionChange = function (event, ui){
+                    if (ui['option'] === 'selection') {
+                         if (ui['value'].length > 0) {
+                             var dataPoints = ui['optionMetadata'];
+                         }
+                    }
+                }
+                
                 var closeGEFDetailsShowPopupScheduled = false;
                 self.chartOptionChangeFactorsGroup1 = function (event, ui) {
                     //console.log(ui);
