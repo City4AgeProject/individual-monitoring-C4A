@@ -133,15 +133,23 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                         for(var i = 0; i < series.length; i++) {
                             for(var j = 0; j < series[i].items.length; j++) {
                                 if(series[i].items[j].assessmentObjects && series[i].items[j].assessmentObjects.length > 0){
-                                    for(var k = 0; k < series[i].items[j].assessmentObjects.length; j++) {
+                                    var hasWarning=false;
+                                    var hasAlert=false;
+                                    for(var k = 0; k < series[i].items[j].assessmentObjects.length; k++) {
                                         if('A' === series[i].items[j].assessmentObjects[k].riskStatus ){
                                             series[i].items[j].source='images/risk_alert.png';
+                                            hasAlert = true;
                                             break;
                                         }
                                         if('W' === series[i].items[j].assessmentObjects[k].riskStatus ){
                                             series[i].items[j].source='images/risk_warning.png';
-                                            break;
+                                            hasWarning = true;
                                         }
+                                    }
+                                    if(!hasAlert && hasWarning){
+                                        series[i].items[j].source='images/risk_warning.png';
+                                    }else if(hasAlert){
+                                        series[i].items[j].source='images/risk_alert.png';
                                     }
                                 } 
                             }
