@@ -4,33 +4,24 @@
  */
 package rs.belit.c4a.jetdto;
 
+import java.util.Date;
+
 /**
  *
  * @author mnou2
  */
 public class AssesmentForLastFives {
     
-    private Long id;
+    private Long time_interval_id;
     private String interval_start;
     private Long gef_id;
     private Float gef_value;
     private Long assessment_id;
-    private String assessment_comment, risk_status, data_validity_status;
+    private String assessment_comment, risk_status, data_validity_status, display_name;
     private Long author_id;
+    private Date created;
 
-    /**
-     * @return the id
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
 
     /**
      * @return the interval_start
@@ -142,6 +133,48 @@ public class AssesmentForLastFives {
      */
     public void setAuthor_id(Long author_id) {
         this.author_id = author_id;
+    }
+
+    /**
+     * @return the display_name
+     */
+    public String getDisplay_name() {
+        return display_name;
+    }
+
+    /**
+     * @param display_name the display_name to set
+     */
+    public void setDisplay_name(String display_name) {
+        this.display_name = display_name;
+    }
+
+    /**
+     * @return the created
+     */
+    public Date getCreated() {
+        return created;
+    }
+
+    /**
+     * @param created the created to set
+     */
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    /**
+     * @return the time_interval_id
+     */
+    public Long getTime_interval_id() {
+        return time_interval_id;
+    }
+
+    /**
+     * @param time_interval_id the time_interval_id to set
+     */
+    public void setTime_interval_id(Long time_interval_id) {
+        this.time_interval_id = time_interval_id;
     }
     
 }

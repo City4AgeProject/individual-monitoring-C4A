@@ -103,7 +103,7 @@ Assessment.prototype.formatDateAndTimeText = function() {
                             + ' ' + new Date(this.dateAndTime).toLocaleTimeString();
 };
 
-Assessment.prototype.formatRiskStatusDescAndImage = function () {
+Assessment.prototype.formatValidityDataDescAndImage = function () {
     if('Q' === this.dataValidity){
         this.dataValidityDesc = 'Questionable data';
         this.dataValidityImage = 'images/questionable_data.png';
@@ -116,7 +116,7 @@ Assessment.prototype.formatRiskStatusDescAndImage = function () {
     }
 };
 
-Assessment.prototype.formatValidityDataDescAndImage = function () {
+Assessment.prototype.formatRiskStatusDescAndImage = function () {
     if('A' === this.riskStatus){
         this.riskStatusDesc = 'Alert status';
         this.riskStatusImage = 'images/risk_alert.png';
@@ -173,6 +173,62 @@ function CdRole(){
     this.roleDescription= '';
     this.stakeholderAbbreviation= '';
 }
+
+function CdDetectionVariable() {
+    this.id;
+    this.detectionVariableName;
+    this.detectionVariableType;
+    this.validFrom;
+    this.validTo;
+    this.derivedDetectionVariableId;
+    this.derivationWeight;
+}
+
+CdDetectionVariable.produceFromOther = function(other) {
+    var result = new CdDetectionVariable();
+    result.id = other.id;
+    result.detectionVariableName = other.detectionVariableName;
+    result.detectionVariableType = other.detectionVariableType;
+    result.validFrom = other.validFrom;
+    result.validTo = other.validTo;
+    result.derivedDetectionVariableId = other.derivedDetectionVariableId;
+    result.derivationWeight = other.derivationWeight;
+    return result;
+};
+
+CdDetectionVariable.produceFromTable = function(table) {
+    var list = [];
+    for(var i=0; i<table.length; i++) {
+        var result = new CdDetectionVariable();
+        result.id = table[i][0];
+        result.detectionVariableName = table[i][1];
+        result.detectionVariableType = table[i][2];
+        result.validFrom = table[i][3];
+        result.validTo = table[i][4];
+        result.derivedDetectionVariableId = table[i][5];
+        result.derivationWeight = table[i][6];
+        list.push(result);
+    }
+    return list;
+};
+
+CdDetectionVariable.parentFactorId = function(list, factorId) {
+    for(var i=0; i<list.length; i++) {
+        var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
+        if(currentDetectionVariable.id === factorId) {
+            return currentDetectionVariable.derivedDetectionVariableId;
+        } 
+    }
+};
+
+CdDetectionVariable.findByDetectionVariableName = function(list, detectionVariableName) {
+    for(var i=0; i<list.length; i++) {
+        var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
+        if(currentDetectionVariable.detectionVariableName === detectionVariableName) {
+            return currentDetectionVariable;
+        } 
+    }
+};
 
 // Few static functions
 

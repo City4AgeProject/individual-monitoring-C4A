@@ -1,122 +1,227 @@
+body{
+    background-image: none;
+    background-color: #f1f1f1;
+}
+
+html{
+    font-family:  "Open Sans", Arial, sans-serif;
+}
+
+.oj-web-applayout-header{
+    margin-top: 10px;
+    background-color: #fff;
+}
+
+.oj-panel {
+    border: 1px solid #e7e8e9;
+    border-radius: 3px;
+}
+
 @font-face {
-  font-family: 'AppFont';
-  src: url("fonts/App_iconfont.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'AppFont';
+    src: url("fonts/App_iconfont.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
 }
 
 .demo-icon-font, .demo-icon-font-24 {
-  font-family: AppFont;
-  font-size: 16px;
-  line-height: 1;
-  display: inline-block;
-  font-weight: normal;
-  speak: none;
-  font-style: normal;
-  font-variant: normal;
-  text-transform: none;
-  text-align: center;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-family: AppFont;
+    font-size: 16px;
+    line-height: 1;
+    display: inline-block;
+    font-weight: normal;
+    speak: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-align: center;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 .demo-icon-font:before, .demo-icon-font-24:before {
-  display: inline-block;
+    display: inline-block;
 }
 
 .demo-icon-font-24 {
-  font-size: 24px;
+    font-size: 24px;
 }
 
 /* Icons with a suffix "-16" were designed to look best at 16px. */
 .demo-bookmark-icon-16:before {
-  content: "\e606";
+    content: "\e606";
 }
 
 .demo-grid-icon-16:before {
-  content: "\e607";
+    content: "\e607";
 }
 
 .demo-list-icon-16:before {
-  content: "\e608";
+    content: "\e608";
 }
 
 .demo-gear-icon-16:before {
-  content: "\e609";
+    content: "\e609";
 }
 
 /* Icons with a suffix "-24" were designed to look best at 24px. */
 .demo-home-icon-24:before {
-  content: "\e600";
+    content: "\e600";
 }
 
 .demo-education-icon-24:before {
-  content: "\e601";
+    content: "\e601";
 }
 
 .demo-catalog-icon-24:before {
-  content: "\e602";
+    content: "\e602";
 }
 
 .demo-palette-icon-24:before {
-  content: "\e603";
+    content: "\e603";
 }
 
 .demo-library-icon-24:before {
-  content: "\e604";
+    content: "\e604";
 }
 
 .demo-chat-icon-24:before {
-  content: "\e605";
+    content: "\e605";
 }
 
 .demo-chart-icon-24:before {
-  content: "\e903";
+    content: "\e903";
 }
 
 .demo-oracle-icon {
-  width: 137px;
-  height: 18px;
+    width: 137px;
+    height: 18px;
 }
 .demo-oracle-icon:before {
-  content: url("images/oracle_logo.svg");
-  /*content: url("images/c4a.svg");*/
-  display: inline;
+    content: url("images/oracle_logo.svg");
+    /*content: url("images/c4a.svg");*/
+    display: inline;
 }
 /* Adds padding between logo and application name */
 html:not([dir="rtl"]) .demo-oracle-icon {
-  padding-right: 4px;
+    padding-right: 4px;
 }
 html[dir="rtl"] .demo-oracle-icon {
-  padding-left: 4px;
+    padding-left: 4px;
 }
 
 .demo-avatar-icon {
-  width:24px;
-  height:24px;
+    width:24px;
+    height:24px;
 }
 .demo-avatar-icon:before {
-  content:url("images/avatar_24px.png")
+    content:url("images/avatar_24px.png")
 }
 @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi), (min-resolution: 1.5dppx) {
-  .demo-avatar-icon:before{
-    content:url("images/avatar_24px_2x.png");
-    -webkit-transform:translate(-25%, -25%) scale(0.5);transform:translate(-25%, -25%) scale(0.5)
-  }
+    .demo-avatar-icon:before{
+        content:url("images/avatar_24px_2x.png");
+        -webkit-transform:translate(-25%, -25%) scale(0.5);transform:translate(-25%, -25%) scale(0.5)
+    }
 }
 
-body{
-    background-image: none;
-    background-color: #99e6ff;
+.oj-flex-bar-center-absolute{
+    left:15%;
 }
 
 .small-logo {
-   width: 60px;   
-   display: visible;
+    width: 60px;   
+    display: visible;
 }
 
 .expand-logo {
     width: 117px;
-   display: visible;
+    display: visible;
 }
+
+.toolbar-hover{
+    display: block;
+
+}
+
+.logged-label{
+    display: block;
+    font-size: 12px;
+    color:#fff;
+
+}
+
+.user-menu{
+    display: block;
+    padding: 13px;
+    border-left: 1px #0fb5b5 solid;
+    background: #0dc0c0;
+}
+
+#userMenu .oj-button-text{
+    font-size: 16px;
+    color:#fff;
+    font-family:  "Open Sans", Arial, sans-serif;
+}
+
+#userMenu .oj-button-icon, #settings.oj-button.oj-default.oj-button-half-chrome .oj-button-icon,
+#help.oj-button.oj-default.oj-button-half-chrome .oj-button-icon,
+#help.oj-button.oj-focus-only.oj-button-half-chrome .oj-button-icon,
+.demo-aqua-full.oj-button.oj-active.oj-button-half-chrome,
+.demo-aqua-full.oj-button.oj-selected.oj-button-half-chrome
+{
+    color:#fff;
+}
+
+.demo-aqua-full.oj-button.oj-active.oj-button-half-chrome,
+.demo-aqua-full.oj-button.oj-selected.oj-button-half-chrome{
+     color:#fff;
+      background: transparent;
+    border-color: transparent;
+}
+
+#settings.oj-button.oj-hover.oj-button-half-chrome .oj-button-icon,
+#help.oj-button.oj-hover.oj-button-half-chrome .oj-button-icon,
+.demo-aqua-full.oj-button.oj-hover.oj-button-half-chrome{
+    color:#0dc0c0;
+}
+
+#userMenu.oj-button.oj-hover.oj-button-half-chrome{
+    background: #0fb5b5;
+    border-color: transparent;
+}
+
+#userMenu.oj-button.oj-selected.oj-button-half-chrome{
+    background: transparent;
+    border-color: transparent;
+}
+
+tr:nth-child(even){
+    background-color: #f2f2f2
+}
+
+th {
+    background-color: #4CAF50;
+
+}
+
+.oj-table-body-row.oj-hover{
+     background:#cfe8fc;
+}
+
+
+.demo-button-aqua.oj-button.oj-hover.oj-button-outlined-chrome,
+.demo-button-aqua.oj-button.oj-hover.oj-button-outlined-chrome .oj-button-icon{
+    color:#0dc0c0;
+}
+
+.demo-button-aqua.oj-button.oj-selected.oj-button-outlined-chrome,
+.demo-button-aqua.oj-button.oj-active.oj-button-outlined-chrome,
+.demo-aqua-full.oj-button.oj-default.oj-button-half-chrome,
+.demo-aqua-full.oj-button.oj-focus-only.oj-button-half-chrome
+{
+    color:#fff;
+    background-color:#0dc0c0;
+    border-color:#0fb5b5;
+}
+

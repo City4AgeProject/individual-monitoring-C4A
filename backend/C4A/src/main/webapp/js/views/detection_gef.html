@@ -1,17 +1,17 @@
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
 
-    <div style="width:70%" class="oj-flex-item" align="left">
-        <span style="font-size: 16px">Care recipient: <span  data-bind="text: oj.Router.rootInstance.retrieve()"></span></span> 
-        <span style="font-size: 16px;padding-left: 20px;">Age: <span  data-bind="text: userAge"></span></span> 
-        <!--<span>Gender: <b  data-bind="text: userGender"></b></span>--> 
+    <!-- CR info -->
+    <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
+        <span style="font-size: 16px">Care recipient: <span  data-bind="text: oj.Router.rootInstance.retrieve()"></span></span>
+        <span style="font-size: 16px;padding-left: 20px;">Age: <span  data-bind="text: $root.age"></span></span>
+        <span>Assign Geriatrician: <b><span data-bind="text:$root.userLogin" ></span></b></span> <!--class="oj-header-border"-->
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <span style="font-size: 16px">Assign Geriatrician: <span data-bind="text:$root.userLogin" > </span></span> <!--class="oj-header-border"-->
         <br>                     
-        <div style="height:19px;overflow:hidden;padding-top:10px;width:60%" id="summary"><span style="font-size: 16px">Summary:</span> <span data-bind="text:textline"></span></div>
+        <div style="height:19px;overflow:hidden;padding-top:10px;width:60%" id="summary">
+            <span style="font-size: 16px">Summary:</span> <span data-bind="text:$root.textline"></span>
+        </div>
     </div>
-    <div style="text-align: center">
-        <a href="#" id="showmore" style="color: #0fb5b5 ">Show more</a>
-    </div>
+	<!-- end CR info -->
     <div class="visualization-drop oj-flex-item" align="right">
         <button class="demo-button-aqua" style="min-width: 100px;"
                 data-bind="ojComponent: { component: 'ojButton', 
@@ -35,9 +35,9 @@
 
     <div class="demo-flex-display oj-flex-items-pad">
         <div class="oj-flex oj-sm-flex-direction-column ">
-            <div class="oj-flex-item" >
-                <!-- from-to date filter -->
-                <div id="filteringDate" >
+<!--            <div class="oj-flex-item " style = "display: none; " >
+                 from-to date filter 
+                <div id="filteringDate"  >
                     <label for="fromDate">From</label>
                     <input id="fromDate" 
                            data-bind=" ojComponent: {component: 'ojInputDate', 
@@ -54,7 +54,7 @@
                 </div>
                 <span class="oj-label">Current component value is: </span>
   <span data-bind="text: fromValue"></span>
-                <!-- end from-to date filter -->
+                 end from-to date filter 
 
 
                	<div class="assesmentBtn" >
@@ -65,7 +65,7 @@
                 </div>
 
 
-            </div>
+            </div>-->
         </div>
         <!-- end context menu for Detection chart -->
 
@@ -181,7 +181,7 @@
         <div id="GEFDetailsShowPopupData1"></div>
         <label for="buttonDetails"></label>
         <button id="buttonDetails" 
-                data-bind="click: function(){$root.router.go('detection_ges');},
+                data-bind="click: bShowDetailsClick,
                         ojComponent: {
                         component:'ojButton', 
                         label: 'Show details'
