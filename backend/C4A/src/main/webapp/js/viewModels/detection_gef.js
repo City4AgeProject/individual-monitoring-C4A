@@ -14,11 +14,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 //                var GROUP1_SERIES_NAME = 'Behavioural';
 //                var GROUP2_SERIES_NAME = 'Contextual';
 
+
                 self.userAge = sp.userAge;
                 self.userGender = sp.userGender;
                 self.textline = sp.userTextline;
                 self.selectedGefName = "";
                 self.careReceiverId = null;
+                self.parentFactorId = ko.observable(-1);
 
                 /* tracking mouse position when do mouseover and mouseup/touchend event*/
                 var clientX;
@@ -75,43 +77,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     };
                 }
 
-                $(".loader-hover").show();
-                $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=-1")
-                        .then(function (radarData) {
-
-//                            console.log("fata ", JSON.stringify(radarData));
-                            $.each(radarData.itemList, function (i, list) {
-                                var nodes = [];
-                                var gtId = list.gefTypeId;
-                                $.each(list.items[0].itemList, function (j, itemList) {
-                                    nodes.push(createItems(list.items[0].idList[j], itemList, gtId ));
-                                });
-                                self.seriesValue.push({
-                                    name: list.items[0].groupName,
-                                    items: nodes,
-                                    lineWidth: 3.5,
-                                    id:gtId,
-                                    color: lineColors[i]
-                                });
-                            });
-                            if(radarData && radarData.itemList && radarData.itemList.length>0)
-                                $.each(radarData.itemList[0].items[0].dateList, function (j, dateItem) {
-                                    self.groupsValue.push(dateItem);
-                                });
-                            self.seriesValue.push({name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'});
-                            self.seriesValue.push({name: PRE_FRAIL_SERIES_NAME, items: [null, null, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
-                            self.seriesValue.push({name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
-                            $(".loader-hover").hide();
-                            
-                            $.each(self.seriesValue(), function (i, s) {
-                                    if("Overall" === s.name){
-                                        s.lineWidth = 5;
-                                        s.selectionMode = 'none';
-                                        s.color= '#999999';
-                                    }
-                            });
-                            
-                        });
                 /* End Detection FGR Groups Line Chart configuration  */
 
                 var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
@@ -136,11 +101,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 /* Group 1 and Group 2 Line Chart configuration with dynamic data */
                 var gefData;
-                $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=1")
-                        .then(function (behavData) {
-                            gefData = behavData;
-//                       console.log("gefData data ", JSON.stringify(gefData));    
-                        });
                 /* End: Group 1 and Group 2 Line Chart configuration with dynamic data */
 
                 /*  Detection GEF Groups Line Chart configuration*/
@@ -150,14 +110,18 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.titleValue = ko.observable("");
                 self.chartDrill = function (event, ui) {
                     var seriesValue = ui['series'];
-                    var seriesData = ui['seriesData'];
                     document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
-
+                    
+                    self.selectedGefName = seriesValue;
+                    var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
+                    self.parentFactorId(selectedDetectionVariable.id);
+                    
                     graphicsContentViewModel.groupsValue2.removeAll();
                     graphicsContentViewModel.lineSeriesValue.removeAll();
 
                     /* Behavioural group */
-                    if (seriesData.name === "Behavioural") {
+                    if (seriesValue.indexOf("Behavioural") !== -1) {
+                        loadGefData();
                         $.each(gefData.itemList, function (i, list) {
                             if (list.parentGroupName.indexOf("Behavioural") !== -1) {
                                 var nodes = [];
@@ -167,7 +131,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                 graphicsContentViewModel.lineSeriesValue.push({
                                     name: list.items[0].groupName,
                                     items: nodes,
-                                    id: list.gefTypeId,
                                     color: lineColors[i]
                                 });
                             }
@@ -178,7 +141,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 //                        graphicsContentViewModel.lineSeriesValue(lineSeries3);
                         graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
                         /* Contextual group */
-                    } else if (seriesData.name === "Contextual") {
+                    } else if (seriesValue.indexOf("Contextual") !== -1) {
+                        loadGefData();
                         $.each(gefData.itemList, function (i, list) {
                             if (list.parentGroupName.indexOf("Contextual") !== -1) {
                                 var nodes = [];
@@ -188,7 +152,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                 graphicsContentViewModel.lineSeriesValue.push({
                                     name: list.items[0].groupName,
                                     items: nodes,
-                                    id: list.gefTypeId,
                                     color: lineColors[i]
                                 });
                             }
@@ -199,7 +162,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 //                        graphicsContentViewModel.lineSeriesValue(lineSeries4);
                         graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
                         /* Overall group */
-                    } else if (seriesData.name === "overall") {
+                    } else if (seriesValue.indexOf("Overall") !== -1) {
+                        loadGefData();
                         console.log("overall ", seriesValue);
                         /* none group */
                     } else {
@@ -285,14 +249,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     return foundColor;
                 };
 
-                self.gfgOptionChange = function (event, ui){
-                    if (ui['option'] === 'selection') {
-                         if (ui['value'].length > 0) {
-                             var dataPoints = ui['optionMetadata'];
-                         }
-                    }
-                }
-                
                 var closeGEFDetailsShowPopupScheduled = false;
                 self.chartOptionChangeFactorsGroup1 = function (event, ui) {
                     //console.log(ui);
@@ -333,8 +289,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
                 self.handleAttached = function (info) {
                     //console.log('handleAttached');                    
-
                     self.careReceiverId = oj.Router.rootInstance.retrieve();
+                    
+                    self.lineSeriesValue = ko.observableArray();
+                    self.lineSeries2Value = ko.observableArray();
+                    self.groupsValue2 = ko.observableArray();
+                    self.seriesValue = ko.observableArray();
+                    self.groupsValue = ko.observableArray();
 
                     /* Assign summary Show more/Show less  */
                     $('#summary').css({height: '20px', overflow: 'hidden'});
@@ -355,6 +316,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     });
                     /*End: Assign summary Show more/Show less */
                     loadCdDetectionVariables();
+                    loadRadarData();
+                    loadGefData();
                 };
                 /* End: handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
 
@@ -368,9 +331,52 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 
                 self.bShowDetailsClick = function() {
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
+                    self.parentFactorId(selectedDetectionVariable.id);
+                    loadGefData();
+                    loadRadarData();
+                };
+
+                self.bGotoGESClick = function() {
+                    var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
                     oj.Router.rootInstance.store([self.careReceiverId, selectedDetectionVariable]);
                     oj.Router.rootInstance.go('detection_ges');
                 };
+
+                function loadRadarData() {
+                    $(".loader-hover").show();
+                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" + (self.parentFactorId()?self.parentFactorId():'-1'))
+                        .then(function (radarData) {
+                            $.each(radarData.itemList, function (i, list) {
+                                var nodes = [];
+                                var gtId = list.gefTypeId;
+                                $.each(list.items[0].itemList, function (j, itemList) {
+                                    nodes.push(createItems(list.items[0].idList[j], itemList, gtId ));
+                                });
+                                self.seriesValue.push({
+                                    name: list.items[0].groupName,
+                                    items: nodes,
+                                    color: lineColors[i]
+                                });
+                            });
+                            if(radarData && radarData.itemList && radarData.itemList.length>0)
+                                $.each(radarData.itemList[0].items[0].dateList, function (j, dateItem) {
+                                    self.groupsValue.push(dateItem);
+                                });
+                            self.seriesValue.push({name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'});
+                            self.seriesValue.push({name: PRE_FRAIL_SERIES_NAME, items: [null, null, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
+                            self.seriesValue.push({name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
+                            $(".loader-hover").hide();
+                        });
+                }
+                
+                function loadGefData() {
+                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" +  + (self.parentFactorId()?self.parentFactorId():'-1'))
+                        .then(function (behavData) {
+                            gefData = behavData;
+//                       console.log("gefData data ", JSON.stringify(gefData));    
+                        });
+ 
+                }
                 
             }
             var graphicsContentViewModel = new GraphicsContentViewModel();

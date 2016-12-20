@@ -16,6 +16,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 
                 self.subFactorName = ko.observable();
                 self.careReceiverId = ko.observable();
+                self.parentFactorId = ko.observable();
                 
                 var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
@@ -41,7 +42,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                                 });
                             });
                         
-
+                    if(data && data.itemList && data.itemList.length>0)
                     $.each(data.itemList[0].items[0].dateList, function (j, dateItem) {
                         self.groupsValue.push(dateItem);
                     });
@@ -164,6 +165,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
                     self.careReceiverId = ko.observable(selectedDetectionVariable[0]);
                     self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
+                    self.parentFactorId = ko.observable(selectedDetectionVariable[1].id);
                     var response = loadDataSet();
                     
                     return response;
@@ -213,7 +215,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.selectedAnotations = ko.observableArray();
                 self.dataPointsMarkedIds = ko.observableArray();
                 self.parentFactorId = ko.observable(4); // get from params 
-                self.careReceiverId = ko.observable(1); // get from params 
+                self.careReceiverId = ko.observable(); // get from params 
                 
                 function showAssessmentsPopup() {
                     //clear previus assessments if exists;

@@ -2,7 +2,7 @@
 
     <!-- CR info -->
     <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
-        <span style="font-size: 16px">Care recipient: <span  data-bind="text: oj.Router.rootInstance.retrieve()"></span></span>
+        <span style="font-size: 16px">Care recipient: <span  data-bind="text: oj.Router.rootInstance.retrieve()[0]"></span></span>
         <span style="font-size: 16px;padding-left: 20px;">Age: <span  data-bind="text: $root.age"></span></span>
         <span>Assign Geriatrician: <b><span data-bind="text:$root.userLogin" ></span></b></span> <!--class="oj-header-border"-->
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -183,7 +183,7 @@
         <div id="GEFDetailsShowPopupData1"></div>
         <label for="buttonDetails"></label>
         <button id="buttonDetails" 
-                data-bind="click: bShowDetailsClick,
+                data-bind="click: bGotoGESClick,
                         ojComponent: {
                         component:'ojButton', 
                         label: 'Show details'
@@ -201,7 +201,7 @@
         <div id="GEFDetailsShowPopupData2"></div>
         <label for="buttonDetails"></label>
         <button id="buttonDetails" 
-                data-bind="click: function(){$root.router.go('detection_ges');},
+                data-bind="click: bShowDetailsClick,
                         ojComponent: {
                         component:'ojButton', 
                         label: 'Show details'
