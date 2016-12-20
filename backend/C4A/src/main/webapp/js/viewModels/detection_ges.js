@@ -41,7 +41,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                                 });
                             });
                         
-
+                    if(data && data.itemList && data.itemList.length>0)
                     $.each(data.itemList[0].items[0].dateList, function (j, dateItem) {
                         self.groupsValue.push(dateItem);
                     });
