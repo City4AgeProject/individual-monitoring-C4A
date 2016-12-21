@@ -29,23 +29,8 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 }
                 
                 var loadDiagramDataCallback = function (data) {
-                     self.seriesValue([]);
-                     self.groupsValue([]);
-                    $.each(data.itemList, function (i, list) {
-                                var nodes = [];
-                                $.each(list.items[0].itemList, function (j, itemList) {
-                                    nodes.push(createItems(list.items[0].idList[j], itemList));
-                                });
-                                self.seriesValue.push({
-                                    name: list.items[0].groupName,
-                                    items: nodes
-                                });
-                            });
-                        
-                    if(data && data.itemList && data.itemList.length>0)
-                    $.each(data.itemList[0].items[0].dateList, function (j, dateItem) {
-                        self.groupsValue.push(dateItem);
-                    });
+                    self.groupsValue(data.groups);
+                    self.seriesValue(data.series);
                     loadAssessmentsCached();
                 };
                 
@@ -498,3 +483,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
             
             return new detectionGesContentViewModel();
         });
+
+
+
+

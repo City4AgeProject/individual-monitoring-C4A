@@ -15,6 +15,7 @@ public class Item {
     
     private Long id;
     private Float value;
+    private Integer gefTypeId;
     private List<Assessment> assessmentObjects = new ArrayList<Assessment>();
 
     /**
@@ -57,6 +58,20 @@ public class Item {
      */
     public void setAssessmentObjects(List<Assessment> assessmentObjects) {
         this.assessmentObjects = assessmentObjects;
+    }
+
+    /**
+     * @return the gefTypeId
+     */
+    public Integer getGefTypeId() {
+        return gefTypeId;
+    }
+
+    /**
+     * @param gefTypeId the gefTypeId to set
+     */
+    public void setGefTypeId(Integer gefTypeId) {
+        this.gefTypeId = gefTypeId;
     }
     
     
