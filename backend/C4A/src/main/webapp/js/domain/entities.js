@@ -230,6 +230,42 @@ CdDetectionVariable.findByDetectionVariableName = function(list, detectionVariab
     }
 };
 
+function CrProfile() {
+    this.id = null;
+    this.refHeight = null;
+    this.refWeight = null;
+    this.refMeanBloodPressure = null;
+    this.date = '';
+    this.userInRoleId = null;
+    this.birthDate = '';
+    this.gender = null;
+}
+
+CrProfile.produceFromTableRow = function(tableRow) {
+    var result = new CrProfile();
+    result.id = tableRow[0][0];
+    result.refHeight = tableRow[0][1];
+    result.refWeight = tableRow[0][2];
+    result.refMeanBloodPressure = tableRow[0][3];
+    result.date = tableRow[0][4];
+    result.userInRoleId = tableRow[0][5];
+    result.birthDate = tableRow[0][6];
+    result.gender = tableRow[0][7];
+    return result;
+};
+
+function UserInSystem() {
+    this.id = null;
+    this.displayName = '';
+}
+
+UserInSystem.produceFromTableRow = function(tableRow) {
+    var result = new UserInSystem();
+    result.id = tableRow[0][0];
+    result.displayName = tableRow[0][4];
+    return result;
+};
+
 // Few static functions
 
 function shortenText(text, newlength) {
