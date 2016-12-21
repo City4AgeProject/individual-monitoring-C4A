@@ -73,7 +73,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     var currentTableRow = $( "#table" ).ojTable("option", "currentRow");
                     var crData = self.data()[currentTableRow.rowIndex];
                     self.viewGef(crData.cr_id,crData.textline,crData.age);
-                }
+                };
 
                 self.viewGef = function (userId, textline, age) {
                     oj.Router.rootInstance.store(userId);
