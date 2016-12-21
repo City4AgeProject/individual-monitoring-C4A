@@ -268,7 +268,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup1FactorsLineChart", ui['value'][0]);
 
                             var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
-                                    "</b></h3>"
+                                    "</b></h3>";
                             closeGEFDetailsShowPopupScheduled = true;
                             $('#GEFDetailsShowPopupData1').html(popupText);
                         } else if (ui['value'].length === 0) {
