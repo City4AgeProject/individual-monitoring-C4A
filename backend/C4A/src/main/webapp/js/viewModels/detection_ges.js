@@ -123,8 +123,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                                 var item = serie.items[j];
                                  var matchedIndex = matchSeriesIndexByItemValue(item); 
                                  if(matchedIndex>=0) {
-                                    
-                                    console.log(item.id +' -> ' + item.value + ' na index '+matchedIndex  );
                                    // serieAlertsItems[matchedIndex] = item;
                                  }
                              }

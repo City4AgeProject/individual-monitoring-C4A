@@ -20,6 +20,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.textline = sp.userTextline;
                 self.selectedGefName = "";
                 self.careReceiverId = null;
+                self.parentFactorId = ko.observable(-1);
 
                 /* tracking mouse position when do mouseover and mouseup/touchend event*/
                 var clientX;
@@ -110,12 +111,17 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.chartDrill = function (event, ui) {
                     var seriesValue = ui['series'];
                     document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
-
+                    
+                    self.selectedGefName = seriesValue;
+                    var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
+                    self.parentFactorId(selectedDetectionVariable.id);
+                    
                     graphicsContentViewModel.groupsValue2.removeAll();
                     graphicsContentViewModel.lineSeriesValue.removeAll();
 
                     /* Behavioural group */
                     if (seriesValue.indexOf("Behavioural") !== -1) {
+                        loadGefData();
                         $.each(gefData.itemList, function (i, list) {
                             if (list.parentGroupName.indexOf("Behavioural") !== -1) {
                                 var nodes = [];
@@ -136,6 +142,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                         graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
                         /* Contextual group */
                     } else if (seriesValue.indexOf("Contextual") !== -1) {
+                        loadGefData();
                         $.each(gefData.itemList, function (i, list) {
                             if (list.parentGroupName.indexOf("Contextual") !== -1) {
                                 var nodes = [];
@@ -155,7 +162,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 //                        graphicsContentViewModel.lineSeriesValue(lineSeries4);
                         graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
                         /* Overall group */
-                    } else if (seriesValue.indexOf("overall") !== -1) {
+                    } else if (seriesValue.indexOf("Overall") !== -1) {
+                        loadGefData();
                         console.log("overall ", seriesValue);
                         /* none group */
                     } else {
@@ -281,8 +289,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
                 self.handleAttached = function (info) {
                     //console.log('handleAttached');                    
-
                     self.careReceiverId = oj.Router.rootInstance.retrieve();
+                    
+                    self.lineSeriesValue = ko.observableArray();
+                    self.lineSeries2Value = ko.observableArray();
+                    self.groupsValue2 = ko.observableArray();
+                    self.seriesValue = ko.observableArray();
+                    self.groupsValue = ko.observableArray();
 
                     /* Assign summary Show more/Show less  */
                     $('#summary').css({height: '20px', overflow: 'hidden'});
@@ -318,13 +331,20 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 
                 self.bShowDetailsClick = function() {
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
+                    self.parentFactorId(selectedDetectionVariable.id);
+                    loadGefData();
+                    loadRadarData();
+                };
+
+                self.bGotoGESClick = function() {
+                    var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
                     oj.Router.rootInstance.store([self.careReceiverId, selectedDetectionVariable]);
                     oj.Router.rootInstance.go('detection_ges');
                 };
 
                 function loadRadarData() {
                     $(".loader-hover").show();
-                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=-1")
+                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" + (self.parentFactorId()?self.parentFactorId():'-1'))
                         .then(function (radarData) {
                             $.each(radarData.itemList, function (i, list) {
                                 var nodes = [];
@@ -350,7 +370,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 }
                 
                 function loadGefData() {
-                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=1")
+                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" +  + (self.parentFactorId()?self.parentFactorId():'-1'))
                         .then(function (behavData) {
                             gefData = behavData;
 //                       console.log("gefData data ", JSON.stringify(gefData));    
