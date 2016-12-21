@@ -19,7 +19,7 @@
 	
 	<!-- CR info -->
 	<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
-            <span>Care recipient: <b> <span  data-bind="text: oj.Router.rootInstance.retrieve()"></span> , age:  <span  data-bind="text: userAge"></span>, sex: male</b></span> 
+            <span>Care recipient: <b> <span  data-bind="text: oj.Router.rootInstance.retrieve()[0]"></span> , age:  <span  data-bind="text: userAge"></span>, sex: male</b></span> 
 	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <span>Assign Geriatrician: <b><span data-bind="text:$root.userLogin" ></span></b></span> <!--class="oj-header-border"-->
 	    <br>                     
