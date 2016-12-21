@@ -5,7 +5,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
             function GraphicsContentViewModel() {
                 var self = this;
                 var url = sp.baseUrl + sp.groupsMethod;
-                var lineColors = ['#ea97f1', '#5dd6c9', '#b4b2b2', '#e4d70d', '#82ef46', '#29a4e4'];
+                var lineColors = ['#b4b2b2','#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
 
                 var PRE_FRAIL_SERIES_NAME = 'Pre-Frail';
                 var FRAIL_SERIES_NAME = 'Frail';
@@ -355,13 +355,22 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                 self.seriesValue.push({
                                     name: list.items[0].groupName,
                                     items: nodes,
-                                    color: lineColors[i]
+                                    color: lineColors[i],
+                                    lineWidth: 3.5
                                 });
                             });
                             if(radarData && radarData.itemList && radarData.itemList.length>0)
                                 $.each(radarData.itemList[0].items[0].dateList, function (j, dateItem) {
                                     self.groupsValue.push(dateItem);
                                 });
+                            
+                            $.each(self.seriesValue(), function (i, s) {
+                                    if(s.name === 'Overall'){
+                                       s.color = '#999999';
+                                       s.lineWidth = 5; 
+                                    }
+                            });
+                            
                             self.seriesValue.push({name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'});
                             self.seriesValue.push({name: PRE_FRAIL_SERIES_NAME, items: [null, null, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
                             self.seriesValue.push({name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
