@@ -18,6 +18,10 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 self.careReceiverId = ko.observable();
                 self.parentFactorId = ko.observable();
                 
+                self.cdDetectionVariables;
+                loadCdDetectionVariables();
+                
+                
                 var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
                 };
@@ -430,6 +434,12 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     error: function (jqXHR, textStatus, errorThrown) {
                     }
                 });
+                
+                function loadCdDetectionVariables() {
+                    $.getJSON(OJ_CODEBOOK_SELECT + '?tableName=cd_detection_variable', function(data) {
+                        self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
+                    });
+                }
                 
                 /* End Audience ids */
                 

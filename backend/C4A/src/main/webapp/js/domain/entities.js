@@ -230,6 +230,14 @@ CdDetectionVariable.findByDetectionVariableName = function(list, detectionVariab
     }
 };
 
+CdDetectionVariable.filterByType = function(list, detectionVariableType) {
+    for(var i=0; i<list.length; i++) {
+        if(list[i].detectionVariableType===detectionVariableType)
+            list.push(result);
+    }
+    return list;
+};
+
 function CrProfile() {
     this.id = null;
     this.refHeight = null;
