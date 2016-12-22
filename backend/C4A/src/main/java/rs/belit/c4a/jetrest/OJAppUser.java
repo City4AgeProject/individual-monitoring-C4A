@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author mnou2
  */
-@Path(OJAppUsers.PATH)
-public class OJAppUsers {
+@Path(OJAppUser.PATH)
+public class OJAppUser {
     
-    public static final String PATH = "OJAppUsers";
+    public static final String PATH = "OJAppUser";
 
     @Autowired
     private SessionFactory sessionFactory;
