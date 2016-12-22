@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author mnou2
  */
-public class AssesmentForLastFives {
+public class Census {
     
     private Long time_interval_id;
     private String interval_start;

@@ -31,7 +31,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import rs.belit.c4a.jetdto.AssesmentForLastFives;
+import rs.belit.c4a.jetdto.Census;
 import rs.belit.c4a.jetdto.Assessment;
 import rs.belit.c4a.jetdto.DataSet;
 import rs.belit.c4a.jetdto.Group;
@@ -89,9 +89,9 @@ public class OJAssesment {
         q.setParameter("intervalStart", intervalStart);
         q.setParameter("intervalEnd", intervalEnd);
         q.setParameter("userInRoleId", userInRoleId);
-        List<AssesmentForLastFives> toLose = new ArrayList<AssesmentForLastFives>();
+        List<Census> toLose = new ArrayList<Census>();
         for (Object[] objects : (List<Object[]>) q.list()) {
-            AssesmentForLastFives aflf = new AssesmentForLastFives();
+            Census aflf = new Census();
             aflf.setTime_interval_id(((BigInteger) objects[0]).longValue());
             aflf.setInterval_start(((Timestamp) objects[1]).toString());
             aflf.setGef_id(((BigInteger) objects[2]).longValue());
@@ -112,7 +112,7 @@ public class OJAssesment {
 
         Set<Group> groups = new HashSet<Group>();
 
-        for (AssesmentForLastFives assesmentForLastFives : toLose) {
+        for (Census assesmentForLastFives : toLose) {
             Group g = new Group();
             g.setId(assesmentForLastFives.getTime_interval_id());
             g.setName(assesmentForLastFives.getInterval_start());
@@ -150,7 +150,7 @@ public class OJAssesment {
 
         for (Group g : groups) {
             
-            for (AssesmentForLastFives as : toLose) {
+            for (Census as : toLose) {
                 Assessment assesment = createFromFlat(as);
                 
                  if (as.getTime_interval_id().equals(g.getId())) {
@@ -160,7 +160,7 @@ public class OJAssesment {
                
                     item.getAssessmentObjects().add(assesment);
                     //add other possible annotations to item
-                    for (AssesmentForLastFives as2 : toLose) {
+                    for (Census as2 : toLose) {
                         if(as2.getTime_interval_id().equals(g.getId()) && !assesment.getId().equals(as2.getAssessment_id()) && as.getGef_value().equals(as2.getGef_value())){ // maybe check gef_value
                             Assessment a2 = createFromFlat(as2);
                             item.getAssessmentObjects().add(a2);
@@ -187,7 +187,7 @@ public class OJAssesment {
         return Response.ok(new ObjectMapper().writeValueAsString(forClient)).build();
     }
     
-    private Assessment createFromFlat(AssesmentForLastFives as){
+    private Assessment createFromFlat(Census as){
         Assessment assesment = new Assessment();
                 assesment.setRiskStatus(as.getRisk_status());
                 assesment.setDataValidity(as.getData_validity_status());
@@ -241,7 +241,7 @@ public class OJAssesment {
         
         List<Assessment> forClient = new ArrayList<Assessment>();
         for (Object[] objects : (List<Object[]>) q.list()) {
-            AssesmentForLastFives aflf = new AssesmentForLastFives();
+            Census aflf = new Census();
             
             aflf.setAssessment_id(((Integer) objects[0]).longValue());
             aflf.setAssessment_comment((String) objects[1]);
