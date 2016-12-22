@@ -145,7 +145,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                             }
                         }
                         self.seriesValue.push(assessmentsSerieAlerts);
-                        
                     });
                 };
                 
@@ -230,7 +229,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                         else {
                             filteredSelection.push(selectedDataPoint.data.id);
                         }
-                        
                     }
                     return filteredSelection;
                 }
@@ -301,8 +299,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 var postAssessmentCallback = function(data) {
                     console.log(data);
                     $('#dialog1').ojDialog('close');
-                    //TODO: reload only assessments
-                    loadDataSet();
+                    loadAssessmentsCached();
                 };
                 
                 /* ojButton postAssessment */

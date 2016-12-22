@@ -231,11 +231,21 @@ CdDetectionVariable.findByDetectionVariableName = function(list, detectionVariab
 };
 
 CdDetectionVariable.filterByType = function(list, detectionVariableType) {
+    var result = [];
     for(var i=0; i<list.length; i++) {
         if(list[i].detectionVariableType===detectionVariableType)
-            list.push(result);
+            result.push(list[i]);
     }
-    return list;
+    return result;
+};
+
+CdDetectionVariable.filterByParentFactorId = function(list, parentFactorId) {
+    var result = [];
+    for(var i=0; i<list.length; i++) {
+        if(list[i].derivedDetectionVariableId===parentFactorId)
+            result.push(list[i]);
+    }
+    return result;
 };
 
 function CrProfile() {
