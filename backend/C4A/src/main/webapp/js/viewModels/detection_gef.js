@@ -15,11 +15,14 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 //                var GROUP2_SERIES_NAME = 'Contextual';
 
 
-                self.userAge = sp.userAge;
-                self.userGender = sp.userGender;
-                self.textline = sp.userTextline;
+                function initCRData() {
+                    self.userAge = sp.userAge;
+                    self.userGender = sp.userGender;
+                    self.textline = sp.userTextline;
+                    self.careReceiverId = null;
+                }
+
                 self.selectedGefName = "";
-                self.careReceiverId = null;
                 self.parentFactorId = ko.observable(-1);
 
                 /* tracking mouse position when do mouseover and mouseup/touchend event*/
@@ -288,7 +291,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
                 self.handleAttached = function (info) {
-                    //console.log('handleAttached');                    
+                    //console.log('handleAttached');  
+                    
+                    initCRData();
+                    
                     self.careReceiverId = oj.Router.rootInstance.retrieve();
                     
                     self.lineSeriesValue = ko.observableArray();
