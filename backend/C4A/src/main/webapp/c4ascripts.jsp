@@ -9,13 +9,13 @@
 <%
     String dynamicRoot = "var dynamicRoot = '" + new URL(request.getScheme(), 
         request.getServerName(), 
-        8080, 
+        request.getLocalPort(), 
         request.getContextPath()).toString() + "';";
     response.getWriter().write(dynamicRoot);
     
     String dynamicServerRoot = "var dynamicServerRoot = '" + new URL(request.getScheme(), 
         request.getServerName(), 
-        8080, 
+        request.getLocalPort(), 
         "").toString() + "';";
     response.getWriter().write(dynamicServerRoot);
 %>

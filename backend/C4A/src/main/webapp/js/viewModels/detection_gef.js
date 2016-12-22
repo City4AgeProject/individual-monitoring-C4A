@@ -114,65 +114,29 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.chartDrill = function (event, ui) {
                     var seriesValue = ui['series'];
                     document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
-                    
+
                     self.selectedGefName = seriesValue;
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
                     self.parentFactorId(selectedDetectionVariable.id);
-                    
-                    graphicsContentViewModel.groupsValue2.removeAll();
-                    graphicsContentViewModel.lineSeriesValue.removeAll();
 
-                    /* Behavioural group */
-                    if (seriesValue.indexOf("Behavioural") !== -1) {
-                        loadGefData();
-                        $.each(gefData.itemList, function (i, list) {
-                            if (list.parentGroupName.indexOf("Behavioural") !== -1) {
-                                var nodes = [];
-                                $.each(list.items[0].itemList, function (j, itemList) {
-                                    nodes.push(createItems(list.items[0].idList[j], itemList, list.gefTypeId ));
+                    self.groupsValue2([]);
+                    self.lineSeriesValue([]);
+                    graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
+
+                    self.parentFactorId(ui['seriesData'].items[0].gefTypeId);
+                    if (self.parentFactorId() !== 1) {
+                        var urlDiagramData = sp.baseUrl + sp.diagramDataMethod;
+                        var jqXHR = $.getJSON(urlDiagramData + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" + self.parentFactorId(),
+                                function (data) {
+                                    self.groupsValue2(data.groups);
+                                    self.lineSeriesValue(data.series);
+
                                 });
-                                graphicsContentViewModel.lineSeriesValue.push({
-                                    name: list.items[0].groupName,
-                                    items: nodes,
-                                    color: lineColors[i]
-                                });
-                            }
+                        jqXHR.fail(function (xhr, message, error) {
+                            console.log('some error');
                         });
-                        $.each(gefData.itemList[0].items[0].dateList, function (j, dateItem) {
-                            graphicsContentViewModel.groupsValue2.push(dateItem);
-                        });
-//                        graphicsContentViewModel.lineSeriesValue(lineSeries3);
-                        graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
-                        /* Contextual group */
-                    } else if (seriesValue.indexOf("Contextual") !== -1) {
-                        loadGefData();
-                        $.each(gefData.itemList, function (i, list) {
-                            if (list.parentGroupName.indexOf("Contextual") !== -1) {
-                                var nodes = [];
-                                $.each(list.items[0].itemList, function (j, itemList) {
-                                    nodes.push(createItems(list.items[0].idList[j], itemList, list.gefTypeId ));
-                                });
-                                graphicsContentViewModel.lineSeriesValue.push({
-                                    name: list.items[0].groupName,
-                                    items: nodes,
-                                    color: lineColors[i]
-                                });
-                            }
-                        });
-                        $.each(gefData.itemList[0].items[0].dateList, function (j, dateItem) {
-                            graphicsContentViewModel.groupsValue2.push(dateItem);
-                        });
-//                        graphicsContentViewModel.lineSeriesValue(lineSeries4);
-                        graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
-                        /* Overall group */
-                    } else if (seriesValue.indexOf("Overall") !== -1) {
-                        loadGefData();
-                        console.log("overall ", seriesValue);
-                        /* none group */
-                    } else {
-                        console.log("nothing ", seriesValue);
-                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
                     }
+                    
                 };
                 /* End Detection GEF Groups Line Chart configuration*/
 

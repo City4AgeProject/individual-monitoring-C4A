@@ -399,15 +399,13 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
-        </dependency>-->
-        
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.7</version>
-        </dependency>
-        
-        <!--
+        </dependency>-->  
+    <dependency> 
+      <groupId>joda-time</groupId>  
+      <artifactId>joda-time</artifactId>  
+      <version>2.7</version> 
+    </dependency>  
+    <!--
         <dependency>
             <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc</artifactId>
@@ -541,7 +539,28 @@
             </goals> 
           </execution> 
         </executions> 
-      </plugin>-->
+      </plugin>-->  
+      <plugin> 
+        <groupId>org.jetbrains.kotlin</groupId>  
+        <artifactId>kotlin-maven-plugin</artifactId>  
+        <version>1.0.4</version>  
+        <executions> 
+          <execution> 
+            <id>compile</id>  
+            <phase>process-sources</phase>  
+            <goals> 
+              <goal>compile</goal> 
+            </goals> 
+          </execution>  
+          <execution> 
+            <id>test-compile</id>  
+            <phase>process-test-sources</phase>  
+            <goals> 
+              <goal>test-compile</goal> 
+            </goals> 
+          </execution> 
+        </executions> 
+      </plugin> 
     </plugins> 
   </build> 
 </project>
