@@ -1,16 +1,14 @@
 <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
 
     <!-- CR info -->
-    <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
-        <span style="font-size: 16px">Care recipient: <span  data-bind="text: careReceiverId"></span></span>
-        <span style="font-size: 16px;padding-left: 20px;">Age: <span  data-bind="text: $root.age"></span></span>
-        <span>Assign Geriatrician: <b><span data-bind="text:$root.userLogin" ></span></b></span> <!--class="oj-header-border"-->
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <br>                     
-        <div style="height:19px;overflow:hidden;padding-top:10px;width:60%" id="summary">
-            <span style="font-size: 16px">Summary:</span> <span data-bind="text:$root.textline"></span>
-        </div>
-    </div>
+	<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
+            <span>Care recipient: <b> <span  data-bind="text: careReceiverId"></span> , age:  <span  data-bind="text: $root.age"></span>, sex: male</b></span> 
+	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>Assign Geriatrician: <b><span data-bind="text:$root.userLogin" ></span></b></span> <!--class="oj-header-border"-->
+	    <br>                     
+	    <div style="height:20px;overflow:hidden" id="summary"><b>Summary:</b><span data-bind="text:$root.textline"></span></div>
+	    <a href="#" id="showmore">Read more</a>
+	</div>  
 	<!-- end CR info -->
     <div class="visualization-drop oj-flex-item" align="right">
         <button class="demo-button-aqua" style="min-width: 100px;"
