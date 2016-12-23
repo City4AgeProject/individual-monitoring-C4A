@@ -23,7 +23,10 @@ requirejs.config({
     'text': 'libs/require/text',
     
     'entities': 'domain/entities',
-    'urls': 'domain/urls'
+    'urls': 'domain/urls',
+    'Bacon': 'libs/bacon/Bacon',
+    
+    'add-assesment': 'composites/add-assesment/loader'
   }
   //endinjector
   ,

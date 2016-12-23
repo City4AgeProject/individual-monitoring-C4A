@@ -1,4 +1,6 @@
-define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout','ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
+/* global ASSESSMENTS_ADD_FOR_DATA_POINTS, CODELIST_SELECT_ALL_RISKS, CODELIST_SELECT_ROLES_FOR_STAKEHOLDER, OJ_CODEBOOK_SELECT, CdDetectionVariable, OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL, DataSet, Serie, Assessment, OJ_ASSESSMENTS_FOR_DATA_POINTS */
+
+define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 'add-assesment', 'ojs/ojknockout','ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 'urls','entities'],
         function (oj, ko, $, sp) {
@@ -99,7 +101,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 }
                 
                 self.initialAssessments = ko.observableArray([]);
-                var loadAssessmentsCached = function (ids) {
+                var loadAssessmentsCached = function () {
                     return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId='+self.careReceiverId(), function (dataSet) {
                         //insert to quick read later on mouse over popup
                         var assesmentsDataSet = DataSet.produceFromOther(dataSet);
@@ -155,7 +157,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
                     self.parentFactorId = ko.observable(selectedDetectionVariable[1].id);
                     var response = loadDataSet();
-                    
                     return response;
                 };
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
@@ -283,90 +284,16 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                 
                 /* Show popup dialog for adding new assessment */
                 self.clickShowPopupAddAssessment = function (data, event) {
-                    resetAddAssessment();
+                    sp.addAssessmentMessageQueue.push({ type: 'resetAddAssessment'});
+                    sp.addAssessmentMessageQueue.push(ko.toJS(self.dataPointsMarkedIds));
                     $('#dialog1').ojDialog();
                     $('#dialog1').ojDialog('open');
                     return true;
                 };
-                
-                function resetAddAssessment(){
-                    self.commentText('');
-                    self.selectedRiskStatus([]);
-                    self.selectedDataValidity([]);
-                    self.selectedRoles([]);
-                }
-                
-                var postAssessmentCallback = function(data) {
-                    console.log(data);
-                    $('#dialog1').ojDialog('close');
+
+                sp.detectionGesMessageQueue.onValue(function(value){
                     loadAssessmentsCached();
-                };
-                
-                /* ojButton postAssessment */
-                self.postAssessment = function (data, event) {
-                    //should be logged user ID
-                    var authorId = 1;
-                    var comment = ko.toJS(self.commentText);
-                    var riskStatus = ko.toJS(self.selectedRiskStatus)[0];
-                    var dataValidityStatus = ko.toJS(self.selectedDataValidity)[0];
-                    var geriatricFactorValueIds = ko.toJS(self.dataPointsMarkedIds);
-                    var audienceIds = ko.toJS(self.selectedRoles);
-                    var assessmentToPost = new AddAssessment
-                        (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
-                    var jqXHR = $.postJSON(ASSESSMENTS_ADD_FOR_DATA_POINTS, 
-                        JSON.stringify(assessmentToPost),
-                        postAssessmentCallback
-                    );
-                    jqXHR.fail(serverErrorCallback);
-                    return true;
-                };
-
-                 // Add assessment popup
-                self.commentText = ko.observable('');
-                
-                /* Risks select */
-                self.riskStatusesURL = CODELIST_SELECT_ALL_RISKS;
-                self.risksCollection = ko.observable();
-                self.risksTags = ko.observableArray([]);       
-                self.selectedRiskStatus = ko.observable();
-
-                parseRisks = function (response) {
-                    return {
-                        riskStatus: response['riskStatus'],
-                        riskStatusDesc: response['riskStatusDescription'],
-                        imagePath: response['iconImagePath']};
-                };
-                
-                var collectionRisks = new oj.Collection.extend({
-                    url: self.riskStatusesURL,
-                    fetchSize: -1,
-                    model: new oj.Model.extend({
-                        idAttribute: 'riskStatus',
-                        parse: parseRisks
-                    })
                 });
-                
-                self.risksCollection(new collectionRisks());
-                self.risksCollection().fetch({
-                    success: function (collection, response, options) {
-                        if(self.risksTags.length === 0) {
-                            for (var i = 0; i < collection.size(); i++) {
-                                var riskModel = collection.at(i);
-                                self.risksTags.push({value: riskModel.attributes.riskStatus, label: riskModel.attributes.riskStatusDesc, imagePath: riskModel.attributes.imagePath});
-                            }
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                    }
-                });
-                /* End Risks select */
-                
-                /* Data validities */
-                //self.dataValiditiesCollection = ko.observable();
-                self.dataValiditiesTags = ko.observableArray([ { value: 'QUESTIONABLE_DATA', label: 'Questionable data' ,  imagePath: 'images/questionable_data.png' },
-                                                            { value: 'FAULTY_DATA', label: 'Faulty data' ,  imagePath: 'images/faulty_data.png' },
-                                                         { value: 'VALID_DATA', label: 'Valid data' ,  imagePath: 'images/valid_data.png' }]);       
-                self.selectedDataValidity = ko.observable();
 
 //                parseDataValidities = function (response) {
 //                    return {
@@ -399,6 +326,72 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
 //                });
                 /* End Data validities */
                 
+                function loadCdDetectionVariables() {
+                    $.getJSON(OJ_CODEBOOK_SELECT + '?tableName=cd_detection_variable', function(data) {
+                        self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
+                    });
+                }
+                
+                /* End Audience ids */
+                
+                self.shownFilterBar = false;
+                self.toggleFilterAssessmentBar = function (e) {
+
+                    if ($('#assessment-filter').css('display') === 'none') {
+                        $('#assessment-filter').css({display: 'block'});
+                        self.shownFilterBar = true;
+                    } else {
+                        $('#assessment-filter').css({display: 'none'});
+                        self.shownFilterBar = false;
+                    }
+                };
+                self.searchInput = function () {};
+                self.nowrap = ko.observable(false);
+
+                /* Risks select */
+                self.riskStatusesURL = CODELIST_SELECT_ALL_RISKS;
+                self.risksCollection = ko.observable();
+                self.risksTags = ko.observableArray([]);
+                self.selectedRiskStatus = ko.observable();
+
+                parseRisks = function (response) {
+                    return {
+                        riskStatus: response['riskStatus'],
+                        riskStatusDesc: response['riskStatusDescription'],
+                        imagePath: response['iconImagePath']};
+                };
+
+                var collectionRisks = new oj.Collection.extend({
+                    url: self.riskStatusesURL,
+                    fetchSize: -1,
+                    model: new oj.Model.extend({
+                        idAttribute: 'riskStatus',
+                        parse: parseRisks
+                    })
+                });
+
+                self.risksCollection(new collectionRisks());
+                self.risksCollection().fetch({
+                    success: function (collection, response, options) {
+                        if (self.risksTags.length === 0) {
+                            for (var i = 0; i < collection.size(); i++) {
+                                var riskModel = collection.at(i);
+                                self.risksTags.push({value: riskModel.attributes.riskStatus, label: riskModel.attributes.riskStatusDesc, imagePath: riskModel.attributes.imagePath});
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                    }
+                });
+                /* End Risks select */
+
+                                /* Data validities */
+                //self.dataValiditiesCollection = ko.observable();
+                self.dataValiditiesTags = ko.observableArray([{value: 'QUESTIONABLE_DATA', label: 'Questionable data', imagePath: 'images/questionable_data.png'},
+                    {value: 'FAULTY_DATA', label: 'Faulty data', imagePath: 'images/faulty_data.png'},
+                    {value: 'VALID_DATA', label: 'Valid data', imagePath: 'images/valid_data.png'}]);
+                self.selectedDataValidity = ko.observable();
+
                 /* Audience ids -> CdRole*/
                 self.rolesForStakeHoldersURL = CODELIST_SELECT_ROLES_FOR_STAKEHOLDER;
                 self.rolesCollection = ko.observable();
@@ -431,29 +424,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','setting_properties', 'ojs/ojknockout
                     error: function (jqXHR, textStatus, errorThrown) {
                     }
                 });
-                
-                function loadCdDetectionVariables() {
-                    $.getJSON(OJ_CODEBOOK_SELECT + '?tableName=cd_detection_variable', function(data) {
-                        self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
-                    });
-                }
-                
-                /* End Audience ids */
-                
-                self.shownFilterBar = false;
-                self.toggleFilterAssessmentBar = function (e) {
-
-                    if ($('#assessment-filter').css('display') === 'none') {
-                        $('#assessment-filter').css({display: 'block'});
-                        self.shownFilterBar = true;
-                    } else {
-                        $('#assessment-filter').css({display: 'none'});
-                        self.shownFilterBar = false;
-                    }
-                };
-                self.searchInput = function () {};
-                self.nowrap = ko.observable(false);
-
 
                 self.formats = ko.observableArray();
                 self.isChecked = ko.observable();
