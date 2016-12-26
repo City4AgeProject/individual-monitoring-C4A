@@ -100,7 +100,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 'add-assesment
                     return -1;
                 }
                 
-                self.initialAssessments = ko.observableArray([]);
                 var loadAssessmentsCached = function () {
                     return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId='+self.careReceiverId(), function (dataSet) {
                         //insert to quick read later on mouse over popup
