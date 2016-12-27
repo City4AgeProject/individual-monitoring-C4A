@@ -1,4 +1,4 @@
-define(['ojs/ojcore', 'knockout', 'Bacon'], function (oj, ko) {
+define(['ojs/ojcore', 'knockout'], function (oj, ko) {
     /**
      * The shared view model for navigation
      */
@@ -14,9 +14,6 @@ define(['ojs/ojcore', 'knockout', 'Bacon'], function (oj, ko) {
             self.baseIP = dynamicServerRoot;
         self.pathRoot = "/dashboard-backend-newORM/rest/careReceiversData" ; //c4ADashboardServices/rest/careReceiversData";
         self.baseUrl = self.baseIP + self.pathRoot;
-        
-        self.addAssessmentMessageQueue = new Bacon.Bus();
-        self.detectionGesMessageQueue = new Bacon.Bus();
         
         /**
          * Define methods

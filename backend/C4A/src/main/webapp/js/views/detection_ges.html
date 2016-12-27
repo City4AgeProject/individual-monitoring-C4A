@@ -88,27 +88,10 @@
 	            <div class="oj-flex-item">
 	                <!-- line chart GES -->
 	                <div id="chart-container">
-	                    <div id="lineChart" data-bind="ojComponent: {
-	                    component: 'ojChart', 
-	                    type: 'line', 
-	                    series: seriesValue, 
-	                    groups: groupsValue, 
-	                    selectionMode: 'multiple',
-	                    animationOnDisplay: 'auto',
-	                    animationOnDataChange: 'auto',
-	                    hideAndShowBehavior: 'withoutRescale',
-	                    optionChange: chartOptionChange,
-	                    orientation: orientationValue,
-	                    hoverBehavior: 'dim',
-                            zoomAndScroll: 'live',
-                            title: {text: 'Geriatric Sub factor - ' + subFactorName(), halign: 'center'},
-	                    yAxis:{step:0.5},
-	                    legend: {position: 'top'}                    
-	                  }" style="width:100%;height:400px;">
-	                    </div>
+	                    <data-set-diagram class="oj-flex-item">
+                            </data-set-diagram>
 	                </div>  
 	                <!-- end line chart GES drilling: 'on',
-	                        drill: chartOptionChange,-->
 	            </div>
 	        </div>
 	    </div>
@@ -185,13 +168,13 @@
         </div>
     </div>
     <!-- end select point/s popup -->
-	</div>
+</div>
     <!-- end main graph panel -->
 
     <!-- add annotation window -->
     <div id="dialogWrapper1">
-        <add-assesment class="oj-flex-item">
-        </add-assesment>
+        <add-assessment class="oj-flex-item">
+        </add-assessment>
     </div>
     <!-- end add annotation window -->
     
@@ -338,39 +321,10 @@
 	                    <!-- end filter annotations -->
 	
 	                    <!-- view annotations -->
-	                    <div class="oj-panel oj-panel-shadow-sm oj-dialog-body" style="border:none; background-color: #fcfcfc; height: 250px;">
-	                        <div class="demo-flex-display oj-flex-items-pad" >
-	                           <!-- ko foreach: selectedAnotations -->
-                                    <div class="oj-flex" id="div_comment_1" style="border-left: 3px solid #fcfcfc;">
-	                                <div class="oj-flex-item">
-	                                    <div class="oj-flex oj-flex-items-pad" style="height: 28px;">
-	                                        <div class="oj-flex-item">
-	                                            <img data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
-                                                     <img data-bind="attr: { src: dataValidityImage, title: dataValidityDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
-                                                    <b><span data-bind="text: from"></span></b>
-	                                        </div>
-	                                        <div class="oj-flex-item" style="max-width: 150px; color: #3C9DBC;" align="right" id="show_comment_1">
-	                                            <a href="#"><img src="images/target.png" style="vertical-align: middle; width: 16px; height: 16px;"/>Show on diagram</a>
-	                                        </div>
-	                                        <div class="oj-flex-item" style="max-width: 146px;" align="right">
-                                                    <b><span data-bind="text: dateAndTimeText"></span></b>
-	                                        </div>
-	                                    </div>
-	                                </div>
-	                                <div class="oj-flex-item">
-	                                    <div style="height:20px; overflow:hidden" id="comment_1"><span data-bind="text: comment"></span></div>
-	
-	                                </div>
-	                                <div class="oj-flex-item">
-	                                    <a href="#" id="showmore_comment_1">Read more</a>
-	                                </div>
-	                                <div class="oj-flex-item" style="min-height: 30px;">
-	                                </div>
-	                            </div>
-                                   <!-- /ko  --> 
-	                        </div>
-	                    </div>
+                                <assessments-list class="oj-flex-item">
+                                </assessments-list>
 	                    <!-- end view annotations -->
+                            
 	                </div>
 	
 	                <div id="tabShowMorphology">
