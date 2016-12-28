@@ -98,6 +98,17 @@ function Assessment() {
     this.dataValidityImage = '';
 };
 
+Assessment.produceFromOther = function(other) {
+    var result = new Assessment();
+    result.id = other.id;
+    result.comment = other.comment;
+    result.from = other.from;
+    result.dateAndTime = other.dateAndTime;
+    result.riskStatus = other.riskStatus;
+    result.dataValidity = other.dataValidity;
+    return result;
+};
+
 Assessment.prototype.formatDateAndTimeText = function() {
     this.dateAndTimeText = new Date(this.dateAndTime).toLocaleDateString() 
                             + ' ' + new Date(this.dateAndTime).toLocaleTimeString();

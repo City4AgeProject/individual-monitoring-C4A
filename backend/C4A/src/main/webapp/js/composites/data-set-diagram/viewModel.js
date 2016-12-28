@@ -17,7 +17,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                         self.optionChangeCallback(event, ui);
                 };
                 
-                function matchSeriesIndexByItemValue(item) {
+                function matchSeriesIndexByItemId(item) {
                     var series = self.seriesValue();
                     for(var i = 0; i < series.length; i++) {
                         for(var j = 0; j < series[i].items.length; j++) {
@@ -48,7 +48,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                              var serie = assesmentsDataSet.series[i];
                              for (var j = 0; j < serie.items.length; j++) {
                                 var item = serie.items[j];
-                                 var matchedIndex = matchSeriesIndexByItemValue(item); 
+                                 var matchedIndex = matchSeriesIndexByItemId(item); 
                                  if(matchedIndex>=0) {
                                    // serieAlertsItems[matchedIndex] = item;
                                  }
@@ -92,11 +92,11 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 
                 ko.postbox.subscribe("loadSeriesAndGroups", function(value) {
                     self.seriesValue([]);
-                    for(var si=0; si<value.series.length; si++)
+                    for(var si=0; si<value.series.length; si++) {
+                        value.series[si].name = shortenText(value.series[si].name, 30);
                         self.seriesValue.push(value.series[si]);
-                    self.groupsValue([]);
-                    for(var sg=0; sg<value.groups.length; sg++)
-                        self.groupsValue.push(value.groups[sg]);
+                    }
+                    self.groupsValue(value.groups);
                 });
                 
                 ko.postbox.subscribe("optionChangeCallback", function(optionChangeCallback) {

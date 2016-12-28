@@ -1,11 +1,13 @@
 /* global ASSESSMENTS_ADD_FOR_DATA_POINTS, CODELIST_SELECT_ALL_RISKS, CODELIST_SELECT_ROLES_FOR_STAKEHOLDER, OJ_CODEBOOK_SELECT, CdDetectionVariable, OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL, DataSet, Serie, Assessment, OJ_ASSESSMENTS_FOR_DATA_POINTS */
 
 define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 
+    
     'data-set-diagram', 'add-assessment', 'assessments-list',
-    'knockout-postbox',
-    'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
+    
+    'knockout-postbox', 'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
+    
     'urls','entities'],
         function (oj, ko, $, sp) {
 
@@ -60,15 +62,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                     return $.postJSON(OJ_ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
                         var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
-                            var assessment = assessments[i];
-                            var newAssessment = new Assessment();
-                            newAssessment.id = assessment.id;
-                            newAssessment.comment = assessment.comment;
-                            newAssessment.from = assessment.from;
-                            newAssessment.dateAndTime = assessment.dateAndTime;
-                            newAssessment.riskStatus = assessment.riskStatus;
-                            newAssessment.dataValidity = assessment.dataValidity;
-                            
+                            var newAssessment = Assessment.produceFromOther(assessments[i]);
                             newAssessment.formatAssessmentData();  
                             if(!Assessment.arrayContains(assessmentsResult, newAssessment))
                                 assessmentsResult.push(newAssessment);
