@@ -9,9 +9,10 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 self.selectedAnotations = ko.observableArray();
                 
                 self.attached = function(context) {
-                        ko.postbox.subscribe("refreshSelectedAssessments", function(selectedAssessments) {
-                        self.selectedAnotations(selectedAssessments);
-                    });
+                        ko.postbox.subscribe("refreshSelectedAssessments", 
+                            function(selectedAssessments) {
+                                self.selectedAnotations(selectedAssessments);
+                            });
                 };
                 
             }

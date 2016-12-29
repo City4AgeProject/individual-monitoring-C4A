@@ -28,7 +28,8 @@ requirejs.config({
     
     'add-assessment': 'composites/add-assessment/loader',
     'data-set-diagram': 'composites/data-set-diagram/loader',
-    'assessments-list': 'composites/assessments-list/loader'
+    'assessments-list': 'composites/assessments-list/loader',
+    'assessments-preview': 'composites/assessments-preview/loader'
   }
   //endinjector
   ,

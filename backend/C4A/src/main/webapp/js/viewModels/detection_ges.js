@@ -2,7 +2,7 @@
 
 define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 
     
-    'data-set-diagram', 'add-assessment', 'assessments-list',
+    'data-set-diagram', 'add-assessment', 'assessments-list', 'assessments-preview',
     
     'knockout-postbox', 'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
@@ -35,8 +35,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 
                 self.val = ko.observableArray(["Month"]);
                 
-                self.dataPointsMarked = ko.observable('No data points marked.');
-                
                 self.dataPointsMarkedIds = ko.observableArray();
                 self.parentFactorId = ko.observable(4); // get from params 
                 self.careReceiverId = ko.observable(); // get from params
@@ -51,7 +49,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 var loadDataSet = function(data) {
-                    var jqXHR = $.getJSON(url + "?careReceiverId=" +self.careReceiverId()+ "&parentFactorId=" + self.parentFactorId(),
+                    var jqXHR = $.getJSON(url + "?careReceiverId=" +self.careReceiverId()
+                                              + "&parentFactorId=" + self.parentFactorId(),
                          loadDiagramDataCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
@@ -70,7 +69,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                         
                         ko.postbox.publish("refreshSelectedAssessments", assessmentsResult);
                         self.selectedAnotations(assessmentsResult);
-                        self.dataPointsMarked(self.dataPointsMarked() + ' with ' + assessmentsResult.length + ' assessment(s)');
+                        ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
                     });
                 };
                 
@@ -102,10 +101,15 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 ko.postbox.subscribe("loadDiagramCallback", function() {
-                    ko.postbox.publish("loadSeriesAndGroups", {"series" : self.seriesValue(), "groups" :self.groupsValue()});
+                    ko.postbox.publish("loadSeriesAndGroups", {"series" : self.seriesValue(), 
+                                                               "groups" :self.groupsValue()});
                     ko.postbox.publish("subFactorName", self.subFactorName());
                     ko.postbox.publish("optionChangeCallback", self.chartOptionChange);
                     ko.postbox.publish("loadAssessmentsCached", self.careReceiverId());
+                });
+                
+                ko.postbox.subscribe("clickShowPopupAddAssessmentCallback", function() {
+                    ko.postbox.publish("setClickShowPopupAddAssessmentCallback", self.clickShowPopupAddAssessment);
                 });
                 
                 /*Mouse handles .. should be deleted when we found better way to fix popup position */
@@ -164,14 +168,14 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                             }
                             if(onlyDataPoints.length === 0)
                                 ;
-                            else if(onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id ){
-                                self.dataPointsMarked('1 data point marked ');
+                            else if(onlyDataPoints.length === 1 
+                                        && onlyDataPoints[0][0] && onlyDataPoints[0][0].id ){
+                                ko.postbox.publish("refreshDataPointsMarked", 1);
                                 ko.postbox.publish("refreshSelectedAssessments", onlyDataPoints);
                             }else{
                                 // Compose selections in get query parameters
                                 var queryParams = calculateSelectedIds(onlyDataPoints);
-                                self.dataPointsMarked(onlyDataPoints.length
-                                    + ' data points marked ');
+                                ko.postbox.publish("refreshDataPointsMarked", onlyDataPoints.length);
                                 loadAssessments(queryParams);
                             }
                             showAssessmentsPopup();
@@ -234,7 +238,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 
                 self.shownFilterBar = false;
                 self.toggleFilterAssessmentBar = function (e) {
-
                     if ($('#assessment-filter').css('display') === 'none') {
                         $('#assessment-filter').css({display: 'block'});
                         self.shownFilterBar = true;
@@ -243,11 +246,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                         self.shownFilterBar = false;
                     }
                 };
+                
                 self.searchInput = function () {};
                 self.nowrap = ko.observable(false);
 
                 /* Risks select */
-                self.riskStatusesURL = CODELIST_SELECT_ALL_RISKS;
                 self.risksCollection = ko.observable();
                 self.risksTags = ko.observableArray([]);
                 self.selectedRiskStatus = ko.observable();
@@ -260,7 +263,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
 
                 var collectionRisks = new oj.Collection.extend({
-                    url: self.riskStatusesURL,
+                    url: CODELIST_SELECT_ALL_RISKS,
                     fetchSize: -1,
                     model: new oj.Model.extend({
                         idAttribute: 'riskStatus',
@@ -274,7 +277,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                         if (self.risksTags.length === 0) {
                             for (var i = 0; i < collection.size(); i++) {
                                 var riskModel = collection.at(i);
-                                self.risksTags.push({value: riskModel.attributes.riskStatus, label: riskModel.attributes.riskStatusDesc, imagePath: riskModel.attributes.imagePath});
+                                self.risksTags.push({value: riskModel.attributes.riskStatus, 
+                                                     label: riskModel.attributes.riskStatusDesc, 
+                                                     imagePath: riskModel.attributes.imagePath});
                             }
                         }
                     },
@@ -284,20 +289,19 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 /* End Risks select */
 
                 /* Data validities */
-                //self.dataValiditiesCollection = ko.observable();
-                self.dataValiditiesTags = ko.observableArray([{value: 'QUESTIONABLE_DATA', label: 'Questionable data', imagePath: 'images/questionable_data.png'},
+                self.dataValiditiesTags = ko.observableArray([
+                    {value: 'QUESTIONABLE_DATA', label: 'Questionable data', imagePath: 'images/questionable_data.png'},
                     {value: 'FAULTY_DATA', label: 'Faulty data', imagePath: 'images/faulty_data.png'},
                     {value: 'VALID_DATA', label: 'Valid data', imagePath: 'images/valid_data.png'}]);
                 self.selectedDataValidity = ko.observable();
 
                 /* Audience ids -> CdRole*/
-                self.rolesForStakeHoldersURL = CODELIST_SELECT_ROLES_FOR_STAKEHOLDER;
                 self.rolesCollection = ko.observable();
                 self.roleTags = ko.observableArray([]);       
                 self.selectedRoles = ko.observableArray();
 
                 var role = new oj.Collection.extend({
-                    url: self.rolesForStakeHoldersURL,
+                    url: CODELIST_SELECT_ROLES_FOR_STAKEHOLDER,
                     fetchSize: -1,
                     model: new oj.Model.extend({
                         idAttribute: 'id',
@@ -315,7 +319,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                         if(self.roleTags.length === 0) {
                             for (var i = 0; i < response.length; i++) {
                                 var roleModel = response[i];
-                                self.roleTags.push({value: roleModel.id, label: roleModel.roleName});
+                                self.roleTags.push({value: roleModel.id, 
+                                                    label: roleModel.roleName});
                             }
                         }
                     },
