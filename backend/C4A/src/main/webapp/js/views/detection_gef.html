@@ -1,41 +1,44 @@
-<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
+<div class="oj-panel oj-panel-shadow-sm"
+	style="border: none; background-color: #fcfcfc">
 
-    <!-- CR info -->
-    <div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
-        <span style="font-size: 16px">Care recipient: <span  data-bind="text: careReceiverId"></span></span>
-        <span style="font-size: 16px;padding-left: 20px;">Age: <span  data-bind="text: $root.age"></span></span>
-        <span>Assign Geriatrician: <b><span data-bind="text:$root.userLogin" ></span></b></span> <!--class="oj-header-border"-->
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <br>                     
-        <div style="height:19px;overflow:hidden;padding-top:10px;width:60%" id="summary">
-            <span style="font-size: 16px">Summary:</span> <span data-bind="text:$root.textline"></span>
-        </div>
-    </div>
+	<!-- CR info -->
+	<div class="oj-panel oj-panel-shadow-sm"
+		style="border: none; background-color: #fcfcfc">
+		<span>Care recipient: <b> <span
+				data-bind="text: oj.Router.rootInstance.retrieve()"></span> , age: <span
+				data-bind="text: userAge"></span>, sex: male
+		</b></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>Assign
+			Geriatrician: <b><span data-bind="text:$root.userLogin"></span></b>
+		</span>
+		<!--class="oj-header-border"-->
+		<br>
+		<div style="height: 20px; overflow: hidden" id="summary">
+			<b>Summary:</b><span data-bind="text:textline"></span>
+		</div>
+		<a href="#" id="showmore">Read more</a>
+	</div>
 	<!-- end CR info -->
-    <div class="visualization-drop oj-flex-item" align="right">
-        <button class="demo-button-aqua" style="min-width: 100px;"
-                data-bind="ojComponent: { component: 'ojButton', 
+	<div class="visualization-drop oj-flex-item" align="right">
+		<button class="demo-button-aqua" style="min-width: 100px;"
+			data-bind="ojComponent: { component: 'ojButton', 
                                                     label: 'Visualisations',
                                                     chroming:'outlined',
                                                     menu: '#visualizationMenu',
                                                     rootAttributes: {class: 'demo-button-aqua'},
                                                     icons: {end:'oj-component-icon oj-button-menu-dropdown-icon'}}">
-        </button>
-        <ul id="visualizationMenu" style="display:none" aria-label="Order Actions"
-            data-bind="ojComponent: {component: 'ojMenu', 
-                                                    select: frailtyMenuItemSelect}" >
-            <li id="lineChart">
-                <a href="#">Line chart</a>
-            </li>
-            <li id="morphology">
-                <a href="#">Morphology</a>
-            </li>
-        </ul>
-    </div>
+		</button>
+		<ul id="visualizationMenu" style="display: none"
+			aria-label="Order Actions"
+			data-bind="ojComponent: {component: 'ojMenu', 
+                                                    select: frailtyMenuItemSelect}">
+			<li id="lineChart"><a href="#">Line chart</a></li>
+			<li id="morphology"><a href="#">Morphology</a></li>
+		</ul>
+	</div>
 
-    <div class="demo-flex-display oj-flex-items-pad">
-        <div class="oj-flex oj-sm-flex-direction-column ">
-<!--            <div class="oj-flex-item " style = "display: none; " >
+	<div class="demo-flex-display oj-flex-items-pad">
+		<div class="oj-flex oj-sm-flex-direction-column ">
+			<!--            <div class="oj-flex-item " style = "display: none; " >
                  from-to date filter 
                 <div id="filteringDate"  >
                     <label for="fromDate">From</label>
@@ -66,22 +69,24 @@
 
 
             </div>-->
-        </div>
-        <!-- end context menu for Detection chart -->
+		</div>
+		<!-- end context menu for Detection chart -->
 
-        <div class="oj-flex-item">
-            <form style="position: absolute;	z-index: 10;	right: 25px;	margin-top: 5px;" id="formId" class="formShow">
-                <div >
-                    <input style="vertical-align: text-bottom;" id="checkcontrol" type="checkbox" class="oj-checkbox-nocomp"
-                           data-bind="checked: checkbox"/>
-                    <label for="checkcontrol" class="oj-checkbox-label-nocomp">
-                        Show frailty status
-                    </label>
-                </div>
-            </form>
-            <!-- chart for overall situation with two groups of geriatric factors -->
-            <!--detectionGEFGroupsLineChart-->
-            <div id="detectionGEFGroupsLineChart" class="oj-flex-item" data-bind="ojComponent: {
+		<div class="oj-flex-item">
+			<form
+				style="position: absolute; z-index: 10; right: 25px; margin-top: 5px;"
+				id="formId" class="formShow">
+				<div>
+					<input style="vertical-align: text-bottom;" id="checkcontrol"
+						type="checkbox" class="oj-checkbox-nocomp"
+						data-bind="checked: checkbox" /> <label for="checkcontrol"
+						class="oj-checkbox-label-nocomp"> Show frailty status </label>
+				</div>
+			</form>
+			<!-- chart for overall situation with two groups of geriatric factors -->
+			<!--detectionGEFGroupsLineChart-->
+			<div id="detectionGEFGroupsLineChart" class="oj-flex-item"
+				data-bind="ojComponent: {
                 component: 'ojChart', 
                 type: 'line',
                 drilling: 'on', 
@@ -90,7 +95,6 @@
                 animationOnDisplay: 'auto',
                 animationOnDataChange: 'auto',
                 drill: chartDrill,
-                selectionMode: 'multiple',
                 hideAndShowBehavior: 'withoutRescale',
                 orientation: 'vertical',
                 hoverBehavior: 'dim',
@@ -98,16 +102,17 @@
                 yAxis:{step:0.5},
                 legend: {position: 'bottom'}
                 }"
-                 style="width:100%;">
-            </div> 
-        </div>
+				style="width: 100%;"></div>
+		</div>
 
-    </div>
+	</div>
 
 
-    <div id="polarChart-container" class="oj-flex"  data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
-        <div class="oj-flex-item">
-            <div id="polarChart1" data-bind="ojComponent: {
+	<div id="polarChart-container" class="oj-flex"
+		data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
+		<div class="oj-flex-item">
+			<div id="polarChart1"
+				data-bind="ojComponent: {
                             component: 'ojChart', 
                             coordinateSystem: 'polar',
                             type: typeValue,
@@ -122,12 +127,12 @@
                             title: {text: 'Behavioural', halign: 'center'},
                             legend: {position: 'top'}
                             }"
-                 style="width:100%;">
-            </div>
-        </div>
-        <div class="oj-flex-item">
-            <!-- polar chart for Group 2 -->
-            <div id="polarChart2" data-bind="ojComponent: {
+				style="width: 100%;"></div>
+		</div>
+		<div class="oj-flex-item">
+			<!-- polar chart for Group 2 -->
+			<div id="polarChart2"
+				data-bind="ojComponent: {
                             component: 'ojChart', 
                             coordinateSystem: 'polar',
                             type: typeValue,
@@ -141,14 +146,14 @@
                             title: {text: 'Contextual', halign: 'center'},
                             legend: {position: 'top'}
                             }"
-                 style="width:100%;height:400px;">
-            </div>
-        </div>
+				style="width: 100%; height: 400px;"></div>
+		</div>
 
-    </div>
+	</div>
 
-    <div class="oj-flex-item">
-        <div  id="detectionGEFGroup1FactorsLineChart"  data-bind="ojComponent: {
+	<div class="oj-flex-item">
+		<div id="detectionGEFGroup1FactorsLineChart"
+			data-bind="ojComponent: {
                     component: 'ojChart', 
                     type: 'line', 
                     series: lineSeriesValue, 
@@ -165,47 +170,46 @@
                     yAxis:{step:0.5},
                     legend: {position: 'top'}
                     }"
-              style="width:100%;height:400px;">
-        </div>
-    </div>
+			style="width: 100%; height: 400px;"></div>
+	</div>
 </div>
 
 
 
 <!-- popup for Group 1 GEF charts -->
-<div style="display:none" id="GEFGroup1DetailsShowPopup" 
-     data-bind="ojComponent:{
+<div style="display: none" id="GEFGroup1DetailsShowPopup"
+	data-bind="ojComponent:{
             component: 'ojPopup', 
             modality: 'modeless'}">
-    <!-- popup panel -->
-    <div align="center" style="padding: 8px 0px 8px 0px;">
-        <div id="GEFDetailsShowPopupData1"></div>
-        <label for="buttonDetails"></label>
-        <button id="buttonDetails" 
-                data-bind="click: bGotoGESClick,
+	<!-- popup panel -->
+	<div align="center" style="padding: 8px 0px 8px 0px;">
+		<div id="GEFDetailsShowPopupData1"></div>
+		<label for="buttonDetails"></label>
+		<button id="buttonDetails"
+			data-bind="click: function(){$root.router.go('detection_ges');},
                         ojComponent: {
                         component:'ojButton', 
                         label: 'Show details'
-        }"/></button>
-    </div>
-    <!-- end popup panel -->
+        }" /></button>
+	</div>
+	<!-- end popup panel -->
 </div>
 <!-- popup for Group 2 GEF charts -->
-<div style="display:none" id="GEFGroup2DetailsShowPopup" 
-     data-bind="ojComponent:{
+<div style="display: none" id="GEFGroup2DetailsShowPopup"
+	data-bind="ojComponent:{
             component: 'ojPopup', 
             modality: 'modeless'}">
-    <!-- popup panel -->
-    <div align="center" style="padding: 8px 0px 8px 0px;">
-        <div id="GEFDetailsShowPopupData2"></div>
-        <label for="buttonDetails"></label>
-        <button id="buttonDetails" 
-                data-bind="click: bShowDetailsClick,
+	<!-- popup panel -->
+	<div align="center" style="padding: 8px 0px 8px 0px;">
+		<div id="GEFDetailsShowPopupData2"></div>
+		<label for="buttonDetails"></label>
+		<button id="buttonDetails"
+			data-bind="click: function(){$root.router.go('detection_ges');},
                         ojComponent: {
                         component:'ojButton', 
                         label: 'Show details'
-        }"/></button>
-    </div>
-    <!-- end popup panel -->
+        }" /></button>
+	</div>
+	<!-- end popup panel -->
 </div>
 <!-- end popup for Group 1 and Group 2 charts -->

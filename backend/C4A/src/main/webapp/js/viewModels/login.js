@@ -6,7 +6,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 $(".loader-hover").hide();
                 var self = this;
 
-                var url = "http://localhost:8080/api-1.0-SNAPSHOT/v1/careReceiversData" + sp.loginMethod;
+                var url = sp.baseUrl + sp.loginMethod;
 
                 self.passwordValue = ko.observable();
                 self.loginValue = ko.observable();
@@ -15,7 +15,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.loginUser = function (viewModel, event) {
                     console.log("username " + self.loginValue() + " password " + self.passwordValue());
 
-                    $.getJSON(url + "?username=" + self.loginValue() + "&password=" + self.passwordValue()).
+                    $.getJSON(url + "/username/" + self.loginValue() + "/password/" + self.passwordValue()).
                             then(function (users) {
                                 if (users.responseCode === 10) {
                                     /*logged in 

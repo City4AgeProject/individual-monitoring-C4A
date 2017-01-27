@@ -9,10 +9,9 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
          */
 //        self.baseIP = "http://10.10.10.199:8080";
 //              self.baseIP = "http://c4adashboard.atc.gr/mobileapi";
-        self.baseIP = "http://localhost:8080"; //8084 
-        if(dynamicServerRoot)
-            self.baseIP = dynamicServerRoot;
-        self.pathRoot = "/dashboard-backend-newORM/rest/careReceiversData" ; //c4ADashboardServices/rest/careReceiversData";
+//        self.baseIP = "http://localhost:8080"; //8084 
+        self.baseIP = location.protocol + "//" + location.host;
+        self.pathRoot = "/C4A/rest/careReceiversData"; //dashboard-backend-newORM/rest/careReceiversData" ; //c4ADashboardServices/rest/careReceiversData";
         self.baseUrl = self.baseIP + self.pathRoot;
         
        

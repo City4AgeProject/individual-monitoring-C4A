@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="db_test_data/xsd/dataset.xsd">
-
-	<user_in_role id="1" user_in_system_id="1" role_id="8" />
-	
-	<user_in_system id="1" username="admin" password="secret" />
-     
-</dataset>
