@@ -20,21 +20,16 @@ a:hover {
 <div id='dges-container'>
 
 	<!-- CR info -->
-	<div class="oj-panel oj-panel-shadow-sm"
-		style="border: none; background-color: #fcfcfc">
-		<span>Care recipient: <b> <span
-				data-bind="text: oj.Router.rootInstance.retrieve()"></span> , age: <span
-				data-bind="text: userAge"></span>, sex: male
-		</b></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>Assign
-			Geriatrician: <b><span data-bind="text:$root.userLogin"></span></b>
-		</span>
-		<!--class="oj-header-border"-->
-		<br>
-		<div style="height: 20px; overflow: hidden" id="summary">
-			<b>Summary:</b><span data-bind="text:textline"></span>
-		</div>
-		<a href="#" id="showmore">Read more</a>
-	</div>
+
+	<div class="oj-panel oj-panel-shadow-sm" style="border:none; background-color: #fcfcfc">
+            <span style="font-size: 16px">Care recipient: <b> <span  data-bind="text: oj.Router.rootInstance.retrieve()[0]"></span> , age:  <span  data-bind="text: userAge"></span>, sex: male</b></span> 
+	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>Assign Geriatrician: <b><span data-bind="text:$root.userLogin" ></span></b></span> <!--class="oj-header-border"-->
+	    <br>                     
+	    <div style="height:20px;overflow:hidden" id="summary"><b>Summary:</b><span data-bind="text:textline"></span></div>
+	    <a href="#" id="showmore">Read more</a>
+	</div>  
+
 	<!-- end CR info -->
 
 
@@ -82,243 +77,46 @@ a:hover {
 								data-bind="ojComponent: {component: 'ojSelect', 
 	                                            value: val,
 	                                            rootAttributes: {style:'max-width:100%'}}
-	                                   " />
-							<datalist id="periods">
-								<option value="Month">Month</option>
-								<option value="Quarter">Quarter</option>
-								<option value="Semester">Semester</option>
-								<option value="Year">Year</option>
-							</datalist>
-						</div>
-						<!-- end period combo box -->
-					</div>
-
-				</div>
-
-
-			</div>
-			<div class="oj-flex-item">
-				<!-- line chart GES -->
-				<div id="chart-container">
-					<div id="lineChart"
-						data-bind="ojComponent: {
-	                    component: 'ojChart', 
-	                    type: 'line', 
-	                    series: seriesValue, 
-	                    groups: groupsValue, 
-	                    selectionMode: 'multiple',
-	                    animationOnDisplay: 'auto',
-	                    animationOnDataChange: 'auto',
-	                    hideAndShowBehavior: 'withoutRescale',
-	                    optionChange: chartOptionChange,
-	                    orientation: orientationValue,
-	                    hoverBehavior: 'dim',
-                            zoomAndScroll: 'live',
-                            title: {text: 'Geriatric Sub factor - ' + subFactorName(), halign: 'center'},
-	                    yAxis:{step:0.5},
-	                    legend: {position: 'top'}                    
-	                  }"
-						style="width: 100%; height: 400px;"></div>
-				</div>
-				<!-- end line chart GES drilling: 'on',
-	                        drill: chartOptionChange,-->
-			</div>
-		</div>
-	</div>
-
-	<!-- select point/s popup -->
-	<div id="popupWrapper1">
-		<div style="display: none" id="popup1"
-			data-bind="ojComponent:{component: 'ojPopup',
-                               rootAttributes: {style:'width:320px;height:320px;'}
-                              }">
-			<div class="demo-flex-display oj-flex-items-pad">
-				<div class="oj-flex oj-sm-flex-direction-column">
-					<div class="oj-flex-item">
-						<h3>
-							<span data-bind="text: dataPointsMarked">&nbsp;</span>
-						</h3>
-						<button id="btnClose" class="oj-panel-remove-button"
-							data-bind="
-                                    ojComponent: {
-                                      component: 'ojButton', 
-                                      chroming: 'half',
-                                      display: 'icons', 
-                                      icons: {end: 'oj-panel-remove-icon'}, 
-                                      label: 'remove'},
-                                      click: function() {$('#popup1').ojPopup('close', '#btnClose');}">
-						</button>
-					</div>
-					<div class="oj-flex-item oj-dialog-body" style="height: 176px;">
-						<!-- ko foreach: selectedAnotations -->
-						<div class="oj-flex oj-sm-flex-direction-column">
-							<div class="oj-flex-item"
-								style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
-								<img
-									data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }"
-									style="vertical-align: bottom; width: 20px; height: 20px;" /> <b><span
-									data-bind="text: riskStatusDesc"> </span></b> from <b><span
-									data-bind="text: from"> </span></b><br> <span
-									data-bind="text: shortComment"> </span>
-							</div>
-						</div>
-						<!-- /ko -->
-					</div>
-					<div class="oj-flex-item" style="height: 10px"></div>
-					<div class="oj-flex-item oj-flex-items-pad">
-						<div class="oj-flex">
-							<div class="oj-flex-item">
-								<a href="#" id="addAnnotation"
-									data-bind="click: clickShowPopupAddAssessment"> <img
-									src="images/comment_add.png"
-									style="vertical-align: middle; width: 16px; height: 16px;" />
-									Add annotation
-								</a>
-							</div>
-							<div class="oj-flex-item" align="right">
-								<a href="#"> <img src="images/comment_view.png"
-									style="vertical-align: middle; width: 16px; height: 16px;" />
-									View annotations
-								</a>
-
-							</div>
-						</div>
-					</div>
-					<div class="oj-flex-item oj-flex-items-pad">
-						<div class="oj-flex">
-							<div class="oj-flex-item">
-								<a href="#"> <img src="images/view.png"
-									style="vertical-align: middle; width: 16px; height: 16px;" />
-									View daily measures
-								</a>
-							</div>
-							<div class="oj-flex-item" align="right">
-								<a href="#"> <img src="images/view.png"
-									style="vertical-align: middle; width: 16px; height: 16px;" />
-									View NUIs
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end select point/s popup -->
+	                                   "/>
+	                            <datalist id="periods">
+	                                <option value="Month">Month</option>
+	                                <option value="Quarter">Quarter</option>
+	                                <option value="Semester">Semester</option>
+	                                <option value="Year">Year</option>
+	                            </datalist>
+	                        </div>
+	                        <!-- end period combo box -->
+	                    </div>
+	                    
+	                </div>
+	
+	
+	            </div>
+	            <div class="oj-flex-item">
+	                <!-- line chart GES -->
+	                <div id="chart-container">
+	                    <data-set-diagram class="oj-flex-item">
+                            </data-set-diagram>
+	                </div>  
+	                <!-- end line chart GES drilling: 'on',
+	
+<!-- select point/s popup -->
+    <div id="popupWrapper1">
+        <assessments-preview class="oj-flex-item">
+        </assessments-preview>
+    </div>
+    <!-- end select point/s popup -->
 </div>
-<!-- end main graph panel -->
+    <!-- end main graph panel -->
 
-<!-- add annotation window -->
-<div id="dialogWrapper1">
-	<div style="display: none;" id="dialog1" title="Add annotation"
-		data-bind="ojComponent:{
-                            component: 'ojDialog', 
-                            initialVisibility: 'hide',
-                            rootAttributes: {style: 'width: 360px; height: 480px;'}
-             }">
-		<div class="oj-dialog-body">
-
-			<div id="form-container">
-				<div class="oj-form-layout">
-					<div class="oj-form">
-						<div class="oj-flex">
-							<div class="oj-flex-item">
-								<label id="selectgrouplabel">Choose type</label>
-								<div class="oj-form-control-group"
-									aria-labelledby="selectgrouplabel" role="group">
-									<ul id="riskList" style="display: none">
-										<!-- ko foreach: risksTags -->
-										<li data-bind="attr: {'oj-data-value': value}"><img
-											data-bind="attr: {src: imagePath}" role="presentation"
-											style="vertical-align: middle; width: 16px; height: 16px;" />
-											<span data-bind="text: label"></span></li>
-										<!-- /ko -->
-									</ul>
-									<input id="riskSelect" placeholder="Choose risk..."
-										data-bind="ojComponent: {
-                                                            component: 'ojCombobox',
-                                                            value: selectedRiskStatus,
-                                                            list: 'riskList',
-                                                            rootAttributes: {style:'width:165px'}}">
-
-									<ul id="dataValiditiesList" style="display: none">
-										<!-- ko foreach: dataValiditiesTags -->
-										<li data-bind="attr: {'oj-data-value': value}"><img
-											data-bind="attr: {src: imagePath}" role="presentation"
-											style="vertical-align: middle; width: 16px; height: 16px;" />
-											<span data-bind="text: label"></span></li>
-										<!-- /ko -->
-									</ul>
-									<input id="dataValiditySelection"
-										placeholder="Choose data validity..."
-										data-bind="ojComponent: {
-                                                            component: 'ojCombobox',
-                                                            value: selectedDataValidity,
-                                                            list: 'dataValiditiesList',
-                                                            rootAttributes: {style:'width:165px'}}">
-								</div>
-
-							</div>
-						</div>
-						<div class="oj-flex">
-							<div class="oj-flex-item">
-								<label for="selectRole">For (select multiple)</label> <select
-									id="selectRole"
-									data-bind="ojComponent: {
-                                            component: 'ojSelect', 
-                                            value: selectedRoles,
-                                            multiple: true,
-                                            options: roleTags,
-                                            rootAttributes: {style:'max-width:334px'}
-                                        }">
-
-								</select>
-							</div>
-						</div>
-
-
-						<div class="oj-flex">
-							<div class="oj-flex-item">
-								<label for="textareacontrol">Comment</label>
-								<textarea id="textareacontrol" rows="5"
-									data-bind="ojComponent: {
-                                                    component: 'ojTextArea',
-                                                    rootAttributes: {style:'max-width:334px'}, 
-                                                    value: commentText,
-                                                    placeholder: 'No comment yet.'}">
-                                    </textarea>
-							</div>
-						</div>
-
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="oj-dialog-footer" style="padding-right: 15px;">
-			<div align="right">
-				<button id="okButton"
-					data-bind="ojComponent: { 
-                                component: 'ojButton', 
-                                chroming: 'full', 
-                                label: 'Post'},
-                                click: postAssessment">
-				</button>
-
-				<button id="buttonCancel"
-					data-bind="ojComponent: { 
-                                component: 'ojButton', 
-                                chroming: 'full', 
-                                label: 'Cancel'},
-                                click: function(){$('#dialog1').ojDialog('close');} 
-                            ">
-				</button>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- end add annotation window -->
-
-<div class="oj-flex-item">
+    <!-- add annotation window -->
+    <div id="dialogWrapper1">
+        <add-assessment class="oj-flex-item">
+        </add-assessment>
+    </div>
+    <!-- end add annotation window -->
+    
+    
 	<div class="oj-flex-item">
 
 		<!-- tabs with annotation list and polar chart -->
@@ -460,91 +258,40 @@ a:hover {
 	                                                                component: 'ojSelect', 
 	                                                                value: 'Date Asc.'
 	                                                            }">
-
-														<option value="Date Asc.">Date Asc.</option>
-														<option value="Date Desc.">Date Desc.</option>
-														<option value="Author Name Asc.">Author Name Asc.</option>
-														<option value="Author Name Desc.">Author Name
-															Desc.</option>
-														<option value="Author Role Asc.">Author Role Asc.</option>
-														<option value="Author Role Desc.">Author Role
-															Desc.</option>
-														<option value="Type">Type</option>
-													</select>
-												</div>
-												<div class="oj-flex-item" align="right">
-													<c="#">Reset to defaults</a>
-												</div>
-												<div class="oj-flex-item" align="right">
-													<a href="#" id="filter" data-bind="click: toggleAll">Filter</a>
-												</div>
-											</div>
-										</div>
-									</div>
-
-
-
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- end filter annotations -->
-
-					<!-- view annotations -->
-					<div class="oj-panel oj-panel-shadow-sm oj-dialog-body"
-						style="border: none; background-color: #fcfcfc; height: 250px;">
-						<div class="demo-flex-display oj-flex-items-pad">
-							<!-- ko foreach: selectedAnotations -->
-							<div class="oj-flex" id="div_comment_1"
-								style="border-left: 3px solid #fcfcfc;">
-								<div class="oj-flex-item">
-									<div class="oj-flex oj-flex-items-pad" style="height: 28px;">
-										<div class="oj-flex-item">
-											<img
-												data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }"
-												style="vertical-align: bottom; width: 20px; height: 20px;" />
-											<img
-												data-bind="attr: { src: dataValidityImage, title: dataValidityDesc }"
-												style="vertical-align: bottom; width: 20px; height: 20px;" />
-											<b><span data-bind="text: from"></span></b>
-										</div>
-										<div class="oj-flex-item"
-											style="max-width: 150px; color: #3C9DBC;" align="right"
-											id="show_comment_1">
-											<a href="#"><img src="images/target.png"
-												style="vertical-align: middle; width: 16px; height: 16px;" />Show
-												on diagram</a>
-										</div>
-										<div class="oj-flex-item" style="max-width: 146px;"
-											align="right">
-											<b><span data-bind="text: dateAndTimeText"></span></b>
-										</div>
-									</div>
-								</div>
-								<div class="oj-flex-item">
-									<div style="height: 20px; overflow: hidden" id="comment_1">
-										<span data-bind="text: comment"></span>
-									</div>
-
-								</div>
-								<div class="oj-flex-item">
-									<a href="#" id="showmore_comment_1">Read more</a>
-								</div>
-								<div class="oj-flex-item" style="min-height: 30px;"></div>
-							</div>
-							<!-- /ko  -->
-						</div>
-					</div>
-					<!-- end view annotations -->
-				</div>
-
-				<div id="tabShowMorphology">
-					<div id="polarChart-container" class="oj-flex"
-						data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
-
-						<!-- polar chart -->
-						<div id="polarChart1"
-							data-bind="ojComponent: {
+	
+	                                                        <option value="Date Asc.">Date Asc.</option>
+	                                                        <option value="Date Desc.">Date Desc.</option>
+	                                                        <option value="Author Name Asc.">Author Name Asc.</option>
+	                                                        <option value="Author Name Desc.">Author Name Desc.</option>
+	                                                        <option value="Author Role Asc.">Author Role Asc.</option>
+	                                                        <option value="Author Role Desc.">Author Role Desc.</option>
+	                                                        <option value="Type">Type</option>
+	                                                    </select>
+	                                                </div>
+	                                                <div class="oj-flex-item" align="right">
+	                                                    <a href="#">Reset to defaults</a>
+	                                                </div>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <!-- end filter annotations -->
+	
+	                    <!-- view annotations -->
+                                <assessments-list class="oj-flex-item">
+                                </assessments-list>
+	                    <!-- end view annotations -->
+                            
+	                </div>
+	
+	                <div id="tabShowMorphology">
+	                    <div id="polarChart-container" class="oj-flex"  data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
+	
+	                        <!-- polar chart -->
+	                        <div id="polarChart1" data-bind="ojComponent: {
 	                            component: 'ojChart', 
 	                            coordinateSystem: 'polar',
 	                            type: typeValue,
@@ -558,17 +305,13 @@ a:hover {
 	                            title: {text: 'Motility', halign: 'center'},
 	                            legend: {position: 'top'}
 	                            }"
-							style="width: 100%; height: 400px;"></div>
-
-
-					</div>
-
-				</div>
-
-			</div>
-
-		</div>
-
+	                             style="width:100%;height:400px;">
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
 	</div>
 
 </div>

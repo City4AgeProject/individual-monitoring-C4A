@@ -98,6 +98,17 @@ function Assessment() {
     this.dataValidityImage = '';
 };
 
+Assessment.produceFromOther = function(other) {
+    var result = new Assessment();
+    result.id = other.id;
+    result.comment = other.comment;
+    result.from = other.from;
+    result.dateAndTime = other.dateAndTime;
+    result.riskStatus = other.riskStatus;
+    result.dataValidity = other.dataValidity;
+    return result;
+};
+
 Assessment.prototype.formatDateAndTimeText = function() {
     this.dateAndTimeText = new Date(this.dateAndTime).toLocaleDateString() 
                             + ' ' + new Date(this.dateAndTime).toLocaleTimeString();
@@ -220,6 +231,71 @@ CdDetectionVariable.parentFactorId = function(list, factorId) {
         } 
     }
 };
+
+
+CdDetectionVariable.findByDetectionVariableName = function(list, detectionVariableName) {
+    for(var i=0; i<list.length; i++) {
+        var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
+        if(currentDetectionVariable.detectionVariableName === detectionVariableName) {
+            return currentDetectionVariable;
+        } 
+    }
+};
+
+CdDetectionVariable.filterByType = function(list, detectionVariableType) {
+    var result = [];
+    for(var i=0; i<list.length; i++) {
+        if(list[i].detectionVariableType===detectionVariableType)
+            result.push(list[i]);
+    }
+    return result;
+};
+
+CdDetectionVariable.filterByParentFactorId = function(list, parentFactorId) {
+    var result = [];
+    for(var i=0; i<list.length; i++) {
+        if(list[i].derivedDetectionVariableId===parentFactorId)
+            result.push(list[i]);
+    }
+    return result;
+};
+
+function CrProfile() {
+    this.id = null;
+    this.refHeight = null;
+    this.refWeight = null;
+    this.refMeanBloodPressure = null;
+    this.date = '';
+    this.userInRoleId = null;
+    this.birthDate = '';
+    this.gender = null;
+}
+
+CrProfile.produceFromTableRow = function(tableRow) {
+    var result = new CrProfile();
+    result.id = tableRow[0][0];
+    result.refHeight = tableRow[0][1];
+    result.refWeight = tableRow[0][2];
+    result.refMeanBloodPressure = tableRow[0][3];
+    result.date = tableRow[0][4];
+    result.userInRoleId = tableRow[0][5];
+    result.birthDate = tableRow[0][6];
+    result.gender = tableRow[0][7];
+    return result;
+};
+
+function UserInSystem() {
+    this.id = null;
+    this.displayName = '';
+}
+
+UserInSystem.produceFromTableRow = function(tableRow) {
+    var result = new UserInSystem();
+    result.id = tableRow[0][0];
+    result.displayName = tableRow[0][4];
+    return result;
+};
+
 // Few static functions
 
 function shortenText(text, newlength) {

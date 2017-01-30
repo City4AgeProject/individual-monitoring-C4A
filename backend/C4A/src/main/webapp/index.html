@@ -1,28 +1,29 @@
-<html lang="en-us" dir="ltr">
-<head>
-<title>C4A Dashboard</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" href="css/images/favicon.ico" type="image/x-icon">
-<!-- This is the main css file for the default Alta theme -->
-<!-- injector:theme -->
-<link rel="stylesheet" href="css/libs/oj/v2.1.0/alta/oj-alta-min.css"
-	type="text/css">
-<!-- endinjector -->
+<html lang="en-us" dir="ltr"><head>
+        <title>C4A Dashboard</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="css/images/favicon.ico" type="image/x-icon">
+        <!-- important script to calculate dynamic root path, protocol , port , host ... -->
+        <script src="c4ascripts.jsp" type="text/javascript"></script>
+        <!-- This is the main css file for the default Alta theme -->
+        <!-- injector:theme -->
+        <link rel="stylesheet" href="css/libs/oj/v2.1.0/alta/oj-alta-min.css" type="text/css">
+        <!-- endinjector -->
 
-<!-- This is where you would add any app specific styling -->
-<link rel="stylesheet" href="css/override.css" type="text/css">
+        <!-- This is where you would add any app specific styling -->
+        <link rel="stylesheet" href="css/override.css" type="text/css">
 
-<!-- This is where you would add any app specific styling -->
-<link rel="stylesheet" href="css/my.css" type="text/css">
+        <!-- This is where you would add any app specific styling -->
+        <link rel="stylesheet" href="css/my.css" type="text/css">
 
-<!-- RequireJS configuration file -->
-<script data-main="js/main" src="js/libs/require/require.js"></script>
+        <!-- RequireJS configuration file -->
+        <script data-main="js/main" src="js/libs/require/require.js"></script>
 
-</head>
-<body contenteditable="true">
-	<!-- Template for rendering navigation items shared between nav bar and nav list -->
-	<script type="text/html" id="navTemplate">
+    </head>
+    <body>
+        <!-- Template for rendering navigation items shared between nav bar and nav list -->
+        <script type="text/html" id="navTemplate">
+        
         <li><a href="#">
                 <span data-bind="css: $data['iconClass']"></span>
                 <!-- ko text: $data['name'] --> <!--/ko-->
@@ -84,29 +85,24 @@
                 chroming: 'half', display: 'icons', icons: {start: 'oj-web-applayout-offcanvas-icon'}}">
                         </button>
                     </div>-->
-					<div id="kakakakak"
-						data-bind="css: smScreen() ? 'oj-flex-bar-center-absolute' : 'oj-flex-bar-middle oj-sm-align-items-baseline'">
-						<!--<span role="img" class="oj-sm-only-hide oj-icon demo-oracle-icon" title="Oracle Logo"></span>-->
 
-						<a
-							data-bind="click: function(){$root.router.go('cr_list_full'); }"
-							href="#"> <img src="images/City4AgeLogo_noBackground1.png"
-							data-bind="css: smScreen() ? 'small-logo' : 'expand-logo'">
-						</a>
+                    <div id="kakakakak" data-bind="css: smScreen() ? 'oj-flex-bar-center-absolute' : 'oj-flex-bar-middle oj-sm-align-items-baseline'">
+                        <!--<span role="img" class="oj-sm-only-hide oj-icon demo-oracle-icon" title="Oracle Logo"></span>-->
 
-						<!--<h1 class="oj-web-applayout-header-title" title="Application Name" data-bind="text: appName"></h1>-->
-					</div>
-					<div class="user-menu oj-flex-bar-end">
-						<!-- Responsive Toolbar -->
-						<div class="toolbar-hover"
-							data-bind="ojComponent: {component:'ojToolbar'}">
+                            <img src="images/City4AgeLogo_noBackground1.png" data-bind="css: smScreen() ? 'small-logo' : 'expand-logo'">
 
-							<!--<span class="oj-toolbar-separator" role="separator"></span>-->
-							<div>
-								<span class="logged-label">Logged in as:</span>
-							</div>
-							<button id="userMenu"
-								data-bind="ojComponent: {component: 'ojButton', label: userLogin,
+                        <!--<h1 class="oj-web-applayout-header-title" title="Application Name" data-bind="text: appName"></h1>-->
+                    </div>
+                    <div class="user-menu oj-flex-bar-end">
+                        <!-- Responsive Toolbar -->
+                        <div class="toolbar-hover" data-bind="ojComponent: {component:'ojToolbar'}">
+
+                            <!--<span class="oj-toolbar-separator" role="separator"></span>-->
+                            <div>
+                                <span class="logged-label">Logged in as:</span>
+                            </div>
+                            <button id="userMenu" data-bind="ojComponent: {component: 'ojButton', label: userLogin,
+
                   display: smScreen() ? 'icons' : 'all',
                   icons: smScreen() ? {start: 'oj-icon demo-avatar-icon', end: null} : {end: 'oj-component-icon oj-button-menu-dropdown-icon'},
                   chroming: 'half', menu: '#menu1'}">

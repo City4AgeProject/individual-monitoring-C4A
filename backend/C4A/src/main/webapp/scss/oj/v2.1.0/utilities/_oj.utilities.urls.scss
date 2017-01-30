@@ -222,5 +222,5 @@
 //-------------------------------------------------------------------------------------------------
 @function oj-svg-url($svg) {
   //@debug "oj-svg-url before encode: #{$svg}";
-  @return url("data:image/svg+xml;base64," + oj-encodebase64($svg));
+  @return 'url("data:image/svg+xml;base64,"' + oj-encodebase64($svg) + ')';
 }

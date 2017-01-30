@@ -11,6 +11,7 @@ requirejs.config({
   //injector:mainReleasePaths
   {
     'knockout': 'libs/knockout/knockout-3.4.0',
+    'knockout-postbox': 'libs/knockout-postbox/knockout-postbox.min',
     'jquery': 'libs/jquery/jquery-3.1.0.min',
     'jqueryui-amd': 'libs/jquery/jqueryui-amd-1.12.0.min',
     'promise': 'libs/es6-promise/es6-promise.min',
@@ -23,7 +24,12 @@ requirejs.config({
     'text': 'libs/require/text',
     
     'entities': 'domain/entities',
-    'urls': 'domain/urls'
+    'urls': 'domain/urls',
+    
+    'add-assessment': 'composites/add-assessment/loader',
+    'data-set-diagram': 'composites/data-set-diagram/loader',
+    'assessments-list': 'composites/assessments-list/loader',
+    'assessments-preview': 'composites/assessments-preview/loader'
   }
   //endinjector
   ,

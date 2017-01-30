@@ -14,8 +14,6 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
         self.pathRoot = "/C4A/rest/careReceiversData"; //dashboard-backend-newORM/rest/careReceiversData" ; //c4ADashboardServices/rest/careReceiversData";
         self.baseUrl = self.baseIP + self.pathRoot;
         
-       
-        
         /**
          * Define methods
          */
