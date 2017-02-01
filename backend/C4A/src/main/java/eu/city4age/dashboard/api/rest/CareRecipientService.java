@@ -260,7 +260,7 @@ public class CareRecipientService {
 	}// end method
 
 	@GET
-	@Path("getDiagramData")
+	@Path("getDiagramData/careReceiverId/{careReceiverId}/parentFactorId/{parentFactorId}")
 	@Produces("application/json")
 	public C4AGroupsResponse getDiagramData(@QueryParam("careReceiverId") String careReceiverId,
 			@QueryParam("parentFactorId") Integer parentFactorId) throws IOException {

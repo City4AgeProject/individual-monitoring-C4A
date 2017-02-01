@@ -21,14 +21,15 @@ import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 public class C4ServiceGetOverallScoreListResponse {
 
 	private final List<C4AServiceGetGereatricFactorsResponse> items = new ArrayList<C4AServiceGetGereatricFactorsResponse>(); // 1
-	private final List<Long> idList = new ArrayList<Long>(); // 2
-	private final List<Float> ItemList = new ArrayList<Float>(); // 2
-	private final List<String> dateList = new ArrayList<String>(); // 2
+	private final List<Long> idList = new ArrayList<Long>();
+	private final List<Float> ItemList = new ArrayList<Float>();
+	private final List<String> dateList = new ArrayList<String>();
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
 
-	private String groupName; // 1 //2
+	private String groupName;
+	private Long gefTypeId;
 
-	private String parentGroupName; // 1
+	private String parentGroupName;
 
 	public C4ServiceGetOverallScoreListResponse(List<GeriatricFactorValue> gereatricfactparamsList,
 			String parentGroupName, List<FrailtyStatusTimeline> fs) {
@@ -37,9 +38,9 @@ public class C4ServiceGetOverallScoreListResponse {
 
 		for (GeriatricFactorValue factors : gereatricfactparamsList) {
 
-			ItemList.add(factors.getGefValue().floatValue());
 			idList.add(factors.getId());
 			String date = sdf.format(factors.getTimeInterval().getIntervalStart());
+			gefTypeId = factors.getGefTypeId() !=null ? factors.getGefTypeId().getId() : 13L;
 
 			dateList.add(date);
 			months.add(new DataIdValue(factors.getTimeInterval().getId(), date));
@@ -82,6 +83,21 @@ public class C4ServiceGetOverallScoreListResponse {
 
 	public void setParentGroupName(String parentGroupName) {
 		this.parentGroupName = parentGroupName;
+	}
+
+	/**
+	 * @return the gefTypeId
+	 */
+	public Long getGefTypeId() {
+		return gefTypeId;
+	}
+
+	/**
+	 * @param gefTypeId
+	 *            the gefTypeId to set
+	 */
+	public void setGefTypeId(Long gefTypeId) {
+		this.gefTypeId = gefTypeId;
 	}
 
 }// end class

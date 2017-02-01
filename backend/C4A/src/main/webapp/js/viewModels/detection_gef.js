@@ -158,9 +158,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     self.lineSeriesValue([]);
                     graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
 
+                    console.log("ui['seriesData']) " + JSON.stringify(ui['seriesData']));
                     self.parentFactorId(ui['seriesData'].items[0].gefTypeId);
+                    
+                    console.log("self.parentFactorId(): " + self.parentFactorId());
                     if (self.parentFactorId() !== 1) {
-                        var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "?careRecipientId=" + self.careRecipientId + "&parentFactorId=" + self.parentFactorId(),
+                        var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId + "/parentFactorId/" + self.parentFactorId(),
                                 function (data) {
                                     self.groupsValue2(data.groups);
                                     self.lineSeriesValue(data.series);
@@ -318,6 +321,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                         }
                     });
                     /*End: Assign summary Show more/Show less */
+                    loadCdDetectionVariables();
+                    loadRadarData();
+                    loadGefData();
                 };
                 /* End: handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
 
@@ -332,8 +338,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.bShowDetailsClick = function() {
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
                     self.parentFactorId(selectedDetectionVariable.id);
-                    loadGefData();
-                    loadRadarData();
                 };
 
                 self.bGotoGESClick = function() {
