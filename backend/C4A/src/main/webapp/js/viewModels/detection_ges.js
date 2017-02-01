@@ -49,8 +49,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 var loadDataSet = function(data) {
-                    var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "?careRecipientId=" +self.careRecipientId()
-                                              + "&parentFactorId=" + self.parentFactorId(),
+                    var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" +self.careRecipientId()
+                                              + "/parentFactorId/" + self.parentFactorId(),
                          loadDiagramDataCallback);
                     jqXHR.fail(serverErrorCallback);
                     return jqXHR;
@@ -234,7 +234,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 /* End Data validities */
                 
                 function loadCdDetectionVariables() {
-                    $.getJSON(CODEBOOK_SELECT + '/tableName/cd_detection_variable', function(data) {
+                    $.getJSON(CODEBOOK_SELECT + '/cd_detection_variable', function(data) {
                         self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
                     });
                 }
@@ -304,7 +304,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.selectedRoles = ko.observableArray();
 
                 var role = new oj.Collection.extend({
-                    url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/stakeholderAbbr/GES",
+                    url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
                     fetchSize: -1,
                     model: new oj.Model.extend({
                         idAttribute: 'id',

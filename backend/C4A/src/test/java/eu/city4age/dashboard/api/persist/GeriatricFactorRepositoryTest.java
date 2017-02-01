@@ -47,8 +47,13 @@ public class GeriatricFactorRepositoryTest {
 		userInRole.setId(1L);
 		userInRoleRepository.save(userInRole);
 		
+		DetectionVariable dv2 = new DetectionVariable();
+		dv2.setId(2L);
+		detectionVariableRepository.save(dv2);
+		
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
+		dv1.setDerivedDetectionVariable(dv2);
 		detectionVariableRepository.save(dv1);
 		
 		TimeInterval ti1 = new TimeInterval();
@@ -77,7 +82,7 @@ public class GeriatricFactorRepositoryTest {
 		gef3.setTimeInterval(ti1);
 		geriatricFactorRepository.save(gef3);
 
-		List<GeriatricFactorValue> result = geriatricFactorRepository.findByDetectionVariableId(1L, 1L);
+		List<GeriatricFactorValue> result = geriatricFactorRepository.findByDetectionVariableId(2L, 1L);
 
 		Assert.assertNotNull(result);
 

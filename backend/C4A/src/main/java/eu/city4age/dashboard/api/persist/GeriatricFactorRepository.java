@@ -14,7 +14,7 @@ import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 @Transactional(readOnly = true)
 public interface GeriatricFactorRepository extends GenericRepository<GeriatricFactorValue, Long> {
 
-	@Query("SELECT g FROM GeriatricFactorValue g JOIN g.cdDetectionVariable detvar WHERE detvar.derivedDetectionVariable.id = :varId AND g.userInRole.id = :userId ORDER BY g.timeInterval.intervalStart ASC")
+	@Query("SELECT g FROM GeriatricFactorValue g INNER JOIN g.cdDetectionVariable dv WHERE dv.derivedDetectionVariable.id = :varId AND g.userInRole.id = :userId ORDER BY g.timeInterval.id ASC")
 	List<GeriatricFactorValue> findByDetectionVariableId(@Param("varId") final Long dvId,
 			@Param("userId") final Long uId);
 

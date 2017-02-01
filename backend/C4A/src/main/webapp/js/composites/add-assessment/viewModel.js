@@ -81,7 +81,7 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                 
                 function loadRoles() {
                     var role = new oj.Collection.extend({
-                        url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER,
+                        url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
                         fetchSize: -1,
                         model: new oj.Model.extend({
                             idAttribute: 'id',
@@ -92,9 +92,7 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                     });
                     self.rolesCollection(new role());
                     self.rolesCollection().fetch({
-                        data: "{\"stakeholderAbbr\":\"GES\"}", 
-                        contentType: 'application/json',
-                        type: 'POST',
+                        type: 'GET',
                         success: function (collection, response, options) {
                             if(self.roleTags.length === 0) {
                                 for (var i = 0; i < response.length; i++) {

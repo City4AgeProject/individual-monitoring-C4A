@@ -20,7 +20,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     self.userAge = sp.userAge;
                     self.userGender = sp.userGender;
                     self.textline = sp.userTextline;
-                    self.careRecipientId = null;
+                    //self.careRecipientId = null;
                 }
 
                 self.selectedGefName = "";
@@ -74,7 +74,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.seriesValue = ko.observableArray();
                 self.groupsValue = ko.observableArray();
 
-//                self.careRecipientId = oj.Router.rootInstance.retrieve();
+//              //self.careRecipientId = oj.Router.rootInstance.retrieve();
 
                 self.careRecipientId = 4;
 
@@ -158,13 +158,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     self.lineSeriesValue([]);
                     graphicsContentViewModel.titleValue(seriesValue + " Geriatric factors");
 
-                    console.log("ui['seriesData']) " + JSON.stringify(ui['seriesData']));
                     self.parentFactorId(ui['seriesData'].items[0].gefTypeId);
                     
-                    console.log("self.parentFactorId(): " + self.parentFactorId());
                     if (self.parentFactorId() !== 1) {
                         var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId + "/parentFactorId/" + self.parentFactorId(),
                                 function (data) {
+                        	
+                        	
                                     self.groupsValue2(data.groups);
                                     self.lineSeriesValue(data.series);
 
@@ -295,7 +295,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     
                     initCRData();
                     
-                    self.careRecipientId = oj.Router.rootInstance.retrieve();
+                    //self.careRecipientId = oj.Router.rootInstance.retrieve();
                     
                     self.lineSeriesValue = ko.observableArray();
                     self.lineSeries2Value = ko.observableArray();
@@ -330,7 +330,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.cdDetectionVariables = [];
 
                 function loadCdDetectionVariables() {
-                    $.getJSON(CODEBOOK_SELECT + '/tableName/cd_detection_variable', function(data) {
+                    $.getJSON(CODEBOOK_SELECT + '/cd_detection_variable', function(data) {
                         self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
                     });
                 }

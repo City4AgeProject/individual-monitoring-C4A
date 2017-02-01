@@ -11,7 +11,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
@@ -174,7 +173,7 @@ public class CareRecipientService {
 					itemList.add(new C4ServiceGetOverallScoreListResponse(tis, fMap.get(type.getId()),
 							idMap.get(type.getId()), dateList, type.getDetectionVariableName(),
 							type.getDerivedDetectionVariable() != null
-									? type.getDerivedDetectionVariable().getDetectionVariableName() : null));
+									? type.getDerivedDetectionVariable().getDetectionVariableName() : null, type.getId()));
 
 				}
 
@@ -260,17 +259,17 @@ public class CareRecipientService {
 	}// end method
 
 	@GET
-	@Path("getDiagramData/careReceiverId/{careReceiverId}/parentFactorId/{parentFactorId}")
+	@Path("getDiagramData/careRecipientId/{careRecipientId}/parentFactorId/{parentFactorId}")
 	@Produces("application/json")
-	public C4AGroupsResponse getDiagramData(@QueryParam("careReceiverId") String careReceiverId,
-			@QueryParam("parentFactorId") Integer parentFactorId) throws IOException {
+	public C4AGroupsResponse getDiagramData(@PathParam("careRecipientId") Long careRecipientId,
+			@PathParam("parentFactorId") Long parentFactorId) throws IOException {
 		DataSet response = new DataSet();
 		List<GeriatricFactorValue> gfvList;
 		ArrayList<C4ServiceGetOverallScoreListResponse> itemList = new ArrayList<C4ServiceGetOverallScoreListResponse>();
 
 		// we use list to avoid "not found" exception
-		gfvList = geriatricFactorRepository.findByDetectionVariableId(Long.valueOf(parentFactorId),
-				Long.parseLong(careReceiverId));
+		gfvList = geriatricFactorRepository.findByDetectionVariableId(parentFactorId, careRecipientId);
+		
 		//
 		if (gfvList.isEmpty()) {
 			response.setMessage("No factors for this group");
@@ -312,7 +311,7 @@ public class CareRecipientService {
 	}// end method
 
 	@GET
-	@Path("findOne/id/{id}")
+	@Path("findOne/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findOne(@PathParam("id") Long id) throws JsonProcessingException {
 		CrProfile crP = crProfileRepository.findOne(id);

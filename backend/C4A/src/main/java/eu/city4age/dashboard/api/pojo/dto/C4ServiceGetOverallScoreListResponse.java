@@ -40,7 +40,7 @@ public class C4ServiceGetOverallScoreListResponse {
 
 			idList.add(factors.getId());
 			String date = sdf.format(factors.getTimeInterval().getIntervalStart());
-			gefTypeId = factors.getGefTypeId() !=null ? factors.getGefTypeId().getId() : 13L;
+			this.gefTypeId = factors.getGefTypeId() !=null ? factors.getGefTypeId().getId() : null;
 
 			dateList.add(date);
 			months.add(new DataIdValue(factors.getTimeInterval().getId(), date));
@@ -59,9 +59,10 @@ public class C4ServiceGetOverallScoreListResponse {
 	}
 
 	public C4ServiceGetOverallScoreListResponse(List<TimeInterval> tis, List<Float> itemList, List<Long> idList,
-			List<String> dateList, String groupName, String parentGroupName) {
+			List<String> dateList, String groupName, String parentGroupName, Long gefTypeId) {
 		this.groupName = groupName;
 		this.parentGroupName = parentGroupName;
+		this.gefTypeId = gefTypeId;
 		items.add(new C4AServiceGetGereatricFactorsResponse(groupName, idList, itemList, dateList));
 	}
 

@@ -70,7 +70,7 @@ public class CodebookService {
 	}
 
 	@GET
-	@Path("getAllRolesForStakeholderAbbr/stakeholderAbbr/{stakeholderAbbr}")
+	@Path("getAllRolesForStakeholderAbbr/{stakeholderAbbr}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllRolesForStakeholderAbbr(@PathParam(value = "stakeholderAbbr") String stakeholderAbbr)
 			throws JsonProcessingException {
@@ -80,7 +80,7 @@ public class CodebookService {
 	}
 
 	@GET
-	@Path("selectTable/tableName/{tableName}")
+	@Path("selectTable/{tableName}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response selectTable(@PathParam(value = "tableName") String tableName) throws JsonProcessingException {
 		Session session = sessionFactory.openSession();
