@@ -55,7 +55,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 @Path(AssessmentsService.PATH)
 public class AssessmentsService {
 
-	public static final String PATH = "assessments";
+	public static final String PATH = "assessment";
 
 	static protected Logger logger = Logger.getLogger(AssessmentsService.class);
 

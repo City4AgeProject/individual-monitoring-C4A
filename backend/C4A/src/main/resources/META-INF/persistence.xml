@@ -5,6 +5,7 @@
 	<persistence-unit name="eu.city4age.dashboard.api_v1_war_1.0-SNAPSHOTPU"
 		transaction-type="JTA">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>jdbc/__c4aDB</jta-data-source>
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect" />
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />

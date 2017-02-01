@@ -25,7 +25,7 @@ public class UserInRoleRepositoryTest {
 	@Autowired
 	private UserInSystemRepository userInSystemRepository;
 
-	// getCareReceivers
+	// getCareRecipients
 	@Test
 	@Transactional
 	@Rollback(true)

@@ -9,7 +9,7 @@ package eu.city4age.dashboard.api.pojo.dto;
  *
  * @author EMantziou
  */
-public class C4ACareReceiverListResponse {
+public class C4ACareRecipientListResponse {
 	private long userId;
 
 	private int age;
@@ -30,7 +30,7 @@ public class C4ACareReceiverListResponse {
 
 	private String detectionDate;
 
-	public C4ACareReceiverListResponse(long userId, int age, String frailtyStatus, String frailtyNotice, char attention,
+	public C4ACareRecipientListResponse(long userId, int age, String frailtyStatus, String frailtyNotice, char attention,
 			String textline, char interventionstatus, String interventionDate, String detectionStatus,
 			String detectionDate) {
 		this.userId = userId;

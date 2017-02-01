@@ -1,4 +1,4 @@
-define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojtable', 'ojs/ojgauge', 'ojs/ojarraytabledatasource'],
+define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojtable', 'ojs/ojgauge', 'ojs/ojarraytabledatasource', 'urls'],
         function (oj, ko, sp, $)
         {
 
@@ -6,12 +6,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 var self = this;
                 self.data = ko.observableArray();
 
-                var url = sp.baseUrl + sp.receiversMethod;
-
-
-
-
-                $.getJSON(url).
+                $.getJSON(CARE_RECIPIENT_ALL).
                         then(function (users) {
                             $.each(users.itemList, function () {
 //                                console.log("userssss ", JSON.stringify(this));
@@ -65,7 +60,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 self.viewGes = function () {
 
-                    oj.Router.rootInstance.go("detection_ges");
+                    //oj.Router.rootInstance.go("detection_ges");
+                	oj.Router.rootInstance.go("cr_list_full");
                 };
 
 

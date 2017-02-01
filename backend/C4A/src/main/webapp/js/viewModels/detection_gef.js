@@ -6,7 +6,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
             function GraphicsContentViewModel() {
                 var self = this;
-                var url = sp.baseUrl + sp.groupsMethod;
                 var lineColors = ['#b4b2b2','#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
 
                 var PRE_FRAIL_SERIES_NAME = 'Pre-Frail';
@@ -21,7 +20,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     self.userAge = sp.userAge;
                     self.userGender = sp.userGender;
                     self.textline = sp.userTextline;
-                    self.careReceiverId = null;
+                    self.careRecipientId = null;
                 }
 
                 self.selectedGefName = "";
@@ -75,9 +74,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.seriesValue = ko.observableArray();
                 self.groupsValue = ko.observableArray();
 
-//                self.careReceiverId = oj.Router.rootInstance.retrieve();
+//                self.careRecipientId = oj.Router.rootInstance.retrieve();
 
-                self.careReceiverId = 4;
+                self.careRecipientId = 4;
 
                 function createItems(id, value, gefTypeId) {
                     //console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value);
@@ -87,9 +86,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 }
 
                 $(".loader-hover").show();
-                $.getJSON(url + "/careReceiverId/" + self.careReceiverId + "/parentFactors/OVL/GFG")
+                $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/OVL/GFG")
                         .then(function (radarData) {
-
 //                            console.log("fata ", JSON.stringify(radarData));
                             $.each(radarData.itemList, function (i, list) {
                                 var nodes = [];
@@ -107,7 +105,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             $.each(radarData.itemList[0].items[0].dateList, function (j, dateItem) {
                                 self.groupsValue.push(dateItem);
                             });
-                            self.seriesValue.push({name: FIT_SERIES_NAME, items: [0.3, 0.1, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'});
+                            self.seriesValue.push({name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'});
                             self.seriesValue.push({name: PRE_FRAIL_SERIES_NAME, items: [null, null, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
                             self.seriesValue.push({name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
                             $(".loader-hover").hide();
@@ -136,7 +134,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 /* Group 1 and Group 2 Line Chart configuration with dynamic data */
                 var gefData;
-                $.getJSON(url + "/careReceiverId/" + self.careReceiverId + "/parentFactors/GEF")
+                $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/GEF")
                         .then(function (behavData) {
                             gefData = behavData;
 //                       console.log("gefData data ", JSON.stringify(gefData));    
@@ -162,8 +160,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                     self.parentFactorId(ui['seriesData'].items[0].gefTypeId);
                     if (self.parentFactorId() !== 1) {
-                        var urlDiagramData = sp.baseUrl + sp.diagramDataMethod;
-                        var jqXHR = $.getJSON(urlDiagramData + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" + self.parentFactorId(),
+                        var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "?careRecipientId=" + self.careRecipientId + "&parentFactorId=" + self.parentFactorId(),
                                 function (data) {
                                     self.groupsValue2(data.groups);
                                     self.lineSeriesValue(data.series);
@@ -295,7 +292,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     
                     initCRData();
                     
-                    self.careReceiverId = oj.Router.rootInstance.retrieve();
+                    self.careRecipientId = oj.Router.rootInstance.retrieve();
                     
                     self.lineSeriesValue = ko.observableArray();
                     self.lineSeries2Value = ko.observableArray();
@@ -341,13 +338,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 self.bGotoGESClick = function() {
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
-                    oj.Router.rootInstance.store([self.careReceiverId, selectedDetectionVariable]);
+                    oj.Router.rootInstance.store([self.careRecipientId, selectedDetectionVariable]);
                     oj.Router.rootInstance.go('detection_ges');
                 };
 
                 function loadRadarData() {
                     $(".loader-hover").show();
-                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" + (self.parentFactorId()?self.parentFactorId():'-1'))
+                    $.getJSON(CARE_RECIPIENT_GROUPS + "?careRecipientId=" + self.careRecipientId + "&parentFactorId=" + (self.parentFactorId()?(self.parentFactorId()==1?"/parentFactors/GEF":"/parentFactors/OVL/GFG"):"/parentFactors/OVL/GFG"))
                         .then(function (radarData) {
                             $.each(radarData.itemList, function (i, list) {
                                 var nodes = [];
@@ -382,7 +379,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 }
                 
                 function loadGefData() {
-                    $.getJSON(url + "?careReceiverId=" + self.careReceiverId + "&parentFactorId=" +  + (self.parentFactorId()?self.parentFactorId():'-1'))
+                    $.getJSON(CARE_RECIPIENT_GROUPS + "?careRecipientId=" + self.careRecipientId + "&parentFactorId=" +  + (self.parentFactorId()?(self.parentFactorId()==1?"/parentFactors/GEF":"/parentFactors/OVL/GFG"):"/parentFactors/OVL/GFG"))
                         .then(function (behavData) {
                             gefData = behavData;
 //                       console.log("gefData data ", JSON.stringify(gefData));    

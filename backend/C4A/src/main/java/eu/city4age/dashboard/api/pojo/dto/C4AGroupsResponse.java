@@ -17,7 +17,7 @@ public class C4AGroupsResponse {
 
 	private int responseCode;
 
-	private String careReceiverName;
+	private String careRecipientName;
 
 	private OJDiagramFrailtyStatus frailtyStatus;
 
@@ -39,12 +39,12 @@ public class C4AGroupsResponse {
 		this.responseCode = responseCode;
 	}
 
-	public String getCareReceiverName() {
-		return careReceiverName;
+	public String getCareRecipientName() {
+		return careRecipientName;
 	}
 
-	public void setCareReceiverName(String careReceiverName) {
-		this.careReceiverName = careReceiverName;
+	public void setCareRecipientName(String careRecipientName) {
+		this.careRecipientName = careRecipientName;
 	}
 
 	public OJDiagramFrailtyStatus getFrailtyStatus() {

@@ -3,15 +3,16 @@ package eu.city4age.dashboard.api.rest;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 
@@ -22,24 +23,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
+import eu.city4age.dashboard.api.persist.CrProfileRepository;
 import eu.city4age.dashboard.api.persist.FrailtyStatusTimelineRepository;
 import eu.city4age.dashboard.api.persist.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
+import eu.city4age.dashboard.api.pojo.domain.CrProfile;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatusTimeline;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.dto.C4ACareReceiverListResponse;
-import eu.city4age.dashboard.api.pojo.dto.C4ACareReceiversResponse;
+import eu.city4age.dashboard.api.pojo.dto.C4ACareRecipientListResponse;
+import eu.city4age.dashboard.api.pojo.dto.C4ACareRecipientsResponse;
 import eu.city4age.dashboard.api.pojo.dto.C4AGroupsResponse;
-import eu.city4age.dashboard.api.pojo.dto.C4ALoginResponse;
 import eu.city4age.dashboard.api.pojo.dto.C4ServiceGetOverallScoreListResponse;
+import eu.city4age.dashboard.api.pojo.dto.DataSet;
+import eu.city4age.dashboard.api.pojo.dto.Group;
+import eu.city4age.dashboard.api.pojo.dto.Item;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie;
@@ -49,18 +54,15 @@ import eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie;
  * @author EMantziou
  */
 @Component(value = "wsService")
-@Path(WsService.PATH)
-public class WsService {
+@Path(CareRecipientService.PATH)
+public class CareRecipientService {
 
-	public static final String PATH = "careReceiversData";
+	public static final String PATH = "careRecipient";
 
-	static protected Logger logger = Logger.getLogger(WsService.class);
+	static protected Logger logger = Logger.getLogger(CareRecipientService.class);
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
-
-	@Autowired
-	private DetectionVariableRepository detectionVariableRepository;
 
 	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
@@ -71,14 +73,17 @@ public class WsService {
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
 
+	@Autowired
+	private CrProfileRepository crProfileRepository;
+
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@Transactional("transactionManager")
 	@GET
-	@Path("/getGroups/careReceiverId/{careReceiverId}/parentFactors/{parentFactors : .+}")
+	@Path("getGroups/careRecipientId/{careRecipientId}/parentFactors/{parentFactors : .+}")
 	@Produces("application/json")
-	public Response getJson(@PathParam("careReceiverId") String careReceiverId,
-			@PathParam("parentFactors") List<PathSegment> parentFactors) throws IOException {
+	public Response getJson(@PathParam("careRecipientId") String careRecipientId,
+			@PathParam("parentFactors") List<PathSegment> parentFactorsPathSegment) throws IOException {
 
 		/**
 		 * ****************Variables*************
@@ -86,91 +91,97 @@ public class WsService {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
 		List<String> dateList = new ArrayList<String>();
 		List<DataIdValue> months = new ArrayList<DataIdValue>();
-		List<Float> ItemList = new ArrayList<Float>();
-		List<Long> idList = new ArrayList<Long>();
-		String groupName = "";
+		Map<Long, List<Float>> fMap = new HashMap<Long, List<Float>>();
+		Map<Long, List<Long>> idMap = new HashMap<Long, List<Long>>();
 		List<GeriatricFactorValue> gereatricfactparamsList = new ArrayList<GeriatricFactorValue>();
-		// List<DetectionVariable> detectionvarsparamsList = new
-		// ArrayList<DetectionVariable>();
+		List<DetectionVariable> detectionvarsparamsList = new ArrayList<DetectionVariable>();
 		ArrayList<C4ServiceGetOverallScoreListResponse> itemList;
 		C4AGroupsResponse response = new C4AGroupsResponse();
-		List<String> pfs = new ArrayList<String>();
+		List<String> parentFactors = new ArrayList<String>();
 
 		/**
 		 * ****************Action*************
 		 */
 
-		for (PathSegment pf : parentFactors) {
-			pfs.add(pf.toString());
+		for (PathSegment parentFactor : parentFactorsPathSegment) {
+			parentFactors.add(parentFactor.toString());
 		}
 
-		List<TimeInterval> tis = timeIntervalRepository.getGroups(Long.valueOf(careReceiverId), pfs);
+		List<TimeInterval> tis = timeIntervalRepository.getGroups(Long.valueOf(careRecipientId), parentFactors);
+
+		for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
+
+			if (gef.getCdDetectionVariable() != null) {
+
+				detectionvarsparamsList.add(gef.getCdDetectionVariable());
+				fMap.put(gef.getCdDetectionVariable().getId(), new ArrayList<Float>());
+				idMap.put(gef.getCdDetectionVariable().getId(), new ArrayList<Long>());
+
+			}
+
+		}
 
 		for (TimeInterval ti : tis) {
-			ItemList.add(ti.getGeriatricFactorValue().iterator().next().getGefValue().floatValue());
-			idList.add(ti.getGeriatricFactorValue().iterator().next().getId());
+
 			String date = sdf.format(ti.getIntervalStart());
+
 			dateList.add(date);
+
 			months.add(new DataIdValue(ti.getId(), date));
 
 			for (GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
-				gereatricfactparamsList.add(gef);
-				// detectionvarsparamsList.add(gef.getCdDetectionVariable());
+
+				for (DetectionVariable type : detectionvarsparamsList) {
+
+					gereatricfactparamsList.add(gef);
+
+					if (gef.getCdDetectionVariable() != null && gef.getCdDetectionVariable().equals(type)) {
+
+						fMap.get(type.getId()).add(gef.getGefValue().floatValue());
+						idMap.get(type.getId()).add(gef.getId());
+
+					}
+
+				}
+
 			}
-		}
 
-		// detectionvarsparamsList =
-		// detectionVariableRepository.findByDetectionVariableTypes(pfs);
-
-		if (gereatricfactparamsList.isEmpty()) {
-			response.setMessage("No detection variables found");
-			response.setResponseCode(0);
-			return Response.ok(objectMapper.writeValueAsString(response)).build();
-		} else {
 			itemList = new ArrayList<C4ServiceGetOverallScoreListResponse>();
-			// for (DetectionVariable types : detectionvarsparamsList) {
 
-			/*
-			 * Long dvId = types.getId(); gereatricfactparamsList =
-			 * geriatricFactorRepository.findByDetectionVariableId(dvId,
-			 * Long.valueOf(careReceiverId));
-			 */
-			/*
-			 * if (gereatricfactparamsList.isEmpty()) {
-			 * 
-			 * response.setMessage("No factors for this group");
-			 * response.setResponseCode(0); response.setCareReceiverName("");
-			 * response.setItemList(null);
-			 * 
-			 * } else {
-			 */
+			if (gereatricfactparamsList.isEmpty()) {
 
-			response.setMessage("success");
-			response.setResponseCode(10);
-			response.setCareReceiverName(
-					gereatricfactparamsList.get(0).getUserInRole().getUserInSystem().getUsername());
+				response.setMessage("No factors for this group");
+				response.setResponseCode(0);
+				response.setCareRecipientName("");
+				response.setItemList(null);
 
-			List<FrailtyStatusTimeline> fs = frailtyStatusTimelineRepository.findByPeriodAndUserId(tis,
-					gereatricfactparamsList.get(0).getUserInRole().getId());
+			} else {
 
-			OJDiagramFrailtyStatus frailtyStatus = transformToDto(fs, months);
+				for (DetectionVariable type : detectionvarsparamsList) {
 
-			response.setFrailtyStatus(frailtyStatus);
+					response.setMessage("success");
+					response.setResponseCode(10);
+					response.setCareRecipientName(
+							gereatricfactparamsList.get(0).getUserInRole().getUserInSystem().getUsername());
 
-			String parentGroupName = "";
-			if (gereatricfactparamsList.get(0).getGefTypeId().getDerivedDetectionVariable() != null) {
-				parentGroupName = gereatricfactparamsList.get(0).getGefTypeId().getDerivedDetectionVariable()
-						.getDetectionVariableName();
-			}
+					List<FrailtyStatusTimeline> fs = frailtyStatusTimelineRepository.findByPeriodAndUserId(tis,
+							gereatricfactparamsList.get(0).getUserInRole().getId());
 
-			itemList.add(new C4ServiceGetOverallScoreListResponse(tis, ItemList, idList, dateList, groupName,
-					parentGroupName));
+					OJDiagramFrailtyStatus frailtyStatus = transformToDto(fs, months);
 
-			// }
+					response.setFrailtyStatus(frailtyStatus);
 
-			// } // detectionVariables loop
+					itemList.add(new C4ServiceGetOverallScoreListResponse(tis, fMap.get(type.getId()),
+							idMap.get(type.getId()), dateList, type.getDetectionVariableName(),
+							type.getDerivedDetectionVariable() != null
+									? type.getDerivedDetectionVariable().getDetectionVariableName() : null));
+
+				}
+
+			} // detectionVariables loop
 			response.setItemList(itemList);
-		} // end detectionVariables is empty
+
+		}
 
 		return Response.ok(objectMapper.writeValueAsString(response)).build();
 
@@ -178,14 +189,13 @@ public class WsService {
 
 	@Transactional("transactionManager")
 	@GET
-	@Path("getCareReceivers")
-	@Consumes("application/json")
+	@Path("getCareRecipients")
 	@Produces("application/json")
 	public Response getJson() throws IOException {
 		/**
 		 * ****************Variables*************
 		 */
-		C4ACareReceiversResponse response = new C4ACareReceiversResponse();
+		C4ACareRecipientsResponse response = new C4ACareRecipientsResponse();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 
 		/**
@@ -199,7 +209,7 @@ public class WsService {
 			response.setResponseCode(0);
 			return Response.ok(objectMapper.writeValueAsString(response)).build();
 		} else {
-			List<C4ACareReceiverListResponse> itemList = new ArrayList<C4ACareReceiverListResponse>();
+			List<C4ACareRecipientListResponse> itemList = new ArrayList<C4ACareRecipientListResponse>();
 			for (UserInRole users : userinroleparamsList) {
 				response.setMessage("success");
 				response.setResponseCode(10);
@@ -238,7 +248,7 @@ public class WsService {
 					frailtyNotice = frailtyparamsList.get(0).getFrailtyNotice();
 				}
 
-				itemList.add(new C4ACareReceiverListResponse(users.getId(), age, frailtyStatus, frailtyNotice,
+				itemList.add(new C4ACareRecipientListResponse(users.getId(), age, frailtyStatus, frailtyNotice,
 						attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate));
 			} // detectionVariables loop
 			response.setItemList(itemList);
@@ -249,136 +259,65 @@ public class WsService {
 
 	}// end method
 
-	@Transactional("transactionManager")
-	@GET
-	@Path("login/username/{username}/password/{password}")
-	@Consumes("application/json")
-	@Produces("application/json")
-	public Response login(@PathParam("username") String username, @PathParam("password") String password)
-			throws IOException {
-		/**
-		 * ****************Variables*************
-		 */
-		UserInRole user;
-		C4ALoginResponse response = new C4ALoginResponse();
-		/**
-		 * ****************Action*************
-		 */
-		try {
-			user = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
-
-			logger.info("user: " + username);
-			logger.info("password: " + password);
-			logger.info("repository: " + user);
-
-			if (user == null) {
-				response.setMessage("wrong credentials");
-				response.setResponseCode(0);
-				response.setDisplayName("");
-				return Response.ok(response).build();
-			} else {
-				if (user.getRoleId().equals(Short.valueOf("8"))) {
-					response.setMessage("success");
-					response.setResponseCode(10);
-					if (user.getUserInSystem().getDisplayName() != null) {
-						response.setDisplayName(user.getUserInSystem().getDisplayName());
-					} else {
-						response.setDisplayName("");
-					}
-					return Response.ok(response).build();
-				} else {
-					response.setMessage("you don't have the right permissions");
-					response.setResponseCode(0);
-					response.setDisplayName("");
-					return Response.ok(response).build();
-				}
-			}
-
-		} catch (Exception e) {
-			response.setMessage("something went terrible wrong");
-			response.setResponseCode(2);
-			response.setDisplayName("");
-			return Response.ok(response).build();
-		}
-	}
-
-	// Should be AssessmentsService.getDiagramData
 	@GET
 	@Path("getDiagramData")
 	@Produces("application/json")
-	public Response getDiagramData(@QueryParam("careReceiverId") String careReceiverId,
+	public C4AGroupsResponse getDiagramData(@QueryParam("careReceiverId") String careReceiverId,
 			@QueryParam("parentFactorId") Integer parentFactorId) throws IOException {
-		C4AGroupsResponse response = new C4AGroupsResponse();
+		DataSet response = new DataSet();
+		List<GeriatricFactorValue> gfvList;
+		ArrayList<C4ServiceGetOverallScoreListResponse> itemList = new ArrayList<C4ServiceGetOverallScoreListResponse>();
 
-		List<GeriatricFactorValue> gereatricfactparamsList;
-		List<DetectionVariable> detectionvarsparamsList;
-		ArrayList<C4ServiceGetOverallScoreListResponse> itemList;
-
-		/**
-		 * ****************Action*************
-		 */
-
-		List<String> parentFactors = null;
-
-		if (parentFactorId.equals(Integer.valueOf(-1))) {
-			parentFactors = Arrays.asList("OVL", "GFG");
-		} else {
-			parentFactors = Arrays.asList("GES");
-		}
-
-		detectionvarsparamsList = detectionVariableRepository.findByDetectionVariableTypes(parentFactors);
-
-		if (detectionvarsparamsList.isEmpty()) {
-			response.setMessage("No detection variables found");
+		// we use list to avoid "not found" exception
+		gfvList = geriatricFactorRepository.findByDetectionVariableId(Long.valueOf(parentFactorId),
+				Long.parseLong(careReceiverId));
+		//
+		if (gfvList.isEmpty()) {
+			response.setMessage("No factors for this group");
 			response.setResponseCode(0);
-			return Response.ok(objectMapper.writeValueAsString(response)).build();
 		} else {
-			itemList = new ArrayList<C4ServiceGetOverallScoreListResponse>();
-			for (DetectionVariable types : detectionvarsparamsList) {
+			response.setMessage("success");
+			response.setResponseCode(10);
 
-				Long dvId = types.getId();
-
-				// we use list to avoid "not found" exception
-				gereatricfactparamsList = geriatricFactorRepository.findByDetectionVariableId(dvId,
-						Long.valueOf(careReceiverId));
-				//
-				if (gereatricfactparamsList.isEmpty()) {
-					response.setMessage("No factors for this group");
-					response.setResponseCode(0);
-					response.setCareReceiverName("");
-					response.setItemList(null);
-				} else {
-
-					response.setMessage("success");
-					response.setResponseCode(10);
-					response.setCareReceiverName(
-							gereatricfactparamsList.get(0).getUserInRole().getUserInSystem().getUsername());
-
-					List<Long> timeintervalIds = new ArrayList<Long>();
-
-					for (GeriatricFactorValue gef : gereatricfactparamsList) {
-						timeintervalIds.add(gef.getTimeInterval().getId());
-					}
-
-					String parentGroupName = "";
-					if (gereatricfactparamsList.get(0).getGefTypeId().getDerivedDetectionVariable() != null) {
-						parentGroupName = gereatricfactparamsList.get(0).getGefTypeId().getDerivedDetectionVariable()
-								.getDetectionVariableName();
-					}
-
-					itemList.add(new C4ServiceGetOverallScoreListResponse(gereatricfactparamsList, parentGroupName,
-							frailtyStatusTimelineRepository.findByPeriodAndUserIdOld(timeintervalIds,
-									gereatricfactparamsList.get(0).getUserInRole().getId())));
-
+			for (GeriatricFactorValue gfv : gfvList) {
+				Group g = findOrCreateGroup(response, gfv.getTimeInterval());
+				if (g == null) {
+					g = new Group();
+					g.setId(gfv.getTimeInterval().getId());
+					SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
+					g.setName(sdf.format(gfv.getTimeInterval().getIntervalStart()));
+					response.getGroups().add(g);
+				}
+				eu.city4age.dashboard.api.pojo.dto.Serie s = findOrCreateSerie(response, gfv.getGefTypeId());
+				if (s == null) {
+					s = new eu.city4age.dashboard.api.pojo.dto.Serie();
+					s.setName(gfv.getGefTypeId().getDetectionVariableName());
+					response.getSeries().add(s);
 				}
 
-			} // detectionVariables loop
-			response.setItemList(itemList);
-		} // end detectionVariables is empty
+				Item i = findOrCreateItem(response, gfv);
+				if (i == null) {
+					i = new Item();
+					i.setId(gfv.getId());
+					i.setValue(gfv.getGefValue().floatValue());
+					i.setGefTypeId(gfv.getGefTypeId().getId().intValue());
+					s.getItems().add(i);
+				}
 
-		return Response.ok(objectMapper.writeValueAsString(response)).build();
+			}
 
+		}
+		response.setItemList(itemList);
+		return response;
 	}// end method
+
+	@GET
+	@Path("findOne/id/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response findOne(@PathParam("id") Long id) throws JsonProcessingException {
+		CrProfile crP = crProfileRepository.findOne(id);
+		return Response.ok(objectMapper.writeValueAsString(crP)).build();
+	}
 
 	private OJDiagramFrailtyStatus transformToDto(List<FrailtyStatusTimeline> fs, List<DataIdValue> months) {
 		OJDiagramFrailtyStatus dto = new OJDiagramFrailtyStatus();
@@ -436,6 +375,34 @@ public class WsService {
 		dto.getSeries().add(fit);
 
 		return dto;
+	}
+
+	private Group findOrCreateGroup(DataSet ds, TimeInterval ti) {
+
+		for (Group g : ds.getGroups()) {
+			if (g.getId().equals(ti.getId()))
+				return g;
+		}
+		return null;
+	}
+
+	private eu.city4age.dashboard.api.pojo.dto.Serie findOrCreateSerie(DataSet ds, DetectionVariable gefTypeId) {
+		for (eu.city4age.dashboard.api.pojo.dto.Serie s : ds.getSeries()) {
+			if (s.getName().equals(gefTypeId.getDetectionVariableName())) {
+				return s;
+			}
+		}
+		return null;
+	}
+
+	private Item findOrCreateItem(DataSet ds, GeriatricFactorValue gfv) {
+		for (eu.city4age.dashboard.api.pojo.dto.Serie s : ds.getSeries()) {
+			for (Item i : s.getItems()) {
+				if (i.getId().equals(gfv.getId()))
+					return i;
+			}
+		}
+		return null;
 	}
 
 }// end class

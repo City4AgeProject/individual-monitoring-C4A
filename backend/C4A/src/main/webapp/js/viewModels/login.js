@@ -1,5 +1,5 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery',
-    'ojs/ojknockout', 'ojs/ojinputtext', 'ojs/ojbutton'],
+    'ojs/ojknockout', 'ojs/ojinputtext', 'ojs/ojbutton', 'urls'],
         function (oj, ko, sp, app, $) {
 
             function LoginViewModel() {
@@ -15,7 +15,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.loginUser = function (viewModel, event) {
                     console.log("username " + self.loginValue() + " password " + self.passwordValue());
 
-                    $.getJSON(url + "/username/" + self.loginValue() + "/password/" + self.passwordValue()).
+                    $.getJSON(USER_LOGIN + "/username/" + self.loginValue() + "/password/" + self.passwordValue()).
                             then(function (users) {
                                 if (users.responseCode === 10) {
                                     /*logged in 

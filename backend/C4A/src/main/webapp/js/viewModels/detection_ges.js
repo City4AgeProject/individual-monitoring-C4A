@@ -7,7 +7,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
     'knockout-postbox', 'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
-    
     'urls','entities'],
         function (oj, ko, $, sp) {
 
@@ -16,14 +15,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
             	var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
                 
                 var self = this;
-                var url = sp.baseUrl + sp.diagramDataMethod;
                 //
                 self.userAge = sp.userAge;
                 self.userGender = sp.userGender;
                 self.textline = sp.userTextline;
                 
                 self.subFactorName = ko.observable();
-                self.careReceiverId = ko.observable();
+                self.careRecipientId = ko.observable();
                 self.parentFactorId = ko.observable();
                 
                 self.groupsValue = ko.observableArray();
@@ -39,7 +37,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 
                 self.dataPointsMarkedIds = ko.observableArray();
                 self.parentFactorId = ko.observable(4); // get from params 
-                self.careReceiverId = ko.observable(); // get from params
+                self.careRecipientId = ko.observable(); // get from params
                 
                 var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
@@ -51,7 +49,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 var loadDataSet = function(data) {
-                    var jqXHR = $.getJSON(url + "?careReceiverId=" +self.careReceiverId()
+                    var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "?careRecipientId=" +self.careRecipientId()
                                               + "&parentFactorId=" + self.parentFactorId(),
                          loadDiagramDataCallback);
                     jqXHR.fail(serverErrorCallback);
@@ -60,7 +58,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 
                 var loadAssessments = function (pointIds) {
                     var pointIdsJson = JSON.stringify(pointIds);
-                    return $.postJSON(OJ_ASSESSMENTS_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
+                    return $.postJSON(ASSESSMENT_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
                         var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var newAssessment = Assessment.produceFromOther(assessments[i]);
@@ -76,11 +74,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 self.handleActivated = function (info) {
-                	console.log("1");
                     var selectedDetectionVariable = oj.Router.rootInstance.retrieve(); //this is null
-                    console.log("2" + selectedDetectionVariable);
-                    self.careReceiverId = ko.observable(selectedDetectionVariable[0]);
-                    console.log("3");
+                    self.careRecipientId = ko.observable(selectedDetectionVariable[0]);
                     self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
                     self.parentFactorId = ko.observable(selectedDetectionVariable[1].id);
                     var response = loadDataSet();
@@ -110,7 +105,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                                                                "groups" :self.groupsValue()});
                     ko.postbox.publish("subFactorName", self.subFactorName());
                     ko.postbox.publish("optionChangeCallback", self.chartOptionChange);
-                    ko.postbox.publish("loadAssessmentsCached", self.careReceiverId());
+                    ko.postbox.publish("loadAssessmentsCached", self.careRecipientId());
                 });
                 
                 ko.postbox.subscribe("clickShowPopupAddAssessmentCallback", function() {

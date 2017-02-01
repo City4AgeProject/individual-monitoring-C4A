@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api;
 
 import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -8,7 +9,9 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -34,13 +37,18 @@ import eu.city4age.dashboard.api.persist.generic.GenericRepositoryFactoryBean;
  * 
  * @author milos.holclajtner
  */
-public class Application {
+public class Application extends SpringBootServletInitializer {
 
 	static protected Logger logger = Logger.getLogger(Application.class);
 
 	public static void main(String[] args) {
 		new SpringApplication(Application.class).run(args);
 	}
+	
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }
 
 	/**
 	 * Jersey rest services.

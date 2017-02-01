@@ -10,7 +10,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 
                 self.optionChangeCallback = null;
                 self.subFactorName = ko.observable();
-                self.careReceiverId = ko.observable();
+                self.careRecipientId = ko.observable();
                 
                 self.chartOptionChange = function (event, ui) {
                     if(self.optionChangeCallback)
@@ -40,7 +40,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 }
                 
                 self.loadAssessmentsCached = function () {
-                    return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId='+self.careReceiverId(), function (dataSet) {
+                    return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId='+self.careRecipientId(), function (dataSet) {
                         var assesmentsDataSet = DataSet.produceFromOther(dataSet);
                         var assessmentsSerieAlerts = Serie.produceAlert();
                         var serieAlertsItems = [];
@@ -103,8 +103,8 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                     self.optionChangeCallback = optionChangeCallback;
                 });
                 
-                ko.postbox.subscribe("loadAssessmentsCached", function(careReceiverId) {
-                    self.careReceiverId(careReceiverId);
+                ko.postbox.subscribe("loadAssessmentsCached", function(careRecipientId) {
+                    self.careRecipientId(careRecipientId);
                     self.loadAssessmentsCached();
                 });
                 

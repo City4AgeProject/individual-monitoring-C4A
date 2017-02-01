@@ -4,23 +4,6 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
      */
     function getUrls() {
         var self = this;
-        /**
-         * Define base Url settings
-         */
-//        self.baseIP = "http://10.10.10.199:8080";
-//              self.baseIP = "http://c4adashboard.atc.gr/mobileapi";
-//        self.baseIP = "http://localhost:8080"; //8084 
-        self.baseIP = location.protocol + "//" + location.host;
-        self.pathRoot = "/C4A/rest/careReceiversData"; //dashboard-backend-newORM/rest/careReceiversData" ; //c4ADashboardServices/rest/careReceiversData";
-        self.baseUrl = self.baseIP + self.pathRoot;
-        
-        /**
-         * Define methods
-         */
-        self.receiversMethod = "/getCareReceivers";
-        self.groupsMethod = "/getGroups";
-        self.loginMethod = "/login";
-        self.diagramDataMethod = "/getDiagramData";
 
         self.userId = ko.observable();
         self.setUserId = function (userId) {

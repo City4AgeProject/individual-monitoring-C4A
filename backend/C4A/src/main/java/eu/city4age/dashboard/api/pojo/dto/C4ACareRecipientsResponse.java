@@ -11,13 +11,13 @@ import java.util.List;
  *
  * @author EMantziou
  */
-public class C4ACareReceiversResponse {
+public class C4ACareRecipientsResponse {
 
 	private String message;
 
 	private int responseCode;
 
-	private List<C4ACareReceiverListResponse> ItemList;
+	private List<C4ACareRecipientListResponse> ItemList;
 
 	public String getMessage() {
 		return message;
@@ -35,11 +35,11 @@ public class C4ACareReceiversResponse {
 		this.responseCode = responseCode;
 	}
 
-	public List<C4ACareReceiverListResponse> getItemList() {
+	public List<C4ACareRecipientListResponse> getItemList() {
 		return ItemList;
 	}
 
-	public void setItemList(List<C4ACareReceiverListResponse> ItemList) {
+	public void setItemList(List<C4ACareRecipientListResponse> ItemList) {
 		this.ItemList = ItemList;
 	}
 
