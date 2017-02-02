@@ -116,7 +116,7 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                     var audienceIds = ko.toJS(self.selectedRoles);
                     var assessmentToPost = new AddAssessment
                             (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
-                    var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_POINTS,
+                    var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_SET,
                             JSON.stringify(assessmentToPost),
                             postAssessmentCallback
                             );

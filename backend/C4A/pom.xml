@@ -15,7 +15,6 @@
 
 	<properties>
 		<start-class>eu.city4age.dashboard.api.Application</start-class>
-		<jersey-version>2.23.2</jersey-version>
 		<glassfish.home>C:\glassfish-4.1.1\glassfish4</glassfish.home>
 		<glassfish.domain>domain1</glassfish.domain>
 		<glassfish.domain.username>admin</glassfish.domain.username>
@@ -57,11 +56,6 @@
 		<!-- End Postgres -->
 
 		<!-- Jersey -->
-		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>${jersey-version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
 			<artifactId>jersey-spring3</artifactId>

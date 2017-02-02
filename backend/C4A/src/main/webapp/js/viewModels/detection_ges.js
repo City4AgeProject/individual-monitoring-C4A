@@ -60,7 +60,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 var loadAssessments = function (pointIds) {
                 	console.log("loadAssessments");
                     var pointIdsJson = JSON.stringify(pointIds);
-                    return $.postJSON(ASSESSMENT_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
+                    return $.postJSON(ASSESSMENT_FOR_DATA_SET, pointIdsJson, function (assessments) {
                         var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var newAssessment = Assessment.produceFromOther(assessments[i]);

@@ -116,11 +116,11 @@ public class AssessmentsService {
 	}
 
 	@GET
-	@Path("getLastFiveAssessmentsForDiagram/userInRoleId/{userInRoleId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
+	@Path("getLastFiveForDiagram/userInRoleId/{userInRoleId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.AssessmentView.class)
-	public Response getLastFiveAssessmentsForDiagram(@PathParam("intervalStart") String intervalStart,
-			@PathParam("intervalEnd") String intervalEnd, @PathParam("userInRoleId") Long userInRoleId)
+	public Response getLastFiveForDiagram(@PathParam("userInRoleId") Long userInRoleId,
+			@PathParam("intervalStart") String intervalStart, @PathParam("intervalEnd") String intervalEnd)
 			throws JsonProcessingException {
 
 		Timestamp intervalStartTimestamp = Timestamp.valueOf(intervalStart.concat(" 00:00:00"));
@@ -135,10 +135,10 @@ public class AssessmentsService {
 	}
 
 	@GET
-	@Path("getAssessmentsForSelectedDataSet/geriatricFactorValueIds/{geriatricFactorValueIds : .+}")
+	@Path("findForSelectedDataSet/geriatricFactorValueIds/{geriatricFactorValueIds : .+}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.AssessmentView.class)
-	public Response getAssessmentsForSelectedDataSet(
+	public Response findForSelectedDataSet(
 			@PathParam("geriatricFactorValueIds") List<PathSegment> geriatricFactorValueIds,
 			@QueryParam("authorRoleId") Long authorRoleId, @QueryParam("riskStatusWarning") Boolean riskStatusWarning,
 			@QueryParam("riskStatusAlert") Boolean riskStatusAlert,
@@ -163,21 +163,21 @@ public class AssessmentsService {
 		inFilterParams.put("dataValidityFaulty", false);
 		inFilterParams.put("assessmentComment", false);
 
-		if(authorRoleId != null)
+		if (authorRoleId != null)
 			inFilterParams.put("userInRoleId", authorRoleId);
 
 		if (riskStatusWarning != null)
 			inFilterParams.put("riskStatusWarning", true);
-		
+
 		if (riskStatusAlert != null)
 			inFilterParams.put("riskStatusAlert", true);
-		
+
 		if (dataValidityQuestionable != null)
 			inFilterParams.put("dataValidityQuestionable", true);
-		
+
 		if (dataValidityFaulty != null)
 			inFilterParams.put("dataValidityFaulty", true);
-		
+
 		if (assessmentComment != null)
 			inFilterParams.put("assessmentComment", true);
 
@@ -207,9 +207,8 @@ public class AssessmentsService {
 		List<Assessment> aaList = assessmentRepository.doQueryWithFilter("filterByAll", "findForSelectedDataSet",
 				inFilterParams, inQueryParams);
 
-		return Response
-				.ok(objectMapper.writerWithView(View.AssessmentView.class).writeValueAsString(new HashSet<Assessment>(aaList)))
-				.build();
+		return Response.ok(objectMapper.writerWithView(View.AssessmentView.class)
+				.writeValueAsString(new HashSet<Assessment>(aaList))).build();
 	}
 
 	private List<Long> convertToListLong(List<PathSegment> geriatricFactorValueIds) {
@@ -221,9 +220,9 @@ public class AssessmentsService {
 	}
 
 	@POST
-	@Path("addAssessmentsForSelectedDataSet")
+	@Path("addForSelectedDataSet")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void addAssessmentsForSelectedDataSet(String json) throws JsonProcessingException, IOException {
+	public void addForSelectedDataSet(String json) throws JsonProcessingException, IOException {
 		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
 		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
 

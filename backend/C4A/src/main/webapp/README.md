@@ -1,2 +1,2 @@
-# anagraph
-Anagraph is a JS module (v1 based on Oracle JET) for management of user-generated metadata on graphic/multimedia client controls and content via RESTful interface to the back end.
+# individual-monitoring-Belit
+Individual monitoring dashboard app, Belit version with Hibernate ORM and support for assessments.

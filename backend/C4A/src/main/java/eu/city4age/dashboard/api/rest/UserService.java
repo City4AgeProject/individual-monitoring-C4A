@@ -44,10 +44,6 @@ public class UserService {
 		try {
 			user = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
 
-			logger.info("user: " + username);
-			logger.info("password: " + password);
-			logger.info("repository: " + user);
-
 			if (user == null) {
 				response.setMessage("wrong credentials");
 				response.setResponseCode(0);
