@@ -17,8 +17,7 @@ public interface DetectionVariableRepository extends GenericRepository<Detection
 	@Query("SELECT dv.detectionVariableName FROM DetectionVariable AS dv WHERE dv.derivedDetectionVariable.id = :parentId")
 	List<String> findNameByParentId(@Param("parentId") final Long parentId);
 
-	@Query("SELECT c FROM DetectionVariable c WHERE c.detectionVariableType.detectionVariableType IN :gefType")
-	List<DetectionVariable> findByDetectionVariableTypes(
-			@Param("gefType") final List<String> parentFactors);
+	@Query("SELECT dv FROM DetectionVariable dv WHERE dv.detectionVariableType.detectionVariableType IN :gefType")
+	List<DetectionVariable> findByDetectionVariableTypes(@Param("gefType") final List<String> parentFactors);
 
 }

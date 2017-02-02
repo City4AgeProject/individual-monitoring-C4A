@@ -40,7 +40,8 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 }
                 
                 self.loadAssessmentsCached = function () {
-                    return $.getJSON(OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '?intervalStart=2011-1-1&intervalEnd=2017-1-1&userInRoleId='+self.careRecipientId(), function (dataSet) {
+                	console.log("self.loadAssessmentsCached");
+                    return $.getJSON(ASSESSMENT_LAST_FIVE_FOR_INTERVAL + '/intervalStart/2011-1-1/intervalEnd=2017-1-1/userInRoleId/'+self.careRecipientId(), function (dataSet) {
                         var assesmentsDataSet = DataSet.produceFromOther(dataSet);
                         var assessmentsSerieAlerts = Serie.produceAlert();
                         var serieAlertsItems = [];

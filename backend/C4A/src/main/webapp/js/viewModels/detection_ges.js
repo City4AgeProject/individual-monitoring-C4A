@@ -11,7 +11,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
         function (oj, ko, $, sp) {
 
             function detectionGesContentViewModel() {
-            	
+            	console.log("detectionGesContentViewModel");
             	var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
                 
                 var self = this;
@@ -49,6 +49,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 var loadDataSet = function(data) {
+                	console.log("loadDataSet");
                     var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" +self.careRecipientId()
                                               + "/parentFactorId/" + self.parentFactorId(),
                          loadDiagramDataCallback);
@@ -57,6 +58,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 var loadAssessments = function (pointIds) {
+                	console.log("loadAssessments");
                     var pointIdsJson = JSON.stringify(pointIds);
                     return $.postJSON(ASSESSMENT_FOR_DATA_POINTS, pointIdsJson, function (assessments) {
                         var assessmentsResult = [];
@@ -74,6 +76,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 self.handleActivated = function (info) {
+                	console.log("handleActivated");
                     var selectedDetectionVariable = oj.Router.rootInstance.retrieve(); //this is null
                     self.careRecipientId = ko.observable(selectedDetectionVariable[0]);
                     self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
@@ -277,6 +280,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.risksCollection(new collectionRisks());
                 self.risksCollection().fetch({
                     success: function (collection, response, options) {
+                    	console.log("self.risksCollection().fetch success");
                         if (self.risksTags.length === 0) {
                             for (var i = 0; i < collection.size(); i++) {
                                 var riskModel = collection.at(i);
@@ -299,6 +303,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.selectedDataValidity = ko.observable();
 
                 /* Audience ids -> CdRole*/
+                console.log("0");
                 self.rolesCollection = ko.observable();
                 self.roleTags = ko.observableArray([]);       
                 self.selectedRoles = ko.observableArray();
@@ -317,6 +322,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.rolesCollection().fetch({
                     type: 'GET',
                     success: function (collection, response, options) {
+                    	console.log("self.rolesCollection().fetch success");
                         if(self.roleTags.length === 0) {
                             for (var i = 0; i < response.length; i++) {
                                 var roleModel = response[i];
@@ -329,10 +335,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                     }
                 });
 
+                console.log("1");
                 self.formats = ko.observableArray();
                 self.isChecked = ko.observable();
                 self.checkedFilterRiskStatus = ko.observableArray();
                 self.checkedFilterValidityData = ko.observableArray();
+                console.log("2");
                 
                 /* polar chart - uradjen za prvu grupu i to za mesece M1, M2 i M5 */
                 var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
@@ -354,11 +362,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                     {name: "Gait balance", items: [3.0, 2.8, 2.8, 3.2, 2.9, 3.3, 2.7, 2.5, 3.0, 1.9, 2.3, 1.8, 2.6]}];
                 var lineGroupsPolar = series1; //grupe su nazivi serija linijskog dijagrama bez alerta
 
+                console.log("3");
                 self.stackValue = ko.observable('off');
                 self.typeValue = ko.observable('line');
                 self.polarGridShapeValue = ko.observable('polygon');
                 self.polarChartSeriesValue = ko.observableArray(lineSeriesPolar);
                 self.polarChartGroupsValue = ko.observableArray(lineGroupsPolar);
+                console.log("4");
             }
 
             return new detectionGesContentViewModel();

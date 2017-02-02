@@ -19,7 +19,6 @@ public interface TimeIntervalRepository extends GenericRepository<TimeInterval, 
 	@Query("SELECT ti FROM TimeInterval ti WHERE ti.intervalStart >= :start AND ti.intervalEnd <= :end")
 	List<TimeInterval> findByPeriod(@Param("start") final Timestamp start, @Param("end") final Timestamp end);
 
-	// Poziva ovo posle care recipients
 	@Query("SELECT DISTINCT ti FROM TimeInterval ti LEFT JOIN FETCH ti.frailtyStatusTimeline AS fst LEFT JOIN FETCH ti.geriatricFactorValue AS gfv INNER JOIN FETCH gfv.cdDetectionVariable AS dv LEFT JOIN FETCH dv.detectionVariableType AS dvt INNER JOIN FETCH gfv.userInRole AS uir INNER JOIN FETCH uir.userInSystem AS uis WHERE (uir.id = :userId OR uir IS NULL) AND (dvt.detectionVariableType IN :gefType OR dv IS NULL) ORDER BY ti.id")
 	List<TimeInterval> getGroups(@Param("userId") final Long userId, @Param("gefType") final List<String> parentFactors);
 
