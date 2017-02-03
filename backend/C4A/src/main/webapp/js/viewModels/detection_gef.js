@@ -88,7 +88,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 $(".loader-hover").show();
                 $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/OVL/GFG")
                         .then(function (radarData) {
-//                            console.log("fata ", JSON.stringify(radarData));
                             $.each(radarData.itemList, function (i, list) {
                                 var nodes = [];
                                 var gtId = list.gefTypeId;
@@ -136,8 +135,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 var gefData;
                 $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/GEF")
                         .then(function (behavData) {
-                            gefData = behavData;
-//                       console.log("gefData data ", JSON.stringify(gefData));    
+                            gefData = behavData;   
                         });
                 /* End: Group 1 and Group 2 Line Chart configuration with dynamic data */
 
@@ -255,7 +253,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 var closeGEFDetailsShowPopupScheduled = false;
                 self.chartOptionChangeFactorsGroup1 = function (event, ui) {
-                    //console.log(ui);
                     if (ui['option'] === 'highlightedCategories') {
                         if ((ui['value'].length > 0) && (!closeGEFDetailsShowPopupScheduled)) {
                             //alert('testi self.selectionValueChange = function(event, data) {');                            
@@ -266,7 +263,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             var selectedGEF = "";
                             if (ui['value'][0])
                                 selectedGEF = ui['value'][0];
-                            //console.log(ui['value'][0]);
                             var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup1FactorsLineChart", ui['value'][0]);
 
                             var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
@@ -290,9 +286,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
                 self.handleAttached = function (info) {
-
-                    //console.log('handleAttached');  
-                    
                     initCRData();
                     
                     //self.careRecipientId = oj.Router.rootInstance.retrieve();
@@ -386,7 +379,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     $.getJSON(CARE_RECIPIENT_GROUPS + "?careRecipientId=" + self.careRecipientId + "&parentFactorId=" +  + (self.parentFactorId()?(self.parentFactorId()==1?"/parentFactors/GEF":"/parentFactors/OVL/GFG"):"/parentFactors/OVL/GFG"))
                         .then(function (behavData) {
                             gefData = behavData;
-//                       console.log("gefData data ", JSON.stringify(gefData));    
                         });
  
                 }
