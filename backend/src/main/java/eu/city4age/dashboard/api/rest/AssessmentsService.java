@@ -90,7 +90,13 @@ public class AssessmentsService {
 
 		ObjectMapper objectMapper = mapperResolver.getContext(TimeInterval.class);
 
-		GetDiagramDataDeserializer data = objectMapper.readerFor(GetDiagramDataDeserializer.class).readValue(json);
+		/*
+		 * Avoiding to use readerFor method instead because of conflict with
+		 * older version of jackson jars in GLASSFISH_HOME/glassfish/modules of
+		 * Glassfish 4.1.1 which then would have to be replaced.
+		 */
+		@SuppressWarnings("deprecation")
+		GetDiagramDataDeserializer data = objectMapper.reader(GetDiagramDataDeserializer.class).readValue(json);
 
 		Timestamp start = Timestamp.valueOf(data.getTimestampStart());
 		Timestamp end = Timestamp.valueOf(data.getTimestampEnd());
@@ -222,11 +228,17 @@ public class AssessmentsService {
 	@POST
 	@Path("addForSelectedDataSet")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void addForSelectedDataSet(String json) throws JsonProcessingException, IOException {
+	public Response addForSelectedDataSet(String json) throws JsonProcessingException, IOException {
 		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
 		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
 
-		AddAssessmentDeserializer data = objectMapper.readerFor(AddAssessmentDeserializer.class)
+		/*
+		 * Avoiding to use readerFor method instead because of conflict with
+		 * older version of jackson jars in GLASSFISH_HOME/glassfish/modules of
+		 * Glassfish 4.1.1 which then would have to be replaced.
+		 */
+		@SuppressWarnings("deprecation")
+		AddAssessmentDeserializer data = objectMapper.reader(AddAssessmentDeserializer.class)
 				.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
 		UserInRole userInRole = userInRoleRepository.findOne(data.getAuthorId());
@@ -249,6 +261,7 @@ public class AssessmentsService {
 		audienceRolesRepository.save(assessmentAudienceRoles);
 		assessedGefValuesRepository.save(assessedGefValueSets);
 
+		return Response.ok().build();
 	}
 
 	private List<String> createMonthLabels(List<TimeInterval> months) {
