@@ -212,7 +212,7 @@ public class AssessmentsService {
 	}
 
 	private List<Long> convertToListLong(List<PathSegment> geriatricFactorValueIds) {
-		List<Long> gefIds = new ArrayList<Long>(0);
+		List<Long> gefIds = new ArrayList<Long>(geriatricFactorValueIds.size());
 		for (PathSegment segment : geriatricFactorValueIds) {
 			gefIds.add(Long.valueOf(segment.toString()));
 		}

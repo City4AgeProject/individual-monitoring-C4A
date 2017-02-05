@@ -137,7 +137,7 @@ public class AssessmentServiceTest {
 			WebTarget WebTarget = client
 					.target("http://localhost:8080/C4A/rest/assessments/addAssessmentsForSelectedDataSet");
 
-			String input = "{\"authorId\":1,\"comment\":\"My comment...\",\"riskStatus\":\"A\",\"dataValidityStatus\":\"QUESTIONABLE_DATA\",\"geriatricFactorValueIds\":[1,2],\"audienceIds\":[1,2]}";
+			String input = "{\"authorId\":1,\"comment\":\"My comment...\",\"riskStatus\":\"A\",\"dataValidity\":\"QUESTIONABLE_DATA\",\"geriatricFactorValueIds\":[1,2],\"audienceIds\":[1,2]}";
 
 			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
 					.post(Entity.entity(input, MediaType.APPLICATION_JSON_TYPE), Response.class);

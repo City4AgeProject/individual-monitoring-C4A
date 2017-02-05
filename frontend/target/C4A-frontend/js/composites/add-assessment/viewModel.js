@@ -107,19 +107,23 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                 }
 
                 self.postAssessment = function (data, event) {
+                	console.log("postAssessment");
                     //should be logged user ID
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
                     var riskStatus = self.selectedRiskStatus().lenth===1 ? ko.toJS(self.selectedRiskStatus)[0] : 'N'; // N-none
-                    var dataValidityStatus = self.selectedDataValidity().length===1 ? ko.toJS(self.selectedDataValidity)[0] : 'VALID_DATA';
+                    var dataValidity = self.selectedDataValidity().length===1 ? ko.toJS(self.selectedDataValidity)[0] : 'VALID_DATA';
                     var geriatricFactorValueIds = self.dataPointsMarkedIds;
                     var audienceIds = ko.toJS(self.selectedRoles);
+                    console.log("1");
                     var assessmentToPost = new AddAssessment
-                            (authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds);
+                            (authorId, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
+                    console.log("2");
                     var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_SET,
                             JSON.stringify(assessmentToPost),
                             postAssessmentCallback
                             );
+                    console.log("3");
                     jqXHR.fail(serverErrorCallback);
                     
                     return true;

@@ -10,6 +10,11 @@ import java.io.Serializable;
 public class GenericRepositoryFactoryBean<T extends JpaRepository<S, ID>, S, ID extends Serializable>
 		extends JpaRepositoryFactoryBean<T, S, ID> {
 
+	// needed for spring-boot 1.5.0 and up
+	/*public GenericRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
+		super(repositoryInterface);
+	}*/
+
 	protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
 		return new GenericRepositoryFactory(entityManager);
 	}

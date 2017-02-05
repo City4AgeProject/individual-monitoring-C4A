@@ -163,16 +163,16 @@ Assessment.prototype.toJson = function() {
  * @param {type} authorId
  * @param {type} comment
  * @param {type} riskStatus
- * @param {type} dataValidityStatus
+ * @param {type} dataValidity
  * @param {type} geriatricFactorValueIds
  * @param {type} audienceIds
  * @returns {AddAssessment}
  */
-function AddAssessment(authorId, comment, riskStatus, dataValidityStatus, geriatricFactorValueIds, audienceIds) {
+function AddAssessment(authorId, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds) {
     this.authorId = authorId;
     this.comment = comment;
     this.riskStatus = riskStatus;
-    this.dataValidityStatus = dataValidityStatus;
+    this.dataValidity = dataValidity;
     this.geriatricFactorValueIds = geriatricFactorValueIds;
     this.audienceIds = audienceIds;
 };

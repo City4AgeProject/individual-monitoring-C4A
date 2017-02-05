@@ -198,7 +198,7 @@ public class AssessmentRepositoryTest {
 		Assert.assertEquals(97, result.length());
 
 		Assert.assertEquals(
-				"[{\"id\":184,\"userInRole\":{},\"assessmentComment\":null,\"riskStatus\":null,\"dataValidityStatus\":null}]",
+				"[{\"id\":184,\"userInRole\":{},\"assessmentComment\":null,\"riskStatus\":null,\"dataValidity\":null}]",
 				result);
 
 		/*
