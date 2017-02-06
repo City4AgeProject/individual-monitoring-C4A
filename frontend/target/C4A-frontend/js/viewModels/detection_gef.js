@@ -20,7 +20,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     self.userAge = sp.userAge;
                     self.userGender = sp.userGender;
                     self.textline = sp.userTextline;
-                    //self.careRecipientId = null;
+                    
+                    self.careRecipientId = null;
                 }
 
                 self.selectedGefName = "";
@@ -74,10 +75,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.seriesValue = ko.observableArray();
                 self.groupsValue = ko.observableArray();
 
-//              //self.careRecipientId = oj.Router.rootInstance.retrieve();
-
-                self.careRecipientId = 4;
-
                 function createItems(id, value, gefTypeId) {
                     //console.log("id=" + id +" gefTypeId="+gefTypeId+" vl="+value);
                     return {id: id,
@@ -85,30 +82,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     };
                 }
 
-                $(".loader-hover").show();
-                $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/OVL/GFG")
-                        .then(function (radarData) {
-                            $.each(radarData.itemList, function (i, list) {
-                                var nodes = [];
-                                var gtId = list.gefTypeId;
-                                $.each(list.items[0].itemList, function (j, itemList) {
-                                    nodes.push(createItems(list.items[0].idList[j], itemList, gtId ));
-                                });
-                                self.seriesValue.push({
-                                    name: list.items[0].groupName,
-                                    items: nodes,
-                                    color: lineColors[i]
-                                });
-                            });
-
-                            $.each(radarData.itemList[0].items[0].dateList, function (j, dateItem) {
-                                self.groupsValue.push(dateItem);
-                            });
-                            self.seriesValue.push({name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'});
-                            self.seriesValue.push({name: PRE_FRAIL_SERIES_NAME, items: [null, null, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
-                            self.seriesValue.push({name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
-                            $(".loader-hover").hide();
-                        });
                 /* End Detection FGR Groups Line Chart configuration  */
 
                 var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
@@ -133,10 +106,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 /* Group 1 and Group 2 Line Chart configuration with dynamic data */
                 var gefData;
-                $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/GEF")
-                        .then(function (behavData) {
-                            gefData = behavData;   
-                        });
                 /* End: Group 1 and Group 2 Line Chart configuration with dynamic data */
 
                 /*  Detection GEF Groups Line Chart configuration*/
@@ -261,8 +230,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             $("#GEFGroup1DetailsShowPopup").ojPopup("widget").css("left", clientX + 2 + document.body.scrollLeft + "px");
                             $("#GEFGroup1DetailsShowPopup").ojPopup("widget").css("top", clientY + 2 + document.body.scrollTop + "px");
                             var selectedGEF = "";
-                            if (ui['value'][0])
+                            if (ui['value'][0]) {
                                 selectedGEF = ui['value'][0];
+                            	self.selectedGefName = selectedGEF;
+                            }
                             var lineColor = self.findGEFColorLineBySeriesName("#detectionGEFGroup1FactorsLineChart", ui['value'][0]);
 
                             var popupText = "<h3 class='oj-header-border' style='border-bottom-width: 4px; font-size: 1.1em; padding: 0px 0px 8px 0px; border-color:" + lineColor + "'> <b>" + selectedGEF +
@@ -288,7 +259,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.handleAttached = function (info) {
                     initCRData();
                     
-                    //self.careRecipientId = oj.Router.rootInstance.retrieve();
+                    self.careRecipientId = oj.Router.rootInstance.retrieve();
                     
                     self.lineSeriesValue = ko.observableArray();
                     self.lineSeries2Value = ko.observableArray();
@@ -331,6 +302,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.bShowDetailsClick = function() {
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
                     self.parentFactorId(selectedDetectionVariable.id);
+                    loadGefData();
+                    loadRadarData();
                 };
 
                 self.bGotoGESClick = function() {
@@ -341,7 +314,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 function loadRadarData() {
                     $(".loader-hover").show();
-                    $.getJSON(CARE_RECIPIENT_GROUPS + "?careRecipientId=" + self.careRecipientId + "&parentFactorId=" + (self.parentFactorId()?(self.parentFactorId()==1?"/parentFactors/GEF":"/parentFactors/OVL/GFG"):"/parentFactors/OVL/GFG"))
+                    console.log("trt");
+                    console.log("self.parentFactorId() " +self.parentFactorId());
+                    $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + (self.parentFactorId()>0?"/parentFactor/OVL/GFG":"/parentFactors/GEF"))
                         .then(function (radarData) {
                             $.each(radarData.itemList, function (i, list) {
                                 var nodes = [];
@@ -376,10 +351,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 }
                 
                 function loadGefData() {
-                    $.getJSON(CARE_RECIPIENT_GROUPS + "?careRecipientId=" + self.careRecipientId + "&parentFactorId=" +  + (self.parentFactorId()?(self.parentFactorId()==1?"/parentFactors/GEF":"/parentFactors/OVL/GFG"):"/parentFactors/OVL/GFG"))
-                        .then(function (behavData) {
-                            gefData = behavData;
-                        });
+                    $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + (self.parentFactorId()>0?"/parentFactor/OVL/GFG":"/parentFactors/GEF"))
+                    .then(function (behavData) {
+                        gefData = behavData;   
+                    })
  
                 }
                 

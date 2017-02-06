@@ -80,6 +80,7 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                 }
                 
                 function loadRoles() {
+                	console.log("loadRoles add")
                     var role = new oj.Collection.extend({
                         url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
                         fetchSize: -1,

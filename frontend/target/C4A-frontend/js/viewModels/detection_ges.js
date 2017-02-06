@@ -43,11 +43,17 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 var loadDiagramDataCallback = function (data) {
-                    self.groupsValue(data.groups);
+                	console.log("loadDiagramDataCallback");
+                	console.log(JSON.stringify("data.groups " + data.groups));
+                	self.groupsValue(data.groups);
+                    console.log(JSON.stringify("self.groupsValue" + self.groupsValue));
+                    console.log(JSON.stringify("data.series " + data.series));
                     self.seriesValue(data.series);
+                    console.log(JSON.stringify("self.seriesValue " + self.seriesValue));
                 };
                 
                 var loadDataSet = function(data) {
+                	console.log("loadDataSet");
                     var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" +self.careRecipientId()
                                               + "/parentFactorId/" + self.parentFactorId(),
                          loadDiagramDataCallback);
@@ -103,10 +109,15 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 ko.postbox.subscribe("loadDiagramCallback", function() {
+                	console.log("loadDiagramCallback");
+                	console.log("publish loadSeriesAndGroups");
                     ko.postbox.publish("loadSeriesAndGroups", {"series" : self.seriesValue(), 
                                                                "groups" :self.groupsValue()});
+                    console.log("publish subFactorName");
                     ko.postbox.publish("subFactorName", self.subFactorName());
+                    console.log("publish optionChangeCallback");
                     ko.postbox.publish("optionChangeCallback", self.chartOptionChange);
+                    console.log("publish loadAssessmentsCached");
                     ko.postbox.publish("loadAssessmentsCached", self.careRecipientId());
                 });
                 
@@ -302,6 +313,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.roleTags = ko.observableArray([]);       
                 self.selectedRoles = ko.observableArray();
 
+                console.log("load roles ges");
                 var role = new oj.Collection.extend({
                     url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
                     fetchSize: -1,

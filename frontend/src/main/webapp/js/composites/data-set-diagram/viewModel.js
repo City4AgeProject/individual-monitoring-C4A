@@ -40,6 +40,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 }
                 
                 self.loadAssessmentsCached = function () {
+                	console.log("loadAssessmentsCached");
                     return $.getJSON(ASSESSMENT_LAST_FIVE_FOR_DIAGRAM + '/userInRoleId/'+self.careRecipientId()+ '/intervalStart/2011-1-1/intervalEnd/2017-1-1', function (dataSet) {
                         var assesmentsDataSet = DataSet.produceFromOther(dataSet);
                         var assessmentsSerieAlerts = Serie.produceAlert();
@@ -91,12 +92,17 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 });
                 
                 ko.postbox.subscribe("loadSeriesAndGroups", function(value) {
+                	console.log("loadSeriesAndGroups");
                     self.seriesValue([]);
+                    console.log("loadSeriesAndGroups 1" + JSON.stringify(value.series));
                     for(var si=0; si<value.series.length; si++) {
+                    	console.log("loadSeriesAndGroups 2a");
                         value.series[si].name = shortenText(value.series[si].name, 30);
                         self.seriesValue.push(value.series[si]);
                     }
+                    console.log("loadSeriesAndGroups 2");
                     self.groupsValue(value.groups);
+                    console.log("loadSeriesAndGroups 3");
                 });
                 
                 ko.postbox.subscribe("optionChangeCallback", function(optionChangeCallback) {
@@ -104,6 +110,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 });
                 
                 ko.postbox.subscribe("loadAssessmentsCached", function(careRecipientId) {
+                	console.log("subscribe loadAssessmentsCached");
                     self.careRecipientId(careRecipientId);
                     self.loadAssessmentsCached();
                 });
