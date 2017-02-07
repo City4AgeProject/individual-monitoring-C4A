@@ -1,0 +1,17 @@
+# individual-monitoring-Belit
+Individual monitoring dashboard app, Belit version with Hibernate ORM and support for assessments. 
+
+Deployment instructions:
+
+1.	Install Glassfish 4.1.1.
+2.	IMPORTANT: jboss-logging.jar under GLASSFISH_HOME/glassfish/modules must be replaced to version 3.3.0 from public maven repository.
+3.	Start Glassfish 4.1.1:
+asadmin start-domain
+4.	Create jdbc connecton pool and jdbc resource under Glassfish 4.1.1:
+<jdbc-resource pool-name="c4aPool" object-type="system-admin" jndi-name="jdbc/__c4aDB"></jdbc-resource>
+<jdbc-connection-pool is-isolation-level-guaranteed="false" datasource-classname="org.postgresql.ds.PGSimpleDataSource" name="c4aPool" res-type="javax.sql.DataSource">
+5.	Deploy application:
+mvn --pl frontend,backend clean install glassfish:deploy -Dmaven.test.skip=true
+6.	IMPORTANT: If there is Derby database connection conflict during application deployment remove all other jdbc connection pools and jdbc resources other then the ones created manually in step.4
+7.	Open in browser:
+http://localhost:8080/C4A-frontend/
