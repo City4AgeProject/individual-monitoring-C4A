@@ -17,7 +17,8 @@
                                         style: 'min-width: 8em; max-width: 8em; width: 8em'},
                                         {headerText: 'CR ID', 
                                         field: 'cr_id'},
-                                        {headerText: 'Textline', 
+                                        {headerText: 'Textline',
+                                        template: 'textline_tpl', 
                                         style: 'min-width: 8em; max-width: 8em; width: 8em',
                                         field: 'textline'},
                                         {headerText: 'Attention', 
@@ -44,10 +45,11 @@
 
 
 <script type="text/html" id="frailty_status">
-
-    <div >
-        <img data-bind="attr: {src: 'images/listview/' + fr_status + '.png', alt: fr_status}"></img>
-    </div>
+	<td data-bind="attr:{title:fr_status}"  >
+    	<div >
+        	<img data-bind="attr: {src: 'images/listview/' + fr_status + '.png', alt: fr_status}"></img>
+    	</div>
+    </td>
 
     <!--            <li data-bind="attr: {id: 'emp'+id}">
                     <span class="avatar" data-bind="style: {backgroundImage: 'url('+url+')'}"></span>
@@ -56,8 +58,13 @@
 </script>
 
 <script type="text/html" id="fr_notice_tpl">
-    <td data-bind="text: fr_notice,attr:{title:fr_status}"  >
+    <td data-bind="text: fr_notice,attr:{title:fr_notice}"  >
         <a href="#" id="showmore">Show more</a> 
+    </td>
+</script>
+
+<script type="text/html" id="textline_tpl">
+    <td data-bind="text: textline,attr:{title:textline}"  >
     </td>
 </script>
 

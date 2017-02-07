@@ -127,7 +127,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                     self.parentFactorId(ui['seriesData'].items[0].gefTypeId);
                     
+                    console.log("self.parentFactorId() getDiagramData " +self.parentFactorId());
                     if (self.parentFactorId() !== 1) {
+                    	console.log("getDiagramData");
                         var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId + "/parentFactorId/" + self.parentFactorId(),
                                 function (data) {
                         	
@@ -313,8 +315,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 };
 
                 function loadRadarData() {
-                    $(".loader-hover").show();
-                    console.log("trt");
                     console.log("self.parentFactorId() " +self.parentFactorId());
                     $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/OVL/GFG")
                         .then(function (radarData) {
@@ -340,6 +340,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                     if(s.name === 'Overall'){
                                        s.color = '#999999';
                                        s.lineWidth = 5; 
+                                    } else if(s.name === 'Behavioural'){
+                                    	s.color = '#ea97f1';
+                                    } else if(s.name === 'Contextual'){
+                                    	s.color = '#5dd6c9';
                                     }
                             });
                             
@@ -351,6 +355,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 }
                 
                 function loadGefData() {
+                	console.log("self.parentFactorId() " +self.parentFactorId());
                     $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/GEF")
                     .then(function (behavData) {
                         gefData = behavData;   
