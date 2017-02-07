@@ -316,7 +316,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     $(".loader-hover").show();
                     console.log("trt");
                     console.log("self.parentFactorId() " +self.parentFactorId());
-                    $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + (self.parentFactorId()>0?"/parentFactor/OVL/GFG":"/parentFactors/GEF"))
+                    $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/OVL/GFG")
                         .then(function (radarData) {
                             $.each(radarData.itemList, function (i, list) {
                                 var nodes = [];
@@ -351,7 +351,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 }
                 
                 function loadGefData() {
-                    $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + (self.parentFactorId()>0?"/parentFactor/OVL/GFG":"/parentFactors/GEF"))
+                    $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/GEF")
                     .then(function (behavData) {
                         gefData = behavData;   
                     })
