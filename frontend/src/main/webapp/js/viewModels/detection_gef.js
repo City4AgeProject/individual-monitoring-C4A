@@ -127,9 +127,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                     self.parentFactorId(ui['seriesData'].items[0].gefTypeId);
                     
-                    console.log("self.parentFactorId() getDiagramData " +self.parentFactorId());
                     if (self.parentFactorId() !== 1) {
-                    	console.log("getDiagramData");
                         var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId + "/parentFactorId/" + self.parentFactorId(),
                                 function (data) {
                         	
@@ -309,17 +307,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 };
 
                 self.bGotoGESClick = function() {
-                	console.log("self.selectedGefName");
-                	console.log("self.selectedGefName: " + self.selectedGefName);
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
-                    console.log("derivedDetectionVariableId");
-                    console.log("derivedDetectionVariableId: " + selectedDetectionVariable.derivedDetectionVariableId);
                     oj.Router.rootInstance.store([self.careRecipientId, selectedDetectionVariable.derivedDetectionVariableId]);
                     oj.Router.rootInstance.go('detection_ges');
                 };
 
                 function loadRadarData() {
-                    console.log("self.parentFactorId() " +self.parentFactorId());
                     $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/OVL/GFG")
                         .then(function (radarData) {
                             $.each(radarData.itemList, function (i, list) {
@@ -359,7 +352,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 }
                 
                 function loadGefData() {
-                	console.log("self.parentFactorId() " +self.parentFactorId());
                     $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/GEF")
                     .then(function (behavData) {
                         gefData = behavData;   

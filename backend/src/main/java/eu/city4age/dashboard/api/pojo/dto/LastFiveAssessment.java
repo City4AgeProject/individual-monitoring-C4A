@@ -2,11 +2,14 @@ package eu.city4age.dashboard.api.pojo.dto;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 public class LastFiveAssessment {
+
+	static protected Logger logger = Logger.getLogger(LastFiveAssessment.class);
 
 	private Long timeIntervalId, gefId, id;
 
@@ -17,7 +20,7 @@ public class LastFiveAssessment {
 
 	public LastFiveAssessment(BigInteger timeIntervalId, Object intervalStart, BigInteger gefId, BigDecimal gefValue,
 			Integer assessmentId, String comment, Character riskStatus, Character dataValidity, Date created,
-			String displayName) throws ParseException {
+			String displayName) {
 
 		this.timeIntervalId = Long.valueOf(timeIntervalId.toString());
 
@@ -71,7 +74,7 @@ public class LastFiveAssessment {
 
 		if (created != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
-			this.dateAndTime = sdf.format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(created.toString()));
+			this.dateAndTime = sdf.format(created);
 		}
 
 		if (displayName != null) {

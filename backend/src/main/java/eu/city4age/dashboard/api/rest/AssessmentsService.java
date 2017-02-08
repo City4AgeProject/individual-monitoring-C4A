@@ -1,10 +1,8 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;

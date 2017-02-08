@@ -80,7 +80,6 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                 }
                 
                 function loadRoles() {
-                	console.log("loadRoles add")
                     var role = new oj.Collection.extend({
                         url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
                         fetchSize: -1,
@@ -108,7 +107,6 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                 }
 
                 self.postAssessment = function (data, event) {
-                	console.log("postAssessment");
                     //should be logged user ID
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
@@ -116,15 +114,12 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                     var dataValidity = self.selectedDataValidity().length===1 ? ko.toJS(self.selectedDataValidity)[0] : 'VALID_DATA';
                     var geriatricFactorValueIds = self.dataPointsMarkedIds;
                     var audienceIds = ko.toJS(self.selectedRoles);
-                    console.log("1");
                     var assessmentToPost = new AddAssessment
                             (authorId, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
-                    console.log("2 " + JSON.stringify(assessmentToPost));
                     var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_SET,
                             JSON.stringify(assessmentToPost),
                             postAssessmentCallback
                             );
-                    console.log("3");
                     jqXHR.fail(serverErrorCallback);
                     
                     return true;

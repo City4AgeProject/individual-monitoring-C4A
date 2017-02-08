@@ -264,7 +264,7 @@ public class Assessment implements Serializable {
 	public String getDateAndTime() throws ParseException {
 		if (this.created != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
-			return sdf.format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(created.toString()));
+			return sdf.format(created);
 		}
 		return null;
 	}

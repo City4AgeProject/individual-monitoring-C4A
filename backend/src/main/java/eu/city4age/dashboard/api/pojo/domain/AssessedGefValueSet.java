@@ -50,10 +50,6 @@ public class AssessedGefValueSet implements Serializable {
 
 	public AssessedGefValueSet(BigInteger gefValueId, Integer assessmentId) {
 		if (gefValueId != null && assessmentId != null) {
-			logger.info("gefValueId: " + gefValueId);
-			logger.info("assessmentId: " + assessmentId);
-			logger.info("gefValueId type: " + gefValueId.getClass());
-			logger.info("assessmentId type: " + assessmentId.getClass());
 			this.gefValueId = Integer.valueOf(gefValueId.intValue());
 			this.assessmentId = assessmentId;
 		}
