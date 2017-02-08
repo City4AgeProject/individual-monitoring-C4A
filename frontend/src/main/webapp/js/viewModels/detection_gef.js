@@ -309,8 +309,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 };
 
                 self.bGotoGESClick = function() {
+                	console.log("self.selectedGefName");
+                	console.log("self.selectedGefName: " + self.selectedGefName);
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
-                    oj.Router.rootInstance.store([self.careRecipientId, selectedDetectionVariable]);
+                    console.log("derivedDetectionVariableId");
+                    console.log("derivedDetectionVariableId: " + selectedDetectionVariable.derivedDetectionVariableId);
+                    oj.Router.rootInstance.store([self.careRecipientId, selectedDetectionVariable.derivedDetectionVariableId]);
                     oj.Router.rootInstance.go('detection_ges');
                 };
 

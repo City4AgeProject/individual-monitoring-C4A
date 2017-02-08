@@ -119,7 +119,7 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                     console.log("1");
                     var assessmentToPost = new AddAssessment
                             (authorId, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
-                    console.log("2");
+                    console.log("2 " + JSON.stringify(assessmentToPost));
                     var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_SET,
                             JSON.stringify(assessmentToPost),
                             postAssessmentCallback

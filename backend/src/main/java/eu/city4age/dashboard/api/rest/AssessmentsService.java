@@ -1,8 +1,10 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -261,7 +263,7 @@ public class AssessmentsService {
 		audienceRolesRepository.save(assessmentAudienceRoles);
 		assessedGefValuesRepository.save(assessedGefValueSets);
 
-		return Response.ok().build();
+		return Response.ok(objectMapper.writeValueAsString(assessment)).build();
 	}
 
 	private List<String> createMonthLabels(List<TimeInterval> months) {

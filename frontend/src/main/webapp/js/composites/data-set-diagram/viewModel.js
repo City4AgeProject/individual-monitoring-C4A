@@ -94,7 +94,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 ko.postbox.subscribe("loadSeriesAndGroups", function(value) {
                 	console.log("loadSeriesAndGroups");
                     self.seriesValue([]);
-                    console.log("loadSeriesAndGroups 1" + JSON.stringify(value.series));
+                    console.log("loadSeriesAndGroups 1" + JSON.stringify(value.series)); //undefined
                     for(var si=0; si<value.series.length; si++) {
                     	console.log("loadSeriesAndGroups 2a");
                         value.series[si].name = shortenText(value.series[si].name, 30);

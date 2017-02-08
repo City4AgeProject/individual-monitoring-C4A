@@ -35,7 +35,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.val = ko.observableArray(["Month"]);
                 
                 self.dataPointsMarkedIds = ko.observableArray();
-                self.parentFactorId = ko.observable(4); // get from params 
+                self.parentFactorId = ko.observable(4); // get from params
+                console.log("self.parentFactorId 1 " + self.parentFactorId());
                 self.careRecipientId = ko.observable(); // get from params
                 
                 var serverErrorCallback = function (xhr, message, error) {
@@ -44,12 +45,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 
                 var loadDiagramDataCallback = function (data) {
                 	console.log("loadDiagramDataCallback");
-                	console.log(JSON.stringify("data.groups " + data.groups));
+                	console.log("data " + JSON.stringify(data));
+                	console.log("data.groups " + JSON.stringify(data.groups)); //undefined
                 	self.groupsValue(data.groups);
-                    console.log(JSON.stringify("self.groupsValue" + self.groupsValue));
-                    console.log(JSON.stringify("data.series " + data.series));
+                    console.log("self.groupsValue" + JSON.stringify(self.groupsValue(data.groups)));
+                    console.log("data.series " + JSON.stringify(data.series)); //undefined
                     self.seriesValue(data.series);
-                    console.log(JSON.stringify("self.seriesValue " + self.seriesValue));
+                    console.log("self.seriesValue " + JSON.stringify(self.seriesValue(data.series)));
                 };
                 
                 var loadDataSet = function(data) {
@@ -83,9 +85,14 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 
                 self.handleActivated = function (info) {
                     var selectedDetectionVariable = oj.Router.rootInstance.retrieve(); //this is null
+                    console.log("selectedDetectionVariable " + JSON.stringify(selectedDetectionVariable));
                     self.careRecipientId = ko.observable(selectedDetectionVariable[0]);
+                    console.log("self.careRecipientId " + self.careRecipientId());
                     self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
-                    self.parentFactorId = ko.observable(selectedDetectionVariable[1].id);
+                    console.log("self.careRecipientId " + self.subFactorName());
+                    console.log("self.parentFactorId 2 " + self.parentFactorId());
+                    self.parentFactorId = ko.observable(selectedDetectionVariable[1]);
+                    console.log("self.parentFactorId 3 " + self.parentFactorId());
                     var response = loadDataSet();
                     return response;
                 };
