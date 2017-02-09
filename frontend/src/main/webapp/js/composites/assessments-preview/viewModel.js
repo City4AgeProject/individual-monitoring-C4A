@@ -14,7 +14,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 self.attached = function(context) {
                         ko.postbox.subscribe("refreshSelectedAssessments", 
                             function(selectedAssessments) {
-                                self.selectedAnotations(selectedAssessments);
+                        		self.selectedAnotations(selectedAssessments);
                             });
                         ko.postbox.publish("clickShowPopupAddAssessmentCallback");
                 };

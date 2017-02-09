@@ -1,7 +1,6 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -261,7 +260,7 @@ public class Assessment implements Serializable {
 	}
 
 	@JsonView(View.AssessmentView.class)
-	public String getDateAndTime() throws ParseException {
+	public String getDateAndTime() {
 		if (this.created != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
 			return sdf.format(created);

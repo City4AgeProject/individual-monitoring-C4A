@@ -228,6 +228,7 @@ public class AssessmentsService {
 	@POST
 	@Path("addForSelectedDataSet")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response addForSelectedDataSet(String json) throws JsonProcessingException, IOException {
 		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
 		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();

@@ -101,8 +101,10 @@ function Assessment() {
 Assessment.produceFromOther = function(other) {
     var result = new Assessment();
     result.id = other.id;
-    result.comment = other.comment;
-    result.from = other.from;
+    result.comment = other.assessmentComment;
+    if(other.userInRole !== undefined && other.userInRole.userInSystem !== undefined) {
+    	result.from = other.userInRole.userInSystem.displayName;
+    }
     result.dateAndTime = other.dateAndTime;
     result.riskStatus = other.riskStatus;
     result.dataValidity = other.dataValidity;

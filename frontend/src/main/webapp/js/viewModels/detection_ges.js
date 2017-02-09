@@ -35,7 +35,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.val = ko.observableArray(["Month"]);
                 
                 self.dataPointsMarkedIds = ko.observableArray();
-                self.parentFactorId = ko.observable(4); // get from params
+                self.parentFactorId = ko.observable(); // get from params
                 self.careRecipientId = ko.observable(); // get from params
                 
                 var serverErrorCallback = function (xhr, message, error) {
@@ -76,10 +76,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 self.handleActivated = function (info) {
-                    var selectedDetectionVariable = oj.Router.rootInstance.retrieve(); //this is null
+                    var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
                     self.careRecipientId = ko.observable(selectedDetectionVariable[0]);
                     self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
-                    self.parentFactorId = ko.observable(selectedDetectionVariable[1]);
+                    self.parentFactorId = ko.observable(selectedDetectionVariable[1].derivedDetectionVariableId);
                     var response = loadDataSet();
                     return response;
                 };
