@@ -9,7 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -18,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @IdClass(AssessedGefValueSetId.class)
 public class AssessedGefValueSet implements Serializable {
 
-	static protected Logger logger = Logger.getLogger(AssessedGefValueSet.class);
+	static protected Logger logger = LogManager.getLogger(AssessedGefValueSet.class);
 
 	/**
 	 * 

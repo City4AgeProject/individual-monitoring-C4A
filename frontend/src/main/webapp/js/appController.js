@@ -51,7 +51,6 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                 self.router.configure({
                     'login': {label: 'Login', isDefault: true},
                     'cr_list_full': {label: 'Care Recipient'},
-                    'cr_list': {label: 'Care Recipient dummy'},
 //        'people': {label: 'People'},
 //        'library': {label: 'Library'},
                     'detection_ges': {label: 'Detection GES'},

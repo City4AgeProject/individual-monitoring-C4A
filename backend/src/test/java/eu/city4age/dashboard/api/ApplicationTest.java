@@ -4,7 +4,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,7 @@ import eu.city4age.dashboard.api.persist.generic.GenericRepositoryFactoryBean;
 @EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.persist", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
 public class ApplicationTest {
 
-	static protected Logger logger = Logger.getLogger(ApplicationTest.class);
+	static protected Logger logger = LogManager.getLogger(ApplicationTest.class);
 
 	public static void main(String[] args) {
 		new SpringApplication(ApplicationTest.class).run(args);
@@ -63,15 +64,17 @@ public class ApplicationTest {
 		Properties hibernateProperties = new Properties();
 
 		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");	
-		hibernateProperties.setProperty("hibernate.show_sql", "false");
-		hibernateProperties.setProperty("hibernate.format_sql", "false");
-		hibernateProperties.setProperty("hibernate.use_sql_comments", "false");
+		hibernateProperties.setProperty("hibernate.show_sql", "true");
+		hibernateProperties.setProperty("hibernate.format_sql", "true");
+		hibernateProperties.setProperty("hibernate.use_sql_comments", "true");
 		hibernateProperties.setProperty("hibernate.generate_statistics", "false");
 		hibernateProperties.setProperty("javax.persistence.validation.mode", "none");
 
 		// Audit History flags
 		hibernateProperties.setProperty("org.hibernate.envers.store_data_at_delete", "true");
 		hibernateProperties.setProperty("org.hibernate.envers.global_with_modified_flag", "true");
+		
+		hibernateProperties.setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
 
 		return hibernateProperties;
 	}

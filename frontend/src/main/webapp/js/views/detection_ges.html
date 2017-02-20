@@ -227,23 +227,23 @@
 	                                                    <select id="selectSort" 
 	                                                            data-bind="ojComponent: {
 	                                                                component: 'ojSelect', 
-	                                                                value: 'Date Asc.'
+	                                                                value: val
 	                                                            }">
 	
-	                                                        <option value="Date Asc.">Date Asc.</option>
-	                                                        <option value="Date Desc.">Date Desc.</option>
-	                                                        <option value="Author Name Asc.">Author Name Asc.</option>
-	                                                        <option value="Author Name Desc.">Author Name Desc.</option>
-	                                                        <option value="Author Role Asc.">Author Role Asc.</option>
-	                                                        <option value="Author Role Desc.">Author Role Desc.</option>
-	                                                        <option value="Type">Type</option>
+	                                                        <option value=1>Date Asc.</option>
+	                                                        <option value=2>Date Desc.</option>
+	                                                        <option value=3>Author Name Asc.</option>
+	                                                        <option value=4>Author Name Desc.</option>
+	                                                        <option value=5>Author Role Asc.</option>
+	                                                        <option value=6>Author Role Desc.</option>
+	                                                        <option value=7>Type</option>
 	                                                    </select>
 	                                                </div>
 	                                                <div class="oj-flex-item" align="right">
 	                                                    <a href="#">Reset to defaults</a>
 	                                                </div>
 													<div class="oj-flex-item" align="right">
-														<a href="#" id="filter" data-bind="click: toggleAll">Filter</a>
+														<a href="#" id="filter" data-bind="click: filterList">Filter</a>
 													</div>
 	                                            </div>
 	                                        </div>

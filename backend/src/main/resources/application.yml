@@ -6,6 +6,7 @@ logging:
       hibernate: INFO
       springframework:
         web: INFO
+  config: classpath:log4j2.xml
 spring:
   main:
     web-environment: true

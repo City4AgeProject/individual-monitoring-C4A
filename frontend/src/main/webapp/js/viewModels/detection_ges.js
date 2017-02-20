@@ -1,6 +1,6 @@
 /* global ASSESSMENTS_ADD_FOR_DATA_POINTS, CODEBOOK_SELECT_ALL_RISKS, CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER, CODEBOOK_SELECT, CdDetectionVariable, OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL, DataSet, Serie, Assessment, OJ_ASSESSMENTS_FOR_DATA_POINTS */
 
-define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 
+define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
     
     'data-set-diagram', 'add-assessment', 'assessments-list', 'assessments-preview',
     
@@ -35,8 +35,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.val = ko.observableArray(["Month"]);
                 
                 self.dataPointsMarkedIds = ko.observableArray();
-                self.parentFactorId = ko.observable(4); // get from params
+                self.parentFactorId = ko.observable(); // get from params
                 self.careRecipientId = ko.observable(); // get from params
+                
+                self.queryParams = ko.observable();
                 
                 var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
@@ -59,10 +61,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 	var pointIdsString = pointIds.join('/');
                     return $.getJSON(ASSESSMENT_FOR_DATA_SET
                     		+ "/geriatricFactorValueIds/"
-							+ pointIdsString
-							/*+ "?dataValidityQuestionable="
-							+ checkedFilterValidityData()*/, function (assessments) {
-                        var assessmentsResult = [];
+							+ pointIdsString, function (assessments) {
+                    	var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var newAssessment = Assessment.produceFromOther(assessments[i]);
                             newAssessment.formatAssessmentData(); 
@@ -75,11 +75,81 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                     });
                 };
                 
+                var filtering = function () {
+                    var string = "";
+                	if (self.checkedFilterRiskStatus() != undefined || self.checkedFilterValidityData() != undefined || ko.toJS(self.selectedRoles) != null || ko.toJS(self.val) != null) {
+                		string += "?";
+                		if (self.checkedFilterRiskStatus() != undefined && self.checkedFilterRiskStatus().contains('A')) {
+                			string += "riskStatusAlert=true";
+                		}
+                		if (self.checkedFilterRiskStatus() != undefined && self.checkedFilterRiskStatus().contains('W')) {
+                			if(string.length > 1) string += "&";
+                			string += "riskStatusWarning=true";
+                		}
+                		if (self.checkedFilterRiskStatus() != undefined && self.checkedFilterRiskStatus().contains('N')) {
+                			if(string.length > 1) string += "&";
+                			string += "riskStatusNoRisk=true";
+                		}
+                		if (self.checkedFilterValidityData() != undefined && self.checkedFilterValidityData().contains('QUESTIONABLE_DATA')) {
+                			if(string.length > 1) string += "&";
+                			string += "dataValidityQuestionable=true";
+                		}
+                		if (self.checkedFilterValidityData() != undefined && self.checkedFilterValidityData().contains('FAULTY_DATA')) {
+                			if(string.length > 1) string += "&";
+                			string += "dataValidityFaulty=true";
+                		}
+                		if (self.checkedFilterValidityData() != undefined && self.checkedFilterValidityData().contains('VALID_DATA')) {
+                			if(string.length > 1) string += "&";
+                			string += "dataValidityValid=true";
+                		}
+                		if ((ko.toJS(self.selectedRoles) == null || ko.toJS(self.selectedRoles).length === 0)) {
+                			;
+                		} else {
+                			if(string.length > 1) string += "&";
+                			string += "authorRoleId="+ko.toJS(self.selectedRoles);
+                		}
+                		if ((ko.toJS(self.val) == null || ko.toJS(self.val).length === 0)) {
+                			;
+                		} else {
+                			if(string.length > 1) string += "&";
+                			string += "orderById="+ko.toJS(self.val);
+                		}
+                	}
+					return string;
+                }
+                
+                var filterAssessments = function (pointIds, checkedFilterValidityData) {
+                	console.log("filterAssessments");
+                	console.log("this.checkedFilterValidityData(): " + self.checkedFilterValidityData());
+                	console.log("self.checkedFilterValidityData().contains('FAULTY_DATA'): " + self.checkedFilterValidityData().contains('FAULTY_DATA'));
+                	var pointIdsString = pointIds.join('/');
+                    return $.getJSON(ASSESSMENT_FOR_DATA_SET
+                    		+ "/geriatricFactorValueIds/"
+							+ pointIdsString
+							+ filtering()
+							, function (assessments) {
+                    	console.log("checkedFilterValidityData 2");
+                    	var assessmentsResult = [];
+                        for (var i = 0; i < assessments.length; i++) {
+                            var newAssessment = Assessment.produceFromOther(assessments[i]);
+                            newAssessment.formatAssessmentData(); 
+                            if(!Assessment.arrayContains(assessmentsResult, newAssessment))
+                                assessmentsResult.push(newAssessment);
+                        }
+                        console.log("checkedFilterValidityData 2");
+                        ko.postbox.publish("refreshSelectedAssessments", assessmentsResult);
+                        self.selectedAnotations(assessmentsResult);
+                        console.log("checkedFilterValidityData 3");
+                        ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
+                        console.log("checkedFilterValidityData 4");
+                    });
+                };
+                
                 self.handleActivated = function (info) {
-                    var selectedDetectionVariable = oj.Router.rootInstance.retrieve(); //this is null
+                    var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
                     self.careRecipientId = ko.observable(selectedDetectionVariable[0]);
                     self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
-                    self.parentFactorId = ko.observable(selectedDetectionVariable[1]);
+                    self.parentFactorId = ko.observable(selectedDetectionVariable[1].derivedDetectionVariableId);
                     var response = loadDataSet();
                     return response;
                 };
@@ -176,9 +246,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                                 ko.postbox.publish("refreshSelectedAssessments", onlyDataPoints);
                             }else{
                                 // Compose selections in get query parameters
-                                var queryParams = calculateSelectedIds(onlyDataPoints);
+                            	self.queryParams = calculateSelectedIds(onlyDataPoints);
                                 ko.postbox.publish("refreshDataPointsMarked", onlyDataPoints.length);
-                                loadAssessments(queryParams);
+                                loadAssessments(self.queryParams);
                             }
                             showAssessmentsPopup();
                             ko.postbox.publish("dataPointsMarkedIds", onlyDataPoints);
@@ -301,6 +371,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.rolesCollection = ko.observable();
                 self.roleTags = ko.observableArray([]);       
                 self.selectedRoles = ko.observableArray();
+                self.val = ko.observableArray();
 
                 console.log("load roles ges");
                 var role = new oj.Collection.extend({
@@ -332,14 +403,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.formats = ko.observableArray();
                 self.isChecked = ko.observable();
 
-				self.checkedFilterRiskStatus = ko.observableArray(["A", "W", "N"]);
-				self.checkedFilterValidityData = ko.observableArray(["QUESTIONABLE_DATA", "FAULTY_DATA", "VALID_DATA"]);
+				self.checkedFilterRiskStatus = ko.observableArray();
+				self.checkedFilterValidityData = ko.observableArray();
 
-				self.toggleAll = function() {
-			        var allChecked = this.checkedFilterRiskStatus().length == 3;
-			        allChecked = this.checkedFilterValidityData().length == 3;
-			        this.checkedFilterRiskStatus(allChecked ? [] : ["A", "W", "N"]);
-			        this.checkedFilterValidityData(allChecked ? [] : ["QUESTIONABLE_DATA", "FAULTY_DATA", "VALID_DATA"]);
+				self.filterList = function() {
+                    filterAssessments(self.queryParams, self.checkedFilterValidityData);
 			    };
                 
                 /* polar chart - uradjen za prvu grupu i to za mesece M1, M2 i M5 */

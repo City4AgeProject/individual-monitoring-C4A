@@ -2,7 +2,7 @@
     <div class="demo-flex-display oj-flex-items-pad" >
         <!-- ko foreach: selectedAnotations -->
         <div class="oj-flex" id="div_comment_1" style="border-left: 3px solid #fcfcfc;">
-            <div class="oj-flex-item">
+            <div class="oj-flex-item" style="display: block !important; " >
                 <div class="oj-flex oj-flex-items-pad" style="height: 28px;">
                     <div class="oj-flex-item" style="width: 300px;">
                         <img data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
@@ -17,14 +17,11 @@
                     </div>
                 </div>
             </div>
-            <div class="oj-flex-item">
-                <div style="height:20px; overflow:hidden; width: 450px;" id="comment_1"><span data-bind="text: comment, attr: { title: comment }"></span></div>
-
+            <div class="oj-flex-item" style="display: block !important;">
+                <div id="comment_1"><span data-bind="text: comment, attr: { title: comment }"></span></div>
             </div>
-            <div class="oj-flex-item">
+            <div class="oj-flex-item"  style="display: block !important;">
                 <a href="#" id="showmore_comment_1">Read more</a>
-            </div>
-            <div class="oj-flex-item" style="min-height: 30px;">
             </div>
         </div>
         <!-- /ko  --> 

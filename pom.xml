@@ -15,6 +15,7 @@
 	
 	<properties>
 		<start-class>eu.city4age.dashboard.api.Application</start-class>
+		<maven.test.skip>true</maven.test.skip>
 		<glassfish.home>C:\glassfish-4.1.1\glassfish4</glassfish.home>
 		<glassfish.domain>domain1</glassfish.domain>
 		<glassfish.domain.username>admin</glassfish.domain.username>
@@ -47,6 +48,14 @@
 							<artifact>${project.build.directory}/${project.build.finalName}.war</artifact>
 						</component>
 					</components>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 		</plugins>

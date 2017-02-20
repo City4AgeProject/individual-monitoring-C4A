@@ -308,7 +308,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 self.bGotoGESClick = function() {
                     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
-                    oj.Router.rootInstance.store([self.careRecipientId, selectedDetectionVariable.derivedDetectionVariableId]);
+                    oj.Router.rootInstance.store([self.careRecipientId, selectedDetectionVariable]);
                     oj.Router.rootInstance.go('detection_ges');
                 };
 

@@ -9,7 +9,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -33,7 +34,7 @@ public class CodebookService {
 
 	public static final String PATH = "codebook";
 
-	static protected Logger logger = Logger.getLogger(CodebookService.class);
+	static protected Logger logger = LogManager.getLogger(CodebookService.class);
 
 	@Autowired
 	private RiskStatusRepository riskStatusRepository;

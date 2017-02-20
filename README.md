@@ -12,7 +12,7 @@ asadmin start-domain
 <jdbc-connection-pool is-isolation-level-guaranteed="false" datasource-classname="org.postgresql.ds.PGSimpleDataSource" name="c4aPool" res-type="javax.sql.DataSource">
 5.	Change spring.datasource.url in application.yml located in src/main/resources of backend application to reflect your database connection.
 6.	Deploy application:
-mvn --pl frontend,backend clean install glassfish:deploy -Dmaven.test.skip=true
+mvn --pl frontend,backend clean install glassfish:deploy
 7.	IMPORTANT: If there is Derby database connection conflict during application deployment remove all other jdbc connection pools and jdbc resources other then the ones created manually in step.4
 8.	Open in browser:
 http://localhost:8080/C4A-frontend/

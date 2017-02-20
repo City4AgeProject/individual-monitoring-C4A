@@ -3,6 +3,8 @@ package eu.city4age.dashboard.api.rest;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +23,8 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ContextResolver;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +53,7 @@ import eu.city4age.dashboard.api.pojo.dto.oj.Serie;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.json.GetDiagramDataDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
+import eu.city4age.dashboard.api.pojo.persist.Filter;
 
 @Transactional("transactionManager")
 @Path(AssessmentsService.PATH)
@@ -57,7 +61,7 @@ public class AssessmentsService {
 
 	public static final String PATH = "assessment";
 
-	static protected Logger logger = Logger.getLogger(AssessmentsService.class);
+	static protected Logger logger = LogManager.getLogger(AssessmentsService.class);
 
 	@Autowired
 	private AssessmentRepository assessmentRepository;
@@ -146,75 +150,103 @@ public class AssessmentsService {
 	@JsonView(View.AssessmentView.class)
 	public Response findForSelectedDataSet(
 			@PathParam("geriatricFactorValueIds") List<PathSegment> geriatricFactorValueIds,
-			@QueryParam("authorRoleId") Long authorRoleId, @QueryParam("riskStatusWarning") Boolean riskStatusWarning,
+			@QueryParam("authorRoleId") Long authorRoleId, @QueryParam("orderById") Long orderById,
+			@QueryParam("riskStatusWarning") Boolean riskStatusWarning,
 			@QueryParam("riskStatusAlert") Boolean riskStatusAlert,
+			@QueryParam("riskStatusNoRisk") Boolean riskStatusNoRisk,
 			@QueryParam("dataValidityQuestionable") Boolean dataValidityQuestionable,
 			@QueryParam("dataValidityFaulty") Boolean dataValidityFaulty,
-			@QueryParam("assessmentComment") Boolean assessmentComment, @QueryParam("orderBy") String orderBy)
-			throws JsonProcessingException {
+			@QueryParam("dataValidityValid") Boolean dataValidityValid) throws JsonProcessingException {
+
+		List<Assessment> aaList;
 
 		Map<String, Object> inQueryParams = new HashMap<String, Object>();
 		inQueryParams.put("geriatricFactorIds", convertToListLong(geriatricFactorValueIds));
 
-		Map<String, Object> inFilterParams = new HashMap<String, Object>();
-		inFilterParams.put("orderByDateAsc", false);
-		inFilterParams.put("orderByDateDesc", false);
-		inFilterParams.put("orderByAuthorNameAsc", false);
-		inFilterParams.put("orderByAuthorNameDesc", false);
-		inFilterParams.put("orderByAuthorRoleAsc", false);
-		inFilterParams.put("orderByAuthorRoleDesc", false);
-		inFilterParams.put("riskStatusWarning", false);
-		inFilterParams.put("riskStatusAlert", false);
-		inFilterParams.put("dataValidityQuestionable", false);
-		inFilterParams.put("dataValidityFaulty", false);
-		inFilterParams.put("assessmentComment", false);
+		List<Filter> filters = new ArrayList<Filter>();
 
-		if (authorRoleId != null)
-			inFilterParams.put("userInRoleId", authorRoleId);
-
-		if (riskStatusWarning != null)
-			inFilterParams.put("riskStatusWarning", true);
-
-		if (riskStatusAlert != null)
-			inFilterParams.put("riskStatusAlert", true);
-
-		if (dataValidityQuestionable != null)
-			inFilterParams.put("dataValidityQuestionable", true);
-
-		if (dataValidityFaulty != null)
-			inFilterParams.put("dataValidityFaulty", true);
-
-		if (assessmentComment != null)
-			inFilterParams.put("assessmentComment", true);
-
-		if (orderBy != null) {
-			switch (orderBy) {
-			case "orderByDateAsc":
-				inFilterParams.put("orderByDateAsc", true);
-				break;
-			case "orderByDateDesc":
-				inFilterParams.put("orderByDateDesc", true);
-				break;
-			case "orderByAuthorNameAsc":
-				inFilterParams.put("orderByAuthorNameAsc", true);
-				break;
-			case "orderByAuthorNameDesc":
-				inFilterParams.put("orderByAuthorNameDesc", true);
-				break;
-			case "orderByAuthorRoleAsc":
-				inFilterParams.put("orderByAuthorRoleAsc", true);
-				break;
-			case "orderByAuthorRoleDesc":
-				inFilterParams.put("orderByAuthorRoleDesc", true);
-				break;
+		if (riskStatusWarning != null || riskStatusAlert != null || riskStatusNoRisk != null) {
+			Filter riskStatus = new Filter();
+			riskStatus.setName("riskStatus");
+			List<Character> inParams = new ArrayList<Character>();
+			if (riskStatusWarning != null && riskStatusWarning) {
+				inParams.add('W');
 			}
+			if (riskStatusAlert != null && riskStatusAlert) {
+				inParams.add('A');
+			}
+			if (riskStatusNoRisk != null && riskStatusNoRisk) {
+				inParams.add('N');
+			}
+			riskStatus.getInParams().put("riskStatus", inParams);
+			filters.add(riskStatus);
 		}
 
-		List<Assessment> aaList = assessmentRepository.doQueryWithFilter("filterByAll", "findForSelectedDataSet",
-				inFilterParams, inQueryParams);
+		if (dataValidityFaulty != null || dataValidityQuestionable != null || dataValidityValid != null) {
+			Filter dataValidity = new Filter();
+			dataValidity.setName("dataValidity");
+			List<Character> inParams = new ArrayList<Character>();
+			if (dataValidityFaulty != null && dataValidityFaulty) {
+				inParams.add('F');
+			}
+			if (dataValidityQuestionable != null && dataValidityQuestionable) {
+				inParams.add('Q');
+			}
+			if (dataValidityValid != null && dataValidityValid) {
+				inParams.add('V');
+			}
+			dataValidity.getInParams().put("dataValidity", inParams);
+			filters.add(dataValidity);
 
-		return Response.ok(objectMapper.writerWithView(View.AssessmentView.class)
-				.writeValueAsString(new HashSet<Assessment>(aaList))).build();
+		}
+
+		if (authorRoleId != null) {
+			Filter userInRoleId = new Filter();
+			userInRoleId.setName("userInRoleId");
+			userInRoleId.getInParams().put("userInRoleId", authorRoleId);
+			filters.add(userInRoleId);
+		}
+
+		aaList = assessmentRepository.doQueryWithFilter(filters, "findForSelectedDataSet", inQueryParams);
+
+		List<Assessment> aa = new ArrayList<Assessment>();
+
+		if (orderById != null) {
+			aa = orderByForFiltering(aaList, orderById);
+		} else {
+			aa = aaList;
+		}
+
+		return Response.ok(objectMapper.writerWithView(View.AssessmentView.class).writeValueAsString(aa)).build();
+
+	}
+
+	private List<Assessment> orderByForFiltering(List<Assessment> list, Long orderById) {
+
+		switch (orderById.intValue()) {
+		case 1:
+			list.sort(Comparator.comparing(Assessment::getCreated));
+			break;
+		case 2:
+			list.sort(Comparator.comparing(Assessment::getCreated).reversed());
+			break;
+		case 3:
+			list.sort(Comparator.comparing(Assessment::getUserInSystemDisplayName));
+			break;
+		case 4:
+			list.sort(Comparator.comparing(Assessment::getUserInSystemDisplayName).reversed());
+			break;
+		case 5:
+			list.sort(Comparator.comparing(Assessment::getUserInRoleId));
+			break;
+		case 6:
+			list.sort(Comparator.comparing(Assessment::getUserInRoleId).reversed());
+			break;
+		case 7:
+			break;
+		}
+
+		return list;
 	}
 
 	private List<Long> convertToListLong(List<PathSegment> geriatricFactorValueIds) {
@@ -228,6 +260,7 @@ public class AssessmentsService {
 	@POST
 	@Path("addForSelectedDataSet")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response addForSelectedDataSet(String json) throws JsonProcessingException, IOException {
 		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
 		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();

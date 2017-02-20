@@ -41,7 +41,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 
                 self.loadAssessmentsCached = function () {
                     return $.getJSON(ASSESSMENT_LAST_FIVE_FOR_DIAGRAM + '/userInRoleId/'+self.careRecipientId()+ '/intervalStart/2011-1-1/intervalEnd/2017-1-1', function (dataSet) {
-                        var assesmentsDataSet = DataSet.produceFromOther(dataSet);
+                    	var assesmentsDataSet = DataSet.produceFromOther(dataSet);
                         var assessmentsSerieAlerts = Serie.produceAlert();
                         var serieAlertsItems = [];
                          for(var i=0; i<assesmentsDataSet.series.length; i++){
@@ -50,7 +50,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                                 var item = serie.items[j];
                                  var matchedIndex = matchSeriesIndexByItemId(item); 
                                  if(matchedIndex>=0) {
-                                   // serieAlertsItems[matchedIndex] = item;
+                                   serieAlertsItems[matchedIndex] = item;
                                  }
                              }
                          }
@@ -104,7 +104,6 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 });
                 
                 ko.postbox.subscribe("loadAssessmentsCached", function(careRecipientId) {
-                	console.log("subscribe loadAssessmentsCached");
                     self.careRecipientId(careRecipientId);
                     self.loadAssessmentsCached();
                 });

@@ -14,6 +14,12 @@
 
 	<build>
 		<finalName>C4A-frontend</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.glassfish.maven.plugin</groupId>
+				<artifactId>maven-glassfish-plugin</artifactId>
+			</plugin>
+		</plugins>
 	</build>
 
 </project>

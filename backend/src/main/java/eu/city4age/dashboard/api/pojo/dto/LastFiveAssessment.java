@@ -5,11 +5,12 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class LastFiveAssessment {
 
-	static protected Logger logger = Logger.getLogger(LastFiveAssessment.class);
+	static protected Logger logger = LogManager.getLogger(LastFiveAssessment.class);
 
 	private Long timeIntervalId, gefId, id;
 

@@ -101,8 +101,10 @@ function Assessment() {
 Assessment.produceFromOther = function(other) {
     var result = new Assessment();
     result.id = other.id;
-    result.comment = other.comment;
-    result.from = other.from;
+    result.comment = other.assessmentComment;
+    if(other.userInRole !== undefined && other.userInRole.userInSystem !== undefined) {
+    	result.from = other.userInRole.userInSystem.displayName;
+    }
     result.dateAndTime = other.dateAndTime;
     result.riskStatus = other.riskStatus;
     result.dataValidity = other.dataValidity;
@@ -314,6 +316,16 @@ function remove_item(arr, value) {
         }
     }
     return arr;
+}
+
+Array.prototype.contains = function(obj) {
+    var i = this.length;
+    while (i--) {
+        if (this[i] == obj) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Navigation parameters wrappers

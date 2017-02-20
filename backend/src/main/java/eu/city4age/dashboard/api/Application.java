@@ -4,7 +4,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.springframework.boot.SpringApplication;
@@ -39,7 +40,7 @@ import eu.city4age.dashboard.api.persist.generic.GenericRepositoryFactoryBean;
  */
 public class Application extends SpringBootServletInitializer {
 
-	static protected Logger logger = Logger.getLogger(Application.class);
+	static protected Logger logger = LogManager.getLogger(Application.class);
 
 	public static void main(String[] args) {
 		new SpringApplication(Application.class).run(args);

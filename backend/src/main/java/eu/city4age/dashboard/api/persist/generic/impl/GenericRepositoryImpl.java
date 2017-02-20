@@ -80,8 +80,8 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	}
 
 	@Override
-	public List<T> doQueryWithFilter(String filterName, String filterQueryName, Map<String, Object> inFilterParams,
-			Map<String, Object> inQueryParams) {
+	public List<T> doQueryWithFilter(List<eu.city4age.dashboard.api.pojo.persist.Filter> filters,
+			String filterQueryName, Map<String, Object> inQueryParams) {
 
 		if (GenericRepository.class.isAssignableFrom(getSpringDataRepositoryInterface())) {
 			Annotation entityFilterAnn = getSpringDataRepositoryInterface().getAnnotation(EntityFilter.class);
@@ -95,13 +95,30 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 
 					if (StringUtils.equals(filterQueryName, fQuery.name())) {
 						String jpql = fQuery.jpql();
-						Filter filter = entityManager.unwrap(Session.class).enableFilter(filterName);
 
-						// Set filter parameter
-						for (Object key : inFilterParams.keySet()) {
-							String filterParamName = key.toString();
-							Object filterParamValue = inFilterParams.get(key);
-							filter.setParameter(filterParamName, filterParamValue);
+						for (eu.city4age.dashboard.api.pojo.persist.Filter flt : filters) {
+							Filter filter = entityManager.unwrap(Session.class).enableFilter(flt.getName());
+
+							// Set filter parameter
+							for (Object key : flt.getInParams().keySet()) {
+
+								// FilterParam map key must be filter name
+								if (flt.getName().equals(key.toString())) {
+
+									String filterParamName = key.toString();
+
+									if (flt.getInParams().get(key) instanceof List) {
+										List<T> filterParamValue = (List<T>) flt.getInParams().get(key);
+										filter.setParameterList(filterParamName, filterParamValue);
+									} else {
+										Object filterParamValue = flt.getInParams().get(key);
+										filter.setParameter(filterParamName, filterParamValue);
+									}
+
+								}
+
+							}
+
 						}
 
 						// Set query parameter

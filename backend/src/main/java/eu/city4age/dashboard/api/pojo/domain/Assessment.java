@@ -1,7 +1,6 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -18,14 +17,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.FilterDefs;
 import org.hibernate.annotations.FilterJoinTable;
-import org.hibernate.annotations.FilterJoinTables;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
@@ -36,24 +36,11 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "assessment")
-@FilterDefs(value = { @FilterDef(name = "filterByAll", parameters = {
-		@ParamDef(name = "riskStatusWarning", type = "boolean"), @ParamDef(name = "riskStatusAlert", type = "boolean"),
-		@ParamDef(name = "dataValidityQuestionable", type = "boolean"),
-		@ParamDef(name = "dataValidityFaulty", type = "boolean"),
-		@ParamDef(name = "assessmentComment", type = "boolean"), @ParamDef(name = "orderByDateAsc", type = "boolean"),
-		@ParamDef(name = "orderByDateDesc", type = "boolean"),
-		@ParamDef(name = "orderByAuthorNameAsc", type = "boolean"),
-		@ParamDef(name = "orderByAuthorNameDesc", type = "boolean"),
-		@ParamDef(name = "orderByAuthorRoleAsc", type = "boolean"),
-		@ParamDef(name = "orderByAuthorRoleDesc", type = "boolean") }),
-		@FilterDef(name = "filterByUser", parameters = { @ParamDef(name = "userInRoleId", type = "long") }) })
-@Filters({ @Filter(name = "riskStatusWarning", condition = "riskStatus = 'W'"),
-		@Filter(name = "riskStatusAlert", condition = "riskStatus = 'A'"),
-		@Filter(name = "dataValidityQuestionable", condition = "dataValidity = 'Q'"),
-		@Filter(name = "dataValidityFaulty", condition = "dataValidity = 'F'"),
-		@Filter(name = "assessmentComment", condition = "assessmentComment != NULL"),
-		@Filter(name = "orderByDateAsc", condition = "created ASC"),
-		@Filter(name = "orderByDateDesc", condition = "created DESC") })
+@FilterDefs(value = { @FilterDef(name = "riskStatus", parameters = @ParamDef(name = "riskStatus", type = "char")),
+		@FilterDef(name = "dataValidity", parameters = @ParamDef(name = "dataValidity", type = "char")),
+		@FilterDef(name = "userInRoleId", parameters = @ParamDef(name = "userInRoleId", type = "long")) })
+@Filters(value = { @Filter(name = "riskStatus", condition = "risk_status in (:riskStatus)"),
+		@Filter(name = "dataValidity", condition = "data_validity_status in (:dataValidity)") })
 public class Assessment implements Serializable {
 
 	/**
@@ -61,11 +48,12 @@ public class Assessment implements Serializable {
 	 */
 	private static final long serialVersionUID = -8849726716647395001L;
 
-	static protected Logger logger = Logger.getLogger(Assessment.class);
+	static protected Logger logger = LogManager.getLogger(Assessment.class);
 
 	@JsonView(View.AssessmentView.class)
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@SequenceGenerator(name = "aa_seq", sequenceName = "assessment_id_seq")
+	@GeneratedValue(generator = "aa_seq", strategy = GenerationType.SEQUENCE)
 	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
 	protected Long id;
 
@@ -79,12 +67,8 @@ public class Assessment implements Serializable {
 
 	@JsonView(View.AssessmentView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
+	@FilterJoinTable(name = "userInRoleId", condition = "id = :userInRoleId")
 	@JoinColumn(name = "author_id")
-	@FilterJoinTables({ @FilterJoinTable(name = "authorRoleId", condition = "id = :userInRoleId"),
-			@FilterJoinTable(name = "orderByAuthorNameAsc", condition = "userInSystem.id ASC"),
-			@FilterJoinTable(name = "orderByAuthorNameDesc", condition = "userInSystem.id DESC"),
-			@FilterJoinTable(name = "orderByAuthorRoleAsc", condition = "roleId ASC"),
-			@FilterJoinTable(name = "orderByAuthorRoleDesc", condition = "roleId DESC") })
 	private UserInRole userInRole;
 
 	@JsonView(View.AssessmentView.class)
@@ -261,7 +245,7 @@ public class Assessment implements Serializable {
 	}
 
 	@JsonView(View.AssessmentView.class)
-	public String getDateAndTime() throws ParseException {
+	public String getDateAndTime() {
 		if (this.created != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
 			return sdf.format(created);
@@ -271,6 +255,14 @@ public class Assessment implements Serializable {
 
 	public Date getUpdated() {
 		return updated;
+	}
+
+	public String getUserInSystemDisplayName() {
+		return getUserInRole().getUserInSystem().getDisplayName();
+	}
+
+	public Long getUserInRoleId() {
+		return getUserInRole().getId();
 	}
 
 	public static class AssessmentBuilder {
@@ -308,6 +300,7 @@ public class Assessment implements Serializable {
 		public Assessment build() {
 			return new Assessment(this);
 		}
+
 	}
 
 }

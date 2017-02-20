@@ -24,7 +24,6 @@ public interface GenericRepository<T, ID extends Serializable>
 
 	List<? extends T> saveWithoutFlush(Iterable<? extends T> entities);
 
-	List<T> doQueryWithFilter(String filterName, String filterQueryName, Map<String, Object> inFilterParams,
-			Map<String, Object> inQueryParams);
+	List<T> doQueryWithFilter(List<eu.city4age.dashboard.api.pojo.persist.Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
 
 }

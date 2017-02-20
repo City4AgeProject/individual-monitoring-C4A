@@ -15,7 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class CareRecipientService {
 
 	public static final String PATH = "careRecipient";
 
-	static protected Logger logger = Logger.getLogger(CareRecipientService.class);
+	static protected Logger logger = LogManager.getLogger(CareRecipientService.class);
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
