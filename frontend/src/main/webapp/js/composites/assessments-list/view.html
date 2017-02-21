@@ -1,26 +1,27 @@
-<div class="oj-panel oj-panel-shadow-sm oj-dialog-body" style="border:none; background-color: #fcfcfc; height: 250px;">
+<div class="oj-panel oj-panel-shadow-sm oj-dialog-body" style="border:none; 
+background-color: #fcfcfc; height: 250px;">
     <div class="demo-flex-display oj-flex-items-pad" >
         <!-- ko foreach: selectedAnotations -->
-        <div class="oj-flex" id="div_comment_1" style="border-left: 3px solid #fcfcfc;">
-            <div class="oj-flex-item" style="display: block !important; " >
-                <div class="oj-flex oj-flex-items-pad" style="height: 28px;">
-                    <div class="oj-flex-item" style="width: 300px;">
+        <div class="oj-flex aa_comment" id="div_comment_1">
+            <div class="oj-flex-item aa_c_info">
+                <div class="oj-flex oj-flex-items-pad">
+                    <div class="oj-flex-item" style="width: 60%;">
                         <img data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
                         <img data-bind="attr: { src: dataValidityImage, title: dataValidityDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
-                        <b><span data-bind="text: shortenText(from, 30), attr: { title: from }"></span></b>
+                        <b><span data-bind="text: shortenText(from, 40), attr: { title: from }"></span></b>
                     </div>
-                    <div class="oj-flex-item" style="width: 150px; color: #3C9DBC;" align="right" id="show_comment_1">
+                    <div class="oj-flex-item" style="width: 20%; color: #3C9DBC;" align="right" id="show_comment_1">
                         <a href="#"><img src="images/target.png" style="vertical-align: middle; width: 16px; height: 16px;"/>Show on diagram</a>
                     </div>
-                    <div class="oj-flex-item" style="width: 200px;" align="right">
+                    <div class="oj-flex-item" style="width: 20%;" align="right">
                         <b><span data-bind="text: dateAndTimeText"></span></b>
                     </div>
                 </div>
             </div>
-            <div class="oj-flex-item" style="display: block !important;">
+            <div class="oj-flex-item aa_c_text">
                 <div id="comment_1"><span data-bind="text: comment, attr: { title: comment }"></span></div>
             </div>
-            <div class="oj-flex-item"  style="display: block !important;">
+            <div class="oj-flex-item aa_c_more">
                 <a href="#" id="showmore_comment_1">Read more</a>
             </div>
         </div>
