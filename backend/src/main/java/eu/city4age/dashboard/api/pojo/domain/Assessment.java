@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,7 +53,8 @@ public class Assessment implements Serializable {
 
 	@JsonView(View.AssessmentView.class)
 	@Id
-	@SequenceGenerator(name = "aa_seq", sequenceName = "assessment_id_seq")
+	@Basic(optional = false)
+	@SequenceGenerator(name = "aa_seq", sequenceName = "city4age_sr.assessment_id_seq", allocationSize = 1)
 	@GeneratedValue(generator = "aa_seq", strategy = GenerationType.SEQUENCE)
 	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
 	protected Long id;
@@ -171,7 +173,7 @@ public class Assessment implements Serializable {
 		if (this.riskStatus != null)
 			switch (this.riskStatus) {
 			case 'A':
-				return ("images/risk_alert.png");
+				return ("images/risk_alert_left.png");
 			case 'W':
 				return ("images/risk_warning.png");
 			default:

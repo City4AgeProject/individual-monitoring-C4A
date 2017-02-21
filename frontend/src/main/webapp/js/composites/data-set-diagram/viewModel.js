@@ -24,10 +24,10 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                             if(series[i].items[j].id === item.id){    
                                 //series[i].markerDisplayed='on';
                                 series[i].items[j].markerDisplayed='on';
-                                series[i].items[j].markerSize='16';
-                                series[i].items[j].source='images/comment.png';
-                                series[i].items[j].height='16';
-                                series[i].items[j].width='16';
+                                series[i].items[j].markerSize='32'; // markerSize for comments
+                                series[i].items[j].source='images/comment_right.png';
+                                series[i].items[j].height='32';
+                                series[i].items[j].width='32';
                                 series[i].items[j].x=j;
                                 series[i].items[j].y=series[i].items[j].value;
                                 
@@ -65,7 +65,7 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                                     var hasAlert = false;
                                     for(var k = 0; k < series[i].items[j].assessmentObjects.length; k++) {
                                         if('A' === series[i].items[j].assessmentObjects[k].riskStatus ){
-                                            series[i].items[j].source='images/risk_alert.png';
+                                            series[i].items[j].source='images/risk_alert_left.png';
                                             hasAlert = true;
                                             break;
                                         }
@@ -74,14 +74,15 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                                             hasWarning = true;
                                         }
                                     }
-                                    if(!hasAlert && hasWarning){
+                                    if(!hasAlert && hasWarning) {
                                         series[i].items[j].source='images/risk_warning.png';
-                                    }else if(hasAlert){
-                                        series[i].items[j].source='images/risk_alert.png';
+                                    } else if(hasAlert) {
+                                        series[i].items[j].source='images/risk_alert_left.png';
                                     }
                                 } 
                             }
                         }
+                        console.log("assessmentsSerieAlerts: " + JSON.stringify(assessmentsSerieAlerts))
                         self.seriesValue.push(assessmentsSerieAlerts);
                     });
                 };

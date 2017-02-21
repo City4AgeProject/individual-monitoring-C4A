@@ -110,7 +110,7 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                     //should be logged user ID
                     var authorId = 1;
                     var comment = ko.toJS(self.commentText);
-                    var riskStatus = self.selectedRiskStatus().lenth===1 ? ko.toJS(self.selectedRiskStatus)[0] : 'N'; // N-none
+                    var riskStatus = self.selectedRiskStatus().length===1 ? ko.toJS(self.selectedRiskStatus)[0] : 'N'; // N-none
                     var dataValidity = self.selectedDataValidity().length===1 ? ko.toJS(self.selectedDataValidity)[0] : 'VALID_DATA';
                     var geriatricFactorValueIds = self.dataPointsMarkedIds;
                     var audienceIds = ko.toJS(self.selectedRoles);

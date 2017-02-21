@@ -37,12 +37,13 @@ public class LastFiveAssessment {
 		if (comment != null)
 			this.comment = comment;
 
+		/*
 		if (riskStatus != null) {
 			this.riskStatus = riskStatus.toString();
 			switch (riskStatus) {
 			case 'A':
 				this.riskStatusDesc = "Alert";
-				this.riskStatusImage = "images/risk_alert.png";
+				this.riskStatusImage = "images/risk_alert_left.png";
 				break;
 			case 'W':
 				this.riskStatusDesc = "Warning";
@@ -71,7 +72,7 @@ public class LastFiveAssessment {
 				this.dataValidityImage = "images/valid_data.png";
 				break;
 			}
-		}
+		}*/
 
 		if (created != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
