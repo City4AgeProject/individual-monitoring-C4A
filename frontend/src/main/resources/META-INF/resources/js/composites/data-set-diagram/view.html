@@ -1,6 +1,8 @@
 <div id="lineChart" data-bind="ojComponent: {
         component: 'ojChart', 
-        type: 'line', 
+        type: 'line',
+        selectionMode: 'multiple',
+        selection: selectedItemsValue,
         series: seriesValue, 
         groups: groupsValue, 
         selectionMode: 'multiple',
@@ -11,6 +13,7 @@
         orientation: 'vertical',
         hoverBehavior: 'dim',
         zoomAndScroll: 'live',
+        highlightMatch: highlightValue,
         title: {text: 'Geriatric Sub factor - ' + subFactorName(), halign: 'center'},
         yAxis:{step:0.5},
         legend: {position: 'top'}                  

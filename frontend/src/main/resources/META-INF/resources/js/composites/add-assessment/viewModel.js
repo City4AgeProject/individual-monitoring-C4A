@@ -1,6 +1,6 @@
 /* global CODEBOOK_SELECT_ALL_RISKS, CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER, ASSESSMENTS_ADD_FOR_DATA_POINTS */
 
-define(['knockout', 'jquery', 'knockout-postbox'],
+define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
         function (ko, $) {
             
             function model(context) {
@@ -43,7 +43,9 @@ define(['knockout', 'jquery', 'knockout-postbox'],
                 var postAssessmentCallback = function (data) {
                     console.log(data);
                     $('#dialog1').ojDialog('close');
+                    console.log("before calling refreshAssessmentsCached");
                     ko.postbox.publish("refreshAssessmentsCached");
+                    console.log("after calling refreshAssessmentsCached");
                 };
 
                 parseRisks = function (response) {

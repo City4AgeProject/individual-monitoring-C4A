@@ -313,11 +313,11 @@ public class AssessmentsService {
 			ojLfa.getGroups().add(new DataIdValue(lfa.getTimeIntervalId(), lfa.getIntervalStart()));
 		}
 
-		ojLfa.getSeries().add(new Serie("Alert", new HashSet<DataIdValueLastFiveAssessment>(), "images/risk_alert_left.png",
-				"20px", 32, "on", "none")); //markerSize in java
+		ojLfa.getSeries().add(new Serie("Alert", new HashSet<DataIdValueLastFiveAssessment>(), "",
+				"20px", 32, "on", "none"));
 		ojLfa.getSeries().add(new Serie("Warning", new HashSet<DataIdValueLastFiveAssessment>(),
-				"images/risk_warning.png", "20px", 32, "on", "none"));
-		ojLfa.getSeries().add(new Serie("Comment", new HashSet<DataIdValueLastFiveAssessment>(), "images/comment_right.png",
+				"", "20px", 32, "on", "none"));
+		ojLfa.getSeries().add(new Serie("Comment", new HashSet<DataIdValueLastFiveAssessment>(), "",
 				"20px", 32, "on", "none"));
 
 		for (DataIdValue group : ojLfa.getGroups()) {

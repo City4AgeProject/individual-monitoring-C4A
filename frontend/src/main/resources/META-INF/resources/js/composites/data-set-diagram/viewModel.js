@@ -1,4 +1,4 @@
-/* global OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL, DataSet, Serie */
+/* global OJ_ASSESSMENT_LAST_FIVE_FOR_I,'urls','entities'NTERVAL, DataSet, Serie */
 
 define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
         function (ko, $) {
@@ -8,9 +8,14 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 self.groupsValue = ko.observableArray();
                 self.seriesValue = ko.observableArray();
                 
+                self.highlightValue = ko.observable();
+                
                 self.optionChangeCallback = null;
                 self.subFactorName = ko.observable();
                 self.careRecipientId = ko.observable();
+                
+                var selected = [];
+                self.selectedItemsValue = ko.observableArray(selected);
                 
                 self.chartOptionChange = function (event, ui) {
                     if(self.optionChangeCallback)
@@ -24,8 +29,8 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                             if(series[i].items[j].id === item.id){    
                                 //series[i].markerDisplayed='on';
                                 series[i].items[j].markerDisplayed='on';
-                                series[i].items[j].markerSize='32'; // markerSize for comments
-                                series[i].items[j].source='images/comment_right.png';
+                                series[i].items[j].markerSize='16';
+                                series[i].items[j].source='images/comment.png';
                                 series[i].items[j].height='32';
                                 series[i].items[j].width='32';
                                 series[i].items[j].x=j;
@@ -64,28 +69,34 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                                     var hasWarning = false;
                                     var hasAlert = false;
                                     for(var k = 0; k < series[i].items[j].assessmentObjects.length; k++) {
-                                        if('A' === series[i].items[j].assessmentObjects[k].riskStatus ){
-                                            series[i].items[j].source='images/risk_alert_left.png';
-                                            hasAlert = true;
-                                            break;
-                                        }
-                                        if('W' === series[i].items[j].assessmentObjects[k].riskStatus ){
+                                    	if('W' === series[i].items[j].assessmentObjects[k].riskStatus ){
                                             series[i].items[j].source='images/risk_warning.png';
                                             hasWarning = true;
                                         }
-                                    }
-                                    if(!hasAlert && hasWarning) {
-                                        series[i].items[j].source='images/risk_warning.png';
-                                    } else if(hasAlert) {
-                                        series[i].items[j].source='images/risk_alert_left.png';
+                                        if('A' === series[i].items[j].assessmentObjects[k].riskStatus ){
+                                            series[i].items[j].source='images/risk_alert.png';
+                                            hasAlert = true;
+                                            break;
+                                        }
+
                                     }
                                 } 
                             }
                         }
-                        console.log("assessmentsSerieAlerts: " + JSON.stringify(assessmentsSerieAlerts))
-                        self.seriesValue.push(assessmentsSerieAlerts);
+                    	self.seriesValue.push(assessmentsSerieAlerts);
                     });
                 };
+                
+                self.selectDatapointsDiagram = function() {
+                	console.log("selectDatapointsDiagram start");
+                	selected = ["733", "734", "721", "722", "723", "724", "725", "726", "727", "728"];
+                	//self.selectedItemsValue(selected);
+                	console.log("self.selectedItemsValue() " + JSON.stringify(self.selectedItemsValue()));
+                	console.log("self.selectedItemsValue(selected) " + JSON.stringify(self.selectedItemsValue(selected)));
+                	console.log("self.seriesValue() " + JSON.stringify(self.seriesValue()));
+                	console.log("self.groupsValue() " + JSON.stringify(self.groupsValue()));
+                	console.log("selectDatapointsDiagram end");
+                }
                 
                 ko.postbox.subscribe("subFactorName", function(subFactorName) {
                     self.subFactorName(subFactorName);
@@ -98,6 +109,8 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                         self.seriesValue.push(value.series[si]);
                     }
                     self.groupsValue(value.groups);
+                    //selected = ["733", "734", "721", "722", "723", "724", "725", "726", "727", "728"];
+                    self.selectedItemsValue(selected);
                 });
                 
                 ko.postbox.subscribe("optionChangeCallback", function(optionChangeCallback) {
@@ -111,6 +124,10 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                 
                 ko.postbox.subscribe("refreshAssessmentsCached", function() {
                     self.loadAssessmentsCached();
+                });
+                
+                ko.postbox.subscribe("selectDatapointsDiagram", function() {
+                    self.selectDatapointsDiagram();
                 });
                 
                 self.attached = function(context) {

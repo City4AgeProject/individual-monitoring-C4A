@@ -54,7 +54,7 @@ public class Assessment implements Serializable {
 	@JsonView(View.AssessmentView.class)
 	@Id
 	@Basic(optional = false)
-	@SequenceGenerator(name = "aa_seq", sequenceName = "city4age_sr.assessment_id_seq", allocationSize = 1)
+	@SequenceGenerator(name = "aa_seq", sequenceName = "assessment_id_seq", allocationSize = 1)
 	@GeneratedValue(generator = "aa_seq", strategy = GenerationType.SEQUENCE)
 	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
 	protected Long id;
@@ -168,20 +168,6 @@ public class Assessment implements Serializable {
 		return null;
 	}
 
-	@JsonView(View.AssessmentView.class)
-	public String getRiskStatusImage() {
-		if (this.riskStatus != null)
-			switch (this.riskStatus) {
-			case 'A':
-				return ("images/risk_alert_left.png");
-			case 'W':
-				return ("images/risk_warning.png");
-			default:
-				return ("images/comment.png");
-			}
-		return null;
-	}
-
 	public Character getDataValidity() {
 		return this.dataValidity;
 	}
@@ -200,20 +186,6 @@ public class Assessment implements Serializable {
 				return ("Questionable data");
 			default:
 				return ("Valid data");
-			}
-		return null;
-	}
-
-	@JsonView(View.AssessmentView.class)
-	public String getDataValidityImage() {
-		if (this.dataValidity != null)
-			switch (dataValidity) {
-			case 'F':
-				return ("images/faulty_data.png");
-			case 'Q':
-				return ("images/questionable_data.png");
-			default:
-				return ("images/valid_data.png");
 			}
 		return null;
 	}
@@ -303,6 +275,18 @@ public class Assessment implements Serializable {
 			return new Assessment(this);
 		}
 
+	}
+
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	public boolean equals(Object obj) {
+		boolean flag = false;
+		Assessment aa = (Assessment) obj;
+		if (aa.id == id)
+			flag = true;
+		return flag;
 	}
 
 }

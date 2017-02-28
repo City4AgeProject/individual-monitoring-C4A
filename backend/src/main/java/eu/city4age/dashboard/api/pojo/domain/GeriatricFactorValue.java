@@ -53,17 +53,7 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 
 	@JsonView(View.TimeIntervalView.class)
 	@OneToMany(mappedBy = "geriatricFactorValue", fetch = FetchType.LAZY)
-	private Set<Assessment> assessments = new HashSet<Assessment>(0);
-
-	/*
-	 * @ManyToMany( targetEntity=Assessment.class, cascade={CascadeType.PERSIST,
-	 * CascadeType.MERGE} )
-	 * 
-	 * @JoinTable( name="assessed_gef_value_set",
-	 * joinColumns=@JoinColumn(name="gef_value_id"),
-	 * inverseJoinColumns=@JoinColumn(name="assessment_id") ) private
-	 * Set<Assessment> assessments = new HashSet<Assessment>(0);
-	 */
+	private Set<Assessment> assessments = new HashSet<Assessment>();
 
 	public GeriatricFactorValue() {
 	}

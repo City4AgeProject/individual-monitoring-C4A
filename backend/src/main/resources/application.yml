@@ -1,5 +1,5 @@
 server:
-  context-path: /C4A
+  context-path: /C4A-dashboard
 logging:
   level:
     org:
@@ -12,7 +12,7 @@ spring:
     web-environment: true
     banner-mode: false
   datasource:
-    url: jdbc:postgresql://109.111.225.84:5432/city4age?characterEncoding=utf8&useUnicode=true&currentSchema=city4age_sr
+    url: jdbc:postgresql://109.111.225.84:5432/city4age?characterEncoding=utf8&useUnicode=true&currentSchema=city4age_sr #109.111.225.84, localhost
     driver-class-name: org.postgresql.Driver
     username: city4age_srv
     password: cities4Ages
@@ -29,8 +29,8 @@ spring:
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
         cache.region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
-        cache.use_second_level_cache: true
-        cache.use_query_cache: true
+        cache.use_second_level_cache: false
+        cache.use_query_cache: false
       javax:
         persistence:
           sharedCache:

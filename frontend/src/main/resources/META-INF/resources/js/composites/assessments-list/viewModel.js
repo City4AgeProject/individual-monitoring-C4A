@@ -15,6 +15,10 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
                             });
                 };
                 
+                showOnDiagram = function() {
+                	ko.postbox.publish("selectDatapointsDiagram");
+                }
+                
             }
 
             return model;

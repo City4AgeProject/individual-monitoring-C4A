@@ -1,7 +1,9 @@
-var app = 'C4A';
+var app = 'C4A-dashboard';
 var rest = 'rest';
+var hostname = location.hostname; //location.hostname, 'c4adashboard.atc.gr'
+var port = location.port; //location.port, 80
 
-var root = location.protocol + "//" + location.host + '/' + app + '/' + rest + '/';
+var root = location.protocol + "//" + hostname + ":" + location.port + '/' + app + '/' + rest + '/';
 
 
 var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';

@@ -88,7 +88,7 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
 
                 // Header
                 // Application Name used in Branding Area
-                self.appName = ko.observable("C4A");
+                self.appName = ko.observable("C4A-dashboard");
                 // User Info used in Global Navigation area
 //                 self.userLogin = ko.observable("Dr Leonardo Mutti");
 

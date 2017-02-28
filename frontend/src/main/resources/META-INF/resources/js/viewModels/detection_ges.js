@@ -119,16 +119,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 }
                 
                 var filterAssessments = function (pointIds, checkedFilterValidityData) {
-                	console.log("filterAssessments");
-                	console.log("this.checkedFilterValidityData(): " + self.checkedFilterValidityData());
-                	console.log("self.checkedFilterValidityData().contains('FAULTY_DATA'): " + self.checkedFilterValidityData().contains('FAULTY_DATA'));
                 	var pointIdsString = pointIds.join('/');
                     return $.getJSON(ASSESSMENT_FOR_DATA_SET
                     		+ "/geriatricFactorValueIds/"
 							+ pointIdsString
 							+ filtering()
 							, function (assessments) {
-                    	console.log("checkedFilterValidityData 2");
                     	var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var newAssessment = Assessment.produceFromOther(assessments[i]);
@@ -136,12 +132,9 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                             if(!Assessment.arrayContains(assessmentsResult, newAssessment))
                                 assessmentsResult.push(newAssessment);
                         }
-                        console.log("checkedFilterValidityData 2");
                         ko.postbox.publish("refreshSelectedAssessments", assessmentsResult);
                         self.selectedAnotations(assessmentsResult);
-                        console.log("checkedFilterValidityData 3");
                         ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
-                        console.log("checkedFilterValidityData 4");
                     });
                 };
                 
@@ -149,7 +142,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                     var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
                     self.careRecipientId = ko.observable(selectedDetectionVariable[0]);
                     self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
-                    self.parentFactorId = ko.observable(selectedDetectionVariable[1].derivedDetectionVariableId);
+                    self.parentFactorId = ko.observable(selectedDetectionVariable[1].id); //derivedDetectionVariableId
                     var response = loadDataSet();
                     return response;
                 };
@@ -178,6 +171,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                     ko.postbox.publish("subFactorName", self.subFactorName());
                     ko.postbox.publish("optionChangeCallback", self.chartOptionChange);
                     ko.postbox.publish("loadAssessmentsCached", self.careRecipientId());
+                    
+                    //if showSelectionOnDiagram true/false
                 });
                 
                 ko.postbox.subscribe("clickShowPopupAddAssessmentCallback", function() {
@@ -409,6 +404,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
 				self.filterList = function() {
                     filterAssessments(self.queryParams, self.checkedFilterValidityData);
 			    };
+			    
+			    self.showOnDiagram = function() {
+                	ko.postbox.publish("selectDatapointsDiagram");
+                }
                 
                 /* polar chart - uradjen za prvu grupu i to za mesece M1, M2 i M5 */
                 var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
