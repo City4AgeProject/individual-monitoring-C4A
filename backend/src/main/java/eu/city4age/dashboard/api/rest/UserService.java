@@ -69,7 +69,7 @@ public class UserService {
 			}
 
 		} catch (Exception e) {
-			response.setMessage("something went terrible wrong");
+			response.setMessage("something went terrible wrong: " + e.getMessage());
 			response.setResponseCode(2);
 			response.setDisplayName("");
 			return Response.ok(response).build();

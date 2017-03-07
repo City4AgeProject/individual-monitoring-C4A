@@ -14,65 +14,43 @@ public class LastFiveAssessment {
 
 	private Long timeIntervalId, gefId, id;
 
-	private String intervalStart, comment, riskStatus, riskStatusDesc, riskStatusImage, dataValidity, dataValidityDesc,
+	private String intervalStart, comment, riskStatusDesc, riskStatusImage, dataValidityDesc,
 			dataValidityImage, from, dateAndTime;
+	
+	private Character riskStatus, dataValidity;
 
 	private Float gefValue;
 
 	public LastFiveAssessment(BigInteger timeIntervalId, Object intervalStart, BigInteger gefId, BigDecimal gefValue,
-			Integer assessmentId, String comment, Character riskStatus, Character dataValidity, Date created,
+			Object assessmentId, String comment, Character riskStatus, Character dataValidity, Date created,
 			String displayName) {
 
-		this.timeIntervalId = Long.valueOf(timeIntervalId.toString());
+		if (timeIntervalId != null)
+			this.timeIntervalId = Long.valueOf(timeIntervalId.toString());
 
-		this.intervalStart = intervalStart.toString();
+		if (intervalStart != null)
+			this.intervalStart = intervalStart.toString();
 
-		this.gefId = Long.valueOf(gefId.toString());
+		if (gefId != null)
+			this.gefId = Long.valueOf(gefId.toString());
 
-		this.gefValue = Float.valueOf(gefValue.toString());
+		if (gefValue != null)
+			this.gefValue = Float.valueOf(gefValue.toString());
 
 		if (assessmentId != null)
-			this.id = assessmentId.longValue();
+			this.id = Long.parseLong(assessmentId.toString());
 
 		if (comment != null)
 			this.comment = comment;
 
-		/*
+
 		if (riskStatus != null) {
-			this.riskStatus = riskStatus.toString();
-			switch (riskStatus) {
-			case 'A':
-				this.riskStatusDesc = "Alert";
-				this.riskStatusImage = "images/risk_alert_left.png";
-				break;
-			case 'W':
-				this.riskStatusDesc = "Warning";
-				this.riskStatusImage = "images/risk_warning.png";
-				break;
-			default:
-				this.riskStatusDesc = "Comment";
-				this.riskStatusImage = "images/comment.png";
-				break;
-			}
+			this.riskStatus = riskStatus;
 		}
 
 		if (dataValidity != null) {
-			this.dataValidity = dataValidity.toString();
-			switch (dataValidity) {
-			case 'F':
-				this.dataValidityDesc = "Faulty data";
-				this.dataValidityImage = "images/faulty_data.png";
-				break;
-			case 'Q':
-				this.dataValidityDesc = "Questionable data";
-				this.dataValidityImage = "images/questionable_data.png";
-				break;
-			case 'V':
-				this.dataValidityDesc = "Valid data";
-				this.dataValidityImage = "images/valid_data.png";
-				break;
-			}
-		}*/
+			this.dataValidity = dataValidity;
+		}
 
 		if (created != null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
@@ -134,11 +112,11 @@ public class LastFiveAssessment {
 		this.comment = comment;
 	}
 
-	public String getRiskStatus() {
+	public Character getRiskStatus() {
 		return riskStatus;
 	}
 
-	public void setRiskStatus(String riskStatus) {
+	public void setRiskStatus(Character riskStatus) {
 		this.riskStatus = riskStatus;
 	}
 
@@ -158,11 +136,11 @@ public class LastFiveAssessment {
 		this.riskStatusImage = riskStatusImage;
 	}
 
-	public String getDataValidity() {
+	public Character getDataValidity() {
 		return dataValidity;
 	}
 
-	public void setDataValidity(String dataValidity) {
+	public void setDataValidity(Character dataValidity) {
 		this.dataValidity = dataValidity;
 	}
 

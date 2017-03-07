@@ -16,11 +16,11 @@ function Serie() {
 
 Serie.produceAlert = function() {
     var annotationsSerieAlerts = new Serie();
-    annotationsSerieAlerts.name = 'Assessments';
-    annotationsSerieAlerts.source = 'images/risk_alert_left.png'; //markerSize for alerts
+    /*annotationsSerieAlerts.name = 'Assessments';
+    annotationsSerieAlerts.source = 'images/risk_alert.png';
     annotationsSerieAlerts.markerSize = 32;
     annotationsSerieAlerts.markerDisplayed = 'on';
-    annotationsSerieAlerts.lineType = 'none';
+    annotationsSerieAlerts.lineType = 'none';*/
     return annotationsSerieAlerts;
 };
 
@@ -28,7 +28,7 @@ Serie.produceWarning = function() {
     var annotationsSerieWarnings = new Serie();
     annotationsSerieWarnings.name = 'Assessments';
     annotationsSerieWarnings.source = 'images/risk_warning.png';
-    annotationsSerieWarnings.markerSize = 32;
+    annotationsSerieWarnings.markerSize = 16;
     annotationsSerieWarnings.markerDisplayed = 'on';
     annotationsSerieWarnings.lineType = 'none';
     return annotationsSerieWarnings;
@@ -37,8 +37,8 @@ Serie.produceWarning = function() {
 Serie.produceComment = function() {
     var annotationsSerieComments = new Serie();
     annotationsSerieComments.name = 'Assessments';
-    annotationsSerieComments.source = 'images/comment_right.png';
-    annotationsSerieComments.markerSize = 32;
+    annotationsSerieComments.source = 'images/comment.png';
+    annotationsSerieComments.markerSize = 16;
     annotationsSerieComments.markerDisplayed = 'on';
     annotationsSerieComments.lineType = 'none';
     return annotationsSerieComments;

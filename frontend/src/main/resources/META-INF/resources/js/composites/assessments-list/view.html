@@ -11,7 +11,7 @@ background-color: #fcfcfc; height: 250px;">
                         <b><span data-bind="text: shortenText(from, 40), attr: { title: from }"></span></b>
                     </div>
                     <div class="oj-flex-item" style="width: 20%; color: #3C9DBC;" align="right" id="show_comment_1">
-                        <a href="#"><img src="images/target.png" style="vertical-align: middle; width: 16px; height: 16px;"/>Show on diagram</a>
+                        <a href="#" id="show" data-bind="click: showOnDiagram"><img src="images/target.png" style="vertical-align: middle; width: 16px; height: 16px;"/>Show on diagram</a>
                     </div>
                     <div class="oj-flex-item" style="width: 20%;" align="right">
                         <b><span data-bind="text: dateAndTimeText"></span></b>

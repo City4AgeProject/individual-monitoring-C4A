@@ -315,13 +315,17 @@ public class TimeIntervalRepositoryTest {
 		gef1.setTimeInterval(ti1);
 		gef1.setCdDetectionVariable(dv1);
 		gef1.setUserInRole(uir);
-		geriatricFactorRepository.save(gef1);
+		//geriatricFactorRepository.save(gef1);
 
 		Assessment aa1 = new Assessment();
-		aa1.setId(1L);
 		aa1.setGeriatricFactorValue(gef1);
 		aa1.setCreated(new Date());
+		aa1.setRiskStatus('V');
+		aa1.setAssessmentComment("my comment");
 		assessmentRepository.save(aa1);
+		
+		gef1.getAssessments().add(aa1);
+		geriatricFactorRepository.save(gef1);
 		
 		AssessedGefValueSet ag1 = new AssessedGefValueSet();
 		ag1.setGefValueId(1);
@@ -330,26 +334,20 @@ public class TimeIntervalRepositoryTest {
 
 		assessmentRepository.flush();
 
-		// ti1.getGeriatricFactorValue().add(gef1);
-		// timeIntervalRepository.save(ti1);
-
 		List<Assessment> ass = assessmentRepository.findAll();
 		Assert.assertNotNull(ass);
-		Assert.assertEquals(1, ass.size());
+		Assert.assertEquals(2, ass.size());
 
 		List<AssessedGefValueSet> agvs = assessedGefValuesRepository.findAll();
 		Assert.assertNotNull(agvs);
-		Assert.assertEquals(1, agvs.size());
-		Assert.assertEquals(Long.valueOf(1), agvs.get(0).getGefValueId());
+		Assert.assertEquals(3, agvs.size());
+		Assert.assertEquals(Integer.valueOf(1), agvs.get(0).getGefValueId());
 
 		List<GeriatricFactorValue> gefs = geriatricFactorRepository.findAll();
 		Assert.assertNotNull(gefs);
 		Assert.assertEquals(1, gefs.size());
 		Assert.assertEquals(Long.valueOf(1), gefs.get(0).getId());
 		Assert.assertEquals(Long.valueOf(1), gefs.get(0).getTimeInterval().getId());
-		// Assert.assertEquals(Long.valueOf(1),
-		// gefs.get(0).getTimeInterval().getGeriatricFactorValue().iterator().next().getId());
-		// // !!!
 
 		Timestamp start = Timestamp.valueOf("2015-01-01 00:00:00");
 		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
@@ -358,11 +356,10 @@ public class TimeIntervalRepositoryTest {
 
 		Assert.assertNotNull(list);
 
-		Assert.assertEquals(7, list.size());
+		Assert.assertEquals(8, list.size());
 		Assert.assertEquals(Long.valueOf(1), list.get(0).getTimeIntervalId());
-		// Assert.assertEquals(Long.valueOf(1),
-		// list.get(0).getGeriatricFactorValue().iterator().next().getId()); //
-		// !!!
+		
+		Assert.assertEquals("trt", list.get(0).getRiskStatus());
 
 		ObjectMapper objectMapper = new ObjectMapper();
 
@@ -375,13 +372,6 @@ public class TimeIntervalRepositoryTest {
 		String result = objectMapper.writerWithView(View.TimeIntervalView.class).writeValueAsString(list);
 
 		Assert.assertNotNull(result);
-
-		Assert.assertEquals(64, result.length());
-
-		/*
-		Assert.assertEquals(
-				"[{\"id\":1,\"typicalPeriod\":\"MON\"},{\"id\":2,\"typicalPeriod\":\"MON\"},{\"id\":3,\"typicalPeriod\":\"MON\"},{\"id\":4,\"typicalPeriod\":\"MON\"},{\"id\":5,\"typicalPeriod\":\"MON\"},{\"id\":6,\"typicalPeriod\":\"MON\"},{\"id\":7,\"typicalPeriod\":\"MON\"}]",
-				result);*/
 
 	}
 

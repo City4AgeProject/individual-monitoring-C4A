@@ -35,8 +35,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.val = ko.observableArray(["Month"]);
                 
                 self.dataPointsMarkedIds = ko.observableArray();
-                self.parentFactorId = ko.observable(); // get from params
-                self.careRecipientId = ko.observable(); // get from params
                 
                 self.queryParams = ko.observable();
                 
@@ -119,16 +117,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 }
                 
                 var filterAssessments = function (pointIds, checkedFilterValidityData) {
-                	console.log("filterAssessments");
-                	console.log("this.checkedFilterValidityData(): " + self.checkedFilterValidityData());
-                	console.log("self.checkedFilterValidityData().contains('FAULTY_DATA'): " + self.checkedFilterValidityData().contains('FAULTY_DATA'));
                 	var pointIdsString = pointIds.join('/');
                     return $.getJSON(ASSESSMENT_FOR_DATA_SET
                     		+ "/geriatricFactorValueIds/"
 							+ pointIdsString
 							+ filtering()
 							, function (assessments) {
-                    	console.log("checkedFilterValidityData 2");
                     	var assessmentsResult = [];
                         for (var i = 0; i < assessments.length; i++) {
                             var newAssessment = Assessment.produceFromOther(assessments[i]);
@@ -136,20 +130,17 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                             if(!Assessment.arrayContains(assessmentsResult, newAssessment))
                                 assessmentsResult.push(newAssessment);
                         }
-                        console.log("checkedFilterValidityData 2");
                         ko.postbox.publish("refreshSelectedAssessments", assessmentsResult);
                         self.selectedAnotations(assessmentsResult);
-                        console.log("checkedFilterValidityData 3");
                         ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
-                        console.log("checkedFilterValidityData 4");
                     });
                 };
                 
                 self.handleActivated = function (info) {
                     var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
-                    self.careRecipientId = ko.observable(selectedDetectionVariable[0]);
-                    self.subFactorName = ko.observable(selectedDetectionVariable[1].detectionVariableName);
-                    self.parentFactorId = ko.observable(selectedDetectionVariable[1].derivedDetectionVariableId);
+                    self.careRecipientId(selectedDetectionVariable[0]);
+                    self.subFactorName(selectedDetectionVariable[1].detectionVariableName);
+                    self.parentFactorId(selectedDetectionVariable[1].id); //derivedDetectionVariableId
                     var response = loadDataSet();
                     return response;
                 };
@@ -172,12 +163,21 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                     });
                 };
                 
-                ko.postbox.subscribe("loadDiagramCallback", function() {
+                ko.postbox.subscribe("loadDiagramCallback", function(showSelectionOnDiagram) {
                     ko.postbox.publish("loadSeriesAndGroups", {"series" : self.seriesValue(), 
                                                                "groups" :self.groupsValue()});
                     ko.postbox.publish("subFactorName", self.subFactorName());
                     ko.postbox.publish("optionChangeCallback", self.chartOptionChange);
                     ko.postbox.publish("loadAssessmentsCached", self.careRecipientId());
+                    
+                    if(showSelectionOnDiagram) {
+                    	ko.postbox.publish("showSelectionOnDiagram");
+                    	console.log("showSelectionOnDiagram true");
+                    } else {
+                    	console.log("showSelectionOnDiagram false");
+                    }
+                    //if showSelectionOnDiagram true/false
+                    console.log("end of ko.postbox.subscribe loadDiagramCallback");
                 });
                 
                 ko.postbox.subscribe("clickShowPopupAddAssessmentCallback", function() {
