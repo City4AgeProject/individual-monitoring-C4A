@@ -409,6 +409,10 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
 				self.filterList = function() {
                     filterAssessments(self.queryParams, self.checkedFilterValidityData);
 			    };
+			    
+			    self.showOnDiagram = function() {
+                	ko.postbox.publish("selectDatapointsDiagram");
+                }
                 
                 /* polar chart - uradjen za prvu grupu i to za mesece M1, M2 i M5 */
                 var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];

@@ -8,7 +8,6 @@ console.log("port: " + port);
 
 var root = location.protocol + "//" + hostname + (port === ''?'':":" + port) + '/' + app + '/' + rest + '/';
 
-
 var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
 var CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER = root + 'codebook/getAllRolesForStakeholderAbbr';
 var CODEBOOK_SELECT_DATA_VALIDITY_STATUS = root + 'codebook/getAllDataValitidityStatus';

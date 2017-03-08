@@ -115,9 +115,6 @@ define(['knockout', 'jquery', 'knockout-postbox','urls','entities',
                     }
                     self.groupsValue(value.groups);
                     self.selectedItemsValue(selected);
-                	console.log("self.selectedItemsValue() " + JSON.stringify(self.selectedItemsValue()));
-                	console.log("self.selectedItemsValue(selected) " + JSON.stringify(self.selectedItemsValue(selected)));
-                    self.selectedItemsValue(selected);
                 });
                 
                 ko.postbox.subscribe("optionChangeCallback", function(optionChangeCallback) {
