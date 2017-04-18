@@ -43,6 +43,7 @@ public class UserService {
 		 * ****************Action*************
 		 */
 		try {
+			logger.info("Logging in...");
 			user = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
 
 			if (user == null) {

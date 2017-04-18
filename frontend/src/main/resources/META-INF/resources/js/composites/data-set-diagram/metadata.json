@@ -1,0 +1,22 @@
+{
+	"name": "data-set-diagram",
+	"version": "1.0.0",
+	"jetVersion": ">=3.0.0",
+	"properties": {
+		"title": {
+			"type": "object"
+		},
+		"legend": {
+			"type": "object"
+		},
+		"groups": {
+			"type": "Array<object>"
+		},
+		"series": {
+			"type": "Array<object>"
+		},
+		"drilling": {
+			"type": "string"
+		}
+	}
+}

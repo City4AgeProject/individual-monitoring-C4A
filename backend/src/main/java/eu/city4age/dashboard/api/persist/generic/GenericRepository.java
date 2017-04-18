@@ -26,4 +26,6 @@ public interface GenericRepository<T, ID extends Serializable>
 
 	List<T> doQueryWithFilter(List<eu.city4age.dashboard.api.pojo.persist.Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
 
+	void disableFilter(String name);
+
 }

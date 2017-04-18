@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.1"
-	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="eu.city4age.dashboard.api_v1_war_1.0-SNAPSHOTPU"
-		transaction-type="JTA">
-		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<jta-data-source>c4aDB</jta-data-source>
-		<properties>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect" />
-			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-		</properties>
-	</persistence-unit>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="persistenceUnit" transaction-type="JTA">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <jta-data-source>jdbc/c4aDB</jta-data-source>
+    <properties>
+      <property name="transaction.manager_lookup_class" value="org.hibernate.transaction.SunONETransactionManagerLookup"/>
+      <property name="hibernate.transaction.factory_class" value="org.hibernate.transaction.CMTTransactionFactory"/>
+      <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
+      <property name="hibernate.enable_lazy_load_no_trans" value="true"/>
+      <property name="javax.persistence.validation_mode" value="none"/>
+      <property name="hibernate.ddl-auto" value="none"/>
+      <property name="hibernate.show_sql" value="false"/>
+      <property name="hibernate.format_sql" value="false"/>
+      <property name="hibernate.use_sql_comments" value="false"/>
+      <property name="hibernate.generate_statistics" value="false"/>
+    </properties>
+  </persistence-unit>
 </persistence>

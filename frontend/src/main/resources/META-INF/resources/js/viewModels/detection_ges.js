@@ -22,9 +22,13 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 self.subFactorName = ko.observable();
                 self.careRecipientId = ko.observable();
                 self.parentFactorId = ko.observable();
+
+                self.groupsVal = ko.observableArray();
+                self.seriesVal = ko.observableArray();
                 
-                self.groupsValue = ko.observableArray();
-                self.seriesValue = ko.observableArray();
+                self.groupsValue2 = ko.observableArray();
+                self.lineSeriesValue = ko.observableArray();
+                
                 self.initialAssessments = ko.observableArray([]);
                 
                 self.selectedAnotations = ko.observableArray();
@@ -43,19 +47,34 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 };
                 
                 var loadDiagramDataCallback = function (data) {
-                	self.groupsValue(data.groups);
-                    self.seriesValue(data.series);
+                	console.log("loadDiagramDataCallback GES start");
+                	console.log("GES prvi bind");
+
+                	self.groupsVal(data.groups);
+                    self.seriesVal(data.series);
+
+                	/*ZAKOMENTARISANO NOVO!!!
+                    self.seriesVal([{"name":"Climbing stairs","items":[{"id":2,"value":3,"gefTypeId":15},{"id":6,"value":4.2,"gefTypeId":15},{"id":10,"value":2.8,"gefTypeId":15},{"id":14,"value":2.2,"gefTypeId":15},{"id":18,"value":3.3,"gefTypeId":15},{"id":22,"value":2.8,"gefTypeId":15},{"id":26,"value":2.8,"gefTypeId":15},{"id":30,"value":1.9,"gefTypeId":15},{"id":34,"value":2.5,"gefTypeId":15},{"id":38,"value":3.4,"gefTypeId":15},{"id":42,"value":3.7,"gefTypeId":15},{"id":46,"value":2.8,"gefTypeId":15}],"imgSize":"20px","markerSize":16,"markerDisplayed":"off","lineType":"auto"},{"name":"Walking","items":[{"id":1,"value":3,"gefTypeId":14},{"id":5,"value":1.5,"gefTypeId":14},{"id":9,"value":1,"gefTypeId":14},{"id":13,"value":2.2,"gefTypeId":14},{"id":17,"value":1.8,"gefTypeId":14},{"id":21,"value":3.1,"gefTypeId":14},{"id":25,"value":3,"gefTypeId":14},{"id":29,"value":3.6,"gefTypeId":14},{"id":33,"value":2,"gefTypeId":14},{"id":37,"value":2.5,"gefTypeId":14},{"id":41,"value":3.4,"gefTypeId":14},{"id":45,"value":3,"gefTypeId":14}],"imgSize":"20px","markerSize":16,"markerDisplayed":"off","lineType":"auto"},{"name":"Still/Moving","items":[{"id":3,"value":3,"gefTypeId":16},{"id":7,"value":5,"gefTypeId":16},{"id":11,"value":3.7,"gefTypeId":16},{"id":15,"value":4.6,"gefTypeId":16},{"id":19,"value":4.5,"gefTypeId":16},{"id":23,"value":5,"gefTypeId":16},{"id":27,"value":4.8,"gefTypeId":16},{"id":31,"value":4.4,"gefTypeId":16},{"id":35,"value":3.9,"gefTypeId":16},{"id":39,"value":3.9,"gefTypeId":16},{"id":43,"value":4.5,"gefTypeId":16},{"id":47,"value":3.3,"gefTypeId":16}],"imgSize":"20px","markerSize":16,"markerDisplayed":"off","lineType":"auto"},{"name":"Moving across rooms","items":[{"id":4,"value":3,"gefTypeId":17},{"id":8,"value":3.3,"gefTypeId":17},{"id":12,"value":3.8,"gefTypeId":17},{"id":16,"value":5,"gefTypeId":17},{"id":20,"value":4.5,"gefTypeId":17},{"id":24,"value":3.9,"gefTypeId":17},{"id":28,"value":3.7,"gefTypeId":17},{"id":32,"value":3.5,"gefTypeId":17},{"id":36,"value":4.1,"gefTypeId":17},{"id":40,"value":4,"gefTypeId":17},{"id":44,"value":5,"gefTypeId":17},{"id":48,"value":4.5,"gefTypeId":17}],"imgSize":"20px","markerSize":16,"markerDisplayed":"off","lineType":"auto"}]);
+                    self.groupsVal([{"id":1,"name":"jan2 2018"},{"id":2,"name":"feb 2016"},{"id":3,"name":"mar 2016"},{"id":4,"name":"apr 2016"},{"id":5,"name":"maj 2016"},{"id":6,"name":"jun 2016"},{"id":7,"name":"jul 2016"},{"id":8,"name":"avg 2016"},{"id":9,"name":"sep 2016"},{"id":10,"name":"okt 2016"},{"id":11,"name":"nov 2016"},{"id":12,"name":"dec 2016"}]);  
+                	*/
+                	
+                    console.log("loadDiagramDataCallback GES end");
                 };
                 
                 var loadDataSet = function(data) {
+                	console.log("loadDataSet GES start");
+                	
                     var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" +self.careRecipientId()
                                               + "/parentFactorId/" + self.parentFactorId(),
                          loadDiagramDataCallback);
                     jqXHR.fail(serverErrorCallback);
+                    console.log("loadDataSet GES end");
                     return jqXHR;
                 };
                 
                 var loadAssessments = function (pointIds, checkedFilterValidityData) {
+                	console.log("loadAssessments GES start");
+                	console.log("pointIds: " + pointIds);
                 	var pointIdsString = pointIds.join('/');
                     return $.getJSON(ASSESSMENT_FOR_DATA_SET
                     		+ "/geriatricFactorValueIds/"
@@ -71,6 +90,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                         self.selectedAnotations(assessmentsResult);
                         ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
                     });
+                    console.log("loadAssessments GES end");
                 };
                 
                 var filtering = function () {
@@ -117,6 +137,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                 }
                 
                 var filterAssessments = function (pointIds, checkedFilterValidityData) {
+                	console.log("filterAssessments GES start");
+                	console.log("pointIds: " + pointIds);
                 	var pointIdsString = pointIds.join('/');
                     return $.getJSON(ASSESSMENT_FOR_DATA_SET
                     		+ "/geriatricFactorValueIds/"
@@ -134,18 +156,23 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                         self.selectedAnotations(assessmentsResult);
                         ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
                     });
+                    console.log("filterAssessments GES end");
                 };
                 
                 self.handleActivated = function (info) {
+                	console.log("handleActivated GES start");
                     var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
                     self.careRecipientId(selectedDetectionVariable[0]);
                     self.subFactorName(selectedDetectionVariable[1].detectionVariableName);
                     self.parentFactorId(selectedDetectionVariable[1].id); //derivedDetectionVariableId
+                    console.log("self.parentFactorId: " + self.parentFactorId());
                     var response = loadDataSet();
                     return response;
+                    console.log("handleActivated GES end");
                 };
 
                 self.handleAttached = function (info) {
+                	console.log("handleAttached GES start");
                     $('#summary').css({height: '20px', overflow: 'hidden'});
                     $('#showmore').on('click', function () {
                         console.log("clicked");
@@ -161,23 +188,27 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                             $this.data('open', 1);
                         }
                     });
+                    console.log("handleAttached GES end");
                 };
                 
                 ko.postbox.subscribe("loadDiagramCallback", function(showSelectionOnDiagram) {
-                    ko.postbox.publish("loadSeriesAndGroups", {"series" : self.seriesValue(), 
-                                                               "groups" :self.groupsValue()});
+                	console.log("loadDiagramCallback GES start");
+                	
+                    //self.seriesVal([{"name":"Climbing stairs","items":[{"id":2,"value":3,"gefTypeId":15},{"id":6,"value":4.2,"gefTypeId":15},{"id":10,"value":2.8,"gefTypeId":15},{"id":14,"value":2.2,"gefTypeId":15},{"id":18,"value":3.3,"gefTypeId":15},{"id":22,"value":2.8,"gefTypeId":15},{"id":26,"value":2.8,"gefTypeId":15},{"id":30,"value":1.9,"gefTypeId":15},{"id":34,"value":2.5,"gefTypeId":15},{"id":38,"value":3.4,"gefTypeId":15},{"id":42,"value":3.7,"gefTypeId":15},{"id":46,"value":2.8,"gefTypeId":15}],"imgSize":"20px","markerSize":16,"markerDisplayed":"off","lineType":"auto"},{"name":"Walking","items":[{"id":1,"value":3,"gefTypeId":14},{"id":5,"value":1.5,"gefTypeId":14},{"id":9,"value":1,"gefTypeId":14},{"id":13,"value":2.2,"gefTypeId":14},{"id":17,"value":1.8,"gefTypeId":14},{"id":21,"value":3.1,"gefTypeId":14},{"id":25,"value":3,"gefTypeId":14},{"id":29,"value":3.6,"gefTypeId":14},{"id":33,"value":2,"gefTypeId":14},{"id":37,"value":2.5,"gefTypeId":14},{"id":41,"value":3.4,"gefTypeId":14},{"id":45,"value":3,"gefTypeId":14}],"imgSize":"20px","markerSize":16,"markerDisplayed":"off","lineType":"auto"},{"name":"Still/Moving","items":[{"id":3,"value":3,"gefTypeId":16},{"id":7,"value":5,"gefTypeId":16},{"id":11,"value":3.7,"gefTypeId":16},{"id":15,"value":4.6,"gefTypeId":16},{"id":19,"value":4.5,"gefTypeId":16},{"id":23,"value":5,"gefTypeId":16},{"id":27,"value":4.8,"gefTypeId":16},{"id":31,"value":4.4,"gefTypeId":16},{"id":35,"value":3.9,"gefTypeId":16},{"id":39,"value":3.9,"gefTypeId":16},{"id":43,"value":4.5,"gefTypeId":16},{"id":47,"value":3.3,"gefTypeId":16}],"imgSize":"20px","markerSize":16,"markerDisplayed":"off","lineType":"auto"},{"name":"Moving across rooms","items":[{"id":4,"value":3,"gefTypeId":17},{"id":8,"value":3.3,"gefTypeId":17},{"id":12,"value":3.8,"gefTypeId":17},{"id":16,"value":5,"gefTypeId":17},{"id":20,"value":4.5,"gefTypeId":17},{"id":24,"value":3.9,"gefTypeId":17},{"id":28,"value":3.7,"gefTypeId":17},{"id":32,"value":3.5,"gefTypeId":17},{"id":36,"value":4.1,"gefTypeId":17},{"id":40,"value":4,"gefTypeId":17},{"id":44,"value":5,"gefTypeId":17},{"id":48,"value":4.5,"gefTypeId":17}],"imgSize":"20px","markerSize":16,"markerDisplayed":"off","lineType":"auto"}]);
+                    //self.groupsVal([{"id":1,"name":"jan2 2016"},{"id":2,"name":"feb 2016"},{"id":3,"name":"mar 2016"},{"id":4,"name":"apr 2016"},{"id":5,"name":"maj 2016"},{"id":6,"name":"jun 2016"},{"id":7,"name":"jul 2016"},{"id":8,"name":"avg 2016"},{"id":9,"name":"sep 2016"},{"id":10,"name":"okt 2016"},{"id":11,"name":"nov 2016"},{"id":12,"name":"dec 2016"}]);  
+                	
+                    ko.postbox.publish("loadSeriesAndGroups", {"series" : self.seriesVal(), 
+                                                               "groups" :self.groupsVal()});
                     ko.postbox.publish("subFactorName", self.subFactorName());
                     ko.postbox.publish("optionChangeCallback", self.chartOptionChange);
-                    ko.postbox.publish("loadAssessmentsCached", self.careRecipientId());
+
+                    //IMPORTANT LOAD OF ASSESSEMENTS
+                    ko.postbox.publish("loadAssessmentsCached", self.careRecipientId(), self.parentFactorId());
                     
                     if(showSelectionOnDiagram) {
                     	ko.postbox.publish("showSelectionOnDiagram");
-                    	console.log("showSelectionOnDiagram true");
-                    } else {
-                    	console.log("showSelectionOnDiagram false");
                     }
-                    //if showSelectionOnDiagram true/false
-                    console.log("end of ko.postbox.subscribe loadDiagramCallback");
+                    console.log("loadDiagramCallback GES end");
                 });
                 
                 ko.postbox.subscribe("clickShowPopupAddAssessmentCallback", function() {
@@ -233,6 +264,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                                 $('#popup1').ojPopup('close');
                             var onlyDataPoints = [];
                                 onlyDataPoints = getDataPoints(ui['optionMetadata']);
+                                console.log("onlyDataPoints: " + onlyDataPoints);
                             if(onlyDataPoints.length === 0) {
                                 for(var i=0; i<ui['value'].length; i++) {
                                     onlyDataPoints.push(ui['value'][i].id);
@@ -247,6 +279,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
                             }else{
                                 // Compose selections in get query parameters
                             	self.queryParams = calculateSelectedIds(onlyDataPoints);
+                            	console.log("self.queryParams: " + self.queryParams);
                                 ko.postbox.publish("refreshDataPointsMarked", onlyDataPoints.length);
                                 loadAssessments(self.queryParams);
                             }
@@ -409,10 +442,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
 				self.filterList = function() {
                     filterAssessments(self.queryParams, self.checkedFilterValidityData);
 			    };
-			    
-			    self.showOnDiagram = function() {
-                	ko.postbox.publish("selectDatapointsDiagram");
-                }
                 
                 /* polar chart - uradjen za prvu grupu i to za mesece M1, M2 i M5 */
                 var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];

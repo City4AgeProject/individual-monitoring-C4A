@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.FilterDefs;
-import org.hibernate.annotations.FilterJoinTable;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
@@ -41,7 +40,8 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 		@FilterDef(name = "dataValidity", parameters = @ParamDef(name = "dataValidity", type = "char")),
 		@FilterDef(name = "userInRoleId", parameters = @ParamDef(name = "userInRoleId", type = "long")) })
 @Filters(value = { @Filter(name = "riskStatus", condition = "risk_status in (:riskStatus)"),
-		@Filter(name = "dataValidity", condition = "data_validity_status in (:dataValidity)") })
+		@Filter(name = "dataValidity", condition = "data_validity_status in (:dataValidity)"),
+		@Filter(name = "userInRoleId", condition = "author_id = :userInRoleId") })
 public class Assessment implements Serializable {
 
 	/**
@@ -69,9 +69,11 @@ public class Assessment implements Serializable {
 
 	@JsonView(View.AssessmentView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
-	@FilterJoinTable(name = "userInRoleId", condition = "id = :userInRoleId")
 	@JoinColumn(name = "author_id")
 	private UserInRole userInRole;
+
+	@Column(name = "author_id", insertable = false, updatable = false)
+	private Long userInRoleId;
 
 	@JsonView(View.AssessmentView.class)
 	@Column(name = "assessment_comment")

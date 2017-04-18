@@ -19,6 +19,8 @@ public class AssessmentServiceTest {
 
 	@Test
 	public void getDiagramDataTest() {
+		
+		logger.info("start of getDiagramDataTest");
 
 		try {
 
@@ -50,11 +52,15 @@ public class AssessmentServiceTest {
 			Assert.fail();
 
 		}
+		
+		logger.info("end of getDiagramDataTest");
 
 	}
 
 	@Test
 	public void getLastFiveAssessmentsTest() {
+		
+		logger.info("start of getLastFiveAssessmentsTest");
 
 		try {
 
@@ -87,11 +93,15 @@ public class AssessmentServiceTest {
 			Assert.fail();
 
 		}
+		
+		logger.info("end of getLastFiveAssessmentsTest");
 
 	}
 
 	@Test
 	public void getAssessmentsForSelectedDataSetTest() {
+		
+		logger.info("start of getAssessmentsForSelectedDataSetTest");
 
 		try {
 
@@ -124,11 +134,15 @@ public class AssessmentServiceTest {
 			Assert.fail();
 
 		}
+		
+		logger.info("end of getAssessmentsForSelectedDataSetTest");
 
 	}
 
 	@Test
 	public void addAssessmentsForSelectedDataSetTest() {
+		
+		logger.info("start of addAssessmentsForSelectedDataSetTest");
 
 		try {
 			Client client = ClientBuilder.newClient().register(JacksonFeature.class);
@@ -159,6 +173,7 @@ public class AssessmentServiceTest {
 			Assert.fail();
 
 		}
+		logger.info("end of addAssessmentsForSelectedDataSetTest");
 
 	}
 

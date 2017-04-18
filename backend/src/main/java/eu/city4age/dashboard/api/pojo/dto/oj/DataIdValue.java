@@ -21,6 +21,7 @@ public class DataIdValue implements Serializable {
 	private String name;
 
 	public DataIdValue() {
+		
 	}
 
 	public DataIdValue(Long id, String name) {

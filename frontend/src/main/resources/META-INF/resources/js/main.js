@@ -12,16 +12,18 @@ requirejs.config({
   {
     'knockout': 'libs/knockout/knockout-3.4.0',
     'knockout-postbox': 'libs/knockout-postbox/knockout-postbox.min',
-    'jquery': 'libs/jquery/jquery-3.1.0.min',
+    'jquery': 'libs/jquery/jquery-3.1.1.min',
     'jqueryui-amd': 'libs/jquery/jqueryui-amd-1.12.0.min',
     'promise': 'libs/es6-promise/es6-promise.min',
     'hammerjs': 'libs/hammer/hammer-2.0.8.min',
     'ojdnd': 'libs/dnd-polyfill/dnd-polyfill-1.0.0.min',
-    'ojs': 'libs/oj/v2.1.0/debug',
-    'ojL10n': 'libs/oj/v2.1.0/ojL10n',
-    'ojtranslations': 'libs/oj/v2.1.0/resources',
+    'ojs': 'libs/oj/v3.0.0/min',
+    'ojL10n': 'libs/oj/v3.0.0/ojL10n',
+    'ojtranslations': 'libs/oj/v3.0.0/resources',
     'signals': 'libs/js-signals/signals.min',
     'text': 'libs/require/text',
+    'customElements': 'libs/webcomponents/CustomElements.min',
+    'proj4': 'libs/proj4js/dist/proj4',
     
     'entities': 'domain/entities',
     'urls': 'domain/urls',
@@ -56,7 +58,7 @@ requirejs.config({
  * A top-level require call executed by the Application.
  * Although 'ojcore' and 'knockout' would be loaded in any case (they are specified as dependencies
  * by the modules themselves), we are listing them explicitly to get the references to the 'oj' and 'ko'
- * objects in the callback
+ * objects in the callback.
  */
  require(['ojs/ojcore', 'knockout', 'appController', 'ojs/ojknockout', 'ojs/ojrouter',
    'ojs/ojmodule', 'ojs/ojdialog', 'ojs/ojnavigationlist', 'ojs/ojtoolbar',

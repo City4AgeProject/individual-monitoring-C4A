@@ -11,6 +11,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name="variation_measure_value")
 public class VariationMeasureValue extends AbstractBaseEntity {
@@ -24,9 +26,9 @@ public class VariationMeasureValue extends AbstractBaseEntity {
     @JoinColumn(name="activity_id")
 	private Activity activity;
 	
-	@ManyToOne
+	/*@ManyToOne
     @JoinColumn(name="data_source_type")
-	private DataSourceType cdDataSourceType;
+	private DataSourceType cdDataSourceType;*/
 
 	@ManyToOne
     @JoinColumn(name="measure_type_id")
@@ -44,6 +46,10 @@ public class VariationMeasureValue extends AbstractBaseEntity {
 	@Column(name="measure_value")
 	private Float measureValue;
 	
+	@Column(name="data_source_type")
+	@Type(type="eu.city4age.dashboard.api.persist.convert.IntArrayUserType") 
+	private int[] cdDataSourceType;
+	
 	@OneToMany
 	@JoinColumn(name="variation_measure_id")
 	private Set<NumericIndicatorValue> numericIndicatorValues = new HashSet<NumericIndicatorValue>(0);
@@ -51,7 +57,7 @@ public class VariationMeasureValue extends AbstractBaseEntity {
 	public VariationMeasureValue() {
 	}
 
-	public VariationMeasureValue(DataSourceType cdDataSourceType, DetectionVariable cdDetectionVariable,
+	public VariationMeasureValue(int[] cdDataSourceType, DetectionVariable cdDetectionVariable,
 			TimeInterval timeInterval, UserInRole userInRole) {
 		this.cdDataSourceType = cdDataSourceType;
 		this.cdDetectionVariable = cdDetectionVariable;
@@ -59,7 +65,7 @@ public class VariationMeasureValue extends AbstractBaseEntity {
 		this.userInRole = userInRole;
 	}
 
-	public VariationMeasureValue(Activity activity, DataSourceType cdDataSourceType,
+	public VariationMeasureValue(Activity activity, int[] cdDataSourceType,
 			DetectionVariable cdDetectionVariable, TimeInterval timeInterval, UserInRole userInRole,
 			Float measureValue, Set<NumericIndicatorValue> numericIndicatorValues) {
 		this.activity = activity;
@@ -79,11 +85,11 @@ public class VariationMeasureValue extends AbstractBaseEntity {
 		this.activity = activity;
 	}
 
-	public DataSourceType getCdDataSourceType() {
-		return this.cdDataSourceType;
+	public int[] getCdDataSourceType() {
+		return cdDataSourceType;
 	}
 
-	public void setCdDataSourceType(DataSourceType cdDataSourceType) {
+	public void setCdDataSourceType(int[] cdDataSourceType) {
 		this.cdDataSourceType = cdDataSourceType;
 	}
 

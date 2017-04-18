@@ -6,15 +6,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
@@ -28,9 +35,12 @@ import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = ApplicationTest.class)
+@SpringApplicationConfiguration(classes = ApplicationTest.class)
+@WebAppConfiguration
 @ActiveProfiles("test")
 public class AssessmentRepositoryTest {
+	
+	static protected Logger logger = LogManager.getLogger(AssessmentRepositoryTest.class);
 
 	@Autowired
 	private AssessmentRepository assessmentRepository;
@@ -61,6 +71,16 @@ public class AssessmentRepositoryTest {
 	@Rollback(true)
 	public void testFindForSelectedDataSet() throws Exception {
 
+		List<Long> gefIds = new ArrayList<Long>();
+		gefIds.add(1L);
+		gefIds.add(7L);
+
+
+		
+		System.out.println("1***Number of assessments in repository:"+assessmentRepository.findAll().size());
+
+		//data for assessment and other joined tables:
+		
 		UserInSystem uis1 = new UserInSystem();
 		uis1.setId(1L);
 		userInSystemRepository.save(uis1);
@@ -78,121 +98,314 @@ public class AssessmentRepositoryTest {
 		uir2.setId(2L);
 		uir2.setUserInSystem(uis2);
 		userInRoleRepository.save(uir2);
-
+		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setId(1L);
 		gef1.setGefValue(new BigDecimal("5"));
 		gef1.setUserInRole(uir1);
 		geriatricFactorRepository.save(gef1);
+		
+		GeriatricFactorValue gef2 = new GeriatricFactorValue();
+		gef2.setId(2L);
+		gef2.setGefValue(new BigDecimal("6"));
+		gef2.setUserInRole(uir2);
+		geriatricFactorRepository.save(gef2);
 
 		Role r1 = new Role();
 		r1.setId(1L);
 		roleRepository.save(r1);
 
-		Assessment aa1 = new Assessment();
-		aa1.setId(1L);
-		aa1.setUserInRole(uir1);
-		aa1.setGeriatricFactorValue(gef1);
-		aa1.getRoles().add(r1);
-		aa1.setDataValidity('Q');
-		aa1.setRiskStatus('A');
-		assessmentRepository.save(aa1);
 
 		AssessedGefValueSet ag1 = new AssessedGefValueSet();
 		ag1.setGefValueId(1);
 		ag1.setAssessmentId(1);
 		assessedGefValuesRepository.save(ag1);
+		
+		AssessedGefValueSet ag2 = new AssessedGefValueSet();
+		ag2.setGefValueId(2);
+		ag2.setAssessmentId(2);
+		assessedGefValuesRepository.save(ag2);
 
 		AssessmentAudienceRole ar1 = new AssessmentAudienceRole();
 		ar1.setAssessmentId(1);
 		ar1.setUserInRoleId(1);
 		ar1.setAssigned(new Timestamp(System.currentTimeMillis()));
 		audienceRolesRepository.save(ar1);
+		
+		AssessmentAudienceRole ar2 = new AssessmentAudienceRole();
+		ar2.setAssessmentId(2);
+		ar2.setUserInRoleId(2);
+		ar2.setAssigned(new Timestamp(System.currentTimeMillis()));
+		audienceRolesRepository.save(ar2);
+		
+		Role r2 = new Role();
+		r2.setId(2L);
+		roleRepository.save(r2);
+			
+		//data for second assessment and joined tables:
 
-		List<Long> gefIds = new ArrayList<Long>();
-		gefIds.add(1L);
-		gefIds.add(7L);
 
-		/*
-		 * inFilterParams.put("riskStatusWarning", false);
-		 * inFilterParams.put("riskStatusAlert", false);
-		 * inFilterParams.put("dataValidityQuestionable", false);
-		 * inFilterParams.put("dataValidityFaulty", true);
-		 * inFilterParams.put("assessmentComment", false);
-		 * inFilterParams.put("userInRoleId", 1L);
-		 * inFilterParams.put("orderByDateAsc", false);
-		 * inFilterParams.put("orderByDateDesc", false);
-		 * inFilterParams.put("orderByAuthorNameAsc", false);
-		 * inFilterParams.put("orderByAuthorNameDesc", false);
-		 * inFilterParams.put("orderByAuthorRoleAsc", false);
-		 * inFilterParams.put("orderByAuthorRoleDesc", false);
-		 */
+		Assessment aa1 = new Assessment();
+		aa1.setId(1L);
+		aa1.setUserInRole(uir1);
+		aa1.setGeriatricFactorValue(gef1);
+		aa1.getRoles().add(r1);
+		aa1.setDataValidity('F');//F,Q
+		aa1.setRiskStatus('W');//W,A
+		assessmentRepository.save(aa1);
+	
+		Assessment aa2 = new Assessment();
+		aa2.setId(2L);
+		aa2.setUserInRole(uir2);//
+		aa2.setGeriatricFactorValue(gef1);
+		aa2.getRoles().add(r2);
+		aa2.setDataValidity('F');//F,Q
+		aa2.setRiskStatus('W');//W,A
+		assessmentRepository.save(aa2);
 
-		/*
-		List<eu.city4age.dashboard.api.pojo.persist.Filter> filters = new ArrayList<eu.city4age.dashboard.api.pojo.persist.Filter>();
+		Assessment aa3 = new Assessment();
+		aa3.setId(3L);
+		aa3.setUserInRole(uir1);
+		aa3.setGeriatricFactorValue(gef1);
+		aa3.getRoles().add(r1);
+		aa3.setDataValidity('Q');//F,Q
+		aa3.setRiskStatus('W');//W,A
+		assessmentRepository.save(aa3);
+		
+		Assessment aa4 = new Assessment();
+		aa4.setId(4L);
+		aa4.setUserInRole(uir1);
+		aa4.setGeriatricFactorValue(gef1);
+		aa4.getRoles().add(r1);
+		aa4.setDataValidity('F');//F,Q
+		aa4.setRiskStatus('A');//W,A
+		assessmentRepository.save(aa4);
+		
+		Assessment aa5 = new Assessment();
+		aa5.setId(5L);
+		aa5.setUserInRole(uir1);
+		aa5.setGeriatricFactorValue(gef2);
+		aa5.getRoles().add(r1);
+		aa5.setDataValidity('F');//F,Q
+		aa5.setRiskStatus('W');//W,A
+		assessmentRepository.save(aa5);
+		
+		Assessment aa6 = new Assessment();
+		aa6.setGeriatricFactorValue(gef2);
+		aa6.setId(6L);
+		assessmentRepository.save(aa6);
+		
+		Assessment aa7 = new Assessment();
+		assessmentRepository.save(aa7);
+		
+		System.out.println("2***Number of assessments in repository:"+assessmentRepository.findAll().size());
+		
 
-		eu.city4age.dashboard.api.pojo.persist.Filter riskStatus = new eu.city4age.dashboard.api.pojo.persist.Filter();
-		riskStatus.setName("riskStatus");
-
-		riskStatus.getInParams().put("riskStatus", 'W');
-
-		eu.city4age.dashboard.api.pojo.persist.Filter dataValidity = new eu.city4age.dashboard.api.pojo.persist.Filter();
-		dataValidity.setName("dataValidity");
-
-		dataValidity.getInParams().put("dataValidity", 'F');
-
-		filters.add(riskStatus);
-		filters.add(dataValidity);*/
 		
 		
 		List<Filter> filters = new ArrayList<Filter>();
-
+		List<Object> inParams = new ArrayList<Object>();
+		
+		//riskStatus filter (W,A):
 		Filter riskStatus = new Filter();
 		riskStatus.setName("riskStatus");
-		List<Character> inParams = new ArrayList<Character>();
-
+		
+		inParams = new ArrayList<Object>();
 		inParams.add('W');
 		
 		riskStatus.getInParams().put("riskStatus", inParams);
 		filters.add(riskStatus);
-
-
+		
+		//dataValidity filter (F,Q)
 		Filter dataValidity = new Filter();
 		dataValidity.setName("dataValidity");
-		inParams = new ArrayList<Character>();
-
+		
+		inParams = new ArrayList<Object>();
 		inParams.add('F');
 
 		dataValidity.getInParams().put("dataValidity", inParams);
 		filters.add(dataValidity);
 		
-		Filter orderByDateDesc = new Filter();
-		orderByDateDesc.setName("orderByDateDesc");
-		filters.add(orderByDateDesc);		
+		//userInRoleId filter (1L):
+		Filter userInRoleId = new Filter();
+		userInRoleId.setName("userInRoleId");
+		
+		inParams = new ArrayList<Object>();
+		inParams.add(1L);
+		
+		userInRoleId.getInParams().put("userInRoleId", inParams);
+		filters.add(userInRoleId);
+		
+		
 
 		HashMap<String, Object> inQueryParams = new HashMap<String, Object>();
 		inQueryParams.put("geriatricFactorIds", gefIds);
 
-		/*
-		 * filter.setParameter("dataValidityFaulty", true);
-		 * filter.setParameter("riskStatusAlert", false);
-		 * filter.setParameter("riskStatusWarning", false);
-		 * filter.setParameter("dataValidityQuestionable", false);
-		 * filter.setParameter("assessmentComment", false);
-		 * filter.setParameter("orderByDateAsc", false);
-		 * filter.setParameter("orderByDateDesc", false);
-		 * filter.setParameter("orderByAuthorNameAsc", false);
-		 * filter.setParameter("orderByAuthorNameDesc", false);
-		 * filter.setParameter("orderByAuthorRoleAsc", false);
-		 * filter.setParameter("orderByAuthorRoleDesc", false);
-		 */
+		
+		Assert.assertEquals(7, assessmentRepository.findAll().size());
+		System.out.println("BEFORE***(BEFORE filters)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		
+		List<Filter> noFilters = new ArrayList<Filter>();
+		HashMap<String, Object> inQueryParams2 = new HashMap<String, Object>();
 
-		List<Assessment> list = assessmentRepository.doQueryWithFilter(filters, "findForSelectedDataSet",
+		List<Assessment> resultWithoutFilters = assessmentRepository.doQueryWithFilter(noFilters , "findForSelectedDataSet",
 				inQueryParams);
+		
+		List<Assessment> resultWithFilters = assessmentRepository.doQueryWithFilter(filters, "findForSelectedDataSet",
+				inQueryParams);
+		
+		
+		//filters are on:
+		Assert.assertNotNull(resultWithFilters);
+		Assert.assertNotNull(resultWithoutFilters);
+		Assert.assertEquals(2, assessmentRepository.findAll().size());
+		Assert.assertEquals(4,resultWithoutFilters.size());
+		Assert.assertEquals(1, resultWithFilters.size());
+	
+		
+		System.out.println("ENABLED***(filters ENABLED)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		System.out.println("ENABLED***For query without filter, FILTERS ENABLED number of assessments:"+resultWithoutFilters.size());
+		System.out.println("ENABLED***For query WITH FILTERS, FILTERS ENABLED number of assessments:"+resultWithFilters.size());
+		
+		//Disabling filters:
+		assessmentRepository.disableFilter("riskStatus");
+		
+		
+		//After riskStatus filter switched off:
+		Assert.assertNotNull(resultWithFilters);
+		Assert.assertNotNull(resultWithoutFilters);
+		Assert.assertEquals(3, assessmentRepository.findAll().size());
+		Assert.assertEquals(4,resultWithoutFilters.size());
+		Assert.assertEquals(1, resultWithFilters.size());
+		logger.info("end of testFindForSelectedDataSet");
 
-		Assert.assertNotNull(list);
-		Assert.assertEquals(0, list.size());
+		System.out.println("ONE DISABLED***(after riskStatus (1) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		System.out.println("ONE DISABLED***For query without filter, AFTER riskStatus (1) FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
+		System.out.println("ONE DISABLED***For query WITH FILTERS, AFTER riskStatus (1) FILTERS DISABLED number of assessments:"+resultWithFilters.size());
+		
+
+
+		assessmentRepository.disableFilter("dataValidity");
+		
+		//After dataValidity filter switched off:
+		Assert.assertNotNull(resultWithFilters);
+		Assert.assertNotNull(resultWithoutFilters);
+		Assert.assertEquals(4, assessmentRepository.findAll().size());
+		Assert.assertEquals(4,resultWithoutFilters.size());
+		Assert.assertEquals(1, resultWithFilters.size());
+		logger.info("end of testFindForSelectedDataSet");
+
+		System.out.println("TWO DISABLED***(after dataValidity (2) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		System.out.println("TWO DISABLED***For query without filter, AFTER dataValidity (2)FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
+		System.out.println("TWO DISABLED***For query WITH FILTERS, AFTER dataValidity (2)FILTERS DISABLED number of assessments:"+resultWithFilters.size());
+		
+
+		
+		assessmentRepository.disableFilter("userInRoleId");
+		
+		//After all filters switched off:
+		Assert.assertNotNull(resultWithFilters);
+		Assert.assertNotNull(resultWithoutFilters);
+		Assert.assertEquals(7, assessmentRepository.findAll().size());
+		Assert.assertEquals(4,resultWithoutFilters.size());
+		Assert.assertEquals(1, resultWithFilters.size());
+		logger.info("end of testFindForSelectedDataSet");
+		
+		System.out.println("ALL DISABLED***(after all filters disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		System.out.println("ALL DISABLED***For query without filter, AFTER FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
+		System.out.println("ALL DISABLED***For query WITH FILTERS, AFTER FILTERS DISABLED number of assessments:"+resultWithFilters.size());
+		
+		
+	
 
 	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFindForSelectedDataSet2() throws Exception {
+
+		/*UserInRole uir1 = new UserInRole();
+		uir1.setId(1L);
+		userInRoleRepository.save(uir1);
+		
+		UserInRole uir2 = new UserInRole();
+		uir2.setId(2L);
+		userInRoleRepository.save(uir2);
+		
+		GeriatricFactorValue gef1 = new GeriatricFactorValue();
+		gef1.setId(1L);
+		GeriatricFactorValue gef2 = new GeriatricFactorValue();
+		gef1.setId(7L);
+
+		
+		Assessment aa1 = new Assessment();
+		aa1.setId(1L);
+		aa1.setGeriatricFactorValue(gef1);
+		aa1.setUserInRole(uir1);
+		aa1.setDataValidity('F');
+		aa1.setRiskStatus('W');
+		assessmentRepository.save(aa1);
+	
+	
+		Assessment aa2 = new Assessment();
+		aa2.setId(2L);
+		aa2.setGeriatricFactorValue(gef1);
+		aa2.setUserInRole(uir1);
+		aa2.setDataValidity('F');
+		aa2.setRiskStatus('A');
+		assessmentRepository.save(aa2);
+		
+		Assessment aa3 = new Assessment();
+		aa3.setId(3L);
+		aa3.setGeriatricFactorValue(gef1);
+		aa3.setUserInRole(uir1);
+		aa3.setDataValidity('V');
+		aa3.setRiskStatus('W');
+		assessmentRepository.save(aa3);
+
+		Assessment aa4 = new Assessment();
+		aa4.setId(4L);
+		aa4.setGeriatricFactorValue(gef1);
+		aa4.setUserInRole(uir1);
+		aa4.setDataValidity('V');
+		aa4.setRiskStatus('A');
+		assessmentRepository.save(aa4);
+
+		Assessment aa5 = new Assessment();
+		aa5.setId(5L);
+		aa5.setGeriatricFactorValue(gef1);
+		aa5.setUserInRole(uir2);
+		aa5.setDataValidity('V');
+		aa5.setRiskStatus('W');
+		assessmentRepository.save(aa5);
+
+		Assessment aa6 = new Assessment();
+		aa6.setId(6L);
+		aa6.setGeriatricFactorValue(gef1);
+		aa6.setUserInRole(uir2);
+		aa6.setDataValidity('F');
+		aa6.setRiskStatus('W');
+		assessmentRepository.save(aa6);
+
+		Assessment aa7 = new Assessment();
+		aa7.setId(7L);
+		aa7.setGeriatricFactorValue(gef1);
+		aa7.setUserInRole(uir2);
+		aa7.setDataValidity('F');
+		aa7.setRiskStatus('A');
+		assessmentRepository.save(aa7);
+
+		Assessment aa8 = new Assessment();
+		aa8.setId(8L);
+		aa8.setGeriatricFactorValue(gef1);
+		aa8.setUserInRole(uir2);
+		aa8.setDataValidity('V');
+		aa8.setRiskStatus('A');
+		assessmentRepository.save(aa8);*/
+
+
+	}
+
 
 }

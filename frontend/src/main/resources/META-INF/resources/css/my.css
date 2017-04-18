@@ -88,7 +88,11 @@ Anagraph is a JS module (based on Oracle JET) for management of user-generated m
     background: #f1f1f1;
 }
 
-#polarChart1,#polarChart2,#detectionGEFGroup1FactorsLineChart{
+#polarChart1,#polarChart2{
+    display: none;
+}
+
+#detectionGEFGroup1FactorsLineChart{
     display: none;
 }
 

@@ -6,23 +6,17 @@ logging:
       hibernate: INFO
       springframework:
         web: INFO
-  config: classpath:log4j2.xml
+  config: classpath:log4j2.yml
 spring:
   main:
     web-environment: true
-    banner-mode: false
-  datasource:
-    url: jdbc:postgresql://109.111.225.84:5432/city4age?characterEncoding=utf8&useUnicode=true&currentSchema=city4age_sr #109.111.225.84, localhost
-    driver-class-name: org.postgresql.Driver
-    username: city4age_srv
-    password: cities4Ages
-    testWhileIdle: true
-    validationQuery: SELECT 1
+    banner-mode: 'off'
   data:
     jpa:
       repositories:
         enabled: true
   jpa:
+    generate-ddl: true
     database: POSTGRESQL
     properties:
       hibernate:

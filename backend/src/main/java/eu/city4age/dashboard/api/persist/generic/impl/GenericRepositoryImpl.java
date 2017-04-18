@@ -140,4 +140,8 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 
 	}
 
+	public void disableFilter(String name) {
+		entityManager.unwrap(Session.class).disableFilter(name);
+	}
+
 }

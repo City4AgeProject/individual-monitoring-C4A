@@ -44,16 +44,16 @@
 			"releasePath": "dnd-polyfill/dnd-polyfill-1.0.0.min"
 		},
 		"ojs": {
-			"devPath": "oj/v2.1.0/debug",
-			"releasePath": "oj/v2.1.0/min"
+			"devPath": "oj/v3.0.0/debug",
+			"releasePath": "oj/v3.0.0/min"
 		},
 		"ojL10n": {
-			"devPath": "oj/v2.1.0/ojL10n",
-			"releasePath": "oj/v2.1.0/ojL10n"
+			"devPath": "oj/v3.0.0/ojL10n",
+			"releasePath": "oj/v3.0.0/ojL10n"
 		},
 		"ojtranslations": {
-			"devPath": "oj/v2.1.0/resources",
-			"releasePath": "oj/v2.1.0/resources"
+			"devPath": "oj/v3.0.0/resources",
+			"releasePath": "oj/v3.0.0/resources"
 		},
 		"text": {
 			"bower": "true",

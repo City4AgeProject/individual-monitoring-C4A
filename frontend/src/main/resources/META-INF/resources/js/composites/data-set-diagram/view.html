@@ -1,11 +1,13 @@
-<div id="lineChart" data-bind="ojComponent: {
+<div id="testDiag2" data-bind="ojComponent: {
         component: 'ojChart', 
         type: 'line',
         selectionMode: 'multiple',
         selection: selectedItemsValue,
-        series: seriesValue, 
-        groups: groupsValue, 
-        selectionMode: 'multiple',
+        title: $props.title,
+        legend: $props.legend,
+        groups: $props.groups,
+        series: $props.series,
+        drilling: $props.drilling,
         animationOnDisplay: 'auto',
         animationOnDataChange: 'auto',
         hideAndShowBehavior: 'withoutRescale',
@@ -14,8 +16,8 @@
         hoverBehavior: 'dim',
         zoomAndScroll: 'live',
         highlightMatch: highlightValue,
-        title: {text: 'Geriatric Sub factor - ' + subFactorName(), halign: 'center'},
         yAxis:{step:0.5},
-        legend: {position: 'top'}                  
-      }" style="width:100%;height:400px;">
+        drill: chartDrill,
+		optionChange: chartOptionChange
+      }" style="width:100%;height:400px;display: block">
 </div>

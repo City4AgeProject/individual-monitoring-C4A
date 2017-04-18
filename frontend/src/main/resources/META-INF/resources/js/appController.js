@@ -76,7 +76,7 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                 };
                 // Close offcanvas on medium and larger screens
                 self.mdScreen.subscribe(function () {
-                    oj.OffcanvasUtils.close(self.drawerParams);
+                    //oj.OffcanvasUtils.close(self.drawerParams);
                 });
                 self.navDataSource = nav.dataSource;
                 // Called by nav drawer option change events so we can close drawer after selection

@@ -25,6 +25,7 @@ import javax.ws.rs.ext.ContextResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -128,14 +129,14 @@ public class AssessmentsService {
 	@Path("getLastFiveForDiagram/userInRoleId/{userInRoleId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.AssessmentView.class)
-	public Response getLastFiveForDiagram(@PathParam("userInRoleId") Long userInRoleId,
+	public Response getLastFiveForDiagram(@PathParam("userInRoleId") Long userInRoleId, @Param("parentDetectionVariableId") final Long parentDetectionVariableId,
 			@PathParam("intervalStart") String intervalStart, @PathParam("intervalEnd") String intervalEnd)
 			throws JsonProcessingException {
 
 		Timestamp intervalStartTimestamp = Timestamp.valueOf(intervalStart.concat(" 00:00:00"));
 		Timestamp intervalEndTimestamp = Timestamp.valueOf(intervalEnd.concat(" 00:00:00"));
 
-		List<LastFiveAssessment> lfa = timeIntervalRepository.findLastFiveForDiagram(userInRoleId,
+		List<LastFiveAssessment> lfa = timeIntervalRepository.getLastFiveForDiagram(userInRoleId, parentDetectionVariableId,
 				intervalStartTimestamp, intervalEndTimestamp);
 
 		OJDiagramLastFiveAssessment ojLfa = transformToOJ(lfa);

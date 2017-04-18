@@ -6,14 +6,21 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -35,9 +42,12 @@ import eu.city4age.dashboard.api.pojo.dto.LastFiveAssessment;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = ApplicationTest.class)
+@SpringApplicationConfiguration(classes = ApplicationTest.class)
+@WebAppConfiguration
 @ActiveProfiles("test")
 public class TimeIntervalRepositoryTest {
+	
+	static protected Logger logger = LogManager.getLogger(TimeIntervalRepositoryTest.class);
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
@@ -73,6 +83,8 @@ public class TimeIntervalRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void testFindByPeriod() {
+		
+		logger.info("start of testFindByPeriod");
 
 		TimeInterval ti1 = new TimeInterval();
 		ti1.setId(1L);
@@ -119,6 +131,8 @@ public class TimeIntervalRepositoryTest {
 		Assert.assertEquals(3, result.size());
 
 		Assert.assertEquals("2016-01-01 00:00:00.0", result.get(0).getStart());
+		
+		logger.info("end of testFindByPeriod");
 
 	}
 
@@ -126,6 +140,8 @@ public class TimeIntervalRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void testFindByUserInRoleId() throws Exception {
+		
+		logger.info("start of testFindByUserInRoleId");
 
 		UserInSystem uis = new UserInSystem();
 		uis.setId(1L);
@@ -240,6 +256,8 @@ public class TimeIntervalRepositoryTest {
 
 		Assert.assertEquals("Climbing stairs",
 				((GeriatricFactorValue) result.get(0)[1]).getGefTypeId().getDetectionVariableName());
+		
+		logger.info("end of testFindByUserInRoleId");
 
 	}
 
@@ -247,6 +265,8 @@ public class TimeIntervalRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void testFindLastFiveAssessmentsForDiagram() throws Exception {
+		
+		logger.info("start of testFindLastFiveAssessmentsForDiagram");
 
 		TypicalPeriod tp = new TypicalPeriod();
 		tp.setTypicalPeriod("MON");
@@ -306,8 +326,15 @@ public class TimeIntervalRepositoryTest {
 		dv1.setId(1L);
 		detectionVariableRepository.save(dv1);
 
+		//
+		UserInSystem uis = new UserInSystem();
+		uis.setId(1L);
+		userInSystemRepository.save(uis);
+		//
+		
 		UserInRole uir = new UserInRole();
 		uir.setId(1L);
+		uir.setUserInSystem(uis);
 		userInRoleRepository.save(uir);
 
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
@@ -315,16 +342,18 @@ public class TimeIntervalRepositoryTest {
 		gef1.setTimeInterval(ti1);
 		gef1.setCdDetectionVariable(dv1);
 		gef1.setUserInRole(uir);
-		//geriatricFactorRepository.save(gef1);
+		geriatricFactorRepository.save(gef1);
+
 
 		Assessment aa1 = new Assessment();
 		aa1.setGeriatricFactorValue(gef1);
 		aa1.setCreated(new Date());
-		aa1.setRiskStatus('V');
+		aa1.setRiskStatus('A');
 		aa1.setAssessmentComment("my comment");
+		aa1.setId(1L);
+		
 		assessmentRepository.save(aa1);
 		
-		gef1.getAssessments().add(aa1);
 		geriatricFactorRepository.save(gef1);
 		
 		AssessedGefValueSet ag1 = new AssessedGefValueSet();
@@ -334,32 +363,19 @@ public class TimeIntervalRepositoryTest {
 
 		assessmentRepository.flush();
 
-		List<Assessment> ass = assessmentRepository.findAll();
-		Assert.assertNotNull(ass);
-		Assert.assertEquals(2, ass.size());
-
-		List<AssessedGefValueSet> agvs = assessedGefValuesRepository.findAll();
-		Assert.assertNotNull(agvs);
-		Assert.assertEquals(3, agvs.size());
-		Assert.assertEquals(Integer.valueOf(1), agvs.get(0).getGefValueId());
-
-		List<GeriatricFactorValue> gefs = geriatricFactorRepository.findAll();
-		Assert.assertNotNull(gefs);
-		Assert.assertEquals(1, gefs.size());
-		Assert.assertEquals(Long.valueOf(1), gefs.get(0).getId());
-		Assert.assertEquals(Long.valueOf(1), gefs.get(0).getTimeInterval().getId());
-
 		Timestamp start = Timestamp.valueOf("2015-01-01 00:00:00");
 		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
 
-		List<LastFiveAssessment> list = timeIntervalRepository.findLastFiveForDiagram(1L, start, end);
+		List<LastFiveAssessment> list = timeIntervalRepository.getLastFiveForDiagram(1L, 1L, start, end); //added 1L for parentDetectionVariableId
 
 		Assert.assertNotNull(list);
-
-		Assert.assertEquals(8, list.size());
-		Assert.assertEquals(Long.valueOf(1), list.get(0).getTimeIntervalId());
 		
-		Assert.assertEquals("trt", list.get(0).getRiskStatus());
+		System.out.println(list.size()+"::WWW");
+		Assert.assertEquals(7, list.size());
+		Assert.assertEquals(Long.valueOf(1), list.get(0).getTimeIntervalId()); 
+
+		Assert.assertEquals(Character.valueOf('A'), list.get(0).getRiskStatus());
+		Assert.assertEquals("2016-01-01 00:00:00.0", list.get(0).getIntervalStart()); //ti
 
 		ObjectMapper objectMapper = new ObjectMapper();
 
@@ -372,6 +388,8 @@ public class TimeIntervalRepositoryTest {
 		String result = objectMapper.writerWithView(View.TimeIntervalView.class).writeValueAsString(list);
 
 		Assert.assertNotNull(result);
+		
+		logger.info("end of testFindLastFiveAssessmentsForDiagram");
 
 	}
 
@@ -379,6 +397,8 @@ public class TimeIntervalRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void testGetGroups() throws Exception {
+		
+		logger.info("start of testGetGroups");
 
 		TypicalPeriod tp = new TypicalPeriod();
 		tp.setTypicalPeriod("MON");
@@ -474,6 +494,8 @@ public class TimeIntervalRepositoryTest {
 		Assert.assertNotNull(result);
 
 		Assert.assertEquals(1, result.size());
+		
+		logger.info("end of testGetGroups");
 	}
 
 }
