@@ -104,10 +104,10 @@ html{
     display: inline;
 }
 /* Adds padding between logo and application name */
-html:not([dir="rtl"]) .demo-oracle-icon {
+html:not([dir="ltr"]) .demo-oracle-icon {
     padding-right: 4px;
 }
-html[dir="rtl"] .demo-oracle-icon {
+html[dir="ltr"] .demo-oracle-icon {
     padding-left: 4px;
 }
 
@@ -197,7 +197,7 @@ html[dir="rtl"] .demo-oracle-icon {
 }
 
 tr:nth-child(even){
-    background-color: #f2f2f2
+    background-color: #f2f2f2;
 }
 
 th {
