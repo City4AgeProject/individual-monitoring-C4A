@@ -5,7 +5,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
             function ListViewModel() {
                 var self = this;
                 self.data = ko.observableArray();
-
+                
                 $.getJSON(CARE_RECIPIENT_ALL).
                         then(function (users) {
                             $.each(users.itemList, function () {
