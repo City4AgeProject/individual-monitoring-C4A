@@ -4,7 +4,7 @@
 		<div
 			class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline">
 			<div class="oj-flex">
-				<div class="oj-flex-item" />
+                            <div class="oj-flex-item" ></div>
 				<div class="oj-flex-item"></div>
 				<div class="oj-flex-item">
 					<label for="username">User:</label>
@@ -22,19 +22,19 @@
 					<input type="password" id="password"
 						data-bind="ojComponent: {component: 'ojInputPassword', 
                                             value: passwordValue,required: true
-                            }" />
+                                }" />
 				</div>
-				<div class="oj-flex-item" />
+                                <div class="oj-flex-item" ></div>
 				<div class="oj-flex-item">
 					<button id="loginBtn" class="oj-button"
 						data-bind="click: loginUser, ojComponent: { component: 'ojButton', 
                                                     label: 'Login',
-                                                    chroming:'outlined'}" />
+                                                    chroming:'outlined'}" /></button>
 					<span>&nbsp;&nbsp;</span>
 					<button id="resetBtn" class="oj-button"
 						data-bind="click: resetForm, ojComponent: { component: 'ojButton', 
                                                     label: 'Reset',
-                                                    chroming:'outlined'}" />
+                                                    chroming:'outlined'}" /></button>
 				</div>
 			</div>
 		</div>

@@ -3,10 +3,10 @@
 }
 
 .Pre-frail{
-     color:red;   
- }
- 
- .frail-fit{
+    color:red;   
+}
+
+.frail-fit{
     color:green;   
 }
 
@@ -83,11 +83,7 @@
     background: #f1f1f1;
 }
 
-#polarChart1,#polarChart2{
-    display: none;
-}
-
-#detectionGEFGroup1FactorsLineChart{
+#polarChart1,#polarChart2,#detectionGEFGroup1FactorsLineChart{
     display: none;
 }
 
@@ -110,13 +106,13 @@
     text-align: center; 
     /*margin-top: 3%;*/
 }
- 
- 
- .formShow {
- 	position: absolute;
- 	z-index: 10;
- 	right: 25px;
- 	margin-top: 5px;
+
+
+.formShow {
+	position: absolute;
+	z-index: 10;
+	right: 25px;
+	margin-top: 5px;
 }
 
 

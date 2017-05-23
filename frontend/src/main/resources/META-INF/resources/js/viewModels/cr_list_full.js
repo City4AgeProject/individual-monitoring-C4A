@@ -97,5 +97,3 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
             return new ListViewModel();
 
         });
-
-
