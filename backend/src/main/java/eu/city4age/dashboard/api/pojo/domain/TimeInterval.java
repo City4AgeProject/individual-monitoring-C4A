@@ -19,18 +19,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import eu.city4age.dashboard.api.pojo.dto.LastFiveAssessment;
+import eu.city4age.dashboard.api.pojo.dto.Last5Assessment;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @SqlResultSetMapping(name = "lastFiveMapping", classes = {
-		@ConstructorResult(targetClass = LastFiveAssessment.class, columns = { @ColumnResult(name = "time_interval_id"),
+		@ConstructorResult(targetClass = Last5Assessment.class, columns = { @ColumnResult(name = "time_interval_id"),
 				@ColumnResult(name = "interval_start"), @ColumnResult(name = "gef_id"),
 				@ColumnResult(name = "gef_value"), @ColumnResult(name = "assessment_id"),
 				@ColumnResult(name = "assessment_comment"), @ColumnResult(name = "risk_status"),
 				@ColumnResult(name = "data_validity_status"), @ColumnResult(name = "created"),
 				@ColumnResult(name = "display_name") }) })
 //Need to check this querry why assessment properties were null
-@NamedNativeQuery(name = "TimeInterval.getLastFiveForDiagram", resultSetMapping = "lastFiveMapping", query = "SELECT DISTINCT ti.id AS time_interval_id, ti.interval_start, gfv.id AS gef_id, gfv.gef_value, aa.id AS assessment_id, aa.assessment_comment, aa.risk_status AS risk_status, aa.data_validity_status, aa.created AS created, uis.display_name FROM time_interval AS ti LEFT OUTER JOIN (geriatric_factor_value AS gfv LEFT OUTER JOIN (assessed_gef_value_set AS agvs INNER JOIN assessment AS aa ON agvs.assessment_id = aa.id) ON agvs.gef_value_id = gfv.id) ON gfv.time_interval_id=ti.id LEFT OUTER JOIN user_in_role AS uir ON uir.id = gfv.user_in_role_id LEFT OUTER JOIN user_in_system AS uis ON uis.id = uir.user_in_system_id WHERE ti.interval_start >= :intervalStart AND ti.interval_end <= :intervalEnd AND (aa.id IN (SELECT id FROM (SELECT DISTINCT a1.id,a1.created FROM assessment a1 INNER JOIN assessed_gef_value_set AS agvs1 ON agvs1.assessment_id = a1.id WHERE agvs1.gef_value_id = agvs.gef_value_id ORDER BY a1.created DESC FETCH FIRST 5 ROWS ONLY) t) OR aa.id IS NULL) AND (gfv.user_in_role_id = :userInRoleId OR gfv.id IS NULL) AND (gfv.gef_type_id IN (SELECT id FROM cd_detection_variable WHERE derived_detection_variable_id = :parentDetectionVariableId) OR gfv.gef_type_id IS NULL) ORDER BY ti.id")
+@NamedNativeQuery(name = "TimeInterval.getLastFiveForDiagram", resultSetMapping = "lastFiveMapping", query = "SELECT DISTINCT ti.id AS time_interval_id, ti.interval_start, gfv.id AS gef_id, gfv.gef_value, aa.id AS assessment_id, aa.assessment_comment, aa.risk_status AS risk_status, aa.data_validity_status, aa.created AS created, uis.display_name FROM time_interval AS ti LEFT OUTER JOIN (geriatric_factor_value AS gfv LEFT OUTER JOIN (assessed_gef_value_set AS agvs INNER JOIN assessment AS aa ON agvs.assessment_id = aa.id) ON agvs.gef_value_id = gfv.id) ON gfv.time_interval_id=ti.id LEFT OUTER JOIN user_in_role AS uir ON uir.id = gfv.user_in_role_id LEFT OUTER JOIN user_in_system AS uis ON uis.id = uir.user_in_system_id WHERE ti.interval_start >= :intervalStart AND ti.interval_end <= :intervalEnd AND (aa.id IN (SELECT id FROM (SELECT DISTINCT a1.id,a1.created FROM assessment a1 INNER JOIN assessed_gef_value_set AS agvs1 ON agvs1.assessment_id = a1.id WHERE agvs1.gef_value_id = agvs.gef_value_id ORDER BY a1.created DESC FETCH FIRST 5 ROWS ONLY) t) OR aa.id IS NULL) AND (gfv.user_in_role_id = :userInRoleId OR gfv.id IS NULL) AND (gfv.gef_type_id IN (SELECT id FROM cd_detection_variable WHERE derived_detection_variable_id = :parentDetectionVariableId) OR gfv.id IS NULL) ORDER BY ti.id")
 
 @Entity
 @Table(name = "time_interval")

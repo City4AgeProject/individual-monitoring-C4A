@@ -112,8 +112,9 @@ Assessment.produceFromOther = function(other) {
 };
 
 Assessment.prototype.formatDateAndTimeText = function() {
-    this.dateAndTimeText = new Date(this.dateAndTime).toLocaleDateString() 
-                            + ' ' + new Date(this.dateAndTime).toLocaleTimeString();
+	
+	this.dateAndTimeText = this.dateAndTime;
+
 };
 
 Assessment.prototype.formatValidityDataDescAndImage = function () {
@@ -327,5 +328,3 @@ Array.prototype.contains = function(obj) {
     }
     return false;
 }
-
-// Navigation parameters wrappers

@@ -37,15 +37,11 @@ Deployment on Glassfish instructions:
 4.	Start Glassfish 4.1.1:
 asadmin start-domain
 5. If you don't have, install now Apache Maven 3.3.9
-6.	Rebuild frontend module (run from project's 'frontend' dir): 
-mvn clean install
-7. For first deploy only (run from project's root dir):
-mvn clean install
-8.	Deploy application (run from project's root dir):
-mvn clean install --pl backend glassfish:deploy
+6. Deploy application (run from project's root dir):
+mvn clean install --pl deploy glassfish:deploy
 or, in case old version of app is already deployed on Glassfish 4.1.1:
-mvn clean install --pl backend glassfish:redeploy
-9.	Open in browser:
+mvn clean install --pl deploy glassfish:redeploy
+7. Open in browser:
 http://localhost:8080/C4A-dashboard/
 
 Running unit tests from Eclipse IDE:

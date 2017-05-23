@@ -34,6 +34,7 @@ import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ApplicationTest.class)
 @WebAppConfiguration

@@ -1,22 +1,17 @@
-/*
-Anagraph 
-Anagraph is a JS module (based on Oracle JET) for management of user-generated metadata on graphic/multimedia client controls and content via RESTful interface to the back end. 
-*/
-/* 
-    Created on : Nov 18, 2016, 11:14:30 AM
-    Author     : EMantziou
-*/
-
 .Frail{
     color:gray;   
 }
 
-.Frail-fit{
+.Pre-frail{
+     color:red;   
+ }
+ 
+ .frail-fit{
     color:green;   
 }
 
 
-.Pre-frail{
+.fre-frail{
     color:red;
 }
 
@@ -114,6 +109,14 @@ Anagraph is a JS module (based on Oracle JET) for management of user-generated m
     width: 100%;
     text-align: center; 
     /*margin-top: 3%;*/
+}
+ 
+ 
+ .formShow {
+ 	position: absolute;
+ 	z-index: 10;
+ 	right: 25px;
+ 	margin-top: 5px;
 }
 
 

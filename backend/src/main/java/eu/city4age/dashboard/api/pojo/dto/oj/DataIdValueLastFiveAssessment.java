@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import eu.city4age.dashboard.api.pojo.dto.LastFiveAssessment;
+import eu.city4age.dashboard.api.pojo.dto.Last5Assessment;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 
 public class DataIdValueLastFiveAssessment implements Serializable {
@@ -24,13 +24,13 @@ public class DataIdValueLastFiveAssessment implements Serializable {
 	private String value;
 	
 	@JsonView(View.TimeIntervalView.class)
-	private List<LastFiveAssessment> assessmentObjects = new ArrayList<LastFiveAssessment>();
+	private List<Last5Assessment> assessmentObjects = new ArrayList<Last5Assessment>();
 	
 
 	public DataIdValueLastFiveAssessment() {
 	}
 
-	public DataIdValueLastFiveAssessment(Long id, String value, List<LastFiveAssessment> assessmentObjects) {
+	public DataIdValueLastFiveAssessment(Long id, String value, List<Last5Assessment> assessmentObjects) {
 		this.id = id;
 		this.value = value;
 		this.assessmentObjects = assessmentObjects;
@@ -52,11 +52,11 @@ public class DataIdValueLastFiveAssessment implements Serializable {
 		this.value = value;
 	}
 
-	public List<LastFiveAssessment> getAssessmentObjects() {
+	public List<Last5Assessment> getAssessmentObjects() {
 		return assessmentObjects;
 	}
 
-	public void setAssessmentObjects(List<LastFiveAssessment> assessmentObjects) {
+	public void setAssessmentObjects(List<Last5Assessment> assessmentObjects) {
 		this.assessmentObjects = assessmentObjects;
 	}
 

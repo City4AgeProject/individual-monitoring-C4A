@@ -9,7 +9,7 @@ import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.Serie;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 
-public class OJDiagramLastFiveAssessment {
+public class OJDiagramLast5Assessment {
 
 	@JsonView(View.TimeIntervalView.class)
 	private Set<DataIdValue> groups = new HashSet<DataIdValue>();

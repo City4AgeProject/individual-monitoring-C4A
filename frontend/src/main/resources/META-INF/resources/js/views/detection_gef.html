@@ -155,8 +155,9 @@
 </div>
 
 
+<!-- 
 <div class="oj-flex-item">
-	<!-- <div class="oj-flex-item" id="detectionGEFGroup1FactorsLineChart"
+	<div class="oj-flex-item" id="detectionGEFGroup1FactorsLineChart"
 		data-bind="ojComponent: {
                     component: 'ojChart', 
                     type: 'line',
@@ -169,51 +170,50 @@
                     orientation: 'vertical',
                     hoverBehavior: 'dim',
                     drilling: 'on',
-                    drill: bGotoGESClick,
+                    drill: chartDrill3,
                     optionChange: chartOptionChange,
                     title: {text: ko.toJS(titleValue), halign: 'center'},
                     yAxis:{step:0.5},
                     legend: {position: 'top'}
                     }"
-		style="width: 100%; height: 400px;"></div> -->
-
+		style="width: 100%; height: 400px;"></div>
+-->
+<!-- 
 	<div class="oj-flex-item" id="detectionGEFGroup1FactorsLineChart"
 		style="width: 100%; height: 400px; display: none">
 		<data-set-diagram id="gefDiag" class="oj-flex-item"
 			series={{lineSeriesValue}} groups={{lineGroupsValue}}
 			title='{"text": "Is hardcoded(need to replace)", "halign": "center"}'
 			legend='{"position":"top"}' drilling='on' style="display: block"></data-set-diagram>
-	</div>
-	<div id="popupWrapper1">
-		<assessments-preview class="oj-flex-item"> </assessments-preview>
-	</div>
-</div>
+	</div>-->
+	<!-- <assessments-preview id="popupWrapper1" class="oj-flex-item"></assessments-preview>
+</div> -->
 <!-- end main graph panel -->
 <!-- add annotation window -->
-<div id="dialogWrapper1">
+<!-- <div id="dialogWrapper1">
 	<add-assessment class="oj-flex-item"> </add-assessment>
-</div>
+</div>-->
 <!-- end add annotation window -->
 
 
-
+<!--
 <div class="oj-flex-item">
-	<div class="oj-flex-item">
+	<div class="oj-flex-item">-->
 
 		<!-- tabs with annotation list and polar chart -->
-		<div id="tabs-container" class="oj-flex-item">
+		<!--<div id="tabs-container" class="oj-flex-item">
 			<div id="tabs"
 				data-bind="ojComponent:{component: 'ojTabs',
-	                                               edge: 'top'}">
+	                                               edge: 'top'}">-->
 				<!-- tab bar -->
-				<ul>
+				<!-- <ul>
 					<li><span>Annotations/assesments</span></li>
 					<li><span>Morphology</span></li>
-				</ul>
+				</ul>-->
 				<!-- tab contents -->
-				<div id="tabAnnotations">
+				<!--<div id="tabAnnotations"> -->
 					<!-- buttons for annotations -->
-					<div id='annotation-buttons-container'
+					<!--<div id='annotation-buttons-container'
 						style="border-bottom: 2px solid #cbcbcb;">
 						<div class="demo-flex-display oj-flex-items-pad ">
 							<div class="oj-flex-bar">
@@ -247,11 +247,11 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div>-->
 					<!-- end buttons for annotations -->
 
 					<!-- filter annotations -->
-					<div id="assessment-filter" class="oj-panel oj-panel-shadow-sm"
+					<!--<div id="assessment-filter" class="oj-panel oj-panel-shadow-sm"
 						style="display: none; border: none; background-color: #f6f6f6">
 						<div id="form-container3" style="width: 100%;">
 							<div class="demo-flex-display oj-flex-items-pad">
@@ -271,32 +271,32 @@
 	                                                        component: 'ojButtonset', 
 	                                                        chroming: 'outlined',
 	                                                        checked: checkedFilterRiskStatus
-	                                                    }">
+	                                                    }">-->
 													<!-- ko foreach: risksTags -->
-													<label data-bind="attr: {for: value}"><img
+													<!--<label data-bind="attr: {for: value}"><img
 														data-bind="attr: {src: imagePath, title: label}"
 														style="vertical-align: bottom; width: 20px; height: 20px;" /></label>
 													<input type="checkbox"
-														data-bind="attr: {value: value, id: value}" />
+														data-bind="attr: {value: value, id: value}" />-->
 													<!-- /ko -->
 
-												</div>
+												<!--</div>
 												<div class="oj-flex-item" id="checkFilterValidityData"
 													style="margin-top: 3px;"
 													data-bind="ojComponent: {
 	                                                        component: 'ojButtonset', 
 	                                                        chroming: 'outlined',
 	                                                        checked: checkedFilterValidityData
-	                                                    }">
+	                                                    }"> -->
 													<!-- ko foreach: dataValiditiesTags -->
-													<label data-bind="attr: {for: value}"><img
+													<!--<label data-bind="attr: {for: value}"><img
 														data-bind="attr: {src: imagePath, title: label}"
 														style="vertical-align: bottom; width: 20px; height: 20px;" /></label>
 													<input type="checkbox"
-														data-bind="attr: {value: value, id: value}" />
+														data-bind="attr: {value: value, id: value}" />-->
 													<!-- /ko -->
 
-												</div>
+												<!--</div>
 											</div>
 										</div>
 
@@ -355,21 +355,21 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div>-->
 					<!-- end filter annotations -->
 
 					<!-- view annotations -->
-					<assessments-list class="oj-flex-item"> </assessments-list>
+					<!--<assessments-list class="oj-flex-item"> </assessments-list>-->
 					<!-- end view annotations -->
 
-				</div>
+				<!--</div>
 
 				<div id="tabShowMorphology">
 					<div id="polarChart-container" class="oj-flex"
-						data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
+						data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">-->
 
 						<!-- polar chart -->
-						<div id="polarChart1"
+						<!-- <div id="polarChart1"
 							data-bind="ojComponent: {
 	                            component: 'ojChart', 
 	                            coordinateSystem: 'polar',
@@ -389,5 +389,12 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div>-->
+	
+		<anagraph-assessment-view id="detectionGEFGroup1FactorsLineChart"
+			care-recipient-id="{{careRecipientId}}"
+			parent-factor-id="{{parentFactorId}}"
+			series="{{lineSeriesValue}}" groups="{{lineGroupsValue}}"
+			title="{{titleObj}}" legend='{"position":"top"}'
+			drilling='on' style="display: none" />
 </div>

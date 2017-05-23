@@ -1,180 +1,174 @@
 package eu.city4age.dashboard.api.rest;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.jackson.JacksonFeature;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.pojo.domain.Assessment;
+import eu.city4age.dashboard.api.pojo.dto.AddAssessment;
 
 public class AssessmentServiceTest {
 
 	static protected Logger logger = LogManager.getLogger(AssessmentServiceTest.class);
 
+	static protected RestTemplate rest = new TestRestTemplate();
+
+	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
+
 	@Test
-	public void getDiagramDataTest() {
-		
-		logger.info("start of getDiagramDataTest");
-
+	public void getLastFiveForDiagramTest() throws Exception {
+			//parentDetectionVariableId/1 Da li treba da se izbaci u mojoj verziji nije bilo parentDetectionVariableId
 		try {
-
-			Client client = ClientBuilder.newClient().register(JacksonFeature.class);
-
-			WebTarget WebTarget = client.target("http://localhost:8080/C4A/rest/assessments/getDiagramData");
-
-			String input = "{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"crId\":1,\"dvParentId\":4}";
-
-			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
-					.post(Entity.entity(input, MediaType.APPLICATION_JSON_TYPE), Response.class);
-
-			if (response.getStatus() != 200) {
-
-				throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
-
+			String uri = "http://localhost:8080/C4A-dashboard/rest/assessment/getLastFiveForDiagram/userInRoleId/1/parentDetectionVariableId/1/intervalStart/2011-1-1/intervalEnd/2017-1-1";
+			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
+			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
+			if (!response.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
 			}
-
 			logger.info("Output from Server .... ");
-			String output = response.toString();
-			logger.info(output);
-
-			Object siftResult = response.readEntity(String.class);
-			logger.info("1: " + siftResult);
-
+			logger.info(response);
+			logger.info("1: " + response.getBody());
 		} catch (Exception e) {
-
 			e.printStackTrace();
 			Assert.fail();
-
 		}
-		
-		logger.info("end of getDiagramDataTest");
-
 	}
 
 	@Test
-	public void getLastFiveAssessmentsTest() {
-		
-		logger.info("start of getLastFiveAssessmentsTest");
+	public void getDiagramDataTest() throws Exception {
 
 		try {
-
-			Client client = ClientBuilder.newClient().register(JacksonFeature.class);
-
-			WebTarget WebTarget = client
-					.target("http://localhost:8080/C4A/rest/assessments/getLastFiveAssessmentsForDiagram");
-
-			String input = "{\"timestampStart\":\"2016-01-01 00:00:00\",\"timestampEnd\":\"2017-01-01 00:00:00\",\"crId\":1}";
-
-			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
-					.post(Entity.entity(input, MediaType.APPLICATION_JSON_TYPE), Response.class);
-
-			if (response.getStatus() != 200) {
-
-				throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
-
+			String uri = "http://localhost:8080/C4A-dashboard/rest/careRecipient/getDiagramData/careRecipientId/1/parentFactorId/2";
+			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
+			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
+			if (!response.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
 			}
-
 			logger.info("Output from Server .... ");
-			String output = response.toString();
-			logger.info(output);
-
-			Object siftResult = response.readEntity(String.class);
-			logger.info("2: " + siftResult);
-
+			logger.info(response);
+			logger.info("2: " + response.getBody());
 		} catch (Exception e) {
-
 			e.printStackTrace();
 			Assert.fail();
-
 		}
-		
-		logger.info("end of getLastFiveAssessmentsTest");
-
 	}
 
 	@Test
-	public void getAssessmentsForSelectedDataSetTest() {
-		
-		logger.info("start of getAssessmentsForSelectedDataSetTest");
+	public void findForSelectedDataSetTest() throws Exception {
+
+		try {
+			String uri = "http://localhost:8080/C4A-dashboard/rest/assessment/findForSelectedDataSet/geriatricFactorValueIds/38/35/39/36";
+			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
+			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
+			if (!response.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+			}
+			logger.info("Output from Server .... ");
+			logger.info(response);
+			logger.info("3: " + response.getBody());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+
+	
+	/*To Test deleteForSelectedDataSetTest() alone comment out everything in addForSelectedDataSetTest() from 
+	 the, and including, first try block to the, and including, second catch block and run it once than use
+	 last generated ASSESSMENT_ID in assessment table in deleteForSelectedDataSetTest() and run it
+	 */
+	@Ignore
+	@Test
+	public void deleteForSelectedDataSetTest() {
 
 		try {
 
-			Client client = ClientBuilder.newClient().register(JacksonFeature.class);
+			String uri = "http://localhost:8080/C4A-dashboard/rest/assessment/deleteAssessment/ASSESSMENT_ID";
+			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
+			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
+			logger.info(response.getStatusCode());
 
-			WebTarget WebTarget = client
-					.target("http://localhost:8080/C4A/rest/assessments/getAssessmentsForSelectedDataSet");
-
-			String input = "{\"geriatricFactorValueIds\":[1,2,3],\"status\":[true,false,true,false,true],\"authorRoleId\":1,\"orderBy\":\"AUTHOR_NAME_ASC\"}";
-
-			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
-					.post(Entity.entity(input, MediaType.APPLICATION_JSON_TYPE), Response.class);
-
-			if (response.getStatus() != 204) {
-
-				throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
-
+			if (!response.getStatusCode().toString().equals("200")) {
+				throw new RuntimeException("Failed : HTTP - error code : " + response.getStatusCode());
 			}
-
 			logger.info("Output from Server .... ");
-			String output = response.toString();
-			logger.info(output);
-
-			Object siftResult = response.readEntity(String.class);
-			logger.info("3: " + siftResult);
-
+			logger.info(response);
+			logger.info("5: " + response.getBody());
 		} catch (Exception e) {
-
 			e.printStackTrace();
 			Assert.fail();
-
 		}
-		
-		logger.info("end of getAssessmentsForSelectedDataSetTest");
-
 	}
 
 	@Test
-	public void addAssessmentsForSelectedDataSetTest() {
-		
-		logger.info("start of addAssessmentsForSelectedDataSetTest");
+	public void addForSelectedDataSetTest() throws Exception {
 
 		try {
-			Client client = ClientBuilder.newClient().register(JacksonFeature.class);
+			rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+			String uri = "http://localhost:8080/C4A-dashboard/rest/assessment/addForSelectedDataSet";
+			String input = "{\"authorId\":1,\"comment\":\"***FROM TEST DELETE***\",\"riskStatus\":\"A\",\"dataValidity\":\"QUESTIONABLE_DATA\",\"geriatricFactorValueIds\":[734,761],\"audienceIds\":[1,2]}";
 
-			WebTarget WebTarget = client
-					.target("http://localhost:8080/C4A/rest/assessments/addAssessmentsForSelectedDataSet");
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<String> entity = new HttpEntity<String>(input, headers);
 
-			String input = "{\"authorId\":1,\"comment\":\"My comment...\",\"riskStatus\":\"A\",\"dataValidity\":\"QUESTIONABLE_DATA\",\"geriatricFactorValueIds\":[1,2],\"audienceIds\":[1,2]}";
+			ResponseEntity<String> response = rest.exchange(uri, HttpMethod.POST, entity, String.class);
 
-			Response response = WebTarget.request(MediaType.APPLICATION_JSON_TYPE)
-					.post(Entity.entity(input, MediaType.APPLICATION_JSON_TYPE), Response.class);
+			if (!response.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed: Http error code:" + response.getStatusCode());
+			}
+			logger.info("Output from Server .... ");
+			logger.info(response);
+			logger.info("4: " + response.getBody());
 
-			if (response.getStatus() != 204) {
+			try {
+				logger.info("BODY::" + (response.getBody().getClass()));
 
-				throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+				String json = response.getBody();
+				@SuppressWarnings("deprecation")
+				AddAssessment data = objectMapper.reader(AddAssessment.class)
+						.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
+				logger.info("ID from json::" + data.getId());
+
+				String id = data.getId().toString();
+				uri = "http://localhost:8080/C4A-dashboard/rest/assessment/deleteAssessment/" + id;
+
+				HttpHeaders headers2 = rest.getForEntity(uri, String.class).getHeaders();
+				ResponseEntity<String> response2 = rest.getForEntity(uri, String.class);
+				if (!response.getStatusCode().equals(HttpStatus.OK)) {
+					throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+				}
+				logger.info("Output from Server .... ");
+				logger.info(response);
+				logger.info("5: " + response.getBody());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Assert.fail();
 			}
 
-			logger.info("Output from Server .... ");
-			String output = response.toString();
-			logger.info(output);
-
-			Object siftResult = response.readEntity(String.class);
-			logger.info("5: " + siftResult);
 		} catch (Exception e) {
-
 			e.printStackTrace();
 			Assert.fail();
-
 		}
-		logger.info("end of addAssessmentsForSelectedDataSetTest");
-
 	}
-
 }

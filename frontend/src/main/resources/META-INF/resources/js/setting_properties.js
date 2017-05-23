@@ -26,9 +26,8 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
         };
 
         self.setStorageData = function (username,userfullname) {
-            sessionStorage.setItem("username", username);
-//            sessionStorage.setItem("userfullname", "Dr Leonardo Mutti");
-              sessionStorage.setItem("userfullname", userfullname);
+        	sessionStorage.setItem("username", username);
+        	sessionStorage.setItem("userfullname", userfullname);
         };
         // Retrieve the JSON data string from browser session storage
         self.getStorageData = function () {

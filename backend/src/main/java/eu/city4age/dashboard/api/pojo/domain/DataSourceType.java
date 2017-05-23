@@ -29,9 +29,9 @@ public class DataSourceType implements Serializable {
 	@Column(name="data_source_type_description")
 	private String dataSourceTypeDescription;
 	
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	/*@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy="cdDataSourceType",fetch=FetchType.LAZY)
-	private Set<VariationMeasureValue> variationMeasureValues = new HashSet<VariationMeasureValue>(0);
+	private Set<VariationMeasureValue> variationMeasureValues = new HashSet<VariationMeasureValue>(0);*/
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy="cdDataSourceType",fetch=FetchType.LAZY)
@@ -49,11 +49,12 @@ public class DataSourceType implements Serializable {
 		this.dataSourceTypeDescription = dataSourceTypeDescription;
 	}
 
-	public DataSourceType(String dataSourceType, String dataSourceTypeDescription, Set<VariationMeasureValue> variationMeasureValues,
+	public DataSourceType(String dataSourceType, String dataSourceTypeDescription, 
+			//Set<VariationMeasureValue> variationMeasureValues,
 			Set<Activity> activities, Set<NumericIndicatorValue> numericIndicatorValues) {
 		this.dataSourceType = dataSourceType;
 		this.dataSourceTypeDescription = dataSourceTypeDescription;
-		this.variationMeasureValues = variationMeasureValues;
+		//this.variationMeasureValues = variationMeasureValues;
 		this.activities = activities;
 		this.numericIndicatorValues = numericIndicatorValues;
 	}
@@ -74,13 +75,13 @@ public class DataSourceType implements Serializable {
 		this.dataSourceTypeDescription = dataSourceTypeDescription;
 	}
 
-	public Set<VariationMeasureValue> getVariationMeasureValues() {
+	/*public Set<VariationMeasureValue> getVariationMeasureValues() {
 		return this.variationMeasureValues;
 	}
 
 	public void setVariationMeasureValues(Set<VariationMeasureValue> variationMeasureValues) {
 		this.variationMeasureValues = variationMeasureValues;
-	}
+	}*/
 
 	public Set<Activity> getActivities() {
 		return this.activities;

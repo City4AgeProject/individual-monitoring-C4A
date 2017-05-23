@@ -2,6 +2,8 @@ package eu.city4age.dashboard.api.persist;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +40,7 @@ import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
-import eu.city4age.dashboard.api.pojo.dto.LastFiveAssessment;
+import eu.city4age.dashboard.api.pojo.dto.Last5Assessment;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -322,8 +324,12 @@ public class TimeIntervalRepositoryTest {
 		ti7.setTypicalPeriod("MON");
 		timeIntervalRepository.save(ti7);
 
+		DetectionVariable ddv1 = new DetectionVariable();
+		ddv1.setId(4L);
+		
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
+		dv1.setDerivedDetectionVariable(ddv1);
 		detectionVariableRepository.save(dv1);
 
 		//
@@ -347,7 +353,12 @@ public class TimeIntervalRepositoryTest {
 
 		Assessment aa1 = new Assessment();
 		aa1.setGeriatricFactorValue(gef1);
-		aa1.setCreated(new Date());
+		
+		String inputString = "2017-05-22 12:00:00";
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		Date inputDate = dateFormat.parse(inputString);
+		aa1.setCreated(inputDate);
+		
 		aa1.setRiskStatus('A');
 		aa1.setAssessmentComment("my comment");
 		aa1.setId(1L);
@@ -366,7 +377,7 @@ public class TimeIntervalRepositoryTest {
 		Timestamp start = Timestamp.valueOf("2015-01-01 00:00:00");
 		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
 
-		List<LastFiveAssessment> list = timeIntervalRepository.getLastFiveForDiagram(1L, 1L, start, end); //added 1L for parentDetectionVariableId
+		List<Last5Assessment> list = timeIntervalRepository.getLastFiveForDiagram(1L, 4L, start, end); //added 1L for parentDetectionVariableId
 
 		Assert.assertNotNull(list);
 		
@@ -376,6 +387,8 @@ public class TimeIntervalRepositoryTest {
 
 		Assert.assertEquals(Character.valueOf('A'), list.get(0).getRiskStatus());
 		Assert.assertEquals("2016-01-01 00:00:00.0", list.get(0).getIntervalStart()); //ti
+		
+		Assert.assertEquals("2017-05-22 12:00:00", list.get(0).getDateAndTime());
 
 		ObjectMapper objectMapper = new ObjectMapper();
 

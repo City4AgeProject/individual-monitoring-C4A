@@ -2,6 +2,9 @@ package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +20,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.LocalDate;
-import org.joda.time.Years;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -216,10 +217,12 @@ public class CareRecipientService {
 
 				int age = 0;
 
+
 				if (users.getCrProfile() != null) {
-					LocalDate birthDate = new LocalDate(users.getCrProfile().getBirthDate());
-					Years age2 = Years.yearsBetween(birthDate, new LocalDate());
-					age = age2.getYears();
+					
+					LocalDate birthDate = users.getCrProfile().getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					age = (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
+					
 				}
 
 				// **************************************

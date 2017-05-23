@@ -1,5 +1,3 @@
-/* global OJ_ASSESSMENT_LAST_FIVE_FOR_INTERVAL, DataSet, Serie */
-
 define(['knockout', 'jquery', 'knockout-postbox','urls','entities'],
         function (ko, $) {
             

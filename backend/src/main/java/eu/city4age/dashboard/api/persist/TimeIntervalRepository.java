@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.persist.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
-import eu.city4age.dashboard.api.pojo.dto.LastFiveAssessment;
+import eu.city4age.dashboard.api.pojo.dto.Last5Assessment;
 
 @Repository(value = "timeIntervalRepository")
 @Transactional(readOnly = true)
@@ -23,7 +23,7 @@ public interface TimeIntervalRepository extends GenericRepository<TimeInterval, 
 	List<TimeInterval> getGroups(@Param("userId") final Long userId, @Param("gefType") final List<String> parentFactors);
 
 	@Query(nativeQuery = true)
-	List<LastFiveAssessment> getLastFiveForDiagram(@Param("userInRoleId") final Long userInRoleId, @Param("parentDetectionVariableId") final Long parentDetectionVariableId,
+	List<Last5Assessment> getLastFiveForDiagram(@Param("userInRoleId") final Long userInRoleId, @Param("parentDetectionVariableId") final Long parentDetectionVariableId,
 			@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);
 
 	@Query("SELECT ti, ti.geriatricFactorValue FROM TimeInterval ti LEFT JOIN ti.geriatricFactorValue AS geriatricFactorValue INNER JOIN geriatricFactorValue.cdDetectionVariable AS cdDetectionVariable WHERE geriatricFactorValue.userInRole.id = :userInRoleId AND cdDetectionVariable.derivedDetectionVariable.id = :parentId AND ti.intervalStart >= :start AND ti.intervalEnd <= :end")

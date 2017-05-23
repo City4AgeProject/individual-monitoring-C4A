@@ -223,7 +223,7 @@ public class Assessment implements Serializable {
 	@JsonView(View.AssessmentView.class)
 	public String getDateAndTime() {
 		if (this.created != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			return sdf.format(created);
 		}
 		return null;

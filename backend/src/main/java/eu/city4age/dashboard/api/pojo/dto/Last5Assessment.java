@@ -8,9 +8,9 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class LastFiveAssessment {
+public class Last5Assessment {
 
-	static protected Logger logger = LogManager.getLogger(LastFiveAssessment.class);
+	static protected Logger logger = LogManager.getLogger(Last5Assessment.class);
 
 	private Long timeIntervalId, gefId, id;
 
@@ -21,7 +21,7 @@ public class LastFiveAssessment {
 
 	private Float gefValue;
 
-	public LastFiveAssessment(BigInteger timeIntervalId, Object intervalStart, BigInteger gefId, BigDecimal gefValue,
+	public Last5Assessment(BigInteger timeIntervalId, Object intervalStart, BigInteger gefId, BigDecimal gefValue,
 			Object assessmentId, String comment, Character riskStatus, Character dataValidity, Date created,
 			String displayName) {
 
@@ -53,7 +53,7 @@ public class LastFiveAssessment {
 		}
 
 		if (created != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			this.dateAndTime = sdf.format(created);
 		}
 
@@ -62,6 +62,10 @@ public class LastFiveAssessment {
 		} else {
 			this.from = "No display name";
 		}
+	}
+	
+	public String toString() {
+		return gefId + " " + id + " " + comment;
 	}
 
 	public Long getTimeIntervalId() {

@@ -9,7 +9,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 $.getJSON(CARE_RECIPIENT_ALL).
                         then(function (users) {
                             $.each(users.itemList, function () {
-//                                console.log("userssss ", JSON.stringify(this));
+
                                 var frailStatus;
                                 if (this.frailtyStatus === null) {
                                     frailStatus = "pre-frail-fit";
@@ -36,15 +36,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
 
                 self.dataSource = new oj.ArrayTableDataSource(
-//                        data, {
+
                         self.data, {
                             idAttribute: "cr_id"
                         });
 
-                
                 self.menuItemSelect = function (event, ui) {
                     var currentRow = $('#table').ojTable('option', 'currentRow');
-//                    console.log("currentRow ", currentRow);
                     var selectData = self.data()[currentRow['rowIndex']];
                     console.log("id " + selectData['cr_id'] + " age " + selectData['age']);
 
@@ -53,9 +51,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             oj.Router.rootInstance.store(selectData['cr_id']);
                             oj.Router.sync();
 
-//                            sp.setUserId(selectData['cr_id']);
                             sp.setuserTextline(selectData['textline']);
-//                            sp.setuserAge(selectData['age']);
 
                             app.age(selectData['age']);
                             app.textline(selectData['textline']);
@@ -87,28 +83,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 };
 
                 self.viewGes = function () {
-
-                    //oj.Router.rootInstance.go("detection_ges");
                 	oj.Router.rootInstance.go("cr_list_full");
                 };
 
 
                 self.changeButtonIcon = function (isPaused, data, event) {
                     console.log("event ", event.type);
-
-//                    if(event.type === 'click'){
-//                          console.log("data ",data);
-//                    }
-
-//                    $("#menuButton").ojButton("option", "icons.start", "oj-fwk-icon-caret-s oj-fwk-icon");
-//
-////                    $( "#menuButton" ).ojButton( "widget" ).toggle( "oj-fwk-icon-caret-s oj-fwk-icon" )
-//                    if (isPaused) {
-//                        $("#menuButton").ojButton("widget").css("oj-fwk-icon-caret-s oj-fwk-icon");
-//                    } else {
-//                        $("#menuButton").ojButton("widget").css("oj-fwk-icon-caret-start oj-fwk-icon");
-//                    }
-
                 };
 
 

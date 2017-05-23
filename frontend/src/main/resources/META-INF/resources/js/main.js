@@ -26,12 +26,12 @@ requirejs.config({
     'proj4': 'libs/proj4js/dist/proj4',
     
     'entities': 'domain/entities',
-    'urls': 'domain/urls',
+    'urls': 'urls',
     
     'add-assessment': 'composites/add-assessment/loader',
-    'data-set-diagram': 'composites/data-set-diagram/loader',
     'assessments-list': 'composites/assessments-list/loader',
-    'assessments-preview': 'composites/assessments-preview/loader'
+    'assessments-preview': 'composites/assessments-preview/loader',
+    'anagraph-assessment-view': 'composites/anagraph-assessment-view/loader'
   }
   //endinjector
   ,

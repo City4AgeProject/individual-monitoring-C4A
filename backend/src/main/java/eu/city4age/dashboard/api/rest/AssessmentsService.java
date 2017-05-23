@@ -25,7 +25,6 @@ import javax.ws.rs.ext.ContextResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -34,19 +33,20 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.persist.AssessedGefValuesRepository;
 import eu.city4age.dashboard.api.persist.AssessmentRepository;
+import eu.city4age.dashboard.api.persist.AudienceRolesRepository;
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
 import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
-import eu.city4age.dashboard.api.persist.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.DiagramData;
-import eu.city4age.dashboard.api.pojo.dto.LastFiveAssessment;
-import eu.city4age.dashboard.api.pojo.dto.OJDiagramLastFiveAssessment;
+import eu.city4age.dashboard.api.pojo.dto.Last5Assessment;
+import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValueLastFiveAssessment;
 import eu.city4age.dashboard.api.pojo.dto.oj.Serie;
@@ -76,10 +76,10 @@ public class AssessmentsService {
 	private UserInRoleRepository userInRoleRepository;
 
 	@Autowired
-	private GenericRepository<AssessmentAudienceRole, Long> audienceRolesRepository;
+	private AudienceRolesRepository audienceRolesRepository;
 
 	@Autowired
-	private GenericRepository<AssessedGefValueSet, Long> assessedGefValuesRepository;
+	private AssessedGefValuesRepository assessedGefValuesRepository;
 
 	@Context
 	private ContextResolver<ObjectMapper> mapperResolver;
@@ -126,20 +126,26 @@ public class AssessmentsService {
 	}
 
 	@GET
-	@Path("getLastFiveForDiagram/userInRoleId/{userInRoleId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
+	@Path("getLastFiveForDiagram/userInRoleId/{userInRoleId}/parentDetectionVariableId/{parentDetectionVariableId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.AssessmentView.class)
-	public Response getLastFiveForDiagram(@PathParam("userInRoleId") Long userInRoleId, @Param("parentDetectionVariableId") final Long parentDetectionVariableId,
+	public Response getLast5ForDiagram(@PathParam("userInRoleId") Long userInRoleId, @PathParam("parentDetectionVariableId") Long parentDetectionVariableId,
 			@PathParam("intervalStart") String intervalStart, @PathParam("intervalEnd") String intervalEnd)
 			throws JsonProcessingException {
 
 		Timestamp intervalStartTimestamp = Timestamp.valueOf(intervalStart.concat(" 00:00:00"));
 		Timestamp intervalEndTimestamp = Timestamp.valueOf(intervalEnd.concat(" 00:00:00"));
 
-		List<LastFiveAssessment> lfa = timeIntervalRepository.getLastFiveForDiagram(userInRoleId, parentDetectionVariableId,
-				intervalStartTimestamp, intervalEndTimestamp);
+		List<Last5Assessment> l5a = new ArrayList<Last5Assessment>();
 
-		OJDiagramLastFiveAssessment ojLfa = transformToOJ(lfa);
+		try {	
+			l5a = timeIntervalRepository.getLastFiveForDiagram(userInRoleId, parentDetectionVariableId,
+					intervalStartTimestamp, intervalEndTimestamp);
+		} catch (Exception e) {
+			logger.info("getLastFiveForDiagram REST service - query exception: ", e);
+		}
+
+		OJDiagramLast5Assessment ojLfa = transformToOJ(l5a);
 
 		return Response.ok(objectMapper.writeValueAsString(ojLfa)).build();
 	}
@@ -297,6 +303,24 @@ public class AssessmentsService {
 		return Response.ok(objectMapper.writeValueAsString(assessment)).build();
 	}
 
+	@GET
+	@Path("deleteAssessment/{assessmentId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteAssessment(@PathParam("assessmentId") Long assessmentId) throws JsonProcessingException {
+
+		Assessment assessment = assessmentRepository.findOne(assessmentId);
+		List<AssessmentAudienceRole> aar = audienceRolesRepository.findByAssessmentId(assessmentId.intValue());
+		List<AssessedGefValueSet> agvs = assessedGefValuesRepository.findByAssessmentId(assessmentId.intValue());
+
+		audienceRolesRepository.deleteInBatch(aar);
+		audienceRolesRepository.flush();
+		assessedGefValuesRepository.deleteInBatch(agvs);
+		assessedGefValuesRepository.flush();
+
+		assessmentRepository.delete(assessment);
+		return Response.ok("Deleted").build();
+	}
+
 	private List<String> createMonthLabels(List<TimeInterval> months) {
 		List<String> monthLabels = new ArrayList<String>();
 
@@ -306,11 +330,11 @@ public class AssessmentsService {
 		return monthLabels;
 	}
 
-	private OJDiagramLastFiveAssessment transformToOJ(List<LastFiveAssessment> lfas) {
+	private OJDiagramLast5Assessment transformToOJ(List<Last5Assessment> lfas) {
 
-		OJDiagramLastFiveAssessment ojLfa = new OJDiagramLastFiveAssessment();
+		OJDiagramLast5Assessment ojLfa = new OJDiagramLast5Assessment();
 
-		for (LastFiveAssessment lfa : lfas) {
+		for (Last5Assessment lfa : lfas) {
 			ojLfa.getGroups().add(new DataIdValue(lfa.getTimeIntervalId(), lfa.getIntervalStart()));
 		}
 
@@ -334,7 +358,7 @@ public class AssessmentsService {
 							item.setValue(lfas.get(i).getGefValue().toString());
 							item.getAssessmentObjects().add(lfas.get(i));
 
-							for (LastFiveAssessment lfa : lfas) {
+							for (Last5Assessment lfa : lfas) {
 								if (lfa.getId() != null && lfa.getTimeIntervalId().equals(group.getId())
 										&& lfas.get(i).getGefValue().equals(lfa.getGefValue())
 										&& !lfas.get(i).getId().equals(lfa.getId())) {

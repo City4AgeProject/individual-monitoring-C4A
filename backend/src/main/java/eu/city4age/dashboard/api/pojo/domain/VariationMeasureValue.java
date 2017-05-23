@@ -11,8 +11,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Type;
-
 @Entity
 @Table(name="variation_measure_value")
 public class VariationMeasureValue extends AbstractBaseEntity {
@@ -46,9 +44,9 @@ public class VariationMeasureValue extends AbstractBaseEntity {
 	@Column(name="measure_value")
 	private Float measureValue;
 	
-	@Column(name="data_source_type")
+	/*@Column(name="data_source_type")
 	@Type(type="eu.city4age.dashboard.api.persist.convert.IntArrayUserType") 
-	private int[] cdDataSourceType;
+	private int[] cdDataSourceType;*/
 	
 	@OneToMany
 	@JoinColumn(name="variation_measure_id")
@@ -57,19 +55,20 @@ public class VariationMeasureValue extends AbstractBaseEntity {
 	public VariationMeasureValue() {
 	}
 
-	public VariationMeasureValue(int[] cdDataSourceType, DetectionVariable cdDetectionVariable,
+	public VariationMeasureValue(//int[] cdDataSourceType, 
+			DetectionVariable cdDetectionVariable,
 			TimeInterval timeInterval, UserInRole userInRole) {
-		this.cdDataSourceType = cdDataSourceType;
+		//this.cdDataSourceType = cdDataSourceType;
 		this.cdDetectionVariable = cdDetectionVariable;
 		this.timeInterval = timeInterval;
 		this.userInRole = userInRole;
 	}
 
-	public VariationMeasureValue(Activity activity, int[] cdDataSourceType,
+	public VariationMeasureValue(Activity activity, //int[] cdDataSourceType,
 			DetectionVariable cdDetectionVariable, TimeInterval timeInterval, UserInRole userInRole,
 			Float measureValue, Set<NumericIndicatorValue> numericIndicatorValues) {
 		this.activity = activity;
-		this.cdDataSourceType = cdDataSourceType;
+		//this.cdDataSourceType = cdDataSourceType;
 		this.cdDetectionVariable = cdDetectionVariable;
 		this.timeInterval = timeInterval;
 		this.userInRole = userInRole;
@@ -85,13 +84,13 @@ public class VariationMeasureValue extends AbstractBaseEntity {
 		this.activity = activity;
 	}
 
-	public int[] getCdDataSourceType() {
+	/*public int[] getCdDataSourceType() {
 		return cdDataSourceType;
 	}
 
 	public void setCdDataSourceType(int[] cdDataSourceType) {
 		this.cdDataSourceType = cdDataSourceType;
-	}
+	}*/
 
 	public DetectionVariable getCdDetectionVariable() {
 		return this.cdDetectionVariable;

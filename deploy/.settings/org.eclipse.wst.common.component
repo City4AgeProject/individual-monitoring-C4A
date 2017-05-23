@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="C4A-dashboard">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/Users/milos.holclajtner/Documents/GitHub/anagraph/backend/src/main/java"/>
+        <property name="context-root" value="C4A-dashboard"/>
+        <property name="java-output-path" value="/C4A-deploy/target/classes"/>
+    </wb-module>
+</project-modules>

@@ -1,5 +1,3 @@
-/* global CODEBOOK_SELECT_ALL_RISKS, CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER, ASSESSMENTS_ADD_FOR_DATA_POINTS */
-
 define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
         function (ko, $) {
             
@@ -41,11 +39,8 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 });
 
                 var postAssessmentCallback = function (data) {
-                    console.log(data);
                     $('#dialog1').ojDialog('close');
-                    console.log("before calling refreshAssessmentsCached");
                     ko.postbox.publish("refreshAssessmentsCached");
-                    console.log("after calling refreshAssessmentsCached");
                 };
 
                 parseRisks = function (response) {
@@ -130,6 +125,28 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 self.attached  = function(context) {
                     loadRoles();
                     loadRisks();
+                };
+
+                ko.postbox.subscribe("clickShowPopupAddAssessmentCallback", function() {
+                    ko.postbox.publish("setClickShowPopupAddAssessmentCallback", self.clickShowPopupAddAssessment);
+                });
+
+                // Show dialog for adding new assessment 
+                self.clickShowPopupAddAssessment = function (data, event) {
+                 var docWidth = $(document).width() ;
+                 var docHeight = $(document).height() ;
+
+                    ko.postbox.publish("resetAddAssessment");
+                   
+                    $('#dialog1').ojDialog();
+                    $('#dialog1').ojDialog('open');
+                    
+                    //position dialog and screen
+                    $("#dialog1").ojDialog('widget').css('top', String(document.body.scrollTop+screen.height/8)+'px');
+                    $("#dialog1").ojDialog('widget').css('left', String((docWidth-$("#dialog1").width())/2)+'px');
+                    window.scrollTo();
+
+                    return true;
                 };
                 
             };

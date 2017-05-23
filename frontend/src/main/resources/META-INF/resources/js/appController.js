@@ -51,8 +51,6 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                 self.router.configure({
                     'login': {label: 'Login', isDefault: true},
                     'cr_list_full': {label: 'Care Recipient'},
-//        'people': {label: 'People'},
-//        'library': {label: 'Library'},
                     'detection_ges': {label: 'Detection GES'},
                     'detection_gef': {label: 'Detection GEF'}
                 });
@@ -89,13 +87,9 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                 // Header
                 // Application Name used in Branding Area
                 self.appName = ko.observable("C4A-dashboard");
-                // User Info used in Global Navigation area
-//                 self.userLogin = ko.observable("Dr Leonardo Mutti");
-
                 self.userLogin = ko.observable("");
                 if (sp.noData()) {
                     console.log(" user is logged in");
-//                    oj.Router.rootInstance.go("cr_list_full");
                     var userfullname = sessionStorage.getItem("userfullname");
                     self.userLogin(userfullname);
                 } else {
@@ -109,8 +103,6 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                 self.menuItemSelect = function (event, ui) {
                     switch (ui.item.attr("id")) {
                         case "out":
-//                            $("#aboutDialog").ojDialog("open");
-
                             sessionStorage.removeItem("userfullname");
                             sessionStorage.removeItem("username");
                             $('.user-menu').css({display: 'none'});
