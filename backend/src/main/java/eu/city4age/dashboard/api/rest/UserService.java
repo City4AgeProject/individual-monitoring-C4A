@@ -17,6 +17,10 @@ import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.C4ALoginResponse;
 
+/**
+ * @author EMantziou
+ *
+ */
 @Transactional("transactionManager")
 @Path(UserService.PATH)
 public class UserService {
@@ -28,6 +32,12 @@ public class UserService {
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
 
+	/**
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws IOException
+	 */
 	@Transactional("transactionManager")
 	@GET
 	@Path("login/username/{username}/password/{password}")

@@ -28,6 +28,10 @@ import eu.city4age.dashboard.api.pojo.domain.RiskStatus;
 import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.Stakeholder;
 
+/**
+ * @author milos.holclajtner
+ *
+ */
 @Transactional("transactionManager")
 @Path(CodebookService.PATH)
 public class CodebookService {
@@ -50,6 +54,10 @@ public class CodebookService {
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
+	/**
+	 * @return
+	 * @throws Exception
+	 */
 	@GET
 	@Path("getAllRiskStatus")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -60,6 +68,10 @@ public class CodebookService {
 		return Response.ok(objectMapper.writeValueAsString(riskStatus)).build();
 	}
 
+	/**
+	 * @return
+	 * @throws Exception
+	 */
 	@GET
 	@Path("getAllStockholders")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -70,6 +82,11 @@ public class CodebookService {
 		return Response.ok(objectMapper.writeValueAsString(stakeholders)).build();
 	}
 
+	/**
+	 * @param stakeholderAbbr
+	 * @return
+	 * @throws JsonProcessingException
+	 */
 	@GET
 	@Path("getAllRolesForStakeholderAbbr/{stakeholderAbbr}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -80,6 +97,11 @@ public class CodebookService {
 		return Response.ok(objectMapper.writeValueAsString(roles)).build();
 	}
 
+	/**
+	 * @param tableName
+	 * @return
+	 * @throws JsonProcessingException
+	 */
 	@GET
 	@Path("selectTable/{tableName}")
 	@Produces(MediaType.APPLICATION_JSON)

@@ -19,10 +19,6 @@ function (oj, ko, $, sp, params) {
         var PRE_FRAIL_SERIES_NAME = 'Pre-Frail';
         var FRAIL_SERIES_NAME = 'Frail';
         var FIT_SERIES_NAME = 'Fit';
-//                var OVERALL_SERIES_NAME = 'Overall';
-//                var GROUP1_SERIES_NAME = 'Behavioural';
-//                var GROUP2_SERIES_NAME = 'Contextual';
-
 
         function initCRData() {
             self.userAge = sp.userAge;
@@ -45,14 +41,11 @@ function (oj, ko, $, sp, params) {
             clientX = e.clientX;
             clientY = e.clientY;
             offsetTop = e.offsetX;
-            offsetLeft = e.offsetY;
-            //console.log(clientX);
-            //console.log(e);                   
+            offsetLeft = e.offsetY;                   
         });
         $(document).on("mouseup touchend", function (e) {
             clientX = e.clientX;
             clientY = e.clientY;
-            //console.log(clientX);
         });
         /* End: tracking mouse position when do mouseover and mouseup/touchend event */
 
@@ -93,38 +86,15 @@ function (oj, ko, $, sp, params) {
         self.dataPointsMarkedIds = ko.observableArray();
         
         self.polarGridShapeValue = ko.observable('polygon');
-        self.polarChartSeriesValue = ko.observableArray(lineSeriesPolar);
-        self.polarChartGroupsValue = ko.observableArray(lineGroupsPolar);
+        self.polarChartSeriesValue = ko.observableArray();
+        self.polarChartGroupsValue = ko.observableArray();
         
-        /* polar chart - uradjen za prvu grupu i to za mesece M1, M2 i M5 */
-        var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
-         var series = [{name: "Walking", items: [3.0, 1.5, 1.0, 2.2, 1.8, 3.1, 3.0, 3.6, 2.0, 2.5, 1.5, 3.8, 4.4]},
-           {name: "Climbing stairs", items: [3.0, 4.2, 2.8, 2.2, 3.3, 2.8, 2.8, 1.9, 2.5, 3.4, 4.1, 2.7, 2.3]},
-           {name: "Still/Moving", items: [3.0, 5.0, 3.7, 4.6, 4.5, 5.0, 4.8, 4.4, 3.9, 3.9, 5.0, 5.0, 5.0]},
-           {name: "Moving across rooms", items: [3.0, 3.3, 3.8, 5.0, 4.5, 3.9, 3.7, 3.5, 4.1, 4.0, 3.6, 5.0, 4.5]},
-           {name: "Gait balance", items: [3.0, 2.8, 2.8, 3.2, 2.9, 3.3, 2.7, 2.5, 3.0, 1.9, 2.3, 1.8, 2.6]},
-           {name: "Alerts", color: '#e83d17', source: "images/alert.png", items: [null, 1.5, 1.0, null, null, null, null, null, null, null, 1.5, null, null], lineType: 'none', markerDisplayed: 'on', markerSize: 20},
-           {name: "Warnings", color: '#ffff66', source: "images/warning-icon.png", items: [null, null, null, null, 1.8, null, null, 1.9, null, 1.9, null, 1.8, null], lineType: 'none', markerDisplayed: 'on', markerSize: 20},
-           {name: "Comments", color: '#ebebeb', source: "images/comment-gray.png", items: [null, null, 2.8, null, null, null, null, null, null, null, null, 2.7, null], lineType: 'none', markerDisplayed: 'on', markerSize: 20}];
-        var lineSeriesPolar = [{name: groups[1], items: [series[0].items[1], series[1].items[1], series[2].items[1], series[3].items[1], series[4].items[1]], color: '#ED6647'},
-            {name: groups[2], items: [series[0].items[2], series[1].items[2], series[2].items[2], series[3].items[2], series[4].items[2]], color: '#8561C8'},
-            {name: groups[5], items: [series[0].items[5], series[1].items[5], series[2].items[5], series[3].items[5], series[4].items[5]], color: '#6DDBDB'}];
-        var series1 = [{name: "Walking", items: [3.0, 1.5, 1.0, 2.2, 1.8, 3.1, 3.0, 3.6, 2.0, 2.5, 1.5, 3.8, 4.4]},
-            {name: "Climbing stairs", items: [3.0, 4.2, 2.8, 2.2, 3.3, 2.8, 2.8, 1.9, 2.5, 3.4, 4.1, 2.7, 2.3]},
-            {name: "Still/Moving", items: [3.0, 5.0, 3.7, 4.6, 4.5, 5.0, 4.8, 4.4, 3.9, 3.9, 5.0, 5.0, 5.0]},
-            {name: "Moving across rooms", items: [3.0, 3.3, 3.8, 5.0, 4.5, 3.9, 3.7, 3.5, 4.1, 4.0, 3.6, 5.0, 4.5]},
-            {name: "Gait balance", items: [3.0, 2.8, 2.8, 3.2, 2.9, 3.3, 2.7, 2.5, 3.0, 1.9, 2.3, 1.8, 2.6]}];
-        var lineGroupsPolar = series1; //grupe su nazivi serija linijskog dijagrama bez alerta
-        self.polarChartSeriesValue = ko.observableArray(lineSeriesPolar);
-        self.polarChartGroupsValue = ko.observableArray(lineGroupsPolar);
+        self.polarChartSeriesValue = ko.observableArray();
+        self.polarChartGroupsValue = ko.observableArray();
         
 		self.filterList = function() {
             filterAssessments(self.queryParams, self.checkedFilterValidityData);
 	    };
-
-        
-        /*self.seriesVal1 = ko.observableArray();
-        self.groupsVal1 = ko.observableArray();	*/
 
         function createItems(id, value, gefTypeId) {
             return {id: id, value: value, gefTypeId: gefTypeId};
@@ -293,7 +263,7 @@ function (oj, ko, $, sp, params) {
             self.lineGroupsValue = [];
             
             loadCdDetectionVariables();
-            loadRadarData();
+            loadCRData();
             loadGefData();
           };
 
@@ -333,7 +303,7 @@ function (oj, ko, $, sp, params) {
             var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
             self.parentFactorId = selectedDetectionVariable.id;
             loadGefData();
-            loadRadarData();
+            loadCRData();
         };
 
         self.bGotoGESClick = function() {
@@ -342,10 +312,10 @@ function (oj, ko, $, sp, params) {
             oj.Router.rootInstance.go('detection_ges');
         };
 
-        function loadRadarData() {
+        function loadCRData() {
             $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/OVL/GFG")
-                .then(function (radarData) {
-                    $.each(radarData.itemList, function (i, list) {
+                .then(function (data) {
+                    $.each(data.itemList, function (i, list) {
                         var nodes = [];
                         var gtId = list.gefTypeId;
                         $.each(list.items[0].itemList, function (j, itemList) {
@@ -358,8 +328,22 @@ function (oj, ko, $, sp, params) {
                             lineWidth: 3.5
                         });
                     });
-                    if(radarData && radarData.itemList && radarData.itemList.length>0)
-                        $.each(radarData.itemList[0].items[0].dateList, function (j, dateItem) {
+                    $.each(data.frailtyStatus.series, function (i, obj) {
+                    	switch(i) {
+                        case 0:
+                        	self.seriesVal.push({name: PRE_FRAIL_SERIES_NAME, items: obj.items, color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
+                            break;
+                        case 1:
+                        	self.seriesVal.push({name: FRAIL_SERIES_NAME, items: obj.items, color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
+                            break;
+                        case 2:
+                        	self.seriesVal.push({name: FIT_SERIES_NAME, items: obj.items, color: '#008c34', lineWidth: 10, selectionMode: 'none'});
+                            break;
+                        default:
+                    	}
+                    });
+                    if(data && data.itemList && data.itemList.length>0)
+                        $.each(data.itemList[0].items[0].dateList, function (j, dateItem) {
                             self.groupsVal.push(dateItem);
                         });
                     
@@ -374,9 +358,6 @@ function (oj, ko, $, sp, params) {
                             }
                     });
                     
-                    self.seriesVal.push({name: FIT_SERIES_NAME, items: [0.1, 0.1, null, null, null, null, null, null, null, null, null, null], color: '#008c34', lineWidth: 10, selectionMode: 'none'});
-                    self.seriesVal.push({name: PRE_FRAIL_SERIES_NAME, items: [null, null, 0.1, 0.1, 0.1, null, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1], color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
-                    self.seriesVal.push({name: FRAIL_SERIES_NAME, items: [null, null, null, null, 0.1, 0.1, 0.1, null, null, null, null, null], color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
                     $(".loader-hover").hide();
                 });
         }

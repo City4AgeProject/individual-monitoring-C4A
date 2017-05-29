@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import eu.city4age.dashboard.api.persist.FrailtyStatusTimelineRepository;
 import eu.city4age.dashboard.api.persist.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
+import eu.city4age.dashboard.api.pojo.comparator.FSTComparator;
 import eu.city4age.dashboard.api.pojo.domain.CrProfile;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatusTimeline;
@@ -79,6 +81,12 @@ public class CareRecipientService {
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
+	/**
+	 * @param careRecipientId
+	 * @param parentFactorsPathSegment
+	 * @return
+	 * @throws IOException
+	 */
 	@Transactional("transactionManager")
 	@GET
 	@Path("getGroups/careRecipientId/{careRecipientId}/parentFactors/{parentFactors : .+}")
@@ -188,6 +196,10 @@ public class CareRecipientService {
 
 	}// end method
 
+	/**
+	 * @return
+	 * @throws IOException
+	 */
 	@Transactional("transactionManager")
 	@GET
 	@Path("getCareRecipients")
@@ -262,6 +274,12 @@ public class CareRecipientService {
 
 	}// end method
 
+	/**
+	 * @param careRecipientId
+	 * @param parentFactorId
+	 * @return
+	 * @throws IOException
+	 */
 	@GET
 	@Path("getDiagramData/careRecipientId/{careRecipientId}/parentFactorId/{parentFactorId}")
 	@Produces("application/json")
@@ -314,6 +332,11 @@ public class CareRecipientService {
 		return response;
 	}// end method
 
+	/**
+	 * @param id
+	 * @return
+	 * @throws JsonProcessingException
+	 */
 	@GET
 	@Path("findOne/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -325,11 +348,12 @@ public class CareRecipientService {
 	private OJDiagramFrailtyStatus transformToDto(List<FrailtyStatusTimeline> fs, List<DataIdValue> months) {
 		OJDiagramFrailtyStatus dto = new OJDiagramFrailtyStatus();
 		dto.setMonths(months);
+		
+		Collections.sort(fs, new FSTComparator());
 
-		Serie preFrail = new Serie("Pre-Frail",
-				new ArrayList<eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue>());
-		Serie frail = new Serie("Frail", new ArrayList<eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue>());
-		Serie fit = new Serie("Fit", new ArrayList<eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue>());
+		Serie preFrail = new Serie("Pre-Frail", new ArrayList<Double>());
+		Serie frail = new Serie("Frail", new ArrayList<Double>());
+		Serie fit = new Serie("Fit", new ArrayList<Double>());
 
 		for (FrailtyStatusTimeline frailty : fs) {
 
@@ -337,36 +361,24 @@ public class CareRecipientService {
 				switch (frailty.getCdFrailtyStatus().getFrailtyStatus()) {
 
 				case "Pre-frail":
-					preFrail.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), 0.1));
-					frail.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), null));
-					fit.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), null));
+					preFrail.getItems().add( 0.1);
+					frail.getItems().add(null);
+					fit.getItems().add(null);
 					break;
 				case "Frail":
-					frail.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), 0.1));
-					preFrail.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), null));
-					fit.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), null));
+					frail.getItems().add(0.1);
+					preFrail.getItems().add(null);
+					fit.getItems().add(null);
 					break;
 				case "Fit":
-					fit.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), 0.1));
-					preFrail.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), null));
-					frail.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), null));
+					fit.getItems().add(0.1);
+					preFrail.getItems().add(null);
+					frail.getItems().add(null);
 					break;
 				default:
-					preFrail.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), null));
-					frail.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), null));
-					fit.getItems().add(new eu.city4age.dashboard.api.pojo.dto.oj.variant.DataIdValue(
-							frailty.getTimeInterval().getId(), null));
+					preFrail.getItems().add(null);
+					frail.getItems().add(null);
+					fit.getItems().add(null);
 					break;
 
 				}

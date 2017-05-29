@@ -55,6 +55,10 @@ import eu.city4age.dashboard.api.pojo.json.GetDiagramDataDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 
+/**
+ * @author milos.holclajtner
+ *
+ */
 @Transactional("transactionManager")
 @Path(AssessmentsService.PATH)
 public class AssessmentsService {
@@ -86,6 +90,12 @@ public class AssessmentsService {
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
+	/**
+	 * @param json
+	 * @return
+	 * @throws JsonProcessingException
+	 * @throws IOException
+	 */
 	@POST
 	@Path("getDiagramData")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -125,11 +135,20 @@ public class AssessmentsService {
 		return Response.ok(objectMapper.writeValueAsString(dto)).build();
 	}
 
+	/**
+	 * @param userInRoleId
+	 * @param parentDetectionVariableId
+	 * @param intervalStart
+	 * @param intervalEnd
+	 * @return
+	 * @throws JsonProcessingException
+	 */
 	@GET
 	@Path("getLastFiveForDiagram/userInRoleId/{userInRoleId}/parentDetectionVariableId/{parentDetectionVariableId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.AssessmentView.class)
-	public Response getLast5ForDiagram(@PathParam("userInRoleId") Long userInRoleId, @PathParam("parentDetectionVariableId") Long parentDetectionVariableId,
+	public Response getLast5ForDiagram(@PathParam("userInRoleId") Long userInRoleId,
+			@PathParam("parentDetectionVariableId") Long parentDetectionVariableId,
 			@PathParam("intervalStart") String intervalStart, @PathParam("intervalEnd") String intervalEnd)
 			throws JsonProcessingException {
 
@@ -138,7 +157,7 @@ public class AssessmentsService {
 
 		List<Last5Assessment> l5a = new ArrayList<Last5Assessment>();
 
-		try {	
+		try {
 			l5a = timeIntervalRepository.getLastFiveForDiagram(userInRoleId, parentDetectionVariableId,
 					intervalStartTimestamp, intervalEndTimestamp);
 		} catch (Exception e) {
@@ -150,19 +169,45 @@ public class AssessmentsService {
 		return Response.ok(objectMapper.writeValueAsString(ojLfa)).build();
 	}
 
+	/**
+	 * @param authorRoleId
+	 *            id of author
+	 * @param orderById
+	 *            selection of ordering (1 - date asc, 2 - date desc, 3 - author
+	 *            name asc, 4 - author name desc, 5 - author role asc, 6 -
+	 *            author role desc, 7 - type)
+	 * @param riskStatusWarning
+	 *            risk warning marker
+	 * @param riskStatusAlert
+	 *            risk alert marker
+	 * @param riskStatusNoRisk
+	 *            no risk marker
+	 * @param dataValidityQuestionable
+	 *            data questionable marker
+	 * @param dataValidityFaulty
+	 *            data faulty marker
+	 * @param dataValidityValid
+	 *            data valid marker
+	 * @param geriatricFactorValueIds
+	 *            id of geriatric factor object
+	 * @return list of assessments
+	 * @throws JsonProcessingException
+	 *             exception
+	 */
 	@GET
 	@Path("findForSelectedDataSet/geriatricFactorValueIds/{geriatricFactorValueIds : .+}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.AssessmentView.class)
-	public Response findForSelectedDataSet(
-			@PathParam("geriatricFactorValueIds") List<PathSegment> geriatricFactorValueIds,
-			@QueryParam("authorRoleId") Long authorRoleId, @QueryParam("orderById") Long orderById,
-			@QueryParam("riskStatusWarning") Boolean riskStatusWarning,
-			@QueryParam("riskStatusAlert") Boolean riskStatusAlert,
-			@QueryParam("riskStatusNoRisk") Boolean riskStatusNoRisk,
-			@QueryParam("dataValidityQuestionable") Boolean dataValidityQuestionable,
-			@QueryParam("dataValidityFaulty") Boolean dataValidityFaulty,
-			@QueryParam("dataValidityValid") Boolean dataValidityValid) throws JsonProcessingException {
+	public Response findForSelectedDataSet(@QueryParam(value = "authorRoleId") Long authorRoleId,
+			@QueryParam(value = "orderById") Long orderById,
+			@QueryParam(value = "riskStatusWarning") Boolean riskStatusWarning,
+			@QueryParam(value = "riskStatusAlert") Boolean riskStatusAlert,
+			@QueryParam(value = "riskStatusNoRisk") Boolean riskStatusNoRisk,
+			@QueryParam(value = "dataValidityQuestionable") Boolean dataValidityQuestionable,
+			@QueryParam(value = "dataValidityFaulty") Boolean dataValidityFaulty,
+			@QueryParam(value = "dataValidityValid") Boolean dataValidityValid,
+			@PathParam(value = "geriatricFactorValueIds") List<PathSegment> geriatricFactorValueIds)
+			throws JsonProcessingException {
 
 		List<Assessment> aaList;
 
@@ -263,6 +308,12 @@ public class AssessmentsService {
 		return gefIds;
 	}
 
+	/**
+	 * @param json
+	 * @return
+	 * @throws JsonProcessingException
+	 * @throws IOException
+	 */
 	@POST
 	@Path("addForSelectedDataSet")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -303,6 +354,11 @@ public class AssessmentsService {
 		return Response.ok(objectMapper.writeValueAsString(assessment)).build();
 	}
 
+	/**
+	 * @param assessmentId
+	 * @return
+	 * @throws JsonProcessingException
+	 */
 	@GET
 	@Path("deleteAssessment/{assessmentId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -338,12 +394,12 @@ public class AssessmentsService {
 			ojLfa.getGroups().add(new DataIdValue(lfa.getTimeIntervalId(), lfa.getIntervalStart()));
 		}
 
-		ojLfa.getSeries().add(new Serie("Alert", new HashSet<DataIdValueLastFiveAssessment>(), "",
-				"20px", 32, "on", "none"));
-		ojLfa.getSeries().add(new Serie("Warning", new HashSet<DataIdValueLastFiveAssessment>(),
-				"", "20px", 32, "on", "none"));
-		ojLfa.getSeries().add(new Serie("Comment", new HashSet<DataIdValueLastFiveAssessment>(), "",
-				"20px", 32, "on", "none"));
+		ojLfa.getSeries()
+				.add(new Serie("Alert", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
+		ojLfa.getSeries()
+				.add(new Serie("Warning", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
+		ojLfa.getSeries()
+				.add(new Serie("Comment", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
 
 		for (DataIdValue group : ojLfa.getGroups()) {
 

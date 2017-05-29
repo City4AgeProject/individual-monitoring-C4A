@@ -12,9 +12,9 @@ public class Serie implements Serializable {
 
 	String name;
 
-	List<DataIdValue> items;
+	List<Double> items;
 
-	public Serie(String name, List<DataIdValue> items) {
+	public Serie(String name, List<Double> items) {
 		this.name = name;
 		this.items = items;
 	}
@@ -27,11 +27,11 @@ public class Serie implements Serializable {
 		this.name = name;
 	}
 
-	public List<DataIdValue> getItems() {
+	public List<Double> getItems() {
 		return items;
 	}
 
-	public void setItems(List<DataIdValue> items) {
+	public void setItems(List<Double> items) {
 		this.items = items;
 	}
 

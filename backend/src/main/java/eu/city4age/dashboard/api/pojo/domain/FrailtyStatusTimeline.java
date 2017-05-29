@@ -146,5 +146,4 @@ public class FrailtyStatusTimeline implements Serializable {
 	public void setFrailtyStatus(String frailtyStatus) {
 		this.frailtyStatus = frailtyStatus;
 	}
-
 }

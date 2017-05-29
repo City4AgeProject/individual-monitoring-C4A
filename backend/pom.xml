@@ -16,7 +16,7 @@
 
 	<build>
 		<finalName>C4A-dashboard</finalName>
-		<sourceDirectory>./src/main/</sourceDirectory>
+		<sourceDirectory>./src/main/java/</sourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
