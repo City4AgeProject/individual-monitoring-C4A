@@ -36,24 +36,27 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.AssessedGefValuesRepository;
 import eu.city4age.dashboard.api.persist.AssessmentRepository;
 import eu.city4age.dashboard.api.persist.AudienceRolesRepository;
-import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
 import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
-import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.dto.DiagramData;
 import eu.city4age.dashboard.api.pojo.dto.Last5Assessment;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValueLastFiveAssessment;
 import eu.city4age.dashboard.api.pojo.dto.oj.Serie;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
-import eu.city4age.dashboard.api.pojo.json.GetDiagramDataDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
  * @author milos.holclajtner
@@ -61,6 +64,7 @@ import eu.city4age.dashboard.api.pojo.persist.Filter;
  */
 @Transactional("transactionManager")
 @Path(AssessmentsService.PATH)
+@Api(value = "assessment", produces = "application/json")
 public class AssessmentsService {
 
 	public static final String PATH = "assessment";
@@ -69,9 +73,6 @@ public class AssessmentsService {
 
 	@Autowired
 	private AssessmentRepository assessmentRepository;
-
-	@Autowired
-	private DetectionVariableRepository detectionVariableRepository;
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
@@ -90,66 +91,23 @@ public class AssessmentsService {
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
-	/**
-	 * @param json
-	 * @return
-	 * @throws JsonProcessingException
-	 * @throws IOException
-	 */
-	@POST
-	@Path("getDiagramData")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getDiagramData(String json) throws JsonProcessingException, IOException {
 
-		ObjectMapper objectMapper = mapperResolver.getContext(TimeInterval.class);
-
-		/*
-		 * Avoiding to use readerFor method instead because of conflict with
-		 * older version of jackson jars in GLASSFISH_HOME/glassfish/modules of
-		 * Glassfish 4.1.1 which then would have to be replaced.
-		 */
-		@SuppressWarnings("deprecation")
-		GetDiagramDataDeserializer data = objectMapper.reader(GetDiagramDataDeserializer.class).readValue(json);
-
-		Timestamp start = Timestamp.valueOf(data.getTimestampStart());
-		Timestamp end = Timestamp.valueOf(data.getTimestampEnd());
-
-		DiagramData dto = new DiagramData();
-
-		List<TimeInterval> months = timeIntervalRepository.findByPeriod(start, end);
-
-		List<String> monthLabels = createMonthLabels(months);
-
-		dto.setMonthLabels(monthLabels);
-
-		List<String> gefLables = detectionVariableRepository.findNameByParentId(data.getDvParentId());
-
-		dto.setGefLabels(gefLables);
-
-		List<Object[]> tis = timeIntervalRepository.findByUserInRoleId(Long.valueOf(data.getCrId()),
-				Long.valueOf(data.getDvParentId()), start, end);
-
-		dto.setTis(tis);
-
-		return Response.ok(objectMapper.writeValueAsString(dto)).build();
-	}
-
-	/**
-	 * @param userInRoleId
-	 * @param parentDetectionVariableId
-	 * @param intervalStart
-	 * @param intervalEnd
-	 * @return
-	 * @throws JsonProcessingException
-	 */
 	@GET
-	@Path("getLastFiveForDiagram/userInRoleId/{userInRoleId}/parentDetectionVariableId/{parentDetectionVariableId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
+	@ApiOperation("Get last five assessments for data sets in specific time interval.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.AssessmentView.class)
-	public Response getLast5ForDiagram(@PathParam("userInRoleId") Long userInRoleId,
-			@PathParam("parentDetectionVariableId") Long parentDetectionVariableId,
-			@PathParam("intervalStart") String intervalStart, @PathParam("intervalEnd") String intervalEnd)
+	@Path("getLastFiveForDiagram/userInRoleId/{userInRoleId}/parentDetectionVariableId/{parentDetectionVariableId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "userInRoleId", value = "id of care recipient", required = false, dataType = "long", paramType = "path", defaultValue = "1"),
+		@ApiImplicitParam(name = "parentDetectionVariableId", value = "id of parent detection variable", required = false, dataType = "long", paramType = "path", defaultValue = "2"),
+		@ApiImplicitParam(name = "intervalStart", value = "start of interval", required = false, dataType = "string", paramType = "path", defaultValue = "2016-9-1"),
+		@ApiImplicitParam(name = "intervalEnd", value = "end of interval", required = false, dataType = "string", paramType = "path", defaultValue = "2016-10-1")})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = OJDiagramLast5Assessment.class),
+			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
+	public Response getLast5ForDiagram(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
+			@ApiParam(hidden = true) @PathParam("parentDetectionVariableId") Long parentDetectionVariableId,
+			@ApiParam(hidden = true) @PathParam("intervalStart") String intervalStart,
+			@ApiParam(hidden = true) @PathParam("intervalEnd") String intervalEnd)
 			throws JsonProcessingException {
 
 		Timestamp intervalStartTimestamp = Timestamp.valueOf(intervalStart.concat(" 00:00:00"));
@@ -169,44 +127,33 @@ public class AssessmentsService {
 		return Response.ok(objectMapper.writeValueAsString(ojLfa)).build();
 	}
 
-	/**
-	 * @param authorRoleId
-	 *            id of author
-	 * @param orderById
-	 *            selection of ordering (1 - date asc, 2 - date desc, 3 - author
-	 *            name asc, 4 - author name desc, 5 - author role asc, 6 -
-	 *            author role desc, 7 - type)
-	 * @param riskStatusWarning
-	 *            risk warning marker
-	 * @param riskStatusAlert
-	 *            risk alert marker
-	 * @param riskStatusNoRisk
-	 *            no risk marker
-	 * @param dataValidityQuestionable
-	 *            data questionable marker
-	 * @param dataValidityFaulty
-	 *            data faulty marker
-	 * @param dataValidityValid
-	 *            data valid marker
-	 * @param geriatricFactorValueIds
-	 *            id of geriatric factor object
-	 * @return list of assessments
-	 * @throws JsonProcessingException
-	 *             exception
-	 */
 	@GET
-	@Path("findForSelectedDataSet/geriatricFactorValueIds/{geriatricFactorValueIds : .+}")
+	@ApiOperation("Find all assessments for selected data sets.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.AssessmentView.class)
-	public Response findForSelectedDataSet(@QueryParam(value = "authorRoleId") Long authorRoleId,
-			@QueryParam(value = "orderById") Long orderById,
-			@QueryParam(value = "riskStatusWarning") Boolean riskStatusWarning,
-			@QueryParam(value = "riskStatusAlert") Boolean riskStatusAlert,
-			@QueryParam(value = "riskStatusNoRisk") Boolean riskStatusNoRisk,
-			@QueryParam(value = "dataValidityQuestionable") Boolean dataValidityQuestionable,
-			@QueryParam(value = "dataValidityFaulty") Boolean dataValidityFaulty,
-			@QueryParam(value = "dataValidityValid") Boolean dataValidityValid,
-			@PathParam(value = "geriatricFactorValueIds") List<PathSegment> geriatricFactorValueIds)
+	@Path("findForSelectedDataSet/geriatricFactorValueIds/{geriatricFactorValueIds : .+}")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "authorRoleId", value = "id of author", required = false, dataType = "long", paramType = "query", defaultValue = "1"),
+		@ApiImplicitParam(name = "orderById", value = "selection of ordering (1 - date asc, 2 - date desc, 3 - author name asc, 4 - author name desc, 5 - author role asc, 6 - author role desc, 7 - type)", required = false, dataType = "long", paramType = "query", defaultValue = "1"),
+		@ApiImplicitParam(name = "riskStatusWarning", value = "risk warning marker", required = false, dataType = "boolean", paramType = "query", defaultValue = "true"),
+		@ApiImplicitParam(name = "riskStatusAlert", value = "risk alert marker", required = false, dataType = "boolean", paramType = "query", defaultValue = "true"),
+		@ApiImplicitParam(name = "riskStatusNoRisk", value = "no risk marker", required = false, dataType = "boolean", paramType = "query", defaultValue = "true"),
+		@ApiImplicitParam(name = "dataValidityQuestionable", value = "data questionable marker", required = false, dataType = "boolean", paramType = "query", defaultValue = "true"),
+		@ApiImplicitParam(name = "dataValidityFaulty", value = "data faulty marker", required = false, dataType = "boolean", paramType = "query", defaultValue = "true"),
+		@ApiImplicitParam(name = "dataValidityValid", value = "data valid marker", required = false, dataType = "boolean", paramType = "query", defaultValue = "true"),
+		@ApiImplicitParam(name = "geriatricFactorValueIds", value = "id of geriatric factor object", required = false, dataType = "list", paramType = "path", defaultValue = "30")})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Assessment.class),
+			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
+	public Response findForSelectedDataSet(
+			@ApiParam(hidden = true) @QueryParam(value = "authorRoleId") Long authorRoleId,
+			@ApiParam(hidden = true) @QueryParam(value = "orderById") Long orderById,
+			@ApiParam(hidden = true) @QueryParam(value = "riskStatusWarning") Boolean riskStatusWarning,
+			@ApiParam(hidden = true) @QueryParam(value = "riskStatusAlert") Boolean riskStatusAlert,
+			@ApiParam(hidden = true) @QueryParam(value = "riskStatusNoRisk") Boolean riskStatusNoRisk,
+			@ApiParam(hidden = true) @QueryParam(value = "dataValidityQuestionable") Boolean dataValidityQuestionable,
+			@ApiParam(hidden = true) @QueryParam(value = "dataValidityFaulty") Boolean dataValidityFaulty,
+			@ApiParam(hidden = true) @QueryParam(value = "dataValidityValid") Boolean dataValidityValid,
+			@ApiParam(hidden = true) @PathParam(value = "geriatricFactorValueIds") List<PathSegment> geriatricFactorValueIds)
 			throws JsonProcessingException {
 
 		List<Assessment> aaList;
@@ -309,15 +256,23 @@ public class AssessmentsService {
 	}
 
 	/**
+	 * Adds assessments for selected data set
+	 * 
 	 * @param json
-	 * @return
+	 *            assessment data json
+	 * @return 200 OK, after successful sending of data
 	 * @throws JsonProcessingException
+	 *             JsonProcessingException exception
 	 * @throws IOException
+	 *             IOException exception
 	 */
 	@POST
-	@Path("addForSelectedDataSet")
+	@ApiOperation("Add assessment for selected data sets.")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Path("addForSelectedDataSet")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Assessment.class),
+			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
 	public Response addForSelectedDataSet(String json) throws JsonProcessingException, IOException {
 		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
 		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
@@ -354,15 +309,15 @@ public class AssessmentsService {
 		return Response.ok(objectMapper.writeValueAsString(assessment)).build();
 	}
 
-	/**
-	 * @param assessmentId
-	 * @return
-	 * @throws JsonProcessingException
-	 */
 	@GET
-	@Path("deleteAssessment/{assessmentId}")
+	@ApiOperation("Delete assessment for assessment id.")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteAssessment(@PathParam("assessmentId") Long assessmentId) throws JsonProcessingException {
+	@Path("deleteAssessment/{assessmentId}")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "assessmentId", value = "id of assessment", required = false, dataType = "long", paramType = "path", defaultValue = "506")})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = String.class),
+			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
+	public Response deleteAssessment(@ApiParam(hidden = true) @PathParam("assessmentId") Long assessmentId) throws JsonProcessingException {
 
 		Assessment assessment = assessmentRepository.findOne(assessmentId);
 		List<AssessmentAudienceRole> aar = audienceRolesRepository.findByAssessmentId(assessmentId.intValue());
@@ -375,15 +330,6 @@ public class AssessmentsService {
 
 		assessmentRepository.delete(assessment);
 		return Response.ok("Deleted").build();
-	}
-
-	private List<String> createMonthLabels(List<TimeInterval> months) {
-		List<String> monthLabels = new ArrayList<String>();
-
-		for (int i = 0; i < months.size(); i++)
-			monthLabels.add(months.get(i).getStart());
-
-		return monthLabels;
 	}
 
 	private OJDiagramLast5Assessment transformToOJ(List<Last5Assessment> lfas) {

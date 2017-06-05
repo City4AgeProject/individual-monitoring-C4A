@@ -130,7 +130,7 @@ function (oj, ko, $, sp, params) {
         self.lineSeries2Value = ko.observableArray();   	
         
         self.titleValue = ko.observable("");
-        self.titlePart = ko.observable("trtmrtw");
+        self.titlePart = ko.observable("");
         self.titleObj = ko.observable();
 
         self.chartDrill = function (event, ui) {

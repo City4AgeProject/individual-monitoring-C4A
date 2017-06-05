@@ -189,6 +189,7 @@ function CdRole(){
 }
 
 function CdDetectionVariable() {
+	this.prefix = "detection_variable.";
     this.id;
     this.detectionVariableName;
     this.detectionVariableType;

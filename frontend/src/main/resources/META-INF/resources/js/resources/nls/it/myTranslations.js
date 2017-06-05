@@ -1,5 +1,5 @@
 define({
-	"motility" : {
+	"detection_variable" : {
 		walking : "Qualità del camminare"
 	}
 });

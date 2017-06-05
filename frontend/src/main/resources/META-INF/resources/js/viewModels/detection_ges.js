@@ -133,7 +133,7 @@ function (oj, ko, $, sp) {
             self.subFactorName(selectedDetectionVariable[1].detectionVariableName);
             self.parentFactor(selectedDetectionVariable[1].id); //derivedDetectionVariableIds
             
-            self.titleObj({"text": "Geriatric Sub factor - " + self.subFactorName(), "halign": "center"});
+            self.titleObj({"text": "Geriatric Sub factor - " + oj.Translations.getTranslatedString(self.subFactorName()), "halign": "center"});
         };
 
         self.handleAttached = function (info) {

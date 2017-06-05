@@ -8,6 +8,8 @@ logging:
         web: INFO
   config: classpath:log4j2.yml
 spring:
+  jersey:
+    application-path: /C4A-dashboard/rest
   main:
     web-environment: true
     banner-mode: 'off'
@@ -29,3 +31,8 @@ spring:
         persistence:
           sharedCache:
             mode: ALL
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /rest/swagger.json

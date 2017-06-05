@@ -1,7 +1,7 @@
 define({
 	root : {
-		"motility" : {
-			walking : "Walking"
+		"detection_variable" : {
+			walking: "Walking"
 		}
 	},
 	"zh-Hant" : true,

@@ -81,12 +81,6 @@ public class CareRecipientService {
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
-	/**
-	 * @param careRecipientId
-	 * @param parentFactorsPathSegment
-	 * @return
-	 * @throws IOException
-	 */
 	@Transactional("transactionManager")
 	@GET
 	@Path("getGroups/careRecipientId/{careRecipientId}/parentFactors/{parentFactors : .+}")
@@ -183,7 +177,8 @@ public class CareRecipientService {
 					itemList.add(new C4ServiceGetOverallScoreListResponse(tis, fMap.get(type.getId()),
 							idMap.get(type.getId()), dateList, type.getDetectionVariableName(),
 							type.getDerivedDetectionVariable() != null
-									? type.getDerivedDetectionVariable().getDetectionVariableName() : null, type.getId()));
+									? type.getDerivedDetectionVariable().getDetectionVariableName() : null,
+							type.getId()));
 
 				}
 
@@ -196,10 +191,6 @@ public class CareRecipientService {
 
 	}// end method
 
-	/**
-	 * @return
-	 * @throws IOException
-	 */
 	@Transactional("transactionManager")
 	@GET
 	@Path("getCareRecipients")
@@ -229,12 +220,12 @@ public class CareRecipientService {
 
 				int age = 0;
 
-
 				if (users.getCrProfile() != null) {
-					
-					LocalDate birthDate = users.getCrProfile().getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+					LocalDate birthDate = users.getCrProfile().getBirthDate().toInstant().atZone(ZoneId.systemDefault())
+							.toLocalDate();
 					age = (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
-					
+
 				}
 
 				// **************************************
@@ -274,12 +265,6 @@ public class CareRecipientService {
 
 	}// end method
 
-	/**
-	 * @param careRecipientId
-	 * @param parentFactorId
-	 * @return
-	 * @throws IOException
-	 */
 	@GET
 	@Path("getDiagramData/careRecipientId/{careRecipientId}/parentFactorId/{parentFactorId}")
 	@Produces("application/json")
@@ -291,7 +276,7 @@ public class CareRecipientService {
 
 		// we use list to avoid "not found" exception
 		gfvList = geriatricFactorRepository.findByDetectionVariableId(parentFactorId, careRecipientId);
-		
+
 		//
 		if (gfvList.isEmpty()) {
 			response.setMessage("No factors for this group");
@@ -332,11 +317,6 @@ public class CareRecipientService {
 		return response;
 	}// end method
 
-	/**
-	 * @param id
-	 * @return
-	 * @throws JsonProcessingException
-	 */
 	@GET
 	@Path("findOne/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -348,7 +328,7 @@ public class CareRecipientService {
 	private OJDiagramFrailtyStatus transformToDto(List<FrailtyStatusTimeline> fs, List<DataIdValue> months) {
 		OJDiagramFrailtyStatus dto = new OJDiagramFrailtyStatus();
 		dto.setMonths(months);
-		
+
 		Collections.sort(fs, new FSTComparator());
 
 		Serie preFrail = new Serie("Pre-Frail", new ArrayList<Double>());
@@ -361,7 +341,7 @@ public class CareRecipientService {
 				switch (frailty.getCdFrailtyStatus().getFrailtyStatus()) {
 
 				case "Pre-frail":
-					preFrail.getItems().add( 0.1);
+					preFrail.getItems().add(0.1);
 					frail.getItems().add(null);
 					fit.getItems().add(null);
 					break;

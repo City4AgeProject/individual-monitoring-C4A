@@ -1,7 +1,5 @@
 package eu.city4age.dashboard.api.persist;
 
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,8 +8,4 @@ import eu.city4age.dashboard.api.pojo.domain.Stakeholder;
 
 @Repository(value = "stakeholderRepository")
 @Transactional(readOnly = true)
-public interface StakeholderRepository extends GenericRepository<Stakeholder, Long> {
-
-	List<Stakeholder> findAll();
-
-}
+public interface StakeholderRepository extends GenericRepository<Stakeholder, Long> {}

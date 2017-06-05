@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN" "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
+<resources>
+<jdbc-connection-pool is-isolation-level-guaranteed="false" datasource-classname="org.postgresql.ds.PGSimpleDataSource" name="c4aPool" res-type="javax.sql.DataSource">
+<property name="User" value="city4age_srv"></property>
+<property name="serverName" value="109.111.225.84"></property>
+<property name="PortNumber" value="5432"></property>
+<property name="URL" value="jdbc:postgresql://109.111.225.84:5432/city4age?characterEncoding=utf8&amp;useUnicode=true&amp;currentSchema=city4age_sr"></property>
+<property name="Password" value="cities4Ages"></property>
+</jdbc-connection-pool>
+<jdbc-resource pool-name="c4aPool" jndi-name="jdbc/c4aDB"></jdbc-resource>
+</resources>

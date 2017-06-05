@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
@@ -21,6 +22,7 @@ import eu.city4age.dashboard.api.pojo.dto.C4ALoginResponse;
  * @author EMantziou
  *
  */
+@Component
 @Transactional("transactionManager")
 @Path(UserService.PATH)
 public class UserService {
@@ -32,12 +34,6 @@ public class UserService {
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
 
-	/**
-	 * @param username
-	 * @param password
-	 * @return
-	 * @throws IOException
-	 */
 	@Transactional("transactionManager")
 	@GET
 	@Path("login/username/{username}/password/{password}")

@@ -150,7 +150,7 @@
 										</form>
 									</div>
 
-									<div class="oj-flex-item" style="width: 180px;">
+									<div class="oj-flex-item">
 										<label for="selectRole">From</label> <select id="selectRole"
 											data-bind="ojComponent: {
                                                         component: 'ojSelect', 
@@ -163,33 +163,27 @@
 										</select>
 									</div>
 
-									<div class="oj-flex-item" style="width: 180px;">
-										<div class="demo-flex-display">
-											<div class="oj-flex oj-sm-flex-direction-column">
-												<div class="oj-flex-item">
-													<label for="selectSort">Sort by</label> <select
-														id="selectSort"
-														data-bind="ojComponent: {
-	                                                                component: 'ojSelect', 
-	                                                                value: val
-	                                                            }">
+									<div class="oj-flex-item" style="width: 33%;">
+										<label for="selectSort">Sort by</label>
+										<div class="oj-flex-item">
+											<select id="selectSort" style="display: inline-block; float: left; width: 35%;"
+													data-bind="ojComponent: {
+	                                                      component: 'ojSelect', 
+	                                                        value: val
+	                                                      }">
 
-														<option value=1>Date Asc.</option>
-														<option value=2>Date Desc.</option>
-														<option value=3>Author Name Asc.</option>
-														<option value=4>Author Name Desc.</option>
-														<option value=5>Author Role Asc.</option>
-														<option value=6>Author Role Desc.</option>
-														<option value=7>Type</option>
-													</select>
-												</div>
-												<div class="oj-flex-item" align="right">
-													<a href="#" data-bind="click: resetClick">Reset to defaults</a>
-												</div>
-												<div class="oj-flex-item" align="right">
-													<a href="#" id="filter" data-bind="click: filterList">Filter</a>
-												</div>
-											</div>
+												<option value=1>Date Asc.</option>
+												<option value=2>Date Desc.</option>
+												<option value=3>Author Name Asc.</option>
+												<option value=4>Author Name Desc.</option>
+												<option value=5>Author Role Asc.</option>
+												<option value=6>Author Role Desc.</option>
+												<option value=7>Type</option>
+											</select>
+											<button id="resetFilter" style="display: inline-block; float: left; width: 40%; margin-left: 5px" data-bind="click: resetClick, 
+													ojComponent: { component: 'ojButton', label: 'Reset to defaults' }" />
+											<button id="filter" style="display: inline-block; float: left; width: 15%; margin-left: 5px" data-bind="click: filterList, 
+													ojComponent: { component: 'ojButton', label: 'Filter' }" />
 										</div>
 									</div>
 								</div>

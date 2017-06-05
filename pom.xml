@@ -6,13 +6,13 @@
 	<artifactId>C4A-parent</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.3.8.RELEASE</version>
 	</parent>
-	
+
 	<properties>
 		<start-class>eu.city4age.dashboard.api.Application</start-class>
 		<maven.test.skip>true</maven.test.skip>
@@ -21,20 +21,16 @@
 		<glassfish.domain.username>admin</glassfish.domain.username>
 		<glassfish.passwordFile>${glassfish.home}\glassfish\domains\domain1\config\domain-passwords</glassfish.passwordFile>
 	</properties>
-	
-    <modules>
+
+	<modules>
 		<module>frontend</module>
 		<module>backend</module>
 		<module>build</module>
-    </modules>
-	
+	</modules>
+
 	<dependencies>
-	<!--	<dependency>
-			<groupId>eu.city4age.dashboard.api</groupId>
-			<artifactId>C4A-frontend</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-	-->
+		<!-- <dependency> <groupId>eu.city4age.dashboard.api</groupId> <artifactId>C4A-frontend</artifactId> 
+			<version>1.0-SNAPSHOT</version> </dependency> -->
 
 		<!-- Spring -->
 		<dependency>
@@ -141,6 +137,39 @@
 		</dependency>
 		<!-- End Jackson -->
 
+		<!-- Swagger -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-jersey2-jaxrs</artifactId>
+			<version>1.5.13</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>1.5.13</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-models</artifactId>
+			<version>1.5.13</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.7.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.7.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- End Swagger -->
+
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -181,16 +210,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.4</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-			<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-javadoc-plugin</artifactId>
-		        <version>2.10.4</version>
-	      	</plugin>
 		</plugins>
 	</build>
 
