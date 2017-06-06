@@ -30,11 +30,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import eu.city4age.dashboard.api.config.JerseyInitialization;
 import eu.city4age.dashboard.api.persist.generic.GenericRepositoryFactoryBean;
-import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -55,6 +52,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class Application extends SpringBootServletInitializer {
 
 	static protected Logger logger = LogManager.getLogger(Application.class);
+
+	@Value("${springfox.documentation.swagger.v2.path}")
+	private String swagger2Endpoint;
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
@@ -139,42 +139,9 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	 public Docket newsApi() { return new
-	  Docket(DocumentationType.SWAGGER_2)
-	 
-	// .securitySchemes(newArrayList(apiKey())).
-	
-	 /*.groupName("swagger").apiInfo(apiInfo()).select()
-	 .paths(regex("/rest/.*")).*/
-	 .select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).
-	  build(); }
-
-	/*class MySecurityScheme extends SecurityScheme {
-		protected MySecurityScheme() {
-			super("", "");
-		}
+	public Docket newsApi() {
+		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
+				.paths(PathSelectors.any()).build();
 	}
-
-	private List<? extends SecurityScheme> newArrayList(ApiKey apiKey) {
-		List<MySecurityScheme> list = new ArrayList<MySecurityScheme>();
-		list.add(new MySecurityScheme());
-		return list;
-	}*/
-
-	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("Spring REST Sample with Swagger")
-				.description("Spring REST Sample with Swagger")
-				.termsOfServiceUrl("http://www-03.ibm.com/software/sla/sladb.nsf/sla/bm?Open")
-				.contact(new Contact("Niklas Heidloff", "url", "email")).license("Apache License Version 2.0")
-				.licenseUrl("https://github.com/IBM-Bluemix/news-aggregator/blob/master/LICENSE").version("2.0")
-				.build();
-	}
-
-	/*private ApiKey apiKey() {
-		return new ApiKey("mykey", "api_key", "header");
-	}*/
-	
-	@Value("${springfox.documentation.swagger.v2.path}")
-	private String swagger2Endpoint;
 
 }

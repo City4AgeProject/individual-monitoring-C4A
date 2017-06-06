@@ -13,6 +13,7 @@ function (oj, ko, $, sp, params) {
         var self = this;
         self.careRecipientId = ko.observable();
         
+        self.highlightValue = ko.observable();
         
         var lineColors = ['#b4b2b2','#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
 

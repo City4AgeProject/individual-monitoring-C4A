@@ -86,11 +86,8 @@ define(
                 };
 
                 var loadDiagramDataCallback = function (data) {
-                	console.log("loadDiagramDataCallback");
                     self.props.groups = data.groups;
                     self.props.series = data.series;
-                    console.log("self.props: " + self.props);
-                    console.log("self.props.series: " + self.props.series);
                     if(self.props !== undefined && self.props.series !== undefined) {
 	                    for(var ig = 0; ig < Object.keys(self.props.series).length; ig++){
 	                    	self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);

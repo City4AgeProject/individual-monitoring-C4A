@@ -1,224 +1,228 @@
-<div class="oj-flex-item"
-	style="width: 100%; height: 400px; display: block">
-	<!-- line chart GES -->
-	<!-- title = /'{/"text/": ."Geriatric Sub factor - /" + subFactorName(), /"halign/": /"center/"}/' -->
-
-	<div id="detectionGEFGroup1FactorsChart" data-bind="ojComponent: {
-        component: 'ojChart', 
-        type: 'line',
-        selectionMode: 'multiple',
-        selection: selectedItemsValue,
-        title: $props.title,
-        legend: $props.legend,
-        groups: $props.groups,
-        series: $props.series,
-        drilling: $props.drilling,
-        animationOnDisplay: 'auto',
-        animationOnDataChange: 'auto',
-        hideAndShowBehavior: 'withoutRescale',
-        optionChange: chartOptionChange,
-        orientation: 'vertical',
-        hoverBehavior: 'dim',
-        zoomAndScroll: 'live',
-        highlightMatch: highlightValue,
-        yAxis:{step:0.5},
-        drill: chartDrill
-      }" style="width:100%;height:400px;display: block">
+<div class="oj-panel oj-panel-shadow-sm"
+	style="border: none; background-color: #fcfcfc">
+	<div class="oj-flex-item"
+		style="width: 100%; height: 400px; display: block">
+		<!-- line chart GES -->
+		<!-- title = /'{/"text/": ."Geriatric Sub factor - /" + subFactorName(), /"halign/": /"center/"}/' -->
+	
+		<div id="detectionGEFGroup1FactorsChart" class="oj-flex-item"
+			data-bind="ojComponent: {
+	        component: 'ojChart', 
+	        type: 'line',
+	        selectionMode: 'multiple',
+	        selection: selectedItemsValue,
+	        title: $props.title,
+	        legend: $props.legend,
+	        groups: $props.groups,
+	        series: $props.series,
+	        drilling: $props.drilling,
+	        animationOnDisplay: 'auto',
+	        animationOnDataChange: 'auto',
+	        hideAndShowBehavior: 'withoutRescale',
+	        optionChange: chartOptionChange,
+	        orientation: 'vertical',
+	        hoverBehavior: 'dim',
+	        zoomAndScroll: 'off',
+	        highlightMatch: highlightValue,
+	        yAxis:{step:0.5},
+	        drill: chartDrill
+	      }" style="width:100%;height:400px;display: block">
+		</div>
+	
+		<!-- end line chart GES drilling: 'on',
+					<!-- select point/s popup -->
+		<assessments-preview id="popupWrapper1" class="oj-flex-item"></assessments-preview>
+		<!-- end select point/s popup -->
+	
 	</div>
-
-	<!-- end line chart GES drilling: 'on',
-				<!-- select point/s popup -->
-	<assessments-preview id="popupWrapper1" class="oj-flex-item"></assessments-preview>
-	<!-- end select point/s popup -->
-
-</div>
-<!-- end main graph panel -->
-
-<!-- add annotation window -->
-<div id="dialogWrapper1">
-	<add-assessment class="oj-flex-item"> </add-assessment>
-</div>
-<!-- end add annotation window -->
-
-<div class="oj-flex-item">
+	<!-- end main graph panel -->
+	
+	<!-- add annotation window -->
+	<div id="dialogWrapper1">
+		<add-assessment class="oj-flex-item"> </add-assessment>
+	</div>
+	<!-- end add annotation window -->
+	
 	<div class="oj-flex-item">
-
-		<!-- tabs with annotation list and polar chart -->
-		<div id="tabs-container" class="oj-flex-item">
-			<div id="tabs"
-				data-bind="ojComponent:{component: 'ojTabs',
-	                                               edge: 'top'}">
-				<!-- tab bar -->
-				<ul>
-					<li><span>Annotations/assesments</span></li>
-					<li><span>Morphology</span></li>
-				</ul>
-				<!-- tab contents -->
-				<div id="tabAnnotations">
-					<!-- buttons for annotations -->
-					<div id='annotation-buttons-container'
-						style="border-bottom: 2px solid #cbcbcb;">
-						<div class="demo-flex-display oj-flex-items-pad ">
-							<div class="oj-flex-bar">
-								<div class="oj-flex-bar-middle">
-									<div>
-										<span
-											data-bind="text: selectedAnotations().length + ' annotations/assessments' ">
-										</span>
+		<div class="oj-flex-item">
+	
+			<!-- tabs with annotation list and polar chart -->
+			<div id="tabs-container" class="oj-flex-item">
+				<div id="tabs"
+					data-bind="ojComponent:{component: 'ojTabs',
+		                                               edge: 'top'}">
+					<!-- tab bar -->
+					<ul>
+						<li><span>Annotations/assesments</span></li>
+						<li><span>Morphology</span></li>
+					</ul>
+					<!-- tab contents -->
+					<div id="tabAnnotations">
+						<!-- buttons for annotations -->
+						<div id='annotation-buttons-container'
+							style="border-bottom: 2px solid #cbcbcb;">
+							<div class="demo-flex-display oj-flex-items-pad ">
+								<div class="oj-flex-bar">
+									<div class="oj-flex-bar-middle">
+										<div>
+											<span
+												data-bind="text: selectedAnotations().length + ' annotations/assessments' ">
+											</span>
+										</div>
 									</div>
-								</div>
-								<div class="oj-flex-bar-end">
-									<div>
-										<button id="buttonAddComment"
-											data-bind="ojComponent: {
-	                                                    component:'ojButton',
-	                                                    label: 'Add',
-                                                            rootAttributes: {style:'margin-bottom:0px; margin-top:10px;'}
-	                                                }, click: clickShowPopupAddAssessment ">
-										</button>
-										<button
-											data-bind="ojComponent: {
-	                                                    component:'ojButton',
-	                                                    label: 'Options',
-	                                                    display: 'icons', 
-	                                                    icons: {start:'demo-icon-font demo-gear-icon-16'},
-	                                                    rootAttributes: {style:'margin-bottom:0px; margin-top:10px;'}
-	                                                },
-	                                                click: toggleFilterAssessmentBar">
-										</button>
+									<div class="oj-flex-bar-end">
+										<div>
+											<button id="buttonAddComment"
+												data-bind="ojComponent: {
+		                                                    component:'ojButton',
+		                                                    label: 'Add',
+	                                                            rootAttributes: {style:'margin-bottom:0px; margin-top:10px;'}
+		                                                }, click: clickShowPopupAddAssessment ">
+											</button>
+											<button
+												data-bind="ojComponent: {
+		                                                    component:'ojButton',
+		                                                    label: 'Options',
+		                                                    display: 'icons', 
+		                                                    icons: {start:'demo-icon-font demo-gear-icon-16'},
+		                                                    rootAttributes: {style:'margin-bottom:0px; margin-top:10px;'}
+		                                                },
+		                                                click: toggleFilterAssessmentBar">
+											</button>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<!-- end buttons for annotations -->
-
-					<!-- filter annotations -->
-					<div id="assessment-filter" class="oj-panel oj-panel-shadow-sm"
-						style="display: none; border: none; background-color: #f6f6f6">
-						<div id="form-container3" style="width: 100%;">
-							<div class="demo-flex-display oj-flex-items-pad">
-								<div
-									class="oj-flex  oj-sm-flex-items-initial oj-lg-justify-content-space-between oj-lg-align-items-flex-start"
-									data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
-									<div class="oj-flex-item" id='buttons-container'>
-										<div>
-											<div class="oj-flex-item">Risk and data type</div>
+						<!-- end buttons for annotations -->
+	
+						<!-- filter annotations -->
+						<div id="assessment-filter" class="oj-panel oj-panel-shadow-sm"
+							style="display: none; border: none; background-color: #f6f6f6">
+							<div id="form-container3" style="width: 100%;">
+								<div class="demo-flex-display oj-flex-items-pad">
+									<div
+										class="oj-flex  oj-sm-flex-items-initial oj-lg-justify-content-space-between oj-lg-align-items-flex-start"
+										data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
+										<div class="oj-flex-item" id='buttons-container'>
 											<div>
-												<div class="oj-flex-item" id="checkFilterRisk"
-													style="margin-top: 3px;"
-													data-bind="ojComponent: {
-	                                                        component: 'ojButtonset', 
-	                                                        chroming: 'outlined',
-	                                                        checked: checkedFilterRiskStatus
-	                                                    }">
-													<!-- ko foreach: risksTags -->
-													<label data-bind="attr: {for: value}"><img
-														data-bind="attr: {src: imagePath, title: label}"
-														style="vertical-align: bottom; width: 20px; height: 20px;" /></label>
-													<input type="checkbox"
-														data-bind="attr: {value: value, id: value}" />
-													<!-- /ko -->
-
-												</div>
-												<div class="oj-flex-item" id="checkFilterValidityData"
-													style="margin-top: 3px;"
-													data-bind="ojComponent: {
-	                                                        component: 'ojButtonset', 
-	                                                        chroming: 'outlined',
-	                                                        checked: checkedFilterValidityData
-	                                                    }">
-													<!-- ko foreach: dataValiditiesTags -->
-													<label data-bind="attr: {for: value}"><img
-														data-bind="attr: {src: imagePath, title: label}"
-														style="vertical-align: bottom; width: 20px; height: 20px;" /></label>
-													<input type="checkbox"
-														data-bind="attr: {value: value, id: value}" />
-													<!-- /ko -->
-
+												<div class="oj-flex-item">Risk and data type</div>
+												<div>
+													<div class="oj-flex-item" id="checkFilterRisk"
+														style="margin-top: 3px;"
+														data-bind="ojComponent: {
+		                                                        component: 'ojButtonset', 
+		                                                        chroming: 'outlined',
+		                                                        checked: checkedFilterRiskStatus
+		                                                    }">
+														<!-- ko foreach: risksTags -->
+														<label data-bind="attr: {for: value}"><img
+															data-bind="attr: {src: imagePath, title: label}"
+															style="vertical-align: bottom; width: 20px; height: 20px;" /></label>
+														<input type="checkbox"
+															data-bind="attr: {value: value, id: value}" />
+														<!-- /ko -->
+	
+													</div>
+													<div class="oj-flex-item" id="checkFilterValidityData"
+														style="margin-top: 3px;"
+														data-bind="ojComponent: {
+		                                                        component: 'ojButtonset', 
+		                                                        chroming: 'outlined',
+		                                                        checked: checkedFilterValidityData
+		                                                    }">
+														<!-- ko foreach: dataValiditiesTags -->
+														<label data-bind="attr: {for: value}"><img
+															data-bind="attr: {src: imagePath, title: label}"
+															style="vertical-align: bottom; width: 20px; height: 20px;" /></label>
+														<input type="checkbox"
+															data-bind="attr: {value: value, id: value}" />
+														<!-- /ko -->
+	
+													</div>
 												</div>
 											</div>
+	
 										</div>
-
-									</div>
-
-									<div class="oj-flex-item">
-										<form id="formId">
-											<label id="switchLabel" for="switch">Show all</label> <input
-												id="switch"
-												data-bind="ojComponent: {component: 'ojSwitch', value: isChecked, rootAttributes: {style:'height:42px; '}}" />
-										</form>
-									</div>
-
-									<div class="oj-flex-item">
-										<label for="selectRole">From</label> <select id="selectRole"
-											data-bind="ojComponent: {
-                                                        component: 'ojSelect', 
-                                                        value: selectedRoles,
-                                                        multiple: false,
-                                                        options: roleTags,
-                                                        rootAttributes: {style:'max-width:334px'}
-                                                    }">
-
-										</select>
-									</div>
-
-									<div class="oj-flex-item" style="width: 33%;">
-										<label for="selectSort">Sort by</label>
+	
 										<div class="oj-flex-item">
-											<select id="selectSort" style="display: inline-block; float: left; width: 35%;"
-													data-bind="ojComponent: {
-	                                                      component: 'ojSelect', 
-	                                                        value: val
-	                                                      }">
-
-												<option value=1>Date Asc.</option>
-												<option value=2>Date Desc.</option>
-												<option value=3>Author Name Asc.</option>
-												<option value=4>Author Name Desc.</option>
-												<option value=5>Author Role Asc.</option>
-												<option value=6>Author Role Desc.</option>
-												<option value=7>Type</option>
+											<form id="formId">
+												<label id="switchLabel" for="switch">Show all</label> <input
+													id="switch"
+													data-bind="ojComponent: {component: 'ojSwitch', value: isChecked, rootAttributes: {style:'height:42px; '}}" />
+											</form>
+										</div>
+	
+										<div class="oj-flex-item">
+											<label for="selectRole">From</label> <select id="selectRole"
+												data-bind="ojComponent: {
+	                                                        component: 'ojSelect', 
+	                                                        value: selectedRoles,
+	                                                        multiple: false,
+	                                                        options: roleTags,
+	                                                        rootAttributes: {style:'max-width:334px'}
+	                                                    }">
+	
 											</select>
-											<button id="resetFilter" style="display: inline-block; float: left; width: 40%; margin-left: 5px" data-bind="click: resetClick, 
-													ojComponent: { component: 'ojButton', label: 'Reset to defaults' }" />
-											<button id="filter" style="display: inline-block; float: left; width: 15%; margin-left: 5px" data-bind="click: filterList, 
-													ojComponent: { component: 'ojButton', label: 'Filter' }" />
+										</div>
+	
+										<div class="oj-flex-item" style="width: 33%;">
+											<label for="selectSort">Sort by</label>
+											<div class="oj-flex-item">
+												<select id="selectSort" style="display: inline-block; float: left; width: 35%;"
+														data-bind="ojComponent: {
+		                                                      component: 'ojSelect', 
+		                                                        value: val
+		                                                      }">
+	
+													<option value=1>Date Asc.</option>
+													<option value=2>Date Desc.</option>
+													<option value=3>Author Name Asc.</option>
+													<option value=4>Author Name Desc.</option>
+													<option value=5>Author Role Asc.</option>
+													<option value=6>Author Role Desc.</option>
+													<option value=7>Type</option>
+												</select>
+												<button id="resetFilter" style="display: inline-block; float: left; width: 40%; margin-left: 5px" data-bind="click: resetClick, 
+														ojComponent: { component: 'ojButton', label: 'Reset to defaults' }" />
+												<button id="filter" style="display: inline-block; float: left; width: 15%; margin-left: 5px" data-bind="click: filterList, 
+														ojComponent: { component: 'ojButton', label: 'Filter' }" />
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
+						<!-- end filter annotations -->
+	
+						<!-- view annotations -->
+						<assessments-list class="oj-flex-item"> </assessments-list>
+						<!-- end view annotations -->
+	
 					</div>
-					<!-- end filter annotations -->
-
-					<!-- view annotations -->
-					<assessments-list class="oj-flex-item"> </assessments-list>
-					<!-- end view annotations -->
-
-				</div>
-
-				<div id="tabShowMorphology">
-					<div id="polarChart-container" class="oj-flex"
-						data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
-
-						<!-- polar chart -->
-						<div id="polarChart1"
-							data-bind="ojComponent: {
-	                            component: 'ojChart', 
-	                            coordinateSystem: 'polar',
-	                            type: typeValue,
-	                            stack: stackValue,
-	                            polarGridShape: polarGridShapeValue,
-	                            series: polarChartSeriesValue, 
-	                            groups: polarChartGroupsValue, 
-	                            animationOnDisplay: 'auto',
-	                            hideAndShowBehavior: 'withoutRescale',
-	                            hoverBehavior: 'dim',
-	                            title: {text: 'Motility', halign: 'center'},
-	                            legend: {position: 'top'}
-	                            }"
-							style="width: 100%; height: 400px;"></div>
+	
+					<div id="tabShowMorphology">
+						<div id="polarChart-container" class="oj-flex"
+							data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
+	
+							<!-- polar chart -->
+							<div id="polarChart1"
+								data-bind="ojComponent: {
+		                            component: 'ojChart', 
+		                            coordinateSystem: 'polar',
+		                            type: typeValue,
+		                            stack: stackValue,
+		                            polarGridShape: polarGridShapeValue,
+		                            series: polarChartSeriesValue, 
+		                            groups: polarChartGroupsValue, 
+		                            animationOnDisplay: 'auto',
+		                            hideAndShowBehavior: 'withoutRescale',
+		                            hoverBehavior: 'dim',
+		                            title: {text: 'Motility', halign: 'center'},
+		                            legend: {position: 'top'}
+		                            }"
+								style="width: 100%; height: 400px;"></div>
+						</div>
 					</div>
 				</div>
 			</div>
