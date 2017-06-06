@@ -86,10 +86,15 @@ define(
                 };
 
                 var loadDiagramDataCallback = function (data) {
+                	console.log("loadDiagramDataCallback");
                     self.props.groups = data.groups;
                     self.props.series = data.series;
-                    for(var ig = 0; ig < Object.keys(self.props.series).length; ig++){
-                    	self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
+                    console.log("self.props: " + self.props);
+                    console.log("self.props.series: " + self.props.series);
+                    if(self.props !== undefined && self.props.series !== undefined) {
+	                    for(var ig = 0; ig < Object.keys(self.props.series).length; ig++){
+	                    	self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
+	                    }
                     }
                 };
                 
@@ -103,11 +108,23 @@ define(
 
 				/* Show popup dialog for adding new assessment */
 				self.clickShowPopupAddAssessment = function (data, event) {
-					ko.postbox.publish("resetAddAssessment");
-					ko.postbox.publish("dataPointsMarkedIds", ko.toJS(self.dataPointsMarkedIds));
-					$('#dialog1').ojDialog();
-					$('#dialog1').ojDialog('open');
-					return true;
+					if(self.dataPointsMarkedIds.length > 0) {
+						ko.postbox.publish("resetAddAssessment");
+						ko.postbox.publish("dataPointsMarkedIds", ko.toJS(self.dataPointsMarkedIds));
+						$('#dialog1').ojDialog();
+						$('#dialog1').ojDialog('open');
+						return true;
+					} else {
+						$('#dialog2').ojDialog();
+						$('#dialog2').ojDialog('open');
+						
+	                    //position dialog and screen
+	                    $("#dialog2").ojDialog('widget').css('top', String(document.body.scrollTop+screen.height/8)+'px');
+	                    $("#dialog2").ojDialog('widget').css('left', String((docWidth-$("#dialog2").width())/2)+'px');
+	                    window.scrollTo();
+	 
+						return false;
+					}
 				};
 
 				self.shownFilterBar = false;

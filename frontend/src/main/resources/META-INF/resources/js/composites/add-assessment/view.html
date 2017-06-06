@@ -1,59 +1,58 @@
-
-    <div style="display:none; " id="dialog1" title="Add annotation"  
-         data-bind="ojComponent:{
+<div style="display: none;" id="dialog1" title="Add annotation"
+	data-bind="ojComponent:{
                             component: 'ojDialog', 
                             initialVisibility: 'hide',
                             rootAttributes: {style: 'width: 360px; height: 480px;'}
              }">
-        <div class="oj-dialog-body">
+	<div class="oj-dialog-body">
 
-            <div id="form-container">
-                <div class="oj-form-layout">
-                    <div class="oj-form" >
-                        <div class="oj-flex"> 
-                            <div class="oj-flex-item">
-                                <label id="selectgrouplabel">Choose type</label>
-                                <div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
-                                    <ul id="riskList" style="display: none">
-                                        <!-- ko foreach: risksTags -->
-                                        <li data-bind="attr: {'oj-data-value': value}">
-                                            <img data-bind="attr: {src: imagePath}" 
-                                                 role="presentation" style="vertical-align:middle; width: 16px; height: 16px;"/> 
-                                            <span data-bind="text: label"></span>
-                                        </li>
-                                        <!-- /ko -->   
-                                    </ul>
-                                    <input id="riskSelect" placeholder="Choose risk..." 
-                                           data-bind="ojComponent: {
+		<div id="form-container">
+			<div class="oj-form-layout">
+				<div class="oj-form">
+					<div class="oj-flex">
+						<div class="oj-flex-item">
+							<label id="selectgrouplabel">Choose type</label>
+							<div class="oj-form-control-group"
+								aria-labelledby="selectgrouplabel" role="group">
+								<ul id="riskList" style="display: none">
+									<!-- ko foreach: risksTags -->
+									<li data-bind="attr: {'oj-data-value': value}"><img
+										data-bind="attr: {src: imagePath}" role="presentation"
+										style="vertical-align: middle; width: 16px; height: 16px;" />
+										<span data-bind="text: label"></span></li>
+									<!-- /ko -->
+								</ul>
+								<input id="riskSelect" placeholder="Choose risk..."
+									data-bind="ojComponent: {
                                                             component: 'ojCombobox',
                                                             value: selectedRiskStatus,
                                                             list: 'riskList',
                                                             rootAttributes: {style:'width:165px'}}">
 
-                                    <ul id="dataValiditiesList" style="display: none">
-                                        <!-- ko foreach: dataValiditiesTags -->
-                                        <li data-bind="attr: {'oj-data-value': value}">
-                                            <img data-bind="attr: {src: imagePath}" 
-                                                 role="presentation" style="vertical-align:middle; width: 16px; height: 16px;"/> 
-                                            <span data-bind="text: label"></span>
-                                        </li>
-                                        <!-- /ko -->   
-                                    </ul>
-                                    <input id="dataValiditySelection" placeholder="Choose data validity..." 
-                                           data-bind="ojComponent: {
+								<ul id="dataValiditiesList" style="display: none">
+									<!-- ko foreach: dataValiditiesTags -->
+									<li data-bind="attr: {'oj-data-value': value}"><img
+										data-bind="attr: {src: imagePath}" role="presentation"
+										style="vertical-align: middle; width: 16px; height: 16px;" />
+										<span data-bind="text: label"></span></li>
+									<!-- /ko -->
+								</ul>
+								<input id="dataValiditySelection"
+									placeholder="Choose data validity..."
+									data-bind="ojComponent: {
                                                             component: 'ojCombobox',
                                                             value: selectedDataValidity,
                                                             list: 'dataValiditiesList',
                                                             rootAttributes: {style:'width:165px'}}">
-                                </div>
+							</div>
 
-                            </div>
-                        </div>
-                        <div class="oj-flex"> 
-                            <div class="oj-flex-item">
-                                <label for="selectRole">For (select multiple)</label>
-                                <select id="selectRole" 
-                                        data-bind="ojComponent: {
+						</div>
+					</div>
+					<div class="oj-flex">
+						<div class="oj-flex-item">
+							<label for="selectRole">For (select multiple)</label> <select
+								id="selectRole"
+								data-bind="ojComponent: {
                                             component: 'ojSelect', 
                                             value: selectedRoles,
                                             multiple: true,
@@ -61,46 +60,54 @@
                                             rootAttributes: {style:'max-width:334px'}
                                         }">
 
-                                </select>
-                            </div>
-                        </div>
+							</select>
+						</div>
+					</div>
 
 
-                        <div class="oj-flex">
-                            <div class="oj-flex-item">
-                                <label for="textareacontrol">Comment</label>
-                                <textarea id="textareacontrol" rows="5"
-                                          data-bind="ojComponent: {
+					<div class="oj-flex">
+						<div class="oj-flex-item">
+							<label for="textareacontrol">Comment</label>
+							<textarea id="textareacontrol" rows="5"
+								data-bind="ojComponent: {
                                                     component: 'ojTextArea',
                                                     rootAttributes: {style:'max-width:334px'}, 
                                                     value: commentText,
                                                     placeholder: 'No comment yet.'}">
                                 </textarea>
-                            </div>
-                        </div>
+						</div>
+					</div>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="oj-dialog-footer" style="padding-right: 15px;">
-            <div align="right">
-                <button id= "okButton" 
-                        data-bind="ojComponent: { 
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="oj-dialog-footer" style="padding-right: 15px;">
+		<div align="right">
+			<button id="okButton"
+				data-bind="ojComponent: { 
                                 component: 'ojButton', 
                                 chroming: 'full', 
                                 label: 'Post'},
                                 click: postAssessment">
-                </button>
+			</button>
 
-                <button id= "buttonCancel"
-                        data-bind="ojComponent: { 
+			<button id="buttonCancel"
+				data-bind="ojComponent: { 
                                 component: 'ojButton', 
                                 chroming: 'full', 
                                 label: 'Cancel'},
                                 click: function(){$('#dialog1').ojDialog('close');} 
                         ">
-                </button>
-            </div>
-        </div>
-    </div>
+			</button>
+		</div>
+	</div>
+</div>
+
+<div style="display: none;" id="dialog2" title="No data set selected!"
+	data-bind="ojComponent:{
+                            component: 'ojDialog', 
+                            initialVisibility: 'hide',
+                            rootAttributes: {style: 'width: 280px; height: 140px;'}
+             }">
+</div>
