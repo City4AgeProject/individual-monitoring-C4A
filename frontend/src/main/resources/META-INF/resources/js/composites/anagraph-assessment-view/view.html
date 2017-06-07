@@ -4,7 +4,7 @@
 		style="width: 100%; height: 400px; display: block">
 		<!-- line chart GES -->
 		<!-- title = /'{/"text/": ."Geriatric Sub factor - /" + subFactorName(), /"halign/": /"center/"}/' -->
-	
+
 		<div id="detectionGEFGroup1FactorsChart" class="oj-flex-item"
 			data-bind="ojComponent: {
 	        component: 'ojChart', 
@@ -26,29 +26,27 @@
 	        highlightMatch: highlightValue,
 	        yAxis:{step:0.5},
 	        drill: chartDrill
-	      }" style="width:100%;height:400px;display: block">
-		</div>
-	
+	      }"
+			style="width: 100%; height: 400px; display: block"></div>
+
 		<!-- end line chart GES drilling: 'on',
 					<!-- select point/s popup -->
 		<assessments-preview id="popupWrapper1" class="oj-flex-item"></assessments-preview>
 		<!-- end select point/s popup -->
-	
+
 	</div>
 	<!-- end main graph panel -->
-	
-	<!-- add annotation window -->
+
 	<div id="dialogWrapper1">
 		<add-assessment class="oj-flex-item"> </add-assessment>
 	</div>
-	<!-- end add annotation window -->
-	
+
 	<div class="oj-flex-item">
 		<div class="oj-flex-item">
-	
+
 			<!-- tabs with annotation list and polar chart -->
 			<div id="tabs-container" class="oj-flex-item">
-				<div id="tabs"
+				<div id="tabs" style="display: none;"
 					data-bind="ojComponent:{component: 'ojTabs',
 		                                               edge: 'top'}">
 					<!-- tab bar -->
@@ -95,7 +93,7 @@
 							</div>
 						</div>
 						<!-- end buttons for annotations -->
-	
+
 						<!-- filter annotations -->
 						<div id="assessment-filter" class="oj-panel oj-panel-shadow-sm"
 							style="display: none; border: none; background-color: #f6f6f6">
@@ -122,7 +120,7 @@
 														<input type="checkbox"
 															data-bind="attr: {value: value, id: value}" />
 														<!-- /ko -->
-	
+
 													</div>
 													<div class="oj-flex-item" id="checkFilterValidityData"
 														style="margin-top: 3px;"
@@ -138,13 +136,13 @@
 														<input type="checkbox"
 															data-bind="attr: {value: value, id: value}" />
 														<!-- /ko -->
-	
+
 													</div>
 												</div>
 											</div>
-	
+
 										</div>
-	
+
 										<div class="oj-flex-item">
 											<form id="formId">
 												<label id="switchLabel" for="switch">Show all</label> <input
@@ -152,7 +150,7 @@
 													data-bind="ojComponent: {component: 'ojSwitch', value: isChecked, rootAttributes: {style:'height:42px; '}}" />
 											</form>
 										</div>
-	
+
 										<div class="oj-flex-item">
 											<label for="selectRole">From</label> <select id="selectRole"
 												data-bind="ojComponent: {
@@ -162,19 +160,20 @@
 	                                                        options: roleTags,
 	                                                        rootAttributes: {style:'max-width:334px'}
 	                                                    }">
-	
+
 											</select>
 										</div>
-	
+
 										<div class="oj-flex-item" style="width: 33%;">
 											<label for="selectSort">Sort by</label>
 											<div class="oj-flex-item">
-												<select id="selectSort" style="display: inline-block; float: left; width: 35%;"
-														data-bind="ojComponent: {
+												<select id="selectSort"
+													style="display: inline-block; float: left; width: 35%;"
+													data-bind="ojComponent: {
 		                                                      component: 'ojSelect', 
 		                                                        value: val
 		                                                      }">
-	
+
 													<option value=1>Date Asc.</option>
 													<option value=2>Date Desc.</option>
 													<option value=3>Author Name Asc.</option>
@@ -182,10 +181,12 @@
 													<option value=5>Author Role Asc.</option>
 													<option value=6>Author Role Desc.</option>
 													<option value=7>Type</option>
-												</select>
-												<button id="resetFilter" style="display: inline-block; float: left; width: 40%; margin-left: 5px" data-bind="click: resetClick, 
-														ojComponent: { component: 'ojButton', label: 'Reset to defaults' }" />
-												<button id="filter" style="display: inline-block; float: left; width: 15%; margin-left: 5px" data-bind="click: filterList, 
+												</select> <input type="button" id="resetFilter"
+													style="display: inline-block; float: left; width: 40%; margin-left: 5px"
+													data-bind="click: resetClick, ojComponent: { component: 'ojButton', label: 'Reset to defaults' }" />
+												<input type="button" id="filter"
+													style="display: inline-block; float: left; width: 15%; margin-left: 5px"
+													data-bind="click: filterList, 
 														ojComponent: { component: 'ojButton', label: 'Filter' }" />
 											</div>
 										</div>
@@ -194,17 +195,17 @@
 							</div>
 						</div>
 						<!-- end filter annotations -->
-	
+
 						<!-- view annotations -->
 						<assessments-list class="oj-flex-item"> </assessments-list>
 						<!-- end view annotations -->
-	
+
 					</div>
-	
+
 					<div id="tabShowMorphology">
 						<div id="polarChart-container" class="oj-flex"
 							data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
-	
+
 							<!-- polar chart -->
 							<div id="polarChart1"
 								data-bind="ojComponent: {

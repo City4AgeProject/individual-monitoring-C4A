@@ -20,7 +20,9 @@ function(ko, $) {
 			self.assessmentId(data.id);
 			ko.postbox.publish("selectDatapointsDiagram", self.assessmentId());
 		}
-
+		
+		readMore= function() {
+		}
 	}
 
 	return model;

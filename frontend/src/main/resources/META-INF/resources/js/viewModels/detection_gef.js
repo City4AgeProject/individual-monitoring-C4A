@@ -375,44 +375,6 @@ function (oj, ko, $, sp, params) {
 			self.bGotoGESClick();
         });
         
-        var loadAssessments = function (pointIds, checkedFilterValidityData) {
-        	var pointIdsString = pointIds.join('/');
-            return $.getJSON(ASSESSMENT_FOR_DATA_SET
-            		+ "/geriatricFactorValueIds/"
-					+ pointIdsString, function (assessments) {
-            	var assessmentsResult = [];
-                for (var i = 0; i < assessments.length; i++) {
-                    var newAssessment = Assessment.produceFromOther(assessments[i]);
-                    newAssessment.formatAssessmentData(); 
-                    if(!Assessment.arrayContains(assessmentsResult, newAssessment))
-                        assessmentsResult.push(newAssessment);
-                }
-                ko.postbox.publish("refreshSelectedAssessments", assessmentsResult);
-                self.selectedAnotations(assessmentsResult);
-                ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
-            });
-        };
-        
-        var filterAssessments = function (pointIds, checkedFilterValidityData) {
-        	var pointIdsString = pointIds.join('/');
-            return $.getJSON(ASSESSMENT_FOR_DATA_SET
-            		+ "/geriatricFactorValueIds/"
-					+ pointIdsString
-					+ filtering()
-					, function (assessments) {
-            	var assessmentsResult = [];
-                for (var i = 0; i < assessments.length; i++) {
-                    var newAssessment = Assessment.produceFromOther(assessments[i]);
-                    newAssessment.formatAssessmentData(); 
-                    if(!Assessment.arrayContains(assessmentsResult, newAssessment))
-                        assessmentsResult.push(newAssessment);
-                }
-                ko.postbox.publish("refreshSelectedAssessments", assessmentsResult);
-                self.selectedAnotations(assessmentsResult);
-                ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
-            });
-        };
-
         self.shownFilterBar = false;
         self.toggleFilterAssessmentBar = function (e) {
             if ($('#assessment-filter').css('display') === 'none') {

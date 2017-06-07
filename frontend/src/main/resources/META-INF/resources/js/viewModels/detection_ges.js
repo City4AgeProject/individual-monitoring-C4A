@@ -45,24 +45,6 @@ function (oj, ko, $, sp) {
             console.log(error);
         };
         
-        var loadAssessments = function (pointIds, checkedFilterValidityData) {
-        	var pointIdsString = pointIds.join('/');
-            return $.getJSON(ASSESSMENT_FOR_DATA_SET
-            		+ "/geriatricFactorValueIds/"
-					+ pointIdsString, function (assessments) {
-            	var assessmentsResult = [];
-                for (var i = 0; i < assessments.length; i++) {
-                    var newAssessment = Assessment.produceFromOther(assessments[i]);
-                    newAssessment.formatAssessmentData(); 
-                    if(!Assessment.arrayContains(assessmentsResult, newAssessment))
-                        assessmentsResult.push(newAssessment);
-                }
-                ko.postbox.publish("refreshSelectedAssessments", assessmentsResult);
-                self.selectedAnotations(assessmentsResult);
-                ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
-            });
-        };
-        
         var filtering = function () {
             var string = "";
         	if (self.checkedFilterRiskStatus() != undefined || self.checkedFilterValidityData() != undefined || ko.toJS(self.selectedRoles) != null || ko.toJS(self.val) != null) {
@@ -105,26 +87,6 @@ function (oj, ko, $, sp) {
         	}
 			return string;
         }
-        
-        var filterAssessments = function (pointIds, checkedFilterValidityData) {
-        	var pointIdsString = pointIds.join('/');
-            return $.getJSON(ASSESSMENT_FOR_DATA_SET
-            		+ "/geriatricFactorValueIds/"
-					+ pointIdsString
-					+ filtering()
-					, function (assessments) {
-            	var assessmentsResult = [];
-                for (var i = 0; i < assessments.length; i++) {
-                    var newAssessment = Assessment.produceFromOther(assessments[i]);
-                    newAssessment.formatAssessmentData(); 
-                    if(!Assessment.arrayContains(assessmentsResult, newAssessment))
-                        assessmentsResult.push(newAssessment);
-                }
-                ko.postbox.publish("refreshSelectedAssessments", assessmentsResult);
-                self.selectedAnotations(assessmentsResult);
-                ko.postbox.publish("refreshDataPointsMarked", assessmentsResult.length);
-            });
-        };
         
         self.handleActivated = function (info) {
             var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
@@ -251,7 +213,6 @@ function (oj, ko, $, sp) {
         self.selectedRoles = ko.observableArray();
         self.val = ko.observableArray();
 
-        console.log("load roles ges");
         var role = new oj.Collection.extend({
             url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
             fetchSize: -1,

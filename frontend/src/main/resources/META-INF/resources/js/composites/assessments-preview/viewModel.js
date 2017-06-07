@@ -24,6 +24,7 @@ function(ko, $) {
 		});
 
 		ko.postbox.subscribe("refreshDataPointsMarked", function(assessmentsResultLength) {
+			document.getElementById('tabs').style.display = 'block';
 			self.dataPointsMarked(self.dataPointsMarkedIds.length + ' data points marked with '
 														+ assessmentsResultLength + ' assessment(s)');
 		});
