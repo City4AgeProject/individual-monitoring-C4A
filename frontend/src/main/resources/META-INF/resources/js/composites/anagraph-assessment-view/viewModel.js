@@ -1,5 +1,6 @@
-define([ 'ojs/ojcore', 'knockout', 'jquery', 'knockout-postbox', 'urls',
-				'entities', 'add-assessment', 'assessments-list','assessments-preview' ],
+define(
+		[ 'ojs/ojcore', 'knockout', 'jquery', 'knockout-postbox', 'urls',
+				'entities', 'add-assessment', 'assessments-list', 'assessments-preview' ],
 
 function(oj, ko, $) {
 
@@ -57,6 +58,7 @@ function(oj, ko, $) {
 		self.checkedFilterValidityData = ko.observableArray();
 		self.isChecked = ko.observable();
 		self.selectedRoles = ko.observableArray();
+		self.rolesCollection = ko.observable();
 		self.roleTags = ko.observableArray([]);
 		self.val = ko.observableArray([ "Month" ]);
 		self.typeValue = ko.observable('line');
@@ -68,6 +70,34 @@ function(oj, ko, $) {
 		var selected = [];
 
 		self.selectedItemsValue = ko.observableArray(selected);
+
+		var role = new oj.Collection.extend({
+			url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
+			fetchSize : -1,
+			model : new oj.Model.extend({
+				idAttribute : 'id',
+				parse : function(response) {
+					return response.result;
+				}
+			})
+		});
+		self.rolesCollection(new role());
+		self.rolesCollection().fetch({
+			type : 'GET',
+			success : function(collection, response, options) {
+				if (self.roleTags.length === 0) {
+					for (var i = 0; i < response.length; i++) {
+						var roleModel = response[i];
+						self.roleTags.push({
+							value : roleModel.id,
+							label : roleModel.roleName
+						});
+					}
+				}
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+			}
+		});
 
 		self.chartOptionChange = function(event, ui) {
 			if (ui['option'] === 'selection') {
@@ -88,15 +118,17 @@ function(oj, ko, $) {
 						else if (onlyDataPoints.length === 1
 								&& onlyDataPoints[0][0]
 								&& onlyDataPoints[0][0].id) {
-							ko.postbox
-									.publish("refreshDataPointsMarked", 1);
+							ko.postbox.publish(
+									"refreshDataPointsMarked", 1);
 							ko.postbox.publish(
 									"refreshSelectedAssessments",
 									onlyDataPoints);
 						} else {
-							// Compose selections in get query parameters
+							// Compose selections in get query
+							// parameters
 							self.queryParams = calculateSelectedIds(onlyDataPoints);
-							ko.postbox.publish("refreshDataPointsMarked",
+							ko.postbox.publish(
+									"refreshDataPointsMarked",
 									onlyDataPoints.length);
 							loadAssessments(self.queryParams);
 						}
