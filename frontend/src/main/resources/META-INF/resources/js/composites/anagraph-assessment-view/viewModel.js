@@ -70,42 +70,45 @@ function(oj, ko, $) {
 		self.selectedItemsValue = ko.observableArray(selected);
 
 		self.chartOptionChange = function(event, ui) {
-			if (ui['option'] === 'selection'
-					&& !self.showSelectionOnDiagram()) {
-				if (ui['value'].length > 0) {
-					$('#popup1').ojPopup();
-					if ($('#popup1').ojPopup("isOpen"))
-						$('#popup1').ojPopup('close');
-					var onlyDataPoints = [];
-					onlyDataPoints = getDataPoints(ui['optionMetadata']);
-					if (onlyDataPoints.length === 0) {
-						for (var i = 0; i < ui['value'].length; i++) {
-							onlyDataPoints.push(ui['value'][i].id);
+			if (ui['option'] === 'selection') {
+				if (!self.showSelectionOnDiagram()) {
+					if (ui['value'].length > 0) {
+						$('#popup1').ojPopup();
+						if ($('#popup1').ojPopup("isOpen"))
+							$('#popup1').ojPopup('close');
+						var onlyDataPoints = [];
+						onlyDataPoints = getDataPoints(ui['optionMetadata']);
+						if (onlyDataPoints.length === 0) {
+							for (var i = 0; i < ui['value'].length; i++) {
+								onlyDataPoints.push(ui['value'][i].id);
+							}
 						}
-					}
-					if (onlyDataPoints.length === 0)
-						;
-					else if (onlyDataPoints.length === 1
-							&& onlyDataPoints[0][0]
-							&& onlyDataPoints[0][0].id) {
-						ko.postbox
-								.publish("refreshDataPointsMarked", 1);
-						ko.postbox.publish(
-								"refreshSelectedAssessments",
+						if (onlyDataPoints.length === 0)
+							;
+						else if (onlyDataPoints.length === 1
+								&& onlyDataPoints[0][0]
+								&& onlyDataPoints[0][0].id) {
+							ko.postbox
+									.publish("refreshDataPointsMarked", 1);
+							ko.postbox.publish(
+									"refreshSelectedAssessments",
+									onlyDataPoints);
+						} else {
+							// Compose selections in get query parameters
+							self.queryParams = calculateSelectedIds(onlyDataPoints);
+							ko.postbox.publish("refreshDataPointsMarked",
+									onlyDataPoints.length);
+							loadAssessments(self.queryParams);
+						}
+						showAssessmentsPopup();
+						ko.postbox.publish("dataPointsMarkedIds",
 								onlyDataPoints);
 					} else {
-						// Compose selections in get query parameters
-						self.queryParams = calculateSelectedIds(onlyDataPoints);
-						ko.postbox.publish("refreshDataPointsMarked",
-								onlyDataPoints.length);
-						loadAssessments(self.queryParams);
+						self.dataPointsMarkedIds = [];
 					}
-					showAssessmentsPopup();
-					ko.postbox.publish("dataPointsMarkedIds",
-							onlyDataPoints);
+				} else {
+					self.showSelectionOnDiagram(false);
 				}
-			} else {
-				self.showSelectionOnDiagram(false);
 			}
 		};
 
@@ -138,6 +141,7 @@ function(oj, ko, $) {
 						.toJS(self.dataPointsMarkedIds));
 				$('#dialog1').ojDialog();
 				$('#dialog1').ojDialog('open');
+
 				return true;
 			} else {
 				$('#dialog2').ojDialog();
