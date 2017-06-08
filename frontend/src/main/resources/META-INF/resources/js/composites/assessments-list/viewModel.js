@@ -1,29 +1,46 @@
 define([ 'knockout', 'jquery', 'knockout-postbox', 'urls', 'entities' ],
 
-function(ko, $) {
+		function(ko, $) {
 
-	function model(context) {
+			function model(context) {
 
-		var self = this;
+				var self = this;
 
-		self.selectedAnotations = ko.observableArray();
+				self.selectedAnotations = ko.observableArray();
 
-		self.assessmentId = ko.observable();
+				self.assessmentId = ko.observable();
 
-		self.attached = function(context) {
-			ko.postbox.subscribe("refreshSelectedAssessments", function(selectedAssessments) {
-				self.selectedAnotations(selectedAssessments);
-			});
-		};
+				self.attached = function(context) {
+					ko.postbox.subscribe("refreshSelectedAssessments",
+							function(selectedAssessments) {
+								self.selectedAnotations(selectedAssessments);
+							});
+				};
 
-		showOnDiagram = function(data, event) {
-			self.assessmentId(data.id);
-			ko.postbox.publish("selectDatapointsDiagram", self.assessmentId());
-		}
-		
-		readMore= function() {
-		}
-	}
+				showOnDiagram = function(data, event) {
+					self.assessmentId(data.id);
+					ko.postbox.publish("selectDatapointsDiagram", self
+							.assessmentId());
+				}
 
-	return model;
-});
+				self.readMore = function() {
+					document.getElementById('commentSpan').textContent = this.comment;
+
+					$('#commentPopup').ojDialog();
+					$('#commentPopup').ojDialog('open');
+
+					// position dialog and screen
+					$("#commentPopup").ojDialog('widget').css(
+							'top',
+							String(document.body.scrollTop + screen.height / 8)
+									+ 'px');
+					$("#commentPopup").ojDialog('widget').css(
+							'left',
+							String((docWidth - $("#commentPopup").width()) / 2)
+									+ 'px');
+					window.scrollTo();
+				}
+			}
+
+			return model;
+		});

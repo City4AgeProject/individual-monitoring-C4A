@@ -1,30 +1,59 @@
-<div class="oj-panel oj-panel-shadow-sm oj-dialog-body" style="border:none; 
-background-color: #fcfcfc; height: 250px;">
-    <div class="demo-flex-display oj-flex-items-pad" >
-        <!-- ko foreach: selectedAnotations -->
-        <div class="oj-flex aa_comment" id="div_comment_1">
-            <div class="oj-flex-item aa_c_info">
-                <div class="oj-flex oj-flex-items-pad">
-                    <div class="oj-flex-item" style="width: 60%;">
-                        <img data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
-                        <img data-bind="attr: { src: dataValidityImage, title: dataValidityDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
-                        <b><span data-bind="text: shortenText(from, 40), attr: { title: from }"></span></b>
-                    </div>
-                    <div class="oj-flex-item" style="width: 20%; color: #3C9DBC;" align="right" id="show_comment_1">
-                        <a href="#" id="show" data-bind="click: showOnDiagram"><img src="images/target.png" style="vertical-align: middle; width: 16px; height: 16px;"/>Show on diagram</a>
-                    </div>
-                    <div class="oj-flex-item" style="width: 20%;" align="right">
-                        <b><span data-bind="text: dateAndTimeText"></span></b>
-                    </div>
-                </div>
-            </div>
-            <div class="oj-flex-item aa_c_text">
-                <div id="comment_1"><span data-bind="text: shortenText(comment, 12), attr: { title: comment, id: 'span_' + ($index() + 1)}"></span></div>
-            </div>
-            <div class="oj-flex-item aa_c_more">
-                <a href="#" id="showmore_comment_1" data-bind="click: readMore">Read more</a>
-            </div>
-        </div>
-        <!-- /ko  --> 
-    </div>
+<div class="oj-panel oj-panel-shadow-sm oj-dialog-body"
+	style="border: none; background-color: #fcfcfc; height: 250px;">
+	<div class="demo-flex-display oj-flex-items-pad">
+		<!-- ko foreach: selectedAnotations -->
+		<div class="oj-flex aa_comment" id="div_comment_1">
+			<div class="oj-flex-item aa_c_info">
+				<div class="oj-flex oj-flex-items-pad">
+					<div class="oj-flex-item" style="width: 60%;">
+						<img
+							data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }"
+							style="vertical-align: bottom; width: 20px; height: 20px;" /> <img
+							data-bind="attr: { src: dataValidityImage, title: dataValidityDesc }"
+							style="vertical-align: bottom; width: 20px; height: 20px;" /> <b><span
+							data-bind="text: shortenText(from, 40), attr: { title: from }"></span></b>
+					</div>
+					<div class="oj-flex-item" style="width: 20%; color: #3C9DBC;"
+						align="right" id="show_comment_1">
+						<a href="#" id="show" data-bind="click: showOnDiagram"><img
+							src="images/target.png"
+							style="vertical-align: middle; width: 16px; height: 16px;" />Show
+							on diagram</a>
+					</div>
+					<div class="oj-flex-item" style="width: 20%;" align="right">
+						<b><span data-bind="text: dateAndTimeText"></span></b>
+					</div>
+				</div>
+			</div>
+			<div class="oj-flex-item aa_c_text">
+				<div id="comment_1">
+					<span id="span_1"
+						data-bind="text: shortenText(comment, 190), attr: { title: comment}"></span>
+				</div>
+			</div>
+			<div class="oj-flex-item aa_c_more" data-bind="visible: comment.length > 190">
+				<a href="#" id="showmore_comment_1"
+					data-bind="click: $parent.readMore">Read more</a>
+			</div>
+		</div>
+		<!-- /ko  -->
+	</div>
+</div>
+
+<div style="display: none;" id="commentPopup"
+	title="Full annotation comment:"
+	data-bind="ojComponent:{
+                            component: 'ojDialog', 
+                            initialVisibility: 'hide',
+                            rootAttributes: {style: 'width: 420px; height: 320px;'}
+             }">
+	<div class="demo-flex-display oj-flex-items-pad">
+		<div class="oj-flex oj-sm-flex-direction-column">
+			<div class="oj-flex-item">
+				<h3>
+					<span id="commentSpan">&nbsp;</span>
+				</h3>
+			</div>
+		</div>
+	</div>
 </div>
