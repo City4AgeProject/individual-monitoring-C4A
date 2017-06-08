@@ -1,27 +1,54 @@
+
 <div class="oj-panel oj-panel-shadow-sm"
 	style="border: none; background-color: #fcfcfc">
 
 	<!-- CR info -->
 	<div class="oj-panel oj-panel-shadow-sm"
 		style="border: none; background-color: #fcfcfc">
-		<span style="font-size: 16px">Care recipient: <b><span
-				data-bind="text: careRecipientId"></span></b></span> <span
-			style="font-size: 16px; padding-left: 20px;">Age: <b><span
-				data-bind="text: userAge"></span></b></span> <span>Assign Geriatrician:
-			<b><span data-bind="text:$root.userLogin"></span></b>
+		<span>
+		<span style="font-size: 16px" data-bind="text: careRecipientLabel "></span> 
+		   <b><span data-bind="text: careRecipientId"></span></b>
+		</span>
+		<span>
+		<span style="font-size: 16px; padding-left: 20px;" data-bind="text: ageLabel"></span>
+		  <b> <span data-bind="text: userAge"></span></b>
+		</span>
+		<span>
+	    <span style="font-size: 16px; padding-left: 20px;" data-bind="text: assignGeriatricianLabel"></span>
+		  <b><span data-bind="text: $root.userLogin"></span></b>
 		</span>
 		<!--class="oj-header-border"-->
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
-		<div style="height: 20px; overflow: hidden" id="summary">
-			<b>Summary:</b><span data-bind="text:textline"></span>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br/>
+		
+		<div style="height: 20px; overflow: hidden; font-size: 16px; margin-top:5px" id="summary">
+			<b><span data-bind="text: summaryLabel"></span></b>
+			<span data-bind="text:textline"></span>
 		</div>
 	</div>
+	<!-- 
+		<div class="oj-panel oj-panel-shadow-sm"
+		style="border: none; background-color: #fcfcfc">
+		<span style="font-size: 16px"  data-bind="text: careRecipientLabel"> 
+		<b><span data-bind="text: careRecipientIdLabel"></span></b></span> 
+		
+		<span style="font-size: 16px; padding-left: 20px;"   data-bind="text: ageLabel" > <b>
+		<span data-bind="text: userAge"></span></b></span>
+		 <span data-bind="text: assignGeriatricianLabel" >
+			<b><span data-bind="text:$root.userLogin"></span></b>
+		</span> -->
+		<!--class="oj-header-border"--><!--  
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>
+		<div style="height: 20px; overflow: hidden" id="summary"  data-bind="text: summaryLabel">
+			<b></b><span data-bind="text:textline"></span>
+		</div>
+	</div>
+	-->
 
 	<!-- end CR info -->
 	<div class="visualization-drop oj-flex-item" align="right">
 		<button class="demo-button-aqua" style="min-width: 100px;"
 			data-bind="ojComponent: { component: 'ojButton', 
-                                                    label: 'Visualisations',
+                                                    label: visualisationsLabel,
                                                     chroming:'outlined',
                                                     menu: '#visualizationMenu',
                                                     rootAttributes: {class: 'demo-button-aqua'},
@@ -31,9 +58,10 @@
 			aria-label="Order Actions"
 			data-bind="ojComponent: {component: 'ojMenu', 
                                                     select: frailtyMenuItemSelect}">
-			<li id="lineChart"><a href="#">Line chart</a></li>
-			<li id="morphology"><a href="#">Morphology</a></li>
+			<li id="lineChart"><a href="#" data-bind="text: lineChartLabel"></a></li>
+			<li id="morphology"><a href="#" data-bind="text: morphologyLabel"></a></li>
 		</ul>
+	
 	</div>
 
 	<div class="demo-flex-display oj-flex-items-pad">
@@ -68,7 +96,7 @@
                 orientation: 'vertical',
                 hoverBehavior: 'dim',
                 highlightMatch: highlightValue,
-                title: {text: 'Behavioural & Contextual Geriatric group factors', halign: 'center'},
+                title: {text: detectionGEFGroupsLineChartLabel , halign: 'center'},
                 yAxis:{step:0.5},
                 legend: {position: 'bottom'}
                 }"
@@ -125,3 +153,5 @@
 	parent-factor-id="{{parentFactorId}}" series="{{lineSeriesValue}}"
 	groups="{{lineGroupsValue}}" title="{{titleObj}}"
 	legend='{"position":"top"}' drilling='on' style="display: none" />
+
+

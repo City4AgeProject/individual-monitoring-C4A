@@ -6,6 +6,27 @@ function(oj, ko, $) {
 
 	function model(context) {
 		var self = this;
+		
+		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_l_aav");
+		self.morphologyLabel = oj.Translations.getTranslatedString("morphology_l_aav");
+		self.annotations_assessmentsLabel = oj.Translations.getTranslatedString("annotations_assessments_l");
+		self.addLabel = oj.Translations.getTranslatedString("add_l");
+		self.riskDataTypeLabel = oj.Translations.getTranslatedString("risk_data_type_l");
+		
+		self.showAllLabel = oj.Translations.getTranslatedString("show_all_l"); 
+		self.fromLabel = oj.Translations.getTranslatedString("from_l"); 
+		self.sortLabel = oj.Translations.getTranslatedString("sort_l");  
+		self.resetToDefaultsLabel = oj.Translations.getTranslatedString("reset_to_defaults_l");  
+		self.filterLabel = oj.Translations.getTranslatedString("filter_l");  
+		
+		self.dateAscLabel = oj.Translations.getTranslatedString("date_asc_l");
+	    self.dateDescLabel = oj.Translations.getTranslatedString("date_desc_l");
+	    self.authorNameAscLabel = oj.Translations.getTranslatedString("author_name_asc_l");
+	    self.authorNameDescLabel = oj.Translations.getTranslatedString("author_name_desc_l");
+	    self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc_l");
+	    self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc_l");
+	    self.typeLabel = oj.Translations.getTranslatedString("type_l");
+	    
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();
 		self.title = ko.observable();
@@ -13,7 +34,7 @@ function(oj, ko, $) {
 		self.drilling = ko.observable();
 
 		self.highlightValue = ko.observable();
-
+		
 		self.optionChangeCallback = null;
 		self.assessmentId = ko.observable();
 		self.subFactorName = ko.observable();
@@ -25,37 +46,24 @@ function(oj, ko, $) {
 		self.selectedAnotations = ko.observableArray();
 
 		self.nowrap = ko.observable(false);
-
-		self.risksTags = ko.observableArray([ {
-			value : 'A',
-			label : 'Alert data',
-			imagePath : 'images/risk_alert.png'
-		}, {
-			value : 'W',
-			label : 'Warning data',
-			imagePath : 'images/risk_warning.png'
-		}, {
-			value : 'N',
-			label : 'No risk data',
-			imagePath : 'images/comment.png'
-		} ]);
-
-		self.checkedFilterRiskStatus = ko.observableArray();
-		/* Data validities */
-		self.dataValiditiesTags = ko.observableArray([ {
-			value : 'QUESTIONABLE_DATA',
-			label : 'Questionable data',
-			imagePath : 'images/questionable_data.png'
-		}, {
-			value : 'FAULTY_DATA',
-			label : 'Faulty data',
-			imagePath : 'images/faulty_data.png'
-		}, {
-			value : 'VALID_DATA',
-			label : 'Valid data',
-			imagePath : 'images/valid_data.png'
-		} ]);
-		self.checkedFilterValidityData = ko.observableArray();
+		
+	    self.risksTags = ko.observableArray([
+       	 	{value: 'A', label: oj.Translations.getTranslatedString('alertData_l'), imagePath: 'images/risk_alert.png'},
+            {value: 'W', label: oj.Translations.getTranslatedString('warning_data_l'), imagePath: 'images/risk_warning.png'},
+            {value: 'N', label: oj.Translations.getTranslatedString('no_risk_data_l'), imagePath: 'images/comment.png'}
+        ]);
+	    
+	    
+	    self.checkedFilterRiskStatus = ko.observableArray();
+        /* Data validities */
+        self.dataValiditiesTags = ko.observableArray([
+            {value: 'QUESTIONABLE_DATA',label: oj.Translations.getTranslatedString( 'questionable_data_l' ), imagePath: 'images/questionable_data.png'},
+            {value: 'FAULTY_DATA',label: oj.Translations.getTranslatedString( 'faulty_data_l' ), imagePath: 'images/faulty_data.png'},
+            {value: 'VALID_DATA',label: oj.Translations.getTranslatedString( 'valid_data_l' ), imagePath: 'images/valid_data.png'}]);
+        self.checkedFilterValidityData = ko.observableArray();
+	    
+        
+        
 		self.isChecked = ko.observable();
 		self.selectedRoles = ko.observableArray();
 		self.rolesCollection = ko.observable();
@@ -143,7 +151,7 @@ function(oj, ko, $) {
 				}
 			}
 		};
-
+		
 		var loadDiagramDataCallback = function(data) {
 			self.props.groups = data.groups;
 			self.props.series = data.series;
@@ -209,7 +217,7 @@ function(oj, ko, $) {
 				self.shownFilterBar = false;
 			}
 		};
-
+		
 		self.filterList = function() {
 			filterAssessments(self.queryParams,
 					self.checkedFilterValidityData);
@@ -223,6 +231,7 @@ function(oj, ko, $) {
 			var response = loadDataSet();
 			return response;
 		};
+
 
 		// This works only for GES!
 		self.bindingsApplied = function() {
@@ -258,7 +267,7 @@ function(oj, ko, $) {
 				self.selectedItemsValue(selected);
 			}
 		};
-
+		
 		var serverErrorCallback = function(xhr, message, error) {
 			console.log(error);
 		};
@@ -277,7 +286,7 @@ function(oj, ko, $) {
 			clientX = e.clientX;
 			clientY = e.clientY;
 		});
-
+		
 		/*
 		 * Method for drawing annotation flags on diagram
 		 */

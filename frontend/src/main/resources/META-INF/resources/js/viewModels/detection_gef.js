@@ -10,16 +10,34 @@ function (oj, ko, $, sp, params) {
 
     function GraphicsContentViewModel() {
 
+    	//Labels on GEF page with translate option
+    	this.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient_l");
+    	this.ageLabel = oj.Translations.getTranslatedString("age_l");
+    	this.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician_l");
+    	this.summaryLabel= oj.Translations.getTranslatedString("summary_l");
+    	this.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detectionGEFGroupsLineChart_l");
+    	this.lineChartLabel = oj.Translations.getTranslatedString('line_chart_l');
+    	this.morphologyLabel = oj.Translations.getTranslatedString('morphology_l');
+    	this.visualisationsLabel = oj.Translations.getTranslatedString('visualisations_l');
+    	
         var self = this;
         self.careRecipientId = ko.observable();
+
         
         self.highlightValue = ko.observable();
+
+        var selectedId;
+
         
         var lineColors = ['#b4b2b2','#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
+        
+        //Key-Value Map for Translations
+     // var mapTranslate1 = new Map();
 
-        var PRE_FRAIL_SERIES_NAME = 'Pre-Frail';
-        var FRAIL_SERIES_NAME = 'Frail';
-        var FIT_SERIES_NAME = 'Fit';
+
+        var PRE_FRAIL_SERIES_NAME = oj.Translations.getTranslatedString('pre-frail');
+        var FRAIL_SERIES_NAME = oj.Translations.getTranslatedString('frail');
+        var FIT_SERIES_NAME = oj.Translations.getTranslatedString('fit');
 
         function initCRData() {
             self.userAge = sp.userAge;
@@ -130,19 +148,25 @@ function (oj, ko, $, sp, params) {
         /*  Detection GEF Groups Line Chart configuration*/	
         self.lineSeries2Value = ko.observableArray();   	
         
+        
         self.titleValue = ko.observable("");
         self.titlePart = ko.observable("");
         self.titleObj = ko.observable();
+       
+        
+       
 
         self.chartDrill = function (event, ui) {
+
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-            graphicsContentViewModel.titleValue(ui['series'] + " Geriatric factors");
+            graphicsContentViewModel.titleValue(  ui['series'].charAt(0).toUpperCase()+ui['series'].slice(1) + oj.Translations.getTranslatedString('geriatric_factors_l') );
 
             self.titlePart(ko.toJS(self.titleValue));
             
             self.titleObj({"text": self.titlePart(), "halign": "center"});
+            
             
             self.parentFactorId = ui['seriesData'].items[0].gefTypeId;
             $('#detectionGEFGroup1FactorsLineChart').prop('parentFactorId', ui['seriesData'].items[0].gefTypeId);
@@ -154,32 +178,57 @@ function (oj, ko, $, sp, params) {
                     console.log('some error');
                 }); 
             }
+
         };
         
+        
+        
+        /***********************************************/
         var loadDiagramDataCallback = function (data) {
+
+        	console.log("JSON data:"+JSON.stringify(data));
             self.lineGroupsValue = data.groups;
             self.lineSeriesValue = data.series;
             
+            //Translate name of the month from date
+            /* for( var i=0; i< Object.keys(data.groups).length;i++){
+            	data.groups[i].name = oj.Translations.getTranslatedString("date"+String(i))+data.groups[i].name.split(" ")[1];
+            }*/
+            
+            
+           for(var ig = 0; ig < Object.keys(data.series).length; ig++){
+        		data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
+        	} 
+           
+        
+           
             $('#detectionGEFGroup1FactorsLineChart').prop('groups', data.groups);
-            $('#detectionGEFGroup1FactorsLineChart').prop('series', data.series);
-
+            $('#detectionGEFGroup1FactorsLineChart').prop('series', data.series); 
+            
             var param = [self.careRecipientId, self.parentFactorId];
             ko.postbox.publish("loadAssessmentsCached", param);
+            
         };
         
         
         self.chartDrill2 = function (ui) {
+
             var seriesVal = ui['series'];
+
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-            self.selectedGefName = ui['series'];
-            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
-            self.parentFactorId = selectedDetectionVariable.id;
+           // self.selectedGefName = ui['series'];
+            selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
 
-            graphicsContentViewModel.titleValue(seriesVal + " Geriatric factors");
+            //Dupli kod, koristi se sad u self.bGotoGESClick
+       /*     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.cdDetectionVariables, selectedId);
+            console.log("selectedDetectionVariable:"+JSON.stringify(selectedDetectionVariable));
+            self.parentFactorId = selectedDetectionVariable.id;*/
             
+            graphicsContentViewModel.titleValue(seriesVal + "Geriatric factors");
             self.parentFactorId = ui['seriesData'].items[0].gefTypeId;
+            
         
         };
         /* End Detection GEF Groups Line Chart configuration*/
@@ -293,26 +342,36 @@ function (oj, ko, $, sp, params) {
 
         self.cdDetectionVariables = [];
 
+        //Names Cd Detection Variable names are loaded from table
         function loadCdDetectionVariables() {
             $.getJSON(CODEBOOK_SELECT + '/cd_detection_variable', function(data) {
                 self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
+                
             });
         }
         
         //not used?
-        self.bShowDetailsClick = function() {
+       self.bShowDetailsClick = function() {
+        	alert('  self.bShowDetailsClick NOT_USED_TEST');
+        	og("***********bShowDetailsClick");
             var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
             self.parentFactorId = selectedDetectionVariable.id;
             loadGefData();
             loadCRData();
+
         };
 
+        //Returns chart by ID for detection variable name that was drilled in (clicked on)
         self.bGotoGESClick = function() {
-            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
+        	
+            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.cdDetectionVariables, selectedId);
             oj.Router.rootInstance.store([self.careRecipientId, selectedDetectionVariable]);
             oj.Router.rootInstance.go('detection_ges');
+            
         };
 
+
+        //Loading Data for detectionGEFGroupsLineChart chart 
         function loadCRData() {
             $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/OVL/GFG")
                 .then(function (data) {
@@ -323,7 +382,7 @@ function (oj, ko, $, sp, params) {
                             nodes.push(createItems(list.items[0].idList[j], itemList, gtId ));
                         });
                         self.seriesVal.push({
-                            name: list.items[0].groupName,
+                            name: oj.Translations.getTranslatedString(list.items[0].groupName),
                             items: nodes,
                             color: lineColors[i],
                             lineWidth: 3.5

@@ -42,18 +42,22 @@
 	</div>
 
 	<div class="oj-flex-item">
-		<div class="oj-flex-item">
 
+		<div class="oj-flex-item">
+				
 			<!-- tabs with annotation list and polar chart -->
 			<div id="tabs-container" class="oj-flex-item">
 				<div id="tabs" style="display: none;"
 					data-bind="ojComponent:{component: 'ojTabs',
 		                                               edge: 'top'}">
-					<!-- tab bar -->
-					<ul>
-						<li><span>Annotations/assesments</span></li>
-						<li><span>Morphology</span></li>
-					</ul>
+					<!-- tab bar -->	
+				<ul>
+					<li><span data-bind="text: annotationsLabel" ></span></li>
+					<li><span data-bind="text: morphologyLabel"></span></li>
+				</ul>
+				
+						
+	
 					<!-- tab contents -->
 					<div id="tabAnnotations">
 						<!-- buttons for annotations -->
@@ -64,7 +68,7 @@
 									<div class="oj-flex-bar-middle">
 										<div>
 											<span
-												data-bind="text: selectedAnotations().length + ' annotations/assessments' ">
+											data-bind="text: selectedAnotations().length + annotations_assessmentsLabel ">
 											</span>
 										</div>
 									</div>
@@ -73,7 +77,7 @@
 											<button id="buttonAddComment"
 												data-bind="ojComponent: {
 		                                                    component:'ojButton',
-		                                                    label: 'Add',
+		                                                    label: addLabel,
 	                                                            rootAttributes: {style:'margin-bottom:0px; margin-top:10px;'}
 		                                                }, click: clickShowPopupAddAssessment ">
 											</button>
@@ -92,6 +96,7 @@
 								</div>
 							</div>
 						</div>
+
 						<!-- end buttons for annotations -->
 
 						<!-- filter annotations -->
@@ -103,8 +108,10 @@
 										class="oj-flex  oj-sm-flex-items-initial oj-lg-justify-content-space-between oj-lg-align-items-flex-start"
 										data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
 										<div class="oj-flex-item" id='buttons-container'>
-											<div>
-												<div class="oj-flex-item">Risk and data type</div>
+	
+										<div>
+											<div class="oj-flex-item" data-bind="text: riskDataTypeLabel, attr:{title:riskDataTypeLabel}"></div>
+
 												<div>
 													<div class="oj-flex-item" id="checkFilterRisk"
 														style="margin-top: 3px;"
@@ -143,29 +150,31 @@
 
 										</div>
 
-										<div class="oj-flex-item">
-											<form id="formId">
-												<label id="switchLabel" for="switch">Show all</label> <input
-													id="switch"
-													data-bind="ojComponent: {component: 'ojSwitch', value: isChecked, rootAttributes: {style:'height:42px; '}}" />
-											</form>
-										</div>
+									<div class="oj-flex-item">
+										<form id="formId" data-bind="attr:{title: showAllLabel}">
+											<label id="switchLabel" for="switch" data-bind="text: showAllLabel, attr:{title: showAllLabel}"></label> <input
+												id="switch"
+												data-bind="  ojComponent: {component: 'ojSwitch', value: isChecked, rootAttributes: {style:'height:42px; '}}" />
+										</form>
+									</div>
 
-										<div class="oj-flex-item">
-											<label for="selectRole">From</label> <select id="selectRole"
-												data-bind="ojComponent: {
-	                                                        component: 'ojSelect', 
-	                                                        value: selectedRoles,
-	                                                        multiple: false,
-	                                                        options: roleTags,
-	                                                        rootAttributes: {style:'max-width:334px'}
-	                                                    }">
 
-											</select>
-										</div>
 
-										<div class="oj-flex-item" style="width: 33%;">
-											<label for="selectSort">Sort by</label>
+									<div class="oj-flex-item" style="width: 180px;">
+										<label for="selectRole" data-bind="text: fromLabel"></label> <select id="selectRole"
+											data-bind="ojComponent: {
+                                                        component: 'ojSelect', 
+                                                        value: selectedRoles ,
+                                                        multiple: false,
+                                                        options: roleTags,
+                                                        rootAttributes: {style:'max-width:334px'}
+                                                    }">
+
+										</select>
+									</div>
+
+										<div class="oj-flex-item" style="width: 40%;">
+											<label for="selectSort" data-bind="text: sortLabel"></label>
 											<div class="oj-flex-item">
 												<select id="selectSort"
 													style="display: inline-block; float: left; width: 35%;"
@@ -174,20 +183,22 @@
 		                                                        value: val
 		                                                      }">
 
-													<option value=1>Date Asc.</option>
-													<option value=2>Date Desc.</option>
-													<option value=3>Author Name Asc.</option>
-													<option value=4>Author Name Desc.</option>
-													<option value=5>Author Role Asc.</option>
-													<option value=6>Author Role Desc.</option>
-													<option value=7>Type</option>
-												</select> <input type="button" id="resetFilter"
-													style="display: inline-block; float: left; width: 40%; margin-left: 5px"
-													data-bind="click: resetClick, ojComponent: { component: 'ojButton', label: 'Reset to defaults' }" />
+													<option value=1 data-bind="text: dateAscLabel"></option>
+														<option value=2 data-bind="text: dateDescLabel"></option>
+														<option value=3 data-bind="text: authorNameAscLabel"></option>
+														<option value=4 data-bind="text: authorNameDescLabel"></option>
+														<option value=5 data-bind="text: authorRoleAscLabel"></option>
+														<option value=6 data-bind="text: authorRoleDescLabel"></option>
+														<option value=7 data-bind="text: typeLabel"></option>
+												</select> 
+												<input type="button" id="resetFilter"
+													style="display: inline-block; float: left; width: auto 40%; margin-left: 5px"
+													data-bind="click: resetClick, ojComponent: { component: 'ojButton', label: resetToDefaultsLabel }" />
 												<input type="button" id="filter"
-													style="display: inline-block; float: left; width: 15%; margin-left: 5px"
+													style="display: inline-block; float: left; width: auto 15%; margin-left: 5px"
 													data-bind="click: filterList, 
-														ojComponent: { component: 'ojButton', label: 'Filter' }" />
+														ojComponent: { component: 'ojButton', label: filterLabel }" />									
+
 											</div>
 										</div>
 									</div>

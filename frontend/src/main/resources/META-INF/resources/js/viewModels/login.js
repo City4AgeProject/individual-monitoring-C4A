@@ -5,6 +5,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             function LoginViewModel() {
                 $(".loader-hover").hide();
                 var self = this;
+                
+               // this.userLabel = oj.Translations.getTranslatedString('user_l');
+               // this.passwordLabel=  oj.Translations.getTranslatedString('password_l');
+               // this.loginLabel = oj.Translations.getTranslatedString('login_l');
+               // this.resetLabel = oj.Translations.getTranslatedString('reset_l');
 
                 var url = sp.baseUrl + sp.loginMethod;
 

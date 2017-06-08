@@ -1,15 +1,17 @@
 define([ 'knockout', 'jquery', 'knockout-postbox', 'urls', 'entities' ],
 
 		function(ko, $) {
-
 			function model(context) {
-
 				var self = this;
-
+				self.readMoreLabel = oj.Translations.getTranslatedString("read_more_l");
+				self.showOnDiagramLabel = oj.Translations.getTranslatedString("show_on_diagram_l");
+				self.fullAnnotationCommentLabel = oj.Translations.getTranslatedString("full_annotation_comment_l");
+				
 				self.selectedAnotations = ko.observableArray();
-
 				self.assessmentId = ko.observable();
-
+				
+		
+				
 				self.attached = function(context) {
 					ko.postbox.subscribe("refreshSelectedAssessments",
 							function(selectedAssessments) {
@@ -41,6 +43,6 @@ define([ 'knockout', 'jquery', 'knockout-postbox', 'urls', 'entities' ],
 					window.scrollTo();
 				}
 			}
-
 			return model;
 		});
+

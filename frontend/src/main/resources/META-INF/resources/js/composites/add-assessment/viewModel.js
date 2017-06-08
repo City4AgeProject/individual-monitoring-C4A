@@ -3,6 +3,20 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
             
             function model(context) {
                 var self = this;
+                
+                self.choseTypeLabel = oj.Translations.getTranslatedString("chose_type_l");
+                self.choseTypePlcHoldLabel = oj.Translations.getTranslatedString("chose_type_plc_hold_l");
+                self.forSelectRoleLabel = oj.Translations.getTranslatedString("for_select_role_l");
+                self.commentLabel = oj.Translations.getTranslatedString("comment_l");
+                self.commentPlcHoldLabel = oj.Translations.getTranslatedString("comment_plc_hold_l");
+                self.dataValidityPlcHoldLabel = oj.Translations.getTranslatedString("data_validity_plc_hold_l");
+                self.postBtnLabel = oj.Translations.getTranslatedString("post_btn_l");
+                self.cancelBtnLabel = oj.Translations.getTranslatedString("cancel_btn_l");
+                self.addAnnotationTitle = oj.Translations.getTranslatedString("add_annotation_title_l");
+                self.noDataSetSelectedLabel = oj.Translations.getTranslatedString("no_data_set_selected_l");
+                
+                
+          /*      self.xxx = oj.Translations.getTranslatedString("xxx");*/
 
                 self.commentText = ko.observable('');
                 self.risksCollection = ko.observable();
@@ -10,9 +24,10 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 self.selectedRiskStatus = ko.observable();
                 self.dataPointsMarkedIds = [];
                 
-                self.dataValiditiesTags = ko.observableArray([{value: 'QUESTIONABLE_DATA', label: 'Questionable data', imagePath: 'images/questionable_data.png'},
-                    {value: 'FAULTY_DATA', label: 'Faulty data', imagePath: 'images/faulty_data.png'},
-                    {value: 'VALID_DATA', label: 'Valid data', imagePath: 'images/valid_data.png'}]);
+                self.dataValiditiesTags = ko.observableArray([
+                	{value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data_l") , imagePath: 'images/questionable_data.png'},
+                    {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data_l") , imagePath: 'images/faulty_data.png'},
+                    {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data_l") , imagePath: 'images/valid_data.png'}]);
                 self.selectedDataValidity = ko.observable();
 
                 self.rolesCollection = ko.observable();
@@ -67,7 +82,7 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                             if (self.risksTags.length === 0) {
                                 for (var i = 0; i < collection.size(); i++) {
                                     var riskModel = collection.at(i);
-                                    self.risksTags.push({value: riskModel.attributes.riskStatus, label: riskModel.attributes.riskStatusDesc, imagePath: riskModel.attributes.imagePath});
+                                    self.risksTags.push({value: riskModel.attributes.riskStatus, label: oj.Translations.getTranslatedString("risk_status_"+riskModel.attributes.riskStatus.toLowerCase()+"_l") , imagePath: riskModel.attributes.imagePath});
                                 }
                             }
                         },
@@ -94,7 +109,7 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                             if(self.roleTags.length === 0) {
                                 for (var i = 0; i < response.length; i++) {
                                     var roleModel = response[i];
-                                    self.roleTags.push({value: roleModel.id, label: roleModel.roleName});
+                                    self.roleTags.push({value: roleModel.id, label: oj.Translations.getTranslatedString("roles_"+roleModel.roleAbbreviation.toLowerCase()+"_l")});
                                 }
                             }
                         },

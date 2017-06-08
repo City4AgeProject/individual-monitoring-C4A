@@ -25,18 +25,38 @@ a:hover {
 	<!-- CR info -->
 	<div class="oj-panel oj-panel-shadow-sm"
 		style="border: none; background-color: #fcfcfc">
-		<span style="font-size: 16px">Care recipient: <b> <span
-				data-bind="text: oj.Router.rootInstance.retrieve()[0]"></span> ,
-				age: <span data-bind="text: userAge"></span>, sex: male
-		</b></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span>Assign
-			Geriatrician: <b><span data-bind="text:$root.userLogin"></span></b>
+		<span>
+		  <span style="font-size: 16px" data-bind="text: careRecipientLabel">
+		  </span>
+		  <b> 
+		    <span style="font-size: 16px" data-bind="text: oj.Router.rootInstance.retrieve()[0]">
+		    </span> 
+		  </b>
+		  <span style="font-size: 16px; padding-left: 20px;" data-bind="text: ageLabel">
+		  </span> 
+		  <b>
+		    <span data-bind="text: userAge">
+		    </span>
+		  </b>
+		  <span style="font-size: 16px; padding-left: 20px;" data-bind="text: sexLabel">
+		  </span> 
+		  <b>
+		    <span style="font-size: 16px;">male</span>
+		  </b>
 		</span>
+		<span>
+	    <span style="font-size: 16px; padding-left: 20px;" data-bind="text: assignGeriatricianLabel"></span>
+		  <b><span data-bind="text: $root.userLogin"></span></b>
+		</span>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br/>
+		
 		<!--class="oj-header-border"-->
-		<br>
-		<div style="height: 20px; overflow: hidden" id="summary">
-			<b>Summary:</b><span data-bind="text:textline"></span>
+		<div style="height: 20px; overflow: hidden; font-size: 16px; margin-top:5px" id="summary">
+			<b><span data-bind="text: summaryLabel"></span></b>
+			<span data-bind="text:textline"></span>
 		</div>
-		<a href="#" id="showmore">Read more</a>
+		<br>
+		<a href="#" id="showmore" data-bind="text: readMoreLabel"></a>
 	</div>
 	<!-- end CR info -->
 </div>
@@ -54,7 +74,7 @@ a:hover {
 					<div class="oj-flex-item">
 						<!-- choose GEF combo box -->
 						<div id="searchGEF" style="width: 280px">
-							<span style="margin-right: 10px;">Select GEF:</span> <input
+							<span style="margin-right: 10px;" data-bind="">Select GEF:</span> <input
 								id="combobox1"
 								data-bind="ojComponent: {
 	                            component: 'ojSelect',
@@ -98,9 +118,13 @@ a:hover {
 
 			<anagraph-assessment-view id="detectionGEFGroup1FactorsLineChart"
 				care-recipient-id="{{careRecipient}}"
-				parent-factor-id="{{parentFactor}}" series="{{seriesVal}}"
-				groups="{{groupsVal}}" title="{{titleObj}}"
-				legend='{"position":"top"}' drilling='off' style="display: block" />
+				parent-factor-id="{{parentFactor}}" 
+				series="{{seriesVal}}"
+				groups="{{groupsVal}}" 
+				title="{{titleObj}}"
+				legend='{"position":"top"}' 
+				drilling='off' style="display: block" />
+
 		</div>
 	</div>
 </div>

@@ -119,23 +119,23 @@ Assessment.prototype.formatDateAndTimeText = function() {
 
 Assessment.prototype.formatValidityDataDescAndImage = function () {
     if('Q' === this.dataValidity){
-        this.dataValidityDesc = 'Questionable data';
+        this.dataValidityDesc = oj.Translations.getTranslatedString("questionable_data_l");
         this.dataValidityImage = 'images/questionable_data.png';
     }else if('F' === this.dataValidity){
-        this.dataValidityDesc = 'Faulty data';
+        this.dataValidityDesc = oj.Translations.getTranslatedString("faulty_data_l"); 
         this.dataValidityImage = 'images/faulty_data.png';
     }else if('V' === this.dataValidity){
-        this.dataValidityDesc = 'Valid data';
+        this.dataValidityDesc = oj.Translations.getTranslatedString("valid_data_l"); 
         this.dataValidityImage = 'images/valid_data.png';
     }
 };
 
 Assessment.prototype.formatRiskStatusDescAndImage = function () {
     if('A' === this.riskStatus){
-        this.riskStatusDesc = 'Alert status';
+        this.riskStatusDesc = oj.Translations.getTranslatedString("alert_status_l");
         this.riskStatusImage = 'images/risk_alert.png';
     }else if('W' === this.riskStatus){
-        this.riskStatusDesc = 'Warning status';
+        this.riskStatusDesc = oj.Translations.getTranslatedString("warning_status_l");
         this.riskStatusImage = 'images/risk_warning.png';
     }
 };
@@ -236,13 +236,21 @@ CdDetectionVariable.parentFactorId = function(list, factorId) {
     }
 };
 
-
 CdDetectionVariable.findByDetectionVariableName = function(list, detectionVariableName) {
     for(var i=0; i<list.length; i++) {
         var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
         if(currentDetectionVariable.detectionVariableName === detectionVariableName) {
             return currentDetectionVariable;
         } 
+    }
+};
+
+CdDetectionVariable.findByDetectionVariableId = function(list, id) {
+    for(var i=0; i<list.length; i++) {
+    	var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
+       if(parseInt(currentDetectionVariable.id) === parseInt(id)) {
+            return currentDetectionVariable;
+        }
     }
 };
 

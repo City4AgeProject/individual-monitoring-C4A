@@ -12,8 +12,18 @@ function (oj, ko, $, sp) {
         
         var self = this;
         
+        
+        self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient_l");
+        self.ageLabel = oj.Translations.getTranslatedString("age_l");
+        self.sexLabel = oj.Translations.getTranslatedString("sex_l");
+        self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician_l");
+        self.summaryLabel= oj.Translations.getTranslatedString("summary_l");
+        self.readMoreLabel = oj.Translations.getTranslatedString("read_more_l");
+       // self.selectGefLabel = oj.Translations.getTranslatedString("select_gef_l");
+       
+        
         self.titleObj = ko.observable();
-        //
+        
         self.userAge = sp.userAge;
         self.userGender = sp.userGender;
         self.textline = sp.userTextline;
@@ -96,7 +106,9 @@ function (oj, ko, $, sp) {
             self.parentFactor(selectedDetectionVariable[1].id); //derivedDetectionVariableIds
             
             self.titleObj({"text": "Geriatric Sub factor - " + oj.Translations.getTranslatedString(self.subFactorName()), "halign": "center"});
+
         };
+
 
         self.handleAttached = function (info) {
             $('#summary').css({height: '20px', overflow: 'hidden'});

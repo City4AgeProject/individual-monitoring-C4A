@@ -1,3 +1,4 @@
+
 <div class="oj-panel oj-panel-shadow-sm oj-dialog-body"
 	style="border: none; background-color: #fcfcfc; height: 250px;">
 	<div class="demo-flex-display oj-flex-items-pad">
@@ -6,6 +7,7 @@
 			<div class="oj-flex-item aa_c_info">
 				<div class="oj-flex oj-flex-items-pad">
 					<div class="oj-flex-item" style="width: 60%;">
+					
 						<img
 							data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }"
 							style="vertical-align: bottom; width: 20px; height: 20px;" /> <img
@@ -17,14 +19,23 @@
 						align="right" id="show_comment_1">
 						<a href="#" id="show" data-bind="click: showOnDiagram"><img
 							src="images/target.png"
-							style="vertical-align: middle; width: 16px; height: 16px;" />Show
-							on diagram</a>
+							style="vertical-align: middle; width: 16px; height: 16px;" />
+							<span data-bind="text: $parent.showOnDiagramLabel"></span>
+						</a>
 					</div>
 					<div class="oj-flex-item" style="width: 20%;" align="right">
 						<b><span data-bind="text: dateAndTimeText"></span></b>
 					</div>
 				</div>
 			</div>
+			
+			
+			
+	
+
+			
+			
+			
 			<div class="oj-flex-item aa_c_text">
 				<div id="comment_1">
 					<span id="span_1"
@@ -33,7 +44,8 @@
 			</div>
 			<div class="oj-flex-item aa_c_more" data-bind="visible: comment.length > 190">
 				<a href="#" id="showmore_comment_1"
-					data-bind="click: $parent.readMore">Read more</a>
+					data-bind="click: $parent.readMore" data-bind="text: $parent.readMoreLabel">
+					<span data-bind="text: $parent.readMoreLabel"></span></a>
 			</div>
 		</div>
 		<!-- /ko  -->
@@ -41,10 +53,10 @@
 </div>
 
 <div style="display: none;" id="commentPopup"
-	title="Full annotation comment:"
 	data-bind="ojComponent:{
                             component: 'ojDialog', 
                             initialVisibility: 'hide',
+                            title: fullAnnotationCommentLabel ,
                             rootAttributes: {style: 'width: 420px; height: 320px;'}
              }">
 	<div class="demo-flex-display oj-flex-items-pad">
@@ -56,4 +68,5 @@
 			</div>
 		</div>
 	</div>
+
 </div>

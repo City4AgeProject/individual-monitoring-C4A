@@ -11,6 +11,12 @@ function(ko, $) {
 		self.dataPointsMarkedIds = [];
 		self.clickShowPopupAddAssessmentCallBack = null;
 
+		self.addAnnotationLabel = oj.Translations.getTranslatedString("add_annotation_l");
+		self.viewAnnotationsLabel = oj.Translations.getTranslatedString("view_annotations_l");
+		self.viewDailyMeasuresLabel = oj.Translations.getTranslatedString("view_daily_measures_l");
+		self.viewNuisLabel = oj.Translations.getTranslatedString("view_nuis_l");
+		self.fromLabel = oj.Translations.getTranslatedString("from_l");
+
 		self.attached = function(context) {
 			ko.postbox.subscribe("refreshSelectedAssessments",
 					function(selectedAssessments) {
@@ -24,7 +30,9 @@ function(ko, $) {
 		});
 
 		ko.postbox.subscribe("refreshDataPointsMarked", function(assessmentsResultLength) {
+
 			document.getElementById('tabs').style.display = 'block';
+
 			self.dataPointsMarked(self.dataPointsMarkedIds.length + ' data points marked with '
 														+ assessmentsResultLength + ' assessment(s)');
 		});
