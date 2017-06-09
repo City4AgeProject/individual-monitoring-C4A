@@ -226,7 +226,7 @@ function (oj, ko, $, sp) {
         self.val = ko.observableArray();
 
         var role = new oj.Collection.extend({
-            url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
+            url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS",
             fetchSize: -1,
             model: new oj.Model.extend({
                 idAttribute: 'id',

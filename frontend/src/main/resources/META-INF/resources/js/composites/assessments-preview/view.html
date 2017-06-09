@@ -59,7 +59,7 @@
                 </button>
             </div>
             <div class="oj-flex-item oj-dialog-body" style="height:176px;">
-                <!-- ko foreach: selectedAnotations -->
+                <!-- ko foreach: props.selectedAssessments -->
                 <div class="oj-flex oj-sm-flex-direction-column" >
                     <div class="oj-flex-item" id="popup-text" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
                         <img data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
@@ -135,7 +135,7 @@
                 </button>
             </div>
             <div class="oj-flex-item oj-dialog-body" style="height:176px;">
-                <!-- ko foreach: selectedAnotations -->
+                <!-- ko foreach: $props.selectedAssessments -->
                 <div class="oj-flex oj-sm-flex-direction-column"  >
                     <div class="oj-flex-item" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
                         <img data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 

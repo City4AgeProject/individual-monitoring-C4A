@@ -1,0 +1,10 @@
+{
+	"name": "assessments-preview",
+	"version": "1.0.0",
+	"jetVersion": ">=3.0.0",
+	"properties": {
+		"dataPointsMarkedIds": {
+			"type": "Array<object>"
+		}
+	}
+}

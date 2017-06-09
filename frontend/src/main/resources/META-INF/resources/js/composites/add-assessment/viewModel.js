@@ -34,6 +34,10 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 self.roleTags = ko.observableArray([]);       
                 self.selectedRoles = ko.observableArray();
                 
+        		context.props.then(function(properties) {
+        			self.props = properties;
+        		});
+                
                 var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
                 };
@@ -93,7 +97,7 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 
                 function loadRoles() {
                     var role = new oj.Collection.extend({
-                        url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
+                        url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS",
                         fetchSize: -1,
                         model: new oj.Model.extend({
                             idAttribute: 'id',

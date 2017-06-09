@@ -31,14 +31,14 @@
 
 		<!-- end line chart GES drilling: 'on',
 					<!-- select point/s popup -->
-		<assessments-preview id="popupWrapper1" class="oj-flex-item"></assessments-preview>
+		<assessments-preview id="popupWrapper1" class="oj-flex-item" selected-assessments="{{selectedAnotations}}" data-points-marked-ids="{{dataPointsMarkedIds}}"></assessments-preview>
 		<!-- end select point/s popup -->
 
 	</div>
 	<!-- end main graph panel -->
 
 	<div id="dialogWrapper1">
-		<add-assessment class="oj-flex-item"> </add-assessment>
+		<add-assessment id="addAssessment" class="oj-flex-item" data-points-marked-ids="{{dataPointsMarkedIds}}"> </add-assessment>
 	</div>
 
 	<div class="oj-flex-item">
@@ -208,7 +208,7 @@
 						<!-- end filter annotations -->
 
 						<!-- view annotations -->
-						<assessments-list class="oj-flex-item"> </assessments-list>
+						<assessments-list id="assessmentsList" class="oj-flex-item" selected-assessments="{{selectedAnotations}}"> </assessments-list>
 						<!-- end view annotations -->
 
 					</div>

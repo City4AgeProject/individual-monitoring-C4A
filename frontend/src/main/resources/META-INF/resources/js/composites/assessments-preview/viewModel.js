@@ -6,7 +6,6 @@ function(ko, $) {
 
 		var self = this;
 
-		self.selectedAnotations = ko.observableArray();
 		self.dataPointsMarked = ko.observable('No data points marked.');
 		self.dataPointsMarkedIds = [];
 		self.clickShowPopupAddAssessmentCallBack = null;
@@ -17,11 +16,11 @@ function(ko, $) {
 		self.viewNuisLabel = oj.Translations.getTranslatedString("view_nuis_l");
 		self.fromLabel = oj.Translations.getTranslatedString("from_l");
 
+		context.props.then(function(properties) {
+			self.props = properties;
+		});
+
 		self.attached = function(context) {
-			ko.postbox.subscribe("refreshSelectedAssessments",
-					function(selectedAssessments) {
-						self.selectedAnotations(selectedAssessments);
-					});
 			ko.postbox.publish("clickShowPopupAddAssessmentCallback");
 		};
 
@@ -32,9 +31,9 @@ function(ko, $) {
 		ko.postbox.subscribe("refreshDataPointsMarked", function(assessmentsResultLength) {
 
 			document.getElementById('tabs').style.display = 'block';
-
-			self.dataPointsMarked(self.dataPointsMarkedIds.length + ' data points marked with '
-														+ assessmentsResultLength + ' assessment(s)');
+			self.dataPointsMarked(self.dataPointsMarkedIds.length
+					+ ' data points marked with '
+					+ assessmentsResultLength + ' assessment(s)');
 		});
 
 		ko.postbox.subscribe("dataPointsMarkedIds", function(dataPointsMarkedIds) {
@@ -43,7 +42,8 @@ function(ko, $) {
 
 		self.clickShowPopupAddAssessment = function(data, event) {
 			if (self.clickShowPopupAddAssessmentCallBack !== null)
-				return self.clickShowPopupAddAssessmentCallBack(data, event);
+				return self.clickShowPopupAddAssessmentCallBack(data,
+						event);
 		};
 	}
 

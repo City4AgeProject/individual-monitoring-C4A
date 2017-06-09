@@ -43,7 +43,7 @@ function(oj, ko, $) {
 
 		self.dataPointsMarkedIds = ko.observableArray();
 
-		self.selectedAnotations = ko.observableArray();
+		self.selectedAnotations = ko.observableArray([]);
 
 		self.nowrap = ko.observable(false);
 		
@@ -80,7 +80,7 @@ function(oj, ko, $) {
 		self.selectedItemsValue = ko.observableArray(selected);
 
 		var role = new oj.Collection.extend({
-			url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GES",
+			url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS",
 			fetchSize : -1,
 			model : new oj.Model.extend({
 				idAttribute : 'id',
@@ -120,29 +120,18 @@ function(oj, ko, $) {
 							for (var i = 0; i < ui['value'].length; i++) {
 								onlyDataPoints.push(ui['value'][i].id);
 							}
-						}
-						if (onlyDataPoints.length === 0)
-							;
-						else if (onlyDataPoints.length === 1
+						} else if (onlyDataPoints.length === 1
 								&& onlyDataPoints[0][0]
 								&& onlyDataPoints[0][0].id) {
-							ko.postbox.publish(
-									"refreshDataPointsMarked", 1);
-							ko.postbox.publish(
-									"refreshSelectedAssessments",
-									onlyDataPoints);
+							ko.postbox.publish("refreshDataPointsMarked", 1);
 						} else {
 							// Compose selections in get query
 							// parameters
 							self.queryParams = calculateSelectedIds(onlyDataPoints);
-							ko.postbox.publish(
-									"refreshDataPointsMarked",
-									onlyDataPoints.length);
 							loadAssessments(self.queryParams);
 						}
 						showAssessmentsPopup();
-						ko.postbox.publish("dataPointsMarkedIds",
-								onlyDataPoints);
+						ko.postbox.publish("dataPointsMarkedIds", onlyDataPoints);
 					} else {
 						self.dataPointsMarkedIds = [];
 					}
@@ -177,8 +166,8 @@ function(oj, ko, $) {
 		self.clickShowPopupAddAssessment = function(data, event) {
 			if (self.dataPointsMarkedIds.length > 0) {
 				ko.postbox.publish("resetAddAssessment");
-				ko.postbox.publish("dataPointsMarkedIds", ko
-						.toJS(self.dataPointsMarkedIds));
+				ko.postbox.publish("dataPointsMarkedIds", ko.toJS(self.dataPointsMarkedIds));
+				
 				$('#dialog1').ojDialog();
 				$('#dialog1').ojDialog('open');
 
@@ -407,8 +396,7 @@ function(oj, ko, $) {
 			}
 			self.dataPointsMarkedIds = idsArray;
 
-			ko.postbox.publish("dataPointsMarkedIds", ko
-					.toJS(self.dataPointsMarkedIds));
+			ko.postbox.publish("dataPointsMarkedIds", ko.toJS(self.dataPointsMarkedIds));
 
 			return idsArray;
 		}
@@ -435,9 +423,6 @@ function(oj, ko, $) {
 								assessmentsResult.push(newAssessment);
 						}
 
-						ko.postbox.publish(
-								"refreshSelectedAssessments",
-								assessmentsResult);
 						self.selectedAnotations(assessmentsResult);
 						ko.postbox.publish("refreshDataPointsMarked",
 								assessmentsResult.length);
@@ -446,8 +431,6 @@ function(oj, ko, $) {
 		};
 
 		function showAssessmentsPopup(aLength) {
-			ko.postbox.publish("refreshSelectedAssessments", []);
-
 			self.selectedAnotations([]);
 
 			// Popup1 or popup2 if there are any assessments
@@ -532,6 +515,7 @@ function(oj, ko, $) {
 					+ "/geriatricFactorValueIds/" + pointIdsString
 					+ filtering(), function(assessments) {
 				var assessmentsResult = [];
+				console.log("assessments: " + JSON.stringify(assessments));
 				for (var i = 0; i < assessments.length; i++) {
 					var newAssessment = Assessment
 							.produceFromOther(assessments[i]);
@@ -540,8 +524,6 @@ function(oj, ko, $) {
 							newAssessment))
 						assessmentsResult.push(newAssessment);
 				}
-				ko.postbox.publish("refreshSelectedAssessments",
-						assessmentsResult);
 				self.selectedAnotations(assessmentsResult);
 				ko.postbox.publish("refreshDataPointsMarked",
 						assessmentsResult.length);
@@ -659,11 +641,10 @@ function(oj, ko, $) {
 			self.selectedItemsValue(selected);
 		}
 
-		ko.postbox.subscribe("selectDatapointsDiagram",
-				function(value) {
-					self.assessmentId(value);
-					self.selectDatapointsDiagram();
-				});
+		ko.postbox.subscribe("selectDatapointsDiagram", function(value) {
+			self.assessmentId(value);
+			self.selectDatapointsDiagram();
+		});
 
 		ko.postbox.subscribe("refreshAssessmentsCached", function() {
 			self.loadAssessmentsCached();
