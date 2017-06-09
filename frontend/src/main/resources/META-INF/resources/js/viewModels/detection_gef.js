@@ -22,18 +22,11 @@ function (oj, ko, $, sp, params) {
     	
         var self = this;
         self.careRecipientId = ko.observable();
-
-        
         self.highlightValue = ko.observable();
 
         var selectedId;
 
-        
         var lineColors = ['#b4b2b2','#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
-        
-        //Key-Value Map for Translations
-     // var mapTranslate1 = new Map();
-
 
         var PRE_FRAIL_SERIES_NAME = oj.Translations.getTranslatedString('pre-frail');
         var FRAIL_SERIES_NAME = oj.Translations.getTranslatedString('frail');
@@ -48,7 +41,6 @@ function (oj, ko, $, sp, params) {
         self.selectedGefName = "";
         self.parentFactorId = ko.observable();
         self.parentFactorId = -1;
-        
 
         /* tracking mouse position when do mouseover and mouseup/touchend event*/
         var clientX;
@@ -152,10 +144,8 @@ function (oj, ko, $, sp, params) {
         self.titleValue = ko.observable("");
         self.titlePart = ko.observable("");
         self.titleObj = ko.observable();
-       
-        
-       
 
+ 
         self.chartDrill = function (event, ui) {
 
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
@@ -166,7 +156,6 @@ function (oj, ko, $, sp, params) {
             self.titlePart(ko.toJS(self.titleValue));
             
             self.titleObj({"text": self.titlePart(), "halign": "center"});
-            
             
             self.parentFactorId = ui['seriesData'].items[0].gefTypeId;
             $('#detectionGEFGroup1FactorsLineChart').prop('parentFactorId', ui['seriesData'].items[0].gefTypeId);
@@ -180,27 +169,17 @@ function (oj, ko, $, sp, params) {
             }
 
         };
-        
-        
-        
+
+
         /***********************************************/
         var loadDiagramDataCallback = function (data) {
 
-        	console.log("JSON data:"+JSON.stringify(data));
             self.lineGroupsValue = data.groups;
             self.lineSeriesValue = data.series;
-            
-            //Translate name of the month from date
-            /* for( var i=0; i< Object.keys(data.groups).length;i++){
-            	data.groups[i].name = oj.Translations.getTranslatedString("date"+String(i))+data.groups[i].name.split(" ")[1];
-            }*/
-            
             
            for(var ig = 0; ig < Object.keys(data.series).length; ig++){
         		data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
         	} 
-           
-        
            
             $('#detectionGEFGroup1FactorsLineChart').prop('groups', data.groups);
             $('#detectionGEFGroup1FactorsLineChart').prop('series', data.series); 
@@ -210,7 +189,6 @@ function (oj, ko, $, sp, params) {
             
         };
         
-        
         self.chartDrill2 = function (ui) {
 
             var seriesVal = ui['series'];
@@ -218,14 +196,8 @@ function (oj, ko, $, sp, params) {
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-           // self.selectedGefName = ui['series'];
             selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
 
-            //Dupli kod, koristi se sad u self.bGotoGESClick
-       /*     var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.cdDetectionVariables, selectedId);
-            console.log("selectedDetectionVariable:"+JSON.stringify(selectedDetectionVariable));
-            self.parentFactorId = selectedDetectionVariable.id;*/
-            
             graphicsContentViewModel.titleValue(seriesVal + "Geriatric factors");
             self.parentFactorId = ui['seriesData'].items[0].gefTypeId;
             
@@ -251,6 +223,7 @@ function (oj, ko, $, sp, params) {
 
         self.stackValue = ko.observable('off');
         self.typeValue = ko.observable('line');
+ 
         self.frailtyMenuItemSelect = function (event, ui) {
             var launcherId = ui.item.children("a").text();
             if (launcherId.indexOf("Morphology") !== -1) {
@@ -287,23 +260,9 @@ function (oj, ko, $, sp, params) {
                 document.getElementById('polarChart2').style.display = 'none';
             }
         };
+
         self.nowrap = ko.observable(false);
 
-        /* detectionGEFLineChart popup manipulation*/
-        self.findGEFColorLineBySeriesName = function (lineChartID, seriesName) {
-            //find GEF color
-            var foundColor = "#fafafa";
-            var seriesCount = $(lineChartID).ojChart("getSeriesCount");
-            for (i = 0; i < seriesCount; i++) {
-                var dataItemObject = $(lineChartID).ojChart("getDataItem", i, 0);
-                if (dataItemObject.series === seriesName) {
-                    foundColor = dataItemObject.color;
-                    break;
-                }
-            }
-            return foundColor;
-        };
-        
         self.handleActivated = function(info) {
             // Implement if needed
             initCRData();
@@ -349,17 +308,6 @@ function (oj, ko, $, sp, params) {
                 
             });
         }
-        
-        //not used?
-       self.bShowDetailsClick = function() {
-        	alert('  self.bShowDetailsClick NOT_USED_TEST');
-        	og("***********bShowDetailsClick");
-            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableName(self.cdDetectionVariables, self.selectedGefName);
-            self.parentFactorId = selectedDetectionVariable.id;
-            loadGefData();
-            loadCRData();
-
-        };
 
         //Returns chart by ID for detection variable name that was drilled in (clicked on)
         self.bGotoGESClick = function() {
@@ -369,7 +317,6 @@ function (oj, ko, $, sp, params) {
             oj.Router.rootInstance.go('detection_ges');
             
         };
-
 
         //Loading Data for detectionGEFGroupsLineChart chart 
         function loadCRData() {
@@ -433,98 +380,9 @@ function (oj, ko, $, sp, params) {
         	self.chartDrill2(ui);
 			self.bGotoGESClick();
         });
-        
-        self.shownFilterBar = false;
-        self.toggleFilterAssessmentBar = function (e) {
-            if ($('#assessment-filter').css('display') === 'none') {
-                $('#assessment-filter').css({display: 'block'});
-                self.shownFilterBar = true;
-            } else {
-                $('#assessment-filter').css({display: 'none'});
-                self.shownFilterBar = false;
-            }
-        };
-
-        /* Data validities */
-        self.dataValiditiesTags = ko.observableArray([
-            {value: 'QUESTIONABLE_DATA', label: 'Questionable data', imagePath: 'images/questionable_data.png'},
-            {value: 'FAULTY_DATA', label: 'Faulty data', imagePath: 'images/faulty_data.png'},
-            {value: 'VALID_DATA', label: 'Valid data', imagePath: 'images/valid_data.png'}]);
-        self.selectedDataValidity = ko.observable();
-
-        function getDataPoints(dataSelection) {
-            var filteredSelection = [];
-            for (var i=0;i<dataSelection.selectionData.length;i++) {
-                var selectedDataPoint = dataSelection.selectionData[i];
-                //skip assessment
-                if(selectedDataPoint.seriesData.name==='Assessments')
-                ;
-                else {
-                    filteredSelection.push(selectedDataPoint.data.id);
-                }
-            }
-            return filteredSelection;
-        }
-
-        var filtering = function () {
-            var string = "";
-        	if (self.checkedFilterRiskStatus() != undefined || self.checkedFilterValidityData() != undefined || ko.toJS(self.selectedRoles) != null || ko.toJS(self.val) != null) {
-        		string += "?";
-        		if (self.checkedFilterRiskStatus() != undefined && self.checkedFilterRiskStatus().contains('A')) {
-        			string += "riskStatusAlert=true";
-        		}
-        		if (self.checkedFilterRiskStatus() != undefined && self.checkedFilterRiskStatus().contains('W')) {
-        			if(string.length > 1) string += "&";
-        			string += "riskStatusWarning=true";
-        		}
-        		if (self.checkedFilterRiskStatus() != undefined && self.checkedFilterRiskStatus().contains('N')) {
-        			if(string.length > 1) string += "&";
-        			string += "riskStatusNoRisk=true";
-        		}
-        		if (self.checkedFilterValidityData() != undefined && self.checkedFilterValidityData().contains('QUESTIONABLE_DATA')) {
-        			if(string.length > 1) string += "&";
-        			string += "dataValidityQuestionable=true";
-        		}
-        		if (self.checkedFilterValidityData() != undefined && self.checkedFilterValidityData().contains('FAULTY_DATA')) {
-        			if(string.length > 1) string += "&";
-        			string += "dataValidityFaulty=true";
-        		}
-        		if (self.checkedFilterValidityData() != undefined && self.checkedFilterValidityData().contains('VALID_DATA')) {
-        			if(string.length > 1) string += "&";
-        			string += "dataValidityValid=true";
-        		}
-        		if ((ko.toJS(self.selectedRoles) == null || ko.toJS(self.selectedRoles).length === 0)) {
-        			;
-        		} else {
-        			if(string.length > 1) string += "&";
-        			string += "authorRoleId="+ko.toJS(self.selectedRoles);
-        		}
-        		if ((ko.toJS(self.val) == null || ko.toJS(self.val).length === 0)) {
-        			;
-        		} else {
-        			if(string.length > 1) string += "&";
-        			string += "orderById="+ko.toJS(self.val);
-        		}
-        	}
-			return string;
-        }
-
-        function calculateSelectedIds(selectedPoints) {
-            var i = 0;
-            var idsArray = [];
-            for (var i=0;i<selectedPoints.length;i++) {
-                idsArray.push(selectedPoints[i]);
-            }
-            self.dataPointsMarkedIds(idsArray);
-            return idsArray;
-        }
-        
-		self.chartDrill3 = function(event, ui) {
-        	self.chartDrill2(ui);
-			self.bGotoGESClick();
-		}
 
     }
+
     var graphicsContentViewModel = new GraphicsContentViewModel();
     return  graphicsContentViewModel;
 });

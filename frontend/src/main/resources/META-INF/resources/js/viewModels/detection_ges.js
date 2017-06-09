@@ -54,50 +54,7 @@ function (oj, ko, $, sp) {
         var serverErrorCallback = function (xhr, message, error) {
             console.log(error);
         };
-        
-        var filtering = function () {
-            var string = "";
-        	if (self.checkedFilterRiskStatus() != undefined || self.checkedFilterValidityData() != undefined || ko.toJS(self.selectedRoles) != null || ko.toJS(self.val) != null) {
-        		string += "?";
-        		if (self.checkedFilterRiskStatus() != undefined && self.checkedFilterRiskStatus().contains('A')) {
-        			string += "riskStatusAlert=true";
-        		}
-        		if (self.checkedFilterRiskStatus() != undefined && self.checkedFilterRiskStatus().contains('W')) {
-        			if(string.length > 1) string += "&";
-        			string += "riskStatusWarning=true";
-        		}
-        		if (self.checkedFilterRiskStatus() != undefined && self.checkedFilterRiskStatus().contains('N')) {
-        			if(string.length > 1) string += "&";
-        			string += "riskStatusNoRisk=true";
-        		}
-        		if (self.checkedFilterValidityData() != undefined && self.checkedFilterValidityData().contains('QUESTIONABLE_DATA')) {
-        			if(string.length > 1) string += "&";
-        			string += "dataValidityQuestionable=true";
-        		}
-        		if (self.checkedFilterValidityData() != undefined && self.checkedFilterValidityData().contains('FAULTY_DATA')) {
-        			if(string.length > 1) string += "&";
-        			string += "dataValidityFaulty=true";
-        		}
-        		if (self.checkedFilterValidityData() != undefined && self.checkedFilterValidityData().contains('VALID_DATA')) {
-        			if(string.length > 1) string += "&";
-        			string += "dataValidityValid=true";
-        		}
-        		if ((ko.toJS(self.selectedRoles) == null || ko.toJS(self.selectedRoles).length === 0)) {
-        			;
-        		} else {
-        			if(string.length > 1) string += "&";
-        			string += "authorRoleId="+ko.toJS(self.selectedRoles);
-        		}
-        		if ((ko.toJS(self.val) == null || ko.toJS(self.val).length === 0)) {
-        			;
-        		} else {
-        			if(string.length > 1) string += "&";
-        			string += "orderById="+ko.toJS(self.val);
-        		}
-        	}
-			return string;
-        }
-        
+
         self.handleActivated = function (info) {
             var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
             
@@ -135,30 +92,6 @@ function (oj, ko, $, sp) {
             clientX = e.clientX;
             clientY = e.clientY;
         });
-
-        function getDataPoints(dataSelection) {
-            var filteredSelection = [];
-            for (var i=0;i<dataSelection.selectionData.length;i++) {
-                var selectedDataPoint = dataSelection.selectionData[i];
-                //skip assessment
-                if(selectedDataPoint.seriesData.name==='Assessments')
-                ;
-                else {
-                    filteredSelection.push(selectedDataPoint.data.id);
-                }
-            }
-            return filteredSelection;
-        }
-
-        function calculateSelectedIds(selectedPoints) {
-            var i = 0;
-            var idsArray = [];
-            for (var i=0;i<selectedPoints.length;i++) {
-                idsArray.push(selectedPoints[i]);
-            }
-            self.dataPointsMarkedIds(idsArray);
-            return idsArray;
-        } 
 
         self.min = ko.observable(10000);
         self.max = ko.observable(20000);
@@ -211,13 +144,6 @@ function (oj, ko, $, sp) {
             }
         });
         /* End Risks select */
-
-        /* Data validities */
-        self.dataValiditiesTags = ko.observableArray([
-            {value: 'QUESTIONABLE_DATA', label: 'Questionable data', imagePath: 'images/questionable_data.png'},
-            {value: 'FAULTY_DATA', label: 'Faulty data', imagePath: 'images/faulty_data.png'},
-            {value: 'VALID_DATA', label: 'Valid data', imagePath: 'images/valid_data.png'}]);
-        self.selectedDataValidity = ko.observable();
 
         /* Audience ids -> CdRole*/
         self.rolesCollection = ko.observable();

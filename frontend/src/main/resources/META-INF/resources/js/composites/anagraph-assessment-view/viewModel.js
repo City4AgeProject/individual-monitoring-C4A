@@ -94,6 +94,11 @@ function(oj, ko, $) {
 			type : 'GET',
 			success : function(collection, response, options) {
 				if (self.roleTags.length === 0) {
+					self.roleTags.push({
+						selected : "selected",
+						value : null,
+						label : ""
+					});
 					for (var i = 0; i < response.length; i++) {
 						var roleModel = response[i];
 						self.roleTags.push({
