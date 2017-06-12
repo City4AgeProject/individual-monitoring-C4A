@@ -7,7 +7,10 @@ function(oj, ko, $) {
 	function model(context) {
 		var self = this;
 		
-		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_l_aav");
+		
+		
+		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_assessments_l")[0].toUpperCase()
+			+ oj.Translations.getTranslatedString("annotations_assessments_l").substring(1);
 		self.morphologyLabel = oj.Translations.getTranslatedString("morphology_l_aav");
 		self.annotations_assessmentsLabel = oj.Translations.getTranslatedString("annotations_assessments_l");
 		self.addLabel = oj.Translations.getTranslatedString("add_l");
@@ -94,11 +97,11 @@ function(oj, ko, $) {
 			type : 'GET',
 			success : function(collection, response, options) {
 				if (self.roleTags.length === 0) {
-					self.roleTags.push({
+				/*	self.roleTags.push({
 						selected : "selected",
-						value : null,
-						label : ""
-					});
+						value : null
+					
+					});*/
 					for (var i = 0; i < response.length; i++) {
 						var roleModel = response[i];
 						self.roleTags.push({
@@ -582,11 +585,13 @@ function(oj, ko, $) {
 				if ((ko.toJS(self.selectedRoles) == null || ko
 						.toJS(self.selectedRoles).length === 0)) {
 					;
-				} else {
+				} else /*if (&& self.selectRoleData().contains('role_'))*/{
 					if (string.length > 1)
 						string += "&";
-					string += "authorRoleId="
-							+ ko.toJS(self.selectedRoles);
+						string += "authorRoleId="
+								+ ko.toJS(self.selectedRoles);
+					//console.log("SELECTED_ROLE:"+ ko.toJS(self.selectedRoles));
+
 				}
 				if ((ko.toJS(self.val) == null || ko.toJS(self.val).length === 0)) {
 					;
@@ -601,10 +606,16 @@ function(oj, ko, $) {
 
 		// Reset Selected Risk and data type ojButtonset-s
 		self.resetClick = function() {
+			//TO DO - Make text from field for selecting role be cleared using Oj
+			$("#ojChoiceId_selectRole_selected").text("");
+			
+			
+			self.selectedRoles = null;
 			this.checkedFilterRiskStatus([]);
 			this.checkedFilterValidityData([]);
 			filterAssessments(self.queryParams,
 					self.checkedFilterValidityData);
+	
 		}
 
 		ko.postbox.subscribe("loadAssessmentsCached", function(param) {

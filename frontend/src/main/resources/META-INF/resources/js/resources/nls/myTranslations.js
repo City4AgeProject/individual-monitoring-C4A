@@ -78,7 +78,7 @@ define({
 				"pre-frail": "Pre-Frail",
 				care_recipient_l:"Care recipient:",
 				age_l: "Age:",
-				assign_geriatrician_l: "Assign Geriatrician:",
+				assign_geriatrician_l: "Assigned geriatrician:",
 				summary_l: "Summary:",
 				detectionGEFGroupsLineChart_l: "Behavioural & Contextual Geriatric group factors",
 				line_chart_l: "Line chart",
@@ -87,7 +87,6 @@ define({
 				geriatric_factors_l:" Geriatric factors",
 				
 				//anagraph-assessment-view component
-				annotations_l_aav:"Annotations/assesments",
 				morphology_l_aav:"Morphology",
 				annotations_assessments_l: "annotations/assessments",
 				add_l: "Add",
@@ -112,7 +111,7 @@ define({
                 valid_data_l: "Valid data",
                 
                 //ges page
-                sex_l:"Sex:",
+                gender_l:"Gender:",
                 read_more_l:"Read more",
                 //select_gef_l: "Select GEF:",
                 
@@ -121,7 +120,7 @@ define({
                 view_annotations_l :"View annotations",
                 view_daily_measures_l :"View daily measures",
                 view_nuis_l :"View NUIs",
-                from_l : "from",
+                from_ap_l : "from",
                 
                 //add-assessment
                 no_data_set_selected_l: "No data set selected!",
@@ -141,7 +140,7 @@ define({
                 risk_status_a_l: "Risk alert",
                 risk_status_w_l: "Risk warning",
                 risk_status_n_l: "No Risk",
-                roles_lge_l:"Local/pilot geriatrician",
+                roles_lge_l: "Local/pilot geriatrician",
                 roles_pge_l:"Project geriatrician",
                 
                 //assessment-list

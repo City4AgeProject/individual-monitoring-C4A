@@ -15,7 +15,7 @@ function (oj, ko, $, sp) {
         
         self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient_l");
         self.ageLabel = oj.Translations.getTranslatedString("age_l");
-        self.sexLabel = oj.Translations.getTranslatedString("sex_l");
+        self.genderLabel = oj.Translations.getTranslatedString("gender_l");
         self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician_l");
         self.summaryLabel= oj.Translations.getTranslatedString("summary_l");
         self.readMoreLabel = oj.Translations.getTranslatedString("read_more_l");

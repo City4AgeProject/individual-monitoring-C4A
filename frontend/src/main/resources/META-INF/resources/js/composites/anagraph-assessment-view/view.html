@@ -68,7 +68,7 @@
 									<div class="oj-flex-bar-middle">
 										<div>
 											<span
-											data-bind="text: selectedAnotations().length + annotations_assessmentsLabel ">
+											data-bind="text: selectedAnotations().length +' '+ annotations_assessmentsLabel ">
 											</span>
 										</div>
 									</div>
@@ -160,17 +160,21 @@
 
 
 
-									<div class="oj-flex-item" style="width: 180px;">
-										<label for="selectRole" data-bind="text: fromLabel"></label> <select id="selectRole"
+									<div class="oj-flex-item" style="width: 180px;" id="selectRoleData">
+										<label for="selectRole" data-bind="text: fromLabel"></label> <select  id="selectRole"
 											data-bind="ojComponent: {
                                                         component: 'ojSelect', 
                                                         value: selectedRoles ,
+                                                        required: true ,
+                                                        placeholder: '' ,
                                                         multiple: false,
-                                                        options: roleTags,
+                                                        options: roleTags ,
                                                         rootAttributes: {style:'max-width:334px'}
                                                     }">
+                                                   
 										</select>
 									</div>
+
 
 										<div class="oj-flex-item" style="width: 40%;">
 											<label for="selectSort" data-bind="text: sortLabel"></label>
@@ -195,7 +199,7 @@
 													data-bind="click: resetClick, ojComponent: { component: 'ojButton', label: resetToDefaultsLabel }" />
 												<input type="button" id="filter"
 													style="display: inline-block; float: left; width: auto 15%; margin-left: 5px"
-													data-bind="click: filterList, 
+													data-bind="click: filterList , 
 														ojComponent: { component: 'ojButton', label: filterLabel }" />									
 
 											</div>

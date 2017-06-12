@@ -14,7 +14,7 @@ function(ko, $) {
 		self.viewAnnotationsLabel = oj.Translations.getTranslatedString("view_annotations_l");
 		self.viewDailyMeasuresLabel = oj.Translations.getTranslatedString("view_daily_measures_l");
 		self.viewNuisLabel = oj.Translations.getTranslatedString("view_nuis_l");
-		self.fromLabel = oj.Translations.getTranslatedString("from_l");
+		self.fromLabel = oj.Translations.getTranslatedString("from_ap_l");
 
 		context.props.then(function(properties) {
 			self.props = properties;
