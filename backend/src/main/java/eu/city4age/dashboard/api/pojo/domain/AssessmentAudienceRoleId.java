@@ -15,19 +15,19 @@ public class AssessmentAudienceRoleId implements Serializable {
 	private int assessmentId;
 	
 	@Column(name="role_id")
-	private int userInRoleId;
+	private int roleId;
 
 	public AssessmentAudienceRoleId() {
 	}
 
 	public AssessmentAudienceRoleId(AssessmentAudienceRoleIdBuilder builder) {
 		this.assessmentId = builder.assessmentId;
-		this.userInRoleId = builder.userInRoleId;
+		this.roleId = builder.roleId;
 	}
 
-	public AssessmentAudienceRoleId(int assessmentId, int userInRoleId) {
+	public AssessmentAudienceRoleId(int assessmentId, int roleId) {
 		this.assessmentId = assessmentId;
-		this.userInRoleId = userInRoleId;
+		this.roleId = roleId;
 	}
 
 	public int getAssessmentId() {
@@ -38,12 +38,12 @@ public class AssessmentAudienceRoleId implements Serializable {
 		this.assessmentId = assessmentId;
 	}
 
-	public int getUserInRoleId() {
-		return userInRoleId;
+	public int getRoleId() {
+		return roleId;
 	}
 
-	public void setUserInRoleId(int userInRoleId) {
-		this.userInRoleId = userInRoleId;
+	public void setRoleId(int roleId) {
+		this.roleId = roleId;
 	}
 
 	public boolean equals(Object other) {
@@ -56,24 +56,24 @@ public class AssessmentAudienceRoleId implements Serializable {
 		SourceEvidenceId castOther = (SourceEvidenceId) other;
 
 		return (this.getAssessmentId() == castOther.getGeriatricFactorId())
-				&& ((this.getUserInRoleId() == castOther.getUserInRoleId()));
+				&& ((this.getRoleId() == castOther.getRoleId()));
 	}
 
 	public int hashCode() {
 		int result = 17;
 
 		result = 37 * result + this.getAssessmentId();
-		result = 37 * result + this.getUserInRoleId();
+		result = 37 * result + this.getRoleId();
 		return result;
 	}
 
 	public static class AssessmentAudienceRoleIdBuilder {
 		private int assessmentId;
-		private int userInRoleId;
+		private int roleId;
 
-		public AssessmentAudienceRoleIdBuilder id(int assessmentId, int userInRoleId) {
+		public AssessmentAudienceRoleIdBuilder id(int assessmentId, int roleId) {
 			this.assessmentId = assessmentId;
-			this.userInRoleId = userInRoleId;
+			this.roleId = roleId;
 			return this;
 		}
 

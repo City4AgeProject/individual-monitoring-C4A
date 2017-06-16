@@ -119,23 +119,23 @@ Assessment.prototype.formatDateAndTimeText = function() {
 
 Assessment.prototype.formatValidityDataDescAndImage = function () {
     if('Q' === this.dataValidity){
-        this.dataValidityDesc = oj.Translations.getTranslatedString("questionable_data_l");
+        this.dataValidityDesc = oj.Translations.getTranslatedString("questionable_data");
         this.dataValidityImage = 'images/questionable_data.png';
     }else if('F' === this.dataValidity){
-        this.dataValidityDesc = oj.Translations.getTranslatedString("faulty_data_l"); 
+        this.dataValidityDesc = oj.Translations.getTranslatedString("faulty_data"); 
         this.dataValidityImage = 'images/faulty_data.png';
     }else if('V' === this.dataValidity){
-        this.dataValidityDesc = oj.Translations.getTranslatedString("valid_data_l"); 
+        this.dataValidityDesc = oj.Translations.getTranslatedString("valid_data"); 
         this.dataValidityImage = 'images/valid_data.png';
     }
 };
 
 Assessment.prototype.formatRiskStatusDescAndImage = function () {
     if('A' === this.riskStatus){
-        this.riskStatusDesc = oj.Translations.getTranslatedString("alert_status_l");
+        this.riskStatusDesc = oj.Translations.getTranslatedString("alert_status");
         this.riskStatusImage = 'images/risk_alert.png';
     }else if('W' === this.riskStatus){
-        this.riskStatusDesc = oj.Translations.getTranslatedString("warning_status_l");
+        this.riskStatusDesc = oj.Translations.getTranslatedString("warning_status");
         this.riskStatusImage = 'images/risk_warning.png';
     }
 };

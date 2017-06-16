@@ -5,9 +5,9 @@ define(
 			function model(context) {
 				var self = this;
 
-				self.readMoreLabel = oj.Translations.getTranslatedString("read_more_l");
-				self.showOnDiagramLabel = oj.Translations.getTranslatedString("show_on_diagram_l");
-				self.fullAnnotationCommentLabel = oj.Translations.getTranslatedString("full_annotation_comment_l");
+				self.readMoreLabel = oj.Translations.getTranslatedString("read_more");
+				self.showOnDiagramLabel = oj.Translations.getTranslatedString("show_on_diagram");
+				self.fullAnnotationCommentLabel = oj.Translations.getTranslatedString("full_annotation_comment");
 				self.assessmentId = ko.observable();
 
 				context.props.then(function(properties) {

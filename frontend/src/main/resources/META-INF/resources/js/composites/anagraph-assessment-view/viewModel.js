@@ -9,26 +9,27 @@ function(oj, ko, $) {
 		
 		
 		
-		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_assessments_l")[0].toUpperCase()
-			+ oj.Translations.getTranslatedString("annotations_assessments_l").substring(1);
-		self.morphologyLabel = oj.Translations.getTranslatedString("morphology_l_aav");
-		self.annotations_assessmentsLabel = oj.Translations.getTranslatedString("annotations_assessments_l");
-		self.addLabel = oj.Translations.getTranslatedString("add_l");
-		self.riskDataTypeLabel = oj.Translations.getTranslatedString("risk_data_type_l");
+		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase()
+			+ oj.Translations.getTranslatedString("annotations_assessments").substring(1);
+		self.morphologyLabel = oj.Translations.getTranslatedString("morphology");
+		self.annotations_assessmentsLabel = oj.Translations.getTranslatedString("annotations_assessments");
+		self.addLabel = oj.Translations.getTranslatedString("add");
+		self.riskDataTypeLabel = oj.Translations.getTranslatedString("risk_data_type");
 		
-		self.showAllLabel = oj.Translations.getTranslatedString("show_all_l"); 
-		self.fromLabel = oj.Translations.getTranslatedString("from_l"); 
-		self.sortLabel = oj.Translations.getTranslatedString("sort_l");  
-		self.resetToDefaultsLabel = oj.Translations.getTranslatedString("reset_to_defaults_l");  
-		self.filterLabel = oj.Translations.getTranslatedString("filter_l");  
+		self.showAllLabel = oj.Translations.getTranslatedString("show_all"); 
+		self.fromLabel = oj.Translations.getTranslatedString("from");
+		self.fromLabel = self.fromLabel.charAt(0).toUpperCase() + self.fromLabel.slice(1);
+		self.sortLabel = oj.Translations.getTranslatedString("sort_by");
+		self.resetToDefaultsLabel = oj.Translations.getTranslatedString("reset_to_defaults");  
+		self.filterLabel = oj.Translations.getTranslatedString("filter");  
 		
-		self.dateAscLabel = oj.Translations.getTranslatedString("date_asc_l");
-	    self.dateDescLabel = oj.Translations.getTranslatedString("date_desc_l");
-	    self.authorNameAscLabel = oj.Translations.getTranslatedString("author_name_asc_l");
-	    self.authorNameDescLabel = oj.Translations.getTranslatedString("author_name_desc_l");
-	    self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc_l");
-	    self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc_l");
-	    self.typeLabel = oj.Translations.getTranslatedString("type_l");
+		self.dateAscLabel = oj.Translations.getTranslatedString("date_asc");
+	    self.dateDescLabel = oj.Translations.getTranslatedString("date_desc");
+	    self.authorNameAscLabel = oj.Translations.getTranslatedString("author_name_asc");
+	    self.authorNameDescLabel = oj.Translations.getTranslatedString("author_name_desc");
+	    self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc");
+	    self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
+	    self.typeLabel = oj.Translations.getTranslatedString("type");
 	    
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();
@@ -51,18 +52,18 @@ function(oj, ko, $) {
 		self.nowrap = ko.observable(false);
 		
 	    self.risksTags = ko.observableArray([
-       	 	{value: 'A', label: oj.Translations.getTranslatedString('alertData_l'), imagePath: 'images/risk_alert.png'},
-            {value: 'W', label: oj.Translations.getTranslatedString('warning_data_l'), imagePath: 'images/risk_warning.png'},
-            {value: 'N', label: oj.Translations.getTranslatedString('no_risk_data_l'), imagePath: 'images/comment.png'}
+       	 	{value: 'A', label: oj.Translations.getTranslatedString('alert_data'), imagePath: 'images/risk_alert.png'},
+            {value: 'W', label: oj.Translations.getTranslatedString('warning_data'), imagePath: 'images/risk_warning.png'},
+            {value: 'N', label: oj.Translations.getTranslatedString('no_risk_data'), imagePath: 'images/comment.png'}
         ]);
 	    
 	    
 	    self.checkedFilterRiskStatus = ko.observableArray();
         /* Data validities */
         self.dataValiditiesTags = ko.observableArray([
-            {value: 'QUESTIONABLE_DATA',label: oj.Translations.getTranslatedString( 'questionable_data_l' ), imagePath: 'images/questionable_data.png'},
-            {value: 'FAULTY_DATA',label: oj.Translations.getTranslatedString( 'faulty_data_l' ), imagePath: 'images/faulty_data.png'},
-            {value: 'VALID_DATA',label: oj.Translations.getTranslatedString( 'valid_data_l' ), imagePath: 'images/valid_data.png'}]);
+            {value: 'QUESTIONABLE_DATA',label: oj.Translations.getTranslatedString( 'questionable_data' ), imagePath: 'images/questionable_data.png'},
+            {value: 'FAULTY_DATA',label: oj.Translations.getTranslatedString( 'faulty_data' ), imagePath: 'images/faulty_data.png'},
+            {value: 'VALID_DATA',label: oj.Translations.getTranslatedString( 'valid_data' ), imagePath: 'images/valid_data.png'}]);
         self.checkedFilterValidityData = ko.observableArray();
 	    
         
@@ -97,16 +98,11 @@ function(oj, ko, $) {
 			type : 'GET',
 			success : function(collection, response, options) {
 				if (self.roleTags.length === 0) {
-				/*	self.roleTags.push({
-						selected : "selected",
-						value : null
-					
-					});*/
 					for (var i = 0; i < response.length; i++) {
 						var roleModel = response[i];
 						self.roleTags.push({
 							value : roleModel.id,
-							label : roleModel.roleName
+							label : oj.Translations.getTranslatedString(roleModel.roleName)
 						});
 					}
 				}
@@ -119,9 +115,9 @@ function(oj, ko, $) {
 			if (ui['option'] === 'selection') {
 				if (!self.showSelectionOnDiagram()) {
 					if (ui['value'].length > 0) {
-						$('#popup1').ojPopup();
-						if ($('#popup1').ojPopup("isOpen"))
-							$('#popup1').ojPopup('close');
+						//$('#popup1').ojPopup();
+					//	if ($('#popup1').ojPopup("isOpen"))
+					//		$('#popup1').ojPopup('close');
 						var onlyDataPoints = [];
 						onlyDataPoints = getDataPoints(ui['optionMetadata']);
 						if (onlyDataPoints.length === 0) {
@@ -150,18 +146,43 @@ function(oj, ko, $) {
 		};
 		
 		var loadDiagramDataCallback = function(data) {
+				
+		/*	var date = new Date(data.groups[0].name);
+			locale = document.documentElement.lang;
+			month = date.toLocaleString(locale,{ month: "long" });
+			year = date.toLocaleString(locale,{ year: "numeric" });
+			console.log("month: "+month+" year:"+year); */
+			
 			self.props.groups = data.groups;
 			self.props.series = data.series;
+			
+			   //Translate name of the month from date
+            for( var i=0; i< Object.keys(data.groups).length;i++){
+            
+            //Can be deleted
+           	//data.groups[i].name = oj.Translations.getTranslatedString("date"+String(i))+data.groups[i].name.split(" ")[1];
+            	
+            var date = new Date(data.groups[i].name);
+            var locale = document.documentElement.lang;
+            var month = date.toLocaleString(locale,{ month: "long" });
+    		var year = date.toLocaleString(locale,{ year: "numeric" });
+            data.groups[i].name = month+" "+year;
+            
+            }
+			
 			if (self.props !== undefined
 					&& self.props.series !== undefined) {
 				for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
-					self.props.series[ig].name = oj.Translations
-							.getTranslatedString(self.props.series[ig].name);
+					self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
+					
 				}
 			}
+			
+			
 		};
 
 		var loadDataSet = function(data) {
+			console.log( "AAV>>JSON.stringify(data)::"+JSON.stringify(data) );
 			var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA
 					+ "/careRecipientId/" + self.props.careRecipientId
 					+ "/parentFactorId/" + self.props.parentFactorId,
@@ -170,14 +191,20 @@ function(oj, ko, $) {
 			return jqXHR;
 		};
 
+		
 		/* Show popup dialog for adding new assessment */
 		self.clickShowPopupAddAssessment = function(data, event) {
+			
+			
 			if (self.dataPointsMarkedIds.length > 0) {
 				ko.postbox.publish("resetAddAssessment");
 				ko.postbox.publish("dataPointsMarkedIds", ko.toJS(self.dataPointsMarkedIds));
 				
 				$('#dialog1').ojDialog();
 				$('#dialog1').ojDialog('open');
+				
+				$("#dialog1").ojDialog('widget').css('top',String(document.body.scrollTop + screen.height/ 8)+ 'px');
+				$("#dialog1").ojDialog('widget').css('left',String((screen.width - $("#dialog1").width()) / 2)+ 'px');
 
 				return true;
 			} else {
@@ -185,20 +212,14 @@ function(oj, ko, $) {
 				$('#dialog2').ojDialog('open');
 
 				// position dialog and screen
-				$("#dialog2").ojDialog('widget').css(
-						'top',
-						String(document.body.scrollTop + screen.height
-								/ 8)
-								+ 'px');
-				$("#dialog2").ojDialog('widget').css(
-						'left',
-						String((docWidth - $("#dialog2").width()) / 2)
-								+ 'px');
-				window.scrollTo();
+				$("#dialog2").ojDialog('widget').css('top',String(document.body.scrollTop + screen.height/ 8)+ 'px');
+				$("#dialog2").ojDialog('widget').css('left',String((screen.width - $("#dialog2").width()) / 2)+ 'px');
 
 				return false;
 			}
 		};
+		
+		
 
 		self.shownFilterBar = false;
 		self.toggleFilterAssessmentBar = function(e) {
@@ -438,12 +459,13 @@ function(oj, ko, $) {
 					});
 		};
 
-		function showAssessmentsPopup(aLength) {
+		function showAssessmentsPopup( aLength ) {
 			self.selectedAnotations([]);
-
+			$('.popup').ojPopup('close');
 			// Popup1 or popup2 if there are any assessments
 			if ($('#' + $('.popup').attr('id')).ojPopup("isOpen") == false) {
 				if (aLength > 0) {
+					
 					$('#popup1').ojPopup("option", "position", {
 						"my" : {
 							"horizontal" : "center",
@@ -457,13 +479,15 @@ function(oj, ko, $) {
 							"x" : 0,
 							"y" : 0
 						}
-					});
-					$('.popup').ojPopup('close');
+					}
+					);
+					
 					$('#popup1').ojPopup('open');
 					$('#popup1').draggable({
 						containment : "#detectionGEFGroup1FactorsChart"
 					});
 				} else if (aLength == 0) {
+					
 					$('#popup2').ojPopup("option", "position", {
 						"my" : {
 							"horizontal" : "center",
@@ -478,7 +502,7 @@ function(oj, ko, $) {
 							"y" : 0
 						}
 					});
-					$('.popup').ojPopup('close');
+					
 					$('#popup2').ojPopup('open');
 					$('#popup2').draggable({
 						containment : "#detectionGEFGroup1FactorsChart"
@@ -488,8 +512,8 @@ function(oj, ko, $) {
 		}
 
 		// Popup relative position
-		$(window)
-				.scroll(
+		//Temporary disabled - DO NOT DELETE THIS!
+		/*	$(window).scroll(
 						function() {
 
 							var height = $(window).scrollTop();
@@ -498,23 +522,50 @@ function(oj, ko, $) {
 							var xPos = offset.left;
 							var yPos = offset.top;
 							var autoClose;
-							var d = document
-									.getElementById("detectionGEFGroup1FactorsChart");
+							var d = document.getElementById("detectionGEFGroup1FactorsLineChart");
 
-							if ((height > (d.offsetTop + 120) && $(id)
-									.ojPopup("isOpen"))
-									|| (height < (d.offsetTop - 120) && $(
-											id).ojPopup("isOpen"))) {
+							if ((height > (d.offsetTop + 120) && $(id).ojPopup("isOpen"))
+									|| (height < (d.offsetTop - 120) && $(id).ojPopup("isOpen"))) {
 								$(id).fadeOut(50);
-							} else if (height <= (d.offsetTop + 100)
-									&& $(id).ojPopup("isOpen")) {
+							} else if ( height <= (d.offsetTop + 120) && height > (d.offsetTop - 120)
+									&& $(id).ojPopup("isOpen") ) {
 								// Prevent showing popup for a moment in
 								// the corrner bug
 								if ($(id).position().top < d.offsetTop + 300)
 									$(id).fadeIn(50);
 							}
 
-						});
+						});*/
+		
+	/*CAN BE DELETED
+	 * 	$(window).scroll(
+				function() {
+
+					var height = $(window).scrollTop();
+					var id = '#' + $('.popup').attr('id');
+					var offset = $(id).offset();
+					var xPos = offset.left;
+					var yPos = offset.top;
+					var wasOpen;
+					var autoClose;
+					var d = document.getElementById("detectionGEFGroup1FactorsLineChart");
+					if($(id).ojPopup("isOpen")){
+						wasOpen=true;
+					}else{
+						wasOpen=false;
+					}
+
+					if (( (height > (d.offsetTop + 120))
+							|| (height < (d.offsetTop - 120)) ) && wasOpen ) {
+						$(id).ojPopup('close');
+					} else if ( (height <= (d.offsetTop + 120)) && (height > (d.offsetTop - 120))
+							&& wasOpen ) {
+						$(id).ojPopup('open');
+					}
+
+				} );*/
+		
+		
 
 		var filterAssessments = function(pointIds,
 				checkedFilterValidityData) {
@@ -588,7 +639,7 @@ function(oj, ko, $) {
 				} else /*if (&& self.selectRoleData().contains('role_'))*/{
 					if (string.length > 1)
 						string += "&";
-						string += "authorRoleId="
+						string += "roleId="
 								+ ko.toJS(self.selectedRoles);
 					//console.log("SELECTED_ROLE:"+ ko.toJS(self.selectedRoles));
 
@@ -607,7 +658,7 @@ function(oj, ko, $) {
 		// Reset Selected Risk and data type ojButtonset-s
 		self.resetClick = function() {
 			//TO DO - Make text from field for selecting role be cleared using Oj
-			$("#ojChoiceId_selectRole_selected").text("");
+			$( ".selector" ).ojSelect( "getNodeBySubId", {'subId': 'oj-select-chosen'} ).textContent="";
 			
 			
 			self.selectedRoles = null;

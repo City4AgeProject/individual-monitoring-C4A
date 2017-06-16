@@ -290,7 +290,7 @@ public class CareRecipientService {
 				if (g == null) {
 					g = new Group();
 					g.setId(gfv.getTimeInterval().getId());
-					SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
 					g.setName(sdf.format(gfv.getTimeInterval().getIntervalStart()));
 					response.getGroups().add(g);
 				}

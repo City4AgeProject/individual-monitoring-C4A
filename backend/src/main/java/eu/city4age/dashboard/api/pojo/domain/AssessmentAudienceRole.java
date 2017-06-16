@@ -26,7 +26,7 @@ public class AssessmentAudienceRole implements Serializable {
 	
 	@Id
 	@Column(name="role_id",insertable=false,updatable=false)
-	private int userInRoleId;
+	private int roleId;
 	
 	@Column(name="assigned",nullable=false)
 	private Timestamp assigned;
@@ -36,7 +36,7 @@ public class AssessmentAudienceRole implements Serializable {
 
 	public AssessmentAudienceRole(AssessmentAudienceRoleBuilder builder) {
 		this.assessmentId = builder.assessmentId;
-		this.userInRoleId = builder.userInRoleId;
+		this.roleId = builder.roleId;
 		this.assigned = builder.assigned;
 	}
 
@@ -48,12 +48,12 @@ public class AssessmentAudienceRole implements Serializable {
 		this.assessmentId = assessmentId;
 	}
 
-	public int getUserInRoleId() {
-		return userInRoleId;
+	public int getRoleId() {
+		return roleId;
 	}
 
-	public void setUserInRoleId(int userInRoleId) {
-		this.userInRoleId = userInRoleId;
+	public void setRoleId(int roleId) {
+		this.roleId = roleId;
 	}
 
 	public AssessmentAudienceRole(Timestamp assigned) {
@@ -70,7 +70,7 @@ public class AssessmentAudienceRole implements Serializable {
 
 	public static class AssessmentAudienceRoleBuilder {
 		private int assessmentId = 0;
-		private int userInRoleId = 0;
+		private int roleId = 0;
 		private Timestamp assigned = new Timestamp((new Date()).getTime());
 		
 		public AssessmentAudienceRoleBuilder assessmentId(int assessmentId) {
@@ -78,8 +78,8 @@ public class AssessmentAudienceRole implements Serializable {
 			return this;
 		}
 		
-		public AssessmentAudienceRoleBuilder userInRoleId(int userInRoleId) {
-			this.userInRoleId = userInRoleId;
+		public AssessmentAudienceRoleBuilder userInRoleId(int roleId) {
+			this.roleId = roleId;
 			return this;
 		}
 		

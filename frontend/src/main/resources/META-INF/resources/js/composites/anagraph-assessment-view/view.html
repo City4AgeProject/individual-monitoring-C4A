@@ -13,7 +13,7 @@
 	        selection: selectedItemsValue,
 	        title: $props.title,
 	        legend: $props.legend,
-	        groups: $props.groups,
+	        groups: $props.groups ,
 	        series: $props.series,
 	        drilling: $props.drilling,
 	        animationOnDisplay: 'auto',
@@ -161,7 +161,7 @@
 
 
 									<div class="oj-flex-item" style="width: 180px;" id="selectRoleData">
-										<label for="selectRole" data-bind="text: fromLabel"></label> <select  id="selectRole"
+										<label for="selectRole" data-bind="text: fromLabel"></label> <select  id="selectRole" class="selector"
 											data-bind="ojComponent: {
                                                         component: 'ojSelect', 
                                                         value: selectedRoles ,
@@ -169,7 +169,7 @@
                                                         placeholder: '' ,
                                                         multiple: false,
                                                         options: roleTags ,
-                                                        rootAttributes: {style:'max-width:334px'}
+                                                        rootAttributes: {style:'width: 180px; max-width: 334px;'}
                                                     }">
                                                    
 										</select>

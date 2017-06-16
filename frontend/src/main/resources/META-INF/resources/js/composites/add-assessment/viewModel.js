@@ -4,20 +4,17 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
             function model(context) {
                 var self = this;
                 
-                self.choseTypeLabel = oj.Translations.getTranslatedString("chose_type_l");
-                self.choseTypePlcHoldLabel = oj.Translations.getTranslatedString("chose_type_plc_hold_l");
-                self.forSelectRoleLabel = oj.Translations.getTranslatedString("for_select_role_l");
-                self.commentLabel = oj.Translations.getTranslatedString("comment_l");
-                self.commentPlcHoldLabel = oj.Translations.getTranslatedString("comment_plc_hold_l");
-                self.dataValidityPlcHoldLabel = oj.Translations.getTranslatedString("data_validity_plc_hold_l");
-                self.postBtnLabel = oj.Translations.getTranslatedString("post_btn_l");
-                self.cancelBtnLabel = oj.Translations.getTranslatedString("cancel_btn_l");
-                self.addAnnotationTitle = oj.Translations.getTranslatedString("add_annotation_title_l");
-                self.noDataSetSelectedLabel = oj.Translations.getTranslatedString("no_data_set_selected_l");
+                self.choseTypeLabel = oj.Translations.getTranslatedString("chose_type");
+                self.choseTypePlcHoldLabel = oj.Translations.getTranslatedString("chose_risk");
+                self.forSelectRoleLabel = oj.Translations.getTranslatedString("for_select_role");
+                self.commentLabel = oj.Translations.getTranslatedString("comment");
+                self.commentPlcHoldLabel = oj.Translations.getTranslatedString("no_comment");
+                self.dataValidityPlcHoldLabel = oj.Translations.getTranslatedString("chose_data_validity");
+                self.postBtnLabel = oj.Translations.getTranslatedString("post_btn");
+                self.cancelBtnLabel = oj.Translations.getTranslatedString("cancel_btn");
+                self.addAnnotationTitle = oj.Translations.getTranslatedString("add_annotation");
+                self.noDataSetSelectedLabel = oj.Translations.getTranslatedString("no_data_set_selected");
                 
-                
-          /*      self.xxx = oj.Translations.getTranslatedString("xxx");*/
-
                 self.commentText = ko.observable('');
                 self.risksCollection = ko.observable();
                 self.risksTags = ko.observableArray();
@@ -25,9 +22,9 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 self.dataPointsMarkedIds = [];
                 
                 self.dataValiditiesTags = ko.observableArray([
-                	{value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data_l") , imagePath: 'images/questionable_data.png'},
-                    {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data_l") , imagePath: 'images/faulty_data.png'},
-                    {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data_l") , imagePath: 'images/valid_data.png'}]);
+                	{value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
+                    {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
+                    {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
                 self.selectedDataValidity = ko.observable();
 
                 self.rolesCollection = ko.observable();
@@ -86,7 +83,8 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                             if (self.risksTags.length === 0) {
                                 for (var i = 0; i < collection.size(); i++) {
                                     var riskModel = collection.at(i);
-                                    self.risksTags.push({value: riskModel.attributes.riskStatus, label: oj.Translations.getTranslatedString("risk_status_"+riskModel.attributes.riskStatus.toLowerCase()+"_l") , imagePath: riskModel.attributes.imagePath});
+                                    //Temporary key (risk_status_+(a||w||n))
+                                    self.risksTags.push({value: riskModel.attributes.riskStatus, label: oj.Translations.getTranslatedString("risk_status_"+riskModel.attributes.riskStatus.toLowerCase()) , imagePath: riskModel.attributes.imagePath});
                                 }
                             }
                         },
@@ -113,7 +111,7 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                             if(self.roleTags.length === 0) {
                                 for (var i = 0; i < response.length; i++) {
                                     var roleModel = response[i];
-                                    self.roleTags.push({value: roleModel.id, label: oj.Translations.getTranslatedString("roles_"+roleModel.roleAbbreviation.toLowerCase()+"_l")});
+                                    self.roleTags.push({value: roleModel.id, label: oj.Translations.getTranslatedString(roleModel.roleName.toLowerCase())});
                                 }
                             }
                         },
@@ -150,21 +148,19 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
 
                 // Show dialog for adding new assessment 
                 self.clickShowPopupAddAssessment = function (data, event) {
-                 var docWidth = $(document).width() ;
-                 var docHeight = $(document).height() ;
+                	
 
                     ko.postbox.publish("resetAddAssessment");
                    
-                    $('#dialog1').ojDialog();
-                    $('#dialog1').ojDialog('open');
+                	$('#dialog1').ojDialog();
+    				$('#dialog1').ojDialog('open');
+    				
+    				$("#dialog1").ojDialog('widget').css('top',String(document.body.scrollTop + screen.height / 8)+ 'px');
+    				$("#dialog1").ojDialog('widget').css('left',String((screen.width - $("#dialog1").width()) / 2)+ 'px');
                     
-                    //position dialog and screen
-                    $("#dialog1").ojDialog('widget').css('top', String(document.body.scrollTop+screen.height/8)+'px');
-                    $("#dialog1").ojDialog('widget').css('left', String((docWidth-$("#dialog1").width())/2)+'px');
-                    window.scrollTo();
-
-                    return true;
+                    //return true;
                 };
+                
                 
             };
             return model;

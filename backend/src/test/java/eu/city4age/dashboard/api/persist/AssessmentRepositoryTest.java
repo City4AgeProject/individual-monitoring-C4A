@@ -129,13 +129,13 @@ public class AssessmentRepositoryTest {
 
 		AssessmentAudienceRole ar1 = new AssessmentAudienceRole();
 		ar1.setAssessmentId(1);
-		ar1.setUserInRoleId(1);
+		ar1.setRoleId(1);
 		ar1.setAssigned(new Timestamp(System.currentTimeMillis()));
 		audienceRolesRepository.save(ar1);
 		
 		AssessmentAudienceRole ar2 = new AssessmentAudienceRole();
 		ar2.setAssessmentId(2);
-		ar2.setUserInRoleId(2);
+		ar2.setRoleId(2);
 		ar2.setAssigned(new Timestamp(System.currentTimeMillis()));
 		audienceRolesRepository.save(ar2);
 		
@@ -228,14 +228,14 @@ public class AssessmentRepositoryTest {
 		filters.add(dataValidity);
 		
 		//userInRoleId filter (1L):
-		Filter userInRoleId = new Filter();
-		userInRoleId.setName("userInRoleId");
+		Filter roleId = new Filter();
+		roleId.setName("roleId");
 		
 		inParams = new ArrayList<Object>();
 		inParams.add(1L);
 		
-		userInRoleId.getInParams().put("userInRoleId", inParams);
-		filters.add(userInRoleId);
+		roleId.getInParams().put("roleId", inParams);
+		filters.add(roleId);
 		
 		
 
@@ -259,7 +259,7 @@ public class AssessmentRepositoryTest {
 		//filters are on:
 		Assert.assertNotNull(resultWithFilters);
 		Assert.assertNotNull(resultWithoutFilters);
-		Assert.assertEquals(2, assessmentRepository.findAll().size());
+		Assert.assertEquals(3, assessmentRepository.findAll().size());
 		Assert.assertEquals(4,resultWithoutFilters.size());
 		Assert.assertEquals(1, resultWithFilters.size());
 	
@@ -275,7 +275,7 @@ public class AssessmentRepositoryTest {
 		//After riskStatus filter switched off:
 		Assert.assertNotNull(resultWithFilters);
 		Assert.assertNotNull(resultWithoutFilters);
-		Assert.assertEquals(3, assessmentRepository.findAll().size());
+		Assert.assertEquals(4, assessmentRepository.findAll().size());
 		Assert.assertEquals(4,resultWithoutFilters.size());
 		Assert.assertEquals(1, resultWithFilters.size());
 		logger.info("end of testFindForSelectedDataSet");
@@ -291,7 +291,7 @@ public class AssessmentRepositoryTest {
 		//After dataValidity filter switched off:
 		Assert.assertNotNull(resultWithFilters);
 		Assert.assertNotNull(resultWithoutFilters);
-		Assert.assertEquals(4, assessmentRepository.findAll().size());
+		Assert.assertEquals(7, assessmentRepository.findAll().size());
 		Assert.assertEquals(4,resultWithoutFilters.size());
 		Assert.assertEquals(1, resultWithFilters.size());
 		logger.info("end of testFindForSelectedDataSet");

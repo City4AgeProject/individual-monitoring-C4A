@@ -11,14 +11,14 @@ function (oj, ko, $, sp, params) {
     function GraphicsContentViewModel() {
 
     	//Labels on GEF page with translate option
-    	this.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient_l");
-    	this.ageLabel = oj.Translations.getTranslatedString("age_l");
-    	this.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician_l");
-    	this.summaryLabel= oj.Translations.getTranslatedString("summary_l");
-    	this.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detectionGEFGroupsLineChart_l");
-    	this.lineChartLabel = oj.Translations.getTranslatedString('line_chart_l');
-    	this.morphologyLabel = oj.Translations.getTranslatedString('morphology_l');
-    	this.visualisationsLabel = oj.Translations.getTranslatedString('visualisations_l');
+    	this.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
+    	this.ageLabel = oj.Translations.getTranslatedString("age");
+    	this.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician");
+    	this.summaryLabel= oj.Translations.getTranslatedString("summary");
+    	this.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detection_gef_groups_chart");
+    	this.lineChartLabel = oj.Translations.getTranslatedString('line_chart');
+    	this.morphologyLabel = oj.Translations.getTranslatedString('morphology');
+    	this.visualisationsLabel = oj.Translations.getTranslatedString('visualisations');
     	
         var self = this;
         self.careRecipientId = ko.observable();
@@ -113,7 +113,7 @@ function (oj, ko, $, sp, params) {
 
         /* End Detection FGR Groups Line Chart configuration  */
 
-        var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Avg 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
+        var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Aug 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
 
         /* Group 1 and Group 2 Line Chart configuration with dummy data */
         /* Group 1 */
@@ -151,7 +151,7 @@ function (oj, ko, $, sp, params) {
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-            graphicsContentViewModel.titleValue(  ui['series'].charAt(0).toUpperCase()+ui['series'].slice(1) + oj.Translations.getTranslatedString('geriatric_factors_l') );
+            graphicsContentViewModel.titleValue(  ui['series'].charAt(0).toUpperCase()+ui['series'].slice(1) + oj.Translations.getTranslatedString('geriatric_factors') );
 
             self.titlePart(ko.toJS(self.titleValue));
             
@@ -172,14 +172,32 @@ function (oj, ko, $, sp, params) {
 
 
         /***********************************************/
+        //Diagram on GEF page
         var loadDiagramDataCallback = function (data) {
 
+        	console.log("G-E-F:::::"+JSON.stringify(data.groups));
+        	
             self.lineGroupsValue = data.groups;
             self.lineSeriesValue = data.series;
             
            for(var ig = 0; ig < Object.keys(data.series).length; ig++){
         		data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
         	} 
+           
+           //Translate name of the month from date
+            for( var i=0; i< Object.keys(data.groups).length;i++){
+            
+            //Can be deleted
+           	//data.groups[i].name = oj.Translations.getTranslatedString("date"+String(i))+data.groups[i].name.split(" ")[1];
+            //data.groups[i].name = groups[i];
+            	
+            var date = new Date(data.groups[i].name);
+            var locale = document.documentElement.lang;
+            var month = date.toLocaleString(locale,{ month: "long" });
+    		var year = date.toLocaleString(locale,{ year: "numeric" });
+            data.groups[i].name = month+" "+year;
+            
+            }
            
             $('#detectionGEFGroup1FactorsLineChart').prop('groups', data.groups);
             $('#detectionGEFGroup1FactorsLineChart').prop('series', data.series); 
@@ -328,6 +346,9 @@ function (oj, ko, $, sp, params) {
                         $.each(list.items[0].itemList, function (j, itemList) {
                             nodes.push(createItems(list.items[0].idList[j], itemList, gtId ));
                         });
+                        
+                        console.log( "GEF>>JSON.stringify(data)::"+JSON.stringify(data) );
+                        
                         self.seriesVal.push({
                             name: oj.Translations.getTranslatedString(list.items[0].groupName),
                             items: nodes,

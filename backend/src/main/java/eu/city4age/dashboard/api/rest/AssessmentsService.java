@@ -133,7 +133,7 @@ public class AssessmentsService {
 	@JsonView(View.AssessmentView.class)
 	@Path("findForSelectedDataSet/geriatricFactorValueIds/{geriatricFactorValueIds : .+}")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "authorRoleId", value = "id of author", required = false, dataType = "long", paramType = "query", defaultValue = "1"),
+		@ApiImplicitParam(name = "roleId", value = "id of role of auditorium", required = false, dataType = "long", paramType = "query", defaultValue = "1"),
 		@ApiImplicitParam(name = "orderById", value = "selection of ordering (1 - date asc, 2 - date desc, 3 - author name asc, 4 - author name desc, 5 - author role asc, 6 - author role desc, 7 - type)", required = false, dataType = "long", paramType = "query", defaultValue = "1"),
 		@ApiImplicitParam(name = "riskStatusWarning", value = "risk warning marker", required = false, dataType = "boolean", paramType = "query", defaultValue = "true"),
 		@ApiImplicitParam(name = "riskStatusAlert", value = "risk alert marker", required = false, dataType = "boolean", paramType = "query", defaultValue = "true"),
@@ -145,7 +145,7 @@ public class AssessmentsService {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Assessment.class),
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
 	public Response findForSelectedDataSet(
-			@ApiParam(hidden = true) @QueryParam(value = "authorRoleId") Long authorRoleId,
+			@ApiParam(hidden = true) @QueryParam(value = "roleId") Long roleId,
 			@ApiParam(hidden = true) @QueryParam(value = "orderById") Long orderById,
 			@ApiParam(hidden = true) @QueryParam(value = "riskStatusWarning") Boolean riskStatusWarning,
 			@ApiParam(hidden = true) @QueryParam(value = "riskStatusAlert") Boolean riskStatusAlert,
@@ -164,8 +164,8 @@ public class AssessmentsService {
 		List<Filter> filters = new ArrayList<Filter>();
 
 		if (riskStatusWarning != null || riskStatusAlert != null || riskStatusNoRisk != null) {
-			Filter riskStatus = new Filter();
-			riskStatus.setName("riskStatus");
+			Filter byRiskStatus = new Filter();
+			byRiskStatus.setName("riskStatus");
 			List<Character> inParams = new ArrayList<Character>();
 			if (riskStatusWarning != null && riskStatusWarning) {
 				inParams.add('W');
@@ -176,13 +176,13 @@ public class AssessmentsService {
 			if (riskStatusNoRisk != null && riskStatusNoRisk) {
 				inParams.add('N');
 			}
-			riskStatus.getInParams().put("riskStatus", inParams);
-			filters.add(riskStatus);
+			byRiskStatus.getInParams().put("riskStatus", inParams);
+			filters.add(byRiskStatus);
 		}
 
 		if (dataValidityFaulty != null || dataValidityQuestionable != null || dataValidityValid != null) {
-			Filter dataValidity = new Filter();
-			dataValidity.setName("dataValidity");
+			Filter byDataValidity = new Filter();
+			byDataValidity.setName("dataValidity");
 			List<Character> inParams = new ArrayList<Character>();
 			if (dataValidityFaulty != null && dataValidityFaulty) {
 				inParams.add('F');
@@ -193,16 +193,16 @@ public class AssessmentsService {
 			if (dataValidityValid != null && dataValidityValid) {
 				inParams.add('V');
 			}
-			dataValidity.getInParams().put("dataValidity", inParams);
-			filters.add(dataValidity);
+			byDataValidity.getInParams().put("dataValidity", inParams);
+			filters.add(byDataValidity);
 
 		}
 
-		if (authorRoleId != null) {
-			Filter userInRoleId = new Filter();
-			userInRoleId.setName("userInRoleId");
-			userInRoleId.getInParams().put("userInRoleId", authorRoleId);
-			filters.add(userInRoleId);
+		if (roleId != null) {
+			Filter byRoleId = new Filter();
+			byRoleId.setName("roleId");
+			byRoleId.getInParams().put("roleId", roleId);
+			filters.add(byRoleId);
 		}
 
 		aaList = assessmentRepository.doQueryWithFilter(filters, "findForSelectedDataSet", inQueryParams);
@@ -235,10 +235,10 @@ public class AssessmentsService {
 			list.sort(Comparator.comparing(Assessment::getUserInSystemDisplayName).reversed());
 			break;
 		case 5:
-			list.sort(Comparator.comparing(Assessment::getUserInRoleId));
+			list.sort(Comparator.comparing(Assessment::getRoleId));
 			break;
 		case 6:
-			list.sort(Comparator.comparing(Assessment::getUserInRoleId).reversed());
+			list.sort(Comparator.comparing(Assessment::getRoleId).reversed());
 			break;
 		case 7:
 			break;

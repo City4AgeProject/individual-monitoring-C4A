@@ -38,7 +38,7 @@ public class SourceEvidenceId implements Serializable {
 		this.geriatricFactorId = geriatricFactorId;
 	}
 
-	public int getUserInRoleId() {
+	public int getRoleId() {
 		return userInRoleId;
 	}
 
@@ -56,13 +56,13 @@ public class SourceEvidenceId implements Serializable {
 		SourceEvidenceId castOther = (SourceEvidenceId) other;
 
 		return (this.getGeriatricFactorId() == castOther.getGeriatricFactorId())
-				&& ((this.getUserInRoleId() == castOther.getUserInRoleId()));
+				&& ((this.getRoleId() == castOther.getRoleId()));
 	}
 	public int hashCode() {
 		int result = 17;
 
 		result = 37 * result + this.getGeriatricFactorId();
-		result = 37 * result + this.getUserInRoleId();
+		result = 37 * result + this.getRoleId();
 		return result;
 	}
 

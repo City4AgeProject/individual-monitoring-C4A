@@ -39,8 +39,9 @@
 </style>
 
 <div style="display:none;" id="popup1" class="popup"
-     data-bind="ojComponent:{component: 'ojPopup',
-                               rootAttributes: {style:'width: 360px;height:330px;'}
+     data-bind="ojComponent:{
+     				component: 'ojPopup',
+           			rootAttributes: {style:'width: 360px;height:330px;'}
                               }">
     <div class="demo-flex-display oj-flex-items-pad">
         <div class="oj-flex oj-sm-flex-direction-column">
@@ -54,8 +55,7 @@
                                       display: 'icons', 
                                       icons: {end: 'oj-panel-remove-icon'}, 
                                       label: 'remove'},
-                                      click: function() {$('#popup1').ojPopup('close', '#btnClose');
-                                      					}  ">
+                                      click: function() {$('#popup1').ojPopup('close', '#btnClose');}  ">
                 </button>
             </div>
             <div class="oj-flex-item oj-dialog-body" style="height:176px;">

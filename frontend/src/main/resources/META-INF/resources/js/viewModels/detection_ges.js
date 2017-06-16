@@ -13,13 +13,13 @@ function (oj, ko, $, sp) {
         var self = this;
         
         
-        self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient_l");
-        self.ageLabel = oj.Translations.getTranslatedString("age_l");
-        self.genderLabel = oj.Translations.getTranslatedString("gender_l");
-        self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician_l");
-        self.summaryLabel= oj.Translations.getTranslatedString("summary_l");
-        self.readMoreLabel = oj.Translations.getTranslatedString("read_more_l");
-       // self.selectGefLabel = oj.Translations.getTranslatedString("select_gef_l");
+        self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
+        self.ageLabel = oj.Translations.getTranslatedString("age");
+        self.genderLabel = oj.Translations.getTranslatedString("gender");
+        self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician");
+        self.summaryLabel= oj.Translations.getTranslatedString("summary");
+        self.readMoreLabel = oj.Translations.getTranslatedString("read_more");
+       // self.selectGefLabel = oj.Translations.getTranslatedString("select_gef");
        
         
         self.titleObj = ko.observable();
@@ -31,6 +31,7 @@ function (oj, ko, $, sp) {
         self.subFactorName = ko.observable();
         self.careRecipient = ko.observable();
         self.parentFactor = ko.observable();
+        self.subFactorType = ko.observable();
 
         self.groupsVal = ko.observableArray();
         self.seriesVal = ko.observableArray();
@@ -61,8 +62,12 @@ function (oj, ko, $, sp) {
             self.careRecipient(selectedDetectionVariable[0]);
             self.subFactorName(selectedDetectionVariable[1].detectionVariableName);
             self.parentFactor(selectedDetectionVariable[1].id); //derivedDetectionVariableIds
+            self.subFactorType(selectedDetectionVariable[1].detectionVariableType);
             
-            self.titleObj({"text": "Geriatric Sub factor - " + oj.Translations.getTranslatedString(self.subFactorName()), "halign": "center"});
+            console.log("***"+selectedDetectionVariable[0]+"***");
+            console.log("///"+JSON.stringify(selectedDetectionVariable[1])+"///");
+            
+            self.titleObj({"text": oj.Translations.getTranslatedString(self.subFactorType().toLowerCase())+" - " + oj.Translations.getTranslatedString(self.subFactorName()), "halign": "center"});
 
         };
 

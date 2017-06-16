@@ -3,7 +3,7 @@
 
                             component: 'ojDialog', 
                             initialVisibility: 'hide',
-                            rootAttributes: {style: 'width: 360px; height: 480px;'},
+                            rootAttributes: {style: 'width: 375px; height: 480px;'},
                             title: addAnnotationTitle
              }">
 	<div class="oj-dialog-body">
@@ -30,7 +30,7 @@
                                                             component: 'ojCombobox',
                                                             value: selectedRiskStatus,
                                                             list: 'riskList',
-                                                            rootAttributes: {style:'width:165px'},
+                                                            rootAttributes: {style:'width:165px; '},
                                                             placeholder: choseTypePlcHoldLabel }"/>
 
 								<ul id="dataValiditiesList" style="display: none">
@@ -48,7 +48,7 @@
                                                             value: selectedDataValidity,
                                                             list: 'dataValiditiesList',
                                                             placeholder: dataValidityPlcHoldLabel ,
-                                                            rootAttributes: {style:'width:165px'}}"/>
+                                                            rootAttributes: {style:'width:175px'}}"/>
 							</div>
 
 						</div>
@@ -61,7 +61,7 @@
                                             component: 'ojSelect', 
                                             value: selectedRoles ,
                                             multiple: true,
-                                            options: roleTags,
+                                            options: roleTags ,
                                             rootAttributes: {style:'max-width:334px'}
                                         }">
 
@@ -76,7 +76,7 @@
 								data-bind="ojComponent: {
                                                     component: 'ojTextArea',
                                                     rootAttributes: {style:'max-width:334px'}, 
-                                                    value: commentText,
+                                                    value: commentText ,
                                                     placeholder: commentPlcHoldLabel }">
                              </textarea>
 						</div>

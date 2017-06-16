@@ -8,7 +8,7 @@ public class AddAssessment {
 	
 	private UserInRole userInRole;
 	
-	private Long userInRoleId;
+	private Long roleId;
 	
 	private String assessmentComment;
 	
@@ -42,12 +42,12 @@ public class AddAssessment {
 		this.userInRole = userInRole;
 	}
 
-	public Long getUserInRoleId() {
-		return userInRoleId;
+	public Long getRoleId() {
+		return roleId;
 	}
 
-	public void setUserInRoleId(Long userInRoleId) {
-		this.userInRoleId = userInRoleId;
+	public void setRoleId(Long roleId) {
+		this.roleId = roleId;
 	}
 
 	public String getAssessmentComment() {

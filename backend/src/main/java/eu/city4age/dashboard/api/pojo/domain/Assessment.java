@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.FilterDefs;
+import org.hibernate.annotations.FilterJoinTable;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
@@ -38,10 +39,9 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 @Table(name = "assessment")
 @FilterDefs(value = { @FilterDef(name = "riskStatus", parameters = @ParamDef(name = "riskStatus", type = "char")),
 		@FilterDef(name = "dataValidity", parameters = @ParamDef(name = "dataValidity", type = "char")),
-		@FilterDef(name = "userInRoleId", parameters = @ParamDef(name = "userInRoleId", type = "long")) })
+		@FilterDef(name = "roleId", parameters = @ParamDef(name = "roleId", type = "long")) })
 @Filters(value = { @Filter(name = "riskStatus", condition = "risk_status in (:riskStatus)"),
-		@Filter(name = "dataValidity", condition = "data_validity_status in (:dataValidity)"),
-		@Filter(name = "userInRoleId", condition = "author_id = :userInRoleId") })
+		@Filter(name = "dataValidity", condition = "data_validity_status in (:dataValidity)") })
 public class Assessment implements Serializable {
 
 	/**
@@ -72,9 +72,6 @@ public class Assessment implements Serializable {
 	@JoinColumn(name = "author_id")
 	private UserInRole userInRole;
 
-	@Column(name = "author_id", insertable = false, updatable = false)
-	private Long userInRoleId;
-
 	@JsonView(View.AssessmentView.class)
 	@Column(name = "assessment_comment")
 	private String assessmentComment;
@@ -97,7 +94,7 @@ public class Assessment implements Serializable {
 	 * private Set<GeriatricFactorValue> geriatricFactorValue = new
 	 * HashSet<GeriatricFactorValue>();
 	 */
-
+	@FilterJoinTable(name="roleId", condition="role_id = :roleId")
 	@ManyToMany(targetEntity = Role.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "assessment_audience_role", joinColumns = @JoinColumn(name = "assessment_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<Role>(0);
@@ -237,8 +234,11 @@ public class Assessment implements Serializable {
 		return getUserInRole().getUserInSystem().getDisplayName();
 	}
 
-	public Long getUserInRoleId() {
-		return getUserInRole().getId();
+	public Long getRoleId() {
+		if (getRoles() != null && getRoles().size() > 0)
+			return getRoles().iterator().next().getId();
+		else
+			return null;
 	}
 
 	public static class AssessmentBuilder {
