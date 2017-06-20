@@ -164,7 +164,7 @@ function (oj, ko, $, sp, params) {
                 var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId + "/parentFactorId/" + self.parentFactorId,
                 		loadDiagramDataCallback);
                 jqXHR.fail(function (xhr, message, error) {
-                    console.log('some error');
+                    console.log('CARE_RECIPIENT_DIAGRAM_DATA web service error');
                 }); 
             }
 
@@ -175,8 +175,6 @@ function (oj, ko, $, sp, params) {
         //Diagram on GEF page
         var loadDiagramDataCallback = function (data) {
 
-        	console.log("G-E-F:::::"+JSON.stringify(data.groups));
-        	
             self.lineGroupsValue = data.groups;
             self.lineSeriesValue = data.series;
             
@@ -346,9 +344,6 @@ function (oj, ko, $, sp, params) {
                         $.each(list.items[0].itemList, function (j, itemList) {
                             nodes.push(createItems(list.items[0].idList[j], itemList, gtId ));
                         });
-                        
-                        console.log( "GEF>>JSON.stringify(data)::"+JSON.stringify(data) );
-                        
                         self.seriesVal.push({
                             name: oj.Translations.getTranslatedString(list.items[0].groupName),
                             items: nodes,

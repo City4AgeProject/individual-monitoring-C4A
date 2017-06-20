@@ -19,7 +19,6 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 self.risksCollection = ko.observable();
                 self.risksTags = ko.observableArray();
                 self.selectedRiskStatus = ko.observable();
-                self.dataPointsMarkedIds = [];
                 
                 self.dataValiditiesTags = ko.observableArray([
                 	{value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
@@ -48,10 +47,6 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
 
                 ko.postbox.subscribe("resetAddAssessment", function () {
                     resetAddAssessment();
-                });
-
-                ko.postbox.subscribe("dataPointsMarkedIds", function (dataPointsMarkedIds) {
-                    self.dataPointsMarkedIds = dataPointsMarkedIds;
                 });
 
                 var postAssessmentCallback = function (data) {
@@ -126,7 +121,7 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                     var comment = ko.toJS(self.commentText);
                     var riskStatus = self.selectedRiskStatus().length===1 ? ko.toJS(self.selectedRiskStatus)[0] : 'N'; // N-none
                     var dataValidity = self.selectedDataValidity().length===1 ? ko.toJS(self.selectedDataValidity)[0] : 'VALID_DATA';
-                    var geriatricFactorValueIds = self.dataPointsMarkedIds;
+                    var geriatricFactorValueIds = self.props.dataPointsMarkedIds;
                     var audienceIds = ko.toJS(self.selectedRoles);
                     var assessmentToPost = new AddAssessment
                             (authorId, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);

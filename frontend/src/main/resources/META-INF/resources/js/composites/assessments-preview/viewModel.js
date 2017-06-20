@@ -7,7 +7,6 @@ function(ko, $) {
 		var self = this;
 
 		self.dataPointsMarked = ko.observable('No data points marked.');
-		self.dataPointsMarkedIds = [];
 		self.clickShowPopupAddAssessmentCallBack = null;
 
 		self.addAnnotationLabel = oj.Translations.getTranslatedString("add_annotation");
@@ -31,13 +30,9 @@ function(ko, $) {
 		ko.postbox.subscribe("refreshDataPointsMarked", function(assessmentsResultLength) {
 
 			document.getElementById('tabs').style.display = 'block';
-			self.dataPointsMarked(self.dataPointsMarkedIds.length
+			self.dataPointsMarked(self.props.dataPointsMarkedIds.length
 					+ oj.Translations.getTranslatedString("dpmw")
 					+ assessmentsResultLength + oj.Translations.getTranslatedString("assessments"));
-		});
-
-		ko.postbox.subscribe("dataPointsMarkedIds", function(dataPointsMarkedIds) {
-			self.dataPointsMarkedIds = dataPointsMarkedIds;
 		});
 
 		self.clickShowPopupAddAssessment = function(data, event) {

@@ -135,7 +135,9 @@ function(oj, ko, $) {
 							loadAssessments(self.queryParams);
 						}
 						showAssessmentsPopup();
-						ko.postbox.publish("dataPointsMarkedIds", onlyDataPoints);
+
+						$('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
+
 					} else {
 						self.dataPointsMarkedIds = [];
 					}
@@ -146,17 +148,11 @@ function(oj, ko, $) {
 		};
 		
 		var loadDiagramDataCallback = function(data) {
-				
-		/*	var date = new Date(data.groups[0].name);
-			locale = document.documentElement.lang;
-			month = date.toLocaleString(locale,{ month: "long" });
-			year = date.toLocaleString(locale,{ year: "numeric" });
-			console.log("month: "+month+" year:"+year); */
 			
 			self.props.groups = data.groups;
 			self.props.series = data.series;
 			
-			   //Translate name of the month from date
+			//Translate name of the month from date
             for( var i=0; i< Object.keys(data.groups).length;i++){
             
             //Can be deleted
@@ -182,7 +178,6 @@ function(oj, ko, $) {
 		};
 
 		var loadDataSet = function(data) {
-			console.log( "AAV>>JSON.stringify(data)::"+JSON.stringify(data) );
 			var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA
 					+ "/careRecipientId/" + self.props.careRecipientId
 					+ "/parentFactorId/" + self.props.parentFactorId,
@@ -198,8 +193,9 @@ function(oj, ko, $) {
 			
 			if (self.dataPointsMarkedIds.length > 0) {
 				ko.postbox.publish("resetAddAssessment");
-				ko.postbox.publish("dataPointsMarkedIds", ko.toJS(self.dataPointsMarkedIds));
-				
+
+				$('#addAssessment').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));
+
 				$('#dialog1').ojDialog();
 				$('#dialog1').ojDialog('open');
 				
@@ -425,7 +421,7 @@ function(oj, ko, $) {
 			}
 			self.dataPointsMarkedIds = idsArray;
 
-			ko.postbox.publish("dataPointsMarkedIds", ko.toJS(self.dataPointsMarkedIds));
+			$('#popupWrapper1').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));
 
 			return idsArray;
 		}
@@ -574,7 +570,6 @@ function(oj, ko, $) {
 					+ "/geriatricFactorValueIds/" + pointIdsString
 					+ filtering(), function(assessments) {
 				var assessmentsResult = [];
-				console.log("assessments: " + JSON.stringify(assessments));
 				for (var i = 0; i < assessments.length; i++) {
 					var newAssessment = Assessment
 							.produceFromOther(assessments[i]);
@@ -636,12 +631,11 @@ function(oj, ko, $) {
 				if ((ko.toJS(self.selectedRoles) == null || ko
 						.toJS(self.selectedRoles).length === 0)) {
 					;
-				} else /*if (&& self.selectRoleData().contains('role_'))*/{
+				} else {
 					if (string.length > 1)
 						string += "&";
 						string += "roleId="
 								+ ko.toJS(self.selectedRoles);
-					//console.log("SELECTED_ROLE:"+ ko.toJS(self.selectedRoles));
 
 				}
 				if ((ko.toJS(self.val) == null || ko.toJS(self.val).length === 0)) {
@@ -657,10 +651,7 @@ function(oj, ko, $) {
 
 		// Reset Selected Risk and data type ojButtonset-s
 		self.resetClick = function() {
-			//TO DO - Make text from field for selecting role be cleared using Oj
 			$( ".selector" ).ojSelect( "getNodeBySubId", {'subId': 'oj-select-chosen'} ).textContent="";
-			
-			
 			self.selectedRoles = null;
 			this.checkedFilterRiskStatus([]);
 			this.checkedFilterValidityData([]);

@@ -234,11 +234,9 @@ public class Assessment implements Serializable {
 		return getUserInRole().getUserInSystem().getDisplayName();
 	}
 
+	@JsonIgnore
 	public Long getRoleId() {
-		if (getRoles() != null && getRoles().size() > 0)
-			return getRoles().iterator().next().getId();
-		else
-			return null;
+		return getRoles().iterator().next().getId();
 	}
 
 	public static class AssessmentBuilder {
