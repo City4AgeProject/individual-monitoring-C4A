@@ -15,20 +15,16 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 self.addAnnotationTitle = oj.Translations.getTranslatedString("add_annotation");
                 self.noDataSetSelectedLabel = oj.Translations.getTranslatedString("no_data_set_selected");
                 
-                self.commentText = ko.observable('');
                 self.risksCollection = ko.observable();
                 self.risksTags = ko.observableArray();
-                self.selectedRiskStatus = ko.observable();
                 
                 self.dataValiditiesTags = ko.observableArray([
                 	{value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
                     {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
                     {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
-                self.selectedDataValidity = ko.observable();
 
                 self.rolesCollection = ko.observable();
                 self.roleTags = ko.observableArray([]);       
-                self.selectedRoles = ko.observableArray();
                 
         		context.props.then(function(properties) {
         			self.props = properties;
@@ -39,15 +35,11 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 };
 
                 function resetAddAssessment() {
-                    self.commentText('');
-                    self.selectedRiskStatus([]);
-                    self.selectedDataValidity([]);
-                    self.selectedRoles([]);
+                	self.props.commentText = '';
+                	self.props.selectedRiskStatus = [];
+                	self.props.selectedDataValidity = [];
+                	self.props.selectedRoles = [];
                 }
-
-                ko.postbox.subscribe("resetAddAssessment", function () {
-                    resetAddAssessment();
-                });
 
                 var postAssessmentCallback = function (data) {
                     $('#dialog1').ojDialog('close');
@@ -118,11 +110,11 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 self.postAssessment = function (data, event) {
                     //should be logged user ID
                     var authorId = 1;
-                    var comment = ko.toJS(self.commentText);
-                    var riskStatus = self.selectedRiskStatus().length===1 ? ko.toJS(self.selectedRiskStatus)[0] : 'N'; // N-none
-                    var dataValidity = self.selectedDataValidity().length===1 ? ko.toJS(self.selectedDataValidity)[0] : 'VALID_DATA';
+                    var comment = ko.toJS(self.props.commentText);
+                    var riskStatus = self.props.selectedRiskStatus.length===1 ? ko.toJS(self.props.selectedRiskStatus)[0] : 'N'; // N-none
+                    var dataValidity = self.props.selectedDataValidity.length===1 ? ko.toJS(self.props.selectedDataValidity)[0] : 'VALID_DATA';
                     var geriatricFactorValueIds = self.props.dataPointsMarkedIds;
-                    var audienceIds = ko.toJS(self.selectedRoles);
+                    var audienceIds = ko.toJS(self.props.selectedRoles);
                     var assessmentToPost = new AddAssessment
                             (authorId, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
                     var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_SET,
@@ -136,26 +128,6 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                     loadRoles();
                     loadRisks();
                 };
-
-                ko.postbox.subscribe("clickShowPopupAddAssessmentCallback", function() {
-                    ko.postbox.publish("setClickShowPopupAddAssessmentCallback", self.clickShowPopupAddAssessment);
-                });
-
-                // Show dialog for adding new assessment 
-                self.clickShowPopupAddAssessment = function (data, event) {
-                	
-
-                    ko.postbox.publish("resetAddAssessment");
-                   
-                	$('#dialog1').ojDialog();
-    				$('#dialog1').ojDialog('open');
-    				
-    				$("#dialog1").ojDialog('widget').css('top',String(document.body.scrollTop + screen.height / 8)+ 'px');
-    				$("#dialog1").ojDialog('widget').css('left',String((screen.width - $("#dialog1").width()) / 2)+ 'px');
-                    
-                    //return true;
-                };
-                
                 
             };
             return model;

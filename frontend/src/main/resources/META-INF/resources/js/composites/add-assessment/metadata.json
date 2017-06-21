@@ -5,6 +5,18 @@
 	"properties": {
 		"dataPointsMarkedIds": {
 			"type": "Array<object>"
+		},
+		"commentText": {
+			"type": "string"
+		},
+		"selectedRiskStatus": {
+			"type": "Array<object>"
+		},
+		"selectedDataValidity": {
+			"type": "Array<object>"
+		},
+		"selectedRoles": {
+			"type": "Array<object>"
 		}
 	}
 }

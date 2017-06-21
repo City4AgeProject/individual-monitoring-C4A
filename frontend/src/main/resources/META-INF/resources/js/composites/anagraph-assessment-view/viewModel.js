@@ -69,7 +69,7 @@ function(oj, ko, $) {
         
         
 		self.isChecked = ko.observable();
-		self.selectedRoles = ko.observableArray();
+		self.selectedRoles = ko.observableArray([]);
 		self.rolesCollection = ko.observable();
 		self.roleTags = ko.observableArray([]);
 		self.val = ko.observableArray([ "Month" ]);
@@ -78,6 +78,10 @@ function(oj, ko, $) {
 		self.polarGridShapeValue = ko.observable('polygon');
 		self.polarChartSeriesValue = ko.observableArray();
 		self.polarChartGroupsValue = ko.observableArray();
+		
+		self.commentText = ko.observable('');
+    	self.selectedRiskStatus = ko.observableArray([]);
+    	self.selectedDataValidity = ko.observableArray([]);
 
 		var selected = [];
 
@@ -149,22 +153,26 @@ function(oj, ko, $) {
 		
 		var loadDiagramDataCallback = function(data) {
 			
-			self.props.groups = data.groups;
-			self.props.series = data.series;
+			if(data !== undefined && data.groups !== undefined && data.series !== undefined) {
 			
-			//Translate name of the month from date
-            for( var i=0; i< Object.keys(data.groups).length;i++){
+				self.props.groups = data.groups;
+				self.props.series = data.series;
+				
+				//Translate name of the month from date
+	            for( var i=0; i< Object.keys(data.groups).length;i++){
+	            
+	            //Can be deleted
+	           	//data.groups[i].name = oj.Translations.getTranslatedString("date"+String(i))+data.groups[i].name.split(" ")[1];
+	            	
+	            var date = new Date(data.groups[i].name);
+	            var locale = document.documentElement.lang;
+	            var month = date.toLocaleString(locale,{ month: "long" });
+	    		var year = date.toLocaleString(locale,{ year: "numeric" });
+	            data.groups[i].name = month+" "+year;
+	            
+	            }
             
-            //Can be deleted
-           	//data.groups[i].name = oj.Translations.getTranslatedString("date"+String(i))+data.groups[i].name.split(" ")[1];
-            	
-            var date = new Date(data.groups[i].name);
-            var locale = document.documentElement.lang;
-            var month = date.toLocaleString(locale,{ month: "long" });
-    		var year = date.toLocaleString(locale,{ year: "numeric" });
-            data.groups[i].name = month+" "+year;
-            
-            }
+			}
 			
 			if (self.props !== undefined
 					&& self.props.series !== undefined) {
@@ -192,7 +200,11 @@ function(oj, ko, $) {
 			
 			
 			if (self.dataPointsMarkedIds.length > 0) {
-				ko.postbox.publish("resetAddAssessment");
+
+				self.commentText = '';
+		    	self.selectedRiskStatus = [];
+		    	self.selectedDataValidity = [];
+		    	self.selectedRoles = [];
 
 				$('#addAssessment').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));
 

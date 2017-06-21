@@ -28,7 +28,7 @@
 								<input id="riskSelect"
 									data-bind="ojComponent: {
                                                             component: 'ojCombobox',
-                                                            value: selectedRiskStatus,
+                                                            value: $props.selectedRiskStatus,
                                                             list: 'riskList',
                                                             rootAttributes: {style:'width:165px; '},
                                                             placeholder: choseTypePlcHoldLabel }"/>
@@ -45,7 +45,7 @@
 								<input id="dataValiditySelection"
 									data-bind="ojComponent: {
                                                             component: 'ojCombobox',
-                                                            value: selectedDataValidity,
+                                                            value: $props.selectedDataValidity,
                                                             list: 'dataValiditiesList',
                                                             placeholder: dataValidityPlcHoldLabel ,
                                                             rootAttributes: {style:'width:175px'}}"/>
@@ -59,7 +59,7 @@
 							<select id="selectRole"
 								data-bind="ojComponent: {
                                             component: 'ojSelect', 
-                                            value: selectedRoles ,
+                                            value: $props.selectedRoles ,
                                             multiple: true,
                                             options: roleTags ,
                                             rootAttributes: {style:'max-width:334px'}
@@ -76,7 +76,7 @@
 								data-bind="ojComponent: {
                                                     component: 'ojTextArea',
                                                     rootAttributes: {style:'max-width:334px'}, 
-                                                    value: commentText ,
+                                                    value: $props.commentText ,
                                                     placeholder: commentPlcHoldLabel }">
                              </textarea>
 						</div>
