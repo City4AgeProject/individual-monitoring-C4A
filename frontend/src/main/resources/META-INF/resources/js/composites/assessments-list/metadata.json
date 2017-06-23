@@ -1,9 +1,11 @@
 {
 	"name": "assessments-list",
+	"description" : "List of assessments searchable and sortable by filters.",
 	"version": "1.0.0",
 	"jetVersion": ">=3.0.0",
 	"properties": {
 		"selectedAssessments": {
+			"description" : "Array of assessments selected on diagram.",
 			"type": "Array<object>"
 		}
 	}

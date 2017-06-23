@@ -186,7 +186,7 @@ define({
 				weakness:"Weakness",
 				weight:"Weight",
 				phonecalls_long_received_perc:"Phonecalls long received perc",
-				transport_time:"Transport time"
+				transport_time:"Transport time",
 
 				
 			   
@@ -242,7 +242,6 @@ define({
                 assessments: " assessment(s) " ,
                 view_annotations :"View annotations" ,
                 view_daily_measures :"View daily measures" ,
-                view_nuis :"View NUIs" ,
                 dpmw:" data points marked with " ,
                 warning_status: "Warning status" , 
                 alert_status: "Alert status" ,

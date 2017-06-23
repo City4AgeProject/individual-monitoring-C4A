@@ -1,5 +1,5 @@
 define(
-		[ 'knockout', 'jquery', 'knockout-postbox', 'urls', 'entities' ],
+		[ 'knockout', 'jquery', 'urls', 'entities' ],
 
 		function(ko, $) {
 			function model(context) {
@@ -15,8 +15,10 @@ define(
 				});
 
 				showOnDiagram = function(data, event) {
+					console.log("showOnDiagram");
 					self.assessmentId(data.id);
-					ko.postbox.publish("selectDatapointsDiagram", self.assessmentId());
+					$('#detectionGEFGroup1FactorsLineChart').prop('assessmentId', self.assessmentId());
+					$('#detectionGEFGroup1FactorsLineChart')[0].selectDatapointsDiagram();
 				}
 
 				self.readMore = function() {

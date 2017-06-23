@@ -1,4 +1,4 @@
-define([ 'knockout', 'jquery', 'knockout-postbox', 'urls', 'entities' ],
+define([ 'knockout', 'jquery', 'urls', 'entities' ],
 
 function(ko, $) {
 
@@ -12,7 +12,6 @@ function(ko, $) {
 		self.addAnnotationLabel = oj.Translations.getTranslatedString("add_annotation");
 		self.viewAnnotationsLabel = oj.Translations.getTranslatedString("view_annotations");
 		self.viewDailyMeasuresLabel = oj.Translations.getTranslatedString("view_daily_measures");
-		self.viewNuisLabel = oj.Translations.getTranslatedString("view_nuis");
 		self.fromLabel = oj.Translations.getTranslatedString("from");
 
 		context.props.then(function(properties) {
@@ -22,14 +21,6 @@ function(ko, $) {
 		self.attached = function(context) {
 			self.clickShowPopupAddAssessment = self.clickShowPopupAddAssessment;
 		};
-
-		ko.postbox.subscribe("refreshDataPointsMarked", function(assessmentsResultLength) {
-
-			document.getElementById('tabs').style.display = 'block';
-			self.dataPointsMarked(self.props.dataPointsMarkedIds.length
-					+ oj.Translations.getTranslatedString("dpmw")
-					+ assessmentsResultLength + oj.Translations.getTranslatedString("assessments"));
-		});
 
 		self.clickShowPopupAddAssessment = function(data, event) {
 			if (self.clickShowPopupAddAssessmentCallBack !== null)

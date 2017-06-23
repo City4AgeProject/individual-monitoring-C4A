@@ -1,28 +1,74 @@
 {
 	"name": "anagraph-assessment-view",
+	"description": "Main component with functionalities for displaying assessments.",
 	"version": "1.0.0",
 	"jetVersion": ">=3.0.0",
 	"properties": {
 		"title": {
+			"description": "Title of diagram.",
 			"type": "object"
 		},
 		"legend": {
+			"description": "Position of legend.",
 			"type": "object"
 		},
+		"drilling": {
+			"description": "ojDiagram drilling on/off.",
+			"type": "string"
+		},
+		"subFactorName": {
+			"description": "Subfactor name in diagram title.",
+			"type": "string"
+		},
+		"titleValue": {
+			"description": "Diagram title.",
+			"type": "string"
+		},
 		"careRecipientId": {
+			"description": "Id of care recipient.",
 			"type": "number"
 		},
 		"parentFactorId": {
+			"description": "Id of parent detection variable.",
+			"type": "number"
+		},
+		"assessmentId": {
+			"description": "Id of selected assessment.",
+			"type": "number"
+		},
+		"selectedId": {
+			"description": "Id of geriatric factor.",
 			"type": "number"
 		},
 		"series": {
+			"description": "ojDiagram series.",
 			"type": "Array<object>"
 		},
 		"groups": {
+			"description": "ojDiagram groups.",
 			"type": "Array<object>"
 		},
-		"drilling": {
-			"type": "string"
+		"selectedItemsValue": {
+			"description": "Array of objects selected on diagram.",
+			"type": "Array<object>"
+		},
+		"cdDetectionVariables": {
+			"description": "Array of subfactors/factors.",
+			"type": "Array<object>"
 		}
-	}
+	},
+	"methods": {
+		"loadAssessmentsCached": {
+			"description": "Web service for last 5 assessments.",
+			"internalName": "loadAssessmentsCached"
+		},
+		"chartOptionChange": {
+			"description": "ojChart event for option change.",
+			"internalName": "chartOptionChange"
+		},
+		"selectDatapointsDiagram": {
+			"description": "Method for showing all datasets on diagram containing one assessment selected on list.",
+			"internalName": "selectDatapointsDiagram"
+		}
+}
 }

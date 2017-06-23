@@ -1,21 +1,27 @@
 {
 	"name": "assessments-preview",
+	"description" : "Popup for adding new assessments.",
 	"version": "1.0.0",
 	"jetVersion": ">=3.0.0",
 	"properties": {
-		"dataPointsMarkedIds": {
-			"type": "Array<object>"
-		},
 		"commentText": {
+			"description" : "Assessment comment.",
 			"type": "string"
 		},
+		"dataPointsMarkedIds": {
+			"description" : "Array of datapoint ids selected on diagram.",
+			"type": "Array<object>"
+		},
 		"selectedRiskStatus": {
+			"description" : "Value of risk status selected in combobox.",
 			"type": "Array<object>"
 		},
 		"selectedDataValidity": {
+			"description" : "Value of data validity selected in combobox.",
 			"type": "Array<object>"
 		},
 		"selectedRoles": {
+			"description" : "Values of auditience roles selected in combobox.",
 			"type": "Array<object>"
 		}
 	}

@@ -1,8 +1,19 @@
-define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
+define(['knockout', 'jquery', 'urls', 'entities'],
         function (ko, $) {
             
             function model(context) {
                 var self = this;
+                
+                self.risksCollection = ko.observable();
+                self.risksTags = ko.observableArray();
+                
+                self.dataValiditiesTags = ko.observableArray([
+                	{value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
+                    {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
+                    {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
+
+                self.rolesCollection = ko.observable();
+                self.roleTags = ko.observableArray([]);
                 
                 self.choseTypeLabel = oj.Translations.getTranslatedString("chose_type");
                 self.choseTypePlcHoldLabel = oj.Translations.getTranslatedString("chose_risk");
@@ -14,18 +25,7 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
                 self.cancelBtnLabel = oj.Translations.getTranslatedString("cancel_btn");
                 self.addAnnotationTitle = oj.Translations.getTranslatedString("add_annotation");
                 self.noDataSetSelectedLabel = oj.Translations.getTranslatedString("no_data_set_selected");
-                
-                self.risksCollection = ko.observable();
-                self.risksTags = ko.observableArray();
-                
-                self.dataValiditiesTags = ko.observableArray([
-                	{value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
-                    {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
-                    {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
 
-                self.rolesCollection = ko.observable();
-                self.roleTags = ko.observableArray([]);       
-                
         		context.props.then(function(properties) {
         			self.props = properties;
         		});
@@ -43,7 +43,7 @@ define(['knockout', 'jquery', 'knockout-postbox', 'urls', 'entities'],
 
                 var postAssessmentCallback = function (data) {
                     $('#dialog1').ojDialog('close');
-                    ko.postbox.publish("refreshAssessmentsCached");
+                    $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
                 };
 
                 parseRisks = function (response) {

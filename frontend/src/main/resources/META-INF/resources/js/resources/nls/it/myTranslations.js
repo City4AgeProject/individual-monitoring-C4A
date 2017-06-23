@@ -138,7 +138,6 @@ define({
                 assessments: " assessment(s) (IT)" ,
                 view_annotations :"View annotations(IT)" ,
                 view_daily_measures :"View daily measures(IT)" ,
-                view_nuis :"View NUIs(IT)" ,
                 dpmw : " data points marked with (IT)" ,
                 warning_status: "Warning status(IT)" , 
                 alert_status: "Alert status(IT)" ,

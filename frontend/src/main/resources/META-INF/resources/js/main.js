@@ -11,7 +11,6 @@ requirejs.config({
   //injector:mainReleasePaths
   {
     'knockout': 'libs/knockout/knockout-3.4.0',
-    'knockout-postbox': 'libs/knockout-postbox/knockout-postbox.min',
     'jquery': 'libs/jquery/jquery-3.1.1.min',
     'jqueryui-amd': 'libs/jquery/jqueryui-amd-1.12.0.min',
     'promise': 'libs/es6-promise/es6-promise.min',

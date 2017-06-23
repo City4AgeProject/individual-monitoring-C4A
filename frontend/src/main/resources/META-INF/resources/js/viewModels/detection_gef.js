@@ -1,5 +1,5 @@
 define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 'promise',
-    'knockout-postbox', 'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
+    'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
     'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view'],
@@ -10,21 +10,12 @@ function (oj, ko, $, sp, params) {
 
     function GraphicsContentViewModel() {
 
-    	//Labels on GEF page with translate option
-    	this.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
-    	this.ageLabel = oj.Translations.getTranslatedString("age");
-    	this.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician");
-    	this.summaryLabel= oj.Translations.getTranslatedString("summary");
-    	this.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detection_gef_groups_chart");
-    	this.lineChartLabel = oj.Translations.getTranslatedString('line_chart');
-    	this.morphologyLabel = oj.Translations.getTranslatedString('morphology');
-    	this.visualisationsLabel = oj.Translations.getTranslatedString('visualisations');
-    	
-        var self = this;
+    	var self = this;
+
         self.careRecipientId = ko.observable();
         self.highlightValue = ko.observable();
 
-        var selectedId;
+        self.selectedId = ko.observable();
 
         var lineColors = ['#b4b2b2','#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
 
@@ -110,6 +101,16 @@ function (oj, ko, $, sp, params) {
         function createItems(id, value, gefTypeId) {
             return {id: id, value: value, gefTypeId: gefTypeId};
         }
+
+    	//Labels on GEF page with translate option
+    	self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
+    	self.ageLabel = oj.Translations.getTranslatedString("age");
+    	self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician");
+    	self.summaryLabel= oj.Translations.getTranslatedString("summary");
+    	self.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detection_gef_groups_chart");
+    	self.lineChartLabel = oj.Translations.getTranslatedString('line_chart');
+    	self.morphologyLabel = oj.Translations.getTranslatedString('morphology');
+    	self.visualisationsLabel = oj.Translations.getTranslatedString('visualisations');
 
         /* End Detection FGR Groups Line Chart configuration  */
 
@@ -201,7 +202,11 @@ function (oj, ko, $, sp, params) {
             $('#detectionGEFGroup1FactorsLineChart').prop('series', data.series); 
             
             var param = [self.careRecipientId, self.parentFactorId];
-            ko.postbox.publish("loadAssessmentsCached", param);
+            
+            $('#detectionGEFGroup1FactorsLineChart').prop('selectedItemsValue', []);
+            $('#detectionGEFGroup1FactorsLineChart').prop('subFactorName', "testtest");
+            $('#detectionGEFGroup1FactorsLineChart')[0].chartOptionChange();
+            $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
             
         };
         
@@ -212,7 +217,7 @@ function (oj, ko, $, sp, params) {
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-            selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
+            self.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
 
             graphicsContentViewModel.titleValue(seriesVal + "Geriatric factors");
             self.parentFactorId = ui['seriesData'].items[0].gefTypeId;
@@ -321,18 +326,9 @@ function (oj, ko, $, sp, params) {
         function loadCdDetectionVariables() {
             $.getJSON(CODEBOOK_SELECT + '/cd_detection_variable', function(data) {
                 self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
-                
+                $('#detectionGEFGroup1FactorsLineChart').prop('cdDetectionVariables', self.cdDetectionVariables);
             });
         }
-
-        //Returns chart by ID for detection variable name that was drilled in (clicked on)
-        self.bGotoGESClick = function() {
-        	
-            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.cdDetectionVariables, selectedId);
-            oj.Router.rootInstance.store([self.careRecipientId, selectedDetectionVariable]);
-            oj.Router.rootInstance.go('detection_ges');
-            
-        };
 
         //Loading Data for detectionGEFGroupsLineChart chart 
         function loadCRData() {
@@ -391,12 +387,6 @@ function (oj, ko, $, sp, params) {
                         gefData = behavData;   
                     })
         }
-
-        ko.postbox.subscribe("chartDrillGEF", function(ui) {
-        	self.chartDrill2(ui);
-			self.bGotoGESClick();
-        });
-
     }
 
     var graphicsContentViewModel = new GraphicsContentViewModel();

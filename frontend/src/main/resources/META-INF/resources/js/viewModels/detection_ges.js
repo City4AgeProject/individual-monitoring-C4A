@@ -1,4 +1,4 @@
-define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties','knockout-postbox',
+define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
      'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
@@ -11,16 +11,6 @@ function (oj, ko, $, sp) {
     	var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
         
         var self = this;
-        
-        
-        self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
-        self.ageLabel = oj.Translations.getTranslatedString("age");
-        self.genderLabel = oj.Translations.getTranslatedString("gender");
-        self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician");
-        self.summaryLabel= oj.Translations.getTranslatedString("summary");
-        self.readMoreLabel = oj.Translations.getTranslatedString("read_more");
-       // self.selectGefLabel = oj.Translations.getTranslatedString("select_gef");
-       
         
         self.titleObj = ko.observable();
         
@@ -51,6 +41,14 @@ function (oj, ko, $, sp) {
         self.dataPointsMarkedIds = ko.observableArray();
         
         self.queryParams = ko.observable();
+
+        self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
+        self.ageLabel = oj.Translations.getTranslatedString("age");
+        self.genderLabel = oj.Translations.getTranslatedString("gender");
+        self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician");
+        self.summaryLabel= oj.Translations.getTranslatedString("summary");
+        self.readMoreLabel = oj.Translations.getTranslatedString("read_more");
+       // self.selectGefLabel = oj.Translations.getTranslatedString("select_gef");
         
         var serverErrorCallback = function (xhr, message, error) {
             console.log(error);
@@ -58,17 +56,13 @@ function (oj, ko, $, sp) {
 
         self.handleActivated = function (info) {
             var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
-            
-            self.careRecipient(selectedDetectionVariable[0]);
-            self.subFactorName(selectedDetectionVariable[1].detectionVariableName);
-            self.parentFactor(selectedDetectionVariable[1].id); //derivedDetectionVariableIds
-            self.subFactorType(selectedDetectionVariable[1].detectionVariableType);
-            
-            console.log("***"+selectedDetectionVariable[0]+"***");
-            console.log("///"+JSON.stringify(selectedDetectionVariable[1])+"///");
-            
-            self.titleObj({"text": oj.Translations.getTranslatedString(self.subFactorType().toLowerCase())+" - " + oj.Translations.getTranslatedString(self.subFactorName()), "halign": "center"});
-
+            if(selectedDetectionVariable !== undefined) {
+	            self.careRecipient(selectedDetectionVariable[0]);
+	            self.subFactorName(selectedDetectionVariable[1].detectionVariableName);
+	            self.parentFactor(selectedDetectionVariable[1].id); //derivedDetectionVariableIds
+	            self.subFactorType(selectedDetectionVariable[1].detectionVariableType);
+	            self.titleObj({"text": oj.Translations.getTranslatedString(self.subFactorType().toLowerCase())+" - " + oj.Translations.getTranslatedString(self.subFactorName()), "halign": "center"});
+            }
         };
 
 
