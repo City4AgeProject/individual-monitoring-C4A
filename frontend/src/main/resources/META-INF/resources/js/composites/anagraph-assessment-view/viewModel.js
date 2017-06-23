@@ -15,6 +15,7 @@ function(oj, ko, $) {
 
 		self.highlightValue = ko.observable();
 
+
 		self.showSelectionOnDiagram = ko.observable(false);
 
 		self.dataPointsMarkedIds = ko.observableArray();
@@ -130,10 +131,12 @@ function(oj, ko, $) {
 								self.queryParams = calculateSelectedIds(onlyDataPoints);
 								loadAssessments(self.queryParams);
 							}
+
 							showAssessmentsPopup();
 	
 							$('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
 	
+
 						} else {
 							self.dataPointsMarkedIds = [];
 						}
@@ -291,6 +294,7 @@ function(oj, ko, $) {
 		};
 
 		self.chartDrill = function(event, ui) {
+
             var seriesVal = ui['series'];
 
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
@@ -300,6 +304,7 @@ function(oj, ko, $) {
             self.props.titleValue = seriesVal + "Geriatric factors";
             self.props.parentFactorId = ui['seriesData'].items[0].gefTypeId;
 			self.bGotoGESClick();
+
 		}
 
 		/*
@@ -641,8 +646,10 @@ function(oj, ko, $) {
 		self.selectDatapointsDiagram = function() {
 			console.log("selectDatapointsDiagram");
 			self.showSelectionOnDiagram(true);
+
 			self.props.selectedItemsValue = selected;
 			self.props.subFactorName = "testtest";
+
 			self.chartOptionChange();
 			self.loadAssessmentsCached();
 			selected = [];
@@ -668,10 +675,12 @@ function(oj, ko, $) {
 
 		function refreshDataPointsMarked(assessmentsResultLength) {
 			document.getElementById('tabs').style.display = 'block';
+
 			self.dataPointsMarked = self.dataPointsMarkedIds.length
 					+ oj.Translations.getTranslatedString("dpmw")
 					+ assessmentsResultLength + oj.Translations.getTranslatedString("assessments");
 		}
+
 
         //Returns chart by ID for detection variable name that was drilled in (clicked on)
         self.bGotoGESClick = function() {
@@ -679,6 +688,7 @@ function(oj, ko, $) {
             oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable]);
             oj.Router.rootInstance.go('detection_ges');
         };
+
 
 	}
 

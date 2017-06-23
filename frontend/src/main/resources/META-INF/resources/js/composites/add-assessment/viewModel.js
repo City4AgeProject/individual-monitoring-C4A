@@ -43,7 +43,9 @@ define(['knockout', 'jquery', 'urls', 'entities'],
 
                 var postAssessmentCallback = function (data) {
                     $('#dialog1').ojDialog('close');
+
                     $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
+
                 };
 
                 parseRisks = function (response) {

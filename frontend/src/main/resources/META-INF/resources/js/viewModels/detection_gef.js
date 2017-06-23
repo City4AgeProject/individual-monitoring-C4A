@@ -205,8 +205,12 @@ function (oj, ko, $, sp, params) {
             
             $('#detectionGEFGroup1FactorsLineChart').prop('selectedItemsValue', []);
             $('#detectionGEFGroup1FactorsLineChart').prop('subFactorName', "testtest");
+
+
             $('#detectionGEFGroup1FactorsLineChart')[0].chartOptionChange();
             $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
+
+
             
         };
         
@@ -387,6 +391,7 @@ function (oj, ko, $, sp, params) {
                         gefData = behavData;   
                     })
         }
+
     }
 
     var graphicsContentViewModel = new GraphicsContentViewModel();
