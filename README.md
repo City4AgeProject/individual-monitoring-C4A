@@ -7,8 +7,8 @@ Deployment on Glassfish instructions:
 2. If you don't have, install now Glassfish 4.1.1
     2.1. If you dont have add postgresql-42.0.0.jre6 (can be found inside projects build/ folder) jar to glassfish4\glassfish\domains\domain1\lib 
     2.2. In glassfish4/bin under Windows operating system delete ASADMIN file (the one without extension!)
-3.	Add resources (xml at root of the project) to Glassfish from glassfish4/bin:
- 	 asadmin add-resources .\glassfish-resources.xml
+3.	Add resources (xml file located at root of the project) to Glassfish from glassfish4/bin:
+ 	 asadmin add-resources ...\glassfish-resources.xml
 	And add these tags under 'server' at  \glassfish4\glassfish\domains\domain1\config\domain.xml :
 		<resource-ref ref="jdbc/c4aDB"></resource-ref>
 4.	Start Glassfish 4.1.1:
