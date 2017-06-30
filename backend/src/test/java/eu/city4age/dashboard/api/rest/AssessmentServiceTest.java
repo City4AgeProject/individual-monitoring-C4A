@@ -34,7 +34,8 @@ public class AssessmentServiceTest {
 
 	@Test
 	public void getLastFiveForDiagramTest() throws Exception {
-			//parentDetectionVariableId/1 Da li treba da se izbaci u mojoj verziji nije bilo parentDetectionVariableId
+		// parentDetectionVariableId/1 Da li treba da se izbaci u mojoj verziji
+		// nije bilo parentDetectionVariableId
 		try {
 			String uri = "http://localhost:8080/C4A-dashboard/rest/assessment/getLastFiveForDiagram/userInRoleId/1/parentDetectionVariableId/1/intervalStart/2011-1-1/intervalEnd/2017-1-1";
 			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
@@ -90,10 +91,12 @@ public class AssessmentServiceTest {
 		}
 	}
 
-	
-	/*To Test deleteForSelectedDataSetTest() alone comment out everything in addForSelectedDataSetTest() from 
-	 the, and including, first try block to the, and including, second catch block and run it once than use
-	 last generated ASSESSMENT_ID in assessment table in deleteForSelectedDataSetTest() and run it
+	/*
+	 * To Test deleteForSelectedDataSetTest() alone comment out everything in
+	 * addForSelectedDataSetTest() from the, and including, first try block to
+	 * the, and including, second catch block and run it once than use last
+	 * generated ASSESSMENT_ID in assessment table in
+	 * deleteForSelectedDataSetTest() and run it
 	 */
 	@Ignore
 	@Test

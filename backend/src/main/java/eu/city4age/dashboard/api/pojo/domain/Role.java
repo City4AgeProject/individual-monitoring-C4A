@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="cd_role")
-public class Role extends AbstractBaseEntity {
+public class Role extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 

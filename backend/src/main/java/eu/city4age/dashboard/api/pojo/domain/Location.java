@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name="location")
-public class Location extends AbstractBaseEntity {
+public class Location extends AbstractBaseEntity<Long> {
 
     /**
 	 * 

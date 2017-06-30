@@ -25,11 +25,11 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
             getUrl.userAge = userAge;
         };
 
-        self.setStorageData = function (username,userfullname, pilotname, pilotId, roleid) {
+        self.setStorageData = function (username,userfullname, pilotname, pilotCode, roleid) {
         	sessionStorage.setItem("username", username);
         	sessionStorage.setItem("userfullname", userfullname);        	
         	sessionStorage.setItem("pilotname", pilotname);
-        	sessionStorage.setItem("pilotid", pilotId);
+        	sessionStorage.setItem("pilotcode", pilotCode);
         	sessionStorage.setItem("roleid", roleid);
         };
         // Retrieve the JSON data string from browser session storage

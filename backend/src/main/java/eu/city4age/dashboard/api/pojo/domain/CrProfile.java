@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "cr_profile")
-public class CrProfile extends AbstractBaseEntity {
+public class CrProfile extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 

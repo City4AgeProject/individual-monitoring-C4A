@@ -23,7 +23,7 @@ spring:
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
   datasource:
-    url: jdbc:postgresql://109.111.225.84:5432/testtest?characterEncoding=utf8&useUnicode=true&currentSchema=testtest
+    url: jdbc:postgresql://localhost:5432/testtest?characterEncoding=utf8&useUnicode=true&currentSchema=testtest
     driver-class-name: org.postgresql.Driver
     username: testtest
     password: testtest

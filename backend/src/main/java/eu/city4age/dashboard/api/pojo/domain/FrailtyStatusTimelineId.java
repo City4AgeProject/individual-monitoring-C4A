@@ -1,10 +1,11 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 
-public class FrailtyStatusTimelineId implements java.io.Serializable {
+public class FrailtyStatusTimelineId implements Serializable {
 
 	/**
 	 * 

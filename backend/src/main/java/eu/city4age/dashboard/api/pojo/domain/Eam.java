@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="eam")
-public class Eam extends AbstractBaseEntity {
+public class Eam extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 

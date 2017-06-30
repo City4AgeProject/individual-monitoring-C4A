@@ -1,5 +1,11 @@
 package eu.city4age.dashboard.api.persist;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,4 +15,26 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 @Repository(value = "variationMeasureValueRepository")
 @Transactional(readOnly = true)
 public interface VariationMeasureValueRepository extends GenericRepository<VariationMeasureValue, Long> {
+
+	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.detectionVariable dv LEFT JOIN vm.timeInterval ti WHERE vm.userInRole.id = :uId AND dv.id IN :dvIds AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.intervalStart <= :intervalEnd OR (ti.intervalEnd IS NULL OR ti.intervalEnd <= :intervalEnd)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'DAY')")
+	List<VariationMeasureValue> findByUserInRoleIdAndDetectionVariableIds(@Param("uId") final Long uId,
+			@Param("dvIds") final List<Long> dvIds, @Param("intervalStart") final Timestamp intervalStart,
+			@Param("intervalEnd") final Timestamp intervalEnd);
+
+	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.userInRole uir LEFT JOIN vm.timeInterval ti WHERE uir.pilotCode = :pilotCode AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.intervalStart <= :intervalEnd OR (ti.intervalEnd IS NULL OR ti.intervalEnd <= :intervalEnd)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'DAY')")
+	List<VariationMeasureValue> findByPilotCode(@Param("pilotCode") final String pilotCode,
+			@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);
+
+	@Query(nativeQuery = true)
+	BigDecimal doWeightedAvg();
+
+	@Query(nativeQuery = true)
+	BigDecimal doWeightedStDev();
+
+	@Query(nativeQuery = true)
+	BigDecimal doWeightedBest25Perc();
+
+	@Query(nativeQuery = true)
+	BigDecimal doWeightedDelta25PercAvg();
+
 }

@@ -89,7 +89,7 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                 self.appName = ko.observable("C4A-dashboard");
                 self.userLogin = ko.observable("");
                 self.userPilotName = ko.observable("");
-                self.userPilotId = ko.observable("");
+                self.userPilotCode = ko.observable("");
                 self.userRoleId = ko.observable("");
                 if (sp.noData()) {
                     console.log(" user is logged in");
@@ -97,8 +97,8 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                     self.userLogin(userfullname);
                     var userpilotname = sessionStorage.getItem("pilotname");
                     self.userPilotName(userpilotname);
-                    var userpilotid = sessionStorage.getItem("pilotid");
-                    self.userPilotId(userpilotid);
+                    var userpilotcode = sessionStorage.getItem("pilotcode");
+                    self.userPilotCode(userpilotcode);
                     var userroleid = sessionStorage.getItem("roleid");
                     self.userRoleId(userroleid);
                 } else {
@@ -115,7 +115,7 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                             sessionStorage.removeItem("userfullname");
                             sessionStorage.removeItem("username");
                             sessionStorage.removeItem("pilotname");
-                            sessionStorage.removeItem("pilotid");
+                            sessionStorage.removeItem("pilotcode");
                             sessionStorage.removeItem("roleid");
                             $('.user-menu').css({display: 'none'});
                             console.log(" user is not logged in");

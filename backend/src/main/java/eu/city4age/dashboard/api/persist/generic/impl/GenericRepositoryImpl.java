@@ -144,4 +144,8 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 		entityManager.unwrap(Session.class).disableFilter(name);
 	}
 
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
 }

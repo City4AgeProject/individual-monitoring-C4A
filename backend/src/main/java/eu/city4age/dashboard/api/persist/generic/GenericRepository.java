@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
+
+import eu.city4age.dashboard.api.pojo.persist.Filter;
 
 /**
  * Generic jpa repository.
@@ -24,8 +28,10 @@ public interface GenericRepository<T, ID extends Serializable>
 
 	List<? extends T> saveWithoutFlush(Iterable<? extends T> entities);
 
-	List<T> doQueryWithFilter(List<eu.city4age.dashboard.api.pojo.persist.Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
+	List<T> doQueryWithFilter(List<Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
 
 	void disableFilter(String name);
+	
+	EntityManager getEntityManager();
 
 }

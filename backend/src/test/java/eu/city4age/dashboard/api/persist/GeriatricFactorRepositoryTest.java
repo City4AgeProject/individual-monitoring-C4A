@@ -22,6 +22,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.rest.MeasuresService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes=ApplicationTest.class)
@@ -41,6 +42,9 @@ public class GeriatricFactorRepositoryTest {
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
 	
+	@Autowired
+	private MeasuresService measuresService;
+	
 	@Test
 	@Transactional
 	@Rollback(true)
@@ -59,9 +63,8 @@ public class GeriatricFactorRepositoryTest {
 		dv1.setDerivedDetectionVariable(dv2);
 		detectionVariableRepository.save(dv1);
 		
-		TimeInterval ti1 = new TimeInterval();
-		ti1.setId(1L);
-		ti1.setIntervalStart(Timestamp.valueOf("2016-01-01 00:00:00"));
+		TimeInterval ti1 = measuresService
+				.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		timeIntervalRepository.save(ti1);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();

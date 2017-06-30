@@ -21,7 +21,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "geriatric_factor_value")
-public class GeriatricFactorValue extends AbstractBaseEntity {
+public class GeriatricFactorValue extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
@@ -34,8 +34,9 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
-	@JoinColumn(name = "time_interval_id")
+	@JoinColumn(name = "time_interval_id", referencedColumnName = "id")
 	private TimeInterval timeInterval;
+	
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "gef_type_id")
@@ -82,6 +83,7 @@ public class GeriatricFactorValue extends AbstractBaseEntity {
 
 	public void setTimeInterval(TimeInterval timeInterval) {
 		this.timeInterval = timeInterval;
+
 	}
 
 	public DetectionVariable getCdDetectionVariable() {

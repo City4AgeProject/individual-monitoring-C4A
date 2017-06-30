@@ -20,14 +20,14 @@ public class C4ALoginResponse {
 	
 	private String pilotName;
 	
-	private int pilotId;
+	private String pilotCode;
 
-	public int getPilotId() {
-		return pilotId;
+	public String getPilotCode() {
+		return pilotCode;
 	}
 
-	public void setPilotId(int pilotId) {
-		this.pilotId = pilotId;
+	public void setPilotCode(String pilotCode) {
+		this.pilotCode = pilotCode;
 	}
 
 	public String getpilotName() {

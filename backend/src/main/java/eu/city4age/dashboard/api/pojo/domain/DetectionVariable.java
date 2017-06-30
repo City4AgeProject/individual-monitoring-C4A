@@ -13,37 +13,37 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name="cd_detection_variable")
-public class DetectionVariable extends AbstractBaseEntity {
+@Table(name = "cd_detection_variable")
+public class DetectionVariable extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -821517967630729430L;
 
-	@Column(name="detection_variable_name")
+	@Column(name = "detection_variable_name")
 	private String detectionVariableName;
-	
+
 	@JsonIgnore
-	@Column(name="valid_from")
+	@Column(name = "valid_from")
 	private Date validFrom;
-	
+
 	@JsonIgnore
-	@Column(name="valid_to")
+	@Column(name = "valid_to")
 	private Date validTo;
-	
-	@Column(name="derivation_weight")
+
+	@Column(name = "derivation_weight")
 	private BigDecimal derivationWeight;
 
 	@JsonIgnore
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="derived_detection_variable_id", referencedColumnName="id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "derived_detection_variable_id", referencedColumnName = "id")
 	private DetectionVariable derivedDetectionVariable;
-	
+
 	@JsonIgnore
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="detection_variable_type")
-	private  DetectionVariableType detectionVariableType;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "detection_variable_type")
+	private DetectionVariableType detectionVariableType;
 
 	public DetectionVariable() {
 	}
@@ -104,5 +104,5 @@ public class DetectionVariable extends AbstractBaseEntity {
 	public Date getValidTo() {
 		return validTo;
 	}
-	
+
 }

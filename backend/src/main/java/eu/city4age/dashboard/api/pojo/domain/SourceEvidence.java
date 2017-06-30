@@ -23,11 +23,11 @@ public class SourceEvidence implements Serializable {
 	private SourceEvidenceId sourceEvidenceId;
 
 	@ManyToOne
-	@JoinColumn(name="geriatric_factor_id",insertable=false,updatable=false)
+	@JoinColumn(name="geriatric_factor_id", insertable=false, updatable=false)
 	private GeriatricFactorValue geriatricFactorValue;
 	
 	@ManyToOne
-	@JoinColumn(name="author_id",insertable=false,updatable=false)	
+	@JoinColumn(name="author_id", insertable=false, updatable=false)	
 	private UserInRole userInRole;
 	
 	@Column(name="text_evidence")

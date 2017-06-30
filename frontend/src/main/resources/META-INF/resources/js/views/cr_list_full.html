@@ -8,7 +8,7 @@
                data-bind="ojComponent: {component: 'ojTable', 
                                 data: dataSource, 
                                 emptyText: 'No data',
-                                columnsDefault: {headerStyle: 'background:transparent;font-weight:bold;',sortable: 'enabled'}, 
+                                columnsDefault: {headerStyle: 'background:transparent;font-weight:bold;',sortable: 'disabled'}, 
                                 columns: [
                                     {headerText: 'Pilot', 
                                         field: 'pilotcode'},
@@ -35,7 +35,7 @@
                                     {headerText: 'Actions', 
                                         template: 'action_btn_tpl'}],
                                 scrollPolicy: 'loadMoreOnScroll',
-                                scrollPolicyOptions: {'fetchSize': 10},
+                                scrollPolicyOptions: {'fetchSize': 30 },
                                 rootAttributes: {'style':'width: 100%;height:750px;'}}">
         </table>
 
@@ -84,7 +84,7 @@
         </button>
         <!-- To handle menu item selection, use a select listener as shown, not a click listener. -->
         <ul id="myMenu" style="display:none " 
-            data-bind="ojComponent: {component: 'ojMenu', select: $parent.menuItemSelectsss}"> 
+            data-bind="ojComponent: {component: 'ojMenu', select: $parent.menuItemSelect}"> 
             <li id="view_more_det">
                 <a data-bind="click: function(){$parent.navigateToGef();}" href="#">View more details</a>
             </li>

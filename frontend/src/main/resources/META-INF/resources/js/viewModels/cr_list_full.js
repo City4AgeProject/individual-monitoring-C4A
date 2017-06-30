@@ -1,28 +1,43 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojtable', 'ojs/ojgauge', 'ojs/ojarraytabledatasource', 'urls'],
         function (oj, ko, sp, $)
         {
+			var m=0;
+			
+			sessionStorage.setItem('clck',0);
+			
 
             function ListViewModel() {
                 var self = this;
                 self.data = ko.observableArray();
+                self.usersOuter = ko.observableArray();
                 
-                var pilotid = sessionStorage.getItem("pilotid");
+                var pilotCode = sessionStorage.getItem("pilotcode");
 
-                $.getJSON(CARE_RECIPIENT_ALL + "/pilotid/" + pilotid).
-                        then(function (users) {
+                $.getJSON(CARE_RECIPIENT_ALL + "/pilotCode/" + pilotCode).
+                       then(function (users) {
+                    	   
+                    	   console.log("BROJ USER_A:"+ users.itemList.length);
+                    	   
                             $.each(users.itemList, function () {
 
                                 var frailStatus;
-                                if (this.frailtyStatus === null) {
+                                if (this.frailtyStatus === undefined || this.frailtyStatus === null) {
                                     frailStatus = "pre-frail-fit";
                                 } else {
                                     frailStatus = this.frailtyStatus;
+                                }
+                                
+                                var frailNotice;
+                                if (this.frailtyNotice === undefined || this.frailtyNotice === null) {
+                                	frailNotice = "";
+                                } else {
+                                	frailNotice = this.frailtyNotice;
                                 }
 
                                 self.data.push({
                                     cr_id: this.userId,
                                     fr_status: frailStatus,
-                                    fr_notice: this.frailtyNotice,
+                                    fr_notice: frailNotice,
                                     textline: this.textline,
                                     attention: this.attention,
                                     det_status: this.detectionStatus,
@@ -34,6 +49,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                 });
                                 $(".loader-hover").hide();
                             });
+                            console.log("users:"+users);
+                            self.usersOuter = users;
+                            console.log("self.users:"+self.usersOuter);
                         });
 
 

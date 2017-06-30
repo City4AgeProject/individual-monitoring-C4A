@@ -16,7 +16,7 @@
 	<properties>
 		<start-class>eu.city4age.dashboard.api.Application</start-class>
 		<maven.test.skip>true</maven.test.skip>
-		<glassfish.home>C:\glassfish-4.1.1\glassfish4</glassfish.home>
+		<glassfish.home>C:\glassfish-4.1.2\glassfish4</glassfish.home>
 		<glassfish.domain>domain1</glassfish.domain>
 		<glassfish.domain.username>admin</glassfish.domain.username>
 		<glassfish.passwordFile>${glassfish.home}\glassfish\domains\domain1\config\domain-passwords</glassfish.passwordFile>
@@ -32,6 +32,7 @@
 	<dependencies>
 		<!-- <dependency> <groupId>eu.city4age.dashboard.api</groupId> <artifactId>C4A-frontend</artifactId> 
 			<version>1.0-SNAPSHOT</version> </dependency> -->
+
 
 		<!-- Spring -->
 		<dependency>
@@ -82,6 +83,9 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- End Spring -->
+
+
+
 
 		<!-- Postgres -->
 		<dependency>

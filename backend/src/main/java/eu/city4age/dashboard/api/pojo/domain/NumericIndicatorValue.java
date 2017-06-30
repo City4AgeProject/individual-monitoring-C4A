@@ -1,14 +1,21 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,17 +25,44 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @Entity
 @Table(name = "numeric_indicator_value")
-public class NumericIndicatorValue extends AbstractBaseEntity {
+public class NumericIndicatorValue implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2422155784673783252L;
+	
+	@Id
+	@Basic(optional = false)
+	@SequenceGenerator(name = "nui_seq", sequenceName = "numeric_indicator_value_id_seq", allocationSize = 1)
+	@GeneratedValue(generator = "nui_seq", strategy = GenerationType.SEQUENCE)
+	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
+	protected Long id;
 
-	private DetectionVariable cdDetectionVariable;
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "nui_type_id")
+	private DetectionVariable detectionVariable;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "time_interval_id", referencedColumnName = "id")
 	private TimeInterval timeInterval;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_in_role_id")
 	private UserInRole userInRole;
+	
+	@Column(name = "nui_value", precision = 20, scale = 8)
 	private BigDecimal nuiValue;
+
+	@Column(name = "data_source_type", length = 1000)
 	private String dataSourceType;
 	// private Set interActivityBehaviourVariations = new HashSet(0);
 
@@ -39,56 +73,36 @@ public class NumericIndicatorValue extends AbstractBaseEntity {
 	public NumericIndicatorValue() {
 	}
 
-	public NumericIndicatorValue(DataSourceType cdDataSourceType, DetectionVariable cdDetectionVariable,
+	public NumericIndicatorValue(String dataSourceType, DetectionVariable detectionVariable,
 			TimeInterval timeInterval, BigDecimal nuiValue) {
 
-		this.cdDataSourceType = cdDataSourceType;//
-		this.cdDetectionVariable = cdDetectionVariable;
+		this.dataSourceType = dataSourceType;
+		this.detectionVariable = detectionVariable;
 		this.timeInterval = timeInterval;
 		this.nuiValue = nuiValue;
 	}
 
-	public NumericIndicatorValue(DataSourceType cdDataSourceType, DetectionVariable cdDetectionVariable,
-			TimeInterval timeInterval, UserInRole userInRole, BigDecimal nuiValue, String dataSourceType,
-			Set interActivityBehaviourVariations) {
+	public NumericIndicatorValue(DetectionVariable detectionVariable, String dataSourceType,
+			TimeInterval timeInterval, UserInRole userInRole, BigDecimal nuiValue, 
+			Set<InterActivityBehaviourVariation> interActivityBehaviourVariations) {
 
-		this.cdDataSourceType = cdDataSourceType;
-		this.cdDetectionVariable = cdDetectionVariable;
+		this.dataSourceType = dataSourceType;
+		this.detectionVariable = detectionVariable;
 		this.timeInterval = timeInterval;
 		this.userInRole = userInRole;
 		this.nuiValue = nuiValue;
-		this.dataSourceType = dataSourceType;
 		this.interActivityBehaviourVariations = interActivityBehaviourVariations;
 	}
 
-	//
-	@ManyToOne
-	@JoinColumn(name = "data_source_type")
-	private DataSourceType cdDataSourceType;
-
-	//
-	//
-	public DataSourceType getCdDataSourceType() {
-		return this.cdDataSourceType;
+	public DetectionVariable getDetectionVariable() {
+		return this.detectionVariable;
 	}
 
-	public void setCdDataSourceType(DataSourceType cdDataSourceType) {
-		this.cdDataSourceType = cdDataSourceType;
-	}
-	//
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "nui_type_id", nullable = false)
-	public DetectionVariable getCdDetectionVariable() {
-		return this.cdDetectionVariable;
+	public void setDetectionVariable(DetectionVariable detectionVariable) {
+		this.detectionVariable = detectionVariable;
 	}
 
-	public void setCdDetectionVariable(DetectionVariable cdDetectionVariable) {
-		this.cdDetectionVariable = cdDetectionVariable;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "time_interval_id", nullable = false)
+	
 	public TimeInterval getTimeInterval() {
 		return this.timeInterval;
 	}
@@ -97,8 +111,6 @@ public class NumericIndicatorValue extends AbstractBaseEntity {
 		this.timeInterval = timeInterval;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_in_role_id")
 	public UserInRole getUserInRole() {
 		return this.userInRole;
 	}
@@ -107,7 +119,6 @@ public class NumericIndicatorValue extends AbstractBaseEntity {
 		this.userInRole = userInRole;
 	}
 
-	@Column(name = "nui_value", nullable = false, precision = 20, scale = 8)
 	public BigDecimal getNuiValue() {
 		return this.nuiValue;
 	}
@@ -116,7 +127,6 @@ public class NumericIndicatorValue extends AbstractBaseEntity {
 		this.nuiValue = nuiValue;
 	}
 
-	@Column(name = "data_source_type", length = 1000)
 	public String getDataSourceType() {
 		return this.dataSourceType;
 	}

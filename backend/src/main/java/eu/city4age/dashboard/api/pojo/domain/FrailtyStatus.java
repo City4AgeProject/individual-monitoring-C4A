@@ -1,5 +1,6 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name="cd_frailty_status")
-public class FrailtyStatus implements java.io.Serializable {
+public class FrailtyStatus implements Serializable {
 
 	/**
 	 * 

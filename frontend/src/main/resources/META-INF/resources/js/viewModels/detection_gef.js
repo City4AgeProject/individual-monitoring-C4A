@@ -204,8 +204,6 @@ function (oj, ko, $, sp, params) {
             var param = [self.careRecipientId, self.parentFactorId];
             
             $('#detectionGEFGroup1FactorsLineChart').prop('selectedItemsValue', []);
-            $('#detectionGEFGroup1FactorsLineChart').prop('subFactorName', "testtest");
-
 
             $('#detectionGEFGroup1FactorsLineChart')[0].chartOptionChange();
             $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();

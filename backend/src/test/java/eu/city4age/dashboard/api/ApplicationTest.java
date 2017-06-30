@@ -15,7 +15,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.SpringSessionContext;
@@ -24,7 +23,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -36,21 +34,16 @@ import eu.city4age.dashboard.api.persist.generic.GenericRepositoryFactoryBean;
 @Configuration
 @ComponentScan(basePackages = { "eu.city4age.dashboard.api.persist", "eu.city4age.dashboard.api.rest" })
 @EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.persist", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
-//@ActiveProfiles("test")
 @PropertySource("classpath:application-test.yml")
 
 public class ApplicationTest {
 
-	
 	static protected Logger logger = LogManager.getLogger(ApplicationTest.class);
 	
 	public static void main(String[] args) {
 		new SpringApplication(ApplicationTest.class).run(args);
-
 	}
 	
-
-
 	@Value("${spring.datasource.url}")
 	private String url;
 

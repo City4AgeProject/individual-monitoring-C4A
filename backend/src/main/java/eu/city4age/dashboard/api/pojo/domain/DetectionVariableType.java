@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="cd_detection_variable_type")
+@Table(name = "cd_detection_variable_type")
 public class DetectionVariableType implements Serializable {
 
 	/**
@@ -16,11 +16,15 @@ public class DetectionVariableType implements Serializable {
 	 */
 	private static final long serialVersionUID = 2367967721511008325L;
 
+	public enum Type {
+		MEA, NUI, GES, GEF, GFG, OVL;
+	};
+
 	@Id
-	@Column(name="detection_variable_type")
+	@Column(name = "detection_variable_type")
 	private String detectionVariableType;
-	
-	@Column(name="detection_variable_type_description")
+
+	@Column(name = "detection_variable_type_description")
 	private String detectionVariableTypeDescription;
 
 	public DetectionVariableType() {

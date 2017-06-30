@@ -15,12 +15,10 @@ define(
 				});
 
 				showOnDiagram = function(data, event) {
-					console.log("showOnDiagram");
 					self.assessmentId(data.id);
 					$('#detectionGEFGroup1FactorsLineChart').prop('assessmentId', self.assessmentId());
 
 					$('#detectionGEFGroup1FactorsLineChart')[0].selectDatapointsDiagram();
-
 				}
 
 				self.readMore = function() {

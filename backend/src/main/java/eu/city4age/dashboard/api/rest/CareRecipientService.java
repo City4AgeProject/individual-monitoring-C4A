@@ -83,7 +83,7 @@ public class CareRecipientService {
 
 	@Autowired
 	private PilotRepository pilotRepository;
-	
+
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@Transactional("transactionManager")
@@ -198,9 +198,9 @@ public class CareRecipientService {
 
 	@Transactional("transactionManager")
 	@GET
-	@Path("getCareRecipients/pilotid/{pilotId}/")
+	@Path("getCareRecipients/pilotCode/{pilotCode}/")
 	@Produces("application/json")
-	public Response getJson(@PathParam("pilotId") String pilotId) throws IOException {
+	public Response getJson(@PathParam("pilotCode") String pilotCode) throws IOException {
 		/**
 		 * ****************Variables*************
 		 */
@@ -210,8 +210,13 @@ public class CareRecipientService {
 		/**
 		 * ****************Action*************
 		 */
-
-		List<UserInRole> userinroleparamsList = userInRoleRepository.findByRoleIdAndPilotId(Short.valueOf("1"),Integer.valueOf(pilotId));
+		List<UserInRole> userinroleparamsList;
+		if (pilotCode.equals("DEV")) {
+			userinroleparamsList = userInRoleRepository.findAll();
+		} else {
+			userinroleparamsList = userInRoleRepository.findByRoleIdAndPilotCode(Short.valueOf("1"),
+					String.valueOf(pilotCode));
+		}
 
 		if (userinroleparamsList.isEmpty()) {
 			response.setMessage("No users found");
@@ -258,13 +263,15 @@ public class CareRecipientService {
 					frailtyStatus = frailtyparamsList.get(0).getCdFrailtyStatus().getFrailtyStatus();
 					frailtyNotice = frailtyparamsList.get(0).getFrailtyNotice();
 				}
-				
-				//Load Pilot object to find the pilot code
-				Long pil = Long.parseLong(user.getPilotId().toString());					
+
+				// Load Pilot object to find the pilot code
+				// Long pil = Long.parseLong(user.getPilotId().toString());
+				String pil = user.getPilotCode();
 				Pilot userPilot = pilotRepository.findOne(pil);
-		
+
 				itemList.add(new C4ACareRecipientListResponse(user.getId(), age, frailtyStatus, frailtyNotice,
-						attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate,userPilot.getPilotCode()));
+						attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate,
+						userPilot.getPilotCode()));
 			} // detectionVariables loop
 			response.setItemList(itemList);
 

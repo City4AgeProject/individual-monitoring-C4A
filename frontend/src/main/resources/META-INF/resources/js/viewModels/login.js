@@ -2,6 +2,19 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     'ojs/ojknockout', 'ojs/ojinputtext', 'ojs/ojbutton', 'urls'],
         function (oj, ko, sp, app, $) {
 
+	
+	//until we find better solution to reload data for cr_list after switching between users
+	$(document).click(function() { 
+	    // Check for left button
+	    if (window.location.href.toString().localeCompare('http://localhost:8080/C4A-dashboard/') == 0
+	    		&& (sessionStorage.getItem("clck")!=1) ) {
+	    
+	       location.reload(); 
+	       sessionStorage.setItem("clck",1);
+	    }
+	});
+
+	
             function LoginViewModel() {
                 $(".loader-hover").hide();
                 var self = this;
@@ -26,7 +39,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	                            /*logged in 
 	                             * keep in session storage username and display name
 	                             */
-	                            sp.setStorageData(self.loginValue(), users.displayName, users.pilotName,users.pilotId,users.roleId);
+	                            sp.setStorageData(self.loginValue(), users.displayName, users.pilotName,users.pilotCode,users.roleId);
 	
 	                            $('#appHeader').css({display: 'block'});
 	                            $('.user-menu').css({display: 'block'});
@@ -38,7 +51,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	                        } else if (users.responseCode === 0) {
 	                            console.log("wrong credentials ",users.message);
 	                        }
-	                    });
+	                    });       
                 };
                 
                 self.resetForm = function (viewModel, event) {

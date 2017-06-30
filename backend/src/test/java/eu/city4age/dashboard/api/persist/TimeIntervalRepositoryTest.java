@@ -38,13 +38,14 @@ import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.dto.Last5Assessment;
 import eu.city4age.dashboard.api.pojo.json.view.View;
+import eu.city4age.dashboard.api.rest.MeasuresService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ApplicationTest.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class TimeIntervalRepositoryTest {
-	
+
 	static protected Logger logger = LogManager.getLogger(TimeIntervalRepositoryTest.class);
 
 	@Autowired
@@ -77,11 +78,14 @@ public class TimeIntervalRepositoryTest {
 	@Autowired
 	private FrailtyStatusTimelineRepository frailtyStatusTimelineRepository;
 
+	@Autowired
+	private MeasuresService measuresService;
+
 	@Test
 	@Transactional
 	@Rollback(true)
 	public void testFindLastFiveAssessmentsForDiagram() throws Exception {
-		
+
 		logger.info("start of testFindLastFiveAssessmentsForDiagram");
 
 		TypicalPeriod tp = new TypicalPeriod();
@@ -89,58 +93,37 @@ public class TimeIntervalRepositoryTest {
 		tp.setPeriodDescription("Month");
 		typicalPeriodRepository.save(tp);
 
-		TimeInterval ti1 = new TimeInterval();
-		ti1.setId(1L);
-		ti1.setIntervalStart(Timestamp.valueOf("2016-01-01 00:00:00"));
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00")
+				,eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti1.setIntervalEnd(Timestamp.valueOf("2016-02-01 00:00:00"));
-		ti1.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti1);
-
-		TimeInterval ti2 = new TimeInterval();
-		ti2.setId(2L);
-		ti2.setIntervalStart(Timestamp.valueOf("2016-02-01 00:00:00"));
+		
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti2.setIntervalEnd(Timestamp.valueOf("2016-03-01 00:00:00"));
-		ti2.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti2);
 
-		TimeInterval ti3 = new TimeInterval();
-		ti3.setId(3L);
-		ti3.setIntervalStart(Timestamp.valueOf("2016-03-01 00:00:00"));
+		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti3.setIntervalEnd(Timestamp.valueOf("2016-04-01 00:00:00"));
-		ti3.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti3);
 
-		TimeInterval ti4 = new TimeInterval();
-		ti4.setId(4L);
-		ti4.setIntervalStart(Timestamp.valueOf("2016-04-01 00:00:00"));
+		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti4.setIntervalEnd(Timestamp.valueOf("2016-05-01 00:00:00"));
-		ti4.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti4);
 
-		TimeInterval ti5 = new TimeInterval();
-		ti5.setId(5L);
-		ti5.setIntervalStart(Timestamp.valueOf("2016-05-01 00:00:00"));
+		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti5.setIntervalEnd(Timestamp.valueOf("2016-06-01 00:00:00"));
-		ti5.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti5);
 
-		TimeInterval ti6 = new TimeInterval();
-		ti6.setId(6L);
-		ti6.setIntervalStart(Timestamp.valueOf("2016-06-01 00:00:00"));
+		TimeInterval ti6 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-06-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti6.setIntervalEnd(Timestamp.valueOf("2016-07-01 00:00:00"));
-		ti6.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti6);
 
-		TimeInterval ti7 = new TimeInterval();
-		ti7.setId(7L);
-		ti7.setIntervalStart(Timestamp.valueOf("2016-07-01 00:00:00"));
+		TimeInterval ti7 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-07-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti7.setIntervalEnd(Timestamp.valueOf("2016-08-01 00:00:00"));
-		ti7.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti7);
 
 		DetectionVariable ddv1 = new DetectionVariable();
 		ddv1.setId(4L);
-		
+
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
 		dv1.setDerivedDetectionVariable(ddv1);
@@ -151,7 +134,7 @@ public class TimeIntervalRepositoryTest {
 		uis.setId(1L);
 		userInSystemRepository.save(uis);
 		//
-		
+
 		UserInRole uir = new UserInRole();
 		uir.setId(1L);
 		uir.setUserInSystem(uis);
@@ -162,25 +145,18 @@ public class TimeIntervalRepositoryTest {
 		gef1.setTimeInterval(ti1);
 		gef1.setCdDetectionVariable(dv1);
 		gef1.setUserInRole(uir);
-		geriatricFactorRepository.save(gef1);
-
 
 		Assessment aa1 = new Assessment();
 		aa1.setGeriatricFactorValue(gef1);
-		
 		String inputString = "2017-05-22 12:00:00";
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		Date inputDate = dateFormat.parse(inputString);
 		aa1.setCreated(inputDate);
-		
 		aa1.setRiskStatus('A');
 		aa1.setAssessmentComment("my comment");
 		aa1.setId(1L);
-		
 		assessmentRepository.save(aa1);
-		
-		geriatricFactorRepository.save(gef1);
-		
+
 		AssessedGefValueSet ag1 = new AssessedGefValueSet();
 		ag1.setGefValueId(1);
 		ag1.setAssessmentId(1);
@@ -191,17 +167,19 @@ public class TimeIntervalRepositoryTest {
 		Timestamp start = Timestamp.valueOf("2015-01-01 00:00:00");
 		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
 
-		List<Last5Assessment> list = timeIntervalRepository.getLastFiveForDiagram(1L, 4L, start, end); //added 1L for parentDetectionVariableId
+		List<Last5Assessment> list = timeIntervalRepository.getLastFiveForDiagram(1L, 4L, start, end); // added
+																										// 1L
+																										// for
+																										// parentDetectionVariableId
 
 		Assert.assertNotNull(list);
-		
-		System.out.println(list.size()+"::WWW");
+
+		System.out.println(list.size() + "::WWW");
 		Assert.assertEquals(7, list.size());
-		Assert.assertEquals(Long.valueOf(1), list.get(0).getTimeIntervalId()); 
 
 		Assert.assertEquals(Character.valueOf('A'), list.get(0).getRiskStatus());
-		Assert.assertEquals("2016-01-01 00:00:00.0", list.get(0).getIntervalStart()); //ti
-		
+		Assert.assertEquals("2016-01-01 00:00:00.0", list.get(0).getIntervalStart()); // ti
+
 		Assert.assertEquals("2017-05-22 12:00:00", list.get(0).getDateAndTime());
 
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -215,7 +193,7 @@ public class TimeIntervalRepositoryTest {
 		String result = objectMapper.writerWithView(View.TimeIntervalView.class).writeValueAsString(list);
 
 		Assert.assertNotNull(result);
-		
+
 		logger.info("end of testFindLastFiveAssessmentsForDiagram");
 
 	}
@@ -224,7 +202,7 @@ public class TimeIntervalRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void testGetGroups() throws Exception {
-		
+
 		logger.info("start of testGetGroups");
 
 		TypicalPeriod tp = new TypicalPeriod();
@@ -232,40 +210,28 @@ public class TimeIntervalRepositoryTest {
 		tp.setPeriodDescription("Month");
 		typicalPeriodRepository.save(tp);
 
-		TimeInterval ti1 = new TimeInterval();
-		ti1.setId(1L);
-		ti1.setIntervalStart(Timestamp.valueOf("2016-01-01 00:00:00"));
+
+		
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti1.setIntervalEnd(Timestamp.valueOf("2016-02-01 00:00:00"));
-		ti1.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti1);
-
-		TimeInterval ti2 = new TimeInterval();
-		ti2.setId(2L);
-		ti2.setIntervalStart(Timestamp.valueOf("2016-02-01 00:00:00"));
+		
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti2.setIntervalEnd(Timestamp.valueOf("2016-03-01 00:00:00"));
-		ti2.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti2);
 
-		TimeInterval ti3 = new TimeInterval();
-		ti3.setId(3L);
-		ti3.setIntervalStart(Timestamp.valueOf("2016-03-01 00:00:00"));
+		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti3.setIntervalEnd(Timestamp.valueOf("2016-04-01 00:00:00"));
-		ti3.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti3);
-
-		TimeInterval ti4 = new TimeInterval();
-		ti4.setId(4L);
-		ti4.setIntervalStart(Timestamp.valueOf("2016-04-01 00:00:00"));
+		
+		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti4.setIntervalEnd(Timestamp.valueOf("2016-05-01 00:00:00"));
-		ti4.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti4);
 
-		TimeInterval ti5 = new TimeInterval();
-		ti5.setId(5L);
-		ti5.setIntervalStart(Timestamp.valueOf("2016-05-01 00:00:00"));
+		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti5.setIntervalEnd(Timestamp.valueOf("2016-06-01 00:00:00"));
-		ti5.setTypicalPeriod("MON");
-		timeIntervalRepository.save(ti5);
+		
 
 		UserInSystem uis = new UserInSystem();
 		uis.setId(1L);
@@ -286,12 +252,14 @@ public class TimeIntervalRepositoryTest {
 		fst.setChangedBy(uir);
 		frailtyStatusTimelineRepository.save(fst);
 
+		logger.info("trt: " + DetectionVariableType.Type.GEF);
+
 		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("DT1");
+		dvt1.setDetectionVariableType(DetectionVariableType.Type.GEF.toString());
 		detectionVariableTypeRepository.save(dvt1);
 
 		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType("DT2");
+		dvt2.setDetectionVariableType(DetectionVariableType.Type.GES.toString());
 		detectionVariableTypeRepository.save(dvt2);
 
 		DetectionVariable dv1 = new DetectionVariable();
@@ -306,23 +274,58 @@ public class TimeIntervalRepositoryTest {
 		dv2.setDetectionVariableType(dvt2);
 		detectionVariableRepository.save(dv2);
 
-		GeriatricFactorValue gef = new GeriatricFactorValue();
-		gef.setId(1L);
-		gef.setGefValue(new BigDecimal(3));
-		gef.setTimeInterval(ti1);
-		gef.setUserInRole(uir);
-		gef.setCdDetectionVariable(dv1);
-		geriatricFactorRepository.save(gef);
+		GeriatricFactorValue gef1 = new GeriatricFactorValue();
+		gef1.setId(1L);
+		gef1.setGefValue(new BigDecimal(3));
+		gef1.setTimeInterval(ti1);
+		gef1.setUserInRole(uir);
+		gef1.setCdDetectionVariable(dv1);
+		geriatricFactorRepository.save(gef1);
 
-		List<String> parentFactors = Arrays.asList("DT1", "DT2");
+		List<String> parentFactors = Arrays.asList("GEF", "GES");
 
 		List<TimeInterval> result = timeIntervalRepository.getGroups(1L, parentFactors);
 
 		Assert.assertNotNull(result);
 
 		Assert.assertEquals(1, result.size());
-		
+
 		logger.info("end of testGetGroups");
+	}
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void setTimeIntervalExistsTest() {
+		
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-05 10:00:16"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-05 10:00:16"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+
+		TimeInterval tif = timeIntervalRepository
+				.findByIntervalStartAndTypicalPeriod(Timestamp.valueOf("2016-01-05 10:00:16"), "MON");
+
+		Long returnedId = tif.getId();
+
+		Assert.assertEquals(ti1.getId().longValue(), returnedId.longValue());
+	}
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void setTimeIntervalNotExistsTest() {
+		TimeInterval tif = timeIntervalRepository
+				.findByIntervalStartAndTypicalPeriod(Timestamp.valueOf("2016-01-05 10:00:16"), "MON");
+		
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-05 10:00:16"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		
+		Long returnedId = ti1.getId();
+
+		Assert.assertNotNull(returnedId.longValue());
+
 	}
 
 }

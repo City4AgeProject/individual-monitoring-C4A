@@ -57,6 +57,7 @@ public class UserService {
 		try {
 			logger.info("Logging in...");
 			user = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
+			logger.info("@@@1: "+user);
 
 			if (user == null) {
 				response.setMessage("wrong credentials");
@@ -69,11 +70,12 @@ public class UserService {
 					response.setResponseCode(10);
 					if (user.getUserInSystem().getDisplayName() != null) {
 						response.setDisplayName(user.getUserInSystem().getDisplayName());
-						Long pil = Long.parseLong(user.getPilotId().toString());					
+						//Long pil = Long.parseLong(user.getPilotId().toString());	
+						String pil = user.getPilotCode();
 						userPilot = pilotRepository.findOne(pil);
 						
 						response.setpilotName(userPilot.getName());
-						response.setPilotId(user.getPilotId());
+						response.setPilotCode(user.getPilotCode());
 						response.setRoleId(user.getRoleId());
 					} else {
 						response.setDisplayName("");

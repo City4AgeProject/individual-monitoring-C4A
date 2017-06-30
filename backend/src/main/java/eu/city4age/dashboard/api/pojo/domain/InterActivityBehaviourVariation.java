@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="inter_activity_behaviour_variation")
-public class InterActivityBehaviourVariation extends AbstractBaseEntity {
+public class InterActivityBehaviourVariation extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 

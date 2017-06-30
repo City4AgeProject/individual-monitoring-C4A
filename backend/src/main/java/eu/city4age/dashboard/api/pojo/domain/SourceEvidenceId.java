@@ -58,6 +58,7 @@ public class SourceEvidenceId implements Serializable {
 		return (this.getGeriatricFactorId() == castOther.getGeriatricFactorId())
 				&& ((this.getRoleId() == castOther.getRoleId()));
 	}
+
 	public int hashCode() {
 		int result = 17;
 

@@ -24,7 +24,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "user_in_role")
-public class UserInRole extends AbstractBaseEntity {
+public class UserInRole extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
@@ -33,6 +33,9 @@ public class UserInRole extends AbstractBaseEntity {
 
 	@Column(name = "pilot_id")
 	private Integer pilotId;
+	
+	@Column(name = "pilot_code")
+	private String pilotCode;
 
 	@JsonIgnore
 	@Column(name = "valid_from")
@@ -66,9 +69,9 @@ public class UserInRole extends AbstractBaseEntity {
 	public UserInRole() {
 	}
 
-	public UserInRole(Integer pilotId, Date validFrom, Date validTo, UserInSystem userInSystem, Short roleId,
+	public UserInRole(String pilotCode, Date validFrom, Date validTo, UserInSystem userInSystem, Short roleId,
 			CrProfile crProfile, CareProfile careProfile, Set<FrailtyStatusTimeline> frailtyStatusTimeline) {
-		this.pilotId = pilotId;
+		this.pilotCode = pilotCode;
 		this.validFrom = validFrom;
 		this.validTo = validTo;
 		this.userInSystem = userInSystem;
@@ -140,6 +143,14 @@ public class UserInRole extends AbstractBaseEntity {
 
 	public void setFrailtyStatusTimeline(Set<FrailtyStatusTimeline> frailtyStatusTimeline) {
 		this.frailtyStatusTimeline = frailtyStatusTimeline;
+	}
+
+	public String getPilotCode() {
+		return pilotCode;
+	}
+
+	public void setPilotCode(String pilotCode) {
+		this.pilotCode = pilotCode;
 	}
 
 }

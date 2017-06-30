@@ -8,4 +8,7 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 
 @Repository(value = "pilotRepository")
 @Transactional(readOnly = true)
-public interface PilotRepository extends GenericRepository<Pilot, Long> {}
+public interface PilotRepository extends GenericRepository<Pilot, String> {
+
+	Pilot findOne(String pil);
+	}

@@ -94,8 +94,9 @@ public class Assessment implements Serializable {
 	 * private Set<GeriatricFactorValue> geriatricFactorValue = new
 	 * HashSet<GeriatricFactorValue>();
 	 */
+	@JsonIgnore
 	@FilterJoinTable(name="roleId", condition="role_id = :roleId")
-	@ManyToMany(targetEntity = Role.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(targetEntity = Role.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "assessment_audience_role", joinColumns = @JoinColumn(name = "assessment_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<Role>(0);
 

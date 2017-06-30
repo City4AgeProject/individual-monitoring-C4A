@@ -644,7 +644,6 @@ function(oj, ko, $) {
 		}
 
 		self.selectDatapointsDiagram = function() {
-			console.log("selectDatapointsDiagram");
 			self.showSelectionOnDiagram(true);
 
 			self.props.selectedItemsValue = selected;

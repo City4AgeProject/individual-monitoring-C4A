@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name="activity")
-public class Activity extends AbstractBaseEntity {
+public class Activity extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name="action")
-public class Action extends AbstractBaseEntity {
+public class Action extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
@@ -33,8 +33,7 @@ public class Action extends AbstractBaseEntity {
 	@OneToMany(mappedBy="action",fetch=FetchType.LAZY)
 	private Set<ExecutedAction> executedActions = new HashSet<ExecutedAction>(0);
 
-	public Action() {
-	}
+	public Action() {}
 
 	public Action(String actionName, String category, Set<Eam> eams, Set<ExecutedAction> executedActions) {
 		this.actionName = actionName;
