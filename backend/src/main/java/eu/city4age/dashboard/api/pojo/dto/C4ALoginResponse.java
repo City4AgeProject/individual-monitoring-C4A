@@ -15,6 +15,36 @@ public class C4ALoginResponse {
 	private int responseCode;
 
 	private String displayName;
+	
+	private short roleId;
+	
+	private String pilotName;
+	
+	private int pilotId;
+
+	public int getPilotId() {
+		return pilotId;
+	}
+
+	public void setPilotId(int pilotId) {
+		this.pilotId = pilotId;
+	}
+
+	public String getpilotName() {
+		return pilotName;
+	}
+
+	public void setpilotName(String pilotName) {
+		this.pilotName = pilotName;
+	}
+
+	public short getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(short roleId) {
+		this.roleId = roleId;
+	}
 
 	public String getMessage() {
 		return message;
