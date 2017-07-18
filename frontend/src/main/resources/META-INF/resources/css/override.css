@@ -137,6 +137,7 @@ html[dir="ltr"] .demo-oracle-icon {
 .expand-logo {
     width: 117px;
     display: visible;
+    padding:6px;
 }
 
 .toolbar-hover{
