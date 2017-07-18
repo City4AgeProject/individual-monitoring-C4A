@@ -29,7 +29,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                     det_date: this.detectionDate,
                                     interv_status: this.interventionstatus,
                                     interv_date: this.interventionDate,
-                                    age: this.age
+                                    age: this.age,
+                                    pilotcode: this.pilotCode
                                 });
                                 $(".loader-hover").hide();
                             });

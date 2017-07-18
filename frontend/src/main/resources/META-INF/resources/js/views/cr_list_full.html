@@ -8,8 +8,10 @@
                data-bind="ojComponent: {component: 'ojTable', 
                                 data: dataSource, 
                                 emptyText: 'No data',
-                                columnsDefault: {headerStyle: 'background:transparent;font-weight:bold;',sortable: 'none'}, 
+                                columnsDefault: {headerStyle: 'background:transparent;font-weight:bold;',sortable: 'enabled'}, 
                                 columns: [
+                                    {headerText: 'Pilot', 
+                                        field: 'pilotcode'},
                                     {headerText: 'Frailty status', 
                                         field: 'fr_status',
                                         template: 'frailty_status'},
@@ -40,9 +42,6 @@
     <!--</div>-->
 
 </div>
-
-
-
 
 
 <script type="text/html" id="frailty_status">

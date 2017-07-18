@@ -32,6 +32,7 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.CrProfileRepository;
 import eu.city4age.dashboard.api.persist.FrailtyStatusTimelineRepository;
 import eu.city4age.dashboard.api.persist.GeriatricFactorRepository;
+import eu.city4age.dashboard.api.persist.PilotRepository;
 import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.comparator.FSTComparator;
@@ -39,6 +40,7 @@ import eu.city4age.dashboard.api.pojo.domain.CrProfile;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatusTimeline;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.C4ACareRecipientListResponse;
@@ -79,6 +81,9 @@ public class CareRecipientService {
 	@Autowired
 	private CrProfileRepository crProfileRepository;
 
+	@Autowired
+	private PilotRepository pilotRepository;
+	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@Transactional("transactionManager")
@@ -214,15 +219,15 @@ public class CareRecipientService {
 			return Response.ok(objectMapper.writeValueAsString(response)).build();
 		} else {
 			List<C4ACareRecipientListResponse> itemList = new ArrayList<C4ACareRecipientListResponse>();
-			for (UserInRole users : userinroleparamsList) {
+			for (UserInRole user : userinroleparamsList) {
 				response.setMessage("success");
 				response.setResponseCode(10);
 
 				int age = 0;
 
-				if (users.getCrProfile() != null) {
+				if (user.getCrProfile() != null) {
 
-					LocalDate birthDate = users.getCrProfile().getBirthDate().toInstant().atZone(ZoneId.systemDefault())
+					LocalDate birthDate = user.getCrProfile().getBirthDate().toInstant().atZone(ZoneId.systemDefault())
 							.toLocalDate();
 					age = (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
 
@@ -239,23 +244,27 @@ public class CareRecipientService {
 				String detectionStatus = "N/A";
 				String detectionDate = "N/A";
 
-				if (users.getCareProfile() != null) {
-					attention = users.getCareProfile().getAttentionStatus();
-					textline = users.getCareProfile().getIndividualSummary();
-					interventionstatus = users.getCareProfile().getInterventionStatus();
-					interventionDate = sdf.format(users.getCareProfile().getLastInterventionDate());
+				if (user.getCareProfile() != null) {
+					attention = user.getCareProfile().getAttentionStatus();
+					textline = user.getCareProfile().getIndividualSummary();
+					interventionstatus = user.getCareProfile().getInterventionStatus();
+					interventionDate = sdf.format(user.getCareProfile().getLastInterventionDate());
 				}
 
 				List<FrailtyStatusTimeline> frailtyparamsList = new ArrayList<FrailtyStatusTimeline>(
-						users.getFrailtyStatusTimeline());
+						user.getFrailtyStatusTimeline());
 
 				if (frailtyparamsList != null && frailtyparamsList.size() > 0) {
 					frailtyStatus = frailtyparamsList.get(0).getCdFrailtyStatus().getFrailtyStatus();
 					frailtyNotice = frailtyparamsList.get(0).getFrailtyNotice();
 				}
-
-				itemList.add(new C4ACareRecipientListResponse(users.getId(), age, frailtyStatus, frailtyNotice,
-						attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate));
+				
+				//Load Pilot object to find the pilot code
+				Long pil = Long.parseLong(user.getPilotId().toString());					
+				Pilot userPilot = pilotRepository.findOne(pil);
+		
+				itemList.add(new C4ACareRecipientListResponse(user.getId(), age, frailtyStatus, frailtyNotice,
+						attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate,userPilot.getPilotCode()));
 			} // detectionVariables loop
 			response.setItemList(itemList);
 
