@@ -25,15 +25,19 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
             getUrl.userAge = userAge;
         };
 
-        self.setStorageData = function (username,userfullname) {
+        self.setStorageData = function (username,userfullname, pilotname, pilotId, roleid) {
         	sessionStorage.setItem("username", username);
-        	sessionStorage.setItem("userfullname", userfullname);
+        	sessionStorage.setItem("userfullname", userfullname);        	
+        	sessionStorage.setItem("pilotname", pilotname);
+        	sessionStorage.setItem("pilotid", pilotId);
+        	sessionStorage.setItem("roleid", roleid);
         };
         // Retrieve the JSON data string from browser session storage
         self.getStorageData = function () {
             var data = sessionStorage.getItem("username");
             return data;
         };
+              
 
         // Check if the data has already been stored, to enable keeping it across page refreshes
         self.noData = function () {

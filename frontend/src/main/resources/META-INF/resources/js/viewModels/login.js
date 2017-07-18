@@ -26,13 +26,14 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	                            /*logged in 
 	                             * keep in session storage username and display name
 	                             */
-	                            sp.setStorageData(self.loginValue(), users.displayName);
+	                            sp.setStorageData(self.loginValue(), users.displayName, users.pilotName,users.pilotId,users.roleId);
 	
 	                            $('#appHeader').css({display: 'block'});
 	                            $('.user-menu').css({display: 'block'});
 	
 	                            oj.Router.rootInstance.go("cr_list_full");
 	                            app.userLogin(users.displayName);
+	                            app.userPilotName(users.pilotName);
 	 
 	                        } else if (users.responseCode === 0) {
 	                            console.log("wrong credentials ",users.message);

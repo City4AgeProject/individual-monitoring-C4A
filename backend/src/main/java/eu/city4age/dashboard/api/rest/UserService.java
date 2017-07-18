@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
+import eu.city4age.dashboard.api.persist.PilotRepository;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.C4ALoginResponse;
 
@@ -33,6 +35,9 @@ public class UserService {
 
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
+	
+	@Autowired
+	private PilotRepository pilotRepository;
 
 	@Transactional("transactionManager")
 	@GET
@@ -45,6 +50,7 @@ public class UserService {
 		 */
 		UserInRole user;
 		C4ALoginResponse response = new C4ALoginResponse();
+		Pilot userPilot;
 		/**
 		 * ****************Action*************
 		 */
@@ -63,9 +69,16 @@ public class UserService {
 					response.setResponseCode(10);
 					if (user.getUserInSystem().getDisplayName() != null) {
 						response.setDisplayName(user.getUserInSystem().getDisplayName());
+						Long pil = Long.parseLong(user.getPilotId().toString());					
+						userPilot = pilotRepository.findOne(pil);
+						
+						response.setpilotName(userPilot.getName());
+						response.setPilotId(user.getPilotId());
+						response.setRoleId(user.getRoleId());
 					} else {
 						response.setDisplayName("");
-					}
+					}						
+					
 					return Response.ok(response).build();
 				} else {
 					response.setMessage("you don't have the right permissions");
