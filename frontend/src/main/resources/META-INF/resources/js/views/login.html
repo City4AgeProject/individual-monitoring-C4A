@@ -1,42 +1,53 @@
 <div id="form-container"
 	style='position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; overflow: auto;'>
-	<div>
-		<div
-			class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline">
-			<div class="oj-flex">
-                            <div class="oj-flex-item" ></div>
-				<div class="oj-flex-item"></div>
-				<div class="oj-flex-item">
-					<label for="username">Users:</label>
-				</div>
-				<div class="oj-flex-item">
-					<input id="username"
-						data-bind="ojComponent: {component: 'ojInputText', 
+
+	<div
+		class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline oj-panel oj-panel-shadow-sm">
+		
+		<p class="oj-train"><img src="images/City4AgeLogo_noBackground1.png" class="expand-logo" align="middle"></p>
+		<h1 class="oj-train">Login</h1>
+		
+		<p class="oj-train">
+			Welcome to the City4Age Dashboard Login page. Access is restricted to
+			authorised members only.<br />Use our <a href="http://www.city4ageproject.eu/index.php/contact/">Contact Form</a> to request
+			access.
+		</p>
+		<div class="oj-flex">
+			<div class="oj-flex-item"></div>
+			<div class="oj-flex-item"></div>
+			<div class="oj-flex-item">
+				<label for="username">Username:</label>
+			</div>
+			<div class="oj-flex-item">
+				<input id="username"
+					data-bind="ojComponent: {component: 'ojInputText', 
                                           value: loginValue, required: true
                             }">
-				</div>
-				<div class="oj-flex-item">
-					<label for="password">Password:</label>
-				</div>
-				<div class="oj-flex-item">
-					<input type="password" id="password"
-						data-bind="ojComponent: {component: 'ojInputPassword', 
+			</div>
+			<div class="oj-flex-item">
+				<label for="password">Password:</label>
+			</div>
+			<div class="oj-flex-item">
+				<input type="password" id="password"
+					data-bind="ojComponent: {component: 'ojInputPassword', 
                                             value: passwordValue,required: true
                                 }" />
-				</div>
-                                <div class="oj-flex-item" ></div>
-				<div class="oj-flex-item">
-					<button id="loginBtn" class="oj-button"
-						data-bind="click: loginUser, ojComponent: { component: 'ojButton', 
+			</div>
+
+			
+				
+			
+		</div>
+		<div class="oj-flex oj-lg-justify-content-center">
+		<button id="loginBtn" class="oj-button-lg oj-lg-align-self-center"
+					data-bind="click: loginUser, ojComponent: { component: 'ojButton', 
                                                     label: 'Login',
-                                                    chroming:'outlined'}" /></button>
-					<span>&nbsp;&nbsp;</span>
+                                                    chroming:'full'}" /></button>
+				<!--  <span>&nbsp;&nbsp;</span>
 					<button id="resetBtn" class="oj-button"
 						data-bind="click: resetForm, ojComponent: { component: 'ojButton', 
                                                     label: 'Reset',
-                                                    chroming:'outlined'}" /></button>
-				</div>
-			</div>
+                                                    chroming:'full'}" /></button>-->
 		</div>
 	</div>
 </div>
