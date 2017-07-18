@@ -29,10 +29,12 @@ public class C4ACareRecipientListResponse {
 	private String detectionStatus;
 
 	private String detectionDate;
+	
+	private String pilotCode;
 
 	public C4ACareRecipientListResponse(long userId, int age, String frailtyStatus, String frailtyNotice, char attention,
 			String textline, char interventionstatus, String interventionDate, String detectionStatus,
-			String detectionDate) {
+			String detectionDate, String pilotCode) {
 		this.userId = userId;
 		this.age = age;
 		this.frailtyStatus = frailtyStatus;
@@ -43,6 +45,7 @@ public class C4ACareRecipientListResponse {
 		this.interventionDate = interventionDate;
 		this.detectionStatus = detectionStatus;
 		this.detectionDate = detectionDate;
+		this.pilotCode = pilotCode;
 	}
 
 	public long getUserId() {
@@ -123,6 +126,14 @@ public class C4ACareRecipientListResponse {
 
 	public void setDetectionDate(String detectionDate) {
 		this.detectionDate = detectionDate;
+	}
+	
+	public String getPilotCode() {
+		return pilotCode;
+	}
+
+	public void setPilotCode(String pilotCode) {
+		this.pilotCode = pilotCode;
 	}
 
 }// end class
