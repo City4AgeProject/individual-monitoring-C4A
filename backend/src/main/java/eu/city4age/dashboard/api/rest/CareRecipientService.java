@@ -193,9 +193,9 @@ public class CareRecipientService {
 
 	@Transactional("transactionManager")
 	@GET
-	@Path("getCareRecipients")
+	@Path("getCareRecipients/pilotid/{pilotId}/")
 	@Produces("application/json")
-	public Response getJson() throws IOException {
+	public Response getJson(@PathParam("pilotId") String pilotId) throws IOException {
 		/**
 		 * ****************Variables*************
 		 */
@@ -206,7 +206,7 @@ public class CareRecipientService {
 		 * ****************Action*************
 		 */
 
-		List<UserInRole> userinroleparamsList = userInRoleRepository.findByRoleId(Short.valueOf("1"));
+		List<UserInRole> userinroleparamsList = userInRoleRepository.findByRoleIdAndPilotId(Short.valueOf("1"),Integer.valueOf(pilotId));
 
 		if (userinroleparamsList.isEmpty()) {
 			response.setMessage("No users found");
@@ -230,14 +230,14 @@ public class CareRecipientService {
 
 				// **************************************
 
-				String frailtyStatus = null;
-				String frailtyNotice = null;
-				char attention = 0;
-				String textline = null;
-				char interventionstatus = 0;
-				String interventionDate = null;
-				String detectionStatus = null;
-				String detectionDate = null;
+				String frailtyStatus = "N/A";
+				String frailtyNotice = "N/A";
+				char attention = '\0';
+				String textline = "N/A";
+				char interventionstatus = '\0';
+				String interventionDate = "N/A";
+				String detectionStatus = "N/A";
+				String detectionDate = "N/A";
 
 				if (users.getCareProfile() != null) {
 					attention = users.getCareProfile().getAttentionStatus();

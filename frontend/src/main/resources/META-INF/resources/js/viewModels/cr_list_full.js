@@ -5,8 +5,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
             function ListViewModel() {
                 var self = this;
                 self.data = ko.observableArray();
+                
+                var pilotid = sessionStorage.getItem("pilotid");
 
-                $.getJSON(CARE_RECIPIENT_ALL).
+                $.getJSON(CARE_RECIPIENT_ALL + "/pilotid/" + pilotid).
                         then(function (users) {
                             $.each(users.itemList, function () {
 
@@ -90,8 +92,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.changeButtonIcon = function (isPaused, data, event) {
                     console.log("event ", event.type);
                 };
-
-
+                
             }
 
             return new ListViewModel();
