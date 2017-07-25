@@ -148,4 +148,10 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 		return entityManager;
 	}
 
+	
+	public <S extends T> S merge(S entity) {
+		return this.entityManager.merge(entity);
+	}
+
+
 }

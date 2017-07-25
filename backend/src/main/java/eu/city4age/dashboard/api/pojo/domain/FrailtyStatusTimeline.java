@@ -32,7 +32,7 @@ public class FrailtyStatusTimeline implements Serializable {
 	private Long userInRoleId;
 
 	@ManyToOne
-	@JoinColumn(name = "time_interval_id", insertable = false, updatable = false)
+	@JoinColumn(name = "time_interval_id", insertable = false, updatable = false, referencedColumnName = "id")
 	private TimeInterval timeInterval;
 
 	@ManyToOne

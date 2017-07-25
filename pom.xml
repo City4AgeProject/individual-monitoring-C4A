@@ -16,7 +16,7 @@
 	<properties>
 		<start-class>eu.city4age.dashboard.api.Application</start-class>
 		<maven.test.skip>true</maven.test.skip>
-		<glassfish.home>C:\glassfish-4.1.2\glassfish4</glassfish.home>
+		<glassfish.home>C:\glassfish-4.1.1\glassfish4</glassfish.home>
 		<glassfish.domain>domain1</glassfish.domain>
 		<glassfish.domain.username>admin</glassfish.domain.username>
 		<glassfish.passwordFile>${glassfish.home}\glassfish\domains\domain1\config\domain-passwords</glassfish.passwordFile>
@@ -185,6 +185,25 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.github.fge/json-schema-validator -->
+		<dependency>
+			<groupId>com.github.fge</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>2.2.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.fge/jackson-coreutils -->
+		<dependency>
+			<groupId>com.github.fge</groupId>
+			<artifactId>jackson-coreutils</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.fge/json-schema-core -->
+		<dependency>
+			<groupId>com.github.fge</groupId>
+			<artifactId>json-schema-core</artifactId>
+			<version>1.2.5</version>
 		</dependency>
 
 	</dependencies>

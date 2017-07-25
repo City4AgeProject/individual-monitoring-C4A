@@ -34,6 +34,10 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.rest.MeasuresService;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.typeCompatibleWith;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ApplicationTest.class)
 @WebAppConfiguration
@@ -61,11 +65,11 @@ public class VariationMeasureValueRepositoryTest {
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void testFindByUserInRoleIdAndDetectionVariableIds() {
+	public void testFindByUserInRoleId() {
 		
 		Long uirId = 13L;
 
-		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-05-03 00:00:00"), TypicalPeriod.DAY);
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-05-03 00:00:00"), TypicalPeriod.MONTH);
 
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(91L);
@@ -111,10 +115,8 @@ public class VariationMeasureValueRepositoryTest {
 		
 		Timestamp startOfMonth = Timestamp.valueOf(YearMonth.parse("2017 MAY", formatter).atDay(1).atStartOfDay());
 		Timestamp endOfMonth = Timestamp.valueOf(YearMonth.parse("2017 MAY", formatter).atEndOfMonth().atTime(LocalTime.MAX));
-		
-		List<Long> dvIds = Arrays.asList(91L, 95L, 98L);
-		List<VariationMeasureValue> result = variationMeasureValueRepository
-				.findByUserInRoleIdAndDetectionVariableIds(uirId, dvIds, startOfMonth, endOfMonth);
+
+		List<VariationMeasureValue> result = variationMeasureValueRepository.findByUserInRoleId(uirId, startOfMonth);
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(3, result.size());
@@ -126,11 +128,6 @@ public class VariationMeasureValueRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void testFindByPilotCode() {
-		
-	/*	TimeInterval ti1 = measuresService.getOrCreateTimeIntervalWithoutSave(Timestamp.valueOf("2017-05-03 00:00:00"),
-				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		ti1.setIntervalEnd(Timestamp.valueOf("2017-05-03 00:00:00"));
-		timeIntervalRepository.save(ti1);*/
 		
 		TimeInterval ti1 = new TimeInterval();
 		ti1.setId(1L);
@@ -189,6 +186,49 @@ public class VariationMeasureValueRepositoryTest {
 				.findByPilotCode("LCC", startOfMonth, endOfMonth);
 
 		Assert.assertEquals(3, result.size());
+	}
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFindMinId() {
+		
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setId(91L);
+		detectionVariableRepository.save(dv1);
+
+		UserInRole uir1 = new UserInRole();
+		uir1.setId(13L);
+		uir1.setPilotCode("LCC");
+		userInRoleRepository.save(uir1);
+		userInRoleRepository.flush();
+
+		VariationMeasureValue vm1 = new VariationMeasureValue();
+		vm1.setId(1L);
+		vm1.setDetectionVariable(dv1);
+		vm1.setUserInRole(uir1);
+		variationMeasureValueRepository.save(vm1);
+
+		VariationMeasureValue vm2 = new VariationMeasureValue();
+		vm2.setId(2L);
+		vm2.setDetectionVariable(dv1);
+		vm2.setUserInRole(uir1);
+		variationMeasureValueRepository.save(vm2);
+
+		VariationMeasureValue vm3 = new VariationMeasureValue();
+		vm3.setId(3L);
+		vm3.setDetectionVariable(dv1);
+		vm3.setUserInRole(uir1);
+		variationMeasureValueRepository.save(vm3);
+		
+		Long result = variationMeasureValueRepository
+				.findMinId(dv1, uir1);
+
+		Assert.assertNotNull(result);
+		Assert.assertNotNull(result);
+		assertThat(result, greaterThan(0L));
+		assertThat(result.getClass(), typeCompatibleWith(Long.class));
+		Assert.assertEquals(1, result.longValue());
 	}
 
 	@Test

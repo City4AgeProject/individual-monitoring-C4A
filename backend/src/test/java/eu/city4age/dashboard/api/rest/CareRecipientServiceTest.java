@@ -22,7 +22,7 @@ public class CareRecipientServiceTest {
 	public void getCareRecipientsTest() throws Exception {
 
 		try {
-			String uri = "http://localhost:8080/C4A-dashboard/rest/careRecipient/getCareRecipients/pilotCode/LCC";
+			String uri = "http://localhost:8080/C4A-dashboard/rest/careRecipient/getCareRecipients/";
 			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
 			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
 			if (!response.getStatusCode().equals(HttpStatus.OK)) {
@@ -36,7 +36,7 @@ public class CareRecipientServiceTest {
 			Assert.fail();
 		}
 	}
-	
+
 	@Test
 	public void getGroupsTest() throws Exception {
 

@@ -27,7 +27,7 @@ public class Activity extends AbstractBaseEntity<Long> {
 	private DataSourceType cdDataSourceType;
 	
 	@ManyToOne
-    @JoinColumn(name="time_interval_id")
+    @JoinColumn(name="time_interval_id", referencedColumnName = "id")
 	private TimeInterval timeInterval;
 	
 	@Column(name="user_in_role_id")

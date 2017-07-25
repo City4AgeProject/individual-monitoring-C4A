@@ -33,5 +33,7 @@ public interface GenericRepository<T, ID extends Serializable>
 	void disableFilter(String name);
 	
 	EntityManager getEntityManager();
+	
+	<S extends T> S merge(S entity);
 
 }

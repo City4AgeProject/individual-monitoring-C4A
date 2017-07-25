@@ -83,6 +83,7 @@ public class TimeInterval implements Serializable {
 	@Column(name = "typical_period")
 	private String typicalPeriod;
 
+	@Transient
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "timeInterval", fetch = FetchType.LAZY)
 	private Set<Activity> activities = new HashSet<Activity>(0);

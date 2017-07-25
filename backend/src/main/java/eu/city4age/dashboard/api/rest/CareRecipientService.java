@@ -119,11 +119,11 @@ public class CareRecipientService {
 
 		for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
 
-			if (gef.getCdDetectionVariable() != null) {
+			if (gef.getDetectionVariable() != null) {
 
-				detectionvarsparamsList.add(gef.getCdDetectionVariable());
-				fMap.put(gef.getCdDetectionVariable().getId(), new ArrayList<Float>());
-				idMap.put(gef.getCdDetectionVariable().getId(), new ArrayList<Long>());
+				detectionvarsparamsList.add(gef.getDetectionVariable());
+				fMap.put(gef.getDetectionVariable().getId(), new ArrayList<Float>());
+				idMap.put(gef.getDetectionVariable().getId(), new ArrayList<Long>());
 
 			}
 
@@ -143,7 +143,7 @@ public class CareRecipientService {
 
 					gereatricfactparamsList.add(gef);
 
-					if (gef.getCdDetectionVariable() != null && gef.getCdDetectionVariable().equals(type)) {
+					if (gef.getDetectionVariable() != null && gef.getDetectionVariable().equals(type)) {
 
 						fMap.get(type.getId()).add(gef.getGefValue().floatValue());
 						idMap.get(type.getId()).add(gef.getId());

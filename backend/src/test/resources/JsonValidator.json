@@ -1,0 +1,98 @@
+{
+    "title": "ConfigurationFileValidator",
+    "description": "Validation file for Configuration Json",
+    "type": "object",
+    "properties": 
+	 {
+        "name": 
+		{
+            "type": "string"
+        },
+        "level": 
+		{
+            "type": "integer"
+        },
+		 "dateUpdated": 
+		{
+            "type": "string"
+        },
+		 "configTree": 
+		{
+            "type": "array",
+			"items":
+			{
+				"type":"object",
+				"properties": 
+				{
+                    "name": 
+					{
+						"type": "string"
+					},
+                    "level": 
+					{
+						"type": "integer"
+					},
+                    "weight": 
+					{
+						"type": "number"
+					},
+					"factors": 
+					{
+						"type": "array",
+						"items":
+						{
+							
+							"type":"object",
+							"properties": 
+							{
+								"name": 
+								{
+									"type": "string"
+								},
+								"level": 
+								{
+									"type": "integer"
+								},
+								"weight": 
+								{
+									"type": "number"
+								},
+								"subFactors": 
+								{
+									"type": "array",
+									"items":
+									{
+									
+										"type":"object",
+										"properties": 
+										{
+											"name": 
+											{
+												"type": "string"
+											},
+											"level": 
+											{
+												"type": "integer"
+											},
+											"weight": 
+											{
+												"type": "number"
+											}
+										},
+										"required": ["level"]
+									}
+
+								}
+							},
+							"required": ["level"]
+						}
+					}
+							
+				},
+				"required": ["level"]
+			}
+        }
+                
+	},
+	"required": ["name", "level", "dateUpdated"]
+}

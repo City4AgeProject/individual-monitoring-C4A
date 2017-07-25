@@ -1,5 +1,6 @@
 package eu.city4age.dashboard.api.persist;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.rest.MeasuresService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -29,6 +31,8 @@ import eu.city4age.dashboard.api.rest.MeasuresService;
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class GeriatricFactorRepositoryTest {
+	
+	static protected Logger logger = LogManager.getLogger(GeriatricFactorRepositoryTest.class);
 	
 	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
@@ -70,21 +74,21 @@ public class GeriatricFactorRepositoryTest {
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setId(1L);
 		gef1.setUserInRole(userInRole);
-		gef1.setCdDetectionVariable(dv1);
+		gef1.setDetectionVariable(dv1);
 		gef1.setTimeInterval(ti1);
 		geriatricFactorRepository.save(gef1);
 		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
 		gef2.setId(2L);
 		gef2.setUserInRole(userInRole);
-		gef2.setCdDetectionVariable(dv1);
+		gef2.setDetectionVariable(dv1);
 		gef2.setTimeInterval(ti1);
 		geriatricFactorRepository.save(gef2);
 		
 		GeriatricFactorValue gef3 = new GeriatricFactorValue();
 		gef3.setId(3L);
 		gef3.setUserInRole(userInRole);
-		gef3.setCdDetectionVariable(dv1);
+		gef3.setDetectionVariable(dv1);
 		gef3.setTimeInterval(ti1);
 		geriatricFactorRepository.save(gef3);
 
@@ -94,6 +98,32 @@ public class GeriatricFactorRepositoryTest {
 
 		Assert.assertEquals(3, result.size());
 
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testSaveGEF() throws Exception {
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setId(91L);
+		dv1.setDerivationWeight(new BigDecimal(1));
+		detectionVariableRepository.save(dv1);
+
+		UserInRole uir1 = new UserInRole();
+		uir1.setId(13L);
+		userInRoleRepository.save(uir1);
+		
+		GeriatricFactorValue ges = new GeriatricFactorValue();
+		ges.setGefValue(new BigDecimal(.4));
+		TimeInterval ti = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-07-01 00:00:00"), TypicalPeriod.MONTH);
+		ges.setTimeInterval(ti);
+		ges.setDetectionVariable(dv1);
+		ges.setUserInRole(uir1);
+		geriatricFactorRepository.save(ges);
+		
+		Assert.assertNotNull(ges);
+		Assert.assertNotNull(ges.getTimeInterval());
+		Assert.assertEquals(Timestamp.valueOf("2017-07-01 00:00:00"), ges.getTimeInterval().getIntervalStart());
 	}
 
 }

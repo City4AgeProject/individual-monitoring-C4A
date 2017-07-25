@@ -143,7 +143,7 @@ public class TimeIntervalRepositoryTest {
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setId(1L);
 		gef1.setTimeInterval(ti1);
-		gef1.setCdDetectionVariable(dv1);
+		gef1.setDetectionVariable(dv1);
 		gef1.setUserInRole(uir);
 
 		Assessment aa1 = new Assessment();
@@ -156,7 +156,6 @@ public class TimeIntervalRepositoryTest {
 		aa1.setAssessmentComment("my comment");
 		aa1.setId(1L);
 		assessmentRepository.save(aa1);
-
 		AssessedGefValueSet ag1 = new AssessedGefValueSet();
 		ag1.setGefValueId(1);
 		ag1.setAssessmentId(1);
@@ -251,6 +250,8 @@ public class TimeIntervalRepositoryTest {
 		fst.setChanged(new Date());
 		fst.setChangedBy(uir);
 		frailtyStatusTimelineRepository.save(fst);
+		
+		logger.info("trt: " + DetectionVariableType.Type.GEF);
 
 		logger.info("trt: " + DetectionVariableType.Type.GEF);
 
@@ -279,7 +280,7 @@ public class TimeIntervalRepositoryTest {
 		gef1.setGefValue(new BigDecimal(3));
 		gef1.setTimeInterval(ti1);
 		gef1.setUserInRole(uir);
-		gef1.setCdDetectionVariable(dv1);
+		gef1.setDetectionVariable(dv1);
 		geriatricFactorRepository.save(gef1);
 
 		List<String> parentFactors = Arrays.asList("GEF", "GES");
