@@ -21,6 +21,7 @@ mvn clean install --pl build glassfish:redeploy
 7. Open in browser:
 http://localhost:8080/C4A-dashboard/
 
+Note: Check jboss-logging and guava jar versions used. Glassfish load older versions by default
 --------------------------------------------
 Running unit tests from Eclipse IDE:
 
