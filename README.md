@@ -21,7 +21,6 @@ mvn clean install --pl build glassfish:redeploy
 7. Open in browser:
 http://localhost:8080/C4A-dashboard/
 
-Note: Check jboss-logging and guava jar versions used. Glassfish load older versions by default
 --------------------------------------------
 Running unit tests from Eclipse IDE:
 
@@ -29,3 +28,5 @@ Running unit tests from Eclipse IDE:
 2. If you don't have, install now Eclipse Neon.1a Release (4.6.1)
 3. Import project into workspace from file system using Import > Existing projects into workspace
 4. Run unit tests from src/test/java packages
+
+Note: Check jboss-logging and guava jar versions used. Glassfish load older versions by default
