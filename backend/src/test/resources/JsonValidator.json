@@ -77,6 +77,30 @@
 											"weight": 
 											{
 												"type": "number"
+											},
+											"measures":
+											{
+												"type": "array",
+												"items":
+												{
+													"type":"object",
+													"properties":
+													{
+														"name": 
+														{
+															"type": "string"
+														},
+														"level": 
+														{
+															"type": "integer"
+														},
+														"weight": 
+														{
+															"type": "number"
+														}
+													},
+													"required":["level"]
+												}
 											}
 										},
 										"required": ["level"]

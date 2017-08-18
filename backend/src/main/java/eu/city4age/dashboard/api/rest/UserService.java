@@ -74,6 +74,7 @@ public class UserService {
 						String pil = user.getPilotCode();
 						userPilot = pilotRepository.findOne(pil);
 						
+						response.setId(user.getId());
 						response.setpilotName(userPilot.getName());
 						response.setPilotCode(user.getPilotCode());
 						response.setRoleId(user.getRoleId());

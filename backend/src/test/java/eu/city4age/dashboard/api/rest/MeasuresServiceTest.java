@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.utils.ValidationUtils;
 
 public class MeasuresServiceTest {
 
@@ -36,8 +37,8 @@ public class MeasuresServiceTest {
 	@Test
 	public final void configureDailyMeasuresTest() throws Exception {
 
-		Resource schemaFile = new ClassPathResource("/JsonValidator.json", MeasuresServiceTest.class);
-		Resource jsonFile = new ClassPathResource("/json1.json", MeasuresServiceTest.class);
+		Resource schemaFile = new ClassPathResource("/JsonValidator.json", this.getClass());
+		Resource jsonFile = new ClassPathResource("/json1.json", this.getClass());
 		
 		if (ValidationUtils.isJsonValid(schemaFile.getFile(), jsonFile.getFile())) {
 			logger.info("Valid!");

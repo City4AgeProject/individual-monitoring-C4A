@@ -30,9 +30,6 @@ public class UserInRole extends AbstractBaseEntity<Long> {
 	 * 
 	 */
 	private static final long serialVersionUID = -1957422483462322553L;
-
-	@Column(name = "pilot_id")
-	private Integer pilotId;
 	
 	@Column(name = "pilot_code")
 	private String pilotCode;
@@ -79,14 +76,6 @@ public class UserInRole extends AbstractBaseEntity<Long> {
 		this.crProfile = crProfile;
 		this.careProfile = careProfile;
 		this.frailtyStatusTimeline = frailtyStatusTimeline;
-	}
-
-	public Integer getPilotId() {
-		return this.pilotId;
-	}
-
-	public void setPilotId(Integer pilotId) {
-		this.pilotId = pilotId;
 	}
 
 	public void setValidFrom(Date validFrom) {

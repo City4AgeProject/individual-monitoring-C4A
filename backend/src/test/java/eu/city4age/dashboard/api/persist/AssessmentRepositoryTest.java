@@ -71,12 +71,6 @@ public class AssessmentRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void testFindForSelectedDataSet() throws Exception {
-
-		List<Long> gefIds = new ArrayList<Long>();
-		gefIds.add(1L);
-		gefIds.add(7L);
-
-
 		
 		System.out.println("1***Number of assessments in repository:"+assessmentRepository.findAll().size());
 
@@ -101,13 +95,11 @@ public class AssessmentRepositoryTest {
 		userInRoleRepository.save(uir2);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
-		gef1.setId(1L);
 		gef1.setGefValue(new BigDecimal("5"));
 		gef1.setUserInRole(uir1);
 		geriatricFactorRepository.save(gef1);
 		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
-		gef2.setId(2L);
 		gef2.setGefValue(new BigDecimal("6"));
 		gef2.setUserInRole(uir2);
 		geriatricFactorRepository.save(gef2);
@@ -238,6 +230,10 @@ public class AssessmentRepositoryTest {
 		filters.add(roleId);
 		
 		
+		List<Long> gefIds = new ArrayList<Long>();
+		gefIds.add(gef1.getId());
+		gefIds.add(gef2.getId());
+		
 
 		HashMap<String, Object> inQueryParams = new HashMap<String, Object>();
 		inQueryParams.put("geriatricFactorIds", gefIds);
@@ -260,8 +256,8 @@ public class AssessmentRepositoryTest {
 		Assert.assertNotNull(resultWithFilters);
 		Assert.assertNotNull(resultWithoutFilters);
 		Assert.assertEquals(3, assessmentRepository.findAll().size());
-		Assert.assertEquals(4,resultWithoutFilters.size());
-		Assert.assertEquals(1, resultWithFilters.size());
+		Assert.assertEquals(5, resultWithoutFilters.size());
+		Assert.assertEquals(2, resultWithFilters.size());
 	
 		
 		System.out.println("ENABLED***(filters ENABLED)Number of assessments in repository:"+assessmentRepository.findAll().size());
@@ -276,8 +272,8 @@ public class AssessmentRepositoryTest {
 		Assert.assertNotNull(resultWithFilters);
 		Assert.assertNotNull(resultWithoutFilters);
 		Assert.assertEquals(4, assessmentRepository.findAll().size());
-		Assert.assertEquals(4,resultWithoutFilters.size());
-		Assert.assertEquals(1, resultWithFilters.size());
+		Assert.assertEquals(5, resultWithoutFilters.size());
+		Assert.assertEquals(2, resultWithFilters.size());
 		logger.info("end of testFindForSelectedDataSet");
 
 		System.out.println("ONE DISABLED***(after riskStatus (1) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
@@ -292,8 +288,8 @@ public class AssessmentRepositoryTest {
 		Assert.assertNotNull(resultWithFilters);
 		Assert.assertNotNull(resultWithoutFilters);
 		Assert.assertEquals(7, assessmentRepository.findAll().size());
-		Assert.assertEquals(4,resultWithoutFilters.size());
-		Assert.assertEquals(1, resultWithFilters.size());
+		Assert.assertEquals(5,resultWithoutFilters.size());
+		Assert.assertEquals(2, resultWithFilters.size());
 		logger.info("end of testFindForSelectedDataSet");
 
 		System.out.println("TWO DISABLED***(after dataValidity (2) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
@@ -308,8 +304,8 @@ public class AssessmentRepositoryTest {
 		Assert.assertNotNull(resultWithFilters);
 		Assert.assertNotNull(resultWithoutFilters);
 		Assert.assertEquals(7, assessmentRepository.findAll().size());
-		Assert.assertEquals(4,resultWithoutFilters.size());
-		Assert.assertEquals(1, resultWithFilters.size());
+		Assert.assertEquals(5,resultWithoutFilters.size());
+		Assert.assertEquals(2, resultWithFilters.size());
 		logger.info("end of testFindForSelectedDataSet");
 		
 		System.out.println("ALL DISABLED***(after all filters disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());

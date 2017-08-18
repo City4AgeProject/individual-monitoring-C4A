@@ -45,6 +45,9 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 	@JoinColumn(name = "detection_variable_type")
 	private DetectionVariableType detectionVariableType;
 
+	@Column(name = "default_typical_period")
+	private String  defaultTypicalPeriod;
+
 	public DetectionVariable() {
 	}
 
@@ -103,6 +106,14 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 
 	public Date getValidTo() {
 		return validTo;
+	}
+
+	public String getDefaultTypicalPeriod() {
+		return defaultTypicalPeriod;
+	}
+
+	public void setDefaultTypicalPeriod(String defaultTypicalPeriod) {
+		this.defaultTypicalPeriod = defaultTypicalPeriod;
 	}
 
 }

@@ -47,7 +47,7 @@ create table testtest.assessment (id int8 not null, assessment_comment varchar(2
 create table testtest.assessment_audience_role (assessment_id int8 not null, role_id int8 not null, assigned timestamptz , primary key (assessment_id,role_id));
 create table testtest.care_profile (user_in_role_id int4 not null, individual_summary varchar(255) , attention_status char(1), intervention_status char(1), last_intervention_date date, created timestamptz , last_updated timestamptz, created_by int8 , last_updated_by int8, primary key (user_in_role_id));
 create table testtest.cd_data_source_type (data_source_type varchar(3) not null, data_source_type_description varchar(250) , primary key (data_source_type));
-create table testtest.cd_detection_variable (id int8 not null, detection_variable_name varchar(100), detection_variable_type varchar(3), valid_from timestamptz, valid_to timestamptz, derived_detection_variable_id int2, derivation_weight numeric(3, 2), primary key (id));
+create table testtest.cd_detection_variable (id int8 not null, detection_variable_name varchar(100), detection_variable_type varchar(3), valid_from timestamptz, valid_to timestamptz, derived_detection_variable_id int2, derivation_weight numeric(3, 2), default_typical_period varchar(3), primary key (id));
 create table testtest.cd_detection_variable_type (detection_variable_type varchar(3) not null, detection_variable_type_description varchar(50), primary key (detection_variable_type));
 create table testtest.cd_frailty_status (frailty_status varchar(9) not null, frailty_status_description varchar(255), primary key (frailty_status));
 create table testtest.md_pilot_detection_variable (id int8 not null, pilot_code varchar(3), detection_variable_id int2, derivation_function_formula varchar(1000), derived_detection_variable_id int4, valid_from timestamp(6), valid_to timestamp(6), derivation_weight numeric(3, 2), primary key (id));
@@ -61,7 +61,7 @@ create table testtest.geriatric_factor_value (id int8 not null, gef_value numeri
 create table testtest.inter_activity_behaviour_variation (id int8 not null, deviation float4, expected_activity_id int8 not null, real_activity_id int8 , numeric_indicator_id int8 , primary key (id));
 create table testtest.location (id int8 not null, location_name varchar(50), indoor int2, pilot_id int8 , primary key (id));
 create table testtest.numeric_indicator_value (id int8 not null, nui_type_id int8 , nui_value numeric(10, 2) , time_interval_id int8 , data_source_type varchar(3) , user_in_role_id int8, primary key (id));
-create table testtest.pilot (id int8 not null, name varchar(50), pilot_code varchar(3), population_size float8, latest_data_submission_completed date, latest_derived_detection_variables_computed date, primary key (id));
+create table testtest.pilot (id int8 not null, name varchar(50), pilot_code varchar(3), population_size float8, latest_data_submission_completed date, latest_derived_detection_variables_computed date, latest_configuration_update date, primary key (id));
 create table testtest.source_evidence (geriatric_factor_id int4 not null, author_id int4 not null, text_evidence varchar(255), multimedia_evidence bytea, uploaded timestamp , primary key (geriatric_factor_id, author_id));
 create table testtest.time_interval (id int8 not null, interval_start timestamp, interval_end timestamp, typical_period varchar(3), primary key (id), unique (interval_start, typical_period));
 create table testtest.user_in_role (id int8 not null, pilot_id int4, pilot_code varchar(3), valid_from timestamp, valid_to timestamp, user_in_system_id int4, role_id int2, primary key (id));
@@ -76,3 +76,61 @@ create sequence testtest.md_pilot_detection_variable_id_seq;
 create sequence testtest.time_interval_id_seq;
 create sequence testtest.numeric_indicator_value_id_seq;
 create sequence testtest.geriatric_factor_value_id_seq;
+CREATE OR REPLACE VIEW "testtest"."vw_detection_variable_derivation_per_user_in_role" AS 
+ SELECT uir.id AS id_user_in_role,
+    uir.role_id,
+    uir.pilot_code,
+    mpdv.id AS mpdv_id,
+    mpdv.detection_variable_id,
+    cdv0.detection_variable_name,
+    cdv0.detection_variable_type,
+    mpdv.derived_detection_variable_id,
+    cdv1.detection_variable_name AS derived_detection_variable_name,
+    cdv1.detection_variable_type AS derived_detection_variable_type,
+    mpdv.derivation_weight,
+    mpdv.derivation_function_formula,
+    cdv1.default_typical_period AS detection_variable_default_period
+   FROM (((testtest.user_in_role uir
+     JOIN testtest.md_pilot_detection_variable mpdv ON (((uir.pilot_code)::text = (mpdv.pilot_code)::text)))
+     JOIN testtest.cd_detection_variable cdv0 ON ((mpdv.detection_variable_id = cdv0.id)))
+     JOIN testtest.cd_detection_variable cdv1 ON ((mpdv.derived_detection_variable_id = cdv1.id)))
+  WHERE (mpdv.pilot_code IS NOT NULL);
+
+ALTER TABLE "testtest"."vw_detection_variable_derivation_per_user_in_role" OWNER TO "testtest";
+CREATE OR REPLACE VIEW "testtest"."vw_mea_nui_derivation_per_pilots" AS 
+ SELECT DISTINCT vw_detection_variable_derivation_per_user_in_role.mpdv_id,
+    vw_detection_variable_derivation_per_user_in_role.pilot_code,
+    vw_detection_variable_derivation_per_user_in_role.detection_variable_id AS mea_id,
+    vw_detection_variable_derivation_per_user_in_role.detection_variable_name AS mea_name,
+    vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_id AS derived_nui_id,
+    vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_name AS derived_nui_name,
+    vw_detection_variable_derivation_per_user_in_role.derivation_weight
+   FROM testtest.vw_detection_variable_derivation_per_user_in_role
+  WHERE (((vw_detection_variable_derivation_per_user_in_role.detection_variable_type)::text = 'MEA'::text) AND ((vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_type)::text = 'NUI'::text));
+
+ALTER TABLE "testtest"."vw_mea_nui_derivation_per_pilots" OWNER TO "city4age_dba";
+
+COMMENT ON VIEW "testtest"."vw_mea_nui_derivation_per_pilots" IS 'Derivation of NUIs from MEAs';
+CREATE OR REPLACE VIEW "testtest"."vw_nui_values_persisted_source_mea_types" AS 
+ SELECT DISTINCT vmnd.mpdv_id,
+    vmnd.pilot_code,
+    nui_v.user_in_role_id,
+    vmnd.mea_id,
+    vmnd.mea_name,
+    vmnd.derived_nui_id,
+    vmnd.derived_nui_name,
+    nui_v.id,
+    nui_v.nui_value,
+    vmnd.derivation_weight,
+    ti.id AS time_interval_id,
+    ti.interval_start,
+    ti.typical_period,
+    ti.interval_end
+   FROM ((testtest.vw_mea_nui_derivation_per_pilots vmnd
+     JOIN testtest.numeric_indicator_value nui_v ON ((nui_v.nui_type_id = vmnd.derived_nui_id)))
+     JOIN testtest.time_interval ti ON ((nui_v.time_interval_id = ti.id)))
+  WHERE (nui_v.user_in_role_id IN ( SELECT user_in_role.id
+           FROM testtest.user_in_role
+          WHERE ((user_in_role.pilot_code)::text = (vmnd.pilot_code)::text)));
+
+ALTER TABLE "testtest"."vw_nui_values_persisted_source_mea_types" OWNER TO "postgres";

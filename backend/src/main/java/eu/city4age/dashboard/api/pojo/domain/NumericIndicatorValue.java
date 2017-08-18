@@ -95,14 +95,13 @@ public class NumericIndicatorValue implements Serializable {
 	}
 
 	public DetectionVariable getDetectionVariable() {
-		return this.detectionVariable;
+		return detectionVariable;
 	}
 
 	public void setDetectionVariable(DetectionVariable detectionVariable) {
 		this.detectionVariable = detectionVariable;
 	}
 
-	
 	public TimeInterval getTimeInterval() {
 		return this.timeInterval;
 	}

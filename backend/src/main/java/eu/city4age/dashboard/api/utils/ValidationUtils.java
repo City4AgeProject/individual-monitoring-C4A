@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.rest;
+package eu.city4age.dashboard.api.utils;
 
 import java.io.File;
 import java.io.IOException;

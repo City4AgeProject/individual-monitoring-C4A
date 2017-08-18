@@ -4,18 +4,13 @@ import java.io.Serializable;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name = "pilot")
@@ -35,21 +30,27 @@ public class Pilot implements Serializable {
 	@Column(name = "population_size")
 	private Double populationSize;
 
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	/*@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "pilot", fetch = FetchType.LAZY)
-	private Set<Location> locations = new HashSet<Location>(0);
+	private Set<Location> locations = new HashSet<Location>(0);*/
 
 	@Column(name = "latest_data_submission_completed")
 	private Date latestSubmissionCompleted;
 
 	@Column(name = "latest_derived_detection_variables_computed")
 	private Date latestVariablesComputed;
+	
+	@Column(name = "latest_configuration_update")
+	private Date latestConfigurationUpdate;
 
 	@Transient
 	private YearMonth lastSubmitted;
 
 	@Transient
 	private YearMonth lastComputed;
+	
+	@Transient
+	private YearMonth lastConfigured;
 
 	public Pilot() {
 		lastSubmitted = YearMonth.of(2017, 2);
@@ -59,7 +60,7 @@ public class Pilot implements Serializable {
 		this.name = name;
 		this.pilotCode = pilotCode;
 		this.populationSize = populationSize;
-		this.locations = locations;
+		//this.locations = locations;
 	}
 
 	public String getName() {
@@ -86,13 +87,13 @@ public class Pilot implements Serializable {
 		this.populationSize = populationSize;
 	}
 
-	public Set<Location> getLocations() {
+	/*public Set<Location> getLocations() {
 		return this.locations;
 	}
 
 	public void setLocations(Set<Location> locations) {
 		this.locations = locations;
-	}
+	}*/
 
 	public YearMonth getLastSubmitted() {
 		return lastSubmitted;
@@ -103,12 +104,15 @@ public class Pilot implements Serializable {
 	}
 
 	public YearMonth getLastComputed() {
-		if (this.latestVariablesComputed != null) {
-			return YearMonth
-					.from(this.latestVariablesComputed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-		} else if (this.latestSubmissionCompleted != null) {
+		if (this.latestSubmissionCompleted != null) {
 			return YearMonth
 					.from(this.latestSubmissionCompleted.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		} else if (this.latestVariablesComputed != null) {
+			return YearMonth
+					.from(this.latestVariablesComputed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		} else if (this.latestConfigurationUpdate != null) {
+			return YearMonth
+					.from(this.latestConfigurationUpdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		} else {
 			return YearMonth.of(2017, 1);
 		}
@@ -116,6 +120,14 @@ public class Pilot implements Serializable {
 
 	public void setLastComputed(YearMonth lastComputed) {
 		this.lastComputed = lastComputed;
+	}
+
+	public YearMonth getLastConfigured() {
+		return lastConfigured;
+	}
+
+	public void setLastConfigured(YearMonth lastConfigured) {
+		this.lastConfigured = lastConfigured;
 	}
 
 	public Date getLatestSubmissionCompleted() {
@@ -132,6 +144,14 @@ public class Pilot implements Serializable {
 
 	public void setLatestVariablesComputed(Date latestVariablesComputed) {
 		this.latestVariablesComputed = latestVariablesComputed;
+	}
+
+	public Date getLatestConfigurationUpdate() {
+		return latestConfigurationUpdate;
+	}
+
+	public void setLatestConfigurationUpdate(Date latestConfigurationUpdate) {
+		this.latestConfigurationUpdate = latestConfigurationUpdate;
 	}
 
 }

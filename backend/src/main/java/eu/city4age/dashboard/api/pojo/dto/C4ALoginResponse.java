@@ -5,11 +5,16 @@
  */
 package eu.city4age.dashboard.api.pojo.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  *
  * @author EMantziou
  */
 public class C4ALoginResponse {
+	
+	private Long id;
+	
 	private String message;
 
 	private int responseCode;
@@ -21,6 +26,15 @@ public class C4ALoginResponse {
 	private String pilotName;
 	
 	private String pilotCode;
+	
+	public Long getId() {
+		return id;
+	}
+
+	@JsonProperty("ID")
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getPilotCode() {
 		return pilotCode;

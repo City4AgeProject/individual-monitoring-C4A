@@ -19,15 +19,19 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 public interface VariationMeasureValueRepository extends GenericRepository<VariationMeasureValue, Long> {
 
 	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.detectionVariable dv LEFT JOIN vm.timeInterval ti WHERE vm.userInRole.id = :uId AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'MON')")
-	List<VariationMeasureValue> findByUserInRoleId(@Param("uId") final Long uId,
+	List<VariationMeasureValue> findAllByUserInRoleId(@Param("uId") final Long uId,
 			@Param("intervalStart") final Timestamp intervalStart);
 
 	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.userInRole uir LEFT JOIN vm.timeInterval ti WHERE uir.pilotCode = :pilotCode AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.intervalStart <= :intervalEnd OR (ti.intervalEnd IS NULL OR ti.intervalEnd <= :intervalEnd)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'DAY')")
-	List<VariationMeasureValue> findByPilotCode(@Param("pilotCode") final String pilotCode,
+	List<VariationMeasureValue> findAllForMonthByPilotCodeNui(@Param("pilotCode") final String pilotCode,
+			@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);
+	
+	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.userInRole uir LEFT JOIN vm.timeInterval ti WHERE uir.pilotCode = :pilotCode AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.intervalStart <= :intervalEnd OR (ti.intervalEnd IS NULL OR ti.intervalEnd <= :intervalEnd)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'DAY' OR ti.typicalPeriod = 'MON')")
+	List<VariationMeasureValue> findAllForMonthByPilotCode(@Param("pilotCode") final String pilotCode,
 			@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);
 
-	@Query("SELECT MIN(vm.id) FROM VariationMeasureValue vm WHERE vm.detectionVariable = :dv AND vm.userInRole = :uir")
-	Long findMinId(@Param("dv") DetectionVariable dv, @Param("uir") UserInRole uir);
+	@Query("SELECT MIN(vm.id) FROM VariationMeasureValue vm WHERE vm.detectionVariable = :dv AND vm.userInRole.id = :uirId")
+	Long findMinId(@Param("dv") DetectionVariable dv, @Param("uirId") Long uirId);
 
 	@Query(nativeQuery = true)
 	BigDecimal doWeightedAvg();

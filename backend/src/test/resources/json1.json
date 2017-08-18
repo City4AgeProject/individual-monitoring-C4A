@@ -37,22 +37,114 @@
 						{
 							"name":"walking",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"WALK_DISTANCE_OUTDOOR",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"WALK_DISTANCE_OUTDOOR_FAST_PERC",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"WALK_DISTANCE_OUTDOOR_SLOW_PERC",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"WALK_TIME_OUTDOOR",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"WALK_SPEED_OUTDOOR",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"still-moving",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"STILL_TIME",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Moving across rooms",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"ROOM_CHANGES",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"BEDROOM_VISITS",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"BEDROOM_TIME",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"LIVINGROOM_VISITS",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"LIVINGROOM_TIME",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"RESTROOM_VISITS",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"RESTROOM_TIME",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"KITCHEN_VISITS",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"KITCHEN_TIME",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Gait balance",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						}
 					]
 				
@@ -66,32 +158,85 @@
 						{
 							"name":"Bathing and showering",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Dressing",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Self-feeding",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Personal hygiene and grooming",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Toilet hygiene",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Going out",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"HOME_TIME",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"OUTDOOR_TIME",
+									"level": 4,
+									"weight":1
+								}
+							]
 						}
 					]
 				}, 
@@ -104,27 +249,122 @@
 						{
 							"name":"Ability to cook food",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Housekeeping",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Laundry",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"WASHINGMACHINE_SESSIONS",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Phone usage",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"PHONECALLS_PLACED",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"PHONECALLS_RECEIVED",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"PHONECALLS_MISSED",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"PHONECALLS_PLACED_PERC",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"PHONECALLS_RECEIVED_PERC",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"PHONECALLS_LONG_RECEIVED_PERC",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"PHONECALLS_SHORT_RECEIVED_PERC",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"PHONECALLS_LONG_PLACED_PERC",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"PHONECALLS_SHORT_PLACED_PERC",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Shopping",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"SUPERMARKET_VISITS",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"SUPERMARKET_TIME",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"SUPERMARKET_TIME_PERC",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"PHARMACY_VISITS_MONTH",
+									"level": 4,
+									"weight":1
+								}
+							]
 						}
 					]
 				}, 
@@ -137,12 +377,43 @@
 						{
 							"name":"Visits",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Attending senior centers",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"SENIORCENTER_VISITS",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"SENIORCENTER_LONG_VISITS",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"SENIORCENTER_TIME",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"SENIORCENTER_TIME_OUT_PERC",
+									"level": 4,
+									"weight":1
+								}
+							]
 						}
 					]
 				}, 
@@ -155,22 +426,59 @@
 						{
 							"name":"Visit entertainment/culture places",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Watching TV",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"TVWATCHING_TIME",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"TVWATCHING_TIME_PERC",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Reading newspapers",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Reading books",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						}
 					]
 				}, 
@@ -178,7 +486,14 @@
 					"name": "Dependence",
 					"level": 2,
 					"weight":1,
-					"subFactors": []
+					"subFactors": 
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 				}, 
 				{
 					"name": "Health - physical",
@@ -189,47 +504,124 @@
 						{
 							"name":"Falls",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Weight",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Weakness",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Exhaustion",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Pain",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Appetite",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Quality of sleep",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Visits to doctors",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"GP_VISITS_MONTH",
+									"level": 4,
+									"weight":1
+								},
+								{
+									"name":"GP_TIME_MONTH",
+									"level": 4,
+									"weight":1
+								}
+							]
 						},
 						{
 							"name":"Visits to health related places",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"PHARMACY_VISITS_MONTH",
+									"level": 4,
+									"weight":1
+								}
+							]
 						}
 					]
 				}, 
@@ -242,7 +634,15 @@
 						{
 							"name":"Mood",
 							"level": 3,
-							"weight":1
+							"weight":1,
+							"measures":
+							[
+								{
+									"name":"",
+									"level": 4,
+									"weight":1
+								}
+							]
 						}
 					]
 				}
