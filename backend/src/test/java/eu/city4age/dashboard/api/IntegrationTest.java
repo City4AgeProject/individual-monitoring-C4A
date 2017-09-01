@@ -2,6 +2,7 @@ package eu.city4age.dashboard.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -48,17 +49,17 @@ public class IntegrationTest {
 
 		//logger.info("Config tree: " + data.getConfigTree().get(3).getFactors().get(0).getSubFactors().get(0).getName());
 		
-		Groups grp1 = data.getConfigTree().get(0);
-		grp1.setWeight(2L);
+		Groups grp1 = data.getGroups().get(0);
+		grp1.setWeight(new BigDecimal("2"));
 		
-		Gef gef1 = data.getConfigTree().get(3).getFactors().get(1);
-		gef1.setWeight(2L);
+		Gef gef1 = data.getGroups().get(3).getFactors().get(1);
+		gef1.setWeight(new BigDecimal("2"));
 		
-		Ges ges1 = data.getConfigTree().get(3).getFactors().get(0).getSubFactors().get(0);
+		Ges ges1 = data.getGroups().get(3).getFactors().get(0).getSubFactors().get(0);
 		ges1.setName("**test_walking_test**");
 		ges1.setLevel(9);
 
-		Mea mea1 = data.getConfigTree().get(3).getFactors().get(0).getSubFactors().get(0).getMeasures().get(0);
+		Mea mea1 = data.getGroups().get(3).getFactors().get(0).getSubFactors().get(0).getMeasures().get(0);
 		mea1.setName("**TEST_WALK_DISTANCE_OUTDOOR_TEST**");
 		mea1.setLevel(5);
 		

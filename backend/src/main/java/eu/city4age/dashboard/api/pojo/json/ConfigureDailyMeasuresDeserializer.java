@@ -10,9 +10,6 @@ public class ConfigureDailyMeasuresDeserializer {
 	Integer level;
 	String dateUpdated;
 	String pilotCode;
-	Long weight;
-	String formula;
-
 	List<Groups> groups;
 
 	public String getName() {
@@ -55,20 +52,5 @@ public class ConfigureDailyMeasuresDeserializer {
 		this.dateUpdated = dateUpdated;
 	}
 
-	public Long getWeight() {
-		return weight;
-	}
-
-	public void setWeight(Long weight) {
-		this.weight = weight;
-	}
-
-	public String getFormula() {
-		return formula;
-	}
-
-	public void setFormula(String formula) {
-		this.formula = formula;
-	}
 
 }
