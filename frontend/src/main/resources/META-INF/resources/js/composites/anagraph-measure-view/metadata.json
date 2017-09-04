@@ -1,0 +1,20 @@
+{
+	"name": "anagraph-measure-view",
+	"description" : "Measure view.",
+	"version": "1.0.0",
+	"jetVersion": ">=3.0.0",
+	"properties": {
+		"measureName": {
+			"description" : "Name of the measure",
+			"type": "string"
+		},
+		"baseUnit": {
+			"description" : "Base unit of the measure",
+			"type": "string"
+		},
+		"lineSeries": {
+			"description" : "Object containing chart data.",
+			"type": "object"
+		}
+	}
+}

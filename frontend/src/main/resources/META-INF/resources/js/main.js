@@ -27,10 +27,12 @@ requirejs.config({
     'entities': 'domain/entities',
     'urls': 'urls',
     
-    'add-assessment': 'composites/add-assessment/loader',
-    'assessments-list': 'composites/assessments-list/loader',
-    'assessments-preview': 'composites/assessments-preview/loader',
-    'anagraph-assessment-view': 'composites/anagraph-assessment-view/loader'
+    'add-assessment': 'composites/anagraph-assessment-view/add-assessment/loader',
+    'assessments-list': 'composites/anagraph-assessment-view/assessments-list/loader',
+    'assessments-preview': 'composites/anagraph-assessment-view/assessments-preview/loader',
+    'anagraph-assessment-view': 'composites/anagraph-assessment-view/loader',
+    
+    'anagraph-measure-view': 'composites/anagraph-measure-view/loader'
   }
   //endinjector
   ,

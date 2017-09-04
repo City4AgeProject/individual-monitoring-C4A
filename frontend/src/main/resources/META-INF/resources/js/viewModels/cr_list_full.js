@@ -74,8 +74,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                             sp.setuserTextline(selectData['textline']);
 
-                            app.age(selectData['age']);
-                            app.textline(selectData['textline']);
+                            /*app.age(selectData['age']);
+                            app.textline(selectData['textline']);*/
 
                             oj.Router.rootInstance.go("detection_gef");
 

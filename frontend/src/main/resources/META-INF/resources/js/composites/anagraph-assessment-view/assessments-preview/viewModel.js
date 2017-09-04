@@ -5,6 +5,12 @@ function(ko, $) {
 	function model(context) {
 
 		var self = this;
+		
+		/*TESTING ROUTING*/
+		self.viewMea = function() {
+			   oj.Router.rootInstance.go("detection_mea");
+			  };
+		/*END TESTING ROUTING*/
 
 		self.dataPointsMarked = ko.observable('No data points marked.');
 		self.clickShowPopupAddAssessmentCallBack = null;
