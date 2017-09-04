@@ -33,6 +33,8 @@ public class MeasuresServiceTest {
 	static protected RestTemplate rest = new TestRestTemplate();
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
+	
+	
 
 	@Test
 	public final void configureDailyMeasuresTest() throws Exception {

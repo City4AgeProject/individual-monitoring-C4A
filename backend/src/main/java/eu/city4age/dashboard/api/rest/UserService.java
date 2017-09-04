@@ -1,6 +1,9 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -51,6 +54,8 @@ public class UserService {
 		UserInRole user;
 		C4ALoginResponse response = new C4ALoginResponse();
 		Pilot userPilot;
+		// list for approved users for login
+		List<Short> approvedUsersForLogin = new ArrayList<Short>(Arrays.asList((short) 8, (short) 7, (short) 6, (short) 5, (short) 4, (short) 2));
 		/**
 		 * ****************Action*************
 		 */
@@ -65,7 +70,7 @@ public class UserService {
 				response.setDisplayName("");
 				return Response.ok(response).build();
 			} else {
-				if (user.getRoleId().equals(Short.valueOf("8"))) {
+				if (approvedUsersForLogin.contains(user.getRoleId())) {
 					response.setMessage("success");
 					response.setResponseCode(10);
 					if (user.getUserInSystem().getDisplayName() != null) {
@@ -80,7 +85,7 @@ public class UserService {
 						response.setRoleId(user.getRoleId());
 					} else {
 						response.setDisplayName("");
-					}						
+					}
 					
 					return Response.ok(response).build();
 				} else {

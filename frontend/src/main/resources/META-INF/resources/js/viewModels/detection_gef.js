@@ -2,7 +2,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 'promise',
     'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
-    'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view'],
+    'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view','anagraph-measure-view'],
 
 function (oj, ko, $, sp, params) {
 	
@@ -178,6 +178,9 @@ function (oj, ko, $, sp, params) {
 
             self.lineGroupsValue = data.groups;
             self.lineSeriesValue = data.series;
+            
+            //printing diagram data from json: 
+            //console.log('Diagram data from json :' + JSON.stringify(data));
             
            for(var ig = 0; ig < Object.keys(data.series).length; ig++){
         		data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
@@ -380,6 +383,17 @@ function (oj, ko, $, sp, params) {
                     });
                     
                     $(".loader-hover").hide();
+                    
+                    //If we get objects with property 'items' == undefined, then set them to [null] so that
+                    //oracle jet cant give an error
+                    self.seriesVal().forEach(function(el) {
+                        if(el.items == undefined){
+                        	el.items = [null];
+                        }
+                    });                    
+                   //If you want to see the data recieved:
+                 /*console.log('This is the data for overall chart ' + JSON.stringify(self.seriesVal())); */                  
+                    
                 });
         }
         

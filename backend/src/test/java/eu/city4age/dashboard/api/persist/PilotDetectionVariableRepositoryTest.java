@@ -19,6 +19,8 @@ import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ApplicationTest.class)
@@ -34,6 +36,16 @@ public class PilotDetectionVariableRepositoryTest {
 	
 	@Autowired
 	private DetectionVariableTypeRepository detectionVariableTypeRepository;
+	
+	@Autowired
+	private VariationMeasureValueRepository variationMeasureValueRepository;
+
+	@Autowired
+	private UserInRoleRepository userInRoleRepository;
+	
+	
+	
+	
 
 	@Test
 	@Transactional
@@ -178,6 +190,7 @@ public class PilotDetectionVariableRepositoryTest {
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
 		dv1.setDetectionVariableType(dvt1);
+		dv1.setDefaultTypicalPeriod("DAY");
 		detectionVariableRepository.save(dv1);
 		
 		DetectionVariable dv2 = new DetectionVariable();

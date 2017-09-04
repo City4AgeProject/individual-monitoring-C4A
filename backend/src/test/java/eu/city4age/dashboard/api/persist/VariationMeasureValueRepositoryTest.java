@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -63,6 +64,100 @@ public class VariationMeasureValueRepositoryTest {
 	@Autowired
 	private MeasuresService measuresService;
 
+	
+	//new test
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFindByUserAndGes() {
+
+		Long uirId = 10L;
+		Long gesId = 514L;
+						
+		
+		//dv measures
+		DetectionVariable mea1 = new DetectionVariable();
+		mea1.setId(91L);
+		mea1.setDetectionVariableType(new DetectionVariableType("MEA"));
+		detectionVariableRepository.save(mea1);
+
+		DetectionVariable mea2 = new DetectionVariable();
+		mea2.setId(95L);
+		mea2.setDetectionVariableType(new DetectionVariableType("MEA"));
+		detectionVariableRepository.save(mea2);
+
+		DetectionVariable mea3 = new DetectionVariable();
+		mea3.setId(98L);
+		mea3.setDetectionVariableType(new DetectionVariableType("MEA"));
+		detectionVariableRepository.save(mea3);
+		
+		//ges
+		DetectionVariable ges = new DetectionVariable();
+		ges.setId(gesId);
+		ges.setDetectionVariableType(new DetectionVariableType("GES"));
+		detectionVariableRepository.save(ges);
+		
+		TimeInterval ti1 = new TimeInterval();
+		ti1.setId(1L);
+		ti1.setIntervalStart(Timestamp.valueOf("2017-05-03 00:00:00"));
+		ti1.setIntervalEnd(Timestamp.valueOf("2017-05-03 00:00:00"));
+		timeIntervalRepository.save(ti1);
+		
+		//user
+		UserInRole uir1 = new UserInRole();
+		uir1.setId(uirId);
+		userInRoleRepository.save(uir1);
+		userInRoleRepository.flush();
+		
+				
+		VariationMeasureValue vm1 = new VariationMeasureValue();
+		vm1.setId(1L);
+		vm1.setDetectionVariable(mea1);
+		vm1.setUserInRole(uir1);
+		vm1.setTimeInterval(ti1);
+		variationMeasureValueRepository.save(vm1);
+
+		VariationMeasureValue vm2 = new VariationMeasureValue();
+		vm2.setId(2L);
+		vm2.setDetectionVariable(mea2);
+		vm2.setUserInRole(uir1);	
+		vm2.setTimeInterval(ti1);
+		variationMeasureValueRepository.save(vm2);
+		
+		VariationMeasureValue vm3 = new VariationMeasureValue();
+		vm3.setId(3L);
+		vm3.setDetectionVariable(mea3);
+		vm3.setUserInRole(uir1);
+		vm3.setTimeInterval(ti1);
+		variationMeasureValueRepository.save(vm3);
+		
+		//pilot variables as measures
+		PilotDetectionVariable pdvMea1 = new PilotDetectionVariable();
+		pdvMea1.setId(10L);
+		pdvMea1.setDetectionVariable(mea1);
+		pdvMea1.setDerivedDetectionVariable(ges);
+		pilotDetectionVariableRepository.save(pdvMea1);
+		
+		PilotDetectionVariable pdvMea2 = new PilotDetectionVariable();
+		pdvMea2.setId(11L);
+		pdvMea2.setDetectionVariable(mea2);
+		pdvMea2.setDerivedDetectionVariable(ges);
+		pilotDetectionVariableRepository.save(pdvMea2);
+		
+		PilotDetectionVariable pdvMea3 = new PilotDetectionVariable();
+		pdvMea3.setId(12L);
+		pdvMea3.setDetectionVariable(mea3);
+		pdvMea3.setDerivedDetectionVariable(ges);
+		pilotDetectionVariableRepository.save(pdvMea3);
+				
+		
+		List<VariationMeasureValue> result = variationMeasureValueRepository.findByUserAndGes(10L, 514L );
+		Assert.assertNotNull(result);
+		
+		Assert.assertEquals(3, result.size());
+		
+	}
+	
 	@Test
 	@Transactional
 	@Rollback(true)

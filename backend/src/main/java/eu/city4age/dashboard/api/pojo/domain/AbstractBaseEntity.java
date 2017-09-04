@@ -27,7 +27,7 @@ public abstract class AbstractBaseEntity<T> implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@JsonView(View.AssessmentView.class)
+	@JsonView(View.BaseView.class)
 	@Id
 	@Generated(GenerationTime.INSERT)
 	@Column(name = "id", columnDefinition = "serial", insertable = true, updatable = true, unique = true)

@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import javax.persistence.Query;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -56,6 +58,13 @@ import eu.city4age.dashboard.api.pojo.domain.ViewMeaNuiDerivationPerPilot;
 import eu.city4age.dashboard.api.pojo.domain.ViewNuiValuesPersistedSourceMeaTypes;
 import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
+import eu.city4age.dashboard.api.pojo.json.view.View;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
  * @author milos.holclajtner
@@ -105,6 +114,45 @@ public class MeasuresService {
 	@Autowired
 	private ViewMeaNuiDerivationPerPilotRepository viewMeaNuiDerivationPerPilotRepository;
 
+	//new
+	@GET
+	@ApiOperation("Get daily measures for care recipient within given geriatric subfactor.")
+	@Produces(MediaType.APPLICATION_JSON)
+	@JsonView(View.VariationMeasureValueView.class)
+	@Path("findByUserAndGes/userInRoleId/{userInRoleId}/gesId/{gesId}")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "userInRoleId", value = "id of care recipient", required = false, dataType = "long", paramType = "path", defaultValue = "1"),
+		@ApiImplicitParam(name = "gesId", value = "id of geriatric subfactor", required = false, dataType = "long", paramType = "path", defaultValue = "2") })		
+	@ApiResponses(value = { 
+			@ApiResponse(code = 200, message = "Success", response = VariationMeasureValue.class),
+			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
+	public Response findByUserAndGes(
+			@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
+			@ApiParam(hidden = true) @PathParam("gesId") Long gesId)
+			throws JsonProcessingException {
+		logger.info("findByUserAndGes method begins");
+		logger.info("findByUserAndGes ovo je userInroleID:  " + userInRoleId + " a ovo je gesId:  " + gesId );
+		List<VariationMeasureValue> measures = new ArrayList<VariationMeasureValue>();
+		try {
+			 measures = variationMeasureValueRepository.findByUserAndGes(userInRoleId, gesId);
+			 logger.info("findByUserAndGes measures after query" + measures);
+			 if(measures.size() > 0) {
+				 logger.info("findByUserAndGes measures after query get(0)" + measures.get(0).getId());
+				 logger.info("findByUserAndGes measures after query get(0) dv name is: " + measures.get(0).getDetectionVariable().getDetectionVariableName());
+				 
+				 logger.info("findByUserAndGes measures after query get(0) measure value length is: " + measures.get(0).getDetectionVariable().getVariationMeasureValue().size());
+			 }
+		} catch (Exception e) {
+			logger.info("findByUserAndGes REST service - query exception: ", e);
+		}
+		
+		logger.info("findByUserAndGes SVE PROSLO BEZ EXEPTION");
+		return Response.ok(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures)).build();	
+
+		
+	}
+
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("computeFromMeasures")

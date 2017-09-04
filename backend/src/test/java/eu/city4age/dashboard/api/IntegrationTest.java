@@ -49,11 +49,13 @@ public class IntegrationTest {
 
 		//logger.info("Config tree: " + data.getConfigTree().get(3).getFactors().get(0).getSubFactors().get(0).getName());
 		
+
 		Groups grp1 = data.getGroups().get(0);
 		grp1.setWeight(new BigDecimal("2"));
 		
 		Gef gef1 = data.getGroups().get(3).getFactors().get(1);
 		gef1.setWeight(new BigDecimal("2"));
+
 		
 		Ges ges1 = data.getGroups().get(3).getFactors().get(0).getSubFactors().get(0);
 		ges1.setName("**test_walking_test**");

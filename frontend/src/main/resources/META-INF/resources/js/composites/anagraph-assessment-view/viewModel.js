@@ -295,7 +295,9 @@ function(oj, ko, $) {
 
 		self.chartDrill = function(event, ui) {
 			console.log('drill on anagraph-assessment-view');
-            var seriesVal = ui['series'];      
+
+            var seriesVal = ui['series'];            
+					
             self.props.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
             
             //if subfaktor lineseries is clicked, transfer to detection_mea page
@@ -306,15 +308,27 @@ function(oj, ko, $) {
             }
             
             self.props.titleValue = seriesVal + "Geriatric factors";
+
             self.props.parentFactorId = ui['seriesData'].items[0].gefTypeId;
             
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
+
             
             console.log('seriesVal = ' + seriesVal);
             console.log('selectedID = ' + self.props.selectedId);
             console.log('titleValue = ' + self.props.titleValue);
             console.log('parentFactorId = ' + self.props.parentFactorId);
+
+            
+          //if subfactor lineseries is clicked, transfer to detection_mea page
+            if(self.props.selectedId > 513){
+            	console.log('veci od 513');
+            	oj.Router.rootInstance.go("detection_mea");
+            	return;
+            }
+            
+
 			self.bGotoGESClick();
 
 		}

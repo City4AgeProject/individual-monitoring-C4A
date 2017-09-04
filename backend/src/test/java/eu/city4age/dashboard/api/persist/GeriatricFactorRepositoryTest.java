@@ -19,8 +19,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.persist.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
+import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
@@ -48,6 +50,9 @@ public class GeriatricFactorRepositoryTest {
 	
 	@Autowired
 	private MeasuresService measuresService;
+
+	@Autowired
+	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
 	
 	@Test
 	@Transactional
@@ -56,20 +61,27 @@ public class GeriatricFactorRepositoryTest {
 		
 		UserInRole userInRole = new UserInRole();
 		userInRole.setId(1L);
+		userInRole.setPilotCode("LCC");
 		userInRoleRepository.save(userInRole);
+		
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setId(1L);
+		detectionVariableRepository.save(dv1);
 		
 		DetectionVariable dv2 = new DetectionVariable();
 		dv2.setId(2L);
 		detectionVariableRepository.save(dv2);
 		
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(1L);
-		dv1.setDerivedDetectionVariable(dv2);
-		detectionVariableRepository.save(dv1);
-		
 		TimeInterval ti1 = measuresService
 				.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		timeIntervalRepository.save(ti1);
+		
+		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
+		pdv1.setId(1L);
+		pdv1.setPilotCode("LCC");
+		pdv1.setDetectionVariable(dv1);
+		pdv1.setDerivedDetectionVariable(dv2);
+		pilotDetectionVariableRepository.save(pdv1);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setId(1L);
@@ -93,6 +105,8 @@ public class GeriatricFactorRepositoryTest {
 		geriatricFactorRepository.save(gef3);
 
 		List<GeriatricFactorValue> result = geriatricFactorRepository.findByDetectionVariableId(2L, 1L);
+		
+		logger.info("result.size(): " + result.size());
 
 		Assert.assertNotNull(result);
 

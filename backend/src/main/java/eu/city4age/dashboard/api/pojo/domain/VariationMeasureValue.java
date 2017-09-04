@@ -15,6 +15,10 @@ import javax.persistence.Table;
 import org.hibernate.annotations.NamedNativeQueries;
 import org.hibernate.annotations.NamedNativeQuery;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import eu.city4age.dashboard.api.pojo.json.view.View;
+
 @SqlResultSetMappings(value = { @SqlResultSetMapping(name = "avgMapping", columns = { @ColumnResult(name = "avg") }),
 		@SqlResultSetMapping(name = "stDevMapping", columns = { @ColumnResult(name = "st_dev") }),
 		@SqlResultSetMapping(name = "best25PercMapping", columns = { @ColumnResult(name = "best_25_perc") }),
@@ -35,26 +39,31 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	 * 
 	 */
 	private static final long serialVersionUID = 2579000073949031381L;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "activity_id")
 	private Activity activity;
-
+	
+	@JsonView(View.VariationMeasureValueView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "measure_type_id", referencedColumnName = "id")
 	private DetectionVariable detectionVariable;
-
+	
+	@JsonView(View.VariationMeasureValueView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "time_interval_id", referencedColumnName = "id")
 	private TimeInterval timeInterval;
-
+	
+	
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_in_role_id")
 	private UserInRole userInRole;
 
+	@JsonView(View.VariationMeasureValueView.class)
 	@Column(name = "measure_value", precision = 30, scale = 10)
 	private BigDecimal measureValue;
 
+	
 	@Column(name = "extra_information", length = 1000)
 	private String extraInformation;
 

@@ -16,7 +16,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 $.getJSON(CARE_RECIPIENT_ALL + "/pilotCode/" + pilotCode).
                        then(function (users) {
                     	   
-                    	   console.log("BROJ USER_A:"+ users.itemList.length);
+                    	   //printing all cr from json:
+                    	   //console.log( JSON.stringify(users) );
+                    	   
                     	   
                             $.each(users.itemList, function () {
 
@@ -64,8 +66,16 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 self.menuItemSelect = function (event, ui) {
                     var currentRow = $('#table').ojTable('option', 'currentRow');
-                    var selectData = self.data()[currentRow['rowIndex']];
-                    console.log("id " + selectData['cr_id'] + " age " + selectData['age']);
+                    var selectData;
+                    
+                  //finding cr with cr_id = selectedRow.keyId
+		              for(var i = 0; i< self.data().length; i++){                    	                   	
+			                         if(self.data()[i].cr_id == currentRow.rowKey){                   		
+			                              		selectData = self.data()[i];
+			                                      	}
+			               }
+
+                    console.log(" selected care recipient with: id " + selectData['cr_id'] + " age " + selectData['age']);
 
                     switch (ui.item.attr("id")) {
                         case "view_more_det":
@@ -74,7 +84,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                             sp.setuserTextline(selectData['textline']);
 
-                            /*app.age(selectData['age']);
+                            
+                            //app should be defined in define block for this below to work!
+                            
+                           /* app.age(selectData['age']);
+
                             app.textline(selectData['textline']);*/
 
                             oj.Router.rootInstance.go("detection_gef");
@@ -89,8 +103,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 self.navigateToGef = function() {
                     var currentTableRow = $( "#table" ).ojTable("option", "currentRow");
-                    var crData = self.data()[currentTableRow.rowIndex];
-                    self.viewGef(crData.cr_id,crData.textline,crData.age);
+                    var crData;
+	                  //finding cr with cr_id = selectedRow.keyId
+	                  for(var i = 0; i< self.data().length; i++){                    	                    	
+	                        if(self.data()[i].cr_id == currentTableRow.rowKey){                   		
+	                                      		crData = self.data()[i];
+	                                      	}
+	                                      }
+	
+	                    self.viewGef(crData.cr_id,crData.textline,crData.age);
                 };
 
                 self.viewGef = function (userId, textline, age) {

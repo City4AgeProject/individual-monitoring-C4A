@@ -188,10 +188,7 @@ public class ViewMeaNuiDerivationPerPilotTest {
 		pilotDetectionVariableRepository.save(pdv3);
 		
 		
-		List<ViewMeaNuiDerivationPerPilot> results1 = viewMeaNuiDerivationPerPilotRepository.findAll();
-		Long meaId = results1.get(0).getMeaId();
-		
-		List<ViewMeaNuiDerivationPerPilot> results = viewMeaNuiDerivationPerPilotRepository.findAllNuiForMea(meaId);
+		List<ViewMeaNuiDerivationPerPilot> results = viewMeaNuiDerivationPerPilotRepository.findAllNuiForMea(111L);
 
 		Assert.assertNotNull(results);
 		Assert.assertEquals(2, results.size());

@@ -26,6 +26,7 @@ public class PilotDetectionVariable implements Serializable {
 
 	private static final long serialVersionUID = 7337284221184594172L;
 	
+	
 	@Id
 	@SequenceGenerator(name = "pdv_seq", sequenceName = "md_pilot_detection_variable_id_seq", allocationSize = 1)
 	@GeneratedValue(generator = "pdv_seq", strategy = GenerationType.SEQUENCE)
@@ -39,20 +40,25 @@ public class PilotDetectionVariable implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+	
+	
 	@Column(name="pilot_code")
 	private String pilotCode;
+	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "derived_detection_variable_id")
 	private DetectionVariable derivedDetectionVariable;
 
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "detection_variable_id")
 	private DetectionVariable detectionVariable;
-
+	
+	
 	@Column(name = "derivation_function_formula")
 	private String formula;
+	
 	
 	@Column(name="derivation_weight")
 	private BigDecimal derivationWeight;
