@@ -15,12 +15,7 @@ import eu.city4age.dashboard.api.pojo.domain.ViewNuiValuesPersistedSourceMeaType
 @Transactional(readOnly = true)
 public interface ViewNuiValuesPersistedSourceMeaTypesRepository extends GenericRepository<ViewNuiValuesPersistedSourceMeaTypes, Long> {
 	
-	@Query("SELECT vnv FROM ViewNuiValuesPersistedSourceMeaTypes vnv "
-			+ "WHERE vnv.userInRoleId = :uirId "
-			+ "AND vnv.derivedNuiId = :gesDvId "
-			+ "AND vnv.pilotCode = :pilotCode "
-			+ "AND vnv.intervalStart = :yearMonth "
-			+ "AND vnv.typicalPeriod = 'MON'")
+	@Query("SELECT vnv FROM ViewNuiValuesPersistedSourceMeaTypes vnv WHERE vnv.userInRoleId = :uirId AND vnv.derivedNuiId = :gesDvId AND vnv.pilotCode = :pilotCode AND vnv.intervalStart = :yearMonth AND vnv.typicalPeriod = 'MON'")
 	List<ViewNuiValuesPersistedSourceMeaTypes> findNuiFor1Month(@Param("pilotCode") final String pilotCode, @Param("yearMonth") final Timestamp yearMonth, @Param("gesDvId") final Long gesDvId, @Param("uirId") final Long uirId);
 
 }

@@ -43,6 +43,7 @@ import eu.city4age.dashboard.api.persist.PilotRepository;
 import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.persist.VariationMeasureValueRepository;
+import eu.city4age.dashboard.api.persist.ViewGefValuesPersistedSourceGesTypesRepository;
 import eu.city4age.dashboard.api.persist.ViewMeaNuiDerivationPerPilotRepository;
 import eu.city4age.dashboard.api.persist.ViewNuiValuesPersistedSourceMeaTypesRepository;
 import eu.city4age.dashboard.api.persist.ViewPilotDetectionVariableRepository;
@@ -54,6 +55,7 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
+import eu.city4age.dashboard.api.pojo.domain.ViewGefValuesPersistedSourceGesTypes;
 import eu.city4age.dashboard.api.pojo.domain.ViewMeaNuiDerivationPerPilot;
 import eu.city4age.dashboard.api.pojo.domain.ViewNuiValuesPersistedSourceMeaTypes;
 import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
@@ -113,6 +115,9 @@ public class MeasuresService {
 
 	@Autowired
 	private ViewMeaNuiDerivationPerPilotRepository viewMeaNuiDerivationPerPilotRepository;
+	
+	@Autowired
+	private ViewGefValuesPersistedSourceGesTypesRepository viewGefValuesPersistedSourceGesTypesRepository;
 
 	//new
 	@GET
@@ -164,20 +169,81 @@ public class MeasuresService {
 		// bice lastSubmited i lastComputed(servis upisuje) date
 
 		List<Pilot> pilots = pilotRepository.findAll();
+		
+		logger.info("pilots size: " + pilots.size());
 
 		for (Pilot pilot : pilots) {
 			// logger.info("getLastComputed before Nuis: " +
 			// pilot.getLastComputed());
+			logger.info("pilot code: " + pilot.getPilotCode());
 			computeNuisForPilot(pilot.getPilotCode(), pilot.getLastComputed());
 		}
 
 		for (Pilot pilot : pilots) {
 			// logger.info("getLastComputed before GESs: " +
 			// pilot.getLastComputed());
+			logger.info("pilot code: " + pilot.getPilotCode());
 			computeGESsForPilot(pilot.getPilotCode(), pilot.getLastComputed());
+			logger.info("pilot code: " + pilot.getPilotCode());
+			computeForPilot("GEF", new BigDecimal(.125), pilot.getPilotCode(), pilot.getLastComputed());
+			computeForPilot("GFG", new BigDecimal(.5),pilot.getPilotCode(), pilot.getLastComputed());
+			computeForPilot("OVL", new BigDecimal(1),pilot.getPilotCode(), pilot.getLastComputed());
 		}
 
 		return Response.ok().build();
+	}
+
+	private void computeForPilot(String dvName, BigDecimal weight, String pilotCode, YearMonth lastComputedYearMonth) {
+		logger.info("computeGEFsForPilot");
+		YearMonth currentYearMonth = YearMonth.now();
+		YearMonth currentComputedYearMonth = lastComputedYearMonth.plusMonths(1L);
+		Timestamp startOfMonth;
+		Timestamp endOfMonth;
+		while (!currentComputedYearMonth.equals(currentYearMonth)) {
+			startOfMonth = Timestamp.valueOf(currentComputedYearMonth.atDay(1).atStartOfDay());
+			endOfMonth = Timestamp.valueOf(currentComputedYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
+			computeFor1Month(dvName, weight, pilotCode, startOfMonth, endOfMonth);
+			currentComputedYearMonth = currentComputedYearMonth.plusMonths(1L);
+		}
+	}
+
+	private void computeFor1Month(String dvName, BigDecimal weight, String pilotCode, Timestamp startOfMonth, Timestamp endOfMonth) {
+		logger.info("computeFor1Month: " + dvName);
+		logger.info("pilotCode: " + pilotCode);
+		logger.info("startOfMonth: " + startOfMonth.toString());
+		logger.info("endOfMonth: " + endOfMonth.toString());
+		
+		List<ViewGefValuesPersistedSourceGesTypes> list = viewGefValuesPersistedSourceGesTypesRepository.findAllForMonthByPilotCode(pilotCode, startOfMonth, dvName);
+		
+		logger.info("list size: " +  list.size());
+		
+		list.sort(new Comparator<ViewGefValuesPersistedSourceGesTypes>() {
+			@Override
+			public int compare(ViewGefValuesPersistedSourceGesTypes o1, ViewGefValuesPersistedSourceGesTypes o2) {
+				int value1 = o1.getId().getUserInRoleId().compareTo(o2.getId().getUserInRoleId());
+				if (value1 == 0) {
+					return o1.getId().getDerivedDetectionVariableId().compareTo(o2.getId().getDerivedDetectionVariableId());
+				} else
+					return value1;
+			}
+		});
+		
+		Long previousUserId = 0L;
+		BigDecimal sum = new BigDecimal(0);
+		for(ViewGefValuesPersistedSourceGesTypes ges: list) {
+			if(previousUserId.equals(ges.getId().getUserInRoleId())) {
+				sum.add(ges.getGefValue().multiply(ges.getDerivationWeight()));
+			} else {
+				if(!previousUserId.equals(0L))
+					createGFV(ges.getId().getDerivedDetectionVariableId(), sum, weight, startOfMonth, endOfMonth, previousUserId, pilotCode);
+				sum = ges.getGefValue().multiply(ges.getDerivationWeight());
+			}
+			previousUserId = ges.getId().getUserInRoleId();
+		}
+		if (list != null && list.size() > 1)
+			createGFV(list.get(list.size()-1).getId().getDerivedDetectionVariableId(), sum, weight, startOfMonth, endOfMonth, previousUserId, pilotCode);
+		
+		
 	}
 
 	private void computeGESsForPilot(String pilotCode, YearMonth lastComputedYearMonth) {
@@ -260,7 +326,7 @@ public class MeasuresService {
 							logger.info("vpdv id uir: " + list.get(i).getId().getUserInRoleId());
 
 							if(list.size() > 1 && i > 1 && !list.get(i-1).getId().getDerivedDetectionVariableId().equals(list.get(i).getId().getDerivedDetectionVariableId()))
-								createGes(list.get(i-1), previousGesValue, startOfMonth, endOfMonth, list.get(i-1).getId().getUserInRoleId(), pilotCode);
+								createGFV(list.get(i-1).getId().getDerivedDetectionVariableId(), previousGesValue, null, startOfMonth, endOfMonth, list.get(i-1).getId().getUserInRoleId(), pilotCode);
 							
 							String dtp = list.get(i).getDefaultTypicalPeriod();
 
@@ -287,12 +353,14 @@ public class MeasuresService {
 							
 						}
 						if (list != null && list.size() > 1)
-							createGes(list.get(list.size()-1), previousGesValue, startOfMonth, endOfMonth, list.get(list.size()-1).getId().getUserInRoleId(), pilotCode);
+							createGFV(list.get(list.size()-1).getId().getDerivedDetectionVariableId(), previousGesValue, null, startOfMonth, endOfMonth, list.get(list.size()-1).getId().getUserInRoleId(), pilotCode);
 					}
 				}
 			}
 		}
 	}
+
+
 
 	private BigDecimal computeDerivedMeaForNUI(String pilotCode, Timestamp startOfMonth, Timestamp endOfMonth,
 			ViewPilotDetectionVariable vpdv, Long userId) {
@@ -385,24 +453,29 @@ public class MeasuresService {
 
 	}
 
-	private void createGes(ViewPilotDetectionVariable vpdv, BigDecimal gesValue, Timestamp startOfMonth,
+	private GeriatricFactorValue createGFV(Long derivedDetectionVariableId, BigDecimal gesValue, BigDecimal weight, Timestamp startOfMonth,
 			Timestamp endOfMonth, Long userId, String pilotCode) {
-		logger.info("createGes");
+		logger.info("createGFV");
 		logger.info("gesValue: " + gesValue);
 		GeriatricFactorValue ges = new GeriatricFactorValue();
 		ges.setGefValue(gesValue);
 		ges.setTimeInterval(getOrCreateTimeInterval(startOfMonth, TypicalPeriod.MONTH));
-		ges.setDetectionVariable(detectionVariableRepository.findOne(vpdv.getId().getDerivedDetectionVariableId()));
+		ges.setDetectionVariable(detectionVariableRepository.findOne(derivedDetectionVariableId));
+		logger.info("userId: " + userId);
 		UserInRole uir = userInRoleRepository.findOne(userId);
 		ges.setUserInRole(uir);
-		BigDecimal weight = pilotDetectionVariableRepository
-				.findByDetectionVariableAndPilotCodeGesGef(vpdv.getId().getDerivedDetectionVariableId(), pilotCode);
-		if (weight != null)
+		if(weight == null) {
+			weight = pilotDetectionVariableRepository
+				.findByDetectionVariableAndPilotCodeGesGef(derivedDetectionVariableId, pilotCode);
+		}
+		if (weight != null) {
 			ges.setDerivationWeight(weight);
-		else
+		} else {
 			ges.setDerivationWeight(new BigDecimal(0));
+		}
 		logger.info("pre save");
 		geriatricFactorRepository.save(ges);
+		return ges;
 	}
 
 	private BigDecimal computeDerivedMeaForMM(String pilotCode, Timestamp startOfMonth, Timestamp endOfMonth,

@@ -1,7 +1,5 @@
 package eu.city4age.dashboard.api.pojo.dto;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 

@@ -22,7 +22,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -48,7 +47,7 @@ public class TimeInterval implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -865550404227746101L;
-	
+
 	@Id
 	@Basic(optional = false)
 	@SequenceGenerator(name = "ti_seq", sequenceName = "time_interval_id_seq", allocationSize = 1)
@@ -64,12 +63,12 @@ public class TimeInterval implements Serializable {
 		this.id = id;
 	}
 
-	//@JsonIgnore
+	// @JsonIgnore
 	@JsonView(View.VariationMeasureValueView.class)
 	@Column(name = "interval_start")
 	private Timestamp intervalStart;
 
-	//@JsonIgnore
+	// @JsonIgnore
 	@JsonView(View.VariationMeasureValueView.class)
 	@Column(name = "interval_end")
 	private Timestamp intervalEnd;

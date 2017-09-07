@@ -14,14 +14,11 @@ import eu.city4age.dashboard.api.pojo.domain.ViewMeaNuiDerivationPerPilot;
 @Transactional(readOnly = true)
 public interface ViewMeaNuiDerivationPerPilotRepository extends GenericRepository<ViewMeaNuiDerivationPerPilot, Long> {
 
-	@Query("SELECT vmn FROM ViewMeaNuiDerivationPerPilot vmn "
-			+ "WHERE vmn.derivedNuiId = :nuiId "
-			+ "AND vmn.pilotCode = :pilotCode")
+	@Query("SELECT vmn FROM ViewMeaNuiDerivationPerPilot vmn WHERE vmn.derivedNuiId = :nuiId AND vmn.pilotCode = :pilotCode")
 	ViewMeaNuiDerivationPerPilot findByDerivedDetectionVariableAndPilotCode(@Param("nuiId") Long nuiId,
 			@Param("pilotCode") String pilotCode);
 
-	@Query("SELECT vmn FROM ViewMeaNuiDerivationPerPilot vmn "
-			+ "WHERE vmn.meaId = :meaId")
+	@Query("SELECT vmn FROM ViewMeaNuiDerivationPerPilot vmn WHERE vmn.meaId = :meaId")
 	List<ViewMeaNuiDerivationPerPilot> findAllNuiForMea(@Param("meaId") Long meaId);
 
 }

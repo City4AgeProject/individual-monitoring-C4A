@@ -77,7 +77,7 @@ create sequence testtest.time_interval_id_seq;
 create sequence testtest.numeric_indicator_value_id_seq;
 create sequence testtest.geriatric_factor_value_id_seq;
 CREATE OR REPLACE VIEW "testtest"."vw_detection_variable_derivation_per_user_in_role" AS 
- SELECT uir.id AS id_user_in_role,
+ SELECT uir.id AS user_in_role_id,
     uir.role_id,
     uir.pilot_code,
     mpdv.id AS mpdv_id,
@@ -134,3 +134,26 @@ CREATE OR REPLACE VIEW "testtest"."vw_nui_values_persisted_source_mea_types" AS
           WHERE ((user_in_role.pilot_code)::text = (vmnd.pilot_code)::text)));
 
 ALTER TABLE "testtest"."vw_nui_values_persisted_source_mea_types" OWNER TO "postgres";
+CREATE OR REPLACE VIEW "testtest"."vw_gef_values_persisted_source_ges_types" AS 
+ SELECT vggd.mpdv_id,
+    vggd.pilot_code,
+    gef_v.user_in_role_id,
+    vggd.detection_variable_id,
+    vggd.detection_variable_name,
+    vggd.detection_variable_type,
+    vggd.derived_detection_variable_id,
+    vggd.derived_detection_variable_name,
+    vggd.derived_detection_variable_type,
+    gef_v.id,
+    gef_v.gef_value,
+    vggd.derivation_weight,
+    ti.id AS time_interval_id,
+    ti.interval_start,
+    ti.typical_period,
+    ti.interval_end
+   FROM ((testtest.vw_detection_variable_derivation_per_user_in_role vggd
+     JOIN testtest.geriatric_factor_value gef_v ON (((gef_v.gef_type_id = vggd.derived_detection_variable_id) AND (gef_v.user_in_role_id = vggd.user_in_role_id))))
+     JOIN testtest.time_interval ti ON ((gef_v.time_interval_id = ti.id)))
+  WHERE ((vggd.derived_detection_variable_type)::text = ANY ((ARRAY['GEF'::character varying, 'GFG'::character varying, 'OVL'::character varying])::text[]));
+
+ALTER TABLE "testtest"."vw_gef_values_persisted_source_ges_types" OWNER TO "city4age_dba";

@@ -6,7 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class ViewPilotDetectionVariableKey implements Serializable {
+public class ViewGefValuesPersistedSourceGesTypesKey implements Serializable {
 
 	/**
 	 * 
@@ -20,20 +20,24 @@ public class ViewPilotDetectionVariableKey implements Serializable {
 	private Long userInRoleId;
 	
 	@Column(name = "detection_variable_id")
-	private Long detectionVariableId;
+	private Long gesId;
 	
 	@Column(name = "derived_detection_variable_id")
-	private Long derivedDetectionVariableId;
+	private Long gefId;
 	
-	public ViewPilotDetectionVariableKey() {
+	@Column(name = "id")
+	private Long id;
+
+	public ViewGefValuesPersistedSourceGesTypesKey() {
 		
 	}
 	
-	public ViewPilotDetectionVariableKey(String pilotCode, Long userInRoleId, Long detectionVariableId, Long derivedDetectionVariableId) {
+	public ViewGefValuesPersistedSourceGesTypesKey(String pilotCode, Long userInRoleId, Long gesId, Long gefId, Long id) {
 		this.pilotCode = pilotCode;
 		this.userInRoleId = userInRoleId;
-		this.detectionVariableId = detectionVariableId;
-		this.derivedDetectionVariableId = derivedDetectionVariableId;
+		this.gesId = gesId;
+		this.gefId = gefId;
+		this.id = id;
 	}
 	
 	public String getPilotCode() {
@@ -53,18 +57,26 @@ public class ViewPilotDetectionVariableKey implements Serializable {
 	}
 	
 	public Long getDetectionVariableId() {
-		return detectionVariableId;
+		return gesId;
 	}
 
 	public void setDetectionVariableId(Long detectionVariableId) {
-		this.detectionVariableId = detectionVariableId;
+		this.gesId = detectionVariableId;
 	}
 	
 	public Long getDerivedDetectionVariableId() {
-		return derivedDetectionVariableId;
+		return gefId;
 	}
 
 	public void setDerivedDetectionVariableId(Long derivedDetectionVariableId) {
-		this.derivedDetectionVariableId = derivedDetectionVariableId;
+		this.gefId = derivedDetectionVariableId;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

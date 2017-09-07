@@ -15,15 +15,11 @@ import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 @Transactional(readOnly = true)
 public interface FrailtyStatusTimelineRepository extends GenericRepository<FrailtyStatusTimeline, Long> {
 
-	@Query("SELECT fst FROM FrailtyStatusTimeline fst "
-			+ "WHERE fst.timeInterval IN :timeintervals "
-			+ "AND fst.userInRole.id = :userId")
+	@Query("SELECT fst FROM FrailtyStatusTimeline fst WHERE fst.timeInterval IN :timeintervals AND fst.userInRole.id = :userId")
 	List<FrailtyStatusTimeline> findByPeriodAndUserId(@Param("timeintervals") final List<TimeInterval> timeintervals,
 			@Param("userId") final Long uId);
 
-	@Query("SELECT fst FROM FrailtyStatusTimeline fst "
-			+ "WHERE fst.timeInterval.id IN :timeintervalIds "
-			+ "AND fst.userInRole.id = :userId")
+	@Query("SELECT fst FROM FrailtyStatusTimeline fst WHERE fst.timeInterval.id IN :timeintervalIds AND fst.userInRole.id = :userId")
 	List<FrailtyStatusTimeline> findByPeriodAndUserIdOld(@Param("timeintervalIds") final List<Long> timeintervalIds,
 			@Param("userId") final Long uId);
 
