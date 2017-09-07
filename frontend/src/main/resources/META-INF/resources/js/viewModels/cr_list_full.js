@@ -12,8 +12,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.usersOuter = ko.observableArray();
                 
                 var pilotCode = sessionStorage.getItem("pilotcode");
-
+                               
                 $.getJSON(CARE_RECIPIENT_ALL + "/pilotCode/" + pilotCode).
+                
                        then(function (users) {
                     	   
                     	   //printing all cr from json:

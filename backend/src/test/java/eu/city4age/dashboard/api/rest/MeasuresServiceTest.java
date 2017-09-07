@@ -37,6 +37,26 @@ public class MeasuresServiceTest {
 	
 
 	@Test
+	public void findByUserAndGesTest() throws Exception {
+
+		try {
+			String uri = "http://localhost:8080/C4A-dashboard/rest/measures/findByUserAndGes/userInRoleId/10/gesId/514";
+			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
+			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
+			if (!response.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+			}
+			logger.info("Output from Server (INSIDE findByUserAndGesTest).... ");
+			logger.info(response);
+			logger.info("3: " + response.getBody());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+	
+	@Test
 	public final void configureDailyMeasuresTest() throws Exception {
 
 		Resource schemaFile = new ClassPathResource("/JsonValidator.json", this.getClass());

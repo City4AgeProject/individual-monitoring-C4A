@@ -48,12 +48,12 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 	@JoinColumn(name = "derived_detection_variable_id", referencedColumnName = "id")
 	private DetectionVariable derivedDetectionVariable;
 
-	//@JsonIgnore
-	@JsonView(View.VariationMeasureValueView.class)
+	@JsonIgnore	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "detection_variable_type")
 	private DetectionVariableType detectionVariableType;
 	
+	@JsonView(View.VariationMeasureValueView.class)
 	@Column(name = "default_typical_period")
 	private String  defaultTypicalPeriod;
 	

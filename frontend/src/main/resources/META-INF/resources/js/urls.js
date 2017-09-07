@@ -18,4 +18,6 @@ var CARE_RECIPIENT_ALL = root + "careRecipient/getCareRecipients";
 var CARE_RECIPIENT_GROUPS = root + "careRecipient/getGroups";
 var CARE_RECIPIENT_DIAGRAM_DATA = root + "careRecipient/getDiagramData";
 
+var DAILY_MEASURES_DATA = root + "measures/findByUserAndGes";
+
 var USER_LOGIN = root + "users/login";

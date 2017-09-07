@@ -54,7 +54,7 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	private TimeInterval timeInterval;
 	
 	
-	
+	@JsonView(View.VariationMeasureValueView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_in_role_id")
 	private UserInRole userInRole;
@@ -63,10 +63,11 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	@Column(name = "measure_value", precision = 30, scale = 10)
 	private BigDecimal measureValue;
 
-	
+	@JsonView(View.VariationMeasureValueView.class)
 	@Column(name = "extra_information", length = 1000)
 	private String extraInformation;
 
+	
 	@Column(name = "data_source_type", length = 1000)
 	private String dataSourceType;
 

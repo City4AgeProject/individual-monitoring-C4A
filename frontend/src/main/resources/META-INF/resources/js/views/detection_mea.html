@@ -1,4 +1,4 @@
-	<div id='ges-chart-container'>
+	<!-- <div id='ges-chart-container'>
 		<h3><span data-bind="text: data.gesName"></span> and its measures</h3>
 	    <div id="lineChart" data-bind="ojComponent: {
 	        component: 'ojChart', 
@@ -13,12 +13,13 @@
 	         style="width:100%;height:350px;">
 	    </div>
 	    
-	</div>
+	</div> -->
 <div id="daily-measures-container">
 	<h3>Visualization of daily measures</h3>
 	<br>
 <!-- ko foreach: data.dailyMeasures-->
-    <anagraph-measure-view  measure-name="{{measureName}}" base-unit= "{{baseUnit}}" line-series="{{lineSeries}}" />
+    <anagraph-measure-view  measure-name="{{measureName}}"  line-series="{{lineSeries}}" />
+    <!-- base-unit= "{{baseUnit}}" -->
     <br><br>
 <!-- /ko -->
 </div>

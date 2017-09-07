@@ -17,8 +17,17 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 @Transactional(readOnly = true)
 public interface VariationMeasureValueRepository extends GenericRepository<VariationMeasureValue, Long> {
 	
-	//new
-	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.detectionVariable dv LEFT JOIN vm.timeInterval ti WHERE vm.detectionVariable.id IN (SELECT pdv.detectionVariable.id FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE pdv.derivedDetectionVariable.id = :gesId AND dv.detectionVariableType = 'MEA') AND vm.userInRole.id = :uId ")					
+	
+	@Query("SELECT vm FROM VariationMeasureValue vm "
+			+ "INNER JOIN FETCH vm.detectionVariable dv "
+			+ "LEFT JOIN FETCH vm.timeInterval ti "			
+			+ "WHERE vm.detectionVariable.id IN( "
+				+ "SELECT pdv.detectionVariable.id FROM PilotDetectionVariable pdv "
+				+ "INNER JOIN pdv.detectionVariable dv "
+				+ "WHERE pdv.derivedDetectionVariable.id = :gesId "
+				+ "AND dv.detectionVariableType = 'MEA') "
+			+ "AND vm.userInRole.id = :uId "
+			+ "ORDER BY ti.intervalStart")				
 	List<VariationMeasureValue> findByUserAndGes(@Param("uId") final Long uId, @Param("gesId") final Long gesId);
 	
 	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.detectionVariable dv LEFT JOIN vm.timeInterval ti WHERE vm.userInRole.id = :uId AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'MON')")

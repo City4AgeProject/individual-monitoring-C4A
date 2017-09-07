@@ -63,24 +63,25 @@ public class TimeInterval implements Serializable {
 		this.id = id;
 	}
 
-	// @JsonIgnore
+
 	@JsonView(View.VariationMeasureValueView.class)
 	@Column(name = "interval_start")
 	private Timestamp intervalStart;
 
-	// @JsonIgnore
+
 	@JsonView(View.VariationMeasureValueView.class)
 	@Column(name = "interval_end")
 	private Timestamp intervalEnd;
 
 	@JsonView(View.TimeIntervalView.class) // Only on start not end, check
-											// this!!!
+											// this!!!	
 	@Transient
 	private String start;
 
 	@Transient
 	private String end;
-
+	
+	
 	@Column(name = "typical_period")
 	private String typicalPeriod;
 

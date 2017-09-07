@@ -135,23 +135,19 @@ public class MeasuresService {
 			@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
 			@ApiParam(hidden = true) @PathParam("gesId") Long gesId)
 			throws JsonProcessingException {
-		logger.info("findByUserAndGes method begins");
-		logger.info("findByUserAndGes ovo je userInroleID:  " + userInRoleId + " a ovo je gesId:  " + gesId );
+		
 		List<VariationMeasureValue> measures = new ArrayList<VariationMeasureValue>();
 		try {
 			 measures = variationMeasureValueRepository.findByUserAndGes(userInRoleId, gesId);
-			 logger.info("findByUserAndGes measures after query" + measures);
+			
 			 if(measures.size() > 0) {
-				 logger.info("findByUserAndGes measures after query get(0)" + measures.get(0).getId());
-				 logger.info("findByUserAndGes measures after query get(0) dv name is: " + measures.get(0).getDetectionVariable().getDetectionVariableName());
-				 
-				 logger.info("findByUserAndGes measures after query get(0) measure value length is: " + measures.get(0).getDetectionVariable().getVariationMeasureValue().size());
+				
 			 }
 		} catch (Exception e) {
 			logger.info("findByUserAndGes REST service - query exception: ", e);
 		}
 		
-		logger.info("findByUserAndGes SVE PROSLO BEZ EXEPTION");
+		
 		return Response.ok(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures)).build();	
 
 		
