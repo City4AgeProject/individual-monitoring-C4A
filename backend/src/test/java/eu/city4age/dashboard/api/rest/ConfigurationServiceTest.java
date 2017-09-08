@@ -36,6 +36,7 @@ import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
+import eu.city4age.dashboard.api.pojo.dto.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gef;
 import eu.city4age.dashboard.api.pojo.json.desobj.Ges;
@@ -51,23 +52,51 @@ public class ConfigurationServiceTest {
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 		
 	@Test
-	public final void updateConfigurationServiceTest() throws Exception {
-		
+	public void updateConfigurationServiceTest() throws Exception {
+
 		try {
+			rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			String uri = "http://localhost:8080/C4A-dashboard/rest/configuration/updateFromConfigFile";
-			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
-			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
+			String input = "{\"name\": \"overall\",\"level\": 0,\"dateUpdated\": \"2017-09-07 00:00:00\",\"pilotCode\":\"MAD\",\"formula\":\"_TEST_FORMULA_\",\"weight\":1,\"groups\":[ {\"name\": \"contextual\",\"level\": 1,\"weight\": 1,\"formula\":\"_TEST_FORMULA_\",\"factors\": []}, {\"name\": \"behavioural\",\"level\": 1,\"weight\": 1,\"formula\":\"_TEST_FORMULA_\",\"factors\":[   {\"name\": \"motility\",\"level\": 2,\"weight\": 1,\"formula\":\"_TEST_FORMULA_\",\"subFactors\":[{\"name\":\"walking\",\"level\": 3,\"weight\": 1,\"formula\":\"_TEST_FORMULA_\",\"measures\":[{\"name\":\"walk_distance\",\"level\": 4,\"weight\": 0.7,\"formula\":\"_TEST_FORMULA_\"},{\"name\":\"walk_time_outdoor\",\"level\": 4,\"weight\": 1,\"formula\":\"_TEST_FORMULA_\"},{\"name\":\"walk_speed_outdoor\",\"level\": 4,\"weight\": 1,\"formula\":\"_TEST_FORMULA_\"}]}]},{\"name\": \"iadl\",\"level\": 2,\"weight\": 1,\"formula\":\"_TEST_FORMULA_\",\"subFactors\": [{\"name\":\"transportation_usage\",\"level\": 3,\"weight\": 1,\"formula\":\"_TEST_FORMULA_\",\"measures\":[{\"name\":\"publictransport_rides_month\",\"level\": 4,\"weight\": 0.8,\"formula\":\"_TEST_FORMULA_\"}]}]}]}]}";
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<String> entity = new HttpEntity<String>(input, headers);
+
+			ResponseEntity<String> response = rest.exchange(uri, HttpMethod.POST, entity, String.class);
+			
 			if (!response.getStatusCode().equals(HttpStatus.OK)) {
-				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+				throw new RuntimeException("Failed: Http error code:" + response.getStatusCode());
 			}
 			logger.info("Output from Server .... ");
 			logger.info(response);
-			logger.info("1: " + response.getBody());
+			logger.info("4: " + response.getBody());
+
+
+			try {
+				logger.info("BODY::" + (response.getBody().getClass()));
+
+				String json = response.getBody();
+			
+				HttpHeaders headers2 = rest.getForEntity(uri, String.class).getHeaders();
+				ResponseEntity<String> response2 = rest.getForEntity(uri, String.class);
+				if (!response.getStatusCode().equals(HttpStatus.OK)) {
+					throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+				}
+				logger.info("Output from Server .... ");
+				logger.info(response);
+				logger.info("5: " + response.getBody());
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Assert.fail();
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();
 		}
-		
 	}
+	
 	
 }

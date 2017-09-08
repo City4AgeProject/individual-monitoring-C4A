@@ -11,6 +11,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 @Transactional(readOnly = true)
 public interface DetectionVariableRepository extends GenericRepository<DetectionVariable, Long> {
 	
+
 	DetectionVariable findOneByDetectionVariableName(String name);
 
 	DetectionVariable findByDetectionVariableName(String string);
@@ -18,3 +19,4 @@ public interface DetectionVariableRepository extends GenericRepository<Detection
 	DetectionVariable findByDetectionVariableNameAndDetectionVariableType(String string, DetectionVariableType dvt);
 
 }
+

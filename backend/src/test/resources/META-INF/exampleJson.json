@@ -1,8 +1,13 @@
 {
 	"name": "overall",
 	"level": 0,
-	"dateUpdated": "2017-11-16 06:43:19.77",
+
+	"dateUpdated": "2056-01-01 00:00:00",
 	"pilotCode":"ATH",
+	
+	"formula":"_TEST_FORMULA_",
+	"weight":1,
+	
 	"groups":
 	[	 
 		{

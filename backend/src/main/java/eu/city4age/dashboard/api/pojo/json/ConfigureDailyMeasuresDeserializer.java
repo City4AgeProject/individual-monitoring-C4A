@@ -1,5 +1,7 @@
 package eu.city4age.dashboard.api.pojo.json;
 
+import java.util.Date;
+
 import java.util.List;
 
 import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
@@ -10,7 +12,11 @@ public class ConfigureDailyMeasuresDeserializer {
 	Integer level;
 	String dateUpdated;
 	String pilotCode;
+	Long weight;
+	String formula;
+	
 	List<Groups> groups;
+	
 
 	public String getName() {
 		return name;
@@ -23,7 +29,6 @@ public class ConfigureDailyMeasuresDeserializer {
 	public String getPilotCode() {
 		return pilotCode;
 	}
-
 	public void setPilotCode(String pilotCode) {
 		this.pilotCode = pilotCode;
 	}
@@ -50,6 +55,19 @@ public class ConfigureDailyMeasuresDeserializer {
 
 	public void setDateUpdated(String dateUpdated) {
 		this.dateUpdated = dateUpdated;
+	}
+	
+	public Long getWeight() {
+		return weight;
+	}
+	public void setWeight(Long weight) {
+		this.weight = weight;
+	}
+	public String getFormula() {
+		return formula;
+	}
+	public void setFormula(String formula) {
+		this.formula = formula;
 	}
 
 

@@ -33,6 +33,7 @@ public class JerseyInitialization extends ResourceConfig {
 	 * Register JAX-RS application components.
 	 */
 	public JerseyInitialization() {
+		packages("eu.city4age.dashboard.api");
 		this.registerEndpoints();
 	}
 	

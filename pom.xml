@@ -96,6 +96,10 @@
 
 		<!-- Jersey -->
 		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
 			<artifactId>jersey-spring3</artifactId>
 			<exclusions>
@@ -186,7 +190,7 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/com.github.fge/json-schema-validator -->
 		<dependency>
 			<groupId>com.github.fge</groupId>

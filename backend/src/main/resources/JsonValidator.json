@@ -20,6 +20,14 @@
 		{
             "type": "string"
         },
+		 "weight": 
+		{
+			"type": "number"
+		},
+        "formula": 
+		{
+			"type": "string"
+		},
 		 "groups": 
 		{
             "type": "array",
@@ -119,24 +127,32 @@
 															"type": "string"
 														}
 													},
-													"required":["level"]
+
+													"required":["name", "level","weight","formula"]
 												}
 											}
 										},
-										"required": ["level"]
+										"required": ["name", "level","weight","formula","measures"]
+
 									}
 
 								}
 							},
-							"required": ["level"]
+
+							"required": ["name", "level","weight","formula","subFactors"]
+
 						}
 					}
 							
 				},
-				"required": ["level"]
+
+				"required": ["name", "level","weight","formula","factors"]
+
 			}
         }
                 
 	},
-	"required": ["name", "level", "dateUpdated"]
+
+	"required": ["name", "level", "dateUpdated","pilotCode","weight","formula","groups"]
+
 }

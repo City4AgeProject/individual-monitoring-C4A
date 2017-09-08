@@ -1,3 +1,6 @@
+
+
+
 package eu.city4age.dashboard.api.utils;
 
 import java.io.File;
@@ -68,6 +71,12 @@ public class ValidationUtils {
 		return report.isSuccess();
 	} // validateJson(Node) ends
 
+	public static ProcessingReport getReport(JsonSchema jsonSchemaNode, JsonNode jsonNode) throws ProcessingException {
+		ProcessingReport report = jsonSchemaNode.validate(jsonNode);
+		return report;
+
+	}
+	
 	public static boolean isJsonValid(String schemaText, String jsonText) throws ProcessingException, IOException {
 		final JsonSchema schemaNode = getSchemaNode(schemaText);
 		final JsonNode jsonNode = getJsonNode(jsonText);
@@ -79,6 +88,18 @@ public class ValidationUtils {
 		final JsonNode jsonNode = getJsonNode(jsonFile);
 		return isJsonValid(schemaNode, jsonNode);
 	} // validateJson(Node) ends
+	
+	public static ProcessingReport getReport(File schemaFile, File jsonFile) throws ProcessingException, IOException {
+		final JsonSchema schemaNode = getSchemaNode(schemaFile);
+		final JsonNode jsonNode = getJsonNode(jsonFile);
+		return getReport(schemaNode, jsonNode);
+	} // validateJson(Node) ends
+	
+	public static ProcessingReport getReport(String jsonSchema, String json) throws ProcessingException, IOException {
+		final JsonSchema schemaNode = getSchemaNode(jsonSchema);
+		final JsonNode jsonNode = getJsonNode(json);
+		return getReport(schemaNode, jsonNode);
+	}
 
 	public static boolean isJsonValid(URL schemaURL, URL jsonURL) throws ProcessingException, IOException {
 		final JsonSchema schemaNode = getSchemaNode(schemaURL);
@@ -120,4 +141,6 @@ public class ValidationUtils {
 		final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 		return factory.getJsonSchema(jsonNode);
 	} // _getSchemaNode() ends
+
+
 }

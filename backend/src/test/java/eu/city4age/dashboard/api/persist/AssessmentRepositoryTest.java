@@ -1,5 +1,8 @@
 package eu.city4age.dashboard.api.persist;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -18,21 +21,34 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
+import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
+import eu.city4age.dashboard.api.rest.MeasuresServiceTest;
+import eu.city4age.dashboard.api.utils.ValidationUtils;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,6 +58,8 @@ import eu.city4age.dashboard.api.pojo.persist.Filter;
 public class AssessmentRepositoryTest {
 	
 	static protected Logger logger = LogManager.getLogger(AssessmentRepositoryTest.class);
+	
+	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@Autowired
 	private AssessmentRepository assessmentRepository;
@@ -66,7 +84,11 @@ public class AssessmentRepositoryTest {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-
+	
+	@Autowired
+	private DetectionVariableRepository detectionVariableRepository; 
+	
+	
 	@Test
 	@Transactional
 	@Rollback(true)
@@ -240,29 +262,29 @@ public class AssessmentRepositoryTest {
 
 		
 		Assert.assertEquals(7, assessmentRepository.findAll().size());
-		System.out.println("BEFORE***(BEFORE filters)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		System.out.println("1BEFORE***(BEFORE filters)Number of assessments in repository:"+assessmentRepository.findAll().size());
 		
 		List<Filter> noFilters = new ArrayList<Filter>();
 		HashMap<String, Object> inQueryParams2 = new HashMap<String, Object>();
-
+		System.out.println("1@@@ assessmentRepository.findAll().size(): "+assessmentRepository.findAll().size());
 		List<Assessment> resultWithoutFilters = assessmentRepository.doQueryWithFilter(noFilters , "findForSelectedDataSet",
 				inQueryParams);
+		System.out.println("2@@@ assessmentRepository.findAll().size(): "+assessmentRepository.findAll().size());
 		
 		List<Assessment> resultWithFilters = assessmentRepository.doQueryWithFilter(filters, "findForSelectedDataSet",
 				inQueryParams);
 		
-		
+		System.out.println("3@@@ assessmentRepository.findAll().size(): "+assessmentRepository.findAll().size());
 		//filters are on:
 		Assert.assertNotNull(resultWithFilters);
 		Assert.assertNotNull(resultWithoutFilters);
 		Assert.assertEquals(3, assessmentRepository.findAll().size());
 		Assert.assertEquals(5, resultWithoutFilters.size());
 		Assert.assertEquals(2, resultWithFilters.size());
-	
-		
-		System.out.println("ENABLED***(filters ENABLED)Number of assessments in repository:"+assessmentRepository.findAll().size());
-		System.out.println("ENABLED***For query without filter, FILTERS ENABLED number of assessments:"+resultWithoutFilters.size());
-		System.out.println("ENABLED***For query WITH FILTERS, FILTERS ENABLED number of assessments:"+resultWithFilters.size());
+
+		System.out.println("2ENABLED***(filters ENABLED)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		System.out.println("2ENABLED***For query without filter, FILTERS ENABLED number of assessments:"+resultWithoutFilters.size());
+		System.out.println("2ENABLED***For query WITH FILTERS, FILTERS ENABLED number of assessments:"+resultWithFilters.size());
 		
 		//Disabling filters:
 		assessmentRepository.disableFilter("riskStatus");
@@ -276,9 +298,9 @@ public class AssessmentRepositoryTest {
 		Assert.assertEquals(2, resultWithFilters.size());
 		logger.info("end of testFindForSelectedDataSet");
 
-		System.out.println("ONE DISABLED***(after riskStatus (1) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
-		System.out.println("ONE DISABLED***For query without filter, AFTER riskStatus (1) FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
-		System.out.println("ONE DISABLED***For query WITH FILTERS, AFTER riskStatus (1) FILTERS DISABLED number of assessments:"+resultWithFilters.size());
+		System.out.println("3ONE DISABLED***(after riskStatus (1) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		System.out.println("3ONE DISABLED***For query without filter, AFTER riskStatus (1) FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
+		System.out.println("3ONE DISABLED***For query WITH FILTERS, AFTER riskStatus (1) FILTERS DISABLED number of assessments:"+resultWithFilters.size());
 		
 
 
@@ -292,9 +314,9 @@ public class AssessmentRepositoryTest {
 		Assert.assertEquals(2, resultWithFilters.size());
 		logger.info("end of testFindForSelectedDataSet");
 
-		System.out.println("TWO DISABLED***(after dataValidity (2) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
-		System.out.println("TWO DISABLED***For query without filter, AFTER dataValidity (2)FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
-		System.out.println("TWO DISABLED***For query WITH FILTERS, AFTER dataValidity (2)FILTERS DISABLED number of assessments:"+resultWithFilters.size());
+		System.out.println("4TWO DISABLED***(after dataValidity (2) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		System.out.println("4TWO DISABLED***For query without filter, AFTER dataValidity (2)FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
+		System.out.println("4TWO DISABLED***For query WITH FILTERS, AFTER dataValidity (2)FILTERS DISABLED number of assessments:"+resultWithFilters.size());
 		
 
 		
@@ -308,9 +330,9 @@ public class AssessmentRepositoryTest {
 		Assert.assertEquals(2, resultWithFilters.size());
 		logger.info("end of testFindForSelectedDataSet");
 		
-		System.out.println("ALL DISABLED***(after all filters disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
-		System.out.println("ALL DISABLED***For query without filter, AFTER FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
-		System.out.println("ALL DISABLED***For query WITH FILTERS, AFTER FILTERS DISABLED number of assessments:"+resultWithFilters.size());
+		System.out.println("5ALL DISABLED***(after all filters disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		System.out.println("5ALL DISABLED***For query without filter, AFTER FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
+		System.out.println("5ALL DISABLED***For query WITH FILTERS, AFTER FILTERS DISABLED number of assessments:"+resultWithFilters.size());
 		
 		
 	

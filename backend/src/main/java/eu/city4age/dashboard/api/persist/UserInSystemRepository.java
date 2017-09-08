@@ -8,4 +8,6 @@ import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 
 @Repository(value = "userInSystemRepository")
 @Transactional(readOnly = true)
-public interface UserInSystemRepository extends GenericRepository<UserInSystem, Long> {}
+public interface UserInSystemRepository extends GenericRepository<UserInSystem, Long> {
+
+	UserInSystem findOneByUsername(String name);}

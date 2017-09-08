@@ -34,8 +34,6 @@ public class AssessmentServiceTest {
 
 	@Test
 	public void getLastFiveForDiagramTest() throws Exception {
-		// parentDetectionVariableId/1 Da li treba da se izbaci u mojoj verziji
-		// nije bilo parentDetectionVariableId
 		try {
 			String uri = "http://localhost:8080/C4A-dashboard/rest/assessment/getLastFiveForDiagram/userInRoleId/1/parentDetectionVariableId/1/intervalStart/2011-1-1/intervalEnd/2017-1-1";
 			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
@@ -127,7 +125,7 @@ public class AssessmentServiceTest {
 		try {
 			rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			String uri = "http://localhost:8080/C4A-dashboard/rest/assessment/addForSelectedDataSet";
-			String input = "{\"authorId\":1,\"comment\":\"***FROM TEST DELETE***\",\"riskStatus\":\"A\",\"dataValidity\":\"QUESTIONABLE_DATA\",\"geriatricFactorValueIds\":[734,761],\"audienceIds\":[1,2]}";
+			String input = "{\"authorId\":1,\"comment\":\"***FROM TEST DELETE***\",\"riskStatus\":\"A\",\"dataValidity\":\"QUESTIONABLE_DATA\",\"geriatricFactorValueIds\":[2,1],\"audienceIds\":[1,2]}";
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
@@ -142,13 +140,17 @@ public class AssessmentServiceTest {
 			logger.info(response);
 			logger.info("4: " + response.getBody());
 
+
 			try {
 				logger.info("BODY::" + (response.getBody().getClass()));
-
+				logger.info("BODY::" + (response.getBody()));
 				String json = response.getBody();
+				
+			
 				@SuppressWarnings("deprecation")
 				AddAssessment data = objectMapper.reader(AddAssessment.class)
 						.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+
 
 				logger.info("ID from json::" + data.getId());
 

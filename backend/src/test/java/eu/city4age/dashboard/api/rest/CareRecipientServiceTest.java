@@ -8,6 +8,8 @@ import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 public class CareRecipientServiceTest {
@@ -17,12 +19,13 @@ public class CareRecipientServiceTest {
 	static protected RestTemplate rest = new TestRestTemplate();
 
 	RestTemplate template = new TestRestTemplate();
+	
 
 	@Test
 	public void getCareRecipientsTest() throws Exception {
 
 		try {
-			String uri = "http://localhost:8080/C4A-dashboard/rest/careRecipient/getCareRecipients/";
+			String uri = "http://localhost:8080/C4A-dashboard/rest/careRecipient/getCareRecipients/pilotCode/LCC";
 			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
 			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
 			if (!response.getStatusCode().equals(HttpStatus.OK)) {
