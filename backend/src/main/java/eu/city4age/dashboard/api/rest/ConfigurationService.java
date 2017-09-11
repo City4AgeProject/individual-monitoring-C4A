@@ -2,28 +2,20 @@ package eu.city4age.dashboard.api.rest;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
-
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -31,15 +23,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.glassfish.jersey.server.ContainerException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -49,16 +38,12 @@ import com.github.fge.jsonschema.core.report.ProcessingMessage;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
-import eu.city4age.dashboard.api.persist.DetectionVariableTypeRepository;
-
 import eu.city4age.dashboard.api.persist.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
-
 import eu.city4age.dashboard.api.pojo.ex.JsonValidationException;
-
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.json.desobj.Element;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gef;

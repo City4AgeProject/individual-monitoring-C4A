@@ -1,7 +1,5 @@
 package eu.city4age.dashboard.api.pojo.json;
 
-import java.util.Date;
-
 import java.util.List;
 
 import eu.city4age.dashboard.api.pojo.json.desobj.Groups;

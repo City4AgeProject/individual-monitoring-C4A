@@ -22,7 +22,6 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,16 +117,18 @@ public class CareRecipientService {
 
 		List<TimeInterval> tis = timeIntervalRepository.getGroups(Long.valueOf(careRecipientId), parentFactors);
 
-		for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
-
-			if (gef.getDetectionVariable() != null) {
-
-				detectionvarsparamsList.add(gef.getDetectionVariable());
-				fMap.put(gef.getDetectionVariable().getId(), new ArrayList<Float>());
-				idMap.put(gef.getDetectionVariable().getId(), new ArrayList<Long>());
-
+		if(tis != null && tis.size() > 0) {
+			for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
+	
+				if (gef.getDetectionVariable() != null) {
+	
+					detectionvarsparamsList.add(gef.getDetectionVariable());
+					fMap.put(gef.getDetectionVariable().getId(), new ArrayList<Float>());
+					idMap.put(gef.getDetectionVariable().getId(), new ArrayList<Long>());
+	
+				}
+	
 			}
-
 		}
 
 		for (TimeInterval ti : tis) {

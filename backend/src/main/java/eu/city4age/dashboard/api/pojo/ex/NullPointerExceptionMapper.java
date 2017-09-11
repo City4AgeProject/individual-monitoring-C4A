@@ -1,15 +1,10 @@
 package eu.city4age.dashboard.api.pojo.ex;
 
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.core.Response;
-import com.fasterxml.jackson.core.JsonParseException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

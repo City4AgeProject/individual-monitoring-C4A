@@ -10,7 +10,6 @@
     <version>1.0-SNAPSHOT</version>
 	<relativePath>../</relativePath>
   </parent>
-  
 
   <build>
 	<finalName>C4A-dashboard</finalName>

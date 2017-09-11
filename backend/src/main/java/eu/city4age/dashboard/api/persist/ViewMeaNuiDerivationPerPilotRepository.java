@@ -18,7 +18,7 @@ public interface ViewMeaNuiDerivationPerPilotRepository extends GenericRepositor
 	ViewMeaNuiDerivationPerPilot findByDerivedDetectionVariableAndPilotCode(@Param("nuiId") Long nuiId,
 			@Param("pilotCode") String pilotCode);
 
-	@Query("SELECT vmn FROM ViewMeaNuiDerivationPerPilot vmn WHERE vmn.meaId = :meaId")
-	List<ViewMeaNuiDerivationPerPilot> findAllNuiForMea(@Param("meaId") Long meaId);
+	@Query("SELECT vmn FROM ViewMeaNuiDerivationPerPilot vmn WHERE vmn.meaId = :meaId  AND vmn.pilotCode = :pilotCode")
+	List<ViewMeaNuiDerivationPerPilot> findAllNuiForMea(@Param("meaId") Long meaId, @Param("pilotCode") String pilotCode);
 
 }
