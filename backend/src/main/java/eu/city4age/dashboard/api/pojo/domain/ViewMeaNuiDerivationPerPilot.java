@@ -30,6 +30,9 @@ public class ViewMeaNuiDerivationPerPilot {
 	@Column(name = "mea_name")
 	private String meaName;
 	
+	@Column(name = "formula")
+	private String formula;
+
 	@Column(name = "derived_nui_id")
 	private Long derivedNuiId;
 	
@@ -71,7 +74,15 @@ public class ViewMeaNuiDerivationPerPilot {
 	public void setMeaName(String meaName) {
 		this.meaName = meaName;
 	}
-	
+
+	public String getFormula() {
+		return formula;
+	}
+
+	public void setFormula(String formula) {
+		this.formula = formula;
+	}
+
 	public void setDerivedNuiId(Long derivedNuiId) {
 		this.derivedNuiId = derivedNuiId;
 	}

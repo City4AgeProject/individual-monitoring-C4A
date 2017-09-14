@@ -124,7 +124,5 @@ public class ViewPilotDetectionVariableRepositoryTest {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals("LCC", result.get(0).getId().getPilotCode());
 	}
-	
-
 
 }
