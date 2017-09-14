@@ -110,9 +110,9 @@ public class Pilot implements Serializable {
 		} else if (this.latestVariablesComputed != null) {
 			return YearMonth
 					.from(this.latestVariablesComputed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-		} else if (this.latestConfigurationUpdate != null) {
+		/*} else if (this.latestConfigurationUpdate != null) {
 			return YearMonth
-					.from(this.latestConfigurationUpdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+					.from(this.latestConfigurationUpdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());*/
 		} else {
 			return YearMonth.of(2017, 1);
 		}

@@ -47,12 +47,12 @@ public class PilotDetectionVariable implements Serializable {
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "derived_detection_variable_id")
+	@JoinColumn(name = "derived_detection_variable_id", referencedColumnName = "id")
 	private DetectionVariable derivedDetectionVariable;
 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "detection_variable_id")
+	@JoinColumn(name = "detection_variable_id", referencedColumnName = "id")
 	private DetectionVariable detectionVariable;
 	
 	

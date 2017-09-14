@@ -102,6 +102,7 @@ CREATE OR REPLACE VIEW "testtest"."vw_mea_nui_derivation_per_pilots" AS
     vw_detection_variable_derivation_per_user_in_role.pilot_code,
     vw_detection_variable_derivation_per_user_in_role.detection_variable_id AS mea_id,
     vw_detection_variable_derivation_per_user_in_role.detection_variable_name AS mea_name,
+    vw_detection_variable_derivation_per_user_in_role.derivation_function_formula AS mea_formula,
     vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_id AS derived_nui_id,
     vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_name AS derived_nui_name,
     vw_detection_variable_derivation_per_user_in_role.derivation_weight

@@ -83,7 +83,7 @@ public class PilotDetectionVariableRepositoryTest {
 
 	}
 	
-	@Test
+	/*@Test
 	@Transactional
 	@Rollback(true)
 	public void testFindAllDvNuisForMeasure() {
@@ -119,7 +119,7 @@ public class PilotDetectionVariableRepositoryTest {
 		Assert.assertNotNull(result);
 		Assert.assertEquals(2, result.size());
 		
-	}
+	}*/
 	
 	@Test
 	@Transactional

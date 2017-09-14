@@ -57,14 +57,9 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 	@Column(name = "default_typical_period")
 	private String  defaultTypicalPeriod;
 	
-	
-	
-	
 	@OneToMany(mappedBy = "detectionVariable", fetch = FetchType.LAZY)
 	private Set<PilotDetectionVariable> pilotDetectionVariable = new HashSet<PilotDetectionVariable>();
 
-	
-	
 	@OneToMany(mappedBy = "detectionVariable", fetch = FetchType.LAZY)
 	private Set<VariationMeasureValue> variationMeasureValue = new HashSet<VariationMeasureValue>();
 

@@ -708,7 +708,7 @@ function(oj, ko, $) {
 
 
         //Returns chart by ID for detection variable name that was drilled in (clicked on)
-        self.bGotoGESClick = function() {
+        self.bGotoGESClick = function() {     	
             var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, self.props.selectedId);
             oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable]);
             oj.Router.rootInstance.go('detection_ges');

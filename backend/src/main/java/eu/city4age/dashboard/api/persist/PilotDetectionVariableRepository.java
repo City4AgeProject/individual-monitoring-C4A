@@ -26,11 +26,11 @@ public interface PilotDetectionVariableRepository extends GenericRepository<Pilo
 	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN dv.detectionVariableType dvt WHERE dvt.detectionVariableType = 'NUI'")
 	List<PilotDetectionVariable> findAllForDvtNUI();
 
-	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE pdv.pilotCode = :pilotCode AND dv.detectionVariableName = pdv.formula || CAST('_' AS string) || :detectionVariableName")
+	/*@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE pdv.pilotCode = :pilotCode AND dv.detectionVariableName = pdv.formula || CAST('_' AS string) || :detectionVariableName")
 	List<PilotDetectionVariable> findAllDvNuisForMeasure(@Param("detectionVariableName") String detectionVariableName,
-			@Param("pilotCode") String pilotCode);
+			@Param("pilotCode") String pilotCode);*/
 
-	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN dv.detectionVariableType dvt WHERE dvt.detectionVariableType = 'MEA' AND pdv.pilotCode = :pilotCode AND dv.defaultTypicalPeriod = 'DAY'")
+	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN pdv.derivedDetectionVariable ddv INNER JOIN dv.detectionVariableType dvt INNER JOIN ddv.detectionVariableType ddvt WHERE dvt.detectionVariableType = 'MEA' AND ddvt.detectionVariableType = 'GES' AND pdv.pilotCode = :pilotCode AND (dv.defaultTypicalPeriod = 'DAY' OR dv.defaultTypicalPeriod = '1WK')")
 	List<PilotDetectionVariable> findAllMEADvTypeByPilotCode(@Param("pilotCode") String pilotCode);
 	
 	@Query("SELECT pdv.derivationWeight FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN pdv.derivedDetectionVariable ddv WHERE dv.id = :detectionVariableId AND pdv.pilotCode = :pilotCode AND dv.detectionVariableType = 'GES' AND ddv.detectionVariableType = 'GEF'")
