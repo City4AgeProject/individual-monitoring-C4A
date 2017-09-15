@@ -59,7 +59,7 @@ create table testtest.executed_action (id int8 not null, date timestamptz , loca
 create table testtest.frailty_status_timeline (time_interval_id int8 not null, changed_by int8 not null, changed timestamptz , user_in_role_id int8 , frailty_status varchar(9) , frailty_notice varchar(200), primary key (time_interval_id, changed_by));
 create table testtest.geriatric_factor_value (id int8 not null, gef_value numeric(3, 2), time_interval_id int8, gef_type_id int8, user_in_role_id int4, data_source_type varchar(3), derivation_weight numeric(3, 2), primary key (id));
 create table testtest.inter_activity_behaviour_variation (id int8 not null, deviation float4, expected_activity_id int8 not null, real_activity_id int8 , numeric_indicator_id int8 , primary key (id));
-create table testtest.location (id int8 not null, location_name varchar(50), indoor int2, primary key (id));
+create table testtest.location (id int8 not null, location_name varchar(50), indoor int2, pilot_code varchar(3), primary key (id));
 create table testtest.numeric_indicator_value (id int8 not null, nui_type_id int8 , nui_value numeric(10, 2) , time_interval_id int8 , data_source_type varchar(3) , user_in_role_id int8, primary key (id));
 create table testtest.pilot (id int8 not null, name varchar(50), pilot_code varchar(3), population_size float8, latest_data_submission_completed date, latest_derived_detection_variables_computed date, latest_configuration_update date, primary key (id));
 create table testtest.source_evidence (geriatric_factor_id int4 not null, author_id int4 not null, text_evidence varchar(255), multimedia_evidence bytea, uploaded timestamp , primary key (geriatric_factor_id, author_id));

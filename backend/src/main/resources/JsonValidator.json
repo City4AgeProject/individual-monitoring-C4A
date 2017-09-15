@@ -1,158 +1,130 @@
 {
-    "title": "ConfigurationFileValidator",
-    "description": "Validation file for Configuration Json",
-    "type": "object",
-    "properties": 
-	 {
-        "name": 
-		{
-            "type": "string"
-        },
-        "level": 
-		{
-            "type": "integer"
-        },
-		"dateUpdated": 
-		{
-            "type": "string"
-        },
-		"pilotCode": 
-		{
-            "type": "string"
-        },
-		 "weight": 
-		{
-			"type": "number"
+	"title": "ConfigurationFileValidator",
+	"description": "Validation file for Configuration Json",
+	"type": "object",
+	"properties": {
+		"level": {
+			"type": "integer"
 		},
-        "formula": 
-		{
+		"validFrom": {
 			"type": "string"
 		},
-		 "groups": 
-		{
-            "type": "array",
-			"items":
-			{
-				"type":"object",
-				"properties": 
-				{
-                    "name": 
-					{
+		"validTo": {
+			"type": "string"
+		},
+		"pilotCode": {
+			"type": "string"
+		},
+		"groups": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
 						"type": "string"
 					},
-                    "level": 
-					{
+					"level": {
 						"type": "integer"
 					},
-                    "weight": 
-					{
+					"weight": {
 						"type": "number"
 					},
-                    "formula": 
-					{
+					"formula": {
 						"type": "string"
 					},
-					"factors": 
-					{
+					"factors": {
 						"type": "array",
-						"items":
-						{
-							
-							"type":"object",
-							"properties": 
-							{
-								"name": 
-								{
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
 									"type": "string"
 								},
-								"level": 
-								{
+								"level": {
 									"type": "integer"
 								},
-								"weight": 
-								{
+								"weight": {
 									"type": "number"
 								},
-								"formula": 
-								{
+								"formula": {
 									"type": "string"
 								},
-								"subFactors": 
-								{
+								"subFactors": {
 									"type": "array",
-									"items":
-									{
-									
-										"type":"object",
-										"properties": 
-										{
-											"name": 
-											{
+									"items": {
+										"type": "object",
+										"properties": {
+											"name": {
 												"type": "string"
 											},
-											"level": 
-											{
+											"level": {
 												"type": "integer"
 											},
-											"weight": 
-											{
+											"weight": {
 												"type": "number"
 											},
-											"formula": 
-											{
+											"formula": {
 												"type": "string"
 											},
-											"measures":
-											{
+											"measures": {
 												"type": "array",
-												"items":
-												{
-													"type":"object",
-													"properties":
-													{
-														"name": 
-														{
+												"items": {
+													"type": "object",
+													"properties": {
+														"name": {
 															"type": "string"
 														},
-														"level": 
-														{
+														"level": {
 															"type": "integer"
 														},
-														"weight": 
-														{
+														"weight": {
 															"type": "number"
-														},
-														"formula": 
-														{
-															"type": "string"
 														}
 													},
-
-													"required":["name", "level","weight","formula"]
+													"required": [
+														"name",
+														"level",
+														"weight"
+													]
 												}
 											}
 										},
-										"required": ["name", "level","weight","formula","measures"]
-
+										"required": [
+											"name",
+											"level",
+											"weight",
+											"measures",
+											"formula"
+										]
 									}
-
 								}
 							},
-
-							"required": ["name", "level","weight","formula","subFactors"]
-
+							"required": [
+								"name",
+								"level",
+								"weight",
+								"subFactors",
+								"formula"
+							]
 						}
 					}
-							
 				},
-
-				"required": ["name", "level","weight","formula","factors"]
-
+				"required": [
+					"name",
+					"level",
+					"weight",
+					"factors",
+					"formula"
+				]
 			}
-        }
-                
+		}
 	},
-
-	"required": ["name", "level", "dateUpdated","pilotCode","weight","formula","groups"]
-
+	"required": [
+		"name",
+		"level",
+		"validFrom",
+		"validTo",
+		"pilotCode",
+		"groups"
+	]
 }

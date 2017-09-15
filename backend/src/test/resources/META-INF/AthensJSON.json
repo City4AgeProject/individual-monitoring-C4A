@@ -1,0 +1,361 @@
+{
+	"name": "overall",
+	"level": 0,
+	"validFrom": "2016-01-01 00:00:01",
+	"validTo": "2020-09-07 00:00:00",
+	"pilotCode": "ATH",
+	"groups": [{
+			"name": "contextual",
+			"level": 1,
+			"weight": 0.5,
+			"formula": "",
+			"factors": []
+		}, {
+			"name": "behavioural",
+			"level": 1,
+			"weight": 0.5,
+			"formula": "",
+			"factors": [{
+					"name": "motility",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors": [{
+							"name": "walking",
+							"level": 3,
+							"weight": 0.4,
+							"formula": "",
+							"measures": [{
+									"name": "walk_distance_outdoor",
+									"level": 4,
+									"weight": 0.3
+								}, {
+									"name": "walk_time_outdoor",
+									"level": 4,
+									"weight": 0.35
+								}, {
+									"name": "walk_speed_outdoor",
+									"level": 4,
+									"weight": 0.35
+								}
+							]
+						}, {
+							"name": "gait_balance",
+							"level": 3,
+							"weight": 0.4,
+							"formula": "",
+							"measures": []
+						}
+					]
+				}, {
+					"name": "adl",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors": [{
+							"name": "bathing_showering",
+							"level": 3,
+							"weight": 0.15,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "dressing",
+							"level": 3,
+							"weight": 0.15,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "self-feeding",
+							"level": 3,
+							"weight": 0.15,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "personal_hygiene",
+							"level": 3,
+							"weight": 0.15,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "toilet_hygiene",
+							"level": 3,
+							"weight": 0.15,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "going_out",
+							"level": 3,
+							"weight": 0.25,
+							"formula": "",
+							"measures": []
+						}
+					]
+				}, {
+					"name": "iadl",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors": [{
+							"name": "cooking_ability",
+							"level": 3,
+							"weight": 0.25,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "housekeeping",
+							"level": 3,
+							"weight": 0.25,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "shopping",
+							"level": 3,
+							"weight": 0.25,
+							"formula": "",
+							"measures": [{
+									"name": "shops_visits",
+									"level": 4,
+									"weight": 0.2
+								}, {
+									"name": "shops_time",
+									"level": 4,
+									"weight": 0.1
+								}, {
+									"name": "shops_outdoor_time_perc",
+									"level": 4,
+									"weight": 0.1
+								}, {
+									"name": "supermarket_visits",
+									"level": 4,
+									"weight": 0.2
+								}, {
+									"name": "supermarket_time",
+									"level": 4,
+									"weight": 0.1
+								}, {
+									"name": "pharmacy_visits_month",
+									"level": 4,
+									"weight": 0.2
+								}, {
+									"name": "pharmacy_time",
+									"level": 4,
+									"weight": 0.1
+								}
+							]
+						}, {
+							"name": "transportation_usage",
+							"level": 3,
+							"weight": 0.25,
+							"formula": "",
+							"measures": [{
+									"name": "transport_time",
+									"level": 4,
+									"weight": 1
+								}
+							]
+						}
+					]
+				}, {
+					"name": "socialization",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors": [{
+							"name": "attending_senior_centers",
+							"level": 3,
+							"weight": 0.4,
+							"formula": "",
+							"measures": [{
+									"name": "seniorcenter_visits",
+									"level": 4,
+									"weight": 0.6
+								}, {
+									"name": "seniorcenter_time",
+									"level": 4,
+									"weight": 0.4
+								}
+							]
+						}, {
+							"name": "attending_social_places",
+							"level": 3,
+							"weight": 0.4,
+							"formula": "",
+							"measures": [{
+									"name": "othersocial_visits",
+									"level": 4,
+									"weight": 0.6
+								}, {
+									"name": "othersocial_time",
+									"level": 4,
+									"weight": 0.4
+								}
+							]
+						}, {
+							"name": "going_restaurants",
+							"level": 3,
+							"weight": 0.2,
+							"formula": "",
+							"measures": [{
+									"name": "restaurants_visits_week",
+									"level": 4,
+									"weight": 0.6
+								}, {
+									"name": "restaurants_time",
+									"level": 4,
+									"weight": 0.4
+								}
+							]
+						}
+					]
+				}, {
+					"name": "cultural",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors": [{
+							"name": "visiting_culture-entertaimment_places",
+							"level": 3,
+							"weight": 0.25,
+							"formula": "",
+							"measures": [{
+									"name": "cinema_time",
+									"level": 4,
+									"weight": 0.4
+								}, {
+									"name": "cinema_visits_month",
+									"level": 4,
+									"weight": 0.6
+								}
+							]
+						}, {
+							"name": "watching_tv",
+							"level": 3,
+							"weight": 0.25,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "reading_books",
+							"level": 3,
+							"weight": 0.25,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "reading_newspapers",
+							"level": 3,
+							"weight": 0.25,
+							"formula": "",
+							"measures": []
+						}
+					]
+				}, {
+					"name": "dependence",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors": []
+				}, {
+					"name": "health-physical",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors": [{
+							"name": "falls",
+							"level": 3,
+							"weight": 0.15,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "weight_loss",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "weakness",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "exhaustion",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "pain",
+							"level": 3,
+							"weight": 0.15,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "appetite_loss",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "sleep_quality",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "doctors_visits",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "visits_health-related_places",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures": [{
+									"name": "pharmacy_visits_month",
+									"level": 4,
+									"weight": -0.6			
+									}, {
+									"name": "pharmacy_time",
+									"level": 4,
+									"weight": -0.4
+								}
+							]
+						}
+					]
+				}, {
+					"name": "health-cognitive",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors": [{
+							"name": "abstraction",
+							"level": 3,
+							"weight": 0.2,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "attention",
+							"level": 3,
+							"weight": 0.2,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "memory",
+							"level": 3,
+							"weight": 0.4,
+							"formula": "",
+							"measures": []
+						}, {
+							"name": "mood",
+							"level": 3,
+							"weight": 0.2,
+							"formula": "",
+							"measures": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

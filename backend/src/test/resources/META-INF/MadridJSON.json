@@ -1,0 +1,75 @@
+{
+	"name": "overall",
+	"level": 0,
+	"validFrom": "2016-01-01 00:00:01",
+	"validTo": "2020-09-07 00:00:00",
+	"pilotCode": "MAD",
+	"groups":
+	[{
+			"name": "contextual",
+			"level": 1,
+			"weight": 0.5,
+			"formula": "",
+			"factors": []
+		}, {
+			"name": "behavioural",
+			"level": 1,
+			"weight": 0.5,
+			"formula": "",
+			"factors":
+			[{
+					"name": "motility",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors":
+					[{
+							"name": "walking",
+							"level": 3,
+							"weight": 1,
+							"formula": "",
+							"measures":
+							[{
+									"name": "walk_distance",
+									"level": 4,
+									"weight": 0.4
+								}, {
+									"name": "walk_time_outdoor",
+									"level": 4,
+									"weight": 0.3
+								}, {
+									"name": "walk_speed_outdoor",
+									"level": 4,
+									"weight": 0.3
+								}
+							]
+						}
+
+					]
+				}, {
+					"name": "iadl",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors":
+					[{
+							"name": "transportation_usage",
+							"level": 3,
+							"weight": 1,
+							"formula": "",
+							"measures":
+							[{
+									"name": "publictransport_rides_month",
+									"level": 4,
+									"weight": 0.5
+								}
+							]
+						}
+
+					]
+				}
+
+			]
+		}
+	]
+}

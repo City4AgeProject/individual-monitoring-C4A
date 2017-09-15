@@ -10,14 +10,14 @@ import org.apache.logging.log4j.Logger;
 
 @Provider
 public class NullPointerExceptionMapper implements ExceptionMapper<NullPointerException>{
-	
+	//TODO make this exception rollback transaction ?
 	static protected Logger logger = LogManager.getLogger(NullPointerExceptionMapper.class);
 
 	 @Override
 	    public Response toResponse(NullPointerException ex) {
 		 
-		 logger.info("\nNullPointerException: Check above this log does KEY of that DETECTION_VAR(?): ? \nexists in DATA BASE in cd_detection_variable TABLE" );
-		 String message="NullPointerException:\n\tSome name(s) for detection variables in JSON file doesn't match key(keys)\n\t in cd_detection_variable in DATABASE.\n\tCheck log for more info.";
+		 logger.info("\nNullPointerException: Most likely KEY of DETECTION_VAR(?): ? (or some of it's properties)\ndoes not exist in cd_detection_variable TABLE" );
+		 String message="NullPointerException:\n\tSome names for properties : name(detection_variable_name) or pilotCode(pilot_code) \n\tin JSON file doesn't match key(keys)\n\tin corresponding tables: cd_detection_variable or pilot.\n\t";
 		 
 			    return Response
 		                .status(Response.Status.BAD_REQUEST)

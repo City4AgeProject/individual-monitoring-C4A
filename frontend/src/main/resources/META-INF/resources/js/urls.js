@@ -1,6 +1,6 @@
 var app = 'C4A-dashboard';
 var rest = 'rest';
-var hostname = location.hostname; //location.hostname, 'c4adashboard.atc.gr'
+var hostname = location.hostname; //location.hostname, 'c4adashboard.atc.gr', 138.4.10.230
 var port = location.port;
 
 var root = location.protocol + "//" + hostname + (port === ''?'':":" + port) + '/' + app + '/' + rest + '/';

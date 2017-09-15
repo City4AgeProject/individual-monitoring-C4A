@@ -2,7 +2,7 @@ package eu.city4age.dashboard.api.pojo.json.desobj;
 
 import java.util.List;
 
-public class Groups extends Element {
+public class Groups extends ElementWithFormula {
 	
 	private List<Gef> factors;
 

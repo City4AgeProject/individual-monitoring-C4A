@@ -2,7 +2,7 @@ package eu.city4age.dashboard.api.pojo.json.desobj;
 
 import java.util.List;
 
-public class Ges extends Element {
+public class Ges extends ElementWithFormula {
 	
 	private List<Mea> measures;
 

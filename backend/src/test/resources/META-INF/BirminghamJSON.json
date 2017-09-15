@@ -1,0 +1,278 @@
+{
+	"name": "overall",
+	"level": 0,
+	"validFrom": "2016-01-01 00:00:01",
+	"validTo": "2020-09-07 00:00:00",
+	"pilotCode": "BHX",
+	"groups":
+	[{
+			"name": "contextual",
+			"level": 1,
+			"weight": 0.5,
+			"formula": "",
+			"factors": []
+		}, {
+			"name": "behavioural",
+			"level": 1,
+			"weight": 0.5,
+			"formula": "",
+			"factors":
+			[{
+					"name": "motility",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors":
+					[{
+							"name": "walking",
+							"level": 3,
+							"weight": 0.6,
+							"formula": "",
+							"measures":
+							[{
+									"name": "walk_steps",
+									"level": 4,
+									"weight": 0.4
+								}, {
+									"name": "walk_distance",
+									"level": 4,
+									"weight": 0.6
+								}
+							]
+						}, {
+							"name": "gait_balance",
+							"level": 3,
+							"weight": 0.4,
+							"formula": "",
+							"measures":
+							[
+
+							]
+						}
+					]
+
+				}, {
+					"name": "physical_activity",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors":
+					[{
+							"name": "physical_activity",
+							"level": 3,
+							"weight": 1,
+							"formula": "",
+							"measures":
+							[{
+									"name": "physicalactivity_soft_time",
+									"level": 4,
+									"weight": 0.1
+								}, {
+									"name": "physicalactivity_calories",
+									"level": 4,
+									"weight": 0.3
+								}, {
+									"name": "physicalactivity_intense_time",
+									"level": 4,
+									"weight": 0.5
+								}, {
+									"name": "physicalactivity_moderate_time",
+									"level": 4,
+									"weight": 0.1
+								}
+							]
+						}
+					]
+				}, {
+					"name": "iadl",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors":
+					[{
+							"name": "cooking_ability",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "housekeeping",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "laundry",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "phone_comm",
+							"level": 3,
+							"weight": 0.15,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "new_media_comm",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "shopping",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "transportation_usage",
+							"level": 3,
+							"weight": 0.15,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "finance_management",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "medication",
+							"level": 3,
+							"weight": 0.1,
+							"formula": "",
+							"measures":
+							[]
+						}
+					]
+				}, {
+					"name": "socialization",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors":
+					[{
+							"name": "visits",
+							"level": 3,
+							"weight": 0.2,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "attending_senior_centers",
+							"level": 3,
+							"weight": 0.3,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "attending_social_places",
+							"level": 3,
+							"weight": 0.3,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "going_restaurants",
+							"level": 3,
+							"weight": 0.2,
+							"formula": "",
+							"measures":
+							[]
+						}
+					]
+				}, {
+					"name": "dependence",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors":
+					[]
+				}, {
+					"name": "health-physical",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors":
+					[{
+							"name": "sleep_quality",
+							"level": 3,
+							"weight": 1,
+							"formula": "",
+							"measures":
+							[{
+									"name": "sleep_light_time",
+									"level": 4,
+									"weight": 0.1
+								}, {
+									"name": "sleep_deep_time",
+									"level": 4,
+									"weight": 0.3
+								}, {
+									"name": "sleep_awake_time",
+									"level": 4,
+									"weight": -0.1
+								}, {
+									"name": "sleep_wakeup_num",
+									"level": 4,
+									"weight": -0.3
+								}, {
+									"name": "sleep_tosleep_time",
+									"level": 4,
+									"weight": -0.2
+								}
+							]
+						}
+					]
+				}, {
+					"name": "health-cognitive",
+					"level": 2,
+					"weight": 0.13,
+					"formula": "",
+					"subFactors":
+					[{
+							"name": "abstraction",
+							"level": 3,
+							"weight": 0.2,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "attention",
+							"level": 3,
+							"weight": 0.2,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "memory",
+							"level": 3,
+							"weight": 0.4,
+							"formula": "",
+							"measures":
+							[]
+						}, {
+							"name": "mood",
+							"level": 3,
+							"weight": 0.2,
+							"formula": "",
+							"measures":
+							[]
+						}
+					]
+				}
+
+			]
+		}
+
+	]
+}

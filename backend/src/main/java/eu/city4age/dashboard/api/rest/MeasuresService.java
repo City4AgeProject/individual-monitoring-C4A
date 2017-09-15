@@ -622,7 +622,6 @@ public class MeasuresService {
 			logger.info("dvNuiForMeasure dv id: " + dvNuisForMeasure.get(i).getMeaId());
 			logger.info("dvNuiForMeasure pilot code: " + dvNuisForMeasure.get(i).getPilotCode());
 
-
 			if (dvNuisForMeasure.get(i).getFormula().contains("avg")) {
 				String nui1 = String.valueOf(nuiForMeasure[0]);
 				logger.info("nui1: " + nui1);
@@ -636,7 +635,6 @@ public class MeasuresService {
 				logger.info("nui3: " + nui3);
 				nuiValue = new BigDecimal(nui3);
 			} else if (dvNuisForMeasure.get(i).getFormula().contains("delta")) {
-
 
 				String nui4 = String.valueOf(nuiForMeasure[3]);
 				logger.info("nui4: " + nui4);

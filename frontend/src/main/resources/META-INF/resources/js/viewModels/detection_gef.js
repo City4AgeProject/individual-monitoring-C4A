@@ -365,6 +365,7 @@ function (oj, ko, $, sp, params) {
                             break;
                         default:
                     	}
+                    	
                     });
                     if(data && data.itemList && data.itemList.length>0)
                         $.each(data.itemList[0].items[0].dateList, function (j, dateItem) {

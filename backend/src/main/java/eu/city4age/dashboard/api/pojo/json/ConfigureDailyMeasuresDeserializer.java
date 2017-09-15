@@ -8,13 +8,11 @@ public class ConfigureDailyMeasuresDeserializer {
 
 	String name;
 	Integer level;
-	String dateUpdated;
+	String validFrom;
+	String validTo;
 	String pilotCode;
-	Long weight;
-	String formula;
-	
+
 	List<Groups> groups;
-	
 
 	public String getName() {
 		return name;
@@ -27,6 +25,7 @@ public class ConfigureDailyMeasuresDeserializer {
 	public String getPilotCode() {
 		return pilotCode;
 	}
+
 	public void setPilotCode(String pilotCode) {
 		this.pilotCode = pilotCode;
 	}
@@ -47,26 +46,22 @@ public class ConfigureDailyMeasuresDeserializer {
 		this.groups = groups;
 	}
 
-	public String getDateUpdated() {
-		return dateUpdated;
+	public String getValidFrom() {
+		return validFrom;
 	}
 
-	public void setDateUpdated(String dateUpdated) {
-		this.dateUpdated = dateUpdated;
+	public void setValidFrom(String validFrom) {
+		this.validFrom = validFrom;
 	}
-	
-	public Long getWeight() {
-		return weight;
+
+	public String getValidTo() {
+		return validTo;
 	}
-	public void setWeight(Long weight) {
-		this.weight = weight;
+
+	public void setValidTo(String validTo) {
+		this.validTo = validTo;
 	}
-	public String getFormula() {
-		return formula;
-	}
-	public void setFormula(String formula) {
-		this.formula = formula;
-	}
+
 
 
 }

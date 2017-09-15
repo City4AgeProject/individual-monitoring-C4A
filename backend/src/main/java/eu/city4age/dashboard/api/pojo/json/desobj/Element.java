@@ -7,7 +7,7 @@ public class Element {
 		private String name;
 		private Integer level;
 		private BigDecimal weight;
-		private String formula;
+
 		
 		public String getName() {
 			return name;
@@ -26,12 +26,6 @@ public class Element {
 		}
 		public void setWeight(BigDecimal weight) {
 			this.weight = weight;
-		}
-		public String getFormula() {
-			return formula;
-		}
-		public void setFormula(String formula) {
-			this.formula = formula;
 		}
 
 

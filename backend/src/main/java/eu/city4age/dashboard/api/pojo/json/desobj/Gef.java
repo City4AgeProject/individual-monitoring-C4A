@@ -2,7 +2,7 @@ package eu.city4age.dashboard.api.pojo.json.desobj;
 
 import java.util.List;
 
-public class Gef extends Element {
+public class Gef extends ElementWithFormula {
 	
 	private List<Ges> subFactors;
 
