@@ -109,8 +109,6 @@ public class ConfigurationService {
 		String jsonSchema = sb.toString();
 
 		if (ValidationUtils.isJsonValid(jsonSchema, json)) {
-			logger.info("Configuration Json from Post is valid!");
-
 			@SuppressWarnings("deprecation")
 			ConfigureDailyMeasuresDeserializer data = objectMapper.reader(ConfigureDailyMeasuresDeserializer.class)
 					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
@@ -139,8 +137,6 @@ public class ConfigurationService {
 
 				Groups group = data.getGroups().get(i);
 				
-				logger.info(" DETECTION_VAR(GFG): " + group.getName() + "  DERIVED_VAR(OVL): " + data.getName());
-
 				detVarType.setDetectionVariableType("GFG");
 				DetectionVariable gfgDetectionVariable = detectionVariableRepository
 						.findByDetectionVariableNameAndDetectionVariableType(group.getName(), detVarType);
@@ -154,8 +150,6 @@ public class ConfigurationService {
 				for (int j = 0; j < group.getFactors().size(); j++) {
 
 					Gef factor = group.getFactors().get(j);
-					logger.info(" DETECTION_VAR(GEF): " + factor.getName() + "  DERIVED_VAR(GFG): " + group.getName());
-
 					detVarType.setDetectionVariableType("GEF");
 					DetectionVariable gefDetectionVariable = detectionVariableRepository
 							.findByDetectionVariableNameAndDetectionVariableType(factor.getName(), detVarType);
@@ -165,9 +159,7 @@ public class ConfigurationService {
 					for (int k = 0; k < factor.getSubFactors().size(); k++) {
 
 						Ges subFactor = factor.getSubFactors().get(k);
-						logger.info(" DETECTION_VAR(GES): " + subFactor.getName() + "  DERIVED_VAR(GEF): "
-								+ factor.getName());
-						
+
 						detVarType.setDetectionVariableType("GES");
 						DetectionVariable gesDetectionVariable = detectionVariableRepository
 								.findByDetectionVariableNameAndDetectionVariableType(subFactor.getName(), detVarType);
@@ -177,8 +169,7 @@ public class ConfigurationService {
 						for (int n = 0; n < subFactor.getMeasures().size(); n++) {
 
 							Mea measure = subFactor.getMeasures().get(n);
-							logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "+ subFactor.getName());
-							
+
 							detVarType.setDetectionVariableType("MEA");
 							DetectionVariable meaDetectionVariable = detectionVariableRepository
 									.findByDetectionVariableNameAndDetectionVariableType(measure.getName(), detVarType);
@@ -202,20 +193,16 @@ public class ConfigurationService {
 								BigDecimal nuiWeight = BigDecimal.valueOf((double) 1 / NuiListFormula.size());
 								String nuiFormula;
 								for (String nui : NuiList) {
-									logger.info("@1@NUI");
 									detVarType.setDetectionVariableType("NUI");
 									DetectionVariable nuiDetectionVariable = detectionVariableRepository
 											.findByDetectionVariableNameAndDetectionVariableType(
 													nui + '_' + measure.getName(), detVarType);
-									logger.info("@2@NUI");
 									
 									nuiFormula = NuiListFormula.get(nui);
 									
 									createOrUpdateNui(nuiDetectionVariable, gesDetectionVariable,validFrom, validTo,
 											pilotCode ,nuiWeight);
-									logger.info("@3@NUI");
-									//createOrUpdateMeasure(meaDetectionVariable, nuiDetectionVariable, validFrom, validTo,
-									//		pilotCode, measure);
+	
 									createOrUpdateMeasure(meaDetectionVariable, nuiDetectionVariable, validFrom, validTo,
 									pilotCode, nuiFormula, nuiWeight);
 								}
@@ -330,8 +317,6 @@ public class ConfigurationService {
 				if (exists == false) {
 					pilotDetectionVariableRepository.delete(one);
 					removed++;
-				} else {
-					logger.info("IT IS PRESENT IN THE CONFIGURATION FILE!");
 				}
 
 			}
@@ -375,7 +360,7 @@ public class ConfigurationService {
 							+ message.asJson().get("missing").toString().replaceAll("[\\[|\\]]", "");
 
 				} else {
-					logger.info("Other type of JsonValidationException!");
+					response += "Other type of JsonValidationException!";
 				}
 
 				throw new JsonValidationException(response);
@@ -396,21 +381,11 @@ public class ConfigurationService {
 						dv.getId(), ddv.getId());
 		if (pdv1 != null) {
 			
-			logger.info("@ 1-1  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-			+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-			"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-			+"\n -f:"+pdv1.getFormula());
-			
 			if (!( (pdv1.getDerivationWeight().compareTo(nuiWeight) == 0) &&
 				   (pdv1.getValidFrom().compareTo(validFrom)==0) &&
 				   (pdv1.getValidTo().compareTo(validTo)==0)
 					 
 			    )) {
-				
-				logger.info("@ 1-2  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-						+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-						"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-						+"\n -f:"+pdv1.getFormula());
 				
 				pdv1.setDerivationWeight(nuiWeight);
 				pdv1.setValidFrom(validFrom);
@@ -418,11 +393,6 @@ public class ConfigurationService {
 				
 				pilotDetectionVariableRepository.save(pdv1);
 
-				logger.info("@ 1-3  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-						+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-						"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-						+"\n -f:"+pdv1.getFormula());
-				
 				updated++;
 			}
 		} else {
@@ -448,11 +418,6 @@ public class ConfigurationService {
 				.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode,
 						dv.getId(), ddv.getId());
 		if (pdv1 != null) {
-
-			logger.info("@ 2-1  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-					+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-					"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-					+"\n -f:"+pdv1.getFormula());
 			
 			if (!( 
 					(pdv1.getDerivationWeight().compareTo(e.getWeight()) == 0) && 
@@ -462,26 +427,12 @@ public class ConfigurationService {
 					
 				 )) {
 
-
-				logger.info("@ 2-2  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-						+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-						"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-						+"\n -f:"+pdv1.getFormula());
-				
-				
 				pdv1.setDerivationWeight(e.getWeight());
 				pdv1.setFormula(e.getFormula().equals("")?null:e.getFormula());
 				pdv1.setValidFrom(validFrom);
 				pdv1.setValidTo(validTo);
 				
 				pilotDetectionVariableRepository.save(pdv1);
-
-
-				logger.info("@ 2-3  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-						+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-						"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-						+"\n -f:"+pdv1.getFormula());
-				
 				
 				updated++;
 			}
@@ -509,24 +460,12 @@ public class ConfigurationService {
 						dv.getId(), ddv.getId());
 		if (pdv1 != null) {
 
-
-			logger.info("@ 3-1  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-					+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-					"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-					+"\n -f:"+pdv1.getFormula());
-			
-
 			if (!((pdv1.getDerivationWeight().compareTo(nuiWeight) == 0) &&
 					(pdv1.getFormula().trim().compareTo(nuiFormula) == 0) &&
 				 (pdv1.getValidFrom().compareTo(validFrom)==0) &&
 			     (pdv1.getValidTo().compareTo(validTo)==0)
 			     )) {
 
-				logger.info("@ 3-2  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-						+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-						"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-						+"\n -f:"+pdv1.getFormula());
-				
 				
 				pdv1.setDerivationWeight(nuiWeight);
 				pdv1.setFormula(nuiFormula);
@@ -535,12 +474,6 @@ public class ConfigurationService {
 				
 				pilotDetectionVariableRepository.save(pdv1);
 
-				logger.info("@ 3-3  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-						+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-						"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-						+"\n -f:"+pdv1.getFormula());
-				
-				
 				updated++;
 			}
 		} else {
@@ -567,21 +500,11 @@ public class ConfigurationService {
 						dv.getId(), ddv.getId());
 		if (pdv1 != null) {
 
-			logger.info("@ 4-1  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-					+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-					"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-					+"\n -f:"+pdv1.getFormula());
-			
 			if (!((pdv1.getDerivationWeight().compareTo(e.getWeight()) == 0) &&
 				 (pdv1.getValidFrom().compareTo(validFrom)==0) &&
 			     (pdv1.getValidTo().compareTo(validTo)==0)
 			     )) {
 
-				logger.info("@ 4-2  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-						+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-						"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-						+"\n -f:"+pdv1.getFormula());
-				
 				pdv1.setDerivationWeight(e.getWeight());
 				pdv1.setValidFrom(validFrom);
 				//set formula for MEA in GES to null
@@ -590,11 +513,6 @@ public class ConfigurationService {
 				
 				pilotDetectionVariableRepository.save(pdv1);
 
-				logger.info("@ 4-3  ID: "+pdv1.getId()+"\n-dv: "+pdv1.getDetectionVariable().getId()
-						+"\n-ddv: "+pdv1.getDerivedDetectionVariable().getId()+
-						"\n-p_c: "+pdv1.getPilotCode()+"\n-w: "+pdv1.getDerivationWeight()
-						+"\n -f:"+pdv1.getFormula());
-				
 				updated++;
 			}
 		} else {

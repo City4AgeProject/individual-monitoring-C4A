@@ -54,46 +54,41 @@ public class UserService {
 		UserInRole user;
 		C4ALoginResponse response = new C4ALoginResponse();
 		Pilot userPilot;
+
 		// list for approved users for login
 		List<Short> approvedUsersForLogin = new ArrayList<Short>(Arrays.asList((short) 8, (short) 7, (short) 6, (short) 5, (short) 4, (short) 2));
+
 		/**
 		 * ****************Action*************
 		 */
 		try {
 			logger.info("Logging in...");
 			user = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
-			logger.info("@@@1: "+user);
+			logger.info("User id: "+ user.getId());
 
-			if (user == null) {
-				response.setMessage("wrong credentials");
+			if (approvedUsersForLogin.contains(user.getRoleId())) {
+				response.setMessage("success");
+				response.setResponseCode(10);
+				if (user.getUserInSystem().getDisplayName() != null) {
+					response.setDisplayName(user.getUserInSystem().getDisplayName());
+
+					String pil = user.getPilotCode();
+					userPilot = pilotRepository.findOne(pil);
+					
+					response.setId(user.getId());
+					response.setpilotName(userPilot.getName());
+					response.setPilotCode(user.getPilotCode());
+					response.setRoleId(user.getRoleId());
+				} else {
+					response.setDisplayName("");
+				}
+				
+				return Response.ok(response).build();
+			} else {
+				response.setMessage("you don't have the right permissions");
 				response.setResponseCode(0);
 				response.setDisplayName("");
 				return Response.ok(response).build();
-			} else {
-				if (approvedUsersForLogin.contains(user.getRoleId())) {
-					response.setMessage("success");
-					response.setResponseCode(10);
-					if (user.getUserInSystem().getDisplayName() != null) {
-						response.setDisplayName(user.getUserInSystem().getDisplayName());
-						//Long pil = Long.parseLong(user.getPilotId().toString());	
-						String pil = user.getPilotCode();
-						userPilot = pilotRepository.findOne(pil);
-						
-						response.setId(user.getId());
-						response.setpilotName(userPilot.getName());
-						response.setPilotCode(user.getPilotCode());
-						response.setRoleId(user.getRoleId());
-					} else {
-						response.setDisplayName("");
-					}
-					
-					return Response.ok(response).build();
-				} else {
-					response.setMessage("you don't have the right permissions");
-					response.setResponseCode(0);
-					response.setDisplayName("");
-					return Response.ok(response).build();
-				}
 			}
 
 		} catch (Exception e) {

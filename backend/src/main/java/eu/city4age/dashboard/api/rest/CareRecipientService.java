@@ -203,6 +203,7 @@ public class CareRecipientService {
 	@Path("getCareRecipients/pilotCode/{pilotCode}/")
 	@Produces("application/json")
 	public Response getJson(@PathParam("pilotCode") String pilotCode) throws IOException {
+
 		/**
 		 * ****************Variables*************
 		 */
@@ -274,6 +275,7 @@ public class CareRecipientService {
 				itemList.add(new C4ACareRecipientListResponse(user.getId(), age, frailtyStatus, frailtyNotice,
 						attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate,
 						userPilot.getPilotCode()));
+
 			} // detectionVariables loop
 			response.setItemList(itemList);
 

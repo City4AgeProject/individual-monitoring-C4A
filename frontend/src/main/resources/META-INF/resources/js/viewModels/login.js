@@ -31,8 +31,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                 // Create handler
                 self.loginUser = function (viewModel, event) {
-                    console.log("username " + self.loginValue() + " password " + self.passwordValue());
-
 	            $.getJSON(USER_LOGIN + "/username/" + self.loginValue() + "/password/" + self.passwordValue()).
 	                    then(function (users) {
 	                        if (users.responseCode === 10) {

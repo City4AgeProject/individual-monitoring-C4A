@@ -16,7 +16,6 @@ public class NullPointerExceptionMapper implements ExceptionMapper<NullPointerEx
 	 @Override
 	    public Response toResponse(NullPointerException ex) {
 		 
-		 logger.info("\nNullPointerException: Most likely KEY of DETECTION_VAR(?): ? (or some of it's properties)\ndoes not exist in cd_detection_variable TABLE" );
 		 String message="NullPointerException:\n\tSome names for properties : name(detection_variable_name) or pilotCode(pilot_code) \n\tin JSON file doesn't match key(keys)\n\tin corresponding tables: cd_detection_variable or pilot.\n\t";
 		 
 			    return Response

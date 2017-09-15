@@ -7,22 +7,18 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 var self = this;           	
             	self.data = null;
             	self.diagramData = new Object();
-            	
-            	
+
             	
             	//this method loads data form ajax request before view is loaded
             	self.handleActivated = function(info) {           	    
             	      return new Promise(function(resolve, reject) {
             	    	  var crId = oj.Router.rootInstance.retrieve()[0];
-            	    	  console.log("user is : " + crId);
-            	    	 
+  	 
             	//ojModule waits to build the view until the promise resolves
             	    	             	    	              	    	
             	    	  var jqxhr = $.getJSON( DAILY_MEASURES_DATA + "/userInRoleId/" + crId + "/gesId/514", function(data) {
-            	    		  console.log( "success for getting daily measures for user !" );
             	    		  self.data = data;
-            	    		  //console.log("recieved jason : " + JSON.stringify(data));
-            	    		  
+  
             	    		  //building diagramData from json data
             	    		  var measureIds = [];
             	    		  var measures = [];
@@ -98,9 +94,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             	    		  delete mea.months;
             	    		  });
             	    		  
-            	    		  
-            	    		  //console.log("measures are now : " + JSON.stringify(measures));
-            	    		  
             	    		  //inserting empty dates
             	    		  measures.forEach(function(mea) {
             	    			  mea.lineSeries.forEach(function(ls) {
@@ -119,8 +112,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 	    		  
             	    		  });
             	    		  
-            	    		  //console.log("With null values, measures are now : " + JSON.stringify(measures));
-            	    	  
             	    		  //data object for diagrams
             	    		  self.data.dailyMeasures = measures;
             	    		  

@@ -72,14 +72,6 @@ public class AndroidService {
 			response.setMessage("There are more than ONE user in role with same ID !");
 		} else if (uir.get(0) != null) {
 			response.setResult(1);
-			logger.info("@ FROM ANDROID  data:" + data + "  @");
-			logger.info("@ FROM ANDROID  json:" + json + "  @");
-			logger.info("@ FROM ANDROID  data.getDate():" + data.getDate() + "  @");
-			logger.info("@ FROM ANDROID@  data.getId():" + data.getId() + "  @");
-
-			// Files.write(Paths.get("C:\\Users\\Andrija.Petrovic\\Desktop\\ANDROID_JSON.txt"),
-			// json.getBytes(), StandardOpenOption.APPEND);
-
 		}
 
 

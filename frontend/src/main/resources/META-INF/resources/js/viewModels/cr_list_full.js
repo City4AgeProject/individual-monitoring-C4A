@@ -9,6 +9,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
             function ListViewModel() {
                 var self = this;
                 self.data = ko.observableArray();
+
                 self.usersOuter = ko.observableArray();
                 
                 var pilotCode = sessionStorage.getItem("pilotcode");
@@ -16,11 +17,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 $.getJSON(CARE_RECIPIENT_ALL + "/pilotCode/" + pilotCode).
                 
                        then(function (users) {
-                    	   
-                    	   //printing all cr from json:
-                    	   //console.log( JSON.stringify(users) );
-                    	   
-                    	   
+
                             $.each(users.itemList, function () {
 
                                 var frailStatus;
@@ -52,9 +49,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                 });
                                 $(".loader-hover").hide();
                             });
-                            console.log("users:"+users);
                             self.usersOuter = users;
-                            console.log("self.users:"+self.usersOuter);
                         });
 
 
@@ -69,14 +64,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     var currentRow = $('#table').ojTable('option', 'currentRow');
                     var selectData;
                     
-                  //finding cr with cr_id = selectedRow.keyId
 		              for(var i = 0; i< self.data().length; i++){                    	                   	
 			                         if(self.data()[i].cr_id == currentRow.rowKey){                   		
 			                              		selectData = self.data()[i];
 			                                      	}
 			               }
-
-                    console.log(" selected care recipient with: id " + selectData['cr_id'] + " age " + selectData['age']);
 
                     switch (ui.item.attr("id")) {
                         case "view_more_det":
@@ -84,13 +76,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             oj.Router.sync();
 
                             sp.setuserTextline(selectData['textline']);
-
-                            
-                            //app should be defined in define block for this below to work!
-                            
-                           /* app.age(selectData['age']);
-
-                            app.textline(selectData['textline']);*/
 
                             oj.Router.rootInstance.go("detection_gef");
 
@@ -105,7 +90,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.navigateToGef = function() {
                     var currentTableRow = $( "#table" ).ojTable("option", "currentRow");
                     var crData;
-	                  //finding cr with cr_id = selectedRow.keyId
+
 	                  for(var i = 0; i< self.data().length; i++){                    	                    	
 	                        if(self.data()[i].cr_id == currentTableRow.rowKey){                   		
 	                                      		crData = self.data()[i];
@@ -120,7 +105,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     sp.setUserId(userId);
                     sp.setuserTextline(textline);
                     sp.setuserAge(age);
-                    console.log("userId " + userId + " Age " + age + " textline " + textline);
 
                     oj.Router.rootInstance.go("detection_gef");
                 };

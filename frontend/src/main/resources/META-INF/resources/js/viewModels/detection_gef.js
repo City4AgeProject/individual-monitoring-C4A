@@ -392,9 +392,7 @@ function (oj, ko, $, sp, params) {
                         	el.items = [null];
                         }
                     });                    
-                   //If you want to see the data recieved:
-                 /*console.log('This is the data for overall chart ' + JSON.stringify(self.seriesVal())); */                  
-                    
+
                 });
         }
         
