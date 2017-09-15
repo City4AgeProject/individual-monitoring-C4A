@@ -82,45 +82,7 @@ public class PilotDetectionVariableRepositoryTest {
 		Assert.assertEquals(3, result.size());
 
 	}
-	
-	/*@Test
-	@Transactional
-	@Rollback(true)
-	public void testFindAllDvNuisForMeasure() {
-		
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(1L);
-		dv1.setDetectionVariableName("prefix_testtest");
-		detectionVariableRepository.save(dv1);
-		
-		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
-		pdv1.setId(1L);
-		pdv1.setPilotCode("LCC");
-		pdv1.setDetectionVariable(dv1);
-		pdv1.setFormula("prefix");
-		pilotDetectionVariableRepository.save(pdv1);
-		
-		PilotDetectionVariable pdv2 = new PilotDetectionVariable();
-		pdv2.setId(2L);
-		pdv2.setPilotCode("LCC");
-		pdv2.setDetectionVariable(dv1);
-		pdv2.setFormula("prefix");
-		pilotDetectionVariableRepository.save(pdv2);
-		
-		PilotDetectionVariable pdv3 = new PilotDetectionVariable();
-		pdv3.setId(3L);
-		pdv3.setPilotCode("ATH");
-		pdv3.setDetectionVariable(dv1);
-		pdv3.setFormula("prefix");
-		pilotDetectionVariableRepository.save(pdv3);
 
-		List<PilotDetectionVariable> result = pilotDetectionVariableRepository.findAllDvNuisForMeasure("testtest", "LCC");
-		
-		Assert.assertNotNull(result);
-		Assert.assertEquals(2, result.size());
-		
-	}*/
-	
 	@Test
 	@Transactional
 	@Rollback(true)

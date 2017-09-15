@@ -20,8 +20,10 @@ public interface DetectionVariableRepository extends GenericRepository<Detection
 	DetectionVariable findByDetectionVariableName(String string);
 
 	DetectionVariable findByDetectionVariableNameAndDetectionVariableType(String string, DetectionVariableType dvt);
-
+	
 	@Query("SELECT dv FROM DetectionVariable dv INNER JOIN dv.pilotDetectionVariable pdv INNER JOIN dv.detectionVariableType dvt WHERE dvt.detectionVariableType = 'MEA' AND pdv.pilotCode = :pilotCode AND (dv.defaultTypicalPeriod = 'DAY' OR dv.defaultTypicalPeriod = '1WK')")
 	List<DetectionVariable> findAllMEADvTypeByPilotCode(@Param("pilotCode") String pilotCode);
+
+	
 
 }

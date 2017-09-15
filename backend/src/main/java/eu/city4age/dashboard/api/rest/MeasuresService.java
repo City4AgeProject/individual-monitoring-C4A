@@ -364,6 +364,7 @@ public class MeasuresService {
 		pilotRepository.save(pilot);
 	}
 
+
 	private BigDecimal computeDerivedMeaForNUI(String pilotCode, Timestamp startOfMonth, Timestamp endOfMonth,
 			ViewPilotDetectionVariable vpdv, Long userId) {
 
@@ -523,6 +524,7 @@ public class MeasuresService {
 
 		logger.info("COUNT DVS: " + dvsWithMEA.size());
 
+
 		for (DetectionVariable dv : dvsWithMEA) {
 			logger.info("DV ID: " + dv.getId());
 		}
@@ -591,28 +593,15 @@ public class MeasuresService {
 																			// or
 																			// Double!!!
 
+
+
 		logger.info("nuiForMeasure length: " + nuiForMeasure.length);
 
-		/*List<PilotDetectionVariable> dvNuisForMeasure = pilotDetectionVariableRepository
-				.findAllDvNuisForMeasure(dv.getDetectionVariableName(), pilotCode);*/
-		
-		/*List<ViewPilotDetectionVariable> dvNuisForMeasure = viewPilotDetectionVariableRepository
-				.findAllDvNuisForMeasure(dv.getDetectionVariableName(), pilotCode);*/
-		
+
 		List<ViewMeaNuiDerivationPerPilot> dvNuisForMeasure = viewMeaNuiDerivationPerPilotRepository
 				.findAllDvNuisForMeasure(dv.getDetectionVariableName(), pilotCode);
 
 		logger.info("dvNuisForMeasure size: " + dvNuisForMeasure.size());
-
-		// Set<PilotDetectionVariable> dvNuisForMeasureSet = new
-		// HashSet<PilotDetectionVariable>();
-
-		/*
-		 * dvNuisForMeasureSet.addAll(dvNuisForMeasure);
-		 * 
-		 * logger.info("dvNuisForMeasureSet size: " +
-		 * dvNuisForMeasureSet.size());
-		 */
 
 		BigDecimal nuiValue = new BigDecimal(0);
 		for (int i = 0; i < 4; i++) {
@@ -620,31 +609,29 @@ public class MeasuresService {
 			logger.info("dvNuiForMeasure dv id: " + dvNuisForMeasure.get(i).getMeaId());
 			logger.info("dvNuiForMeasure pilot code: " + dvNuisForMeasure.get(i).getPilotCode());
 
-			if (dvNuisForMeasure.get(i).getMeaFormula().contains("avg")) {
+
+			if (dvNuisForMeasure.get(i).getFormula().contains("avg")) {
 				String nui1 = String.valueOf(nuiForMeasure[0]);
 				logger.info("nui1: " + nui1);
 				nuiValue = new BigDecimal(nui1);
-			} else if (dvNuisForMeasure.get(i).getMeaFormula().contains("std")) {
+			} else if (dvNuisForMeasure.get(i).getFormula().contains("std")) {
 				String nui2 = String.valueOf(nuiForMeasure[1]);
 				logger.info("nui2: " + nui2);
 				nuiValue = new BigDecimal(nui2);
-			} else if (dvNuisForMeasure.get(i).getMeaFormula().contains("best")) {
+			} else if (dvNuisForMeasure.get(i).getFormula().contains("best")) {
 				String nui3 = String.valueOf(nuiForMeasure[2]);
 				logger.info("nui3: " + nui3);
 				nuiValue = new BigDecimal(nui3);
-			} else if (dvNuisForMeasure.get(i).getMeaFormula().contains("delta")) {
+			} else if (dvNuisForMeasure.get(i).getFormula().contains("delta")) {
+
+
 				String nui4 = String.valueOf(nuiForMeasure[3]);
 				logger.info("nui4: " + nui4);
 				nuiValue = new BigDecimal(nui4);
 			}
-			
-			logger.info("uir: " + uir);
-			logger.info("nuiValue: " + nuiValue);
-			logger.info("dvNuisForMeasure.get(i).getId().getDerivedDetectionVariableId(): " + dvNuisForMeasure.get(i).getDerivedNuiId());
-			logger.info("startOfMonth: " + startOfMonth);
-			
-			NumericIndicatorValue nui = create1Nui(uir, nuiValue, dvNuisForMeasure.get(i).getDerivedNuiId(),
-					startOfMonth);
+
+			NumericIndicatorValue nui = create1Nui(uir, nuiValue, dvNuisForMeasure.get(i).getDerivedNuiId(), startOfMonth);
+
 			nuis.add(nui);
 		}
 		return nuis;

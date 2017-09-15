@@ -9,7 +9,7 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 context.props.then(function(properties) {               	                     
                     self.props = properties;
                     
-                    self.measureName = properties.measureName;
+                    self.measureName = properties.measureName.replace(/_/g, " ");
                     
                                                           
                 });

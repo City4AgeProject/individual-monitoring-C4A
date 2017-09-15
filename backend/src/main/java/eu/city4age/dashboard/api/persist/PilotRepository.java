@@ -11,5 +11,5 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 public interface PilotRepository extends GenericRepository<Pilot, String> {
 
 	Pilot findByPilotCode(String pilotCode);
-	
+
 }
