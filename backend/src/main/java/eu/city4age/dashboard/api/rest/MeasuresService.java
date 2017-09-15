@@ -221,21 +221,34 @@ public class MeasuresService {
 		});
 
 		Long previousUserId = 0L;
+		Long previousDerivedDvId = 0L;
 		BigDecimal sum = new BigDecimal(0);
-		for (ViewGefValuesPersistedSourceGesTypes ges : list) {
-			if (previousUserId.equals(ges.getId().getUserInRoleId())) {
+
+		for(ViewGefValuesPersistedSourceGesTypes ges: list) {
+			logger.info("gfv uir id: " + ges.getId().getUserInRoleId());
+			logger.info("gfv dv id: " + ges.getId().getDetectionVariableId());
+			logger.info("gfv derived dv id: " + ges.getId().getDerivedDetectionVariableId());
+
+			if(previousUserId.equals(ges.getId().getUserInRoleId()) && previousDerivedDvId.equals(ges.getId().getDerivedDetectionVariableId())) {
+				logger.info("sum add");
 				sum.add(ges.getGefValue().multiply(ges.getDerivationWeight()));
 			} else {
-				if (!previousUserId.equals(0L))
-					createGFV(ges.getId().getDerivedDetectionVariableId(), sum, weight, startOfMonth, endOfMonth,
-							previousUserId, pilotCode);
+				logger.info("sum");
+				if(!previousUserId.equals(0L)) {
+					logger.info("createGFG");
+					createGFV(previousDerivedDvId, sum, weight, startOfMonth, endOfMonth, previousUserId, pilotCode);
+				}
+
 				sum = ges.getGefValue().multiply(ges.getDerivationWeight());
 			}
 			previousUserId = ges.getId().getUserInRoleId();
+			previousDerivedDvId = ges.getId().getDerivedDetectionVariableId();
 		}
 		if (list != null && list.size() > 1)
-			createGFV(list.get(list.size() - 1).getId().getDerivedDetectionVariableId(), sum, weight, startOfMonth,
-					endOfMonth, previousUserId, pilotCode);
+
+			createGFV(previousDerivedDvId, sum, weight, startOfMonth, endOfMonth, previousUserId, pilotCode);
+		
+		
 
 	}
 
