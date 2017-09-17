@@ -35,8 +35,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 
-
-import eu.city4age.dashboard.api.utils.ValidationUtils;
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;

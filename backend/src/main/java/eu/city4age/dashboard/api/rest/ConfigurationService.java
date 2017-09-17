@@ -32,9 +32,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
+import com.github.fge.jsonschema.main.JsonSchema;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
@@ -88,27 +90,12 @@ public class ConfigurationService {
 	public final Response updateConfigurationService(String json) throws FileNotFoundException, IOException,
 			ProcessingException, ParseException, ContainerException, JsonParseException, JsonValidationException {
 
-		Resource schemaFile = new ClassPathResource("/JsonValidator.json", ConfigurationService.class);
 		String response = "";
 
-		FileInputStream fis = null;
-		String encoding = "utf-8";
-		StringBuilder sb = new StringBuilder();
-
-
-		fis = new FileInputStream(schemaFile.getFile());
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(fis, encoding));
-
-		String line;
-		while ((line = br.readLine()) != null) {
-			sb.append(line);
-			sb.append('\n');
-		}
-
-		String jsonSchema = sb.toString();
-
-		if (ValidationUtils.isJsonValid(jsonSchema, json)) {
+		JsonSchema jsonSchemaFromResource = ValidationUtils.getSchemaNodeFromResource("/JsonValidator.json");
+		JsonNode jsonNodeAsString = ValidationUtils.getJsonNode(json);
+		
+		if (ValidationUtils.isJsonValid(jsonSchemaFromResource, jsonNodeAsString)) {
 			@SuppressWarnings("deprecation")
 			ConfigureDailyMeasuresDeserializer data = objectMapper.reader(ConfigureDailyMeasuresDeserializer.class)
 					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
@@ -328,7 +315,7 @@ public class ConfigurationService {
 
 			response += "Json is not valid!\nProperty(ies) is/are missing or it has incorrect data type!";
 
-			Iterator itr = ValidationUtils.getReport(jsonSchema, json).iterator();
+			Iterator itr = ValidationUtils.getReport(jsonSchemaFromResource, jsonNodeAsString).iterator();
 			ProcessingMessage message;
 			while (itr.hasNext()) {
 

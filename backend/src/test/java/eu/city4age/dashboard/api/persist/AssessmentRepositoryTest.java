@@ -48,7 +48,6 @@ import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.rest.MeasuresServiceTest;
-import eu.city4age.dashboard.api.utils.ValidationUtils;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
