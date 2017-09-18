@@ -21,6 +21,8 @@ public class ParseExceptionMapper implements ExceptionMapper<ParseException>{
 		 String message="ParseException:\n\tCheck are Date properties in your JSON formatted correctly."
 				 +"\n\tORIGINAL MESSAGE:"+ex.getMessage();
 		 
+		 logger.info(message+"\nORIGINAL MESSAGE: "+ex.getMessage());
+		 
 			    return Response
 		                .status(Response.Status.BAD_REQUEST)
 		                .type(MediaType.TEXT_PLAIN)

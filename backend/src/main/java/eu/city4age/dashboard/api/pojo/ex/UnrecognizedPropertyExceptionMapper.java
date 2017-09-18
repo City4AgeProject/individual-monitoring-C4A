@@ -17,10 +17,14 @@ public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<Unre
 	@SuppressWarnings("deprecation")
 	@Override
 	public Response toResponse(UnrecognizedPropertyException ex) {
-
-		return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN)
-				.entity("Property: " + ex.getUnrecognizedPropertyName() + " unrecognized!\n At line:"
-						+ ex.getLocation().getLineNr() + " and column:" + ex.getLocation().getColumnNr())
+		
+		String message = "Property: " + ex.getUnrecognizedPropertyName() + " unrecognized!\n At line:"
+				+ ex.getLocation().getLineNr() + " and column:" + ex.getLocation().getColumnNr();
+		
+		logger.info(message+"\nORIGINAL MESSAGE: "+ex.getMessage());
+		
+		 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN)
+				.entity(message)
 				.build();
 	}
 

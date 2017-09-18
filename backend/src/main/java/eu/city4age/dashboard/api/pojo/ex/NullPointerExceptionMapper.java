@@ -18,6 +18,7 @@ public class NullPointerExceptionMapper implements ExceptionMapper<NullPointerEx
 		 
 		 String message="NullPointerException:\n\tSome names for properties : name(detection_variable_name) or pilotCode(pilot_code) \n\tin JSON file doesn't match key(keys)\n\tin corresponding tables: cd_detection_variable or pilot.\n\t";
 		 
+		 logger.info(message+"\nORIGINAL MESSAGE: "+ex.getMessage());
 			    return Response
 		                .status(Response.Status.BAD_REQUEST)
 		                .type(MediaType.TEXT_PLAIN)
