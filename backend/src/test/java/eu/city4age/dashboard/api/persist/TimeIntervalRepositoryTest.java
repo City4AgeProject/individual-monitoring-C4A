@@ -292,7 +292,6 @@ public class TimeIntervalRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void setTimeIntervalExistsTest() {
-		
 		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-05 10:00:16"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		
@@ -320,7 +319,6 @@ public class TimeIntervalRepositoryTest {
 		Long returnedId = ti1.getId();
 
 		Assert.assertNotNull(returnedId.longValue());
-
 	}
 
 }

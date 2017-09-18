@@ -196,7 +196,10 @@ public class TimeInterval implements Serializable {
 	}
 
 	public String getEnd() {
-		return intervalEnd.toString();
+		if(intervalEnd != null)
+			return intervalEnd.toString();
+		else
+			return "";
 	}
 
 }

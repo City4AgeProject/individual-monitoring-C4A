@@ -115,4 +115,5 @@ public class ViewNuiValuesPersistedSourceMeaTypesRepositoryTest {
 		Assert.assertEquals("LCC", result.getPilotCode());
 		
 	}
+
 }

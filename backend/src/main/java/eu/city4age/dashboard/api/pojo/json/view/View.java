@@ -9,5 +9,7 @@ public class View {
 	public interface TimeIntervalView extends BaseView {}
 
 	public interface VariationMeasureValueView extends BaseView {}
+	
+	public interface NUIView extends VariationMeasureValueView {}
 
 }

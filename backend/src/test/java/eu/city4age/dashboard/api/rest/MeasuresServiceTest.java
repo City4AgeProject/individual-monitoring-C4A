@@ -99,4 +99,24 @@ public class MeasuresServiceTest {
 		
 	}
 	
+	@Test
+	public void getNuiValuesTest() throws Exception {
+
+		try {
+			String uri = "http://localhost:8080/C4A-dashboard/rest/measures/getNuiValues/userInRoleId/68/detectionVariableId/514";
+			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
+			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
+			if (!response.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+			}
+			logger.info("Output from Server (INSIDE getNuiValuesTest).... ");
+			logger.info(response);
+			logger.info("2: " + response.getBody());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+	
 }

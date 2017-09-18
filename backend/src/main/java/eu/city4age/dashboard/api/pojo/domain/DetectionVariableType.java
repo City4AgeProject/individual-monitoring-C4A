@@ -46,17 +46,13 @@ public class DetectionVariableType implements Serializable {
 
 	@Column(name = "detection_variable_type_description")
 	private String detectionVariableTypeDescription;
-
-	private DetectionVariableType(DetectionVariableType.Type detectionVariableType, String detectionVariableTypeDescription) {
-		this.detectionVariableType = detectionVariableType;
-		this.detectionVariableTypeDescription = detectionVariableTypeDescription;
-	}
 	
 	public DetectionVariableType() {
 	}
 
-	public static Type getDetectionVariableType(String name) throws Exception {
-		return (DetectionVariableType.Type) DetectionVariableType.class.getDeclaredField(name).get(DetectionVariableType.Type.class.getClass());
+	private DetectionVariableType(DetectionVariableType.Type detectionVariableType, String detectionVariableTypeDescription) {
+		this.detectionVariableType = detectionVariableType;
+		this.detectionVariableTypeDescription = detectionVariableTypeDescription;
 	}
 
 }

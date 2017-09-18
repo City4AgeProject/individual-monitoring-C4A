@@ -136,9 +136,6 @@ public class MeasuresService {
 		try {
 			measures = variationMeasureValueRepository.findByUserAndGes(userInRoleId, gesId);
 
-			if (measures.size() > 0) {
-
-			}
 		} catch (Exception e) {
 			logger.info("getDailyMeasures REST service - query exception: ", e);
 		}
@@ -584,6 +581,15 @@ public class MeasuresService {
 			timeIntervalRepository.flush();
 		}
 		return ti;
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("getNuiValues/userInRoleId/{userInRoleId}/detectionVariableId/{detectionVariableId}")
+	public Response getNuiValues(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
+			@ApiParam(hidden = true) @PathParam("detectionVariableId") Long detectionVariableId) throws JsonProcessingException {
+		List<NumericIndicatorValue> nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, detectionVariableId);
+		return Response.ok(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis)).build();
 	}
 
 }
