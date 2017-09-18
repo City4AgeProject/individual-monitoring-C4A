@@ -12,24 +12,12 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-	
+	<properties>
+    	<main.basedir>${project.parent.parent.basedir}</main.basedir>
+	</properties>
 
 	<build>
 		<finalName>C4A-dashboard</finalName>
-		<sourceDirectory>./src/main/java/</sourceDirectory>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.glassfish.maven.plugin</groupId>
-				<artifactId>maven-glassfish-plugin</artifactId>
-			</plugin>
-		</plugins>
 	</build>
 
 </project>

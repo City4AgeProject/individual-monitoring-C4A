@@ -18,6 +18,7 @@ public class GenericRepositoryFactory extends JpaRepositoryFactory {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected <T, ID extends Serializable> SimpleJpaRepository<T, ID> getTargetRepository(
 			RepositoryInformation metadata, EntityManager entityManager) {
 		Class<?> repositoryInterface = metadata.getRepositoryInterface();

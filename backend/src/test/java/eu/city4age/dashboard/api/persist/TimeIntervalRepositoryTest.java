@@ -251,16 +251,10 @@ public class TimeIntervalRepositoryTest {
 		fst.setChangedBy(uir);
 		frailtyStatusTimelineRepository.save(fst);
 		
-		logger.info("trt: " + DetectionVariableType.Type.GEF);
-
-		logger.info("trt: " + DetectionVariableType.Type.GEF);
-
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType(DetectionVariableType.Type.GEF.toString());
+		DetectionVariableType dvt1 = DetectionVariableType.GEF;
 		detectionVariableTypeRepository.save(dvt1);
 
-		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType(DetectionVariableType.Type.GES.toString());
+		DetectionVariableType dvt2 = DetectionVariableType.GES;
 		detectionVariableTypeRepository.save(dvt2);
 
 		DetectionVariable dv1 = new DetectionVariable();
@@ -283,7 +277,7 @@ public class TimeIntervalRepositoryTest {
 		gef1.setDetectionVariable(dv1);
 		geriatricFactorRepository.save(gef1);
 
-		List<String> parentFactors = Arrays.asList("GEF", "GES");
+		List<DetectionVariableType.Type> parentFactors = Arrays.asList(DetectionVariableType.Type.valueOf("GEF"), DetectionVariableType.Type.valueOf("GES"));
 
 		List<TimeInterval> result = timeIntervalRepository.getGroups(1L, parentFactors);
 

@@ -76,12 +76,10 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		uir1.setPilotCode("LCC");
 		userInRoleRepository.save(uir1);
 	
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("GES");
+		DetectionVariableType dvt1 = DetectionVariableType.GES;
 		detectionVariableTypeRepository.save(dvt1);
 		
-		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType("GEF");
+		DetectionVariableType dvt2 = DetectionVariableType.GEF;
 		detectionVariableTypeRepository.save(dvt2);
 	
 		DetectionVariable dv1 = new DetectionVariable();
@@ -150,12 +148,10 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		uir1.setPilotCode(pilotCode);
 		userInRoleRepository.save(uir1);
 	
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("GES");
+		DetectionVariableType dvt1 = DetectionVariableType.GES;
 		detectionVariableTypeRepository.save(dvt1);
 		
-		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType("GEF");
+		DetectionVariableType dvt2 = DetectionVariableType.GEF;
 		detectionVariableTypeRepository.save(dvt2);
 	
 		DetectionVariable dv1 = new DetectionVariable();

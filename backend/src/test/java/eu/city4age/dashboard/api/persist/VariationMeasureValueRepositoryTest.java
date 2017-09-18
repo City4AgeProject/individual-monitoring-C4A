@@ -78,23 +78,23 @@ public class VariationMeasureValueRepositoryTest {
 		//dv measures
 		DetectionVariable mea1 = new DetectionVariable();
 		mea1.setId(91L);
-		mea1.setDetectionVariableType(new DetectionVariableType("MEA"));
+		mea1.setDetectionVariableType(DetectionVariableType.MEA);
 		detectionVariableRepository.save(mea1);
 
 		DetectionVariable mea2 = new DetectionVariable();
 		mea2.setId(95L);
-		mea2.setDetectionVariableType(new DetectionVariableType("MEA"));
+		mea2.setDetectionVariableType(DetectionVariableType.MEA);
 		detectionVariableRepository.save(mea2);
 
 		DetectionVariable mea3 = new DetectionVariable();
 		mea3.setId(98L);
-		mea3.setDetectionVariableType(new DetectionVariableType("MEA"));
+		mea3.setDetectionVariableType(DetectionVariableType.MEA);
 		detectionVariableRepository.save(mea3);
 		
 		//ges
 		DetectionVariable ges = new DetectionVariable();
 		ges.setId(gesId);
-		ges.setDetectionVariableType(new DetectionVariableType("GES"));
+		ges.setDetectionVariableType(DetectionVariableType.GES);
 		detectionVariableRepository.save(ges);
 		
 		TimeInterval ti1 = new TimeInterval();

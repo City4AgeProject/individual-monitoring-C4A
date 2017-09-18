@@ -52,7 +52,6 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
-import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
@@ -444,8 +443,6 @@ public class MeasuresService {
 					.findOne(variationMeasureValueRepository.findMinId(mmThisMonth.getDetectionVariable(), userId));
 			ds = (mmThisMonth.getMeasureValue().subtract(mmMonthZero.getMeasureValue()))
 					.divide(mmMonthZero.getMeasureValue(), 2, RoundingMode.HALF_UP);
-			PilotDetectionVariable pdv = pilotDetectionVariableRepository
-					.findByDetectionVariableAndPilotCodeMeaGes(vpdv.getMpdvId(), pilotCode);
 			weight = new BigDecimal(.1);
 			if (ds.compareTo(new BigDecimal(.25)) < 0) {
 				if (ds.compareTo(new BigDecimal(.1)) < 0) {

@@ -70,12 +70,10 @@ public class ViewPilotDetectionVariableRepositoryTest {
 		uir3.setPilotCode("MPL");
 		userInRoleRepository.save(uir3);
 		
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("MEA");
+		DetectionVariableType dvt1 = DetectionVariableType.MEA;
 		detectionVariableTypeRepository.save(dvt1);
 		
-		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType("GES");
+		DetectionVariableType dvt2 = DetectionVariableType.GES;
 		detectionVariableTypeRepository.save(dvt2);
 		
 		DetectionVariable dv1 = new DetectionVariable();

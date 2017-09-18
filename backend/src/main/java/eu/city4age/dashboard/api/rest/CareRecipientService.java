@@ -38,6 +38,7 @@ import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.comparator.FSTComparator;
 import eu.city4age.dashboard.api.pojo.domain.CrProfile;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatusTimeline;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
@@ -105,14 +106,14 @@ public class CareRecipientService {
 		List<DetectionVariable> detectionvarsparamsList = new ArrayList<DetectionVariable>();
 		ArrayList<C4ServiceGetOverallScoreListResponse> itemList;
 		C4AGroupsResponse response = new C4AGroupsResponse();
-		List<String> parentFactors = new ArrayList<String>();
+		List<DetectionVariableType.Type> parentFactors = new ArrayList<DetectionVariableType.Type>();
 
 		/**
 		 * ****************Action*************
 		 */
 
 		for (PathSegment parentFactor : parentFactorsPathSegment) {
-			parentFactors.add(parentFactor.toString());
+			parentFactors.add(DetectionVariableType.Type.valueOf(parentFactor.toString()));
 		}
 
 		List<TimeInterval> tis = timeIntervalRepository.getGroups(Long.valueOf(careRecipientId), parentFactors);
@@ -267,10 +268,7 @@ public class CareRecipientService {
 					frailtyNotice = frailtyparamsList.get(0).getFrailtyNotice();
 				}
 
-				// Load Pilot object to find the pilot code
-				// Long pil = Long.parseLong(user.getPilotId().toString());
-				String pil = user.getPilotCode();
-				Pilot userPilot = pilotRepository.findOne(pil);
+				Pilot userPilot = pilotRepository.findOne(user.getPilotCode());
 
 				itemList.add(new C4ACareRecipientListResponse(user.getId(), age, frailtyStatus, frailtyNotice,
 						attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate,

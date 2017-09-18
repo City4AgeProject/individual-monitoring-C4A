@@ -1,7 +1,6 @@
 package eu.city4age.dashboard.api.persist;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;

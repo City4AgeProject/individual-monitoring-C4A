@@ -63,12 +63,10 @@ public class ViewMeaNuiDerivationPerPilotTest {
 		uir1.setPilotCode("ATH");
 		userInRoleRepository.save(uir1);
 		
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("MEA");
+		DetectionVariableType dvt1 = DetectionVariableType.MEA;
 		detectionVariableTypeRepository.save(dvt1);
 		
-		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType("NUI");
+		DetectionVariableType dvt2 = DetectionVariableType.NUI;
 		detectionVariableTypeRepository.save(dvt2);
 		
 		DetectionVariable dv1 = new DetectionVariable();
@@ -130,16 +128,13 @@ public class ViewMeaNuiDerivationPerPilotTest {
 		uir5.setPilotCode("MPL");
 		userInRoleRepository.save(uir5);
 		
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("MEA");
+		DetectionVariableType dvt1 = DetectionVariableType.MEA;
 		detectionVariableTypeRepository.save(dvt1);
 		
-		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType("NUI");
+		DetectionVariableType dvt2 = DetectionVariableType.NUI;
 		detectionVariableTypeRepository.save(dvt2);
 		
-		DetectionVariableType dvt3 = new DetectionVariableType();
-		dvt3.setDetectionVariableType("NUI");
+		DetectionVariableType dvt3 = DetectionVariableType.NUI;
 		detectionVariableTypeRepository.save(dvt3);
 		
 		DetectionVariable dv1 = new DetectionVariable();

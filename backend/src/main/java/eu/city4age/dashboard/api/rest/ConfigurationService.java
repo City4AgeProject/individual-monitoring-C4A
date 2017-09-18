@@ -1,10 +1,7 @@
 package eu.city4age.dashboard.api.rest;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,8 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.server.ContainerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +44,6 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.ex.JsonValidationException;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
-import eu.city4age.dashboard.api.pojo.json.desobj.Element;
-import eu.city4age.dashboard.api.pojo.json.desobj.ElementWithFormula;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gef;
 import eu.city4age.dashboard.api.pojo.json.desobj.Ges;
 import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
@@ -79,9 +72,6 @@ public class ConfigurationService {
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
-	int inserted;
-	int updated;
-
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("updateFromConfigFile")
@@ -99,10 +89,10 @@ public class ConfigurationService {
 			@SuppressWarnings("deprecation")
 			ConfigureDailyMeasuresDeserializer data = objectMapper.reader(ConfigureDailyMeasuresDeserializer.class)
 					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
-			inserted = 0;
-			updated = 0;
+			int inserted = 0;
+			int updated = 0;
 
-			DetectionVariableType detVarType = new DetectionVariableType();
+			DetectionVariableType detVarType;
 
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			
@@ -124,46 +114,51 @@ public class ConfigurationService {
 
 				Groups group = data.getGroups().get(i);
 				
-				detVarType.setDetectionVariableType("GFG");
+				detVarType = DetectionVariableType.GFG;
 				DetectionVariable gfgDetectionVariable = detectionVariableRepository
 						.findByDetectionVariableNameAndDetectionVariableType(group.getName(), detVarType);
 
-				detVarType.setDetectionVariableType("OVL");
+				detVarType = DetectionVariableType.OVL;
 				DetectionVariable ovlDetectionVariable = detectionVariableRepository
 						.findByDetectionVariableNameAndDetectionVariableType(data.getName(), detVarType);
 
-				createOrUpdatePilotDetectionVariable(gfgDetectionVariable, ovlDetectionVariable, validFrom, validTo, pilotCode, group);
+				createOrUpdatePilotDetectionVariable(gfgDetectionVariable, ovlDetectionVariable, validFrom, validTo, pilotCode, null, group.getWeight(), inserted, updated);
 
 				for (int j = 0; j < group.getFactors().size(); j++) {
 
 					Gef factor = group.getFactors().get(j);
-					detVarType.setDetectionVariableType("GEF");
+					detVarType = DetectionVariableType.GEF;
 					DetectionVariable gefDetectionVariable = detectionVariableRepository
 							.findByDetectionVariableNameAndDetectionVariableType(factor.getName(), detVarType);
 
-					createOrUpdatePilotDetectionVariable(gefDetectionVariable, gfgDetectionVariable, validFrom, validTo, pilotCode, factor);
+					createOrUpdatePilotDetectionVariable(gefDetectionVariable, gfgDetectionVariable, validFrom, validTo, pilotCode, null, factor.getWeight(), inserted, updated);
 
 					for (int k = 0; k < factor.getSubFactors().size(); k++) {
 
 						Ges subFactor = factor.getSubFactors().get(k);
 
-						detVarType.setDetectionVariableType("GES");
+						detVarType = DetectionVariableType.GES;
 						DetectionVariable gesDetectionVariable = detectionVariableRepository
 								.findByDetectionVariableNameAndDetectionVariableType(subFactor.getName(), detVarType);
 						
-						createOrUpdatePilotDetectionVariable(gesDetectionVariable, gefDetectionVariable, validFrom, validTo, pilotCode, subFactor);
+						createOrUpdatePilotDetectionVariable(gesDetectionVariable, gefDetectionVariable, validFrom, validTo, pilotCode, null, subFactor.getWeight(), inserted, updated);
 						
 						for (int n = 0; n < subFactor.getMeasures().size(); n++) {
 
 							Mea measure = subFactor.getMeasures().get(n);
 
-							detVarType.setDetectionVariableType("MEA");
+							detVarType = DetectionVariableType.MEA;
 							DetectionVariable meaDetectionVariable = detectionVariableRepository
 									.findByDetectionVariableNameAndDetectionVariableType(measure.getName(), detVarType);
 							
 							List<String> NuiList = Arrays.asList("avg", "std", "delta", "best");
 
 							Map<String, String> NuiListFormula = new HashMap<String, String>() {
+								/**
+								 * 
+								 */
+								private static final long serialVersionUID = 1L;
+
 								{
 									put("avg", "avg");
 									put("std", "std");
@@ -172,26 +167,26 @@ public class ConfigurationService {
 								}
 							};
 							
-							createOrUpdateMeasure(meaDetectionVariable, gesDetectionVariable, validFrom, validTo,
-									pilotCode, measure);
+							createOrUpdatePilotDetectionVariable(meaDetectionVariable, gesDetectionVariable, validFrom, validTo,
+									pilotCode, null, measure.getWeight(), inserted, updated);
 							
 							if(meaDetectionVariable.getDefaultTypicalPeriod().equals("1WK")||meaDetectionVariable.getDefaultTypicalPeriod().equals("DAY")){
 							
 								BigDecimal nuiWeight = BigDecimal.valueOf((double) 1 / NuiListFormula.size());
 								String nuiFormula;
 								for (String nui : NuiList) {
-									detVarType.setDetectionVariableType("NUI");
+									detVarType = DetectionVariableType.NUI;
 									DetectionVariable nuiDetectionVariable = detectionVariableRepository
 											.findByDetectionVariableNameAndDetectionVariableType(
 													nui + '_' + measure.getName(), detVarType);
 									
 									nuiFormula = NuiListFormula.get(nui);
 									
-									createOrUpdateNui(nuiDetectionVariable, gesDetectionVariable,validFrom, validTo,
-											pilotCode ,nuiWeight);
+									createOrUpdatePilotDetectionVariable(nuiDetectionVariable, gesDetectionVariable,validFrom, validTo,
+											pilotCode, null, nuiWeight, inserted, updated);
 	
-									createOrUpdateMeasure(meaDetectionVariable, nuiDetectionVariable, validFrom, validTo,
-									pilotCode, nuiFormula, nuiWeight);
+									createOrUpdatePilotDetectionVariable(meaDetectionVariable, nuiDetectionVariable, validFrom, validTo,
+									pilotCode, nuiFormula, nuiWeight, inserted, updated);
 								}
 							}
 							
@@ -245,7 +240,7 @@ public class ConfigurationService {
 												
 												Mea measure = subFactor.getMeasures().get(n);
 												
-												detVarType.setDetectionVariableType("MEA");
+												detVarType = DetectionVariableType.MEA;
 												DetectionVariable meaDetectionVariable = detectionVariableRepository
 														.findByDetectionVariableNameAndDetectionVariableType(measure.getName(), detVarType);
 
@@ -315,7 +310,7 @@ public class ConfigurationService {
 
 			response += "Json is not valid!\nProperty(ies) is/are missing or it has incorrect data type!";
 
-			Iterator itr = ValidationUtils.getReport(jsonSchemaFromResource, jsonNodeAsString).iterator();
+			Iterator<?> itr = ValidationUtils.getReport(jsonSchemaFromResource, jsonNodeAsString).iterator();
 			ProcessingMessage message;
 			while (itr.hasNext()) {
 
@@ -358,104 +353,25 @@ public class ConfigurationService {
 		return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity(response).build();
 
 	}
-
-	private void createOrUpdateNui(DetectionVariable dv, DetectionVariable ddv, Date validFrom,
-			Date validTo,String pilotCode, BigDecimal nuiWeight) {
-		
-
-		PilotDetectionVariable pdv1 = pilotDetectionVariableRepository
-				.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode,
-						dv.getId(), ddv.getId());
-		if (pdv1 != null) {
-			
-			if (!( (pdv1.getDerivationWeight().compareTo(nuiWeight) == 0) &&
-				   (pdv1.getValidFrom().compareTo(validFrom)==0) &&
-				   (pdv1.getValidTo().compareTo(validTo)==0)
-					 
-			    )) {
-				
-				pdv1.setDerivationWeight(nuiWeight);
-				pdv1.setValidFrom(validFrom);
-				pdv1.setValidTo(validTo);
-				
-				pilotDetectionVariableRepository.save(pdv1);
-
-				updated++;
-			}
-		} else {
-			PilotDetectionVariable pdv2 = new PilotDetectionVariable();
-			pdv2.setValidFrom(validFrom);
-			pdv2.setValidTo(validTo);
-			pdv2.setPilotCode(pilotCode);
-			pdv2.setDerivationWeight(nuiWeight);
-			pdv2.setDetectionVariable(dv);
-			pdv2.setDerivedDetectionVariable(ddv);
-			
-			pilotDetectionVariableRepository.save(pdv2);
-			inserted++;
-		}
-
-	}
-
+	
 	private void createOrUpdatePilotDetectionVariable(DetectionVariable dv, DetectionVariable ddv, Date validFrom,
-			Date validTo, String pilotCode, ElementWithFormula e) {
-		
-		
+			Date validTo, String pilotCode,String nuiFormula,BigDecimal nuiWeight, int inserted, int updated) {
+	
 		PilotDetectionVariable pdv1 = pilotDetectionVariableRepository
 				.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode,
 						dv.getId(), ddv.getId());
-		if (pdv1 != null) {
-			
-			if (!( 
-					(pdv1.getDerivationWeight().compareTo(e.getWeight()) == 0) && 
-					(((pdv1.getFormula()==null)?"":pdv1.getFormula()).trim().compareTo(((e.getFormula()==null)?"":e.getFormula())) == 0) &&
-					(pdv1.getValidFrom().compareTo(validFrom)==0) &&
-					(pdv1.getValidTo().compareTo(validTo)==0)
-					
-				 )) {
 
-				pdv1.setDerivationWeight(e.getWeight());
-				pdv1.setFormula(e.getFormula().equals("")?null:e.getFormula());
-				pdv1.setValidFrom(validFrom);
-				pdv1.setValidTo(validTo);
-				
-				pilotDetectionVariableRepository.save(pdv1);
-				
-				updated++;
-			}
-		} else {
-			PilotDetectionVariable pdv2 = new PilotDetectionVariable();
-			pdv2.setValidFrom(validFrom);
-			pdv2.setValidTo(validTo);
-			pdv2.setPilotCode(pilotCode);
-			pdv2.setDerivationWeight(e.getWeight());
-			pdv2.setFormula(e.getFormula().equals("")?null:e.getFormula());
-			pdv2.setDetectionVariable(dv);
-			pdv2.setDerivedDetectionVariable(ddv);
-			
-			pilotDetectionVariableRepository.save(pdv2);
-			inserted++;
-		}
-	}
-	
-	private void createOrUpdateMeasure(DetectionVariable dv, DetectionVariable ddv, Date validFrom,
-			Date validTo, String pilotCode,String nuiFormula,BigDecimal nuiWeight) {
-	
-		
-		PilotDetectionVariable pdv1 = pilotDetectionVariableRepository
-				.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode,
-						dv.getId(), ddv.getId());
 		if (pdv1 != null) {
 
 			if (!((pdv1.getDerivationWeight().compareTo(nuiWeight) == 0) &&
-					(pdv1.getFormula().trim().compareTo(nuiFormula) == 0) &&
+				 (pdv1.getFormula() == null || (pdv1.getFormula() != null && pdv1.getFormula().trim().compareTo(nuiFormula) == 0)) &&
 				 (pdv1.getValidFrom().compareTo(validFrom)==0) &&
 			     (pdv1.getValidTo().compareTo(validTo)==0)
 			     )) {
 
 				
 				pdv1.setDerivationWeight(nuiWeight);
-				pdv1.setFormula(nuiFormula);
+				pdv1.setFormula(nuiFormula.equals("")?null:nuiFormula);
 				pdv1.setValidFrom(validFrom);
 				pdv1.setValidTo(validTo);
 				
@@ -468,7 +384,7 @@ public class ConfigurationService {
 			pdv2.setValidFrom(validFrom);
 			pdv2.setValidTo(validTo);
 			pdv2.setPilotCode(pilotCode);
-			pdv2.setFormula(nuiFormula);
+			pdv2.setFormula(nuiFormula.equals("")?null:nuiFormula);
 			pdv2.setDerivationWeight(nuiWeight);
 			pdv2.setDetectionVariable(dv);
 			pdv2.setDerivedDetectionVariable(ddv);
@@ -476,55 +392,15 @@ public class ConfigurationService {
 			pilotDetectionVariableRepository.save(pdv2);
 			inserted++;
 		}
+
 	}
-	
-	private void createOrUpdateMeasure(DetectionVariable dv, DetectionVariable ddv, Date validFrom,
-			Date validTo, String pilotCode, Element e) {
-	
-		
-		PilotDetectionVariable pdv1 = pilotDetectionVariableRepository
-				.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode,
-						dv.getId(), ddv.getId());
-		if (pdv1 != null) {
 
-			if (!((pdv1.getDerivationWeight().compareTo(e.getWeight()) == 0) &&
-				 (pdv1.getValidFrom().compareTo(validFrom)==0) &&
-			     (pdv1.getValidTo().compareTo(validTo)==0)
-			     )) {
-
-				pdv1.setDerivationWeight(e.getWeight());
-				pdv1.setValidFrom(validFrom);
-				//set formula for MEA in GES to null
-				pdv1.setFormula("");
-				pdv1.setValidTo(validTo);
-				
-				pilotDetectionVariableRepository.save(pdv1);
-
-				updated++;
-			}
-		} else {
-			PilotDetectionVariable pdv2 = new PilotDetectionVariable();
-			pdv2.setValidFrom(validFrom);
-			pdv2.setValidTo(validTo);
-			pdv2.setPilotCode(pilotCode);
-			pdv2.setDerivationWeight(e.getWeight());
-			pdv2.setDetectionVariable(dv);
-			pdv2.setDerivedDetectionVariable(ddv);
-			
-			pilotDetectionVariableRepository.save(pdv2);
-			inserted++;
-		}
-	}
-	
-	private boolean existPdv(PilotDetectionVariable p, String e, String de) {
-
-		if (p.getDetectionVariable().getDetectionVariableName().equals(e)
-				&& p.getDerivedDetectionVariable().getDetectionVariableName().equals(de)) {
+	private boolean existPdv(PilotDetectionVariable pdv, String dvName, String ddvName) {
+		if (pdv.getDetectionVariable().getDetectionVariableName().equals(dvName)
+				&& pdv.getDerivedDetectionVariable().getDetectionVariableName().equals(ddvName))
 			return true;
-		} else {
+		else
 			return false;
-		}
-
 	}
 
 }

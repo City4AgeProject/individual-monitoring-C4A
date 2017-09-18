@@ -174,11 +174,8 @@ function(oj, ko, $) {
 					&& self.props.series !== undefined) {
 				for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
 					self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
-					
 				}
 			}
-			
-			
 		};
 
 		var loadDataSet = function(data) {

@@ -14,6 +14,7 @@
 	</parent>
 
 	<properties>
+		<main.basedir>${project.basedir}</main.basedir>
 		<start-class>eu.city4age.dashboard.api.Application</start-class>
 		<maven.test.skip>true</maven.test.skip>
 		<glassfish.home>C:\glassfish-4.1.1\glassfish4</glassfish.home>
@@ -213,6 +214,7 @@
 	</dependencies>
 
 	<build>
+		<sourceDirectory>./src/main/java/</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.glassfish.maven.plugin</groupId>
@@ -240,6 +242,13 @@
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>

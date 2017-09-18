@@ -68,12 +68,10 @@ public class ViewNuiValuesPersistedSourceMeaTypesRepositoryTest {
 		uir1.setPilotCode("LCC");
 		userInRoleRepository.save(uir1);
 	
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("MEA");
+		DetectionVariableType dvt1 = DetectionVariableType.MEA;
 		detectionVariableTypeRepository.save(dvt1);
 		
-		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType("NUI");
+		DetectionVariableType dvt2 = DetectionVariableType.NUI;
 		detectionVariableTypeRepository.save(dvt2);
 	
 		DetectionVariable dv1 = new DetectionVariable();

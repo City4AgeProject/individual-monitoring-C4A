@@ -52,8 +52,7 @@ public class PilotDetectionVariableRepositoryTest {
 	@Rollback(true)
 	public void testFindAllForDvtNUI() {
 		
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("NUI");
+		DetectionVariableType dvt1 = DetectionVariableType.NUI;
 		detectionVariableTypeRepository.save(dvt1);
 
 		DetectionVariable dv1 = new DetectionVariable();
@@ -82,42 +81,6 @@ public class PilotDetectionVariableRepositoryTest {
 		Assert.assertEquals(3, result.size());
 
 	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testFindByDetectionVariableAndPilotCodeMeaGes() {
-		
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("MEA");
-		detectionVariableTypeRepository.save(dvt1);
-		
-		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType("GES");
-		detectionVariableTypeRepository.save(dvt2);
-		
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(1L);
-		dv1.setDetectionVariableType(dvt1);
-		detectionVariableRepository.save(dv1);
-		
-		DetectionVariable dv2 = new DetectionVariable();
-		dv2.setId(2L);
-		dv2.setDetectionVariableType(dvt2);
-		detectionVariableRepository.save(dv2);
-		
-		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
-		pdv1.setDetectionVariable(dv1);
-		pdv1.setDerivedDetectionVariable(dv2);;
-		pdv1.setPilotCode("LCC");
-		pilotDetectionVariableRepository.save(pdv1);
-		
-		PilotDetectionVariable result = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCodeMeaGes(dv1.getId(), "LCC");
-		
-		Assert.assertNotNull(result);
-		Assert.assertEquals(Long.valueOf(1L), result.getDetectionVariable().getId());
-		
-	}
 	
 	@Test
 	@Transactional
@@ -141,12 +104,10 @@ public class PilotDetectionVariableRepositoryTest {
 	@Rollback(true)
 	public void testFindAllMEADvTypeByPilotCode() {
 		
-		DetectionVariableType dvt1 = new DetectionVariableType();
-		dvt1.setDetectionVariableType("MEA");
+		DetectionVariableType dvt1 = DetectionVariableType.MEA;
 		detectionVariableTypeRepository.save(dvt1);
 		
-		DetectionVariableType dvt2 = new DetectionVariableType();
-		dvt2.setDetectionVariableType("GES");
+		DetectionVariableType dvt2 = DetectionVariableType.GES;
 		detectionVariableTypeRepository.save(dvt2);
 		
 		DetectionVariable dv1 = new DetectionVariable();

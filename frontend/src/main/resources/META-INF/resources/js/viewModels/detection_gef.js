@@ -45,6 +45,7 @@ function (oj, ko, $, sp, params) {
             offsetTop = e.offsetX;
             offsetLeft = e.offsetY;                   
         });
+
         $(document).on("mouseup touchend", function (e) {
             clientX = e.clientX;
             clientY = e.clientY;
@@ -64,35 +65,35 @@ function (oj, ko, $, sp, params) {
         }
 
         /*  Detection FGR Groups Line Chart configuration  */
-        self.seriesVal = ko.observableArray();
-        self.groupsVal = ko.observableArray();
+        self.seriesVal = ko.observableArray([]);
+        self.groupsVal = ko.observableArray([]);
         
-        self.lineGroupsValue = ko.observableArray();
-        self.lineSeriesValue = ko.observableArray();
+        self.lineGroupsValue = ko.observableArray([]);
+        self.lineSeriesValue = ko.observableArray([]);
         
-        self.selectedAnotations = ko.observableArray();
+        self.selectedAnotations = ko.observableArray([]);
         
         /* Risks select */
         self.risksTags = ko.observableArray([]);
         
         self.isChecked = ko.observable();
         
-        self.checkedFilterRiskStatus = ko.observableArray();
-        self.checkedFilterValidityData = ko.observableArray();
+        self.checkedFilterRiskStatus = ko.observableArray([]);
+        self.checkedFilterValidityData = ko.observableArray([]);
         
         self.roleTags = ko.observableArray([]);  
-        self.selectedRoles = ko.observableArray();
+        self.selectedRoles = ko.observableArray([]);
         
         self.val = ko.observableArray(["Month"]);
         
-        self.dataPointsMarkedIds = ko.observableArray();
+        self.dataPointsMarkedIds = ko.observableArray([]);
         
         self.polarGridShapeValue = ko.observable('polygon');
-        self.polarChartSeriesValue = ko.observableArray();
-        self.polarChartGroupsValue = ko.observableArray();
+        self.polarChartSeriesValue = ko.observableArray([]);
+        self.polarChartGroupsValue = ko.observableArray([]);
         
-        self.polarChartSeriesValue = ko.observableArray();
-        self.polarChartGroupsValue = ko.observableArray();
+        self.polarChartSeriesValue = ko.observableArray([]);
+        self.polarChartGroupsValue = ko.observableArray([]);
         
 		self.filterList = function() {
             filterAssessments(self.queryParams, self.checkedFilterValidityData);
@@ -139,7 +140,7 @@ function (oj, ko, $, sp, params) {
         /* End: Group 1 and Group 2 Line Chart configuration with dynamic data */
         
         /*  Detection GEF Groups Line Chart configuration*/	
-        self.lineSeries2Value = ko.observableArray();   	
+        self.lineSeries2Value = ko.observableArray([]);   	
         
         
         self.titleValue = ko.observable("");
@@ -152,7 +153,7 @@ function (oj, ko, $, sp, params) {
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-            graphicsContentViewModel.titleValue(  ui['series'].charAt(0).toUpperCase()+ui['series'].slice(1) + oj.Translations.getTranslatedString('geriatric_factors') );
+            self.titleValue(  ui['series'].charAt(0).toUpperCase()+ui['series'].slice(1) + oj.Translations.getTranslatedString('geriatric_factors') );
 
             self.titlePart(ko.toJS(self.titleValue));
             
@@ -224,7 +225,7 @@ function (oj, ko, $, sp, params) {
 
             self.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
 
-            graphicsContentViewModel.titleValue(seriesVal + "Geriatric factors");
+            self.titleValue(seriesVal + "Geriatric factors");
             self.parentFactorId = ui['seriesData'].items[0].gefTypeId;
             
         
@@ -240,12 +241,12 @@ function (oj, ko, $, sp, params) {
             {name: groups[5], items: [lineSeries2[0].items[5], lineSeries2[1].items[5], lineSeries2[2].items[5], lineSeries2[3].items[5]], color: '#1DDB1B'}];
 
         self.polarGridShapeValue1 = ko.observable();
-        self.polarChartSeriesValue1 = ko.observableArray();
-        self.polarChartGroupsValue1 = ko.observableArray();
+        self.polarChartSeriesValue1 = ko.observableArray([]);
+        self.polarChartGroupsValue1 = ko.observableArray([]);
 
         self.polarGridShapeValue2 = ko.observable();
-        self.polarChartSeriesValue2 = ko.observableArray();
-        self.polarChartGroupsValue2 = ko.observableArray();
+        self.polarChartSeriesValue2 = ko.observableArray([]);
+        self.polarChartGroupsValue2 = ko.observableArray([]);
 
         self.stackValue = ko.observable('off');
         self.typeValue = ko.observable('line');
@@ -256,12 +257,12 @@ function (oj, ko, $, sp, params) {
 
                 $.each(gefData.itemList, function (i, list) {
                     if (list.parentGroupName.indexOf("Behavioural") !== -1) {
-                        graphicsContentViewModel.polarChartGroupsValue1.push({
+                        self.polarChartGroupsValue1.push({
                             name: list.items[0].groupName,
                             items: list.items[0].itemList
                         });
                     } else if (list.parentGroupName.indexOf("Contextual") !== -1) {
-                        graphicsContentViewModel.polarChartGroupsValue2.push({
+                    	self.polarChartGroupsValue2.push({
                             name: list.items[0].groupName,
                             items: list.items[0].itemList
                         });
@@ -270,11 +271,11 @@ function (oj, ko, $, sp, params) {
 
                 document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-                graphicsContentViewModel.polarGridShapeValue1('polygon');
-                graphicsContentViewModel.polarChartSeriesValue1(lineSeriesPolar1);
+                self.polarGridShapeValue1('polygon');
+                self.polarChartSeriesValue1(lineSeriesPolar1);
 
-                graphicsContentViewModel.polarGridShapeValue2('polygon');
-                graphicsContentViewModel.polarChartSeriesValue2(lineSeriesPolar2);
+                self.polarGridShapeValue2('polygon');
+                self.polarChartSeriesValue2(lineSeriesPolar2);
 
                 document.getElementById('polarChart1').style.display = 'block';
                 document.getElementById('polarChart2').style.display = 'block';
@@ -368,9 +369,9 @@ function (oj, ko, $, sp, params) {
                     	
                     });
                     if(data && data.itemList && data.itemList.length>0)
-                        $.each(data.itemList[0].items[0].dateList, function (j, dateItem) {
-                            self.groupsVal.push(dateItem);
-                        });
+                    	self.groupsVal(data.itemList[0].items[0].dateList);
+                    else
+                    	self.groupsVal([]);
                     
                     $.each(self.seriesVal(), function (i, s) {
                             if(s.name === 'Overall'){
@@ -405,6 +406,5 @@ function (oj, ko, $, sp, params) {
 
     }
 
-    var graphicsContentViewModel = new GraphicsContentViewModel();
-    return  graphicsContentViewModel;
+    return  GraphicsContentViewModel;
 });

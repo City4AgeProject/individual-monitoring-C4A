@@ -63,7 +63,6 @@ public class AndroidService {
 
 		C4AAndroidResponse response = new C4AAndroidResponse();
 		List<UserInRole> uir = userInRoleRepository.findByUserInSystemId(data.getId());
-		// response.setId(data.getId());
 
 		response.setResult(0);
 		if (uir.size() < 1) {
