@@ -1,4 +1,4 @@
-define(['knockout', 'jquery', 'urls', 'entities'],
+define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'ojs/ojtable', 'ojs/ojarraytabledatasource','ojs/ojtabs', 'ojs/ojconveyorbelt'],
         function (ko, $) {
             
             function model(context) {
@@ -7,20 +7,23 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 self.lineSeries = [];
                 
                 context.props.then(function(properties) {               	                     
-                    self.props = properties;
-                    
-                    self.measureName = properties.measureName.replace(/_/g, " ");
-                    
-                                                          
+                    self.props = properties;                  
+                    var name = properties.measureName.replace(/_/g, " ");
+                    self.measureName = name.charAt(0).toUpperCase() + name.slice(1);                                 
                 });
-               
-                
+               //new for nuis            
+                var legend = new Object();
+                legend.title = "hover to see summary values";
+                legend.titleStyle = "font-size:10px";
               
+                this.legendValue = ko.observable(legend);
+                                
+              //end new
              self.lineGroups = ["1", "2", "3", "4", "5","6","7","8","9","10",
                 	"11","12","13","14","15","16","17","18","19","20",
                 	"21","22","23","24","25","26","27","28","29","30","31"];
-             
-                
+                        
+            
                  
             };
             return model;

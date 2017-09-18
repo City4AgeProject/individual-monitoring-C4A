@@ -1,4 +1,4 @@
-<h5>Daily measures for <strong><span data-bind="text: measureName"></span></strong></h5>
+<h5><strong><span data-bind="text: measureName"></span></strong></h5>
 <div id='measure-view-container' style="border:1px solid silver;">
     <div id="lineChart" data-bind="ojComponent: {
         component: 'ojChart', 
@@ -10,10 +10,15 @@
         orientation: 'vertical',
         hoverBehavior: 'dim',
         yAxis: {title: $props.baseUnit},        
-        zoomAndScroll: 'live' 
+        zoomAndScroll: 'live',
+        legend: legendValue
           
         }"
          style="width:100%;height:350px;">
     </div>
    <!--  zaobljene ivice: styleDefaults: {lineType: 'curved'} -->
 </div>
+
+
+
+

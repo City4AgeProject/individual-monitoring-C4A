@@ -1,6 +1,6 @@
 var app = 'C4A-dashboard';
 var rest = 'rest';
-var hostname = location.hostname; //location.hostname, 'c4adashboard.atc.gr', 138.4.10.230
+var hostname = location.hostname; //location.hostname, 'c4adashboard.atc.gr'
 var port = location.port;
 
 var root = location.protocol + "//" + hostname + (port === ''?'':":" + port) + '/' + app + '/' + rest + '/';
@@ -18,6 +18,6 @@ var CARE_RECIPIENT_ALL = root + "careRecipient/getCareRecipients";
 var CARE_RECIPIENT_GROUPS = root + "careRecipient/getGroups";
 var CARE_RECIPIENT_DIAGRAM_DATA = root + "careRecipient/getDiagramData";
 
-var DAILY_MEASURES_DATA = root + "measures/findByUserAndGes";
+var DAILY_MEASURES_DATA = root + "measures/getDailyMeasures";
 
 var USER_LOGIN = root + "users/login";

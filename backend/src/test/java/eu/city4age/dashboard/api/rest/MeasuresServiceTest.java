@@ -53,16 +53,16 @@ public class MeasuresServiceTest {
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@Test
-	public void findByUserAndGesTest() throws Exception {
+	public void getDailyMeasuresTest() throws Exception {
 
 		try {
-			String uri = "http://localhost:8080/C4A-dashboard/rest/measures/findByUserAndGes/userInRoleId/10/gesId/514";
+			String uri = "http://localhost:8080/C4A-dashboard/rest/measures/getDailyMeasures/userInRoleId/10/gesId/514";
 			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
 			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
 			if (!response.getStatusCode().equals(HttpStatus.OK)) {
 				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
 			}
-			logger.info("Output from Server (INSIDE findByUserAndGesTest).... ");
+			logger.info("Output from Server (INSIDE getDailyMeasures).... ");
 			logger.info(response);
 			logger.info("3: " + response.getBody());
 

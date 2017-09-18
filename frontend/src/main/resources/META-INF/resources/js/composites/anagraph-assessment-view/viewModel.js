@@ -291,13 +291,17 @@ function(oj, ko, $) {
 		};
 
 		self.chartDrill = function(event, ui) {
+			console.log('drill on anagraph-assessment-view');
+
             var seriesVal = ui['series'];            
 					
             self.props.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
             
             //if subfaktor lineseries is clicked, transfer to detection_mea page
             if(self.props.selectedId > 513){
-            	oj.Router.rootInstance.go("detection_mea");
+            	console.log('bigger than 513');            	
+            	oj.Router.rootInstance.store([self.props.careRecipientId, self.props.selectedId]);
+                oj.Router.rootInstance.go("detection_mea");
             	return;
             }
             
@@ -307,6 +311,14 @@ function(oj, ko, $) {
             
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
+
+            
+            console.log('seriesVal = ' + seriesVal);
+            console.log('selectedID = ' + self.props.selectedId);
+            console.log('titleValue = ' + self.props.titleValue);
+            console.log('parentFactorId = ' + self.props.parentFactorId);
+         
+            
 
 			self.bGotoGESClick();
 
@@ -687,7 +699,7 @@ function(oj, ko, $) {
 
 
         //Returns chart by ID for detection variable name that was drilled in (clicked on)
-        self.bGotoGESClick = function() {     	
+        self.bGotoGESClick = function() {
             var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, self.props.selectedId);
             oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable]);
             oj.Router.rootInstance.go('detection_ges');

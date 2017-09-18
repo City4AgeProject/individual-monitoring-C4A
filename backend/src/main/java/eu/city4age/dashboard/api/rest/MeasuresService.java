@@ -123,13 +123,13 @@ public class MeasuresService {
 	@ApiOperation("Get daily measures for care recipient within given geriatric subfactor.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.VariationMeasureValueView.class)
-	@Path("findByUserAndGes/userInRoleId/{userInRoleId}/gesId/{gesId}")
+	@Path("getDailyMeasures/userInRoleId/{userInRoleId}/gesId/{gesId}")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "userInRoleId", value = "id of care recipient", required = false, dataType = "long", paramType = "path", defaultValue = "1"),
 			@ApiImplicitParam(name = "gesId", value = "id of geriatric subfactor", required = false, dataType = "long", paramType = "path", defaultValue = "2") })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = VariationMeasureValue.class),
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
-	public Response findByUserAndGes(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
+	public Response getDailyMeasures(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
 			@ApiParam(hidden = true) @PathParam("gesId") Long gesId) throws JsonProcessingException {
 
 		List<VariationMeasureValue> measures = new ArrayList<VariationMeasureValue>();
@@ -140,7 +140,7 @@ public class MeasuresService {
 
 			}
 		} catch (Exception e) {
-			logger.info("findByUserAndGes REST service - query exception: ", e);
+			logger.info("getDailyMeasures REST service - query exception: ", e);
 		}
 
 		return Response

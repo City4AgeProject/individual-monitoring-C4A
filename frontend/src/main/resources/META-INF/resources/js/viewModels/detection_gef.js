@@ -366,7 +366,6 @@ function (oj, ko, $, sp, params) {
                             break;
                         default:
                     	}
-                    	
                     });
                     if(data && data.itemList && data.itemList.length>0)
                     	self.groupsVal(data.itemList[0].items[0].dateList);
@@ -374,14 +373,18 @@ function (oj, ko, $, sp, params) {
                     	self.groupsVal([]);
                     
                     $.each(self.seriesVal(), function (i, s) {
-                            if(s.name === 'Overall'){
-                               s.color = '#999999';
-                               s.lineWidth = 5; 
-                            } else if(s.name === 'Behavioural'){
-                            	s.color = '#ea97f1';
-                            } else if(s.name === 'Contextual'){
-                            	s.color = '#5dd6c9';
-                            }
+                        if(s.name === 'Overall'){
+                        	s.drilling = "off";
+                           s.color = '#999999';
+                           s.lineWidth = 2; 
+                        } else if(s.name === 'Behavioural'){
+                        	s.color = '#ea97f1';
+                        	
+                        	s.lineWidth = 5; 
+                        } else if(s.name === 'Contextual'){
+                        	s.color = '#5dd6c9';
+                        	s.lineWidth = 5; 
+                        }
                     });
                     
                     $(".loader-hover").hide();
@@ -393,7 +396,9 @@ function (oj, ko, $, sp, params) {
                         	el.items = [null];
                         }
                     });                    
-
+                   //If you want to see the data recieved:
+                 /*console.log('This is the data for overall chart ' + JSON.stringify(self.seriesVal())); */                  
+                    
                 });
         }
         
