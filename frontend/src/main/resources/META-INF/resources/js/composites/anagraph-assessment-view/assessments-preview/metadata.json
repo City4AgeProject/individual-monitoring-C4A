@@ -8,9 +8,9 @@
 			"description" : "Array of assessments selected on diagram.",
 			"type": "Array<object>"
 		},
-		"dataPointsMarkedIds": {
-			"description" : "Array of datapoint ids selected on diagram.",
-			"type": "Array<object>"
+		"dataPointsMarked": {
+			"description" : "Label for selected datapoint ids counter.",
+			"type": "number"
 		}
 	}
 }

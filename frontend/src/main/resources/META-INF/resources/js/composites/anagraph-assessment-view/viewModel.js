@@ -15,6 +15,7 @@ function(oj, ko, $) {
 
 		self.highlightValue = ko.observable();
 
+		self.dataPointsMarked = ko.observable('No data points marked.');
 
 		self.showSelectionOnDiagram = ko.observable(false);
 
@@ -695,6 +696,8 @@ function(oj, ko, $) {
 			self.dataPointsMarked = self.dataPointsMarkedIds.length
 					+ oj.Translations.getTranslatedString("dpmw")
 					+ assessmentsResultLength + oj.Translations.getTranslatedString("assessments");
+			$('#popupWrapper1').prop('dataPointsMarked', self.dataPointsMarked);
+			
 		}
 
 
