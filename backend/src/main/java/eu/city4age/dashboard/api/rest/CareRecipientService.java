@@ -32,6 +32,7 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.CrProfileRepository;
 import eu.city4age.dashboard.api.persist.FrailtyStatusTimelineRepository;
 import eu.city4age.dashboard.api.persist.GeriatricFactorRepository;
+import eu.city4age.dashboard.api.persist.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.persist.PilotRepository;
 import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
@@ -42,6 +43,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatusTimeline;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
+import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.C4ACareRecipientListResponse;
@@ -84,6 +86,9 @@ public class CareRecipientService {
 
 	@Autowired
 	private PilotRepository pilotRepository;
+	
+	@Autowired
+	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
@@ -133,7 +138,6 @@ public class CareRecipientService {
 		}
 
 		for (TimeInterval ti : tis) {
-
 			String date = sdf.format(ti.getIntervalStart());
 
 			dateList.add(date);
@@ -141,13 +145,12 @@ public class CareRecipientService {
 			months.add(new DataIdValue(ti.getId(), date));
 
 			for (GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
-
 				for (DetectionVariable type : detectionvarsparamsList) {
+
 
 					gereatricfactparamsList.add(gef);
 
 					if (gef.getDetectionVariable() != null && gef.getDetectionVariable().equals(type)) {
-
 						fMap.get(type.getId()).add(gef.getGefValue().floatValue());
 						idMap.get(type.getId()).add(gef.getId());
 
@@ -181,11 +184,17 @@ public class CareRecipientService {
 					OJDiagramFrailtyStatus frailtyStatus = transformToDto(fs, months);
 
 					response.setFrailtyStatus(frailtyStatus);
+					
+					logger.info("2 tis: " + tis);
+					logger.info("2 pilottype: " + type);
+
+					String pilotCode = gereatricfactparamsList.get(0).getUserInRole().getPilotCode();						
+					PilotDetectionVariable pdv = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(type.getId(), pilotCode);
 
 					itemList.add(new C4ServiceGetOverallScoreListResponse(tis, fMap.get(type.getId()),
 							idMap.get(type.getId()), dateList, type.getDetectionVariableName(),
-							type.getDerivedDetectionVariable() != null
-									? type.getDerivedDetectionVariable().getDetectionVariableName() : null,
+							pdv != null
+									? pdv.getDerivedDetectionVariable().getDetectionVariableName() : null,
 							type.getId()));
 
 				}

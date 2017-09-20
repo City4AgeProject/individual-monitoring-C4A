@@ -154,5 +154,29 @@ public class PilotDetectionVariableRepositoryTest {
 		Assert.assertEquals(2, result2.size());
 		
 	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFindByDetectionVariableAndPilotCode() {
+		
+		Long dvId = 1L;
+		String pilotCode = "LCC";
+		
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setId(dvId);
+		detectionVariableRepository.save(dv1);
+		
+		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
+		pdv1.setDetectionVariable(dv1);
+		pdv1.setPilotCode(pilotCode);
+		pilotDetectionVariableRepository.save(pdv1);
+		
+		PilotDetectionVariable result = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(dvId, pilotCode );
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals(pilotCode, result.getPilotCode());
+		
+	}
 
 }

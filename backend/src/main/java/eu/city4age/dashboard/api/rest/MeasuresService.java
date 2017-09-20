@@ -416,7 +416,7 @@ public class MeasuresService {
 		UserInRole uir = userInRoleRepository.findOne(userId);
 		ges.setUserInRole(uir);
 		if (weight == null) {
-			weight = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCodeGesGef(dvId, pilotCode);
+			weight = pilotDetectionVariableRepository.findWeightByDetectionVariableAndPilotCodeGesGef(dvId, pilotCode);
 		}
 		if (weight != null) {
 			ges.setDerivationWeight(weight);
