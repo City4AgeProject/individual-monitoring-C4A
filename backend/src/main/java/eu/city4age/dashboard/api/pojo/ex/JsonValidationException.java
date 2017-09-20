@@ -27,7 +27,7 @@ public class JsonValidationException extends Exception implements ExceptionMappe
 	@Override
 	public Response toResponse(JsonValidationException ex) {
 		
-		logger.info( "\nORIGINAL MESSAGE: "+ex.getMessage());
+		logger.info("\nEXCEPTION:\n"+ex.getMessage());
 		 
 		return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity(ex.getMessage()).build();
 

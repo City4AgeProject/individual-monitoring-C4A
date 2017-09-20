@@ -373,7 +373,7 @@ function(oj, ko, $) {
 									+ self.props.careRecipientId
 									+ '/parentDetectionVariableId/'
 									+ self.props.parentFactorId
-									+ '/intervalStart/2011-1-1/intervalEnd/2017-1-1',
+									+ '/intervalStart/2001-1-1/intervalEnd/2040-1-1',
 							function(dataSet) {
 								var assesmentsDataSet = DataSet
 										.produceFromOther(dataSet);

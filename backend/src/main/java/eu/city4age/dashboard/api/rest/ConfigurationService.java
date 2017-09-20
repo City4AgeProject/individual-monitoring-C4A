@@ -42,7 +42,9 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
+import eu.city4age.dashboard.api.pojo.ex.ConfigurationValidityDateException;
 import eu.city4age.dashboard.api.pojo.ex.JsonValidationException;
+import eu.city4age.dashboard.api.pojo.ex.MissingKeyException;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gef;
 import eu.city4age.dashboard.api.pojo.json.desobj.Ges;
@@ -65,7 +67,7 @@ public class ConfigurationService {
 
 	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
-	
+
 	@Autowired
 	private PilotRepository pilotRepository;
 
@@ -78,98 +80,102 @@ public class ConfigurationService {
 	@Path("updateFromConfigFile")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Assessment.class),
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
-	public final Response updateConfigurationService(String json) throws FileNotFoundException, IOException,
-			ProcessingException, ParseException, ContainerException, JsonParseException, JsonValidationException {
+	public final Response updateConfigurationService(String json)
+			throws FileNotFoundException, IOException, ProcessingException, ContainerException,
+			JsonParseException, JsonValidationException, MissingKeyException, ConfigurationValidityDateException {
 
 		String response = "";
 
 		JsonSchema jsonSchemaFromResource = ValidationUtils.getSchemaNodeFromResource("/JsonValidator.json");
 		JsonNode jsonNodeAsString = ValidationUtils.getJsonNode(json);
-		
+
 		if (ValidationUtils.isJsonValid(jsonSchemaFromResource, jsonNodeAsString)) {
 			@SuppressWarnings("deprecation")
 			ConfigureDailyMeasuresDeserializer data = objectMapper.reader(ConfigureDailyMeasuresDeserializer.class)
 					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
-			
-			
 
 			DetectionVariableType detVarType;
 
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			
+
 			ConfigurationCounter confCounter = new ConfigurationCounter();
-			
+
 			String validFromInString = data.getValidFrom();
 			String validToInString = data.getValidTo();
+			Date validFrom;
+			Date validTo;
 			
-			Date validFrom = formatter.parse(validFromInString);
-			Date validTo = formatter.parse(validToInString);
+
+			try{
+				 validFrom = formatter.parse(validFromInString);
+				 validTo = formatter.parse(validToInString);
+			}catch(ParseException ex){
+				throw new ConfigurationValidityDateException();
+			}
 			
+
 			int startingNumberOfRows = pilotDetectionVariableRepository.findAll().size();
 
 			String pilotCode = data.getPilotCode();
-			
-			Pilot pilot = pilotRepository.findByPilotCode(pilotCode);
-			pilot.setLatestConfigurationUpdate(new Date());
-			pilotRepository.save(pilot);
-			
+
+			try {
+				Pilot pilot = pilotRepository.findByPilotCode(pilotCode);
+				pilot.setLatestConfigurationUpdate(new Date());
+				pilotRepository.save(pilot);
+			} catch (NullPointerException ex) {
+				throw new MissingKeyException("MissingKeyException:\n\tName for property : pilotCode(pilot_code)\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
+			}
+
 			for (int i = 0; i < data.getGroups().size(); i++) {
 
 				Groups group = data.getGroups().get(i);
-				
+
 				logger.info(" DETECTION_VAR(GFG): " + group.getName() + "  DERIVED_VAR(OVL): " + data.getName());
 
-				
-				detVarType = DetectionVariableType.GFG;
-				DetectionVariable gfgDetectionVariable = detectionVariableRepository
-						.findByDetectionVariableNameAndDetectionVariableType(group.getName(), detVarType);
+				DetectionVariable gfgDetectionVariable = findDetectionVariableOfType(group.getName(),
+						DetectionVariableType.GFG);
 
-				detVarType = DetectionVariableType.OVL;
-				DetectionVariable ovlDetectionVariable = detectionVariableRepository
-						.findByDetectionVariableNameAndDetectionVariableType(data.getName(), detVarType);
-logger.info("\n## 1");
-				createOrUpdatePilotDetectionVariable(gfgDetectionVariable, ovlDetectionVariable, validFrom, validTo, pilotCode, group.getFormula(), group.getWeight(), confCounter);
-				logger.info("\n## 11");
+				DetectionVariable ovlDetectionVariable = findDetectionVariableOfType(data.getName(),
+						DetectionVariableType.OVL);
+
+				createOrUpdatePilotDetectionVariable(gfgDetectionVariable, ovlDetectionVariable, validFrom, validTo,
+						pilotCode, group.getFormula(), group.getWeight(), confCounter);
+
 				for (int j = 0; j < group.getFactors().size(); j++) {
 
 					Gef factor = group.getFactors().get(j);
 					logger.info(" DETECTION_VAR(GEF): " + factor.getName() + "  DERIVED_VAR(GFG): " + group.getName());
 
-					detVarType = DetectionVariableType.GEF;
-					DetectionVariable gefDetectionVariable = detectionVariableRepository
-							.findByDetectionVariableNameAndDetectionVariableType(factor.getName(), detVarType);
-					logger.info("\n## 2");
-					createOrUpdatePilotDetectionVariable(gefDetectionVariable, gfgDetectionVariable, validFrom, validTo, pilotCode, factor.getFormula(), factor.getWeight(), confCounter);
-					logger.info("\n## 21");
+					DetectionVariable gefDetectionVariable = findDetectionVariableOfType(factor.getName(),
+							DetectionVariableType.GEF);
+
+					createOrUpdatePilotDetectionVariable(gefDetectionVariable, gfgDetectionVariable, validFrom, validTo,
+							pilotCode, factor.getFormula(), factor.getWeight(), confCounter);
+
 					for (int k = 0; k < factor.getSubFactors().size(); k++) {
 
 						Ges subFactor = factor.getSubFactors().get(k);
-						logger.info(" DETECTION_VAR(GES): " + subFactor.getName() + "  DERIVED_VAR(GEF): "+ factor.getName());
+						logger.info(" DETECTION_VAR(GES): " + subFactor.getName() + "  DERIVED_VAR(GEF): "
+								+ factor.getName());
 
+						DetectionVariable gesDetectionVariable = findDetectionVariableOfType(subFactor.getName(),
+								DetectionVariableType.GES);
 
-						detVarType = DetectionVariableType.GES;
-						DetectionVariable gesDetectionVariable = detectionVariableRepository
-								.findByDetectionVariableNameAndDetectionVariableType(subFactor.getName(), detVarType);
-						logger.info("\n## 3");
-						createOrUpdatePilotDetectionVariable(gesDetectionVariable, gefDetectionVariable, validFrom, validTo, pilotCode, subFactor.getFormula(), subFactor.getWeight(), confCounter);
-						logger.info("\n## 31");
+						createOrUpdatePilotDetectionVariable(gesDetectionVariable, gefDetectionVariable, validFrom,
+								validTo, pilotCode, subFactor.getFormula(), subFactor.getWeight(), confCounter);
+
 						for (int n = 0; n < subFactor.getMeasures().size(); n++) {
 
 							Mea measure = subFactor.getMeasures().get(n);
-							logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "+ subFactor.getName());
+							logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "
+									+ subFactor.getName());
 
+							DetectionVariable meaDetectionVariable = findDetectionVariableOfType(measure.getName(),
+									DetectionVariableType.MEA);
 
-							detVarType = DetectionVariableType.MEA;
-							DetectionVariable meaDetectionVariable = detectionVariableRepository
-									.findByDetectionVariableNameAndDetectionVariableType(measure.getName(), detVarType);
-							
 							List<String> NuiList = Arrays.asList("avg", "std", "delta", "best");
 
 							Map<String, String> NuiListFormula = new HashMap<String, String>() {
-								/**
-								 * 
-								 */
-								private static final long serialVersionUID = 1L;
 
 								{
 									put("avg", "avg");
@@ -178,39 +184,36 @@ logger.info("\n## 1");
 									put("best", "best");
 								}
 							};
-							logger.info("\n## 4");
-							createOrUpdatePilotDetectionVariable(meaDetectionVariable, gesDetectionVariable, validFrom, validTo,
-									pilotCode, null, measure.getWeight(), confCounter);
-							logger.info("\n## 41");
-							if(meaDetectionVariable.getDefaultTypicalPeriod().equals("1WK")||meaDetectionVariable.getDefaultTypicalPeriod().equals("DAY")){
 							
+							createOrUpdatePilotDetectionVariable(meaDetectionVariable, gesDetectionVariable, validFrom,
+									validTo, pilotCode, null, measure.getWeight(), confCounter);
+
+							if (meaDetectionVariable.getDefaultTypicalPeriod().equals("1WK")
+									|| meaDetectionVariable.getDefaultTypicalPeriod().equals("DAY")) {
+
 								BigDecimal nuiWeight = BigDecimal.valueOf((double) 1 / NuiListFormula.size());
 								String nuiFormula;
 								for (String nui : NuiList) {
-									detVarType = DetectionVariableType.NUI;
-									DetectionVariable nuiDetectionVariable = detectionVariableRepository
-											.findByDetectionVariableNameAndDetectionVariableType(
-													nui + '_' + measure.getName(), detVarType);
-									
+
+									DetectionVariable nuiDetectionVariable = 
+											findDetectionVariableOfType(nui + '_' + measure.getName(), DetectionVariableType.NUI);
+
 									nuiFormula = NuiListFormula.get(nui);
-									logger.info(" DETECTION_VAR(NUI): " + nui + '_' + measure.getName() + "  DERIVED_VAR(GES): "+ subFactor.getName());
+									logger.info(" DETECTION_VAR(NUI): " + nui + '_' + measure.getName()+ "  DERIVED_VAR(GES): " + subFactor.getName());
 									logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "+ nui + '_' + measure.getName());
 
-									logger.info("\n## 5");
-									createOrUpdatePilotDetectionVariable(nuiDetectionVariable, gesDetectionVariable,validFrom, validTo,
-											pilotCode, null, nuiWeight, confCounter);
-									logger.info("\n## 51");
-									createOrUpdatePilotDetectionVariable(meaDetectionVariable, nuiDetectionVariable, validFrom, validTo,
-									pilotCode, nuiFormula, nuiWeight, confCounter);
-									logger.info("\n## 52");
+									createOrUpdatePilotDetectionVariable(nuiDetectionVariable, gesDetectionVariable,
+											validFrom, validTo, pilotCode, null, nuiWeight, confCounter);
+									
+									createOrUpdatePilotDetectionVariable(meaDetectionVariable, nuiDetectionVariable,
+											validFrom, validTo, pilotCode, nuiFormula, nuiWeight, confCounter);
 								}
 							}
-							
+
 						}
 					}
 				}
 			}
-
 
 			List<PilotDetectionVariable> AllFromDB = pilotDetectionVariableRepository.findAll();
 
@@ -230,61 +233,60 @@ logger.info("\n## 1");
 
 					exists = false;
 					for (int i = 0; i < data.getGroups().size(); i++) {
-						
+
 						Groups group = data.getGroups().get(i);
-						
+
 						if (existPdv(one, group.getName(), data.getName()) == false) {
-							
+
 							exists = false;
 							for (int j = 0; j < group.getFactors().size(); j++) {
 
 								Gef factor = group.getFactors().get(j);
-								
-								if (existPdv(one, factor.getName(),
-										group.getName()) == false) {
-									
+
+								if (existPdv(one, factor.getName(), group.getName()) == false) {
+
 									exists = false;
-									for (int k = 0; k < factor.getSubFactors()
-											.size(); k++) {
+									for (int k = 0; k < factor.getSubFactors().size(); k++) {
 
 										Ges subFactor = factor.getSubFactors().get(k);
-										
-										if (existPdv(one, subFactor.getName(),factor.getName()) == false) {
-											
+
+										if (existPdv(one, subFactor.getName(), factor.getName()) == false) {
+
 											exists = false;
 											for (int n = 0; n < subFactor.getMeasures().size(); n++) {
-												
-												Mea measure = subFactor.getMeasures().get(n);
-												
-												detVarType = DetectionVariableType.MEA;
-												DetectionVariable meaDetectionVariable = detectionVariableRepository
-														.findByDetectionVariableNameAndDetectionVariableType(measure.getName(), detVarType);
 
-												
-												if (existPdv(one, measure.getName(),subFactor.getName()) == false) {
+												Mea measure = subFactor.getMeasures().get(n);
+
+												DetectionVariable meaDetectionVariable = 
+														findDetectionVariableOfType(measure.getName(), DetectionVariableType.MEA);
+
+
+												if (existPdv(one, measure.getName(), subFactor.getName()) == false) {
 													exists = false;
 
 												} else {
 													exists = true;
 													break outerLoop;
 												}
-												
-												
-												if(meaDetectionVariable.getDefaultTypicalPeriod().equals("1WK")||meaDetectionVariable.getDefaultTypicalPeriod().equals("DAY")){
-											
+
+												if (meaDetectionVariable.getDefaultTypicalPeriod().equals("1WK")
+														|| meaDetectionVariable.getDefaultTypicalPeriod()
+																.equals("DAY")) {
+
 													for (String nui : NUIList) {
 
-														if (existPdv(one,nui+ '_'+ measure.getName(),subFactor.getName()) == false) {
+														if (existPdv(one, nui + '_' + measure.getName(),
+																subFactor.getName()) == false) {
 															exists = false;
 
-															if (existPdv(one, measure.getName(),nui+'_'+ measure.getName()) == false) {
+															if (existPdv(one, measure.getName(),
+																	nui + '_' + measure.getName()) == false) {
 																exists = false;
 
 															} else {
 																exists = true;
 																break outerLoop;
 															}
-
 
 														} else {
 															exists = true;
@@ -369,46 +371,53 @@ logger.info("\n## 1");
 		return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity(response).build();
 
 	}
-	
+
+	private DetectionVariable findDetectionVariableOfType(String dvName, DetectionVariableType dvt)
+			throws MissingKeyException {
+		DetectionVariable dv = detectionVariableRepository.findByDetectionVariableNameAndDetectionVariableType(dvName,
+				dvt);
+		if (dv == null) {
+			throw new MissingKeyException("MissingKeyException:\n\tName of property : name(detection_variable_name)\n\tin JSON file doesn't match to any key\n\tin corresponding table: cd_detection_variable.\n\t");
+		}
+		return dv;
+	}
+
 	private void createOrUpdatePilotDetectionVariable(DetectionVariable dv, DetectionVariable ddv, Date validFrom,
-			Date validTo, String pilotCode,String nuiFormula,BigDecimal nuiWeight, ConfigurationCounter cfc) {
-	
+			Date validTo, String pilotCode, String nuiFormula, BigDecimal nuiWeight, ConfigurationCounter cfc) {
+
 		PilotDetectionVariable pdv1 = pilotDetectionVariableRepository
-				.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode,
-						dv.getId(), ddv.getId());
+				.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode, dv.getId(),
+						ddv.getId());
 
 		if (pdv1 != null) {
-			logger.info("@@@ EXISTS!!!");
-			if (!((pdv1.getDerivationWeight().compareTo(nuiWeight) == 0) &&
-				 (pdv1.getFormula() == null || (pdv1.getFormula() != null && pdv1.getFormula().trim().compareTo(nuiFormula) == 0)) &&
-				 (pdv1.getValidFrom().compareTo(validFrom)==0) &&
-			     (pdv1.getValidTo().compareTo(validTo)==0)
-			     )) {
+			if (!((pdv1.getDerivationWeight().compareTo(nuiWeight) == 0)
+					&& (pdv1.getFormula() == null
+							|| (pdv1.getFormula() != null && pdv1.getFormula().trim().compareTo(nuiFormula) == 0))
+					&& (pdv1.getValidFrom().compareTo(validFrom) == 0)
+					&& (pdv1.getValidTo().compareTo(validTo) == 0))) {
 
-				logger.info("@@@ EXISTS NOT EQUAL");
 				pdv1.setDerivationWeight(nuiWeight);
-				if(nuiFormula!=null) pdv1.setFormula(nuiFormula.equals("")?null:nuiFormula);
+				if (nuiFormula != null)
+					pdv1.setFormula(nuiFormula.equals("") ? null : nuiFormula);
 				pdv1.setValidFrom(validFrom);
 				pdv1.setValidTo(validTo);
-				
+
 				pilotDetectionVariableRepository.save(pdv1);
 				cfc.incrementUpdated();
-				
-			}else{
-				
-				logger.info("@@@ EXISTS  EQUAL");
-			}
-			
+
+			} 
+
 		} else {
 			PilotDetectionVariable pdv2 = new PilotDetectionVariable();
 			pdv2.setValidFrom(validFrom);
 			pdv2.setValidTo(validTo);
 			pdv2.setPilotCode(pilotCode);
-			if(nuiFormula!=null) pdv2.setFormula(nuiFormula.equals("")?null:nuiFormula);
+			if (nuiFormula != null)
+				pdv2.setFormula(nuiFormula.equals("") ? null : nuiFormula);
 			pdv2.setDerivationWeight(nuiWeight);
 			pdv2.setDetectionVariable(dv);
 			pdv2.setDerivedDetectionVariable(ddv);
-			
+
 			pilotDetectionVariableRepository.save(pdv2);
 			cfc.incrementInserted();
 		}

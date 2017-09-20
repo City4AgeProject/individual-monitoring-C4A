@@ -31,7 +31,7 @@ public class JsonParseExceptionMapper implements ExceptionMapper<JsonParseExcept
 				 +" and column: "+ex.getLocation().getColumnNr() + "\n and remove that then send JSON again."
 				 +"\n Or check if JSON has first '{' curly brace and fix it and send JSON again.";
 		 }
-		 logger.info(message+"\nORIGINAL MESSAGE: "+ex.getMessage());
+		 logger.info("\nEXCEPTION:\n"+message+"\nORIGINAL MESSAGE: "+ex.getOriginalMessage());
 			    return Response
 		                .status(Response.Status.BAD_REQUEST)
 		                .type(MediaType.TEXT_PLAIN)
