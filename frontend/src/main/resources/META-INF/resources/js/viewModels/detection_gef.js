@@ -25,8 +25,10 @@ function (oj, ko, $, sp, params) {
 
         function initCRData() {
             self.userAge = sp.userAge;
-            self.userGender = sp.userGender;
+            self.userGender = "male";
             self.textline = sp.userTextline;
+            
+            
         }
 
         self.selectedGefName = "";
@@ -112,6 +114,8 @@ function (oj, ko, $, sp, params) {
     	self.lineChartLabel = oj.Translations.getTranslatedString('line_chart');
     	self.morphologyLabel = oj.Translations.getTranslatedString('morphology');
     	self.visualisationsLabel = oj.Translations.getTranslatedString('visualisations');
+    	self.readMoreLabel = oj.Translations.getTranslatedString("read_more");
+    	self.genderLabel = oj.Translations.getTranslatedString("gender");
 
         /* End Detection FGR Groups Line Chart configuration  */
 
@@ -153,7 +157,7 @@ function (oj, ko, $, sp, params) {
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-            self.titleValue(  ui['series'].charAt(0).toUpperCase()+ui['series'].slice(1) + oj.Translations.getTranslatedString('geriatric_factors') );
+            self.titleValue(oj.Translations.getTranslatedString('gfg') + " - " + ui['series'].charAt(0).toUpperCase()+ui['series'].slice(1));
 
             self.titlePart(ko.toJS(self.titleValue));
             
@@ -366,6 +370,7 @@ function (oj, ko, $, sp, params) {
                             break;
                         default:
                     	}
+                    	
                     });
                     if(data && data.itemList && data.itemList.length>0)
                     	self.groupsVal(data.itemList[0].items[0].dateList);
@@ -373,18 +378,14 @@ function (oj, ko, $, sp, params) {
                     	self.groupsVal([]);
                     
                     $.each(self.seriesVal(), function (i, s) {
-                        if(s.name === 'Overall'){
-                        	s.drilling = "off";
-                           s.color = '#999999';
-                           s.lineWidth = 2; 
-                        } else if(s.name === 'Behavioural'){
-                        	s.color = '#ea97f1';
-                        	
-                        	s.lineWidth = 5; 
-                        } else if(s.name === 'Contextual'){
-                        	s.color = '#5dd6c9';
-                        	s.lineWidth = 5; 
-                        }
+                            if(s.name === 'Overall'){
+                               s.color = '#999999';
+                               s.lineWidth = 5; 
+                            } else if(s.name === 'Behavioural'){
+                            	s.color = '#ea97f1';
+                            } else if(s.name === 'Contextual'){
+                            	s.color = '#5dd6c9';
+                            }
                     });
                     
                     $(".loader-hover").hide();
@@ -396,9 +397,7 @@ function (oj, ko, $, sp, params) {
                         	el.items = [null];
                         }
                     });                    
-                   //If you want to see the data recieved:
-                 /*console.log('This is the data for overall chart ' + JSON.stringify(self.seriesVal())); */                  
-                    
+
                 });
         }
         

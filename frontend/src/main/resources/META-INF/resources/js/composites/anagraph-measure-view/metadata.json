@@ -4,6 +4,7 @@
 	"version": "1.0.0",
 	"jetVersion": ">=3.0.0",
 	"properties": {
+	
 		"measureName": {
 			"description" : "Name of the measure",
 			"type": "string"
@@ -16,5 +17,6 @@
 			"description" : "Object containing chart data.",
 			"type": "object"
 		}
+				
 	}
 }

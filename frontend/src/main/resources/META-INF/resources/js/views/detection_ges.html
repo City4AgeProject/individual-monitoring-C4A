@@ -69,11 +69,13 @@ a:hover {
 			<div class="oj-flex-item">
 				<br>
 			</div>
+			<!-- DROPDOWN MENUS-->
+			<!--  
 			<div class="oj-flex-item">
 				<div class="oj-flex oj-lg-align-items-flex-end">
 					<div class="oj-flex-item">
-						<!-- choose GEF combo box -->
-						<div id="searchGEF" style="width: 280px">
+						<!- - choose GEF combo box - ->
+						<!- - <div id="searchGEF" style="width: 280px">
 							<span style="margin-right: 10px;" data-bind="">Select GEF:</span> <input
 								id="combobox1"
 								data-bind="ojComponent: {
@@ -92,12 +94,12 @@ a:hover {
 	                                            {value: 'healthcognitive', label: 'Health – cognitive'}]}],
 	                                    rootAttributes: {style:'max-width:100%'}
 	                        }">
-						</div>
-						<!-- end choose GEF combo box -->
+						</div> - ->
+						<!- - end choose GEF combo box - ->
 					</div>
 					<div class="oj-flex-item">
-						<!-- period combo box -->
-						<div id="choosePeriod" style="width: 100px">
+						<!- - period combo box - ->
+						<!- - <div id="choosePeriod" style="width: 100px">
 							<span style="margin-right: 10px;">Period:</span> <input
 								id="combobox2" list="periods"
 								data-bind="ojComponent: {component: 'ojSelect', 
@@ -110,18 +112,17 @@ a:hover {
 								<option value="Semester">Semester</option>
 								<option value="Year">Year</option>
 							</datalist>
-						</div>
-						<!-- end period combo box -->
+						</div> - ->
+						<!- - end period combo box - ->
 					</div>
 				</div>
-			</div>
+				-->
 
 			<anagraph-assessment-view id="detectionGEFGroup1FactorsLineChart"
 				care-recipient-id="{{careRecipient}}" parent-factor-id="{{parentFactor}}" 
-				series="{{seriesVal}}" groups="{{groupsVal}}" 
-				legend='{"position":"top"}' 
+				series="{{seriesVal}}" groups="{{groupsVal}}" title-value="{{titleValue}}"
+				legend='{"position":"bottom"}' 
 				drilling='on' style="display: block" />
-			<!-- deleted attribute: title="{{titleObj}}" -->
 		</div>
 	</div>
 </div>

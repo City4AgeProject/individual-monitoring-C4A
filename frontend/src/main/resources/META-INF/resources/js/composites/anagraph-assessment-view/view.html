@@ -4,14 +4,15 @@
 		style="width: 100%; height: 400px; display: block">
 		<!-- line chart GES -->
 		<!-- title = /'{/"text/": ."Geriatric Sub factor - /" + subFactorName(), /"halign/": /"center/"}/' -->
-
+<!-- title: {text: detectionGEFGroupsLineChartLabel , halign: 'center'}, -->
+<!-- title: {text: $props.titleValue, halign: 'center'}, -->
 		<div id="detectionGEFGroup1FactorsChart" class="oj-flex-item"
 			data-bind="ojComponent: {
 	        component: 'ojChart', 
 	        type: 'line',
 	        selectionMode: 'multiple',
 	        selection: $props.selectedItemsValue,
-	        title: $props.title,
+	        title: {text: $props.titleValue, halign: 'center'},
 	        legend: $props.legend,
 	        groups: $props.groups ,
 	        series: $props.series,

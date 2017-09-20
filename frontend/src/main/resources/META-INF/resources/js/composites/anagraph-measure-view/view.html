@@ -1,6 +1,6 @@
-<h5><strong><span data-bind="text: measureName"></span></strong></h5>
 <div id='measure-view-container' style="border:1px solid silver;">
     <div id="lineChart" data-bind="ojComponent: {
+    	title: {text: measureName, halign: 'center'}, 
         component: 'ojChart', 
         type: 'line',
         series: $props.lineSeries, 

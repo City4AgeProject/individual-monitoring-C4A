@@ -12,7 +12,7 @@ function (oj, ko, $, sp) {
         
         var self = this;
         
-        self.titleObj = ko.observable();
+        self.titleValue = ko.observable("");
         
         self.userAge = sp.userAge;
         self.userGender = sp.userGender;
@@ -61,7 +61,7 @@ function (oj, ko, $, sp) {
 	            self.subFactorName(selectedDetectionVariable[1].detectionVariableName);
 	            self.parentFactor(selectedDetectionVariable[1].id); //derivedDetectionVariableIds
 	            self.subFactorType(selectedDetectionVariable[1].detectionVariableType);
-	            self.titleObj({"text": oj.Translations.getTranslatedString(self.subFactorType().toLowerCase())+" - " + oj.Translations.getTranslatedString(self.subFactorName()), "halign": "center"});
+	            self.titleValue(oj.Translations.getTranslatedString(self.subFactorType().toLowerCase()) + " - " + oj.Translations.getTranslatedString(self.subFactorName()));
             }
         };
 
