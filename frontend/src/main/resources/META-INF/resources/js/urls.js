@@ -19,5 +19,6 @@ var CARE_RECIPIENT_GROUPS = root + "careRecipient/getGroups";
 var CARE_RECIPIENT_DIAGRAM_DATA = root + "careRecipient/getDiagramData";
 
 var DAILY_MEASURES_DATA = root + "measures/getDailyMeasures";
+var NUI_VALUES_DATA = root + "measures/getNuiValues";
 
 var USER_LOGIN = root + "users/login";

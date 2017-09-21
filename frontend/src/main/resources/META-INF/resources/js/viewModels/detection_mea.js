@@ -5,9 +5,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             function detectionMeaViewModel() {
                 $(".loader-hover").hide();
                 var self = this;           	
-            	self.data = null;
-            	
-            	
             	
             	//this method loads data form ajax request before view is loaded
             	self.handleActivated = function(info) {  
@@ -19,17 +16,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             	    	  var gesId = oj.Router.rootInstance.retrieve()[1];
             	    	  console.log("user is : " + crId);
             	    	  console.log("ges is : " + gesId);
-            	    	 
-	            	    	
             	    	  
 	          	        	$.when(
 	          	        		  // Get the HTML
-	          	        		  $.get("http://localhost:8080/C4A-dashboard/rest/measures/getDailyMeasures/userInRoleId/"+ crId +"/gesId/" + gesId, function(data) {
+	          	        		  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + crId + "/gesId/" + gesId, function(data) {
 	          	        		    self.data = data;
 	          	        		  }),
 
 	          	        		  // Get the CSS
-	          	        		  $.get("http://localhost:8080/C4A-dashboard/rest/measures/getNuiValues/userInRoleId/"+ crId +"/detectionVariableId/" + gesId, function(nuiData) {
+	          	        		  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ crId +"/detectionVariableId/" + gesId, function(nuiData) {
 	          	        		    self.nuiData = nuiData;
 	          	        		  })
 
@@ -41,8 +36,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	          	        		}).fail(function() {
 	            	    		    console.log( "error recieving json data from web service" );
 	            	    		  })
-            	              });
-            	    	  //new
+            	              });           	    	  
             	              	                	        
             	    };          
             	
@@ -114,11 +108,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    			}
     	    			
     	    		  });
-  	    		 
   	    		  
-  	    		  
-  	    		  
-  	              //creating lineSeries with values for each month	    		  
+  	              //creating lineSeries with mea and nui values for each month	    		  
   	    		  measures.forEach(function(mea) {
     	    			mea.lineSeries = []; 
     	    			var avg, std, best, delta;
@@ -128,6 +119,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    				lineSerie.name = mon;
     	    				lineSerie.items = [];
     	    				
+    	    				//getting nuis from nuiData with timeinterval 
     	    				var nuisInMonth = getNuiForMeaAndMonth(mea, mon , nuiData);
     	    				if(nuisInMonth.length == 0){   	    					
     	    					avg = std = best = delta = 0;
