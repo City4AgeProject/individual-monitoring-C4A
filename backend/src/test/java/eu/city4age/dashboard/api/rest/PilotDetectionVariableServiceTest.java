@@ -43,9 +43,9 @@ import eu.city4age.dashboard.api.pojo.json.desobj.Ges;
 import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
 import eu.city4age.dashboard.api.pojo.json.desobj.Mea;
 
-public class ConfigurationServiceTest {
+public class PilotDetectionVariableServiceTest {
 
-	static protected Logger logger = LogManager.getLogger(ConfigurationServiceTest.class);
+	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableServiceTest.class);
 
 	static protected RestTemplate rest = new TestRestTemplate();
 

@@ -94,7 +94,6 @@ public class AssessmentRepositoryTest {
 	public void testFindForSelectedDataSet() throws Exception {
 		
 		System.out.println("1***Number of assessments in repository:"+assessmentRepository.findAll().size());
-
 		//data for assessment and other joined tables:
 		
 		UserInSystem uis1 = new UserInSystem();

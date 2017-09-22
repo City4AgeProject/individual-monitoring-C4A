@@ -38,7 +38,7 @@ public class ValidationUtilsTest {
 
 		String json = "{\"name\":\"overall\",\"level\":0,\"validFrom\":\"2016-01-01 00:00:01\",\"validTo\":\"2020-09-07 00:00:00\",\"pilotCode\":\"MAD\",\"groups\":[{\"name\":\"contextual\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[]},{\"name\":\"behavioural\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[{\"name\":\"motility\",\"level\":2,\"weight\":0.13,\"formula\":\"\",\"subFactors\":[{\"name\":\"walking\",\"level\":3,\"weight\":1,\"formula\":\"\",\"measures\":[{\"name\":\"walk_distance\",\"level\":4,\"weight\":0.4},{\"name\":\"walk_time_outdoor\",\"level\":4,\"weight\":0.3}]}]}]}]}";
 
-		JsonSchema jsonSchemaFromResource = ValidationUtils.getSchemaNodeFromResource("/JsonValidator.json");
+		JsonSchema jsonSchemaFromResource = ValidationUtils.getSchemaNodeFromResource("/PilotConfigurationJsonValidator.json");
 		JsonNode jsonNodeAsString = ValidationUtils.getJsonNode(json);
 		Boolean isValid = ValidationUtils.isJsonValid(jsonSchemaFromResource, jsonNodeAsString);
 
@@ -55,7 +55,7 @@ public class ValidationUtilsTest {
 		String invalidJson2 = "{\"name\":\"overall\",\"level\":\"0\",\"validFrom\":\"2016-01-01 00:00:01\",\"validTo\":\"2020-09-07 00:00:00\",\"pilotCode\":\"MAD\",\"groups\":[{\"name\":\"contextual\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[]},{\"name\":\"behavioural\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[{\"name\":\"motility\",\"level\":2,\"weight\":0.13,\"formula\":\"\",\"subFactors\":[{\"name\":\"walking\",\"level\":3,\"weight\":1,\"formula\":\"\",\"measures\":[{\"name\":\"walk_distance\",\"level\":4,\"weight\":0.4},{\"name\":\"walk_time_outdoor\",\"level\":4,\"weight\":0.3}]}]}]}]}";
 		String invalidJson3 = "{\"names\":\"overall\",\"level\":\"0\",\"validFrom\":\"2016-01-01 00:00:01\",\"validTo\":\"2020-09-07 00:00:00\",\"pilotCode\":\"MAD\",\"groups\":[{\"name\":\"contextual\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[]},{\"name\":\"behavioural\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[{\"name\":\"motility\",\"level\":2,\"weight\":0.13,\"formula\":\"\",\"subFactors\":[{\"name\":\"walking\",\"level\":3,\"weight\":1,\"formula\":\"\",\"measures\":[{\"name\":\"walk_distance\",\"level\":4,\"weight\":0.4},{\"name\":\"walk_time_outdoor\",\"level\":4,\"weight\":0.3}]}]}]}]}";
 		
-		JsonSchema jsonSchemaFromResource = ValidationUtils.getSchemaNodeFromResource("/JsonValidator.json");
+		JsonSchema jsonSchemaFromResource = ValidationUtils.getSchemaNodeFromResource("/PilotConfigurationJsonValidator.json");
 		JsonNode jsonNodeAsString = ValidationUtils.getJsonNode(invalidJson1);
 		Boolean isValid = ValidationUtils.isJsonValid(jsonSchemaFromResource, jsonNodeAsString);
 

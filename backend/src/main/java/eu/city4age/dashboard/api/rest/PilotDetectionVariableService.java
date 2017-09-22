@@ -1,5 +1,7 @@
 package eu.city4age.dashboard.api.rest;
 
+import javax.servlet.http.HttpServletRequest;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,15 +17,21 @@ import java.util.Map;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.server.ContainerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -52,15 +60,23 @@ import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
 import eu.city4age.dashboard.api.pojo.json.desobj.Mea;
 import eu.city4age.dashboard.api.pojo.other.ConfigurationCounter;
 import eu.city4age.dashboard.api.utils.ValidationUtils;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+/**
+ * @author Andrija Petrovic
+ *
+ */
 @Component
 @Transactional("transactionManager")
-@Path(ConfigurationService.PATH)
-public class ConfigurationService {
+@Path(PilotDetectionVariableService.PATH)
+public class PilotDetectionVariableService {
 
 	public static final String PATH = "configuration";
+
+	@Context
+	private HttpServletRequest request;
 
 	@Autowired
 	private DetectionVariableRepository detectionVariableRepository;
@@ -71,30 +87,37 @@ public class ConfigurationService {
 	@Autowired
 	private PilotRepository pilotRepository;
 
-	static protected Logger logger = LogManager.getLogger(ConfigurationService.class);
+	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableService.class);
+
+	static protected RestTemplate rest = new TestRestTemplate();
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
+	@Context
+	UriInfo uriInfo;
+
 	@POST
+	@ApiOperation("Insert configuration from Pilot Configuration Json into md_pilot_detection_variable table.")
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("updateFromConfigFile")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Assessment.class),
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
 	public final Response updateConfigurationService(String json)
-			throws FileNotFoundException, IOException, ProcessingException, ContainerException,
-			JsonParseException, JsonValidationException, MissingKeyException, ConfigurationValidityDateException {
+			throws FileNotFoundException, IOException, ProcessingException, ContainerException, JsonParseException,
+			JsonValidationException, MissingKeyException, ConfigurationValidityDateException {
 
 		String response = "";
 
-		JsonSchema jsonSchemaFromResource = ValidationUtils.getSchemaNodeFromResource("/JsonValidator.json");
+		JsonSchema jsonSchemaFromResource = ValidationUtils
+				.getSchemaNodeFromResource("/PilotConfigurationJsonValidator.json");
 		JsonNode jsonNodeAsString = ValidationUtils.getJsonNode(json);
+		
+		String baseUri = uriInfo.getBaseUri().toString();
 
 		if (ValidationUtils.isJsonValid(jsonSchemaFromResource, jsonNodeAsString)) {
 			@SuppressWarnings("deprecation")
 			ConfigureDailyMeasuresDeserializer data = objectMapper.reader(ConfigureDailyMeasuresDeserializer.class)
 					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
-
-			DetectionVariableType detVarType;
 
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -104,15 +127,13 @@ public class ConfigurationService {
 			String validToInString = data.getValidTo();
 			Date validFrom;
 			Date validTo;
-			
 
-			try{
-				 validFrom = formatter.parse(validFromInString);
-				 validTo = formatter.parse(validToInString);
-			}catch(ParseException ex){
+			try {
+				validFrom = formatter.parse(validFromInString);
+				validTo = formatter.parse(validToInString);
+			} catch (ParseException ex) {
 				throw new ConfigurationValidityDateException();
 			}
-			
 
 			int startingNumberOfRows = pilotDetectionVariableRepository.findAll().size();
 
@@ -123,7 +144,8 @@ public class ConfigurationService {
 				pilot.setLatestConfigurationUpdate(new Date());
 				pilotRepository.save(pilot);
 			} catch (NullPointerException ex) {
-				throw new MissingKeyException("MissingKeyException:\n\tName for property : pilotCode(pilot_code)\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
+				throw new MissingKeyException(
+						"MissingKeyException:\n\tName for property : pilotCode(pilot_code)\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
 			}
 
 			for (int i = 0; i < data.getGroups().size(); i++) {
@@ -160,7 +182,6 @@ public class ConfigurationService {
 
 						DetectionVariable gesDetectionVariable = findDetectionVariableOfType(subFactor.getName(),
 								DetectionVariableType.GES);
-
 						createOrUpdatePilotDetectionVariable(gesDetectionVariable, gefDetectionVariable, validFrom,
 								validTo, pilotCode, subFactor.getFormula(), subFactor.getWeight(), confCounter);
 
@@ -172,10 +193,10 @@ public class ConfigurationService {
 
 							DetectionVariable meaDetectionVariable = findDetectionVariableOfType(measure.getName(),
 									DetectionVariableType.MEA);
-
 							List<String> NuiList = Arrays.asList("avg", "std", "delta", "best");
-
 							Map<String, String> NuiListFormula = new HashMap<String, String>() {
+
+								private static final long serialVersionUID = 1L;
 
 								{
 									put("avg", "avg");
@@ -184,7 +205,7 @@ public class ConfigurationService {
 									put("best", "best");
 								}
 							};
-							
+
 							createOrUpdatePilotDetectionVariable(meaDetectionVariable, gesDetectionVariable, validFrom,
 									validTo, pilotCode, null, measure.getWeight(), confCounter);
 
@@ -195,16 +216,18 @@ public class ConfigurationService {
 								String nuiFormula;
 								for (String nui : NuiList) {
 
-									DetectionVariable nuiDetectionVariable = 
-											findDetectionVariableOfType(nui + '_' + measure.getName(), DetectionVariableType.NUI);
+									DetectionVariable nuiDetectionVariable = findDetectionVariableOfType(
+											nui + '_' + measure.getName(), DetectionVariableType.NUI);
 
 									nuiFormula = NuiListFormula.get(nui);
-									logger.info(" DETECTION_VAR(NUI): " + nui + '_' + measure.getName()+ "  DERIVED_VAR(GES): " + subFactor.getName());
-									logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "+ nui + '_' + measure.getName());
+									logger.info(" DETECTION_VAR(NUI): " + nui + '_' + measure.getName()
+											+ "  DERIVED_VAR(GES): " + subFactor.getName());
+									logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "
+											+ nui + '_' + measure.getName());
 
 									createOrUpdatePilotDetectionVariable(nuiDetectionVariable, gesDetectionVariable,
 											validFrom, validTo, pilotCode, null, nuiWeight, confCounter);
-									
+
 									createOrUpdatePilotDetectionVariable(meaDetectionVariable, nuiDetectionVariable,
 											validFrom, validTo, pilotCode, nuiFormula, nuiWeight, confCounter);
 								}
@@ -257,9 +280,8 @@ public class ConfigurationService {
 
 												Mea measure = subFactor.getMeasures().get(n);
 
-												DetectionVariable meaDetectionVariable = 
-														findDetectionVariableOfType(measure.getName(), DetectionVariableType.MEA);
-
+												DetectionVariable meaDetectionVariable = findDetectionVariableOfType(
+														measure.getName(), DetectionVariableType.MEA);
 
 												if (existPdv(one, measure.getName(), subFactor.getName()) == false) {
 													exists = false;
@@ -368,6 +390,21 @@ public class ConfigurationService {
 			}
 
 		}
+
+		try {
+			String uri = baseUri + "measures/computeFromMeasures";
+			response+="\n\tCalled Url: "+uri;
+			ResponseEntity<String> responseFromComputeMeasures = rest.getForEntity(uri, String.class);
+			if (!responseFromComputeMeasures.getStatusCode().equals(HttpStatus.OK)) {
+				response+="\n\t\tcomputeFromMeasures:\n\tEXCEPTION:\n\tFailed : HTTP error code : " + responseFromComputeMeasures.getStatusCode()+"\n\t\t\terror body: "+responseFromComputeMeasures.getBody();
+			}
+			else{
+				response+="\n\t\tcomputeFromMeasures:\n\tstatus code: "+responseFromComputeMeasures.getStatusCode()+"\n\t\t\tbody: "+responseFromComputeMeasures.getBody();
+			}
+		} catch (Exception ex) {
+			response += "\n\tERROR while calling computeFromMeasures Service:\n\texception message: " + ex.getMessage();
+		}
+
 		return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity(response).build();
 
 	}
@@ -377,7 +414,8 @@ public class ConfigurationService {
 		DetectionVariable dv = detectionVariableRepository.findByDetectionVariableNameAndDetectionVariableType(dvName,
 				dvt);
 		if (dv == null) {
-			throw new MissingKeyException("MissingKeyException:\n\tName of property : name(detection_variable_name)\n\tin JSON file doesn't match to any key\n\tin corresponding table: cd_detection_variable.\n\t");
+			throw new MissingKeyException(
+					"MissingKeyException:\n\tName of property : name(detection_variable_name)\n\tin JSON file doesn't match to any key\n\tin corresponding table: cd_detection_variable.\n\t");
 		}
 		return dv;
 	}
@@ -405,7 +443,7 @@ public class ConfigurationService {
 				pilotDetectionVariableRepository.save(pdv1);
 				cfc.incrementUpdated();
 
-			} 
+			}
 
 		} else {
 			PilotDetectionVariable pdv2 = new PilotDetectionVariable();

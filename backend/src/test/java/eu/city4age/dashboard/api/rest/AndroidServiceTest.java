@@ -26,6 +26,10 @@ import eu.city4age.dashboard.api.pojo.dto.AddAssessment;
 import eu.city4age.dashboard.api.pojo.dto.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
 
+/**
+ * @author Andrija Petrovic
+ *
+ */
 public class AndroidServiceTest {
 
 	static protected Logger logger = LogManager.getLogger(AndroidServiceTest.class);

@@ -31,10 +31,9 @@ import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
 
-
 /**
  * @author milos.holclajtner
- *
+ * 
  */
 @Component
 @Transactional("transactionManager")

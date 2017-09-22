@@ -71,13 +71,6 @@ public class MeasuresServiceTest {
 			Assert.fail();
 		}
 	}
-	
-	@Test
-	public final void configureDailyMeasuresTest() throws Exception {
-
-		Resource schemaFile = new ClassPathResource("/JsonValidator.json", this.getClass());
-		Resource jsonFile = new ClassPathResource("/json1.json", this.getClass());
-	}
 		
 	@Test
 	public final void computeMeasuresTest() throws Exception {

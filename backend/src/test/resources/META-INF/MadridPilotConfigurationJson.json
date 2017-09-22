@@ -58,8 +58,12 @@
 							"weight": 1,
 							"formula": "",
 							"measures":
-							[{
+							[	{
 									"name": "publictransport_rides_month",
+									"level": 4,
+									"weight": 0.5
+								}, {
+									"name": "publictransport_distance_month",
 									"level": 4,
 									"weight": 0.5
 								}
