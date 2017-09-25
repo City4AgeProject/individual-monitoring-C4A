@@ -110,8 +110,8 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 }
 
                 self.postAssessment = function (data, event) {
-                    //should be logged user ID
-                    var authorId = 1;
+                    
+                    var authorId = sessionStorage.getItem ("userid");
                     var comment = ko.toJS(self.props.commentText);
                     var riskStatus = self.props.selectedRiskStatus.length===1 ? ko.toJS(self.props.selectedRiskStatus)[0] : 'N'; // N-none
                     var dataValidity = self.props.selectedDataValidity.length===1 ? ko.toJS(self.props.selectedDataValidity)[0] : 'VALID_DATA';

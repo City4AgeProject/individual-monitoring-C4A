@@ -2,7 +2,9 @@ package eu.city4age.dashboard.api;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.TimeZone;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +44,11 @@ public class ApplicationTest {
 	
 	public static void main(String[] args) {
 		new SpringApplication(ApplicationTest.class).run(args);
+	}
+	
+	@PostConstruct
+	private void defaultTimeZone() {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
 	
 	@Value("${spring.datasource.url}")

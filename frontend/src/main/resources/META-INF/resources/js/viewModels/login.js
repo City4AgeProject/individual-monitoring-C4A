@@ -39,7 +39,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	                            /*logged in 
 	                             * keep in session storage username and display name
 	                             */
-	                            sp.setStorageData(self.loginValue(), users.displayName, users.pilotName,users.pilotCode,users.roleId);
+	                            sp.setStorageData(users.ID,self.loginValue(), users.displayName, users.pilotName,users.pilotCode,users.roleId);
 	
 	                            $('#appHeader').css({display: 'block'});
 	                            $('.user-menu').css({display: 'block'});

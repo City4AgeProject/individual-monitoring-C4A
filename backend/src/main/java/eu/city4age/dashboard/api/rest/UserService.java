@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -77,7 +78,7 @@ public class UserService {
 					
 					response.setId(user.getId());
 					response.setpilotName(userPilot.getName());
-					response.setPilotCode(user.getPilotCode());
+					response.setPilotCode(user.getPilotCode());					
 					response.setRoleId(user.getRoleId());
 				} else {
 					response.setDisplayName("");
@@ -98,6 +99,5 @@ public class UserService {
 			return Response.ok(response).build();
 		}
 	}
-
 }
 

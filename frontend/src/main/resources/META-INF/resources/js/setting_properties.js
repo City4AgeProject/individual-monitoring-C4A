@@ -25,7 +25,8 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
             getUrl.userAge = userAge;
         };
 
-        self.setStorageData = function (username,userfullname, pilotname, pilotCode, roleid) {
+        self.setStorageData = function (userid, username,userfullname, pilotname, pilotCode, roleid) {
+        	sessionStorage.setItem("userid", userid);
         	sessionStorage.setItem("username", username);
         	sessionStorage.setItem("userfullname", userfullname);        	
         	sessionStorage.setItem("pilotname", pilotname);

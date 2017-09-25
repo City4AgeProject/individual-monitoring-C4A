@@ -1,7 +1,9 @@
 package eu.city4age.dashboard.api;
 
 import java.util.Properties;
+import java.util.TimeZone;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.logging.log4j.LogManager;
@@ -63,6 +65,11 @@ public class Application extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		new SpringApplication(Application.class).run(args);
+	}
+	
+	@PostConstruct
+	private void defaultTimeZone() {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
 
 	/**
