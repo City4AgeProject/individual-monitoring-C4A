@@ -14,6 +14,17 @@ function Serie() {
     this.imgSize = '20px'; //default size for chart
  }
 
+function formatDate(dates){
+	   for( var i=0; i< Object.keys(dates).length;i++){
+         
+         var splitedDateString = dates[i].split("/"); 
+         var date = new Date(splitedDateString[0],splitedDateString[1]);
+         var locale = document.documentElement.lang;
+         var month = date.toLocaleString(locale,{ month: "long" });
+         var year = date.toLocaleString(locale,{ year: "numeric" });
+ 		 dates[i] = month+" "+year;
+ }};
+
 Serie.produceAlert = function() {
     var annotationsSerieAlerts = new Serie();
     /*annotationsSerieAlerts.name = 'Assessments';

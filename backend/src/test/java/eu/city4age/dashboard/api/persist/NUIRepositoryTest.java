@@ -1,5 +1,10 @@
 package eu.city4age.dashboard.api.persist;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.typeCompatibleWith;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.YearMonth;
@@ -26,9 +31,6 @@ import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.rest.MeasuresService;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ApplicationTest.class)
 @WebAppConfiguration
@@ -43,10 +45,10 @@ public class NUIRepositoryTest {
 
 	@Autowired
 	DetectionVariableRepository detectionVariableRepository;
-	
+
 	@Autowired
 	DetectionVariableTypeRepository detectionVariableTypeRepository;
-	
+
 	@Autowired
 	PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
@@ -70,7 +72,7 @@ public class NUIRepositoryTest {
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
 		detectionVariableRepository.save(dv1);
-		
+
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
 		pdv1.setDetectionVariable(dv1);
@@ -121,7 +123,7 @@ public class NUIRepositoryTest {
 		nui2.setDetectionVariable(dv1);
 		nuiRepository.save(nui2);
 
-		NumericIndicatorValue nui3 = new NumericIndicatorValue();		
+		NumericIndicatorValue nui3 = new NumericIndicatorValue();
 		nui3.setUserInRole(uir1);
 		nui3.setDetectionVariable(dv1);
 		nuiRepository.save(nui3);
@@ -136,45 +138,45 @@ public class NUIRepositoryTest {
 		Assert.assertThat(result, lessThan(nui3.getId()));
 
 	}
-	
+
 	@Test
 	@Transactional
 	@Rollback(true)
 	public void testGetNuisForSelectedGes() {
 		Long uirId = 1L;
 		Long dvId = 1L;
-		
+
 		Timestamp intervalStart1 = Timestamp.valueOf(YearMonth.of(2017, 1).atDay(1).atStartOfDay());
 
 		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(intervalStart1, TypicalPeriod.MONTH);
-		
+
 		Timestamp intervalStart2 = Timestamp.valueOf(YearMonth.of(2017, 2).atDay(1).atStartOfDay());
 
 		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(intervalStart2, TypicalPeriod.MONTH);
-		
+
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(uirId);
 		uir1.setPilotCode("LCC");
 		userInRoleRepository.save(uir1);
-		
+
 		DetectionVariableType dvt1 = DetectionVariableType.GES;
 		detectionVariableTypeRepository.save(dvt1);
-		
+
 		DetectionVariableType dvt2 = DetectionVariableType.NUI;
 		detectionVariableTypeRepository.save(dvt2);
-	
+
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(dvId);
 		dv1.setDetectionVariableName("Ges");
 		dv1.setDetectionVariableType(dvt1);
 		detectionVariableRepository.save(dv1);
-		
+
 		DetectionVariable dv2 = new DetectionVariable();
 		dv2.setId(2L);
 		dv2.setDetectionVariableName("Nui");
 		dv2.setDetectionVariableType(dvt2);
 		detectionVariableRepository.save(dv2);
-		
+
 		NumericIndicatorValue nui1 = new NumericIndicatorValue();
 		nui1.setId(1L);
 		nui1.setNuiValue(new BigDecimal(0));
@@ -182,7 +184,7 @@ public class NUIRepositoryTest {
 		nui1.setUserInRole(uir1);
 		nui1.setTimeInterval(ti1);
 		nuiRepository.save(nui1);
-		
+
 		NumericIndicatorValue nui2 = new NumericIndicatorValue();
 		nui2.setId(2L);
 		nui2.setNuiValue(new BigDecimal(1));
@@ -190,17 +192,17 @@ public class NUIRepositoryTest {
 		nui2.setUserInRole(uir1);
 		nui2.setTimeInterval(ti2);
 		nuiRepository.save(nui2);
-		
+
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
 		pdv1.setDetectionVariable(dv2);
 		pdv1.setDerivedDetectionVariable(dv1);
 		pilotDetectionVariableRepository.save(pdv1);
-		
+
 		List<NumericIndicatorValue> result = nuiRepository.getNuisForSelectedGes(uirId, dvId);
-		
+
 		Assert.assertNotNull(result);
-		
+
 		Assert.assertEquals(2, result.size());
 	}
 

@@ -30,6 +30,8 @@ function (oj, ko, $, sp, params) {
             
             
         }
+        
+  	 
 
         self.selectedGefName = "";
         self.parentFactorId = ko.observable();
@@ -191,20 +193,11 @@ function (oj, ko, $, sp, params) {
         		data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
         	} 
            
-           //Translate name of the month from date
-            for( var i=0; i< Object.keys(data.groups).length;i++){
-            
-            //Can be deleted
-           	//data.groups[i].name = oj.Translations.getTranslatedString("date"+String(i))+data.groups[i].name.split(" ")[1];
-            //data.groups[i].name = groups[i];
-            	
-            var date = new Date(data.groups[i].name);
-            var locale = document.documentElement.lang;
-            var month = date.toLocaleString(locale,{ month: "long" });
-    		var year = date.toLocaleString(locale,{ year: "numeric" });
-            data.groups[i].name = month+" "+year;
-            
-            }
+           data.groups = data.groups.map(function(obj){
+        	   return obj.name;
+           });
+         
+           formatDate(data.groups);
            
             $('#detectionGEFGroup1FactorsLineChart').prop('groups', data.groups);
             $('#detectionGEFGroup1FactorsLineChart').prop('series', data.series); 
@@ -373,7 +366,12 @@ function (oj, ko, $, sp, params) {
                     	
                     });
                     if(data && data.itemList && data.itemList.length>0)
-                    	self.groupsVal(data.itemList[0].items[0].dateList);
+                    	{
+
+                    	   formatDate(data.itemList[0].items[0].dateList);
+                    	   self.groupsVal(data.itemList[0].items[0].dateList);
+                    	   
+                    }
                     else
                     	self.groupsVal([]);
                     

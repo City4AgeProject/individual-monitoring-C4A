@@ -152,22 +152,14 @@ function(oj, ko, $) {
 			
 			if(data !== undefined && data.groups !== undefined && data.series !== undefined) {
 			
-				self.props.groups = data.groups;
+	    	   data.groups = data.groups.map(function(obj){
+	        	   return obj.name;
+	           });
+
+	    	   formatDate(data.groups);
+	    	   
+	    		self.props.groups = data.groups;
 				self.props.series = data.series;
-				
-				//Translate name of the month from date
-	            for( var i=0; i< Object.keys(data.groups).length;i++){
-	            
-	            //Can be deleted
-	           	//data.groups[i].name = oj.Translations.getTranslatedString("date"+String(i))+data.groups[i].name.split(" ")[1];
-	            	
-	            var date = new Date(data.groups[i].name);
-	            var locale = document.documentElement.lang;
-	            var month = date.toLocaleString(locale,{ month: "long" });
-	    		var year = date.toLocaleString(locale,{ year: "numeric" });
-	            data.groups[i].name = month+" "+year;
-	            
-	            }
             
 			}
 			
