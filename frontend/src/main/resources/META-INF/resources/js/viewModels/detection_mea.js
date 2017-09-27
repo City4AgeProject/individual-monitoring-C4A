@@ -5,7 +5,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             function detectionMeaViewModel() {
                 $(".loader-hover").hide();
                 var self = this;           	
-            	
+            	                                                  
             	//this method loads data form ajax request before view is loaded
             	self.handleActivated = function(info) {  
             		initData();
@@ -17,13 +17,14 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             	    	  console.log("user is : " + crId);
             	    	  console.log("ges is : " + gesId);
             	    	  
+            	    	  
 	          	        	$.when(
-	          	        		  // Get the HTML
+	          	        		  
 	          	        		  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + crId + "/gesId/" + gesId, function(data) {
 	          	        		    self.data = data;
 	          	        		  }),
 
-	          	        		  // Get the CSS
+	          	        		  
 	          	        		  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ crId +"/detectionVariableId/" + gesId, function(nuiData) {
 	          	        		    self.nuiData = nuiData;
 	          	        		  })
@@ -62,9 +63,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             		 //building diagramData from json data
   	    		  var measureIds = [];
   	    		  var measures = [];
-  	    		  
-  	    		  //console.log('printing nuiData in setdata : ' + JSON.stringify(nuiData));
-  	    		  
+  	    		    	    		   	    		  
   	    		  //getting list of measures (detection variables) from json
   	    		  data.forEach(function(element) {
   	    			  if(measureIds.indexOf(element.detectionVariable.id) == -1){          	    				  
@@ -203,10 +202,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  delete mea.measureValues;
   	    		  delete mea.months;
   	    		  });
-  	    		  
-  	    		  
-  	    		  //console.log("measures are now : " + JSON.stringify(measures));
-  	    		  
+  	    		    	    		  
   	    		  //inserting empty dates
   	    		  measures.forEach(function(mea) {
   	    			  mea.lineSeries.forEach(function(ls) {

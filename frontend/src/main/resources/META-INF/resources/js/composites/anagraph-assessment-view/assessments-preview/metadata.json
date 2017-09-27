@@ -11,6 +11,14 @@
 		"dataPointsMarked": {
 			"description" : "Label for selected datapoint ids counter.",
 			"type": "number"
+		},
+		"crId": {
+			"description" : "Care recipient id.",
+			"type": "number"
+		},
+		"gesId": {
+			"description" : "Geriatric subfactor id.",
+			"type": "number"
 		}
 	}
 }

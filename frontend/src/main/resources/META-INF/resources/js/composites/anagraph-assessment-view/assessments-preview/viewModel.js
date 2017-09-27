@@ -3,15 +3,33 @@ define([ 'knockout', 'jquery', 'urls', 'entities' ],
 function(ko, $) {
 
 	function model(context) {
+		context.props.then(function(properties) {
+			self.props = properties;
+			
+		});
 
 		var self = this;
+		self.composite = context.element;
 		
-		/*TESTING ROUTING*/
-		self.viewMea = function() {
-			   oj.Router.rootInstance.go("detection_mea");
+		//property changed event listener for gesId
+        $(self.composite).on('gesId-changed',function(event){
+        	 if (event.detail.updatedFrom === 'external'){
+        		 if(self.props.gesId > 513) {
+        			 self.shouldSeeMea(true);
+        		 }else {
+        			 self.shouldSeeMea(false)
+        		 }
+                 
+                 
+               }
+            
+        });
+		
+		self.viewMea = function(){
+			oj.Router.rootInstance.store([self.props.crId, self.props.gesId]);
+            oj.Router.rootInstance.go("detection_mea");
 			  };
-		/*END TESTING ROUTING*/
-
+					
 		self.dataPointsMarked = ko.observable('No data points marked.');
 		self.clickShowPopupAddAssessmentCallBack = null;
 
@@ -20,12 +38,15 @@ function(ko, $) {
 		self.viewDailyMeasuresLabel = oj.Translations.getTranslatedString("view_daily_measures");
 		self.fromLabel = oj.Translations.getTranslatedString("from");
 
-		context.props.then(function(properties) {
-			self.props = properties;
-		});
+		self.shouldSeeMea = ko.observable(false);
+		
+		
 
 		self.attached = function(context) {
-			self.clickShowPopupAddAssessment = self.clickShowPopupAddAssessment;
+			self.clickShowPopupAddAssessment = self.clickShowPopupAddAssessment;			
+			if(self.props.gesId) {				
+				self.isGes(true);
+			}
 		};
 
 		self.clickShowPopupAddAssessment = function(data, event) {

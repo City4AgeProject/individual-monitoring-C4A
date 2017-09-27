@@ -155,7 +155,9 @@ function (oj, ko, $, sp, params) {
 
  
         self.chartDrill = function (event, ui) {
-
+        	document.getElementById('polarChart1').style.display = 'none';
+            document.getElementById('polarChart2').style.display = 'none';
+        	
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
@@ -266,7 +268,7 @@ function (oj, ko, $, sp, params) {
                     }
                 });
 
-                document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
+                //document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
                 self.polarGridShapeValue1('polygon');
                 self.polarChartSeriesValue1(lineSeriesPolar1);
@@ -276,10 +278,11 @@ function (oj, ko, $, sp, params) {
 
                 document.getElementById('polarChart1').style.display = 'block';
                 document.getElementById('polarChart2').style.display = 'block';
+                document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
 
             } else {
                 document.getElementById('detectionGEFGroupsLineChart').style.display = 'block';
-                document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
+                //document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
                 document.getElementById('polarChart1').style.display = 'none';
                 document.getElementById('polarChart2').style.display = 'none';
             }
@@ -376,14 +379,17 @@ function (oj, ko, $, sp, params) {
                     	self.groupsVal([]);
                     
                     $.each(self.seriesVal(), function (i, s) {
-                            if(s.name === 'Overall'){
-                               s.color = '#999999';
-                               s.lineWidth = 5; 
-                            } else if(s.name === 'Behavioural'){
-                            	s.color = '#ea97f1';
-                            } else if(s.name === 'Contextual'){
-                            	s.color = '#5dd6c9';
-                            }
+                    	if(s.name === 'Overall'){
+                    		s.drilling = "off";
+                    		s.color = '#999999';
+                    		s.lineWidth = 2; 
+                    	} else if(s.name === 'Behavioural'){
+                    		s.color = '#ea97f1';
+                    		s.lineWidth = 5; 
+                    	} else if(s.name === 'Contextual'){
+                    		s.color = '#5dd6c9';
+                    		s.lineWidth = 5; 
+                    	}
                     });
                     
                     $(".loader-hover").hide();

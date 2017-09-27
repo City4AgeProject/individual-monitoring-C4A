@@ -74,8 +74,7 @@
                 </div>
                 <!-- /ko -->
             </div>
-            <div class="oj-flex-item" style="height:10px">
-            </div>
+            <div class="oj-flex-item" style="height:10px"></div>
             <div class="oj-flex-item oj-flex-items-pad">
                 <div class="oj-flex">
                     <div class="oj-flex-item message" >
@@ -93,7 +92,7 @@
                     </div>
                 </div>
             </div>                    
-            <div class="oj-flex-item oj-flex-items-pad">
+            <div class="oj-flex-item oj-flex-items-pad" data-bind="visible: shouldSeeMea">
                 <div class="oj-flex">
                     <div class="oj-flex-item message">
                         <a class="link" href="#" data-bind="click: viewMea">
@@ -104,13 +103,13 @@
                 </div>
             </div>
         </div>
-        <div class="oj-flex-item" style="height:10px"/>
-    </div>
+	        <div class="oj-flex-item" style="height:10px"></div>
+	</div>
 </div>
 
 <div style="display:none;" id="popup2" class="popup"
      data-bind="ojComponent:{component: 'ojPopup',
-                               rootAttributes: {style:'width:320px;height:320px;'}
+                               rootAttributes: {style:'width:360px;height:330px;'}
                               }">
     <div class="demo-flex-display oj-flex-items-pad">
         <div class="oj-flex oj-sm-flex-direction-column">
@@ -139,23 +138,31 @@
                 </div>
                 <!-- /ko -->
             </div>
-            <div class="oj-flex-item" style="height:10px">
-            </div>
+            <div class="oj-flex-item" style="height:10px"></div>
             <div class="oj-flex-item oj-flex-items-pad">
                 <div class="oj-flex">
-                    <div class="oj-flex-item">
-                    
-                        <a  id="addAnotation" href="#"  data-bind="click: clickShowPopupAddAssessment">
+                    <div class="oj-flex-item message" >
+                        <a class="link" href="#" id="addAnnotation" data-bind="click: clickShowPopupAddAssessment">
                             <img src="images/comment_add.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-                            <span data-bind="text: addAnnotationLabel"></span>
+                            <span  data-bind="text: addAnnotationLabel"></span>
                         </a>
-                 
-                    </div>
-                  
+                    </div>                                 
                 </div>
             </div>                    
-           
+            <div class="oj-flex-item oj-flex-items-pad" data-bind="visible: shouldSeeMea">
+                <div class="oj-flex">
+                    <div class="oj-flex-item message">
+                        <a class="link" href="#" data-bind="click: viewMea">
+                            <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
+                            <span data-bind="text: viewDailyMeasuresLabel "></span>
+                        </a> 
+                    </div>
+                </div>
+            </div>
+                  
         </div>
-        <div class="oj-flex-item" style="height:10px"/>
-    </div>
+        <div class="oj-flex-item" style="height:10px"></div>
+        <div class="oj-flex-item" style="height:10px"></div>
+     </div>                               
 </div>
+        

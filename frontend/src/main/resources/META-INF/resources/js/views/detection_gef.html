@@ -63,8 +63,7 @@
 		</button>
 		<ul id="visualizationMenu" style="display: none"
 			aria-label="Order Actions"
-			data-bind="ojComponent: {component: 'ojMenu', 
-                                                    select: frailtyMenuItemSelect}">
+			data-bind="ojComponent: {component: 'ojMenu', select: frailtyMenuItemSelect}">
 			<li id="lineChart"><a href="#" data-bind="text: lineChartLabel"></a></li>
 			<li id="morphology"><a href="#" data-bind="text: morphologyLabel"></a></li>
 		</ul>
@@ -72,7 +71,7 @@
 	</div>
 
 	<div class="demo-flex-display oj-flex-items-pad">
-		<div class="oj-flex oj-sm-flex-direction-column "></div>
+		<!-- <div class="oj-flex oj-sm-flex-direction-column "></div> -->
 		<!-- end context menu for Detection chart -->
 
 		<div class="oj-flex-item">
@@ -88,71 +87,76 @@
 			</form>
 			<!-- chart for overall situation with two groups of geriatric factors -->
 			<!--detectionGEFGroupsLineChart-->
-			<div id="detectionGEFGroupsLineChart" class="oj-flex-item"
-				data-bind="ojComponent: {
-                component: 'ojChart', 
-                type: 'line',
-                selectionMode: 'multiple',
-                drilling: 'on', 
-                series: seriesVal , 
-                groups: groupsVal ,
-                animationOnDisplay: 'auto',
-                animationOnDataChange: 'auto',
-                drill: chartDrill,
-                hideAndShowBehavior: 'withoutRescale',
-                orientation: 'vertical',
-                hoverBehavior: 'dim',
-                highlightMatch: highlightValue,
-                title: {text: detectionGEFGroupsLineChartLabel , halign: 'center'},
-                yAxis:{step:0.5},
-                legend: {position: 'bottom'}
-                }"
-				style="width: 100%;"></div>
+			
+				<div id="detectionGEFGroupsLineChart" class="oj-flex-item"
+					data-bind="ojComponent: {
+	                component: 'ojChart', 
+	                type: 'line',                
+	                drilling: 'on', 
+	                series: seriesVal , 
+	                groups: groupsVal ,
+	                animationOnDisplay: 'auto',
+	                animationOnDataChange: 'auto',
+	                drill: chartDrill,
+	                hideAndShowBehavior: 'withoutRescale',
+	                orientation: 'vertical',
+	                hoverBehavior: 'dim',
+	                highlightMatch: highlightValue,
+	                title: {text: detectionGEFGroupsLineChartLabel , halign: 'center'},
+	                yAxis:{step:0.5},
+	                legend: {position: 'bottom'}
+	                }"
+					style="width: 100%;">
+				</div>
+			
 		</div>
 	</div>
+	
+		<div id="polarChart-container" class="oj-flex"
+			data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
+			<div class="oj-flex-item">
+				<div id="polarChart1"
+					data-bind="ojComponent: {
+		                            component: 'ojChart', 
+		                            coordinateSystem: 'polar',
+		                            type: typeValue,
+		                            stack: stackValue,
+		                            polarGridShape: polarGridShapeValue1,
+		                            series: polarChartSeriesValue1, 
+		                            groups: polarChartGroupsValue1, 
+		                            animationOnDisplay: 'auto',
+		                            hideAndShowBehavior: 'withoutRescale',
+		                            hoverBehavior: 'dim',
+		                            drilling: 'on',
+		                            title: {text: 'Behavioural', halign: 'center'},
+		                            legend: {position: 'top'}
+		                            }"
+					style="width: 100%;"></div>
+			</div>
+			<div class="oj-flex-item">
+				<!-- polar chart for Group 2 -->
+				<div id="polarChart2"
+					data-bind="ojComponent: {
+		                            component: 'ojChart', 
+		                            coordinateSystem: 'polar',
+		                            type: typeValue,
+		                            stack: stackValue,
+		                            polarGridShape: polarGridShapeValue2,
+		                            series: polarChartSeriesValue2, 
+		                            groups: polarChartGroupsValue2, 
+		                            animationOnDisplay: 'auto',
+		                            hideAndShowBehavior: 'withoutRescale',
+		                            hoverBehavior: 'dim',
+		                            title: {text: 'Contextual', halign: 'center'},
+		                            legend: {position: 'top'}
+		                            }"
+					style="width: 100%; height: 400px;"></div>
+			</div>
+		</div>	
 </div>
 
-<div id="polarChart-container" class="oj-flex"
-	data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
-	<div class="oj-flex-item">
-		<div id="polarChart1"
-			data-bind="ojComponent: {
-                            component: 'ojChart', 
-                            coordinateSystem: 'polar',
-                            type: typeValue,
-                            stack: stackValue,
-                            polarGridShape: polarGridShapeValue1,
-                            series: polarChartSeriesValue1, 
-                            groups: polarChartGroupsValue1, 
-                            animationOnDisplay: 'auto',
-                            hideAndShowBehavior: 'withoutRescale',
-                            hoverBehavior: 'dim',
-                            drilling: 'on',
-                            title: {text: 'Behavioural', halign: 'center'},
-                            legend: {position: 'top'}
-                            }"
-			style="width: 100%;"></div>
-	</div>
-	<div class="oj-flex-item">
-		<!-- polar chart for Group 2 -->
-		<div id="polarChart2"
-			data-bind="ojComponent: {
-                            component: 'ojChart', 
-                            coordinateSystem: 'polar',
-                            type: typeValue,
-                            stack: stackValue,
-                            polarGridShape: polarGridShapeValue2,
-                            series: polarChartSeriesValue2, 
-                            groups: polarChartGroupsValue2, 
-                            animationOnDisplay: 'auto',
-                            hideAndShowBehavior: 'withoutRescale',
-                            hoverBehavior: 'dim',
-                            title: {text: 'Contextual', halign: 'center'},
-                            legend: {position: 'top'}
-                            }"
-			style="width: 100%; height: 400px;"></div>
-	</div>
-</div>
+	
+
 
 
 <anagraph-assessment-view id="detectionGEFGroup1FactorsLineChart"

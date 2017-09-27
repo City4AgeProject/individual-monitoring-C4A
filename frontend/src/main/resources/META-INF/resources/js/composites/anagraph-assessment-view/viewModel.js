@@ -7,12 +7,16 @@ function(oj, ko, $) {
 	function model(context) {
 		var self = this;
 
+		self.crId = ko.observable();
+		self.gesId  = ko.observable(); 
+		
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();
 		self.title = ko.observable();
 		self.legend = ko.observable();
 		self.drilling = ko.observable();
-
+		
+		
 		self.highlightValue = ko.observable();
 
 		self.dataPointsMarked = ko.observable('No data points marked.');
@@ -107,33 +111,45 @@ function(oj, ko, $) {
 			error : function(jqXHR, textStatus, errorThrown) {
 			}
 		});
-
+		
+		//event triggers when user makes a selection on diagram
 		self.chartOptionChange = function(event, ui) {
 			if(ui !== undefined) {
-				if (ui['option'] === 'selection') {
+				if (ui['option'] === 'selection') {					
 					if (!self.showSelectionOnDiagram()) {
-						if (ui['value'].length > 0) {
-							//$('#popup1').ojPopup();
-						//	if ($('#popup1').ojPopup("isOpen"))
-						//		$('#popup1').ojPopup('close');
-							var onlyDataPoints = [];
+						//if there is any selected values:
+						if (ui['value'].length > 0) {							
+							var onlyDataPoints = [];						
 							onlyDataPoints = getDataPoints(ui['optionMetadata']);
-							if (onlyDataPoints.length === 0) {
+							
+							//if there is no selected values
+							if (onlyDataPoints.length === 0) {								
 								for (var i = 0; i < ui['value'].length; i++) {
 									onlyDataPoints.push(ui['value'][i].id);
 								}
 							} else if (onlyDataPoints.length === 1
 									&& onlyDataPoints[0][0]
-									&& onlyDataPoints[0][0].id) {
+									&& onlyDataPoints[0][0].id) {								
 								refreshDataPointsMarked(1);
-							} else {
-								// Compose selections in get query
-								// parameters
+							} else {								
+								// Compose selections in get query parameters
+								if(ui['optionMetadata']['selectionData'].length == 1){
+									//if there is only 1 selection
+									var gefOrGesId = ui['optionMetadata']['selectionData'][0]['data']['gefTypeId'];									
+										$('#popupWrapper1').prop('gesId', gefOrGesId);
+										$('#popupWrapper1').prop('crId', self.props.careRecipientId);
+									
+								}else {
+									//if there is multiple selections, set gesid property from assessment-preview component 
+									//to 0 so that viewMeasures wont be displayed
+									$('#popupWrapper1').prop('gesId', 0);
+								}
+								
 								self.queryParams = calculateSelectedIds(onlyDataPoints);
 								loadAssessments(self.queryParams);
 							}
 
-							showAssessmentsPopup();
+							//showAssessmentsPopup();
 	
 							$('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
 	
@@ -176,7 +192,7 @@ function(oj, ko, $) {
 					+ "/careRecipientId/" + self.props.careRecipientId
 					+ "/parentFactorId/" + self.props.parentFactorId,
 					loadDiagramDataCallback);
-			jqXHR.fail(serverErrorCallback);
+			jqXHR.fail(serverErrorCallback);			
 			return jqXHR;
 		};
 
@@ -237,7 +253,9 @@ function(oj, ko, $) {
 
 		context.props.then(function(properties) {
 			self.props = properties;
+			
 		});
+		
 
 		self.attached = function() {
 			var response = loadDataSet();
@@ -256,7 +274,7 @@ function(oj, ko, $) {
 
 			self.loadAssessmentsCached();
 
-			if (self.showSelectionOnDiagram()) {
+			if (self.showSelectionOnDiagram()) {				
 				selected = [];
 				for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
 					for (var jg = 0; jg < Object
@@ -284,6 +302,7 @@ function(oj, ko, $) {
 		};
 
 		self.chartDrill = function(event, ui) {
+			
 			console.log('drill on anagraph-assessment-view');
 
             var seriesVal = ui['series'];            
@@ -445,18 +464,15 @@ function(oj, ko, $) {
 				idsArray.push(selectedPoints[i]);
 			}
 			self.dataPointsMarkedIds = idsArray;
-
+			
 			$('#popupWrapper1').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));
 
 			return idsArray;
 		}
 
-		var loadAssessments = function(pointIds,
-				checkedFilterValidityData) {
+		var loadAssessments = function(pointIds) {
 			var pointIdsString = pointIds.join('/');
-			return $.getJSON(ASSESSMENT_FOR_DATA_SET
-					+ "/geriatricFactorValueIds/" + pointIdsString,
-					function(assessments) {
+			return $.getJSON(ASSESSMENT_FOR_DATA_SET + "/geriatricFactorValueIds/" + pointIdsString, function(assessments) {
 
 						var assessmentsResult = [];
 
@@ -465,11 +481,9 @@ function(oj, ko, $) {
 						showAssessmentsPopup(assessments.length);
 
 						for (var i = 0; i < assessments.length; i++) {
-							var newAssessment = Assessment
-									.produceFromOther(assessments[i]);
+							var newAssessment = Assessment.produceFromOther(assessments[i]);
 							newAssessment.formatAssessmentData();
-							if (!Assessment.arrayContains(
-									assessmentsResult, newAssessment))
+							if (!Assessment.arrayContains(assessmentsResult, newAssessment))
 								assessmentsResult.push(newAssessment);
 						}
 
@@ -478,8 +492,8 @@ function(oj, ko, $) {
 
 					});
 		};
-
-		function showAssessmentsPopup( aLength ) {
+		//shows either popup1 or popup2 on assessment preview component based on number of selected assessments
+		function showAssessmentsPopup( aLength) {			
 			self.selectedAnotations([]);
 			$('.popup').ojPopup('close');
 			// Popup1 or popup2 if there are any assessments
@@ -557,19 +571,14 @@ function(oj, ko, $) {
 
 						});*/
 
-		var filterAssessments = function(pointIds,
-				checkedFilterValidityData) {
+		var filterAssessments = function(pointIds, checkedFilterValidityData) {
 			var pointIdsString = pointIds.join('/');
-			return $.getJSON(ASSESSMENT_FOR_DATA_SET
-					+ "/geriatricFactorValueIds/" + pointIdsString
-					+ filtering(), function(assessments) {
+			return $.getJSON(ASSESSMENT_FOR_DATA_SET + "/geriatricFactorValueIds/" + pointIdsString + filtering(), function(assessments) {
 				var assessmentsResult = [];
 				for (var i = 0; i < assessments.length; i++) {
-					var newAssessment = Assessment
-							.produceFromOther(assessments[i]);
+					var newAssessment = Assessment.produceFromOther(assessments[i]);
 					newAssessment.formatAssessmentData();
-					if (!Assessment.arrayContains(assessmentsResult,
-							newAssessment))
+					if (!Assessment.arrayContains(assessmentsResult, newAssessment))
 						assessmentsResult.push(newAssessment);
 				}
 				self.selectedAnotations(assessmentsResult);
