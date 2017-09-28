@@ -24,7 +24,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "user_in_role")
-public class UserInRole extends AbstractBaseEntity<Long> {
+public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<AbstractBaseEntity<Long>> {
 
 	/**
 	 * 
@@ -141,5 +141,12 @@ public class UserInRole extends AbstractBaseEntity<Long> {
 	public void setPilotCode(String pilotCode) {
 		this.pilotCode = pilotCode;
 	}
+
+	@Override
+	public int compareTo(AbstractBaseEntity<Long> o) {
+		return this.getId().compareTo(o.getId());
+	}
+
+
 
 }

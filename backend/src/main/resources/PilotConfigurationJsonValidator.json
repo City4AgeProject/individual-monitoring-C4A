@@ -3,36 +3,25 @@
 	"description": "Validation file for Configuration Json",
 	"type": "object",
 	"properties": {
-		"level": {
-			"type": "integer"
-		},
-		"validFrom": {
-			"type": "string"
-		},
-		"validTo": {
-			"type": "string"
-		},
-		"pilotCode": {
-			"type": "string"
-		},
-		"groups": {
+		"configurations": {
 			"type": "array",
 			"items": {
 				"type": "object",
 				"properties": {
-					"name": {
-						"type": "string"
-					},
+
 					"level": {
 						"type": "integer"
 					},
-					"weight": {
-						"type": "number"
-					},
-					"formula": {
+					"validFrom": {
 						"type": "string"
 					},
-					"factors": {
+					"validTo": {
+						"type": "string"
+					},
+					"pilotCode": {
+						"type": "string"
+					},
+					"groups": {
 						"type": "array",
 						"items": {
 							"type": "object",
@@ -49,7 +38,7 @@
 								"formula": {
 									"type": "string"
 								},
-								"subFactors": {
+								"factors": {
 									"type": "array",
 									"items": {
 										"type": "object",
@@ -66,7 +55,7 @@
 											"formula": {
 												"type": "string"
 											},
-											"measures": {
+											"subFactors": {
 												"type": "array",
 												"items": {
 													"type": "object",
@@ -79,12 +68,39 @@
 														},
 														"weight": {
 															"type": "number"
+														},
+														"formula": {
+															"type": "string"
+														},
+														"measures": {
+															"type": "array",
+															"items": {
+																"type": "object",
+																"properties": {
+																	"name": {
+																		"type": "string"
+																	},
+																	"level": {
+																		"type": "integer"
+																	},
+																	"weight": {
+																		"type": "number"
+																	}
+																},
+																"required": [
+																	"name",
+																	"level",
+																	"weight"
+																]
+															}
 														}
 													},
 													"required": [
 														"name",
 														"level",
-														"weight"
+														"weight",
+														"measures",
+														"formula"
 													]
 												}
 											}
@@ -93,7 +109,7 @@
 											"name",
 											"level",
 											"weight",
-											"measures",
+											"subFactors",
 											"formula"
 										]
 									}
@@ -103,7 +119,7 @@
 								"name",
 								"level",
 								"weight",
-								"subFactors",
+								"factors",
 								"formula"
 							]
 						}
@@ -112,19 +128,15 @@
 				"required": [
 					"name",
 					"level",
-					"weight",
-					"factors",
-					"formula"
+					"validFrom",
+					"validTo",
+					"pilotCode",
+					"groups"
 				]
 			}
 		}
 	},
 	"required": [
-		"name",
-		"level",
-		"validFrom",
-		"validTo",
-		"pilotCode",
-		"groups"
+		"configurations"
 	]
 }

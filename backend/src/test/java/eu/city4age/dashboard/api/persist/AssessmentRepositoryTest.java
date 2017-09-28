@@ -45,7 +45,7 @@ import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
-import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
+import eu.city4age.dashboard.api.pojo.json.Configuration;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.rest.MeasuresServiceTest;
 

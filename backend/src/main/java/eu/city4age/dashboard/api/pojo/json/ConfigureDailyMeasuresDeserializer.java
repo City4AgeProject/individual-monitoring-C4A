@@ -2,66 +2,16 @@ package eu.city4age.dashboard.api.pojo.json;
 
 import java.util.List;
 
-import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
-
 public class ConfigureDailyMeasuresDeserializer {
 
-	String name;
-	Integer level;
-	String validFrom;
-	String validTo;
-	String pilotCode;
+	private List<Configuration> configurations;
 
-	List<Groups> groups;
-
-	public String getName() {
-		return name;
+	public List<Configuration> getConfigurations() {
+		return configurations;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setConfigurations(List<Configuration> configurations) {
+		this.configurations = configurations;
 	}
-
-	public String getPilotCode() {
-		return pilotCode;
-	}
-
-	public void setPilotCode(String pilotCode) {
-		this.pilotCode = pilotCode;
-	}
-
-	public Integer getLevel() {
-		return level;
-	}
-
-	public void setLevel(Integer level) {
-		this.level = level;
-	}
-
-	public List<Groups> getGroups() {
-		return groups;
-	}
-
-	public void setGroups(List<Groups> groups) {
-		this.groups = groups;
-	}
-
-	public String getValidFrom() {
-		return validFrom;
-	}
-
-	public void setValidFrom(String validFrom) {
-		this.validFrom = validFrom;
-	}
-
-	public String getValidTo() {
-		return validTo;
-	}
-
-	public void setValidTo(String validTo) {
-		this.validTo = validTo;
-	}
-
-
 
 }

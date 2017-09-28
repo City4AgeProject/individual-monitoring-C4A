@@ -37,7 +37,7 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
-import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
+import eu.city4age.dashboard.api.pojo.json.Configuration;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gef;
 import eu.city4age.dashboard.api.pojo.json.desobj.Ges;
 import eu.city4age.dashboard.api.pojo.json.desobj.Groups;

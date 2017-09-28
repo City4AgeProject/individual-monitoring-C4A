@@ -8,8 +8,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -96,7 +100,7 @@ public class CareRecipientService {
 	@GET
 	@Path("getGroups/careRecipientId/{careRecipientId}/parentFactors/{parentFactors : .+}")
 	@Produces("application/json")
-	public Response getJson(@PathParam("careRecipientId") String careRecipientId,
+	public Response getGroups(@PathParam("careRecipientId") String careRecipientId,
 			@PathParam("parentFactors") List<PathSegment> parentFactorsPathSegment) throws IOException {
 
 		/**
@@ -212,7 +216,7 @@ public class CareRecipientService {
 	@GET
 	@Path("getCareRecipients/pilotCode/{pilotCode}/")
 	@Produces("application/json")
-	public Response getJson(@PathParam("pilotCode") String pilotCode) throws IOException {
+	public Response getCareRecipients(@PathParam("pilotCode") String pilotCode) throws IOException {
 
 		/**
 		 * ****************Variables*************
@@ -223,21 +227,24 @@ public class CareRecipientService {
 		/**
 		 * ****************Action*************
 		 */
-		List<UserInRole> userinroleparamsList;
+		SortedSet<UserInRole> userInRoleParams;
+		
+		List<UserInRole> uirs;
 		if (pilotCode.equals("DEV")) {
-			userinroleparamsList = userInRoleRepository.findAll();
+			uirs = userInRoleRepository.findAll();
 		} else {
-			userinroleparamsList = userInRoleRepository.findByRoleIdAndPilotCode(Short.valueOf("1"),
-					String.valueOf(pilotCode));
+			uirs = userInRoleRepository.findByRoleIdAndPilotCode(Short.valueOf("1"), String.valueOf(pilotCode));
 		}
+		userInRoleParams = new TreeSet<UserInRole>(uirs);
 
-		if (userinroleparamsList.isEmpty()) {
+		if (userInRoleParams.isEmpty()) {
 			response.setMessage("No users found");
 			response.setResponseCode(0);
 			return Response.ok(objectMapper.writeValueAsString(response)).build();
 		} else {
 			List<C4ACareRecipientListResponse> itemList = new ArrayList<C4ACareRecipientListResponse>();
-			for (UserInRole user : userinroleparamsList) {
+
+			for (UserInRole user : userInRoleParams) {
 				response.setMessage("success");
 				response.setResponseCode(10);
 
@@ -269,14 +276,19 @@ public class CareRecipientService {
 					interventionDate = sdf.format(user.getCareProfile().getLastInterventionDate());
 				}
 
-				List<FrailtyStatusTimeline> frailtyparamsList = new ArrayList<FrailtyStatusTimeline>(
-						user.getFrailtyStatusTimeline());
-
-				if (frailtyparamsList != null && frailtyparamsList.size() > 0) {
-					frailtyStatus = frailtyparamsList.get(0).getCdFrailtyStatus().getFrailtyStatus();
-					frailtyNotice = frailtyparamsList.get(0).getFrailtyNotice();
+				
+				FrailtyStatusTimeline fs = frailtyStatusTimelineRepository.findLatest(user.getId());
+				
+				Set<FrailtyStatusTimeline> fsts = new HashSet<FrailtyStatusTimeline>();
+				
+				if(fs != null) {
+					frailtyStatus = fs.getCdFrailtyStatus().getFrailtyStatus();
+					frailtyNotice = fs.getFrailtyNotice();
+					fsts.add(fs);
 				}
-
+				
+				user.setFrailtyStatusTimeline(fsts);
+				
 				Pilot userPilot = pilotRepository.findOne(user.getPilotCode());
 
 				itemList.add(new C4ACareRecipientListResponse(user.getId(), age, frailtyStatus, frailtyNotice,

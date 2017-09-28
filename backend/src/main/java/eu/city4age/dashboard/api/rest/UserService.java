@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.TimeZone;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.persist.PilotRepository;
+import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.C4ALoginResponse;
@@ -78,7 +77,7 @@ public class UserService {
 					
 					response.setId(user.getId());
 					response.setpilotName(userPilot.getName());
-					response.setPilotCode(user.getPilotCode());					
+					response.setPilotCode(user.getPilotCode());
 					response.setRoleId(user.getRoleId());
 				} else {
 					response.setDisplayName("");
@@ -99,5 +98,6 @@ public class UserService {
 			return Response.ok(response).build();
 		}
 	}
+
 }
 

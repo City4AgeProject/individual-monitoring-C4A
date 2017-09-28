@@ -187,6 +187,7 @@ public class MeasuresService {
 
 	private void computeFor1Month(String factor, BigDecimal weight, String pilotCode, Timestamp startOfMonth,
 			Timestamp endOfMonth) {
+		logger.info("computeFor1Month: " + factor);
 		List<ViewGefValuesPersistedSourceGesTypes> list = viewGefValuesPersistedSourceGesTypesRepository
 				.findAllForMonthByPilotCode(pilotCode, startOfMonth, factor);
 
@@ -258,6 +259,7 @@ public class MeasuresService {
 	}
 
 	private void computeGESsFor1Month(String pilotCode, Timestamp startOfMonth, Timestamp endOfMonth) {
+		logger.info("computeGESsFor1Month");
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository.findAllForMonthByPilotCode(pilotCode,
 				startOfMonth, endOfMonth);
 
@@ -307,15 +309,16 @@ public class MeasuresService {
 
 							BigDecimal gesValue = new BigDecimal(0);
 
+							BigDecimal derivedMea = null;
+							
 							if (dtp.equals("DAY") || dtp.equals("1WK")) {
-								BigDecimal computeDerivedMeaForNUI = computeDerivedMeaForNUI(pilotCode, startOfMonth,
+								derivedMea = computeDerivedMeaForNUI(pilotCode, startOfMonth,
 										endOfMonth, list.get(i), userId);
-								gesValue = gesValue.add(computeDerivedMeaForNUI);
 							} else if (dtp.equals("MON")) {
-								BigDecimal computeDerivedMeaForMM = computeDerivedMeaForMM(pilotCode, startOfMonth,
+								derivedMea = computeDerivedMeaForMM(pilotCode, startOfMonth,
 										endOfMonth, list.get(i), userId);
-								gesValue = gesValue.add(computeDerivedMeaForMM);
 							}
+							gesValue = gesValue.add(derivedMea);
 							previousGesValue = gesValue;
 
 						}
@@ -408,6 +411,12 @@ public class MeasuresService {
 
 	private GeriatricFactorValue createGFV(Long dvId, BigDecimal gesValue, BigDecimal weight, Timestamp startOfMonth,
 			Timestamp endOfMonth, Long userId, String pilotCode) {
+		logger.info("dvId: " + dvId);
+		logger.info("gesValue: " + gesValue);
+		logger.info("weight: " + weight);
+		logger.info("startOfMonth: " + startOfMonth);
+		logger.info("userId: " + userId);
+		logger.info("pilotCode: " + pilotCode);
 		GeriatricFactorValue ges = new GeriatricFactorValue();
 		ges.setGefValue(gesValue);
 		TimeInterval ti = getOrCreateTimeInterval(startOfMonth, TypicalPeriod.MONTH);
@@ -429,6 +438,7 @@ public class MeasuresService {
 
 	private BigDecimal computeDerivedMeaForMM(String pilotCode, Timestamp startOfMonth, Timestamp endOfMonth,
 			ViewPilotDetectionVariable vpdv, Long userId) {
+		logger.info("computeDerivedMeaForMM");
 		List<VariationMeasureValue> mmsThisMonth = variationMeasureValueRepository.findAllByUserInRoleId(userId,
 				startOfMonth);
 		BigDecimal sum = new BigDecimal(0);
@@ -436,11 +446,13 @@ public class MeasuresService {
 		BigDecimal ts;
 		BigDecimal weight = new BigDecimal(0);
 		for (VariationMeasureValue mmThisMonth : mmsThisMonth) {
+			logger.info("vmvId: " + mmThisMonth.getId());
+			logger.info("dvId: " + mmThisMonth.getDetectionVariable().getId());
 			VariationMeasureValue mmMonthZero = variationMeasureValueRepository
 					.findOne(variationMeasureValueRepository.findMinId(mmThisMonth.getDetectionVariable(), userId));
 			ds = (mmThisMonth.getMeasureValue().subtract(mmMonthZero.getMeasureValue()))
 					.divide(mmMonthZero.getMeasureValue(), 2, RoundingMode.HALF_UP);
-			weight = new BigDecimal(.1);
+			weight = new BigDecimal(1/mmsThisMonth.size());
 			if (ds.compareTo(new BigDecimal(.25)) < 0) {
 				if (ds.compareTo(new BigDecimal(.1)) < 0) {
 					if (ds.compareTo(new BigDecimal(-.1)) < 0) {
@@ -454,7 +466,10 @@ public class MeasuresService {
 					ts = new BigDecimal(4);
 			} else
 				ts = new BigDecimal(5);
+			logger.info("ts: " + ts);
+			logger.info("weight: " + weight);
 			sum = sum.add(ts.multiply(weight));
+			logger.info("sum: " + sum);
 		}
 		return sum;
 	}
@@ -505,10 +520,13 @@ public class MeasuresService {
 	private List<NumericIndicatorValue> createAllNuis(UserInRole uir, DetectionVariable dv, Timestamp startOfMonth,
 			Timestamp endOfMonth, String pilotCode) {
 		List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
-
+		logger.info("uId: " + uir.getId());
+		logger.info("dvId: " + dv.getId());
+		logger.info("startOfMonth: " + startOfMonth);
+		logger.info("pilotCode: " + pilotCode);
 		// menja se where za upit jer smo izmenili upit i podelili na dva (upit
 		// i podupit)
-		String formula = "WITH subq AS (SELECT AVG (vm.measure_value) AS avg, COALESCE (STDDEV(vm.measure_value), 0) stDev, PERCENTILE_CONT (0.25) WITHIN GROUP (ORDER BY vm.measure_value DESC) best25 FROM variation_measure_value AS vm INNER JOIN time_interval AS ti ON ti. ID = vm.time_interval_id WHERE ti.interval_start >= '"
+		String formula = "WITH subq AS (SELECT COALESCE (AVG (vm.measure_value), 0) avg, COALESCE (STDDEV(vm.measure_value), 0) stDev, PERCENTILE_CONT (0.25) WITHIN GROUP (ORDER BY vm.measure_value DESC) best25 FROM variation_measure_value AS vm INNER JOIN time_interval AS ti ON ti. ID = vm.time_interval_id WHERE ti.interval_start >= '"
 				+ startOfMonth + "' AND ti.interval_end <= '" + endOfMonth + "' AND vm.user_in_role_id = "
 				+ uir.getId().toString() + " AND vm.measure_type_id = " + dv.getId().toString()
 				+ ") SELECT avg, (CASE WHEN avg != 0 THEN stDev / avg ELSE 0 END) std, (CASE WHEN avg != 0 THEN best25 / avg ELSE 0 END) best, (CASE WHEN avg != 0 THEN best25 - avg / avg ELSE 0 END) delta FROM subq";
@@ -535,16 +553,19 @@ public class MeasuresService {
 
 			if (dvNuisForMeasure.get(i).getFormula().contains("avg")) {
 				String nui1 = String.valueOf(nuiForMeasure[0]);
+				logger.info("nui1: " + nui1);
 				nuiValue = new BigDecimal(nui1);
 			} else if (dvNuisForMeasure.get(i).getFormula().contains("std")) {
 				String nui2 = String.valueOf(nuiForMeasure[1]);
+				logger.info("nui2: " + nui2);
 				nuiValue = new BigDecimal(nui2);
 			} else if (dvNuisForMeasure.get(i).getFormula().contains("best")) {
 				String nui3 = String.valueOf(nuiForMeasure[2]);
+				logger.info("nui3: " + nui3);
 				nuiValue = new BigDecimal(nui3);
 			} else if (dvNuisForMeasure.get(i).getFormula().contains("delta")) {
-
 				String nui4 = String.valueOf(nuiForMeasure[3]);
+				logger.info("nui4: " + nui4);
 				nuiValue = new BigDecimal(nui4);
 			}
 

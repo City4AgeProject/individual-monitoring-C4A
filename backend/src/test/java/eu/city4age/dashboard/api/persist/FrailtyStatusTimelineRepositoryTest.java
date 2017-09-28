@@ -1,5 +1,6 @@
 package eu.city4age.dashboard.api.persist;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatus;
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatusTimeline;
+import eu.city4age.dashboard.api.pojo.domain.FrailtyStatusTimelineId;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 
@@ -38,6 +40,9 @@ public class FrailtyStatusTimelineRepositoryTest {
 
 	@Autowired
 	private FrailtyStatusRepository frailtyStatusRepository;
+	
+	@Autowired
+	private TimeIntervalRepository timeIntervalRepository;
 
 	@Test
 	@Transactional
@@ -91,6 +96,57 @@ public class FrailtyStatusTimelineRepositoryTest {
 
 		Assert.assertEquals("F", result.get(0).getFrailtyStatus());
 
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(false)
+	public void testFindLatest() throws Exception {
+		
+		Long uId = 1L;
+		
+		UserInRole uir = new UserInRole();
+		uir.setId(uId);
+		userInRoleRepository.save(uir);
+		
+		FrailtyStatus fs = new FrailtyStatus();
+		fs.setFrailtyStatus("F");
+		frailtyStatusRepository.save(fs);
+		
+		TimeInterval ti1 = new TimeInterval();
+		ti1.setIntervalStart(Timestamp.valueOf("2016-04-01 00:00:00"));
+		timeIntervalRepository.save(ti1);
+		
+		TimeInterval ti2 = new TimeInterval();
+		ti2.setIntervalStart(Timestamp.valueOf("2016-05-01 00:00:00"));
+		timeIntervalRepository.save(ti2);
+
+		FrailtyStatusTimeline fst1 = new FrailtyStatusTimeline();
+		fst1.setTimeIntervalId(ti1.getId());
+		fst1.setUserInRoleId(uId);
+		fst1.setFrailtyStatus("F");
+		fst1.setChangedBy(uir);
+		fst1.setChanged(new Date());
+		fst1.setTimeInterval(ti1);
+		fst1.setUserInRole(uir);
+		frailtyStatusTimelineRepository.save(fst1);
+		
+		FrailtyStatusTimeline fst2 = new FrailtyStatusTimeline();
+		fst2.setTimeIntervalId(ti2.getId());
+		fst2.setUserInRoleId(uId);
+		fst2.setFrailtyStatus("F");
+		fst2.setChangedBy(uir);
+		fst2.setChanged(new Date());
+		fst2.setTimeInterval(ti2);
+		fst2.setUserInRole(uir);
+		frailtyStatusTimelineRepository.save(fst2);
+
+		FrailtyStatusTimeline result = frailtyStatusTimelineRepository.findLatest(uId);
+		
+		Assert.assertNotNull(result);
+		
+		Assert.assertEquals(Timestamp.valueOf("2016-04-01 00:00:00"), result.getTimeInterval().getIntervalStart());
+		
 	}
 
 }
