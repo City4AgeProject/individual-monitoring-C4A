@@ -526,7 +526,7 @@ public class MeasuresService {
 		logger.info("pilotCode: " + pilotCode);
 		// menja se where za upit jer smo izmenili upit i podelili na dva (upit
 		// i podupit)
-		String formula = "WITH subq AS (SELECT COALESCE (AVG (vm.measure_value), 0) avg, COALESCE (STDDEV(vm.measure_value), 0) stDev, PERCENTILE_CONT (0.25) WITHIN GROUP (ORDER BY vm.measure_value DESC) best25 FROM variation_measure_value AS vm INNER JOIN time_interval AS ti ON ti. ID = vm.time_interval_id WHERE ti.interval_start >= '"
+		String formula = "WITH subq AS (SELECT AVG (vm.measure_value) avg, COALESCE (STDDEV(vm.measure_value), 0) stDev, PERCENTILE_CONT (0.25) WITHIN GROUP (ORDER BY vm.measure_value DESC) best25 FROM variation_measure_value AS vm INNER JOIN time_interval AS ti ON ti. ID = vm.time_interval_id WHERE ti.interval_start >= '"
 				+ startOfMonth + "' AND ti.interval_end <= '" + endOfMonth + "' AND vm.user_in_role_id = "
 				+ uir.getId().toString() + " AND vm.measure_type_id = " + dv.getId().toString()
 				+ ") SELECT avg, (CASE WHEN avg != 0 THEN stDev / avg ELSE 0 END) std, (CASE WHEN avg != 0 THEN best25 / avg ELSE 0 END) best, (CASE WHEN avg != 0 THEN best25 - avg / avg ELSE 0 END) delta FROM subq";
@@ -545,33 +545,37 @@ public class MeasuresService {
 																			// or
 																			// Double!!!
 
-		List<ViewMeaNuiDerivationPerPilot> dvNuisForMeasure = viewMeaNuiDerivationPerPilotRepository
-				.findAllDvNuisForMeasure(dv.getDetectionVariableName(), pilotCode);
-
-		BigDecimal nuiValue = new BigDecimal(0);
-		for (int i = 0; i < 4; i++) {
-
-			if (dvNuisForMeasure.get(i).getFormula().contains("avg")) {
-				String nui1 = String.valueOf(nuiForMeasure[0]);
-				logger.info("nui1: " + nui1);
-				nuiValue = new BigDecimal(nui1);
-			} else if (dvNuisForMeasure.get(i).getFormula().contains("std")) {
-				String nui2 = String.valueOf(nuiForMeasure[1]);
-				logger.info("nui2: " + nui2);
-				nuiValue = new BigDecimal(nui2);
-			} else if (dvNuisForMeasure.get(i).getFormula().contains("best")) {
-				String nui3 = String.valueOf(nuiForMeasure[2]);
-				logger.info("nui3: " + nui3);
-				nuiValue = new BigDecimal(nui3);
-			} else if (dvNuisForMeasure.get(i).getFormula().contains("delta")) {
-				String nui4 = String.valueOf(nuiForMeasure[3]);
-				logger.info("nui4: " + nui4);
-				nuiValue = new BigDecimal(nui4);
+		if(nuiForMeasure != null && nuiForMeasure[0] != null) {
+		
+			List<ViewMeaNuiDerivationPerPilot> dvNuisForMeasure = viewMeaNuiDerivationPerPilotRepository
+					.findAllDvNuisForMeasure(dv.getDetectionVariableName(), pilotCode);
+	
+			BigDecimal nuiValue = new BigDecimal(0);
+			for (int i = 0; i < 4; i++) {
+	
+				if (dvNuisForMeasure.get(i).getFormula().contains("avg")) {
+					String nui1 = String.valueOf(nuiForMeasure[0]);
+					logger.info("nui1: " + nui1);
+					nuiValue = new BigDecimal(nui1);
+				} else if (dvNuisForMeasure.get(i).getFormula().contains("std")) {
+					String nui2 = String.valueOf(nuiForMeasure[1]);
+					logger.info("nui2: " + nui2);
+					nuiValue = new BigDecimal(nui2);
+				} else if (dvNuisForMeasure.get(i).getFormula().contains("best")) {
+					String nui3 = String.valueOf(nuiForMeasure[2]);
+					logger.info("nui3: " + nui3);
+					nuiValue = new BigDecimal(nui3);
+				} else if (dvNuisForMeasure.get(i).getFormula().contains("delta")) {
+					String nui4 = String.valueOf(nuiForMeasure[3]);
+					logger.info("nui4: " + nui4);
+					nuiValue = new BigDecimal(nui4);
+				}
+	
+				NumericIndicatorValue nui = create1Nui(uir, nuiValue, dvNuisForMeasure.get(i).getDerivedNuiId(), startOfMonth);
+	
+				nuis.add(nui);
 			}
-
-			NumericIndicatorValue nui = create1Nui(uir, nuiValue, dvNuisForMeasure.get(i).getDerivedNuiId(), startOfMonth);
-
-			nuis.add(nui);
+		
 		}
 		return nuis;
 	}

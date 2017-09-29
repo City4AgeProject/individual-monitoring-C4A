@@ -414,7 +414,7 @@ public class PilotDetectionVariableService {
 			response += "\n\tERROR while calling computeFromMeasures Service:\n\texception message: " + ex.getMessage();
 		}
 
-		return Response.status(Response.Status.OK).type(MediaType.TEXT_PLAIN).entity(response).build();
+		return Response.ok().type(MediaType.TEXT_PLAIN).entity(response).build();
 
 	}
 

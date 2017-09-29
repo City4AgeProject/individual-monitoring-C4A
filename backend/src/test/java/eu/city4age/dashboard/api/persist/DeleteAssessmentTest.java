@@ -50,9 +50,6 @@ public class DeleteAssessmentTest {
 	private UserInRoleRepository userInRoleRepository;
 
 	@Autowired
-	private UserInSystemRepository userInSystemRepository;
-
-	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
 
 	@Autowired
@@ -79,7 +76,6 @@ public class DeleteAssessmentTest {
 		logger.info("1*****"+assessedGefValuesRepository.count());
 		logger.info("11****"+geriatricFactorRepository.count());
 		logger.info("111****"+roleRepository.count());
-		logger.info("111****"+userInSystemRepository.count());
 		
 		Role r1 = new Role();
 		r1.setId(1L);
@@ -90,54 +86,25 @@ public class DeleteAssessmentTest {
 		roleRepository.save(r2);
 		
 		
-		UserInSystem uis1 = new UserInSystem();
-		uis1.setId(101L);
-		userInSystemRepository.save(uis1);
-		
-		UserInSystem uis2 = new UserInSystem();
-		uis2.setId(202L);
-		userInSystemRepository.save(uis2);
-		
-
-		UserInSystem uis3 = new UserInSystem();
-		uis3.setId(101L);
-		userInSystemRepository.save(uis3);
-		
-
-		UserInSystem uis4 = new UserInSystem();
-		uis4.setId(101L);
-		userInSystemRepository.save(uis4);
-		
-
-		UserInSystem uis5 = new UserInSystem();
-		uis5.setId(101L);
-		userInSystemRepository.save(uis5);
-		
-		
 		//***
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
-		uir1.setUserInSystem(uis1);
 		userInRoleRepository.save(uir1);
 		
 		UserInRole uir2 = new UserInRole();
 		uir2.setId(2L);
-		uir2.setUserInSystem(uis2);
 		userInRoleRepository.save(uir2);
 		
 		UserInRole uir3 = new UserInRole();
 		uir3.setId(3L);
-		uir3.setUserInSystem(uis3);
 		userInRoleRepository.save(uir3);
 		
 		UserInRole uir4 = new UserInRole();
 		uir4.setId(4L);
-		uir4.setUserInSystem(uis4);
 		userInRoleRepository.save(uir4);
 		
 		UserInRole uir5 = new UserInRole();
 		uir5.setId(5L);
-		uir5.setUserInSystem(uis5);
 		userInRoleRepository.save(uir5);
 		
 		//*******
@@ -268,7 +235,6 @@ public class DeleteAssessmentTest {
 		logger.info("*****"+assessedGefValuesRepository.count());
 		logger.info("****"+geriatricFactorRepository.count());
 		logger.info("****"+roleRepository.count());
-		logger.info("****"+userInSystemRepository.count());
 
 	}
 

@@ -67,9 +67,6 @@ public class AssessmentRepositoryTest {
 	private UserInRoleRepository userInRoleRepository;
 
 	@Autowired
-	private UserInSystemRepository userInSystemRepository;
-
-	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
 
 	@Autowired
@@ -95,23 +92,13 @@ public class AssessmentRepositoryTest {
 		
 		System.out.println("1***Number of assessments in repository:"+assessmentRepository.findAll().size());
 		//data for assessment and other joined tables:
-		
-		UserInSystem uis1 = new UserInSystem();
-		uis1.setId(1L);
-		userInSystemRepository.save(uis1);
-
-		UserInSystem uis2 = new UserInSystem();
-		uis2.setId(2L);
-		userInSystemRepository.save(uis2);
 
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
-		uir1.setUserInSystem(uis1);
 		userInRoleRepository.save(uir1);
 
 		UserInRole uir2 = new UserInRole();
 		uir2.setId(2L);
-		uir2.setUserInSystem(uis2);
 		userInRoleRepository.save(uir2);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();

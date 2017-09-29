@@ -58,9 +58,6 @@ public class TimeIntervalRepositoryTest {
 	private GeriatricFactorRepository geriatricFactorRepository;
 
 	@Autowired
-	private UserInSystemRepository userInSystemRepository;
-
-	@Autowired
 	private DetectionVariableRepository detectionVariableRepository;
 
 	@Autowired
@@ -129,15 +126,9 @@ public class TimeIntervalRepositoryTest {
 		dv1.setDerivedDetectionVariable(ddv1);
 		detectionVariableRepository.save(dv1);
 
-		//
-		UserInSystem uis = new UserInSystem();
-		uis.setId(1L);
-		userInSystemRepository.save(uis);
-		//
 
 		UserInRole uir = new UserInRole();
 		uir.setId(1L);
-		uir.setUserInSystem(uis);
 		userInRoleRepository.save(uir);
 
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
@@ -174,9 +165,9 @@ public class TimeIntervalRepositoryTest {
 		Assert.assertNotNull(list);
 
 		System.out.println(list.size() + "::WWW");
-		Assert.assertEquals(7, list.size());
+		Assert.assertEquals(6, list.size());
 
-		Assert.assertEquals(Character.valueOf('A'), list.get(0).getRiskStatus());
+		Assert.assertEquals(Character.valueOf('A'), list.get(5).getRiskStatus());
 		Assert.assertEquals("2016-01-01 00:00:00.0", list.get(0).getIntervalStart()); // ti
 
 		Assert.assertEquals("2017-05-22 12:00:00", list.get(0).getDateAndTime());
@@ -230,17 +221,9 @@ public class TimeIntervalRepositoryTest {
 		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti5.setIntervalEnd(Timestamp.valueOf("2016-06-01 00:00:00"));
-		
-
-		UserInSystem uis = new UserInSystem();
-		uis.setId(1L);
-		uis.setUsername("alfa");
-		uis.setPassword("omega");
-		userInSystemRepository.save(uis);
 
 		UserInRole uir = new UserInRole();
 		uir.setId(1L);
-		uir.setUserInSystem(uis);
 		userInRoleRepository.save(uir);
 
 		FrailtyStatusTimeline fst = new FrailtyStatusTimeline();

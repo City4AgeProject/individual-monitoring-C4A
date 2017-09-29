@@ -295,6 +295,8 @@ function (oj, ko, $, sp, params) {
             initCRData();
             
             self.careRecipientId = oj.Router.rootInstance.retrieve();
+            
+            if(self.careRecipientId instanceof Array) self.careRecipientId = self.careRecipientId[0];
             self.lineSeriesValue = [];
             self.lineGroupsValue = [];
             

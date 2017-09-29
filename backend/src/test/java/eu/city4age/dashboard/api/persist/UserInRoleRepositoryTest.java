@@ -30,9 +30,6 @@ public class UserInRoleRepositoryTest {
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
 
-	@Autowired
-	private UserInSystemRepository userInSystemRepository;
-
 	// getCareRecipients
 	@Test
 	@Transactional
@@ -79,30 +76,6 @@ public class UserInRoleRepositoryTest {
 		Assert.assertNotNull(result);
 
 		Assert.assertEquals(7, result.size());
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testFindBySystemUsernameAndPassword() throws Exception {
-
-		UserInSystem uis = new UserInSystem();
-		uis.setId(1L);
-		uis.setUsername("admin");
-		uis.setPassword("secret");
-		userInSystemRepository.save(uis);
-
-		UserInRole uir = new UserInRole();
-		uir.setId(1L);
-		uir.setUserInSystem(uis);
-		userInRoleRepository.save(uir);
-
-		UserInRole result = userInRoleRepository.findBySystemUsernameAndPassword("admin", "secret");
-
-		Assert.assertNotNull(result);
-
-		Assert.assertEquals("admin", result.getUserInSystem().getUsername());
-
 	}
 
 }

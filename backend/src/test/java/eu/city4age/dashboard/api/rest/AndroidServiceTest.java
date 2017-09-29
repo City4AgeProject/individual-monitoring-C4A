@@ -67,11 +67,6 @@ public class AndroidServiceTest {
 				logger.info("BODY::" + (response.getBody().getClass()));
 
 				String json = response.getBody();
-			
-				@SuppressWarnings("deprecation")
-				C4AAndroidResponse data = objectMapper.reader(C4AAndroidResponse.class)
-						.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
-		
 
 				HttpHeaders headers2 = rest.getForEntity(uri, String.class).getHeaders();
 				ResponseEntity<String> response2 = rest.getForEntity(uri, String.class);

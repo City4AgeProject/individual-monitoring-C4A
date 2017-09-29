@@ -4,10 +4,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.persist.generic.GenericRepository;
-import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
+import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 
-@Repository(value = "userInSystemRepository")
+@Repository(value = "mTestingReadingsRepository")
 @Transactional(readOnly = true)
-public interface UserInSystemRepository extends GenericRepository<UserInSystem, Long> {
+public interface MTestingReadingsRepository extends GenericRepository<MTestingReadings, Long> {
 
-	UserInSystem findOneByUsername(String name);}
+}
