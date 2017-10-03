@@ -9,7 +9,7 @@ function(oj, ko, $) {
 
 		self.crId = ko.observable();
 		self.gesId  = ko.observable(); 
-		
+		self.parentFactorId = ko.observable();
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();
 		self.title = ko.observable();
@@ -29,20 +29,20 @@ function(oj, ko, $) {
 
 		self.nowrap = ko.observable(false);
 
-	    self.risksTags = ko.observableArray([
-       	 	{value: 'A', label: oj.Translations.getTranslatedString('alert_data'), imagePath: 'images/risk_alert.png'},
-            {value: 'W', label: oj.Translations.getTranslatedString('warning_data'), imagePath: 'images/risk_warning.png'},
-            {value: 'N', label: oj.Translations.getTranslatedString('no_risk_data'), imagePath: 'images/comment.png'}
-        ]);
-	    
-	    
-	    self.checkedFilterRiskStatus = ko.observableArray();
-        /* Data validities */
-        self.dataValiditiesTags = ko.observableArray([
-            {value: 'QUESTIONABLE_DATA',label: oj.Translations.getTranslatedString( 'questionable_data' ), imagePath: 'images/questionable_data.png'},
-            {value: 'FAULTY_DATA',label: oj.Translations.getTranslatedString( 'faulty_data' ), imagePath: 'images/faulty_data.png'},
-            {value: 'VALID_DATA',label: oj.Translations.getTranslatedString( 'valid_data' ), imagePath: 'images/valid_data.png'}]);
-        self.checkedFilterValidityData = ko.observableArray();
+                self.risksTags = ko.observableArray([
+                    {value: 'A', label: oj.Translations.getTranslatedString('alert_data'), imagePath: 'images/risk_alert.png'},
+                    {value: 'W', label: oj.Translations.getTranslatedString('warning_data'), imagePath: 'images/risk_warning.png'},
+                    {value: 'N', label: oj.Translations.getTranslatedString('no_risk_data'), imagePath: 'images/comment.png'}
+                ]);
+
+
+                self.checkedFilterRiskStatus = ko.observableArray();
+                /* Data validities */
+                self.dataValiditiesTags = ko.observableArray([
+                    {value: 'QUESTIONABLE_DATA',label: oj.Translations.getTranslatedString( 'questionable_data' ), imagePath: 'images/questionable_data.png'},
+                    {value: 'FAULTY_DATA',label: oj.Translations.getTranslatedString( 'faulty_data' ), imagePath: 'images/faulty_data.png'},
+                    {value: 'VALID_DATA',label: oj.Translations.getTranslatedString( 'valid_data' ), imagePath: 'images/valid_data.png'}]);
+                self.checkedFilterValidityData = ko.observableArray();
 	    
         
         
@@ -58,8 +58,8 @@ function(oj, ko, $) {
 		self.polarChartGroupsValue = ko.observableArray();
 		
 		self.commentText = ko.observable('');
-    	self.selectedRiskStatus = ko.observableArray([]);
-    	self.selectedDataValidity = ko.observableArray([]);
+                self.selectedRiskStatus = ko.observableArray([]);
+                self.selectedDataValidity = ko.observableArray([]);
 
 		var selected = [];
 
@@ -77,12 +77,12 @@ function(oj, ko, $) {
 		self.filterLabel = oj.Translations.getTranslatedString("filter");  
 		
 		self.dateAscLabel = oj.Translations.getTranslatedString("date_asc");
-	    self.dateDescLabel = oj.Translations.getTranslatedString("date_desc");
-	    self.authorNameAscLabel = oj.Translations.getTranslatedString("author_name_asc");
-	    self.authorNameDescLabel = oj.Translations.getTranslatedString("author_name_desc");
-	    self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc");
-	    self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
-	    self.typeLabel = oj.Translations.getTranslatedString("type");
+                self.dateDescLabel = oj.Translations.getTranslatedString("date_desc");
+                self.authorNameAscLabel = oj.Translations.getTranslatedString("author_name_asc");
+                self.authorNameDescLabel = oj.Translations.getTranslatedString("author_name_desc");
+                self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc");
+                self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
+                self.typeLabel = oj.Translations.getTranslatedString("type");
 
 		var role = new oj.Collection.extend({
 			url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS",
@@ -165,18 +165,18 @@ function(oj, ko, $) {
 		};
 		
 		var loadDiagramDataCallback = function(data) {
-			
+                    
 			if(data !== undefined && data.groups !== undefined && data.series !== undefined) {
 			
-	    	   data.groups = data.groups.map(function(obj){
-	        	   return obj.name;
-	           });
+                            data.groups = data.groups.map(function(obj){
+                                    return obj.name;
+                            });
 
-	    	   formatDate(data.groups);
-	    	   
-	    		self.props.groups = data.groups;
-				self.props.series = data.series;
-            
+                            formatDate(data.groups);
+
+                            self.props.groups = data.groups;
+                            self.props.series = data.series;
+
 			}
 			
 			if (self.props !== undefined
@@ -187,7 +187,7 @@ function(oj, ko, $) {
 			}
 		};
 
-		var loadDataSet = function(data) {
+		var loadDataSet = function(data) {                  
 			var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA
 					+ "/careRecipientId/" + self.props.careRecipientId
 					+ "/parentFactorId/" + self.props.parentFactorId,
@@ -305,30 +305,36 @@ function(oj, ko, $) {
 			
 			console.log('drill on anagraph-assessment-view');
 
-            var seriesVal = ui['series'];            
-					
-            self.props.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
+                        var seriesVal = ui['series'];
+                        
+                        self.props.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
+                           
+                        //if subfaktor lineseries is clicked, transfer to detection_mea page
+                        if(self.props.selectedId > 513){
+                            console.log('bigger than 513');        
+                            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, self.props.selectedId);                          
+                            if(selectedDetectionVariable.detectionVariableType === 'GEF'){                               
+                                self.props.parentFactorId = selectedDetectionVariable.id;
+                            }else {
+                                self.props.parentFactorId = selectedDetectionVariable.derivedDetectionVariableId;
+                            }
+                            var gefName = oj.Router.rootInstance.retrieve()[1].detectionVariableName;
+                            oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable, gefName]);          	
+                            oj.Router.rootInstance.go("detection_mea");
+                            return;
+                        }
             
-            //if subfaktor lineseries is clicked, transfer to detection_mea page
-            if(self.props.selectedId > 513){
-            	console.log('bigger than 513');            	
-            	oj.Router.rootInstance.store([self.props.careRecipientId, self.props.selectedId]);
-                oj.Router.rootInstance.go("detection_mea");
-            	return;
-            }
-            
-            self.props.titleValue = seriesVal + "Geriatric factors";
+                        self.props.titleValue = seriesVal + "Geriatric factors";
+                                              
+                                               
+                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
+                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-            self.props.parentFactorId = ui['seriesData'].items[0].gefTypeId;
-            
-            document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
-            document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
-            
-            console.log('seriesVal = ' + seriesVal);
-            console.log('selectedID = ' + self.props.selectedId);
-            console.log('titleValue = ' + self.props.titleValue);
-            console.log('parentFactorId = ' + self.props.parentFactorId);
+                        console.log('seriesVal = ' + seriesVal);
+                        console.log('selectedID = ' + self.props.selectedId);
+                        console.log('titleValue = ' + self.props.titleValue);
+                        console.log('parentFactorId = ' + self.props.parentFactorId);
          
             
 
@@ -704,8 +710,15 @@ function(oj, ko, $) {
 
         //Returns chart by ID for detection variable name that was drilled in (clicked on)
         self.bGotoGESClick = function() {
-            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, self.props.selectedId);
-            oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable]);
+            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, self.props.selectedId);        
+            oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable, selectedDetectionVariable.detectionVariableName]);
+            if(selectedDetectionVariable.detectionVariableType === 'GEF'){                               
+                                self.props.parentFactorId = selectedDetectionVariable.id;
+                            }
+                            else {
+                                self.props.parentFactorId = selectedDetectionVariable.derivedDetectionVariableId;
+                            }                           
+                    
             oj.Router.rootInstance.go('detection_ges');
         };
 

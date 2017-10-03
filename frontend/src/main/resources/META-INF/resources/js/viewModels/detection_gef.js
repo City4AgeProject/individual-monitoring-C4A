@@ -155,7 +155,7 @@ function (oj, ko, $, sp, params) {
 
  
         self.chartDrill = function (event, ui) {
-        	document.getElementById('polarChart1').style.display = 'none';
+            document.getElementById('polarChart1').style.display = 'none';
             document.getElementById('polarChart2').style.display = 'none';
         	
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';

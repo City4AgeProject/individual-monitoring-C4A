@@ -11,7 +11,7 @@ function (oj, ko, $, sp) {
     	var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
         
         var self = this;
-        
+        self.selectedId = ko.observable();
         self.titleValue = ko.observable("");
         
         self.userAge = sp.userAge;
@@ -33,9 +33,8 @@ function (oj, ko, $, sp) {
         
         self.selectedAnotations = ko.observableArray();
         
-        self.cdDetectionVariables;
-        loadCdDetectionVariables();
-        
+        self.cdDetectionVariables = [];
+                
         self.val = ko.observableArray(["Month"]);
         
         self.dataPointsMarkedIds = ko.observableArray();
@@ -55,14 +54,24 @@ function (oj, ko, $, sp) {
         };
 
         self.handleActivated = function (info) {
-            var selectedDetectionVariable = oj.Router.rootInstance.retrieve();
+            var selectedDetectionVariable = oj.Router.rootInstance.retrieve();            
             if(selectedDetectionVariable !== undefined) {
+                    self.selectedId(selectedDetectionVariable[1].id);
 	            self.careRecipient(selectedDetectionVariable[0]);
-	            self.subFactorName(selectedDetectionVariable[1].detectionVariableName);
-	            self.parentFactor(selectedDetectionVariable[1].id); //derivedDetectionVariableIds
-	            self.subFactorType(selectedDetectionVariable[1].detectionVariableType);
-	            self.titleValue(oj.Translations.getTranslatedString(self.subFactorType().toLowerCase()) + " - " + oj.Translations.getTranslatedString(self.subFactorName()));
-            }
+	            self.subFactorName(selectedDetectionVariable[1].detectionVariableName);                    
+                    if(selectedDetectionVariable[1].detectionVariableType == 'GES')
+                    {                                             
+                        self.parentFactor(selectedDetectionVariable[1].derivedDetectionVariableId);               
+                        self.titleValue(oj.Translations.getTranslatedString('GEF'.toLowerCase()) + " - " + oj.Translations.getTranslatedString(selectedDetectionVariable[2]));
+                    }else {
+                        self.parentFactor(selectedDetectionVariable[1].id); //derivedDetectionVariableIds
+                        self.subFactorType(selectedDetectionVariable[1].detectionVariableType);
+                        self.titleValue(oj.Translations.getTranslatedString(self.subFactorType().toLowerCase()) + " - " + oj.Translations.getTranslatedString(self.subFactorName()));
+                    }	            
+	            self.subFactorType(selectedDetectionVariable[1].detectionVariableType);                    	            
+            } 
+             loadCdDetectionVariables();
+           
         };
 
 
@@ -71,7 +80,7 @@ function (oj, ko, $, sp) {
             $('#showmore').on('click', function () {
                 console.log("clicked");
                 var $this = $("#summary");
-                if ($this.data('open')) {
+                if ($this.data('open')) {   
                     $("#showmore").html("Read more");
                     $this.animate({height: '20px'});
                     $this.data('open', 0);
@@ -83,7 +92,7 @@ function (oj, ko, $, sp) {
                 }
             });
         };
-
+        
         /*Mouse handles .. should be deleted when we found better way to fix popup position */
         var clientX;
         var clientY;
@@ -98,8 +107,9 @@ function (oj, ko, $, sp) {
         self.valueArray = ko.observableArray([0, 0]);
 
         function loadCdDetectionVariables() {
-            $.getJSON(CODEBOOK_SELECT + '/cd_detection_variable', function(data) {
+            $.getJSON(CODEBOOK_SELECT + '/cd_detection_variable', function(data) {               
                 self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
+                $('#detectionGEFGroup1FactorsLineChart').prop('cdDetectionVariables', self.cdDetectionVariables);                   
             });
         }
         

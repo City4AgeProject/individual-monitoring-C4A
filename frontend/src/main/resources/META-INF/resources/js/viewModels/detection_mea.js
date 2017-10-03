@@ -11,21 +11,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             		initData();
             		
             	      return new Promise(function(resolve, reject) {            	    	                         	    	  
-            	    	  
-            	    	  var crId = oj.Router.rootInstance.retrieve()[0];
-            	    	  var gesId = oj.Router.rootInstance.retrieve()[1];
-            	    	  console.log("user is : " + crId);
-            	    	  console.log("ges is : " + gesId);
-            	    	  
-            	    	  
+            	    	              	    	            	    	            	    	            	    	  
 	          	        	$.when(
 	          	        		  
-	          	        		  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + crId + "/gesId/" + gesId, function(data) {
+	          	        		  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + self.careRecipientId() + "/gesId/" + self.gesId(), function(data) {
 	          	        		    self.data = data;
 	          	        		  }),
 
 	          	        		  
-	          	        		  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ crId +"/detectionVariableId/" + gesId, function(nuiData) {
+	          	        		  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ self.careRecipientId() +"/detectionVariableId/" + self.gesId(), function(nuiData) {
 	          	        		    self.nuiData = nuiData;
 	          	        		  })
 
@@ -51,10 +45,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
           	      	self.genderLabel = oj.Translations.getTranslatedString("gender");
           	      	
           	      	var crId = oj.Router.rootInstance.retrieve()[0];
-          	      	var gesId = oj.Router.rootInstance.retrieve()[1];
+          	      	var gesId = oj.Router.rootInstance.retrieve()[1].id;
           	      	
           	      	//data
       	        	self.careRecipientId = ko.observable(crId);
+                        self.gesId = ko.observable(gesId);
       	        	self.userAge = ko.observable("0");	          	        	
       	        	self.textline = ko.observable("N/A");	          	        	
       	        	self.userGender = ko.observable("male");
