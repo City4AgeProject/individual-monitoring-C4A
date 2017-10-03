@@ -8,7 +8,10 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 
                 context.props.then(function(properties) {               	                     
                     self.props = properties;                    
-                    self.measureName = oj.Translations.getTranslatedString(properties.measureName);                                                                                
+                    self.measureName = oj.Translations.getTranslatedString(properties.measureName);
+                    if(properties.baseUnit){
+                        self.measureName += " (" + properties.baseUnit + ")";
+                    }                  
                 });
                //new for nuis            
                 var legend = new Object();

@@ -42,6 +42,10 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 	
 	@Column(name = "derivation_weight")
 	private BigDecimal derivationWeight;
+        
+        @JsonView(View.VariationMeasureValueView.class)
+        @Column(name = "base_unit")
+	private String  baseUnit;
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -129,20 +133,27 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 	public void setDefaultTypicalPeriod(String defaultTypicalPeriod) {
 		this.defaultTypicalPeriod = defaultTypicalPeriod;
 	}
-	//NEW CODE
-			public Set<PilotDetectionVariable> getPilotDetectionVariable() {
-				return pilotDetectionVariable;
-			}
+	
+        public Set<PilotDetectionVariable> getPilotDetectionVariable() {
+                return pilotDetectionVariable;
+        }
 
-			public void setPilotDetectionVariable(Set<PilotDetectionVariable> pilotDetectionVariable) {
-				this.pilotDetectionVariable = pilotDetectionVariable;
-			}
-			public Set<VariationMeasureValue> getVariationMeasureValue() {
-				return variationMeasureValue;
-			}
+        public void setPilotDetectionVariable(Set<PilotDetectionVariable> pilotDetectionVariable) {
+                this.pilotDetectionVariable = pilotDetectionVariable;
+        }
+        public Set<VariationMeasureValue> getVariationMeasureValue() {
+                return variationMeasureValue;
+        }
 
-			public void setVariationMeasureValue(Set<VariationMeasureValue> variationMeasureValue) {
-				this.variationMeasureValue = variationMeasureValue;
-			}
+        public void setVariationMeasureValue(Set<VariationMeasureValue> variationMeasureValue) {
+                this.variationMeasureValue = variationMeasureValue;
+        }
 
+        public String getBaseUnit() {
+            return baseUnit;
+        }
+
+        public void setBaseUnit(String baseUnit) {
+            this.baseUnit = baseUnit;
+        }               
 }

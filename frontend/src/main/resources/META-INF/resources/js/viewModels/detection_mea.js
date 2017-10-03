@@ -8,32 +8,32 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             	                                                  
             	//this method loads data form ajax request before view is loaded
             	self.handleActivated = function(info) {  
-            		initData();
+                        initData();
             		
-            	      return new Promise(function(resolve, reject) {            	    	                         	    	  
-            	    	              	    	            	    	            	    	            	    	  
-	          	        	$.when(
-	          	        		  
-	          	        		  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + self.careRecipientId() + "/gesId/" + self.gesId(), function(data) {
-	          	        		    self.data = data;
-	          	        		  }),
+                        return new Promise(function(resolve, reject) {            	    	                         	    	  
 
-	          	        		  
-	          	        		  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ self.careRecipientId() +"/detectionVariableId/" + self.gesId(), function(nuiData) {
-	          	        		    self.nuiData = nuiData;
-	          	        		  })
+                        $.when(
 
-	          	        		).then(function() {
-	          	        			
-	          	        		    self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
+                                  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + self.careRecipientId() + "/gesId/" + self.gesId(), function(data) {
+                                    self.data = data;
+                                  }),
 
-	          	        		    resolve();
-	          	        		}).fail(function() {
-	            	    		    console.log( "error recieving json data from web service" );
-	            	    		  })
-            	              });           	    	  
+
+                                  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ self.careRecipientId() +"/detectionVariableId/" + self.gesId(), function(nuiData) {
+                                    self.nuiData = nuiData;
+                                  })
+
+                                ).then(function() {
+
+                                    self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
+
+                                    resolve();
+                                }).fail(function() {
+                                    console.log( "error recieving json data from web service" );
+                                })
+                        });           	    	  
             	              	                	        
-            	    };          
+            	};          
             	
             	function initData() {
             		//labels
@@ -66,6 +66,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    				  var meaObj = new Object();
   	    				  meaObj.detectionVariableId = element.detectionVariable.id;
   	    				  meaObj.measureName = element.detectionVariable.detectionVariableName;
+                                          meaObj.baseUnit = element.detectionVariable.baseUnit;
   	    				  measures.push(meaObj);
   	    			  }  
   	    			});
@@ -104,7 +105,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    		  });
   	    		  
   	              //creating lineSeries with mea and nui values for each month	    		  
-  	    		  measures.forEach(function(mea) {
+  	    		  measures.forEach(function(mea) {                             
     	    			mea.lineSeries = []; 
     	    			var avg, std, best, delta;
     	    			
