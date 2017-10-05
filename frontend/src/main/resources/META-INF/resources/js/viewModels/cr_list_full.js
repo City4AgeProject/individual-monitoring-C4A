@@ -10,7 +10,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 var self = this;
                 self.data = ko.observableArray();
                 self.usersOuter = ko.observableArray();
-                
+    			
                 var pilotCode = sessionStorage.getItem("pilotcode");
                                
                 $.getJSON(CARE_RECIPIENT_ALL + "/pilotCode/" + pilotCode).
@@ -54,6 +54,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             });
                             ;
                             self.usersOuter = users;
+                            $( "#table" ).ojTable( "refresh" );
                             
                         });
 

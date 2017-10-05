@@ -2,19 +2,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     'ojs/ojknockout', 'ojs/ojinputtext', 'ojs/ojbutton', 'urls'],
         function (oj, ko, sp, app, $) {
 
-	
-	//until we find better solution to reload data for cr_list after switching between users
-	$(document).mouseover(function() { 
-	    // Check for left button
-	    if (window.location.href.toString().localeCompare('http://localhost:8080/C4A-dashboard/') == 0
-	    		&& (sessionStorage.getItem("clck")!=1) ) {
-	    
-	       location.reload(); 
-	       sessionStorage.setItem("clck",1);
-	    }
-	});
-
-	
             function LoginViewModel() {
                 $(".loader-hover").hide();
                 var self = this;

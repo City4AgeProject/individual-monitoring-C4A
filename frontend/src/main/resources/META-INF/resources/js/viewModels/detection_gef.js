@@ -251,6 +251,7 @@ function (oj, ko, $, sp, params) {
         self.typeValue = ko.observable('line');
  
         self.frailtyMenuItemSelect = function (event, ui) {
+        	
             var launcherId = ui.item.children("a").text();
             if (launcherId.indexOf("Morphology") !== -1) {
 
@@ -276,13 +277,26 @@ function (oj, ko, $, sp, params) {
                 self.polarGridShapeValue2('polygon');
                 self.polarChartSeriesValue2(lineSeriesPolar2);
 
-                document.getElementById('polarChart1').style.display = 'block';
-                document.getElementById('polarChart2').style.display = 'block';
+                document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
+                
+                if(document.getElementById('polarChart1').style.display == 'block' &&  document.getElementById('polarChart2').style.display == 'block'){
+                	document.getElementById('polarChart1').style.display = 'none';
+                    document.getElementById('polarChart2').style.display = 'none';
+                } else {
+                	document.getElementById('polarChart1').style.display = 'block';
+                    document.getElementById('polarChart2').style.display = 'block';
+                }
+                
                 document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
 
-            } else {
-                document.getElementById('detectionGEFGroupsLineChart').style.display = 'block';
-                //document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
+            } else  if (launcherId.indexOf("Line chart") !== -1 && document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility == 'visible'){
+                //document.getElementById('detectionGEFGroupsLineChart').style.display = 'block';
+            	if(document.getElementById('detectionGEFGroup1FactorsLineChart').style.display == 'block'){
+            		document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
+            	}else{
+            		document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
+            	}
+                
                 document.getElementById('polarChart1').style.display = 'none';
                 document.getElementById('polarChart2').style.display = 'none';
             }

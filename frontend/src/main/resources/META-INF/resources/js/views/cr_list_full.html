@@ -8,7 +8,7 @@
                data-bind="ojComponent: {component: 'ojTable', 
                                 data: dataSource, 
                                 emptyText: 'No data',
-                                columnsDefault: {headerStyle: 'background:transparent;font-weight:bold;',sortable: 'disabled'}, 
+                                columnsDefault: {headerStyle: 'background:transparent;font-weight:bold;',sortable:'enabled'}, 
                                 columns: [
                                     {headerText: 'Pilot', 
                                         field: 'pilotcode'},
@@ -20,7 +20,8 @@
                                         template: 'fr_notice_tpl',
                                         style: 'min-width: 8em; max-width: 8em; width: 8em'},
                                     {headerText: 'CR ID', 
-                                        field: 'cr_id'},
+                                        field: 'cr_id',
+                                         sortable: 'enabled'},
                                     {headerText: 'Textline', 
                                         style: 'min-width: 8em; max-width: 8em; width: 8em',
                                         field: 'textline'},
