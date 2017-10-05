@@ -32,9 +32,8 @@
 
 		<!-- end line chart GES drilling: 'on',
 					<!-- select point/s popup -->
-		<assessments-preview id="popupWrapper1" class="oj-flex-item" selected-assessments="{{selectedAnotations}}" data-points-marked="{{dataPointsMarked}}" cr-id="{{crId}}" ges-id="{{gesId}}"></assessments-preview>
+	 	<assessments-preview id="popupWrapper1" class="oj-flex-item" selected-assessments="{{selectedAnotations}}" data-points-marked="{{dataPointsMarked}}" cr-id="{{crId}}" ges-id="{{gesId}}"></assessments-preview>
 		<!-- end select point/s popup -->
-
 	</div>
 	<!-- end main graph panel -->
 
@@ -43,25 +42,22 @@
 	</div>
 
 	<div class="oj-flex-item">
-
-		<div class="oj-flex-item">
-				
 			<!-- tabs with annotation list and polar chart -->
 			<div id="tabs-container" class="oj-flex-item">
+			
 				<div id="tabs" style="display: none;"
 					data-bind="ojComponent:{component: 'ojTabs',
 		                                               edge: 'top'}">
 					<!-- tab bar -->	
 				<ul>
-					<li><span data-bind="text: annotationsLabel" ></span></li>
-					<li><span data-bind="text: morphologyLabel"></span></li>
+					<li><span data-bind="text: annotationsLabel, click: toggleAnnotationsLabel" ></span></li>
+					<li><span data-bind="text: morphologyLabel, click: toggleMorphologyLabel"></span></li>
 				</ul>
-				
 						
-	
 					<!-- tab contents -->
 					<div id="tabAnnotations">
 						<!-- buttons for annotations -->
+
 						<div id='annotation-buttons-container'
 							style="border-bottom: 2px solid #cbcbcb;">
 							<div class="demo-flex-display oj-flex-items-pad ">
@@ -97,7 +93,6 @@
 								</div>
 							</div>
 						</div>
-
 						<!-- end buttons for annotations -->
 
 						<!-- filter annotations -->
@@ -109,10 +104,8 @@
 										class="oj-flex  oj-sm-flex-items-initial oj-lg-justify-content-space-between oj-lg-align-items-flex-start"
 										data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
 										<div class="oj-flex-item" id='buttons-container'>
-	
 										<div>
 											<div class="oj-flex-item" data-bind="text: riskDataTypeLabel, attr:{title:riskDataTypeLabel}"></div>
-
 												<div>
 													<div class="oj-flex-item" id="checkFilterRisk"
 														style="margin-top: 3px;"
@@ -148,7 +141,6 @@
 													</div>
 												</div>
 											</div>
-
 										</div>
 
 									<div class="oj-flex-item">
@@ -178,7 +170,7 @@
 									</div>
 
 
-										<div class="oj-flex-item" style="width: 40%;">
+										<div class="oj-flex-item" style="width: 35%;">
 											<label for="selectSort" data-bind="text: sortLabel"></label>
 											<div class="oj-flex-item">
 												<select id="selectSort"
@@ -211,7 +203,7 @@
 							</div>
 						</div>
 						<!-- end filter annotations -->
-
+						
 						<!-- view annotations -->
 						<assessments-list id="assessmentsList" class="oj-flex-item" selected-assessments="{{selectedAnotations}}"> </assessments-list>
 						<!-- end view annotations -->
@@ -243,6 +235,5 @@
 					</div>
 				</div>
 			</div>
-		</div>
 	</div>
 </div>

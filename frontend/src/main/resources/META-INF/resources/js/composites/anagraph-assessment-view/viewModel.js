@@ -29,6 +29,7 @@ function(oj, ko, $) {
 
 		self.nowrap = ko.observable(false);
 
+
                 self.risksTags = ko.observableArray([
                     {value: 'A', label: oj.Translations.getTranslatedString('alert_data'), imagePath: 'images/risk_alert.png'},
                     {value: 'W', label: oj.Translations.getTranslatedString('warning_data'), imagePath: 'images/risk_warning.png'},
@@ -43,6 +44,7 @@ function(oj, ko, $) {
                     {value: 'FAULTY_DATA',label: oj.Translations.getTranslatedString( 'faulty_data' ), imagePath: 'images/faulty_data.png'},
                     {value: 'VALID_DATA',label: oj.Translations.getTranslatedString( 'valid_data' ), imagePath: 'images/valid_data.png'}]);
                 self.checkedFilterValidityData = ko.observableArray();
+
 	    
         
         
@@ -668,6 +670,32 @@ function(oj, ko, $) {
 	
 		}
 
+		self.toggleMorphologyLabel = function(){
+			
+			if ($('#tabShowMorphology').css('display') === 'none') {
+				$('#tabShowMorphology').css({
+					display : 'block'
+				});
+			} else {
+				$('#tabShowMorphology').css({
+					display : 'none'
+				});
+			}
+		};
+		
+		self.toggleAnnotationsLabel = function(){
+			
+			if ($('#tabAnnotations').css('display') === 'none') {
+				$('#tabAnnotations').css({
+					display : 'block'
+				});
+			} else {
+				$('#tabAnnotations').css({
+					display : 'none'
+				});
+			}
+		};
+
 		self.selectDatapointsDiagram = function() {
 			self.showSelectionOnDiagram(true);
 
@@ -699,6 +727,9 @@ function(oj, ko, $) {
 
 		function refreshDataPointsMarked(assessmentsResultLength) {
 			document.getElementById('tabs').style.display = 'block';
+			$('#tabAnnotations').css({
+				display : 'block'
+			});
 
 			self.dataPointsMarked = self.dataPointsMarkedIds.length
 					+ oj.Translations.getTranslatedString("dpmw")

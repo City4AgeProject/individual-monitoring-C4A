@@ -226,3 +226,42 @@ th {
     border-color:#0fb5b5;
 }
 
+.oj-tabs-tab.oj-hover .oj-tabs-title {
+      text-decoration: none;
+    
+    }
+.oj-tabs-tab{
+      transition: 0.25s;   
+}
+.oj-tabs-tab.oj-hover{
+      background-color: #EEEEFD;
+      transition: 0.25s;
+}
+
+.oj-button-jqui.oj-selected.oj-button-outlined-chrome,
+.oj-button.oj-selected.oj-button-outlined-chrome .oj-button-button {
+	background-color: 	 #82B0F5;
+	border-color: 	 #82B0F5;
+}
+
+.oj-button-jqui.oj-selected.oj-hover.oj-button-outlined-chrome,
+.oj-button.oj-selected.oj-hover.oj-button-outlined-chrome .oj-button-button {
+	background-color: 	#478EFA;
+	border-color: 	#478EFA;
+  }
+  
+.oj-button-jqui.oj-hover.oj-button-outlined-chrome,
+ .oj-button.oj-hover.oj-button-outlined-chrome .oj-button-button {
+	background-color: 	#EDEDED;
+	border-color: 	#D0D0D0;
+}
+
+.oj-switch.oj-selected .oj-switch-track{
+	    background-color: #82B0F5;
+    border-color: #82B0F5;
+}
+
+.oj-switch.oj-selected.oj-hover .oj-switch-track{
+	    background-color: #478EFA;
+    border-color: #478EFA;
+}

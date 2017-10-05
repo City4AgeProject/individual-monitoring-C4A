@@ -90,9 +90,14 @@ chroming: 'half', display: 'icons', icons: {start: 'oj-web-applayout-offcanvas-i
                     <div id="kakakakak" data-bind="css: smScreen() ? 'oj-flex-bar-center-absolute' : 'oj-flex-bar-middle oj-sm-align-items-baseline'">
                         <!--<span role="img" class="oj-sm-only-hide oj-icon demo-oracle-icon" title="Oracle Logo"></span>-->
 
+<!--*************************  TODO - REMOVE LOGING THROUGH PICTURE C4A  -->
 
                         <a data-bind="click: function(){ $root.router.go('cr_list_full'); 
-                        sessionStorage.setItem('pilotcode','DEV'); }" href="#"> 
+                        sessionStorage.setItem('pilotcode','DEV');
+                        sessionStorage.setItem('userid', 1 ); }" href="#"> 
+ 
+ <!--***********************   REMOVE LOGING THROUGH PICTURE C4A  -->
+                     
                             <img src="images/City4AgeLogo_noBackground1.png" data-bind="css: smScreen() ? 'small-logo' : 'expand-logo'" > </a>
                         <!--<h1 class="oj-web-applayout-header-title" title="Application Name" data-bind="text: appName"></h1>-->
                     </div>

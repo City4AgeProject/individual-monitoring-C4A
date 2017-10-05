@@ -4,7 +4,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
 	
 	//until we find better solution to reload data for cr_list after switching between users
-	$(document).click(function() { 
+	$(document).mouseover(function() { 
 	    // Check for left button
 	    if (window.location.href.toString().localeCompare('http://localhost:8080/C4A-dashboard/') == 0
 	    		&& (sessionStorage.getItem("clck")!=1) ) {
