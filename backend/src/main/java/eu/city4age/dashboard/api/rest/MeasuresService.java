@@ -293,22 +293,22 @@ public class MeasuresService {
 							if (meaList != null && meaList.size() > 0) {
 								
 								BigDecimal sumW1 = new BigDecimal(0);
+								
 								List<ViewPilotDetectionVariable> newMeaList = new ArrayList<ViewPilotDetectionVariable>();
 								
 								for(ViewPilotDetectionVariable mea : meaList) {
 									List<VariationMeasureValue> vmvs = variationMeasureValueRepository.findByUserInRoleId(userId, mea.getId().getDetectionVariableId(), startOfMonth, endOfMonth);
-									
-									logger.info("mrmot");
+
 									if(vmvs != null) logger.info("vmvs size: " + vmvs.size());
 									
 									if(vmvs != null && vmvs.size() > 0) {
 										newMeaList.add(mea);
-										logger.info("m2");
 										BigDecimal w1 = mea.getDerivationWeight();
 										logger.info("w1: " + w1);
 										sumW1 = sumW1.add(w1);
 									}
 								}
+
 								logger.info("sumW1: " + sumW1);
 								
 								gesValue = new BigDecimal(0);
@@ -321,16 +321,10 @@ public class MeasuresService {
 
 									BigDecimal derivedMea = computeDerivedMea(pilotCode, startOfMonth, endOfMonth,
 											newMeaList.get(i), userId, newMeaList.size());
-
-									/*PilotDetectionVariable pdv = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCodeMeaGes(list.get(i).getId().getDetectionVariableId(), list.get(i).getId().getDerivedDetectionVariableId(), pilotCode);
-									BigDecimal weight = new BigDecimal(1);
-									if(pdv != null) weight = pdv.getDerivationWeight();*/
 									
-									BigDecimal weight;
+									BigDecimal weight= new BigDecimal(0);
 									if(sumW1 != null && !sumW1.equals(new BigDecimal(0)))
 										weight = newMeaList.get(i).getDerivationWeight().divide(sumW1, 2, RoundingMode.HALF_UP);
-									else
-										weight = new BigDecimal(0);
 									
 									if (derivedMea != null) gesValue = gesValue.add(derivedMea.multiply(weight));
 									logger.info("gesValue add derivedMea: " + gesValue);
@@ -383,15 +377,15 @@ public class MeasuresService {
 				if (userEntryForNui1Month != null) {
 
 					BigDecimal dn;
-					BigDecimal tn = new BigDecimal(0);
+					BigDecimal tn = new BigDecimal(3);
 
-					Map<String, BigDecimal> derivedMM = new HashMap<String, BigDecimal>();
+					//Map<String, BigDecimal> derivedMM = new HashMap<String, BigDecimal>();
 
 					Long nuiMonthZeroId = nuiRepository.findMonthZero(nuiVpdv.getDerivedNuiId(),
 							userId);
 					NumericIndicatorValue nuiMonthZero = null;
 					
-					BigDecimal weight = new BigDecimal(.25).divide(new BigDecimal(size), 2, RoundingMode.HALF_UP);
+					BigDecimal weight = new BigDecimal(1).divide(new BigDecimal(list.size()), 2, RoundingMode.HALF_UP).divide(new BigDecimal(size), 2, RoundingMode.HALF_UP);
 					logger.info("weight: " + weight);
 	
 					if (nuiMonthZeroId != null) {
@@ -399,6 +393,7 @@ public class MeasuresService {
 						if (nuiMonthZero != null && nuiMonthZero.getNuiValue().compareTo(new BigDecimal(0)) > 0) {
 							dn = (userEntryForNui1Month.getNuiValue().subtract(nuiMonthZero.getNuiValue()))
 									.divide(nuiMonthZero.getNuiValue(), 2, RoundingMode.HALF_UP);
+							
 							if (dn.compareTo(new BigDecimal(.25)) < 0) {
 								if (dn.compareTo(new BigDecimal(.1)) < 0) {
 									if (dn.compareTo(new BigDecimal(-.1)) < 0) {
@@ -407,10 +402,11 @@ public class MeasuresService {
 									} else tn = new BigDecimal(3);
 								} else tn = new BigDecimal(4);
 							} else tn = new BigDecimal(5);
+	
 						}
-					} else tn = new BigDecimal(3);
+					}
 					
-					derivedMM.put("", tn.multiply(weight));
+					//derivedMM.put("", tn.multiply(weight));
 					logger.info("tn: " + tn);
 					logger.info("weight: " + weight);
 					result = result.add(tn.multiply(weight));
@@ -428,7 +424,7 @@ public class MeasuresService {
 			List<VariationMeasureValue> mmsThisMonth = variationMeasureValueRepository.findMMByUserInRoleId(userId, vpdv.getId().getDetectionVariableId(), startOfMonth, endOfMonth);
 
 			BigDecimal ds;
-			BigDecimal ts;
+			BigDecimal ts = new BigDecimal(3);
 
 			BigDecimal weight = new BigDecimal(1).divide(new BigDecimal(size), 2, RoundingMode.HALF_UP);
 			logger.info("weight: " + weight);
@@ -457,7 +453,7 @@ public class MeasuresService {
 							} else ts = new BigDecimal(3);
 						} else ts = new BigDecimal(4);
 					} else ts = new BigDecimal(5);
-				} else ts = new BigDecimal(3);
+				}
 				
 				logger.info("ts: " + ts);
 				logger.info("weight: " + weight);
@@ -570,15 +566,14 @@ public class MeasuresService {
 																			// Double!!!
 
 		
-		if(nuiForMeasure != null && nuiForMeasure.length > 0) {
+		if(nuiForMeasure != null && nuiForMeasure.length == 4) {
 		
 			logger.info("nui1: " + nuiForMeasure[0]);
 			logger.info("nui2: " + nuiForMeasure[1]);
 			logger.info("nui3: " + nuiForMeasure[2]);
 			logger.info("nui4: " + nuiForMeasure[3]);
-			
-			if (nuiForMeasure[0] != null) {
 	
+			if (nuiForMeasure[0] != null) {
 				List<ViewMeaNuiDerivationPerPilot> dvNuisForMeasure = viewMeaNuiDerivationPerPilotRepository
 						.findAllDvNuisForMeasure(dv.getDetectionVariableName(), pilotCode);
 				BigDecimal nuiValue = new BigDecimal(0);
@@ -603,8 +598,7 @@ public class MeasuresService {
 
 					nuis.add(nui);
 				} 
-			}
-		
+			} 
 		}
 		return nuis;
 	}
