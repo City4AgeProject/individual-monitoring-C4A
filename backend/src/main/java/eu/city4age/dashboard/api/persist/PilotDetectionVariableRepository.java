@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.persist.generic.GenericRepository;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 
 @Repository(value = "pilotDetectionVariableRepository")
@@ -18,9 +19,9 @@ public interface PilotDetectionVariableRepository extends GenericRepository<Pilo
 	@Query(nativeQuery = true, value = "SELECT pdv.derivation_function_formula FROM md_pilot_detection_variable AS pdv")
 	String runFormula();
 
-	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN pdv.derivedDetectionVariable ddv WHERE dv.id = :detectionVariableId AND pdv.pilotCode = :pilotCode AND dv.detectionVariableType = 'MEA' AND ddv.detectionVariableType = 'GES'")
+	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN pdv.derivedDetectionVariable ddv WHERE dv.id = :detectionVariableId AND ddv.id = :derivedDetectionVariableId AND pdv.pilotCode = :pilotCode AND dv.detectionVariableType = 'MEA' AND ddv.detectionVariableType = 'GES'")
 	PilotDetectionVariable findByDetectionVariableAndPilotCodeMeaGes(
-			@Param("detectionVariableId") Long detectionVariableId, @Param("pilotCode") String pilotCode);
+			@Param("detectionVariableId") Long detectionVariableId, @Param("derivedDetectionVariableId") Long derivedDetectionVariableId, @Param("pilotCode") String pilotCode);
 
 	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN dv.detectionVariableType dvt WHERE dvt.detectionVariableType = 'NUI'")
 	List<PilotDetectionVariable> findAllForDvtNUI();
@@ -36,5 +37,8 @@ public interface PilotDetectionVariableRepository extends GenericRepository<Pilo
 
 	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN FETCH pdv.detectionVariable dv INNER JOIN FETCH pdv.derivedDetectionVariable ddv WHERE dv.id = :detectionVariableId AND pdv.pilotCode = :pilotCode")
 	PilotDetectionVariable findByDetectionVariableAndPilotCode(@Param("detectionVariableId") Long detectionVariableId, @Param("pilotCode") String pilotCode);
+
+	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE pdv.pilotCode = :pilotCode AND dv.detectionVariableType = :type")
+	List<PilotDetectionVariable> findDerived(@Param("pilotCode") final String pilotCode, @Param("type") final DetectionVariableType type);
 
 }

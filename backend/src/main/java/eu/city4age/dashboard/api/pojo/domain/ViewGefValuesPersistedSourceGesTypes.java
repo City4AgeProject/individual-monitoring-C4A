@@ -6,6 +6,9 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Immutable;
@@ -27,8 +30,9 @@ public class ViewGefValuesPersistedSourceGesTypes {
 	@Column(name = "derived_detection_variable_name")
 	private String derivedGefName;
 	
-	@Column(name = "derived_detection_variable_type")
-	private String derivedGefType;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "derived_detection_variable_type")
+	private DetectionVariableType derivedGefType;
 	
 	@EmbeddedId
 	private ViewPilotDetectionVariableKey id;
@@ -80,11 +84,11 @@ public class ViewGefValuesPersistedSourceGesTypes {
 		this.derivedGefName = derivedGefName;
 	}
 
-	public String getDerivedGefType() {
+	public DetectionVariableType getDerivedGefType() {
 		return derivedGefType;
 	}
 
-	public void setDerivedGefType(String derivedGefType) {
+	public void setDerivedGefType(DetectionVariableType derivedGefType) {
 		this.derivedGefType = derivedGefType;
 	}
 

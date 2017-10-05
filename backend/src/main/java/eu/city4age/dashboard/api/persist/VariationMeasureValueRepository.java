@@ -21,10 +21,12 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN FETCH vm.detectionVariable dv LEFT JOIN FETCH vm.timeInterval ti WHERE vm.detectionVariable.id IN (SELECT pdv.detectionVariable.id FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE pdv.derivedDetectionVariable.id = :gesId AND dv.detectionVariableType = 'MEA') AND vm.userInRole.id = :uId ORDER BY ti.intervalStart")				
 	List<VariationMeasureValue> findByUserAndGes(@Param("uId") final Long uId, @Param("gesId") final Long gesId);
 	
-	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.detectionVariable dv LEFT JOIN vm.timeInterval ti WHERE vm.userInRole.id = :uId AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'MON')")
-	List<VariationMeasureValue> findAllByUserInRoleId(@Param("uId") final Long uId,
-			@Param("intervalStart") final Timestamp intervalStart);
+	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.detectionVariable dv LEFT JOIN vm.timeInterval ti WHERE dv.id = :dvId AND vm.userInRole.id = :uId AND ti.intervalStart >= :intervalStart AND ti.intervalStart <= :intervalEnd AND ((ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'MON') )")
+	List<VariationMeasureValue> findMMByUserInRoleId(@Param("uId") final Long uId, @Param("dvId") final Long dvId, @Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);
 
+	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.detectionVariable dv LEFT JOIN vm.timeInterval ti WHERE dv.id = :dvId AND vm.userInRole.id = :uId AND ti.intervalStart >= :intervalStart AND ti.intervalStart <= :intervalEnd ")
+	List<VariationMeasureValue> findByUserInRoleId(@Param("uId") final Long uId, @Param("dvId") final Long dvId, @Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);
+	
 	@Query("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.userInRole uir LEFT JOIN vm.timeInterval ti WHERE uir.pilotCode = :pilotCode AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.intervalStart <= :intervalEnd OR (ti.intervalEnd IS NULL OR ti.intervalEnd <= :intervalEnd)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'DAY' OR ti.typicalPeriod = '1WK')")
 	List<VariationMeasureValue> findAllForMonthByPilotCodeNui(@Param("pilotCode") final String pilotCode,
 			@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);

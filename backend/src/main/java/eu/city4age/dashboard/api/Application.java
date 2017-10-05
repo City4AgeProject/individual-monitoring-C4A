@@ -69,7 +69,7 @@ public class Application extends SpringBootServletInitializer {
 	
 	@PostConstruct
 	private void defaultTimeZone() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC+2"));
 	}
 
 	/**

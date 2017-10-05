@@ -54,5 +54,9 @@ public class DetectionVariableType implements Serializable {
 		this.detectionVariableType = detectionVariableType;
 		this.detectionVariableTypeDescription = detectionVariableTypeDescription;
 	}
+	
+	public String toString() {
+		return detectionVariableType.getName();
+	}
 
 }

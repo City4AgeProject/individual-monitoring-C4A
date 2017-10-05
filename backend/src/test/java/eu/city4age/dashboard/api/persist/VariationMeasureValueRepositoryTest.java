@@ -213,11 +213,9 @@ public class VariationMeasureValueRepositoryTest {
 		Timestamp endOfMonth = Timestamp
 				.valueOf(YearMonth.parse("2017 MAY", formatter).atEndOfMonth().atTime(LocalTime.MAX));
 
-		List<VariationMeasureValue> result = variationMeasureValueRepository.findAllByUserInRoleId(uirId, startOfMonth);
+		List<VariationMeasureValue> result = variationMeasureValueRepository.findByUserInRoleId(uirId, 91L, startOfMonth, endOfMonth);
 
 		Assert.assertNotNull(result);
-		Assert.assertEquals(3, result.size());
-
 		Assert.assertEquals(Timestamp.valueOf("2017-05-03 00:00:00"),
 				result.get(0).getTimeInterval().getIntervalStart());
 	}

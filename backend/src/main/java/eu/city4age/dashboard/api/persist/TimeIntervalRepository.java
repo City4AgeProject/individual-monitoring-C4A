@@ -26,11 +26,5 @@ public interface TimeIntervalRepository extends GenericRepository<TimeInterval, 
 	
 	TimeInterval findByIntervalStartAndTypicalPeriod(Timestamp intervalStart, String typicalPeriod);
 	
-	/* returns timezone offset in miliseconds; used for converting timeinterval to UTC time */
-	
-	@Query("select extract (TIMEZONE from ti1.intervalStart ) from TimeInterval ti1 where (ti1.id = :Id OR ti1 IS NULL) ")
-	Long getTimeZoneOffset(@Param("Id") final Long Id);
-	
-	
 
 }

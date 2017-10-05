@@ -1,10 +1,14 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Immutable;
@@ -12,8 +16,13 @@ import org.hibernate.annotations.Immutable;
 @Entity
 @Table(name = "vw_detection_variable_derivation_per_user_in_role")
 @Immutable
-public class ViewPilotDetectionVariable {
+public class ViewPilotDetectionVariable implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6447327289295618307L;
+
 	@EmbeddedId
 	private ViewPilotDetectionVariableKey id;
 
@@ -26,8 +35,9 @@ public class ViewPilotDetectionVariable {
 	@Column(name = "detection_variable_name")
 	private String detectionVariableName;
 	
-	@Column(name = "detection_variable_type")
-	private String detectionVariableType;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "detection_variable_type")
+	private DetectionVariableType detectionVariableType;
 	
 	@Column(name = "derived_detection_variable_name")
 	private String derivedDetectionVariableName;
@@ -44,7 +54,13 @@ public class ViewPilotDetectionVariable {
 	@Column(name = "detection_variable_default_period")
 	private String defaultTypicalPeriod;
 	
+	@Column(name = "detection_variable_id", insertable = false, updatable = false, nullable = false)
+	private Long detectionVariableId;
 	
+	/*@OneToMany(mappedBy="vpdv", fetch=FetchType.LAZY)
+	private Set<VariationMeasureValue> variationMeasureValues = new HashSet<VariationMeasureValue>();*/
+	
+
 	public void setId(ViewPilotDetectionVariableKey id) {
 		this.id = id;
 	}
@@ -69,14 +85,14 @@ public class ViewPilotDetectionVariable {
 		this.formula = formula;
 	}
 	
-	public String getDetectionVariableType() {
-		return this.detectionVariableType;
+	public DetectionVariableType getDetectionVariableType() {
+		return detectionVariableType;
 	}
 
-	public void setDetectionVariableType(String detectionVariableType) {
+	public void setDetectionVariableType(DetectionVariableType detectionVariableType) {
 		this.detectionVariableType = detectionVariableType;
 	}
-	
+
 	public String getDerivedDetectionVariableType() {
 		return this.formula;
 	}
@@ -124,5 +140,22 @@ public class ViewPilotDetectionVariable {
 	public void setDefaultTypicalPeriod(String defaultTypicalPeriod) {
 		this.defaultTypicalPeriod = defaultTypicalPeriod;
 	}
+
+	public Long getDetectionVariableId() {
+		return detectionVariableId;
+	}
+
+	public void setDetectionVariableId(Long detectionVariableId) {
+		this.detectionVariableId = detectionVariableId;
+	}
+
+	/*public Set<VariationMeasureValue> getVariationMeasureValues() {
+		return variationMeasureValues;
+	}
+
+	public void setVariationMeasureValues(Set<VariationMeasureValue> variationMeasureValues) {
+		this.variationMeasureValues = variationMeasureValues;
+	}*/
+
 
 }

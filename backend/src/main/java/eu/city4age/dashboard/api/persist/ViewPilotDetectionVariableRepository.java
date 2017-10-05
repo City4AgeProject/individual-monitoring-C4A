@@ -14,7 +14,12 @@ import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
 @Transactional(readOnly = true)
 public interface ViewPilotDetectionVariableRepository extends GenericRepository<ViewPilotDetectionVariable, Long> {
 	
-	@Query("SELECT vpdv FROM ViewPilotDetectionVariable vpdv WHERE vpdv.id.pilotCode = :pilotCode AND vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'MEA' AND vpdv.derivedDetectionVariableType = 'GES'")
-	List<ViewPilotDetectionVariable> findAllMeaGes(@Param("pilotCode") final String pilotCode, @Param("userId") final Long userId);
+	//@Query("SELECT vpdv FROM ViewPilotDetectionVariable vpdv INNER JOIN vpdv.variationMeasureValues vms INNER JOIN vms.timeInterval ti WHERE ti.intervalStart >= :startOfMonth AND ti.intervalStart <= :endOfMonth AND vms.id = (SELECT max(vms1.id) FROM VariationMeasureValue vms1 INNER JOIN vms1.timeInterval ti1 WHERE ti1.intervalStart >= :startOfMonth AND ti1.intervalStart <= :endOfMonth ) AND vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'MEA' AND vpdv.derivedDetectionVariableType = 'GES'")
+	//@Query("SELECT	 vpdv FROM ViewPilotDetectionVariable vpdv INNER JOIN vpdv.variationMeasureValues vms INNER JOIN vms.timeInterval ti WHERE ti.intervalStart >= :startOfMonth AND ti.intervalStart <= :endOfMonth AND vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'MEA' AND vpdv.id.derivedDetectionVariableId = :dvId")
+	@Query("SELECT	 vpdv FROM ViewPilotDetectionVariable vpdv WHERE vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'MEA' AND vpdv.id.derivedDetectionVariableId = :dvId")
+	List<ViewPilotDetectionVariable> findAllMeaGes(@Param("userId") final Long userId, @Param("dvId") final Long dvId);
+	
+	@Query("SELECT vpdv FROM ViewPilotDetectionVariable vpdv WHERE vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'GES'")
+	List<ViewPilotDetectionVariable> findAllGes(@Param("userId") final Long userId);
 
 }

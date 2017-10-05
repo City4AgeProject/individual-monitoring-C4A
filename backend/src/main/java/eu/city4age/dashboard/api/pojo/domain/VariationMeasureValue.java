@@ -70,6 +70,11 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	
 	@Column(name = "data_source_type", length = 1000)
 	private String dataSourceType;
+	
+	/*@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "measure_type_id", referencedColumnName = "detection_variable_id", insertable = false, updatable = false)
+	private ViewPilotDetectionVariable vpdv;*/
 
 	public VariationMeasureValue() {
 	}
@@ -147,5 +152,13 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	public void setExtraInformation(String extraInformation) {
 		this.extraInformation = extraInformation;
 	}
+
+	/*public ViewPilotDetectionVariable getVpdv() {
+		return vpdv;
+	}
+
+	public void setVpdv(ViewPilotDetectionVariable vpdv) {
+		this.vpdv = vpdv;
+	}*/
 
 }

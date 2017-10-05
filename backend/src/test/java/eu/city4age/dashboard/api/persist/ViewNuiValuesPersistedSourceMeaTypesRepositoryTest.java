@@ -109,7 +109,7 @@ public class ViewNuiValuesPersistedSourceMeaTypesRepositoryTest {
 		pdv1.setFormula("Formula1");
 		pilotDetectionVariableRepository.save(pdv1);
 
-		ViewNuiValuesPersistedSourceMeaTypes result = viewNuiValuesPersistedSourceMeaTypesRepository.findNuiFor1Month(pdv1.getPilotCode(), nui1.getTimeInterval().getIntervalStart(), pdv1.getDerivedDetectionVariable().getId(), nui1.getUserInRole().getId()).get(0);
+		ViewNuiValuesPersistedSourceMeaTypes result = viewNuiValuesPersistedSourceMeaTypesRepository.findNuiFor1Month(nui1.getTimeInterval().getIntervalStart(), pdv1.getDerivedDetectionVariable().getId(), nui1.getUserInRole().getId());
 		System.out.println("@@@@@@@@@@@@@@@@@@" + result);
 		Assert.assertNotNull(result);
 		Assert.assertEquals("LCC", result.getPilotCode());

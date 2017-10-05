@@ -178,5 +178,40 @@ public class PilotDetectionVariableRepositoryTest {
 		Assert.assertEquals(pilotCode, result.getPilotCode());
 		
 	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFindDerived() {
+		
+		String pilotCode = "LCC";
+		DetectionVariableType dt1 = DetectionVariableType.GEF;		
+		
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setId(1L);
+		dv1.setDetectionVariableType(dt1);
+		detectionVariableRepository.save(dv1);
+		
+		DetectionVariable ddv1 = new DetectionVariable();
+		ddv1.setId(2L);
+		ddv1.setDetectionVariableName("test");
+		detectionVariableRepository.save(ddv1);
+		
+		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
+		pdv1.setId(1L);
+		pdv1.setPilotCode("LCC");
+		pdv1.setDetectionVariable(dv1);
+		pdv1.setDerivedDetectionVariable(ddv1);
+		pilotDetectionVariableRepository.save(pdv1);
+		
+		List<PilotDetectionVariable> result = pilotDetectionVariableRepository.findDerived(pilotCode, dt1);
+		
+		Assert.assertNotNull(result);
+		
+		Assert.assertEquals("LCC", result.get(0).getPilotCode());
+		
+		Assert.assertEquals("test", result.get(0).getDerivedDetectionVariable().getDetectionVariableName());
+	
+	}
 
 }

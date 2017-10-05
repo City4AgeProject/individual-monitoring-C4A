@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.persist;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -51,6 +52,9 @@ public class ViewPilotDetectionVariableRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void testFindAllMeaGes() {
+		
+		/*Timestamp start = Timestamp.valueOf("2015-01-01 00:00:00");
+		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
 		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(11L);
@@ -116,11 +120,11 @@ public class ViewPilotDetectionVariableRepositoryTest {
 		pilotDetectionVariableRepository.save(pdv3);
 		
 		
-		List<ViewPilotDetectionVariable> result = viewPilotDetectionVariableRepository.findAllMeaGes("LCC", uir1.getId());
+		List<ViewPilotDetectionVariable> result = viewPilotDetectionVariableRepository.findAllMeaGes(uir1.getId(), start, end);
 		
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals("LCC", result.get(0).getId().getPilotCode());
+		Assert.assertEquals("LCC", result.get(0).getId().getPilotCode());*/
 	}
 
 
