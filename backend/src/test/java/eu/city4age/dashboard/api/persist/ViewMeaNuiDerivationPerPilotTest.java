@@ -51,47 +51,9 @@ public class ViewMeaNuiDerivationPerPilotTest {
 	
 	@Autowired
 	private PilotRepository pilotRepository;
-
 	
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testFindByDerivedDetectionVariableAndPilotCode() {
-		
-		UserInRole uir1 = new UserInRole();
-		uir1.setId(1L);
-		uir1.setPilotCode("ATH");
-		userInRoleRepository.save(uir1);
-		
-		DetectionVariableType dvt1 = DetectionVariableType.MEA;
-		detectionVariableTypeRepository.save(dvt1);
-		
-		DetectionVariableType dvt2 = DetectionVariableType.NUI;
-		detectionVariableTypeRepository.save(dvt2);
-		
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(1L);
-		dv1.setDetectionVariableType(dvt1);
-		detectionVariableRepository.save(dv1);
-		
-		DetectionVariable dv2 = new DetectionVariable();
-		dv2.setId(2L);
-		dv2.setDetectionVariableType(dvt2);
-		detectionVariableRepository.save(dv2);
-		
-		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
-		pdv1.setDetectionVariable(dv1);
-		pdv1.setPilotCode("ATH");
-		pdv1.setDerivedDetectionVariable(dv2);
-		pilotDetectionVariableRepository.save(pdv1);
-		
-		Long nuiId = dv2.getId();
-		String pilotCode = "ATH";
-		ViewMeaNuiDerivationPerPilot result = viewMeaNuiDerivationPerPilotRepository.findByDerivedDetectionVariableAndPilotCode(nuiId, pilotCode);
-		
-		Assert.assertNotNull(result);
-		Assert.assertEquals("ATH", result.getPilotCode());
-	}
+	@Autowired
+	private ViewPilotDetectionVariableRepository viewPilotDetectionVariableRepository;
 	
 	@Test
 	@Transactional
@@ -183,10 +145,10 @@ public class ViewMeaNuiDerivationPerPilotTest {
 		pilotDetectionVariableRepository.save(pdv3);
 		
 		
-		List<ViewMeaNuiDerivationPerPilot> results = viewMeaNuiDerivationPerPilotRepository.findAllNuiForMea(111L, "ATH");
+		List<ViewMeaNuiDerivationPerPilot> results = viewMeaNuiDerivationPerPilotRepository.findAllNuiForMea(111L, "LCC");
 
 		Assert.assertNotNull(results);
-		Assert.assertEquals(2, results.size());
+		Assert.assertEquals(1, results.size());
 
 	}
 	
@@ -195,31 +157,86 @@ public class ViewMeaNuiDerivationPerPilotTest {
 	@Rollback(true)
 	public void testFindAllDvNuisForMeasure() {
 		
+		UserInRole uir1 = new UserInRole();
+		uir1.setId(11L);
+		uir1.setRoleId(Short.valueOf("1"));
+		uir1.setPilotCode("LCC");
+		userInRoleRepository.save(uir1);
+		UserInRole uir2 = new UserInRole();
+		uir2.setId(22L);
+		uir2.setRoleId(Short.valueOf("2"));
+		uir2.setPilotCode("ATH");
+		userInRoleRepository.save(uir2);
+		
+		DetectionVariableType dvt1 = DetectionVariableType.MEA;
+		detectionVariableTypeRepository.save(dvt1);
+		
+		DetectionVariableType dvt2 = DetectionVariableType.NUI;
+		detectionVariableTypeRepository.save(dvt2);
+		
+		DetectionVariable dv2 = new DetectionVariable();
+		dv2.setId(2L);
+		dv2.setDetectionVariableType(dvt2);
+		dv2.setDetectionVariableName("prefix_testtest");
+		detectionVariableRepository.save(dv2);
+		
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
+		dv1.setDetectionVariableType(dvt1);
+		dv1.setDerivedDetectionVariable(dv2);
 		dv1.setDetectionVariableName("prefix_testtest");
 		detectionVariableRepository.save(dv1);
 		
+				
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
 		pdv1.setPilotCode("LCC");
 		pdv1.setDetectionVariable(dv1);
+		pdv1.setDerivedDetectionVariable(dv2);
 		pdv1.setFormula("prefix");
+		pdv1.setDerivationWeight(BigDecimal.valueOf(0.5));
 		pilotDetectionVariableRepository.save(pdv1);
 		
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable();
 		pdv2.setId(2L);
 		pdv2.setPilotCode("LCC");
 		pdv2.setDetectionVariable(dv1);
+		pdv2.setDerivedDetectionVariable(dv2);
 		pdv2.setFormula("prefix");
+		pdv2.setDerivationWeight(BigDecimal.valueOf(0.3));
 		pilotDetectionVariableRepository.save(pdv2);
 		
 		PilotDetectionVariable pdv3 = new PilotDetectionVariable();
 		pdv3.setId(3L);
 		pdv3.setPilotCode("ATH");
 		pdv3.setDetectionVariable(dv1);
+		pdv3.setDerivedDetectionVariable(dv2);
 		pdv3.setFormula("prefix");
+		pdv3.setDerivationWeight(BigDecimal.valueOf(0.7));
 		pilotDetectionVariableRepository.save(pdv3);
+		
+		for (PilotDetectionVariable pdv : pilotDetectionVariableRepository.findAll()) {
+			logger.info("PDVformula: " + pdv.getFormula());
+			logger.info("PDVDetectionVariableName: " + pdv.getDetectionVariable().getDetectionVariableName());
+			if (pdv.getDetectionVariable().getDetectionVariableName().equals(pdv.getFormula() + "_" + "testtest"))
+				logger.info("JEDNAKO");
+		}
+		
+		for (ViewPilotDetectionVariable vpdv : viewPilotDetectionVariableRepository.findAll()) {
+			logger.info("VariableName: " + vpdv.getDetectionVariableName());
+			logger.info("ID: " + vpdv.getId().getPilotCode());
+			logger.info("DetectionVariableType" + vpdv.getDetectionVariableType());
+			logger.info("DerivedVariableType" + vpdv.getDerivedDetectionVariableName());
+			logger.info("DerivedType" + vpdv.getDerivedDetectionVariableType());
+		}
+		
+		List<ViewMeaNuiDerivationPerPilot> result1 = viewMeaNuiDerivationPerPilotRepository.findAll();
+		
+		for (ViewMeaNuiDerivationPerPilot vmndpp : viewMeaNuiDerivationPerPilotRepository.findAll()) {
+			logger.info("DerivedNuiName" + vmndpp.getDerivedNuiName());
+		}
+		
+		logger.info("SIZE: " + result1.size());
 
 		List<ViewMeaNuiDerivationPerPilot> result = viewMeaNuiDerivationPerPilotRepository.findAllDvNuisForMeasure("testtest", "LCC");
 		

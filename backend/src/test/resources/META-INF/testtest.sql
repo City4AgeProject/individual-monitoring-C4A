@@ -47,7 +47,7 @@ create table testtest.assessment (id int8 not null, assessment_comment varchar(2
 create table testtest.assessment_audience_role (assessment_id int8 not null, role_id int8 not null, assigned timestamptz , primary key (assessment_id,role_id));
 create table testtest.care_profile (user_in_role_id int4 not null, individual_summary varchar(255) , attention_status char(1), intervention_status char(1), last_intervention_date date, created timestamptz , last_updated timestamptz, created_by int8 , last_updated_by int8, primary key (user_in_role_id));
 create table testtest.cd_data_source_type (data_source_type varchar(3) not null, data_source_type_description varchar(250) , primary key (data_source_type));
-create table testtest.cd_detection_variable (id int8 not null, detection_variable_name varchar(100), detection_variable_type varchar(3), valid_from timestamptz, valid_to timestamptz, derived_detection_variable_id int2, derivation_weight numeric(3, 2), default_typical_period varchar(3), primary key (id));
+create table testtest.cd_detection_variable (id int8 not null, detection_variable_name varchar(100), detection_variable_type varchar(3), valid_from timestamptz, valid_to timestamptz, derived_detection_variable_id int2, derivation_weight numeric(3, 2), default_typical_period varchar(3), source_datatype varchar(25), base_unit varchar(50), primary key (id));
 create table testtest.cd_detection_variable_type (detection_variable_type varchar(3) not null, detection_variable_type_description varchar(50), primary key (detection_variable_type));
 create table testtest.cd_frailty_status (frailty_status varchar(9) not null, frailty_status_description varchar(255), primary key (frailty_status));
 create table testtest.md_pilot_detection_variable (id int8 not null, pilot_code varchar(3), detection_variable_id int2, derivation_function_formula varchar(1000), derived_detection_variable_id int4, valid_from timestamp(6), valid_to timestamp(6), derivation_weight numeric(3, 2), primary key (id));
@@ -66,6 +66,10 @@ create table testtest.source_evidence (geriatric_factor_id int4 not null, author
 create table testtest.time_interval (id int8 not null, interval_start timestamp, interval_end timestamp, typical_period varchar(3), primary key (id), unique (interval_start, typical_period));
 create table testtest.user_in_role (id int8 not null, pilot_code varchar(3), valid_from timestamp, valid_to timestamp, user_in_system_id int4, role_id int2, primary key (id));
 create table testtest.user_in_system (id int8 not null, username varchar(25) unique, password varchar(25), created_date timestamp, display_name varchar(255), primary key (id));
+INSERT INTO "testtest"."user_in_system" VALUES ('1', 'aaaa', 'aaaa', null, 'aaaa');
+INSERT INTO "testtest"."user_in_system" VALUES ('2', 'bbbb', 'bbbb', null, 'bbbb');
+INSERT INTO "testtest"."user_in_system" VALUES ('3', 'cccc', 'cccc', null, 'cccc');
+INSERT INTO "testtest"."user_in_system" VALUES ('4', 'baba_baba', null, null, null);
 create table testtest.variation_measure_value (id int8 not null, activity_id int8, user_in_role_id int8 , measure_value float4, measure_type_id int8 , data_source_type varchar(3) , time_interval_id int8 , extra_information varchar(1000), primary key (id));
 create table testtest.cd_risk_status (risk_status varchar(3) not null, risk_status_description varchar(50), confidence_rating numeric(3, 2), icon_image bytea, icon_image_path varchar(255), primary key (risk_status));
 create table testtest.stakeholder (stakeholder_abbreviation varchar(3) not null, stakeholder_name varchar(50) , stakeholder_description varchar(50), valid_from timestamptz , valid_to timestamptz, primary key (stakeholder_abbreviation));
@@ -102,7 +106,7 @@ CREATE OR REPLACE VIEW "testtest"."vw_mea_nui_derivation_per_pilots" AS
     vw_detection_variable_derivation_per_user_in_role.pilot_code,
     vw_detection_variable_derivation_per_user_in_role.detection_variable_id AS mea_id,
     vw_detection_variable_derivation_per_user_in_role.detection_variable_name AS mea_name,
-    vw_detection_variable_derivation_per_user_in_role.derivation_function_formula AS mea_formula,
+    vw_detection_variable_derivation_per_user_in_role.derivation_function_formula AS formula,
     vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_id AS derived_nui_id,
     vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_name AS derived_nui_name,
     vw_detection_variable_derivation_per_user_in_role.derivation_weight

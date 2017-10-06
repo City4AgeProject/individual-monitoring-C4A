@@ -141,8 +141,8 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 
 		String pilotCode = "LCC";
 		Timestamp startOfMonth = Timestamp.valueOf("2016-08-01 00:00:00");
-		Timestamp endOfMonth = Timestamp.valueOf("2016-08-31 23:59:59");
-		DetectionVariableType derivedType = DetectionVariableType.GEF;
+		Timestamp endOfMonth = Timestamp.valueOf("2016-08-02 00:00:00");
+		String derivedType= "GEF";
 		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
@@ -198,7 +198,7 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		pdv1.setFormula("Formula1");
 		pilotDetectionVariableRepository.save(pdv1);
 		
-		List<ViewGefValuesPersistedSourceGesTypes> result = viewGefValuesPersistedSourceGesTypesRepository.findAllForMonthByUserId(1L, startOfMonth, endOfMonth, derivedType);
+		List<ViewGefValuesPersistedSourceGesTypes> result = viewGefValuesPersistedSourceGesTypesRepository.findAllForMonthByUserId(uir1.getId(), startOfMonth, endOfMonth, dvt2);
 		
 		Assert.assertNotNull(result);
 		

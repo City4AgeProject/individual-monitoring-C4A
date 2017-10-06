@@ -1,6 +1,5 @@
 package eu.city4age.dashboard.api.persist;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -37,17 +36,5 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 
 	@Query("SELECT MIN(vm.id) FROM VariationMeasureValue vm WHERE vm.detectionVariable = :dv AND vm.userInRole.id = :uirId")
 	Long findMinId(@Param("dv") DetectionVariable dv, @Param("uirId") Long uirId);
-
-	@Query(nativeQuery = true)
-	BigDecimal doWeightedAvg();
-
-	@Query(nativeQuery = true)
-	BigDecimal doWeightedStDev();
-
-	@Query(nativeQuery = true)
-	BigDecimal doWeightedBest25Perc();
-
-	@Query(nativeQuery = true)
-	BigDecimal doWeightedDelta25PercAvg();
-
+	
 }

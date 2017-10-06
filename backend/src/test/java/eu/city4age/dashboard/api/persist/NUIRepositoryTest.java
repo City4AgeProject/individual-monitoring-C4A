@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 import java.time.YearMonth;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
@@ -37,6 +40,8 @@ import eu.city4age.dashboard.api.rest.MeasuresService;
 @ActiveProfiles("test")
 public class NUIRepositoryTest {
 
+	static protected Logger logger = LogManager.getLogger(NUIRepositoryTest.class);
+	
 	@Autowired
 	NUIRepository nuiRepository;
 
@@ -54,50 +59,8 @@ public class NUIRepositoryTest {
 
 	@Autowired
 	private MeasuresService measuresService;
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testGetNuisFor1Month() throws Exception {
-
-		Timestamp intervalStart = Timestamp.valueOf(YearMonth.of(2017, 1).atDay(1).atStartOfDay());
-
-		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(intervalStart, TypicalPeriod.MONTH);
-
-		UserInRole uir1 = new UserInRole();
-		uir1.setId(1L);
-		uir1.setPilotCode("LLC");
-		userInRoleRepository.save(uir1);
-
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(1L);
-		detectionVariableRepository.save(dv1);
-
-		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
-		pdv1.setId(1L);
-		pdv1.setDetectionVariable(dv1);
-		pilotDetectionVariableRepository.save(pdv1);
-
-		NumericIndicatorValue nui1 = new NumericIndicatorValue();
-		nui1.setId(1L);
-		nui1.setUserInRole(uir1);
-		nui1.setTimeInterval(ti1);
-		nui1.setDetectionVariable(dv1);
-		nuiRepository.save(nui1);
-
-		NumericIndicatorValue nui2 = new NumericIndicatorValue();
-		nui2.setId(2L);
-		nui2.setUserInRole(uir1);
-		nui2.setTimeInterval(ti1);
-		nui2.setDetectionVariable(dv1);
-		nuiRepository.save(nui2);
-
-		List<NumericIndicatorValue> result = nuiRepository.getNuisFor1Month("LLC", intervalStart, dv1);
-
-		Assert.assertNotNull(result);
-		Assert.assertEquals(2, result.size());
-	}
-
+	
+	
 	@Test
 	@Transactional
 	@Rollback(true)
@@ -107,20 +70,30 @@ public class NUIRepositoryTest {
 		uir1.setId(1L);
 		uir1.setPilotCode("LLC");
 		userInRoleRepository.save(uir1);
+		
+		UserInRole uir2 = new UserInRole();
+		uir2.setId(2L);
+		uir2.setPilotCode("LLC");
+		userInRoleRepository.save(uir2);
 
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
 		dv1.setDetectionVariableName("dv1");
 		detectionVariableRepository.save(dv1);
-
+		
+		DetectionVariable dv2 = new DetectionVariable();
+		dv2.setId(2L);
+		dv2.setDetectionVariableName("dv2");
+		detectionVariableRepository.save(dv2);
+		
 		NumericIndicatorValue nui1 = new NumericIndicatorValue();
-		nui1.setUserInRole(uir1);
+		nui1.setUserInRole(uir2);
 		nui1.setDetectionVariable(dv1);
 		nuiRepository.save(nui1);
-
+		
 		NumericIndicatorValue nui2 = new NumericIndicatorValue();
 		nui2.setUserInRole(uir1);
-		nui2.setDetectionVariable(dv1);
+		nui2.setDetectionVariable(dv2);
 		nuiRepository.save(nui2);
 
 		NumericIndicatorValue nui3 = new NumericIndicatorValue();
@@ -128,14 +101,26 @@ public class NUIRepositoryTest {
 		nui3.setDetectionVariable(dv1);
 		nuiRepository.save(nui3);
 
-		Long result = nuiRepository.findMonthZero(dv1.getId(), uir1.getId());
+		NumericIndicatorValue nui4 = new NumericIndicatorValue();
+		nui4.setUserInRole(uir1);
+		nui4.setDetectionVariable(dv1);
+		nuiRepository.save(nui4);
 
+		NumericIndicatorValue nui5 = new NumericIndicatorValue();
+		nui5.setUserInRole(uir1);
+		nui5.setDetectionVariable(dv1);
+		nuiRepository.save(nui5);
+
+		Long result = nuiRepository.findMonthZero(dv1.getId(), uir1.getId());
+		
 		Assert.assertNotNull(result);
 		assertThat(result, greaterThan(0L));
 		assertThat(result.getClass(), typeCompatibleWith(Long.class));
-		Assert.assertEquals(nui1.getId(), result);
-		Assert.assertThat(result, lessThan(nui2.getId()));
-		Assert.assertThat(result, lessThan(nui3.getId()));
+		Assert.assertEquals(nui3.getId(), result);
+		Assert.assertThat(result, lessThan(nui4.getId()));
+		Assert.assertThat(result, lessThan(nui5.getId()));
+		Assert.assertThat(result, greaterThan(nui1.getId()));
+		Assert.assertThat(result, greaterThan(nui2.getId()));
 
 	}
 
@@ -158,6 +143,16 @@ public class NUIRepositoryTest {
 		uir1.setId(uirId);
 		uir1.setPilotCode("LCC");
 		userInRoleRepository.save(uir1);
+		
+		UserInRole uir2 = new UserInRole ();
+		uir2.setId(2L);
+		uir2.setPilotCode("LCC");
+		userInRoleRepository.save(uir2);
+		
+		UserInRole uir3 = new UserInRole ();
+		uir3.setId(3L);
+		uir3.setPilotCode("ATH");
+		userInRoleRepository.save(uir3);
 
 		DetectionVariableType dvt1 = DetectionVariableType.GES;
 		detectionVariableTypeRepository.save(dvt1);
@@ -192,18 +187,54 @@ public class NUIRepositoryTest {
 		nui2.setUserInRole(uir1);
 		nui2.setTimeInterval(ti2);
 		nuiRepository.save(nui2);
-
+		
+		NumericIndicatorValue nui3 = new NumericIndicatorValue();
+		nui3.setId(3L);
+		nui3.setNuiValue(new BigDecimal(2));
+		nui3.setDetectionVariable(dv2);
+		nui3.setUserInRole(uir2);
+		nui3.setTimeInterval(ti1);
+		nuiRepository.save(nui3);
+		
+		NumericIndicatorValue nui4 = new NumericIndicatorValue();
+		nui4.setId(4L);
+		nui4.setNuiValue(new BigDecimal(3));
+		nui4.setDetectionVariable(dv2);
+		nui4.setUserInRole(uir3);
+		nui4.setTimeInterval(ti2);
+		nuiRepository.save(nui4);
+		
+		NumericIndicatorValue nui5 = new NumericIndicatorValue();
+		nui5.setId(5L);
+		nui5.setNuiValue(new BigDecimal(4));
+		nui5.setDetectionVariable(dv1);
+		nui5.setUserInRole(uir1);
+		nui5.setTimeInterval(ti2);
+		nuiRepository.save(nui5);
+				
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
 		pdv1.setDetectionVariable(dv2);
 		pdv1.setDerivedDetectionVariable(dv1);
 		pilotDetectionVariableRepository.save(pdv1);
+		
+		PilotDetectionVariable pdv2 = new PilotDetectionVariable();
+		pdv2.setId(2L);
+		pdv2.setDetectionVariable(dv1);
+		pdv2.setDerivedDetectionVariable(dv2);
+		pilotDetectionVariableRepository.save(pdv2);
 
 		List<NumericIndicatorValue> result = nuiRepository.getNuisForSelectedGes(uirId, dvId);
-
 		Assert.assertNotNull(result);
-
 		Assert.assertEquals(2, result.size());
+		
+		result = nuiRepository.getNuisForSelectedGes(2L, dvId);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		
+		result = nuiRepository.getNuisForSelectedGes(uirId, 2L);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0, result.size());
 	}
 
 }

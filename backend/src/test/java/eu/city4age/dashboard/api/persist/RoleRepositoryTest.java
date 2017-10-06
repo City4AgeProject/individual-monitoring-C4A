@@ -26,6 +26,8 @@ import eu.city4age.dashboard.api.pojo.domain.Stakeholder;
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class RoleRepositoryTest {
+	
+	private static Logger logger = LogManager.getLogger(RoleRepositoryTest.class);
 
 	@Autowired
 	private StakeholderRepository stakeholderRepository;
@@ -93,10 +95,12 @@ public class RoleRepositoryTest {
 		List<Role> result = roleRepository.findByStakeholderAbbreviation("DRL");
 
 		Assert.assertNotNull(result);
-
-		Assert.assertEquals(4, result.size());
-		
+		Assert.assertEquals(4, result.size());		
 		Assert.assertEquals(Long.valueOf(1), result.get(0).getId());
+		
+		result = roleRepository.findByStakeholderAbbreviation("GPS");
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0, result.size());
 
 	}
 

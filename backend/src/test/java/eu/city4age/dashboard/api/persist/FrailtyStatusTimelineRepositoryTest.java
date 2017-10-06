@@ -49,9 +49,13 @@ public class FrailtyStatusTimelineRepositoryTest {
 	@Rollback(true)
 	public void testFindByPeriodAndUserId() throws Exception {
 
-		UserInRole uir = new UserInRole();
-		uir.setId(1L);
-		userInRoleRepository.save(uir);
+		UserInRole uir1 = new UserInRole();
+		uir1.setId(1L);
+		userInRoleRepository.save(uir1);
+		
+		UserInRole uir2 = new UserInRole();
+		uir2.setId(2L);
+		userInRoleRepository.save(uir2);
 
 		FrailtyStatus fs = new FrailtyStatus();
 		fs.setFrailtyStatus("F");
@@ -63,23 +67,23 @@ public class FrailtyStatusTimelineRepositoryTest {
 		fst1.setUserInRoleId(1L);
 		fst1.setFrailtyStatus("F");
 		fst1.setChanged(new Date());
-		fst1.setChangedBy(uir);
+		fst1.setChangedBy(uir1);
 		frailtyStatusTimelineRepository.save(fst1);
 
 		FrailtyStatusTimeline fst2 = new FrailtyStatusTimeline();
 		fst2.setTimeIntervalId(2L);
-		fst2.setUserInRoleId(1L);
-		fst2.setFrailtyStatus("F");
+		fst2.setUserInRoleId(2L);
+		fst2.setFrailtyStatus("Q");
 		fst2.setChanged(new Date());
-		fst2.setChangedBy(uir);
+		fst2.setChangedBy(uir2);
 		frailtyStatusTimelineRepository.save(fst2);
 
 		FrailtyStatusTimeline fst3 = new FrailtyStatusTimeline();
 		fst3.setTimeIntervalId(3L);
 		fst3.setUserInRoleId(1L);
-		fst3.setFrailtyStatus("F");
+		fst3.setFrailtyStatus("W");
 		fst3.setChanged(new Date());
-		fst3.setChangedBy(uir);
+		fst3.setChangedBy(uir1);
 		frailtyStatusTimelineRepository.save(fst3);
 
 		List<TimeInterval> timeintervals = Arrays.asList(new TimeInterval(), new TimeInterval(), new TimeInterval());
@@ -91,16 +95,21 @@ public class FrailtyStatusTimelineRepositoryTest {
 		List<FrailtyStatusTimeline> result = frailtyStatusTimelineRepository.findByPeriodAndUserId(timeintervals, 1L);
 
 		Assert.assertNotNull(result);
-
-		Assert.assertEquals(3, result.size());
-
+		Assert.assertEquals(2, result.size());
 		Assert.assertEquals("F", result.get(0).getFrailtyStatus());
+		Assert.assertNotEquals("F", result.get(1).getFrailtyStatus());
+		
+		result = frailtyStatusTimelineRepository.findByPeriodAndUserId(timeintervals, 2L);
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("Q", result.get(0).getFrailtyStatus());
 
 	}
 	
 	@Test
 	@Transactional
-	@Rollback(false)
+	@Rollback(true)
 	public void testFindLatest() throws Exception {
 		
 		Long uId = 1L;
@@ -108,6 +117,10 @@ public class FrailtyStatusTimelineRepositoryTest {
 		UserInRole uir = new UserInRole();
 		uir.setId(uId);
 		userInRoleRepository.save(uir);
+		
+		UserInRole uir2 = new UserInRole ();
+		uir2.setId(2L);
+		userInRoleRepository.save(uir2);
 		
 		FrailtyStatus fs = new FrailtyStatus();
 		fs.setFrailtyStatus("F");
@@ -120,6 +133,10 @@ public class FrailtyStatusTimelineRepositoryTest {
 		TimeInterval ti2 = new TimeInterval();
 		ti2.setIntervalStart(Timestamp.valueOf("2016-05-01 00:00:00"));
 		timeIntervalRepository.save(ti2);
+		
+		TimeInterval ti3 = new TimeInterval ();
+		ti3.setIntervalStart(Timestamp.valueOf("2016-06-01 00:00:00"));
+		timeIntervalRepository.save(ti3);
 
 		FrailtyStatusTimeline fst1 = new FrailtyStatusTimeline();
 		fst1.setTimeIntervalId(ti1.getId());
@@ -140,13 +157,27 @@ public class FrailtyStatusTimelineRepositoryTest {
 		fst2.setTimeInterval(ti2);
 		fst2.setUserInRole(uir);
 		frailtyStatusTimelineRepository.save(fst2);
+		
+		FrailtyStatusTimeline fst3 = new FrailtyStatusTimeline();
+		fst3.setTimeIntervalId(ti3.getId());
+		fst3.setUserInRoleId(uir2.getId());
+		fst3.setFrailtyStatus("F");
+		fst3.setChangedBy(uir2);
+		fst3.setChanged(new Date());
+		fst3.setTimeInterval(ti3);
+		fst3.setUserInRole(uir2);
+		frailtyStatusTimelineRepository.save(fst3);
 
 		FrailtyStatusTimeline result = frailtyStatusTimelineRepository.findLatest(uId);
 		
 		Assert.assertNotNull(result);
 		
-		Assert.assertEquals(Timestamp.valueOf("2016-04-01 00:00:00"), result.getTimeInterval().getIntervalStart());
+		Assert.assertNotEquals(Timestamp.valueOf("2016-04-01 00:00:00"), result.getTimeInterval().getIntervalStart());
+		Assert.assertEquals(Timestamp.valueOf("2016-05-01 00:00:00"), result.getTimeInterval().getIntervalStart());
+		Assert.assertTrue(fst3.getTimeInterval().getIntervalStart().getTime() > fst2.getTimeInterval().getIntervalStart().getTime());
 		
+		result = frailtyStatusTimelineRepository.findLatest(3L);
+		Assert.assertNull(result);
 	}
 
 }

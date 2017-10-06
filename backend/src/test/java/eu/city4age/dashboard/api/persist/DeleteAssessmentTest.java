@@ -67,15 +67,6 @@ public class DeleteAssessmentTest {
 	@Transactional
 	@Rollback(true)
 	public void DeleteAssessmentTest() throws Exception {
-
-
-
-		
-		logger.info("1****"+assessmentRepository.count());
-		logger.info("1****"+audienceRolesRepository.count());
-		logger.info("1*****"+assessedGefValuesRepository.count());
-		logger.info("11****"+geriatricFactorRepository.count());
-		logger.info("111****"+roleRepository.count());
 		
 		Role r1 = new Role();
 		r1.setId(1L);
@@ -83,10 +74,9 @@ public class DeleteAssessmentTest {
 		
 		Role r2 = new Role();
 		r2.setId(2L);
-		roleRepository.save(r2);
+		roleRepository.save(r2);	
 		
 		
-		//***
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
 		userInRoleRepository.save(uir1);
@@ -106,16 +96,11 @@ public class DeleteAssessmentTest {
 		UserInRole uir5 = new UserInRole();
 		uir5.setId(5L);
 		userInRoleRepository.save(uir5);
-		
-		//*******
-		logger.info("2****"+assessmentRepository.count());
-		logger.info("2****"+audienceRolesRepository.count());
-		logger.info("2*****"+assessedGefValuesRepository.count());
-		
+				
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setId(11L);
 		gef1.setGefValue(new BigDecimal("1"));
-		gef1.setUserInRole(uir1);
+		gef1.setUserInRole(uir1);		
 		geriatricFactorRepository.save(gef1);
 		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
@@ -141,22 +126,23 @@ public class DeleteAssessmentTest {
 		gef5.setGefValue(new BigDecimal("5"));
 		gef5.setUserInRole(uir5);
 		geriatricFactorRepository.save(gef5);
+				
 		
+		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
+		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole> ();
 		
-		logger.info("3*****"+assessmentRepository.count());
-		logger.info("3*****"+audienceRolesRepository.count());
-		logger.info("3*****"+assessedGefValuesRepository.count());
-		logger.info("33****"+geriatricFactorRepository.count());
-		
-		
-		//Assessment:
 		Assessment a1 = new Assessment();
 		a1.setId(1L);
 		a1.setAssessmentComment("CASCADE DELETE TEST");
 		a1.setDataValidity('F');
 		a1.setGeriatricFactorValue(gef1);//add in assessedGefValuesRepository
+		gef1.addAssessment(a1);
+		assessedGefValueSets.add (new AssessedGefValueSet.AssessedGefValueSetBuilder().assessmentId(a1.getId().intValue()).gefValueId(gef1.getId().intValue()).build());
 		a1.setUserInRole(uir1);
 		a1.getRoles().add(r1); //add in audienceRolesRepository
+		a1.getRoles().add(r2);
+		assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder().assessmentId(a1.getId().intValue()).userInRoleId(uir1.getId().intValue()).build());
+		assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder().assessmentId(a1.getId().intValue()).userInRoleId(uir2.getId().intValue()).build());
 		a1.setRiskStatus('W');
 		
 		Assessment a2 = new Assessment();
@@ -164,8 +150,11 @@ public class DeleteAssessmentTest {
 		a2.setAssessmentComment("CASCADE DELETE TEST");
 		a2.setDataValidity('F');
 		a2.setGeriatricFactorValue(gef2);
+		assessedGefValueSets.add (new AssessedGefValueSet.AssessedGefValueSetBuilder().assessmentId(a1.getId().intValue()).gefValueId(gef2.getId().intValue()).build());
+		assessedGefValueSets.add (new AssessedGefValueSet.AssessedGefValueSetBuilder().assessmentId(a2.getId().intValue()).gefValueId(gef2.getId().intValue()).build());
 		a2.setUserInRole(uir2);
 		a2.getRoles().add(r2); 
+		assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder().assessmentId(a2.getId().intValue()).userInRoleId(uir2.getId().intValue()).build());
 		a2.setRiskStatus('W');
 		
 		Assessment a3 = new Assessment();
@@ -173,8 +162,10 @@ public class DeleteAssessmentTest {
 		a3.setAssessmentComment("CASCADE DELETE TEST");
 		a3.setDataValidity('F');
 		a3.setGeriatricFactorValue(gef3);
+		assessedGefValueSets.add (new AssessedGefValueSet.AssessedGefValueSetBuilder().assessmentId(a3.getId().intValue()).gefValueId(gef3.getId().intValue()).build());
 		a3.setUserInRole(uir3);
 		a3.getRoles().add(r2); 
+		assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder().assessmentId(a3.getId().intValue()).userInRoleId(uir3.getId().intValue()).build());
 		a3.setRiskStatus('W');
 		
 		Assessment a4 = new Assessment();
@@ -182,8 +173,10 @@ public class DeleteAssessmentTest {
 		a4.setAssessmentComment("CASCADE DELETE TEST");
 		a4.setDataValidity('F');
 		a4.setGeriatricFactorValue(gef4);
+		assessedGefValueSets.add (new AssessedGefValueSet.AssessedGefValueSetBuilder().assessmentId(a4.getId().intValue()).gefValueId(gef4.getId().intValue()).build());
 		a4.setUserInRole(uir3);
 		a4.getRoles().add(r2); 
+		assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder().assessmentId(a4.getId().intValue()).userInRoleId(uir4.getId().intValue()).build());
 		a4.setRiskStatus('W');
 		
 		Assessment a5 = new Assessment();
@@ -191,50 +184,35 @@ public class DeleteAssessmentTest {
 		a5.setAssessmentComment("CASCADE DELETE TEST");
 		a5.setDataValidity('F');
 		a5.setGeriatricFactorValue(gef5);
+		assessedGefValueSets.add (new AssessedGefValueSet.AssessedGefValueSetBuilder().assessmentId(a5.getId().intValue()).gefValueId(gef5.getId().intValue()).build());
 		a5.setUserInRole(uir2);
-		a5.getRoles().add(r2); 
-		a5.setRiskStatus('W');
-		
+		a5.getRoles().add(r2);
+		assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder().assessmentId(a5.getId().intValue()).userInRoleId(uir5.getId().intValue()).build());
+		a5.setRiskStatus('W');		
 		
 		assessmentRepository.save(a1);
 		assessmentRepository.save(a2);
-		assessmentRepository.flush();
-		logger.info("***a1.getId():"+a1.getId());
-		logger.info("***a2.getId():"+a2.getId());
+		assessmentRepository.save(a3);
+		assessmentRepository.save(a4);
+		assessmentRepository.save(a5);		
 		
-		logger.info("***gef1.getId():"+gef1.getId());
-		logger.info("***gef2.getId():"+gef2.getId());
+		assessedGefValuesRepository.save(assessedGefValueSets);
+		audienceRolesRepository.save(assessmentAudienceRoles);
 		
-		logger.info("***uir1.getId():"+uir1.getId());
-		logger.info("***uir2.getId():"+uir2.getId());
-		
-		logger.info("4*****"+assessmentRepository.count());
-		logger.info("4*****"+audienceRolesRepository.count());
-		logger.info("4*****"+assessedGefValuesRepository.count());
-		logger.info("44****"+geriatricFactorRepository.count());
 
-		//List<AssessedGefValueSet> agvs = assessedGefValuesRepository.findByAssessmentId(a1.getId().intValue());
-		//List<AssessmentAudienceRole> aar = audienceRolesRepository.findByAssessmentId(a1.getId().intValue());
-
-		Long idA1 = a1.getId();
-		assessmentRepository.delete(a1);
-		assessmentRepository.delete(a2);
-		assessmentRepository.flush();
+		List<AssessedGefValueSet> resultGEF = assessedGefValuesRepository.findByAssessmentId(a1.getId().intValue());
+		List<AssessmentAudienceRole> resultRoles = audienceRolesRepository.findByAssessmentId(a1.getId().intValue());
 		
-		logger.info("FFDD"+assessmentRepository.findOne(idA1));
-		logger.info("#***a1.getId():"+a1.getId());
-		logger.info("#***a2.getId():"+a2.getId());
+		Assert.assertNotNull(resultGEF);
+		Assert.assertNotNull(resultRoles);
+		Assert.assertEquals(2, resultRoles.size());
+		Assert.assertEquals(2, resultGEF.size());	
 		
-		logger.info("#***gef1.getId():"+gef1.getId());
-		logger.info("#***gef2.getId():"+gef2.getId());
-		logger.info("#***uir1.getId():"+uir1.getId());
-		logger.info("#***uir2.getId():"+uir2.getId());
+		resultGEF = assessedGefValuesRepository.findByAssessmentId (a2.getId().intValue());
 		
-		logger.info("****"+assessmentRepository.count());
-		logger.info("****"+audienceRolesRepository.count());
-		logger.info("*****"+assessedGefValuesRepository.count());
-		logger.info("****"+geriatricFactorRepository.count());
-		logger.info("****"+roleRepository.count());
+		Assert.assertNotNull(resultGEF);
+		Assert.assertEquals(1, resultGEF.size());
+		Assert.assertEquals(gef2.getId().intValue(), resultGEF.get(0).getGefValueId().intValue());
 
 	}
 

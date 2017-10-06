@@ -1,7 +1,6 @@
 package eu.city4age.dashboard.api.persist;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -47,14 +46,11 @@ public class ViewPilotDetectionVariableRepositoryTest {
 	
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
-	
+		
 	@Test
 	@Transactional
 	@Rollback(true)
 	public void testFindAllMeaGes() {
-		
-		/*Timestamp start = Timestamp.valueOf("2015-01-01 00:00:00");
-		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
 		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(11L);
@@ -119,12 +115,35 @@ public class ViewPilotDetectionVariableRepositoryTest {
 		pdv3.setFormula("Formula3");
 		pilotDetectionVariableRepository.save(pdv3);
 		
+		PilotDetectionVariable pdv4 = new PilotDetectionVariable();
+		pdv4.setId(4L);
+		pdv4.setDetectionVariable(dv2);
+		pdv4.setPilotCode("LCC");
+		pdv4.setDerivationWeight(BigDecimal.valueOf(0.5));
+		pdv4.setDerivedDetectionVariable(dv1);
+		pdv4.setFormula("Formula4");
+		pilotDetectionVariableRepository.save(pdv4);
 		
-		List<ViewPilotDetectionVariable> result = viewPilotDetectionVariableRepository.findAllMeaGes(uir1.getId(), start, end);
+		PilotDetectionVariable pdv5 = new PilotDetectionVariable();
+		pdv5.setId(5L);
+		pdv5.setDetectionVariable(dv2);
+		pdv5.setPilotCode("ATH");
+		pdv5.setDerivationWeight(BigDecimal.valueOf(0.5));
+		pdv5.setDerivedDetectionVariable(dv1);
+		pdv5.setFormula("Formula5");
+		pilotDetectionVariableRepository.save(pdv5);
+		
+		
+		List<ViewPilotDetectionVariable> result = viewPilotDetectionVariableRepository.findAllMeaGes(uir1.getId(), 222L);
 		
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals("LCC", result.get(0).getId().getPilotCode());*/
+		Assert.assertEquals("LCC", result.get(0).getId().getPilotCode());
+		
+		result = viewPilotDetectionVariableRepository.findAllGes(uir1.getId());
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("LCC", result.get(0).getId().getPilotCode());
 	}
 
 

@@ -64,6 +64,11 @@ public class GeriatricFactorRepositoryTest {
 		userInRole.setPilotCode("LCC");
 		userInRoleRepository.save(userInRole);
 		
+		UserInRole uir2 = new UserInRole ();
+		uir2.setId(2L);
+		uir2.setPilotCode("LCC");
+		userInRoleRepository.save(uir2);
+		
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
 		detectionVariableRepository.save(dv1);
@@ -82,6 +87,13 @@ public class GeriatricFactorRepositoryTest {
 		pdv1.setDetectionVariable(dv1);
 		pdv1.setDerivedDetectionVariable(dv2);
 		pilotDetectionVariableRepository.save(pdv1);
+		
+		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
+		pdv2.setId(2L);
+		pdv2.setPilotCode("LCC");
+		pdv2.setDetectionVariable(dv2);
+		pdv2.setDerivedDetectionVariable(dv1);
+		pilotDetectionVariableRepository.save(pdv2);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setId(1L);
@@ -103,14 +115,44 @@ public class GeriatricFactorRepositoryTest {
 		gef3.setDetectionVariable(dv1);
 		gef3.setTimeInterval(ti1);
 		geriatricFactorRepository.save(gef3);
-
+		
+		GeriatricFactorValue gef4 = new GeriatricFactorValue();
+		gef4.setId(4L);
+		gef4.setUserInRole(uir2);
+		gef4.setDetectionVariable(dv1);
+		gef4.setTimeInterval(ti1);
+		geriatricFactorRepository.save(gef4);
+		
+		GeriatricFactorValue gef5 = new GeriatricFactorValue ();
+		gef5.setId(5L);
+		gef5.setUserInRole(userInRole);
+		gef5.setDetectionVariable(dv2);
+		gef5.setTimeInterval(ti1);
+		geriatricFactorRepository.save(gef5);
+		
 		List<GeriatricFactorValue> result = geriatricFactorRepository.findByDetectionVariableId(2L, 1L);
 		
 		logger.info("result.size(): " + result.size());
-
 		Assert.assertNotNull(result);
-
 		Assert.assertEquals(3, result.size());
+		
+		result = geriatricFactorRepository.findByDetectionVariableId(1L, 1L);
+		
+		logger.info("result.size(): " + result.size());
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		
+		result = geriatricFactorRepository.findByDetectionVariableId(2L, 2L);
+		
+		logger.info("result.size(): " + result.size());
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		
+		result = geriatricFactorRepository.findByDetectionVariableId(1L, 2L);
+		
+		logger.info("result.size(): " + result.size());
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0, result.size());
 
 	}
 	

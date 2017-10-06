@@ -19,6 +19,8 @@ import java.util.Locale;
 
 import javax.persistence.Query;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +33,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.persist.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
@@ -45,6 +48,8 @@ import eu.city4age.dashboard.api.rest.MeasuresService;
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class VariationMeasureValueRepositoryTest {
+	
+	static protected Logger logger = LogManager.getLogger(VariationMeasureValueRepositoryTest.class);
 
 	@Autowired
 	private VariationMeasureValueRepository variationMeasureValueRepository;
@@ -63,6 +68,9 @@ public class VariationMeasureValueRepositoryTest {
 
 	@Autowired
 	private MeasuresService measuresService;
+	
+	@Autowired
+	private TypicalPeriodRepository typicalPeriodRepository;
 
 	
 	//new test
@@ -161,75 +169,199 @@ public class VariationMeasureValueRepositoryTest {
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void testFindByUserInRoleId() {
-
-		Long uirId = 13L;
-
-		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-05-03 00:00:00"),
-				TypicalPeriod.MONTH);
-
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(91L);
-		detectionVariableRepository.save(dv1);
-
-		DetectionVariable dv2 = new DetectionVariable();
-		dv2.setId(95L);
-		detectionVariableRepository.save(dv2);
-
-		DetectionVariable dv3 = new DetectionVariable();
-		dv3.setId(98L);
-		detectionVariableRepository.save(dv3);
-
-		UserInRole uir1 = new UserInRole();
-		uir1.setId(uirId);
+	public void testFindMMByUserInRoleId () {
+		
+		eu.city4age.dashboard.api.pojo.domain.TypicalPeriod tp1 = new eu.city4age.dashboard.api.pojo.domain.TypicalPeriod();
+		tp1.setTypicalPeriod("1YR");		
+		typicalPeriodRepository.save(tp1);
+		eu.city4age.dashboard.api.pojo.domain.TypicalPeriod tp2 = new eu.city4age.dashboard.api.pojo.domain.TypicalPeriod();
+		tp2.setTypicalPeriod("MON");
+		typicalPeriodRepository.save(tp2);
+		eu.city4age.dashboard.api.pojo.domain.TypicalPeriod tp3 = new eu.city4age.dashboard.api.pojo.domain.TypicalPeriod();
+		tp3.setTypicalPeriod("DAY");
+		typicalPeriodRepository.save(tp3);
+		
+		UserInRole uir1 = new UserInRole ();
+		uir1.setId(1L);
 		userInRoleRepository.save(uir1);
-		userInRoleRepository.flush();
-
-		VariationMeasureValue vm1 = new VariationMeasureValue();
-		vm1.setId(1L);
-		vm1.setDetectionVariable(dv1);
-		vm1.setUserInRole(uir1);
-		vm1.setTimeInterval(ti1);
-		variationMeasureValueRepository.save(vm1);
-
-		VariationMeasureValue vm2 = new VariationMeasureValue();
-		vm2.setId(2L);
-		vm2.setDetectionVariable(dv2);
-		vm2.setUserInRole(uir1);
-		vm2.setTimeInterval(ti1);
-		variationMeasureValueRepository.save(vm2);
-
-		VariationMeasureValue vm3 = new VariationMeasureValue();
-		vm3.setId(3L);
-		vm3.setDetectionVariable(dv3);
-		vm3.setUserInRole(uir1);
-		vm3.setTimeInterval(ti1);
-		variationMeasureValueRepository.save(vm3);
-
+		
+		UserInRole uir2 = new UserInRole ();
+		uir2.setId(2L);
+		userInRoleRepository.save(uir2);
+		
+		DetectionVariable dv1 = new DetectionVariable ();
+		dv1.setId(1L);
+		detectionVariableRepository.save(dv1);
+		
+		DetectionVariable dv2 = new DetectionVariable ();
+		dv2.setId(2L);
+		detectionVariableRepository.save(dv2);
+		
+		DetectionVariable dv3 = new DetectionVariable ();
+		dv3.setId(3L);
+		detectionVariableRepository.save(dv3);
+		
+		TimeInterval ti1 = new TimeInterval ();
+		ti1.setId(1L);
+		ti1.setIntervalStart(Timestamp.valueOf("2015-01-01 00:00:00"));
+		ti1.setIntervalEnd(Timestamp.valueOf("2016-01-01 00:00:00"));
+		ti1.setTypicalPeriod(tp1.getTypicalPeriod());
+		ti1 = timeIntervalRepository.save(ti1);
+		//ti1.setId(timeIntervalRepository.);
+				
+		TimeInterval ti2 = new TimeInterval ();
+		ti2.setId(2L);
+		ti2.setIntervalStart(Timestamp.valueOf("2015-04-01 00:00:00"));
+		ti2.setIntervalEnd(Timestamp.valueOf("2016-01-01 00:00:00"));
+		ti2 = timeIntervalRepository.save(ti2);
+		
+		TimeInterval ti3 = new TimeInterval ();
+		ti3.setId(3L);
+		ti3.setIntervalStart(Timestamp.valueOf("2015-02-01 00:00:00"));
+		ti3.setIntervalEnd(Timestamp.valueOf("2015-03-01 00:00:00"));
+		ti3.setTypicalPeriod(tp2.getTypicalPeriod());
+		ti3 = timeIntervalRepository.save(ti3);
+		
+		logger.info("timeIntervalCount: " + timeIntervalRepository.count());
+		
+		for (TimeInterval i : timeIntervalRepository.findAll()) {
+			logger.info("TimeIntervalId: " + i.getId());
+		}
+		
+		VariationMeasureValue vmv1 = new VariationMeasureValue();
+		vmv1.setId(1L);
+		vmv1.setUserInRole(uir1);
+		vmv1.setDetectionVariable(dv1);
+		vmv1.setTimeInterval(ti1);
+		variationMeasureValueRepository.save(vmv1);
+		
+		VariationMeasureValue vmv2 = new VariationMeasureValue();
+		vmv2.setId(2L);
+		vmv2.setUserInRole(uir1);
+		vmv2.setDetectionVariable(dv1);
+		vmv2.setTimeInterval(ti2);
+		variationMeasureValueRepository.save(vmv2);
+		
+		VariationMeasureValue vmv3 = new VariationMeasureValue();
+		vmv3.setId(3L);
+		vmv3.setUserInRole(uir1);
+		vmv3.setDetectionVariable(dv1);
+		vmv3.setTimeInterval(ti3);
+		variationMeasureValueRepository.save(vmv3);
+		
+		/*test findByUserInRoleId */
 		DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern("yyyy MMM")
 				.toFormatter(Locale.ENGLISH);
-
-		Timestamp startOfMonth = Timestamp.valueOf(YearMonth.parse("2017 MAY", formatter).atDay(1).atStartOfDay());
-		Timestamp endOfMonth = Timestamp
-				.valueOf(YearMonth.parse("2017 MAY", formatter).atEndOfMonth().atTime(LocalTime.MAX));
-
-		List<VariationMeasureValue> result = variationMeasureValueRepository.findByUserInRoleId(uirId, 91L, startOfMonth, endOfMonth);
-
+		Timestamp start = Timestamp.valueOf(YearMonth.parse("2015 JAN", formatter).atDay(1).atStartOfDay());
+		Timestamp end = Timestamp.valueOf(YearMonth.parse("2016 JAN", formatter).atDay(1).atStartOfDay());
+		List<VariationMeasureValue> result = variationMeasureValueRepository.findByUserInRoleId(uir1.getId(), dv1.getId(), start, end);
+		
+		/*for (VariationMeasureValue res : variationMeasureValueRepository.findByUserInRoleId(uir1.getId(), dv1.getId(), start, end)) {
+			logger.info(" " + res.get);
+		} */
+		
+		for (VariationMeasureValue res: variationMeasureValueRepository.findAll()) {
+			logger.info("vmvID: " + res.getId());
+			logger.info("vmvUiRID: " + res.getUserInRole().getId());
+			logger.info("vmvDvID: " + res.getDetectionVariable().getId());
+			logger.info("vmvTimeIntervalID:  " + res.getTimeInterval().getId());
+		}
 		Assert.assertNotNull(result);
-		Assert.assertEquals(Timestamp.valueOf("2017-05-03 00:00:00"),
-				result.get(0).getTimeInterval().getIntervalStart());
+		Assert.assertEquals (3, result.size());
+		
+		end = Timestamp.valueOf(YearMonth.parse("2015 MAR", formatter).atDay(1).atStartOfDay());
+		result = variationMeasureValueRepository.findByUserInRoleId(uir1.getId(), dv1.getId(), start, end);
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals (2, result.size());
+		
+		end = Timestamp.valueOf(YearMonth.parse("2015 JAN", formatter).atDay(1).atStartOfDay());
+		result = variationMeasureValueRepository.findByUserInRoleId(uir1.getId(), dv1.getId(), start, end);
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals (1, result.size());
+		
+		start = Timestamp.valueOf(YearMonth.parse("2016 MAR", formatter).atDay(1).atStartOfDay());
+		end = Timestamp.valueOf(YearMonth.parse("2016 MAR", formatter).atDay(1).atStartOfDay());
+		result = variationMeasureValueRepository.findByUserInRoleId(uir1.getId(), dv1.getId(), start, end);
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals (0, result.size());
+		
+		/* test findByUserMMInRoleId */
+		
+		start = Timestamp.valueOf(YearMonth.parse("2015 JAN", formatter).atDay(1).atStartOfDay());;
+		end = Timestamp.valueOf(YearMonth.parse("2016 JAN", formatter).atDay(1).atStartOfDay());
+		result = variationMeasureValueRepository.findMMByUserInRoleId(uir1.getId(), dv1.getId(), start, end);
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals (2, result.size());
+		
+		end = Timestamp.valueOf(YearMonth.parse("2015 MAR", formatter).atDay(1).atStartOfDay());
+		result = variationMeasureValueRepository.findMMByUserInRoleId(uir1.getId(), dv1.getId(), start, end);
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals (1, result.size());
+		
+		end = Timestamp.valueOf(YearMonth.parse("2015 JAN", formatter).atDay(1).atStartOfDay());;
+		result = variationMeasureValueRepository.findMMByUserInRoleId(uir1.getId(), dv1.getId(), start, end);
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals (0, result.size());
+		
 	}
-
+	
+	
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void testFindByPilotCode() {
-
+	public void testFindAllForMonthByPilotCodeNui() {
+		
+		eu.city4age.dashboard.api.pojo.domain.TypicalPeriod tp1 = new eu.city4age.dashboard.api.pojo.domain.TypicalPeriod();
+		tp1.setTypicalPeriod("1YR");		
+		typicalPeriodRepository.save(tp1);
+		eu.city4age.dashboard.api.pojo.domain.TypicalPeriod tp2 = new eu.city4age.dashboard.api.pojo.domain.TypicalPeriod();
+		tp2.setTypicalPeriod("MON");
+		typicalPeriodRepository.save(tp2);
+		eu.city4age.dashboard.api.pojo.domain.TypicalPeriod tp3 = new eu.city4age.dashboard.api.pojo.domain.TypicalPeriod();
+		tp3.setTypicalPeriod("DAY");
+		typicalPeriodRepository.save(tp3);
+		
+		
 		TimeInterval ti1 = new TimeInterval();
 		ti1.setId(1L);
 		ti1.setIntervalStart(Timestamp.valueOf("2017-05-03 00:00:00"));
 		ti1.setIntervalEnd(Timestamp.valueOf("2017-05-03 00:00:00"));
-		timeIntervalRepository.save(ti1);
+		ti1 = timeIntervalRepository.save(ti1);
+		
+		TimeInterval ti2 = new TimeInterval ();
+		ti2.setId(2L);
+		ti2.setIntervalStart(Timestamp.valueOf("2016-01-01 00:00:00"));
+		ti2.setIntervalEnd(Timestamp.valueOf ("2017-01-01 00:00:00"));
+		ti2 = timeIntervalRepository.save(ti2); 
+		
+		TimeInterval ti3 = new TimeInterval ();
+		ti3.setId(3L);
+		ti3.setIntervalStart(Timestamp.valueOf("2016-01-01 00:00:00"));
+		ti3.setIntervalEnd(Timestamp.valueOf ("2016-02-01 00:00:00"));
+		ti3.setTypicalPeriod(tp2.getTypicalPeriod());	
+		ti3 = timeIntervalRepository.save(ti3);
+		
+		TimeInterval ti4 = new TimeInterval ();
+		ti4.setId(4L);
+		ti4.setIntervalStart(Timestamp.valueOf("2016-01-01 00:00:00"));
+		ti4.setIntervalEnd(Timestamp.valueOf ("2016-01-02 00:00:00"));
+		ti4.setTypicalPeriod(tp3.getTypicalPeriod());	
+		ti4 = timeIntervalRepository.save(ti4);
+		
+		TimeInterval ti5 = new TimeInterval ();
+		ti5.setId(5L);
+		ti5.setIntervalStart(Timestamp.valueOf("2016-01-01 00:00:00"));
+		ti5.setIntervalEnd(Timestamp.valueOf ("2017-01-01 00:00:00"));
+		ti5.setTypicalPeriod(tp1.getTypicalPeriod());
+		ti5 = timeIntervalRepository.save(ti5);
+		
+		timeIntervalRepository.flush();
 
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(91L);
@@ -247,6 +379,11 @@ public class VariationMeasureValueRepositoryTest {
 		uir1.setId(13L);
 		uir1.setPilotCode("LCC");
 		userInRoleRepository.save(uir1);
+		
+		UserInRole uir2 = new UserInRole();
+		uir2.setId(23L);
+		uir2.setPilotCode("ATH");
+		userInRoleRepository.save(uir2);
 		userInRoleRepository.flush();
 
 		VariationMeasureValue vm1 = new VariationMeasureValue();
@@ -269,6 +406,34 @@ public class VariationMeasureValueRepositoryTest {
 		vm3.setUserInRole(uir1);
 		vm3.setTimeInterval(ti1);
 		variationMeasureValueRepository.save(vm3);
+		
+		VariationMeasureValue vm4 = new VariationMeasureValue();
+		vm4.setId(4L);
+		vm4.setDetectionVariable(dv1);
+		vm4.setUserInRole(uir2);
+		vm4.setTimeInterval(ti2);
+		variationMeasureValueRepository.save(vm4);
+		
+		VariationMeasureValue vm5 = new VariationMeasureValue();
+		vm5.setId(5L);
+		vm5.setDetectionVariable(dv1);
+		vm5.setUserInRole(uir2);
+		vm5.setTimeInterval(ti3);
+		variationMeasureValueRepository.save(vm5);
+		
+		VariationMeasureValue vm6 = new VariationMeasureValue();
+		vm6.setId(6L);
+		vm6.setDetectionVariable(dv1);
+		vm6.setUserInRole(uir2);
+		vm6.setTimeInterval(ti4);
+		variationMeasureValueRepository.save(vm6);
+		
+		VariationMeasureValue vm7 = new VariationMeasureValue();
+		vm7.setId(7L);
+		vm7.setDetectionVariable(dv1);
+		vm7.setUserInRole(uir2);
+		vm7.setTimeInterval(ti5);
+		variationMeasureValueRepository.save(vm7);
 
 		DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern("yyyy MMM")
 				.toFormatter(Locale.ENGLISH);
@@ -283,6 +448,32 @@ public class VariationMeasureValueRepositoryTest {
 				startOfMonth, endOfMonth);
 
 		Assert.assertEquals(3, result.size());
+		
+		/* findAllForMonthByPilotCode TEST */
+		
+		startOfMonth = Timestamp.valueOf(YearMonth.parse("2016 JAN", formatter).atDay(1).atStartOfDay());
+		endOfMonth = Timestamp.valueOf(YearMonth.parse("2017 JAN", formatter).atDay(1).atStartOfDay());
+		result = variationMeasureValueRepository.findAllForMonthByPilotCode ("ATH", startOfMonth, endOfMonth);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(3, result.size());
+		
+		startOfMonth = Timestamp.valueOf(YearMonth.parse("2016 JAN", formatter).atDay(3).atStartOfDay());
+		endOfMonth = Timestamp.valueOf(YearMonth.parse("2016 FEB", formatter).atDay(1).atStartOfDay());
+		result = variationMeasureValueRepository.findAllForMonthByPilotCode ("ATH", startOfMonth, endOfMonth);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
+		
+		startOfMonth = Timestamp.valueOf(YearMonth.parse("2016 MAR", formatter).atDay(1).atStartOfDay());
+		endOfMonth = Timestamp.valueOf(YearMonth.parse("2016 MAY", formatter).atDay(1).atStartOfDay());
+		result = variationMeasureValueRepository.findAllForMonthByPilotCode ("ATH", startOfMonth, endOfMonth);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		
+		startOfMonth = Timestamp.valueOf(YearMonth.parse("2017 MAR", formatter).atDay(1).atStartOfDay());
+		endOfMonth = Timestamp.valueOf(YearMonth.parse("2017 MAY", formatter).atDay(1).atStartOfDay());
+		result = variationMeasureValueRepository.findAllForMonthByPilotCode ("ATH", startOfMonth, endOfMonth);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0, result.size());
 	}
 
 	@Test
@@ -325,220 +516,7 @@ public class VariationMeasureValueRepositoryTest {
 		assertThat(result, greaterThan(0L));
 		assertThat(result.getClass(), typeCompatibleWith(Long.class));
 		Assert.assertEquals(1, result.longValue());
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testDoWeightedAvg() {
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(91L);
-		dv1.setDerivationWeight(new BigDecimal(1));
-		detectionVariableRepository.save(dv1);
-
-		UserInRole uir1 = new UserInRole();
-		uir1.setId(13L);
-		userInRoleRepository.save(uir1);
-		userInRoleRepository.flush();
-
-		VariationMeasureValue vm1 = new VariationMeasureValue();
-		vm1.setId(1L);
-		vm1.setMeasureValue(new BigDecimal(10));
-		vm1.setDetectionVariable(dv1);
-		vm1.setUserInRole(uir1);
-		variationMeasureValueRepository.save(vm1);
-
-		VariationMeasureValue vm2 = new VariationMeasureValue();
-		vm2.setId(2L);
-		vm2.setMeasureValue(new BigDecimal(20));
-		vm2.setDetectionVariable(dv1);
-		vm2.setUserInRole(uir1);
-		variationMeasureValueRepository.save(vm2);
-
-		BigDecimal result = variationMeasureValueRepository.doWeightedAvg();
-
-		Assert.assertNotNull(result);
-
-		Assert.assertEquals((new BigDecimal(15)).setScale(1, RoundingMode.HALF_EVEN), result);
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testDoWeightedStDev() {
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(91L);
-		dv1.setDerivationWeight(new BigDecimal(1));
-		detectionVariableRepository.save(dv1);
-
-		UserInRole uir1 = new UserInRole();
-		uir1.setId(13L);
-		userInRoleRepository.save(uir1);
-		userInRoleRepository.flush();
-
-		VariationMeasureValue vm1 = new VariationMeasureValue();
-		vm1.setId(1L);
-		vm1.setMeasureValue(new BigDecimal(10));
-		vm1.setDetectionVariable(dv1);
-		vm1.setUserInRole(uir1);
-		variationMeasureValueRepository.save(vm1);
-
-		VariationMeasureValue vm2 = new VariationMeasureValue();
-		vm2.setId(2L);
-		vm2.setMeasureValue(new BigDecimal(20));
-		vm2.setDetectionVariable(dv1);
-		vm2.setUserInRole(uir1);
-		variationMeasureValueRepository.save(vm2);
-
-		BigDecimal result = variationMeasureValueRepository.doWeightedStDev();
-
-		Assert.assertNotNull(result);
-
-		Assert.assertEquals((new BigDecimal(.47)).setScale(2, RoundingMode.HALF_EVEN),
-				result.setScale(2, RoundingMode.HALF_EVEN));
-
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testDoWeightedBest25Perc() {
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(91L);
-		dv1.setDerivationWeight(new BigDecimal(1));
-		detectionVariableRepository.save(dv1);
-
-		UserInRole uir1 = new UserInRole();
-		uir1.setId(13L);
-		userInRoleRepository.save(uir1);
-		userInRoleRepository.flush();
-
-		VariationMeasureValue vm1 = new VariationMeasureValue();
-		vm1.setId(1L);
-		vm1.setMeasureValue(new BigDecimal(10));
-		vm1.setDetectionVariable(dv1);
-		vm1.setUserInRole(uir1);
-		variationMeasureValueRepository.save(vm1);
-
-		VariationMeasureValue vm2 = new VariationMeasureValue();
-		vm2.setId(2L);
-		vm2.setMeasureValue(new BigDecimal(20));
-		vm2.setDetectionVariable(dv1);
-		vm2.setUserInRole(uir1);
-		variationMeasureValueRepository.save(vm2);
-
-		BigDecimal result = variationMeasureValueRepository.doWeightedBest25Perc();
-
-		Assert.assertNotNull(result);
-
-		Assert.assertEquals((new BigDecimal(1.17)).setScale(2, RoundingMode.HALF_EVEN),
-				result.setScale(2, RoundingMode.HALF_EVEN));
-
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testDoWeightedDelta25PercAvg() {
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(91L);
-		dv1.setDerivationWeight(new BigDecimal(1));
-		detectionVariableRepository.save(dv1);
-
-		UserInRole uir1 = new UserInRole();
-		uir1.setId(13L);
-		userInRoleRepository.save(uir1);
-		userInRoleRepository.flush();
-
-		VariationMeasureValue vm1 = new VariationMeasureValue();
-		vm1.setId(1L);
-		vm1.setMeasureValue(new BigDecimal(10));
-		vm1.setDetectionVariable(dv1);
-		vm1.setUserInRole(uir1);
-		variationMeasureValueRepository.save(vm1);
-
-		VariationMeasureValue vm2 = new VariationMeasureValue();
-		vm2.setId(2L);
-		vm2.setMeasureValue(new BigDecimal(20));
-		vm2.setDetectionVariable(dv1);
-		vm2.setUserInRole(uir1);
-		variationMeasureValueRepository.save(vm2);
-
-		BigDecimal result = variationMeasureValueRepository.doWeightedDelta25PercAvg();
-
-		Assert.assertNotNull(result);
-
-		Assert.assertEquals((new BigDecimal(.17)).setScale(2, RoundingMode.HALF_EVEN),
-				result.setScale(2, RoundingMode.HALF_EVEN));
-
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void runFormula() {
-
-		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-03 00:00:00"),
-				TypicalPeriod.DAY);
-
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(91L);
-		dv1.setDerivationWeight(new BigDecimal(1));
-		detectionVariableRepository.save(dv1);
-
-		UserInRole uir1 = new UserInRole();
-		uir1.setId(13L);
-		userInRoleRepository.save(uir1);
-		userInRoleRepository.flush();
-
-		VariationMeasureValue vm1 = new VariationMeasureValue();
-		vm1.setId(1L);
-		vm1.setMeasureValue(new BigDecimal(10));
-		vm1.setDetectionVariable(dv1);
-		vm1.setUserInRole(uir1);
-		vm1.setTimeInterval(ti1);
-		variationMeasureValueRepository.save(vm1);
-
-		VariationMeasureValue vm2 = new VariationMeasureValue();
-		vm2.setId(2L);
-		vm2.setMeasureValue(new BigDecimal(20));
-		vm2.setDetectionVariable(dv1);
-		vm2.setUserInRole(uir1);
-		vm2.setTimeInterval(ti1);
-		variationMeasureValueRepository.save(vm2);
-
-		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
-		pdv1.setId(1L);
-		pdv1.setFormula(
-				"SELECT AVG(vm.measure_value*dv.derivation_weight) FROM variation_measure_value AS vm INNER JOIN cd_detection_variable AS dv ON dv.id = vm.measure_type_id INNER JOIN time_interval AS ti ON ti. ID = vm.time_interval_id WHERE vm.user_in_role_id = :uId AND vm.measure_type_id = :dvId AND ti.interval_start > :tiStart AND ti.interval_start < :tiEnd");
-		;
-		pdv1.setPilotCode("LCC");
-		pdv1.setDetectionVariable(dv1);
-		pdv1.setDerivedDetectionVariable(dv1);
-		pdv1.setDerivationWeight(new BigDecimal(1));
-		pdv1.setValidFrom(new Date());
-		pilotDetectionVariableRepository.save(pdv1);
-
-		String formula = pilotDetectionVariableRepository.runFormula();
-
-		Assert.assertEquals(
-				"SELECT AVG(vm.measure_value*dv.derivation_weight) FROM variation_measure_value AS vm INNER JOIN cd_detection_variable AS dv ON dv.id = vm.measure_type_id INNER JOIN time_interval AS ti ON ti. ID = vm.time_interval_id WHERE vm.user_in_role_id = :uId AND vm.measure_type_id = :dvId AND ti.interval_start > :tiStart AND ti.interval_start < :tiEnd",
-				formula);
-
-		Query sql = variationMeasureValueRepository.getEntityManager().createNativeQuery(formula);
-		variationMeasureValueRepository.getEntityManager().getEntityManagerFactory().addNamedQuery("dynamic", sql);
-		Query namedQuery = variationMeasureValueRepository.getEntityManager().createNamedQuery("dynamic");
-		namedQuery.setParameter("uId", 13L);
-		namedQuery.setParameter("dvId", 91L);
-		namedQuery.setParameter("tiStart", Timestamp.valueOf("2016-04-01 00:00:00"));
-		namedQuery.setParameter("tiEnd", Timestamp.valueOf("2016-06-01 00:00:00"));
-
-		Double result = (Double) namedQuery.getSingleResult();
-
-		Assert.assertNotNull(result);
-		Assert.assertEquals(new Double(15.0), result);
-
-	}
+	}	
 
 	@Test
 	@Transactional

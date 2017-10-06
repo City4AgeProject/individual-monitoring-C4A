@@ -15,10 +15,6 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 @Transactional(readOnly = true)
 public interface DetectionVariableRepository extends GenericRepository<DetectionVariable, Long> {
 
-	DetectionVariable findOneByDetectionVariableName(String name);
-
-	DetectionVariable findByDetectionVariableName(String string);
-
 	DetectionVariable findByDetectionVariableNameAndDetectionVariableType(String string, DetectionVariableType dvt);
 	
 	@Query("SELECT dv FROM DetectionVariable dv INNER JOIN dv.pilotDetectionVariable pdv INNER JOIN dv.detectionVariableType dvt WHERE dvt.detectionVariableType = 'MEA' AND pdv.pilotCode = :pilotCode AND (dv.defaultTypicalPeriod = 'DAY' OR dv.defaultTypicalPeriod = '1WK')")

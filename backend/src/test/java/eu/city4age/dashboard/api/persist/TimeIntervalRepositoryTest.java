@@ -4,9 +4,13 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +36,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatusTimeline;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
+import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -59,6 +64,9 @@ public class TimeIntervalRepositoryTest {
 
 	@Autowired
 	private DetectionVariableRepository detectionVariableRepository;
+	
+	@Autowired
+	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
@@ -120,15 +128,27 @@ public class TimeIntervalRepositoryTest {
 
 		DetectionVariable ddv1 = new DetectionVariable();
 		ddv1.setId(4L);
-
+		detectionVariableRepository.save(ddv1);
+		
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
-		dv1.setDerivedDetectionVariable(ddv1);
+		dv1.setDerivedDetectionVariable(ddv1);		
 		detectionVariableRepository.save(dv1);
-
-
+		
+		PilotDetectionVariable pdv1 = new PilotDetectionVariable ();
+		pdv1.setId(1L);
+		pdv1.setDerivedDetectionVariable(ddv1);
+		pdv1.setPilotCode("LCC");
+		pdv1.setDetectionVariable(dv1);
+		pdv1.setDerivedDetectionVariable(ddv1);
+		pilotDetectionVariableRepository.save(pdv1);
+		
+		UserInSystem uis = new UserInSystem ();
+		uis.setId(1L);
 		UserInRole uir = new UserInRole();
 		uir.setId(1L);
+		uir.setPilotCode("LCC");
+		uir.setUserInSystem(uis);
 		userInRoleRepository.save(uir);
 
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
@@ -165,9 +185,23 @@ public class TimeIntervalRepositoryTest {
 		Assert.assertNotNull(list);
 
 		System.out.println(list.size() + "::WWW");
-		Assert.assertEquals(6, list.size());
+		int i = 1;
+		for (Iterator <Last5Assessment> l5a = list.iterator(); l5a.hasNext();) {
+			Last5Assessment curr = l5a.next();
+			logger.info(i + " intervalID: " + curr.getTimeIntervalId());
+			logger.info(i + " intervalStart: " + curr.getIntervalStart());
+			logger.info(i + " gefID: " + curr.getGefId());	
+			logger.info(i + " gefValue: " + curr.getGefValue());
+			logger.info(i + " assessmentID: " + curr.getId());
+			logger.info(i + " assessmentComment: " + curr.getComment());
+			logger.info(i + " riskStatus: " + curr.getRiskStatus());
+			logger.info(i + " validity: " + curr.getDataValidity());
+			logger.info(i + " created: " + curr.getDateAndTime());
+			i++;
+		}
+		Assert.assertEquals(7, list.size());
 
-		Assert.assertEquals(Character.valueOf('A'), list.get(5).getRiskStatus());
+		Assert.assertEquals(Character.valueOf('A'), list.get(0).getRiskStatus());
 		Assert.assertEquals("2016-01-01 00:00:00.0", list.get(0).getIntervalStart()); // ti
 
 		Assert.assertEquals("2017-05-22 12:00:00", list.get(0).getDateAndTime());
@@ -199,31 +233,32 @@ public class TimeIntervalRepositoryTest {
 		tp.setTypicalPeriod("MON");
 		tp.setPeriodDescription("Month");
 		typicalPeriodRepository.save(tp);
-
-
 		
 		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti1.setIntervalEnd(Timestamp.valueOf("2016-02-01 00:00:00"));
-		
+				
 		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti2.setIntervalEnd(Timestamp.valueOf("2016-03-01 00:00:00"));
-
+		
 		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti3.setIntervalEnd(Timestamp.valueOf("2016-04-01 00:00:00"));
-		
+				
 		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti4.setIntervalEnd(Timestamp.valueOf("2016-05-01 00:00:00"));
-
+		
 		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		ti5.setIntervalEnd(Timestamp.valueOf("2016-06-01 00:00:00"));
-
+				
+		UserInSystem uis = new UserInSystem ();
+		uis.setId(1L);
 		UserInRole uir = new UserInRole();
 		uir.setId(1L);
+		uir.setUserInSystem(uis);
 		userInRoleRepository.save(uir);
 
 		FrailtyStatusTimeline fst = new FrailtyStatusTimeline();
@@ -233,6 +268,8 @@ public class TimeIntervalRepositoryTest {
 		fst.setChanged(new Date());
 		fst.setChangedBy(uir);
 		frailtyStatusTimelineRepository.save(fst);
+		
+		//
 		
 		DetectionVariableType dvt1 = DetectionVariableType.GEF;
 		detectionVariableTypeRepository.save(dvt1);
@@ -261,6 +298,11 @@ public class TimeIntervalRepositoryTest {
 		geriatricFactorRepository.save(gef1);
 
 		List<DetectionVariableType.Type> parentFactors = Arrays.asList(DetectionVariableType.Type.valueOf("GEF"), DetectionVariableType.Type.valueOf("GES"));
+		
+		logger.info("parentFactorsSize: " + parentFactors.size());
+		for (Iterator<DetectionVariableType.Type> i = parentFactors.iterator(); i.hasNext();) {
+			logger.info("parentFactor: " + i.next().name());
+		}
 
 		List<TimeInterval> result = timeIntervalRepository.getGroups(1L, parentFactors);
 
