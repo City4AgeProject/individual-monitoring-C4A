@@ -204,11 +204,11 @@
 			<artifactId>json-schema-core</artifactId>
 			<version>1.2.5</version>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <scope>test</scope>
 		</dependency>
 
 	</dependencies>

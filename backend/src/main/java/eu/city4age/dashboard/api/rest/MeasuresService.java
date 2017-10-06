@@ -9,10 +9,8 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -155,93 +153,93 @@ public class MeasuresService {
 
 		List<Pilot> pilots = pilotRepository.findAll();
 
-		for (Pilot pilot : pilots) {
+		for (Pilot pilot : pilots)
 			computeNuisForPilot(pilot.getPilotCode(), pilot.getLastComputed());
-		}
 
-		for (Pilot pilot : pilots) {
+		for (Pilot pilot : pilots)
 			computeGESsForPilot(pilot.getPilotCode(), pilot.getLastComputed());
-			computeForPilot(DetectionVariableType.GEF, pilot.getPilotCode(), pilot.getLastComputed());
-		}
 
 		return Response.ok().build();
 	}
-
-	private void computeForPilot(DetectionVariableType type, String pilotCode, YearMonth lastComputedYearMonth) {
-		logger.info("computeForPilot");
-		logger.info("pilotCode: " + pilotCode);
-		logger.info("type: " + type);
-		YearMonth currentYearMonth = YearMonth.now();
-		YearMonth currentComputedYearMonth = lastComputedYearMonth.plusMonths(1L);
-		Timestamp startOfMonth;
-		Timestamp endOfMonth;
-		
-		List<PilotDetectionVariable> deriveds = pilotDetectionVariableRepository.findDerived(pilotCode, type);
-		BigDecimal weight = new BigDecimal(1);
-		if(deriveds != null && deriveds.size() > 0) weight = deriveds.get(0).getDerivationWeight();
-
-		if (currentYearMonth.compareTo(currentComputedYearMonth) > 1) {
-			while (!currentComputedYearMonth.equals(currentYearMonth)) {
-				startOfMonth = Timestamp.valueOf(currentComputedYearMonth.atDay(1).atStartOfDay());
-				endOfMonth = Timestamp.valueOf(currentComputedYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
-				computeFor1Month(type, weight, pilotCode, startOfMonth, endOfMonth);
-				currentComputedYearMonth = currentComputedYearMonth.plusMonths(1L);
-			}
-		}
-		if(deriveds != null && deriveds.size() > 0) computeForPilot(deriveds.get(0).getDerivedDetectionVariable().getDetectionVariableType(), pilotCode, lastComputedYearMonth);
-	}
-
-	private void computeFor1Month(DetectionVariableType factor, BigDecimal weight, String pilotCode, Timestamp startOfMonth,
-			Timestamp endOfMonth) {
-		logger.info("computeFor1Month: " + factor);
-		List<ViewGefValuesPersistedSourceGesTypes> list = viewGefValuesPersistedSourceGesTypesRepository
-				.findAllForMonthByPilotCode(pilotCode, startOfMonth, endOfMonth, factor);
-
-		list.sort(new Comparator<ViewGefValuesPersistedSourceGesTypes>() {
-			@Override
-			public int compare(ViewGefValuesPersistedSourceGesTypes o1, ViewGefValuesPersistedSourceGesTypes o2) {
-				int value1 = o1.getId().getUserInRoleId().compareTo(o2.getId().getUserInRoleId());
-				if (value1 == 0) {
-					return o1.getId().getDerivedDetectionVariableId()
-							.compareTo(o2.getId().getDerivedDetectionVariableId());
-				} else
-					return value1;
-			}
-		});
-
-		Long previousUserId = 0L;
-		Long previousDerivedDvId = 0L;
-		BigDecimal sum = new BigDecimal(0);
-
-		for(ViewGefValuesPersistedSourceGesTypes ges: list) {
-			if(previousUserId.equals(ges.getId().getUserInRoleId()) && previousDerivedDvId.equals(ges.getId().getDerivedDetectionVariableId())) {
-				sum.add(ges.getGefValue().multiply(ges.getDerivationWeight()));
-			} else if(!previousUserId.equals(0L)) {
-				logger.info("createGFV");
-				createGFV(previousDerivedDvId, sum, weight, startOfMonth, endOfMonth, previousUserId, pilotCode);
-				sum = ges.getGefValue().multiply(ges.getDerivationWeight());
-			}
-			previousUserId = ges.getId().getUserInRoleId();
-			previousDerivedDvId = ges.getId().getDerivedDetectionVariableId();
-		}
-		if (list != null && list.size() > 1) {
-			logger.info("last createGFV");
-			createGFV(previousDerivedDvId, sum, weight, startOfMonth, endOfMonth, previousUserId, pilotCode);
-		}
-
-	}
-
+	
+	
 	private void computeGESsForPilot(String pilotCode, YearMonth lastComputedYearMonth) {
 		YearMonth currentYearMonth = YearMonth.now();
 		YearMonth currentComputedYearMonth = lastComputedYearMonth.plusMonths(1L);
 		Timestamp startOfMonth;
 		Timestamp endOfMonth;
+		
+		//Zbog pondera
+		List<PilotDetectionVariable> deriveds = pilotDetectionVariableRepository.findDerived(pilotCode, DetectionVariableType.GEF);
+		BigDecimal weight = new BigDecimal(1);
+		if(deriveds != null && deriveds.size() > 0) weight = deriveds.get(0).getDerivationWeight();
+		
 		if (currentYearMonth.compareTo(currentComputedYearMonth) > 1) {
 			while (!currentComputedYearMonth.equals(currentYearMonth)) {
 				startOfMonth = Timestamp.valueOf(currentComputedYearMonth.atDay(1).atStartOfDay());
 				endOfMonth = Timestamp.valueOf(currentComputedYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
-				computeGESsFor1Month(pilotCode, startOfMonth, endOfMonth);
+				Set<Long> users = computeGESsFor1Month(pilotCode, startOfMonth, endOfMonth);
+				if(users != null && users.size() > 0) computeFor1Month(users, DetectionVariableType.GEF, weight, pilotCode, startOfMonth, endOfMonth);
 				currentComputedYearMonth = currentComputedYearMonth.plusMonths(1L);
+				if(deriveds != null && deriveds.size() > 0) computeDerivedForPilot(users, DetectionVariableType.GFG, pilotCode, startOfMonth, endOfMonth);
+			}
+		}
+	}
+
+
+	private void computeDerivedForPilot(Set<Long> users, DetectionVariableType type, String pilotCode, Timestamp startOfMonth,
+			Timestamp endOfMonth) {
+		
+
+		logger.info("computeForPilot");
+		logger.info("pilotCode: " + pilotCode);
+		logger.info("type: " + type);
+
+		List<PilotDetectionVariable> deriveds = pilotDetectionVariableRepository.findDerived(pilotCode, type);
+		BigDecimal weight = new BigDecimal(1);
+		if(deriveds != null && deriveds.size() > 0) weight = deriveds.get(0).getDerivationWeight();
+		if(users != null && users.size() > 0) computeFor1Month(users, type, weight, pilotCode, startOfMonth, endOfMonth);
+		if(deriveds != null && deriveds.size() > 0) computeDerivedForPilot(users, deriveds.get(0).getDerivedDetectionVariable().getDetectionVariableType(), pilotCode, startOfMonth, endOfMonth);
+
+	}
+
+	
+	private void computeFor1Month(Set<Long> users, DetectionVariableType factor, BigDecimal weight, String pilotCode, Timestamp startOfMonth,
+			Timestamp endOfMonth) {
+		logger.info("computeFor1Month: " + factor);
+		for (Long userId : users) {
+			List<ViewGefValuesPersistedSourceGesTypes> list = viewGefValuesPersistedSourceGesTypesRepository
+					.findAllForMonthByUserId(userId, startOfMonth, endOfMonth, factor);
+
+			if (list != null && list.size() > 1) {
+				
+				list.sort(new Comparator<ViewGefValuesPersistedSourceGesTypes>() {
+					@Override
+					public int compare(ViewGefValuesPersistedSourceGesTypes o1, ViewGefValuesPersistedSourceGesTypes o2) {
+						return o1.getId().getDerivedDetectionVariableId()
+									.compareTo(o2.getId().getDerivedDetectionVariableId());
+					}
+				});
+
+				Long previousDerivedDvId = 0L;
+				BigDecimal sum = new BigDecimal(0);
+
+				for(ViewGefValuesPersistedSourceGesTypes ges: list) {
+					if(userId.equals(ges.getId().getUserInRoleId()) && previousDerivedDvId.equals(ges.getId().getDerivedDetectionVariableId())) {
+						sum.add(ges.getGefValue().multiply(ges.getDerivationWeight()));
+					} else if(previousDerivedDvId != 0L) {
+						logger.info("createGFV");
+						logger.info("gesValue: " + sum);
+						createGFV(previousDerivedDvId, sum, weight, startOfMonth, endOfMonth, userId, pilotCode);
+						sum = ges.getGefValue().multiply(ges.getDerivationWeight());
+					}
+					previousDerivedDvId = ges.getId().getDerivedDetectionVariableId();
+				}
+				if (list != null && list.size() > 1) {
+					logger.info("last createGFV");
+					logger.info("gesValue: " + sum);
+					createGFV(previousDerivedDvId, sum, weight, startOfMonth, endOfMonth, userId, pilotCode);
+				}
 			}
 		}
 	}
@@ -261,13 +259,16 @@ public class MeasuresService {
 		}
 	}
 
-	private void computeGESsFor1Month(String pilotCode, Timestamp startOfMonth, Timestamp endOfMonth) {
+	private Set<Long> computeGESsFor1Month(String pilotCode, Timestamp startOfMonth, Timestamp endOfMonth) {
 		logger.info("computeGESsFor1Month");
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository.findAllForMonthByPilotCode(pilotCode,
 				startOfMonth, endOfMonth);
 
+		Set<Long> users = null;
+		
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
-			Set<Long> users = new HashSet<Long>();
+
+			users = new HashSet<Long>();
 
 			for (VariationMeasureValue vmv : vmsMonthly) {
 				users.add(vmv.getUserInRole().getId());
@@ -292,8 +293,10 @@ public class MeasuresService {
 							
 							if (meaList != null && meaList.size() > 0) {
 								
-								BigDecimal sumW1 = new BigDecimal(0);
+								gesValue = new BigDecimal(0);
 								
+								BigDecimal sumW1 = new BigDecimal(0);
+
 								List<ViewPilotDetectionVariable> newMeaList = new ArrayList<ViewPilotDetectionVariable>();
 								
 								for(ViewPilotDetectionVariable mea : meaList) {
@@ -311,7 +314,9 @@ public class MeasuresService {
 
 								logger.info("sumW1: " + sumW1);
 								
-								gesValue = new BigDecimal(0);
+								List<BigDecimal> derivedMeas = new ArrayList<BigDecimal>();
+								List<BigDecimal> weights = new ArrayList<BigDecimal>();
+
 
 								for (int i = 0; i < newMeaList.size(); i++) { //iterate measures for every derived ges
 
@@ -322,21 +327,30 @@ public class MeasuresService {
 									BigDecimal derivedMea = computeDerivedMea(pilotCode, startOfMonth, endOfMonth,
 											newMeaList.get(i), userId, newMeaList.size());
 									
-									BigDecimal weight= new BigDecimal(0);
+									BigDecimal weight = new BigDecimal(0);
 									if(sumW1 != null && !sumW1.equals(new BigDecimal(0)))
 										weight = newMeaList.get(i).getDerivationWeight().divide(sumW1, 2, RoundingMode.HALF_UP);
 									
-									if (derivedMea != null) gesValue = gesValue.add(derivedMea.multiply(weight));
+									if (derivedMea != null) {
+										derivedMeas.add(derivedMea);
+										weights.add(weight);
+									}
 									logger.info("gesValue add derivedMea: " + gesValue);
 
+								}
+								
+								for (int i=0; i < derivedMeas.size(); i++) {
+									gesValue = gesValue.add(derivedMeas.get(i).multiply(weights.get(i)));
 								}
 
 							}
 							
-							if(gesValue != null)
+							if(gesValue != null) {
+								logger.info("gesValue: " + gesValue);
 								createGFV(ges.getId().getDetectionVariableId(),
 										gesValue, ges.getDerivationWeight(), startOfMonth,
 										endOfMonth, userId, pilotCode);
+							}
 						} 
 						
 					}
@@ -347,6 +361,8 @@ public class MeasuresService {
 		Pilot pilot = pilotRepository.findByPilotCode(pilotCode);
 		pilot.setLatestVariablesComputed(new Date());
 		pilotRepository.save(pilot);
+		
+		return users;
 	}
 	
 	private BigDecimal computeDerivedMea(String pilotCode, Timestamp startOfMonth, Timestamp endOfMonth,
@@ -379,13 +395,12 @@ public class MeasuresService {
 					BigDecimal dn;
 					BigDecimal tn = new BigDecimal(3);
 
-					//Map<String, BigDecimal> derivedMM = new HashMap<String, BigDecimal>();
-
 					Long nuiMonthZeroId = nuiRepository.findMonthZero(nuiVpdv.getDerivedNuiId(),
 							userId);
 					NumericIndicatorValue nuiMonthZero = null;
-					
+
 					BigDecimal weight = new BigDecimal(1).divide(new BigDecimal(list.size()), 2, RoundingMode.HALF_UP).divide(new BigDecimal(size), 2, RoundingMode.HALF_UP);
+
 					logger.info("weight: " + weight);
 	
 					if (nuiMonthZeroId != null) {
@@ -393,11 +408,12 @@ public class MeasuresService {
 						if (nuiMonthZero != null && nuiMonthZero.getNuiValue().compareTo(new BigDecimal(0)) > 0) {
 							dn = (userEntryForNui1Month.getNuiValue().subtract(nuiMonthZero.getNuiValue()))
 									.divide(nuiMonthZero.getNuiValue(), 2, RoundingMode.HALF_UP);
-							
+
 							if (dn.compareTo(new BigDecimal(.25)) < 0) {
 								if (dn.compareTo(new BigDecimal(.1)) < 0) {
 									if (dn.compareTo(new BigDecimal(-.1)) < 0) {
-										if (dn.compareTo(new BigDecimal(-.25)) < 0) tn = new BigDecimal(1);
+										if (dn.compareTo(new BigDecimal(-.25)) < 0)
+											tn = new BigDecimal(1);
 										else tn = new BigDecimal(2);
 									} else tn = new BigDecimal(3);
 								} else tn = new BigDecimal(4);
@@ -405,8 +421,8 @@ public class MeasuresService {
 	
 						}
 					}
-					
-					//derivedMM.put("", tn.multiply(weight));
+
+
 					logger.info("tn: " + tn);
 					logger.info("weight: " + weight);
 					result = result.add(tn.multiply(weight));
@@ -440,15 +456,17 @@ public class MeasuresService {
 				if (!mmThisMonth.getId().equals(mmMonthZero.getId())) {
 					logger.info("mm this month: " + mmThisMonth.getMeasureValue());
 					logger.info("mm zero month: " + mmMonthZero.getMeasureValue());
-					logger.info(
-							"mm substract: " + mmThisMonth.getMeasureValue().subtract(mmMonthZero.getMeasureValue()));
+					logger.info("mm substract: " + mmThisMonth.getMeasureValue().subtract(mmMonthZero.getMeasureValue()));
+
 					ds = (mmThisMonth.getMeasureValue().subtract(mmMonthZero.getMeasureValue()))
 							.divide(mmMonthZero.getMeasureValue(), 2, RoundingMode.HALF_UP);
 					logger.info("ds: " + ds);
+
 					if (ds.compareTo(new BigDecimal(.25)) < 0) {
 						if (ds.compareTo(new BigDecimal(.1)) < 0) {
 							if (ds.compareTo(new BigDecimal(-.1)) < 0) {
-								if (ds.compareTo(new BigDecimal(-.25)) < 0) ts = new BigDecimal(1);
+								if (ds.compareTo(new BigDecimal(-.25)) < 0)
+									ts = new BigDecimal(1);
 								else ts = new BigDecimal(2);
 							} else ts = new BigDecimal(3);
 						} else ts = new BigDecimal(4);
@@ -468,6 +486,7 @@ public class MeasuresService {
 
 	private GeriatricFactorValue createGFV(Long dvId, BigDecimal gesValue, BigDecimal weight, Timestamp startOfMonth,
 			Timestamp endOfMonth, Long userId, String pilotCode) {
+
 		logger.info("dvId: " + dvId);
 		logger.info("gesValue: " + gesValue);
 		logger.info("weight: " + weight);
@@ -567,6 +586,7 @@ public class MeasuresService {
 
 		
 		if(nuiForMeasure != null && nuiForMeasure.length == 4) {
+
 		
 			logger.info("nui1: " + nuiForMeasure[0]);
 			logger.info("nui2: " + nuiForMeasure[1]);

@@ -198,7 +198,7 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		pdv1.setFormula("Formula1");
 		pilotDetectionVariableRepository.save(pdv1);
 		
-		List<ViewGefValuesPersistedSourceGesTypes> result = viewGefValuesPersistedSourceGesTypesRepository.findAllForMonthByPilotCode(pilotCode, startOfMonth, endOfMonth, derivedType);
+		List<ViewGefValuesPersistedSourceGesTypes> result = viewGefValuesPersistedSourceGesTypesRepository.findAllForMonthByUserId(1L, startOfMonth, endOfMonth, derivedType);
 		
 		Assert.assertNotNull(result);
 		
