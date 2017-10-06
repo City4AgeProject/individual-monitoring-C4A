@@ -16,7 +16,7 @@ function (oj, ko, $, sp, params) {
         self.highlightValue = ko.observable();
 
         self.selectedId = ko.observable();
-
+        var chartClicked = false;
         var lineColors = ['#b4b2b2','#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
 
         var PRE_FRAIL_SERIES_NAME = oj.Translations.getTranslatedString('pre-frail');
@@ -157,7 +157,8 @@ function (oj, ko, $, sp, params) {
         self.chartDrill = function (event, ui) {
             document.getElementById('polarChart1').style.display = 'none';
             document.getElementById('polarChart2').style.display = 'none';
-        	
+            chartClicked = true;
+            
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
@@ -293,8 +294,8 @@ function (oj, ko, $, sp, params) {
                 //document.getElementById('detectionGEFGroupsLineChart').style.display = 'block';
             	if(document.getElementById('detectionGEFGroup1FactorsLineChart').style.display == 'block'){
             		document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
-            	}else{
-            		document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
+            	}else{                   
+            		document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';                        
             	}
                 
                 document.getElementById('polarChart1').style.display = 'none';
@@ -347,7 +348,7 @@ function (oj, ko, $, sp, params) {
         //Names Cd Detection Variable names are loaded from table
         function loadCdDetectionVariables() {
             $.getJSON(CODEBOOK_SELECT + '/cd_detection_variable', function(data) {
-                self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
+                self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);             
                 $('#detectionGEFGroup1FactorsLineChart').prop('cdDetectionVariables', self.cdDetectionVariables);
             });
         }
@@ -405,13 +406,15 @@ function (oj, ko, $, sp, params) {
                     	} else if(s.name === 'Contextual'){
                     		s.color = '#5dd6c9';
                     		s.lineWidth = 5; 
+                    	}else if(s.name === 'Fit'){
+                    		s.drilling = "off";
                     	}
                     });
                     
                     $(".loader-hover").hide();
                     
                     //If we get objects with property 'items' == undefined, then set them to [null] so that
-                    //oracle jet cant give an error
+                    //oracle jet cant give an error                   
                     self.seriesVal().forEach(function(el) {
                         if(el.items == undefined){
                         	el.items = [null];

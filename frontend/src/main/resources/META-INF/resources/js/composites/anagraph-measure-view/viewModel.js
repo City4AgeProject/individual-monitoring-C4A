@@ -8,24 +8,26 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 
                 context.props.then(function(properties) {               	                     
                     self.props = properties;                    
-                    self.measureName = oj.Translations.getTranslatedString(properties.measureName);
+                    self.measureName = oj.Translations.getTranslatedString(properties.measureName);                    
                     if(properties.baseUnit){
                         self.measureName += " (" + properties.baseUnit + ")";
-                    }                  
+                    }     
+                    self.defaultTypicalPeriod = properties.defaultTypicalPeriod;
+                    
+                    if(self.defaultTypicalPeriod === 'MON'){
+                        self.lineGroups = ko.observable(["", ""]);
+                    }else{
+                        self.lineGroups = ko.observable(["1", "2", "3", "4", "5","6","7","8","9","10",
+                                "11","12","13","14","15","16","17","18","19","20",
+                                "21","22","23","24","25","26","27","28","29","30","31"]);     
+                    }                    
                 });
-               //new for nuis            
+                          
                 var legend = new Object();
                 legend.title = "Hover to see NUI values";
                 legend.titleStyle = "font-size:10px";             
-                this.legendValue = ko.observable(legend);
-                                
-                //end new
-                self.lineGroups = ["1", "2", "3", "4", "5","6","7","8","9","10",
-                	"11","12","13","14","15","16","17","18","19","20",
-                	"21","22","23","24","25","26","27","28","29","30","31"];     
-                                               
-                
-                 
+                this.legendValue = ko.observable(legend);                            
+                   
             };
             return model;
         }

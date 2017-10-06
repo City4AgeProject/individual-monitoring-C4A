@@ -5,12 +5,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 			
 			sessionStorage.setItem('clck',0);
 			
-
-            function ListViewModel() {
+            
+            function ListViewModel() {                                                              
                 var self = this;
                 self.data = ko.observableArray();
                 self.usersOuter = ko.observableArray();
-    			
+   			
                 var pilotCode = sessionStorage.getItem("pilotcode");
                                
                 $.getJSON(CARE_RECIPIENT_ALL + "/pilotCode/" + pilotCode).
@@ -22,7 +22,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     	   
                     	   
                             $.each(users.itemList, function () {
-
+                                
                                 var frailStatus;
                                 if (this.frailtyStatus === undefined || this.frailtyStatus === null) {
                                     frailStatus = "pre-frail-fit";
@@ -55,11 +55,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             ;
                             self.usersOuter = users;
                             $( "#table" ).ojTable( "refresh" );
-                            
+
                         });
 
 
-
+                        
                 self.dataSource = new oj.ArrayTableDataSource(
 
                         self.data, {

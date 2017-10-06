@@ -13,6 +13,10 @@
 			"description" : "Base unit of the measure",
 			"type": "string"
 		},
+                "defaultTypicalPeriod": {
+			"description" : "Default typical period of the measure",
+			"type": "string"
+		},
 		"lineSeries": {
 			"description" : "Object containing chart data.",
 			"type": "object"

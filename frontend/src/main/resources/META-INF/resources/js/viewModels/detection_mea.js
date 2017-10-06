@@ -33,7 +33,27 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                 })
                         });           	    	  
             	              	                	        
-            	};          
+            	};
+                self.handleAttached = function (info) {
+                    /* Assign summary Show more/Show less  */
+                    $('#summary').css({height: '20px', overflow: 'hidden'});
+                    $('#showmore').on('click', function () {
+                        console.log("clicked");
+                        var $this = $("#summary");
+                        if ($this.data('open')) {
+                            $("#showmore").html("Read more");
+                            $this.animate({height: '20px'});
+                            $this.data('open', 0);
+
+                        } else {
+                            $("#showmore").html("Read less");
+                            $this.animate({height: '200px'});
+                            $this.data('open', 1);
+
+                        }
+                    });
+                    /*End: Assign summary Show more/Show less */
+                };
             	
             	function initData() {
             		//labels
@@ -67,6 +87,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    				  meaObj.detectionVariableId = element.detectionVariable.id;
   	    				  meaObj.measureName = element.detectionVariable.detectionVariableName;
                                           meaObj.baseUnit = element.detectionVariable.baseUnit;
+                                          meaObj.defaultTypicalPeriod = element.detectionVariable.defaultTypicalPeriod;
   	    				  measures.push(meaObj);
   	    			  }  
   	    			});
@@ -113,7 +134,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    				var lineSerie = new Object();
     	    				lineSerie.name = mon;
     	    				lineSerie.items = [];
-    	    				
+    	    	
     	    				//getting nuis from nuiData with timeinterval 
     	    				var nuisInMonth = getNuiForMeaAndMonth(mea, mon , nuiData);
     	    				if(nuisInMonth.length == 0){   	    					
@@ -158,8 +179,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
       	    			
   	    		  });
   	    		  
-  	    		
-  	    		
+
+  	    		 	    		
   	    		  function getNuiForMeaAndMonth(mea, mon , nuiData) {   	    			  
   	    			  var nuiMonth = null;
   	    			  var nuiYear = null;
@@ -195,20 +216,25 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  
   	    		  //delete unnecessary data
   	    		  measures.forEach(function(mea) {
-  	    		  delete mea.measureValues;
-  	    		  delete mea.months;
+                            delete mea.measureValues;
+                            delete mea.months;                                                       
   	    		  });
-  	    		    	    		  
-  	    		  //inserting empty dates
-  	    		  measures.forEach(function(mea) {
+  	    		                                                                                 
+  	    		  
+  	    		  measures.forEach(function(mea) {                              
+                              if(mea.defaultTypicalPeriod === 'MON'){
+                                  mea.lineSeries.forEach(function(ls) {
+                                      ls.items[1] = ls.items[0];
+                                  });
+                              }else {
   	    			  mea.lineSeries.forEach(function(ls) {
-  	    				  
+  	    				  //inserting empty dates
   	    				  for(var i = 0; i< 30; i++){           	    					  
   	    					  if(ls.items[i] == null || ls.items[i] == undefined){            	    						  
-  	    						  var item = new Object();
-          	    				  item.value = null;                    	    				                     	    				                     	    				  
-          	    				  ls.items.splice(i, 0, item);
-          	    				  continue;
+  	    						var item = new Object();
+                                                        item.value = null;                    	    				                     	    				                     	    				  
+                                                        ls.items.splice(i, 0, item);
+                                                        continue;
   	    					  }
   	    					  var dateStart = new Date(ls.items[i].intervalStart);
   	    					             	    					 
@@ -218,9 +244,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    							  //do nothing because this time interval ends on the i+1 date           	    							 
   	    						  }
   	    						  else{            	    							 
-  	    							  var item = new Object();
-              	    				  item.value = null;                    	    				                     	    				                     	    				  
-              	    				  ls.items.splice(i, 0, item);	                    	    				  	                    	    				
+  	    							var item = new Object();
+                                                                item.value = null;                    	    				                     	    				                     	    				  
+                                                                ls.items.splice(i, 0, item);	                    	    				  	                    	    				
   	    						  }
   	    						  
   	    					  }
@@ -229,7 +255,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
           	    			 
           	    		  }
   	    			  });
-  	    		  });
+                              }                             
+  	    		  });                         
   	    		return measures;
 	    		  
 	    		  
