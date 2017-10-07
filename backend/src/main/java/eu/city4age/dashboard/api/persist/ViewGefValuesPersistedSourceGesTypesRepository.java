@@ -17,6 +17,6 @@ import eu.city4age.dashboard.api.pojo.domain.ViewGefValuesPersistedSourceGesType
 public interface ViewGefValuesPersistedSourceGesTypesRepository extends GenericRepository<ViewGefValuesPersistedSourceGesTypes, Long> {
 
 	@Query("SELECT vg FROM ViewGefValuesPersistedSourceGesTypes vg WHERE vg.id.userInRoleId = :uirId AND vg.intervalStart >= :startOfMonth AND vg.intervalStart <= :endOfMonth AND vg.typicalPeriod = 'MON' AND vg.derivedGefType = :derivedType")
-	List<ViewGefValuesPersistedSourceGesTypes> findAllForMonthByUserId(@Param("uirId") Long uirId, @Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("derivedType") DetectionVariableType derivedType);
+	List<ViewGefValuesPersistedSourceGesTypes> findAllFor1MonthByUserAndDerived(@Param("uirId") Long uirId, @Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("derivedType") DetectionVariableType derivedType);
 
 }
