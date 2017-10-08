@@ -245,12 +245,12 @@ public class MeasuresService {
 					BigDecimal gesDerivationWeight = ges.getDerivationWeight();
 					logger.info("gefValue: " + gefValue);
 					logger.info("gesDerivationWeight: " + gesDerivationWeight);
-					BigDecimal multiply = gefValue.multiply(gesDerivationWeight);
+					BigDecimal multiply = gefValue.multiply(gesDerivationWeight.abs());
 					logger.info("multiply: " + multiply);
 					if(sumW2 != null && !sumW2.equals(new BigDecimal(0))) {
 						BigDecimal divisor = sumW2.get(derivedDvId);
 						logger.info("divisor: " + divisor);
-						multiply = multiply.divide(divisor, 2, RoundingMode.HALF_UP);
+						multiply = multiply.divide(divisor.abs(), 2, RoundingMode.HALF_UP);
 						logger.info("new multiply: " + multiply);
 					}
 					if(!previousDerivedDvId.equals(derivedDvId) && previousDerivedDvId != 0L) {
@@ -312,7 +312,6 @@ public class MeasuresService {
 					List<ViewPilotDetectionVariable> gesList = viewPilotDetectionVariableRepository.findAllGes(userId);
 	
 					if (gesList != null && gesList.size() > 0) {
-	
 						for (ViewPilotDetectionVariable ges : gesList) {
 							
 							BigDecimal gesValue = null;
@@ -323,9 +322,7 @@ public class MeasuresService {
 							logger.info("findAllMeaGes size: " + meaList.size());
 							
 							if (meaList != null && meaList.size() > 0) {
-								
-								gesValue = new BigDecimal(0);
-								
+
 								BigDecimal sumW1 = new BigDecimal(0);
 
 								List<ViewPilotDetectionVariable> newMeaList = new ArrayList<ViewPilotDetectionVariable>();
@@ -339,7 +336,7 @@ public class MeasuresService {
 										newMeaList.add(mea);
 										BigDecimal w1 = mea.getDerivationWeight();
 										logger.info("w1: " + w1);
-										sumW1 = sumW1.add(w1);
+										sumW1 = sumW1.add(w1.abs());
 									}
 								}
 
@@ -360,7 +357,7 @@ public class MeasuresService {
 									
 									BigDecimal weight = new BigDecimal(0);
 									if(sumW1 != null && !sumW1.equals(new BigDecimal(0)))
-										weight = newMeaList.get(i).getDerivationWeight().divide(sumW1, 2, RoundingMode.HALF_UP);
+										weight = newMeaList.get(i).getDerivationWeight().abs().divide(sumW1, 2, RoundingMode.HALF_UP);
 									
 									logger.info("weight W1 : " + weight);
 									logger.info("sumW1: " + sumW1);
@@ -373,11 +370,15 @@ public class MeasuresService {
 								}
 								
 								logger.info("gesValue initial: " + gesValue);
-								for (int i=0; i < derivedMeas.size(); i++) {
-									gesValue = gesValue.add(derivedMeas.get(i).multiply(weights.get(i)));
-									logger.info("derivedMeas.get(i): " + derivedMeas.get(i));
-									logger.info("weights.get(i): " + weights.get(i));
-									logger.info("gesValue after add: " + gesValue);
+								
+								if (derivedMeas.size() > 0) {
+									gesValue = new BigDecimal(0);
+									for (int i = 0; i < derivedMeas.size(); i++) {
+										gesValue = gesValue.add(derivedMeas.get(i).multiply(weights.get(i).abs()));
+										logger.info("derivedMeas.get(i): " + derivedMeas.get(i));
+										logger.info("weights.get(i): " + weights.get(i));
+										logger.info("gesValue after add: " + gesValue);
+									} 
 								}
 
 							}
@@ -438,7 +439,7 @@ public class MeasuresService {
 							userId);
 					NumericIndicatorValue nuiMonthZero = null;
 
-					BigDecimal weight = new BigDecimal(1).divide(new BigDecimal(list.size()), 2, RoundingMode.HALF_UP);
+					BigDecimal weight = new BigDecimal(signum).divide(new BigDecimal(list.size()), 2, RoundingMode.HALF_UP);
 
 					logger.info("weight: " + weight);
 	
@@ -464,7 +465,7 @@ public class MeasuresService {
 
 					logger.info("tn: " + tn);
 					logger.info("weight: " + weight);
-					result = result.add(tn.multiply(weight));
+					result = result.add(tn.multiply(weight.abs()));
 					logger.info("sum: " + result);
 					
 				}
@@ -473,18 +474,18 @@ public class MeasuresService {
 			
 		} else if (dtp.equals("MON")) { // if MON
 			logger.info("MON");
-			
-			result = new BigDecimal(0);
 		
 			List<VariationMeasureValue> mmsThisMonth = variationMeasureValueRepository.findMMByUserInRoleId(userId, vpdv.getId().getDetectionVariableId(), startOfMonth, endOfMonth);
 
 			BigDecimal ds;
 			BigDecimal ts = new BigDecimal(3);
 
-			BigDecimal weight = new BigDecimal(1).divide(new BigDecimal(size), 2, RoundingMode.HALF_UP);
+			BigDecimal weight = new BigDecimal(signum).divide(new BigDecimal(size), 2, RoundingMode.HALF_UP);
 			logger.info("weight: " + weight);
 
 			if(mmsThisMonth != null && mmsThisMonth.size() > 0 ) {
+				result = new BigDecimal(0);
+				
 				 VariationMeasureValue mmThisMonth = mmsThisMonth.get(0);
 				logger.info("vmvId: " + mmThisMonth.getId());
 				logger.info("dvId: " + mmThisMonth.getDetectionVariable().getId());
@@ -514,7 +515,7 @@ public class MeasuresService {
 				
 				logger.info("ts: " + ts);
 				logger.info("weight: " + weight);
-				result = ts.multiply(weight);
+				result = ts.multiply(weight.abs());
 				logger.info("sum: " + result);
 
 			}
