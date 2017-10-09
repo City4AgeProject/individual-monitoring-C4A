@@ -385,7 +385,7 @@ function (oj, ko, $, sp, params) {
                     	}
                     	
                     });
-                    if(data && data.itemList && data.itemList.length>0)
+                    if(data && data.itemList && data.itemList.length > 0)
                     	{
 
                     	   formatDate(data.itemList[0].items[0].dateList);
@@ -413,13 +413,27 @@ function (oj, ko, $, sp, params) {
                     
                     $(".loader-hover").hide();
                     
-                    //If we get objects with property 'items' == undefined, then set them to [null] so that
-                    //oracle jet cant give an error                   
+                    //If we get objects with property 'items' == undefined, then set them to appropriate values, to assign frailty status to FIT
+                    //and oracle jet won't give an error
+                    
+                    //mock up frailty status method START 
+                    var monthsNum = data.frailtyStatus.months.length;
+                    //console.log("monthsNum: " + monthsNum)
+                    var counter = 0;
                     self.seriesVal().forEach(function(el) {
                         if(el.items == undefined){
-                        	el.items = [null];
+                        	el.items = [];
+                        	counter++;
+                        	for (i = 1; i <= monthsNum; i++) {
+                        		if (counter === 3) {
+                        			el.items.push(0.1);
+                        		} else {
+                        			el.items.push(null);
+                        		}
+                        	}
                         }
-                    });                    
+                    });
+                    //mock up frailty status method END
 
                 });
         }

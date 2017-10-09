@@ -9,13 +9,13 @@
 			"groups": [{
 					"name": "contextual",
 					"level": 1,
-					"weight": 0.5,
+					"weight": 0.3,
 					"formula": "",
 					"factors": []
 				}, {
 					"name": "behavioural",
 					"level": 1,
-					"weight": 0.5,
+					"weight": 0.7,
 					"formula": "",
 					"factors": [{
 							"name": "motility",
@@ -25,7 +25,7 @@
 							"subFactors": [{
 									"name": "walking",
 									"level": 3,
-									"weight": 0.4,
+									"weight": 0.6,
 									"formula": "",
 									"measures": [{
 											"name": "walk_distance_outdoor",

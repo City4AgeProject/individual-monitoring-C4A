@@ -10,13 +10,13 @@
 			[{
 					"name": "contextual",
 					"level": 1,
-					"weight": 0.5,
+					"weight": 0.3,
 					"formula": "",
 					"factors": []
 				}, {
 					"name": "behavioural",
 					"level": 1,
-					"weight": 0.5,
+					"weight": 0.7,
 					"formula": "",
 					"factors":
 					[{
@@ -34,23 +34,23 @@
 									[{
 											"name": "walk_distance_outdoor",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.1
 										}, {
 											"name": "walk_distance_outdoor_fast_perc",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.15
 										}, {
 											"name": "walk_distance_outdoor_slow_perc",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.15
 										}, {
 											"name": "walk_speed_outdoor",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.3
 										}, {
 											"name": "walk_time_outdoor",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.3
 										}
 									]
 								}, {
@@ -62,7 +62,7 @@
 									[{
 											"name": "still_time",
 											"level": 4,
-											"weight": 0.25
+											"weight": -1
 										}
 									]
 								}, {
@@ -74,39 +74,39 @@
 									[{
 											"name": "room_changes",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.6
 										}, {
 											"name": "bedroom_time",
 											"level": 4,
-											"weight": 0.25
+											"weight": -0.02
 										}, {
 											"name": "bedroom_visits",
 											"level": 4,
-											"weight": -0.02
+											"weight": 0.08
 										}, {
 											"name": "livingroom_time",
 											"level": 4,
-											"weight": 0.08
+											"weight": -0.02
 										}, {
 											"name": "livingroom_visits",
 											"level": 4,
-											"weight": 0.02
+											"weight": 0.08
 										}, {
 											"name": "restroom_time",
 											"level": 4,
-											"weight": 0.08
+											"weight": -0.02
 										}, {
 											"name": "restroom_visits",
 											"level": 4,
-											"weight": -0.02
+											"weight": 0.08
 										}, {
 											"name": "kitchen_time",
 											"level": 4,
-											"weight": 0.08
+											"weight": 0.02
 										}, {
 											"name": "kitchen_visits",
 											"level": 4,
-											"weight": 0.02
+											"weight": 0.08
 										}
 									]
 								}, {
@@ -169,11 +169,11 @@
 									[{
 											"name": "home_time",
 											"level": 4,
-											"weight": 0.25
+											"weight": -0.4
 										}, {
 											"name": "outdoor_time",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.6
 										}
 									]
 								}
@@ -208,7 +208,7 @@
 									[{
 											"name": "washingmachine_sessions",
 											"level": 4,
-											"weight": 0.25
+											"weight": 1
 										}
 									]
 								}, {
@@ -220,7 +220,7 @@
 									[{
 											"name": "phonecalls_placed",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.6
 										}, {
 											"name": "phonecalls_received",
 											"level": 4,
@@ -236,11 +236,11 @@
 									[{
 											"name": "supermarket_time",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.1
 										}, {
 											"name": "supermarket_visits",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.6
 										}, {
 											"name": "pharmacy_visits_month",
 											"level": 4,
@@ -279,15 +279,15 @@
 									[{
 											"name": "seniorcenter_long_visits",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.4
 										}, {
 											"name": "seniorcenter_time",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.3
 										}, {
 											"name": "seniorcenter_visits",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.3
 										}
 									]
 								}
@@ -315,11 +315,11 @@
 									[{
 											"name": "tvwatching_time",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.4
 										}, {
 											"name": "tvwatching_time_perc",
 											"level": 4,
-											"weight": 0.25
+											"weight": 0.6
 										}
 									]
 								}, {
@@ -420,7 +420,7 @@
 							[{
 									"name": "mood",
 									"level": 3,
-									"weight": 0.2,
+									"weight": 1,
 									"formula": "",
 									"measures":
 									[]

@@ -10,13 +10,13 @@
 			[{
 					"name": "contextual",
 					"level": 1,
-					"weight": 0.5,
+					"weight": 0.3,
 					"formula": "",
 					"factors": []
 				}, {
 					"name": "behavioural",
 					"level": 1,
-					"weight": 0.5,
+					"weight": 0.7,
 					"formula": "",
 					"factors":
 					[{

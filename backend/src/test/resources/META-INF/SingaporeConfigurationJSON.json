@@ -11,13 +11,13 @@
 	[{
 			"name": "contextual",
 			"level": 1,
-			"weight": 0.5,
+			"weight": 0.3,
 			"formula": "",
 			"factors": []
 		}, {
 			"name": "behavioural",
 			"level": 1,
-			"weight": 0.5,
+			"weight": 0.7,
 			"formula": "",
 			"factors":
 			[{
@@ -35,15 +35,15 @@
 							[{
 									"name": "walk_distance_outdoor",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.3
 								}, {
 									"name": "walk_steps_outdoor",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.2
 								}, {
 									"name": "walk_time_outdoor",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.5
 								}
 							]
 						}, {
@@ -55,47 +55,47 @@
 							[{
 									"name": "room_changes",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.5
 								}, {
 									"name": "bedroom_time",
 									"level": 4,
-									"weight": 0.25
+									"weight": -0.02
 								}, {
 									"name": "bedroom_visits",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.08
 								}, {
 									"name": "livingroom_time",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.02
 								}, {
 									"name": "livingroom_visits",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.08
 								}, {
 									"name": "restroom_time",
 									"level": 4,
-									"weight": 0.25
+									"weight": -0.02
 								}, {
 									"name": "restroom_visits",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.08
 								}, {
 									"name": "kitchen_time",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.02
 								}, {
 									"name": "kitchen_visits",
 									"level": 4,
-									"weight": 0.02
+									"weight": 0.08
 								}, {
 									"name": "bathroom_time",
 									"level": 4,
-									"weight": 0.25
+									"weight": -0.02
 								}, {
 									"name": "bathroom_visits",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.08
 								}
 							]
 						}, {
@@ -158,15 +158,15 @@
 							[{
 									"name": "home_time",
 									"level": 4,
-									"weight": 0.25
+									"weight": -0.4
 								}, {
 									"name": "outdoor_num",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.2
 								}, {
 									"name": "outdoor_time",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.4
 								}
 							]
 						}
@@ -187,15 +187,15 @@
 							[{
 									"name": "kitchen_time",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.1
 								}, {
 									"name": "kitchen_visits",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.1
 								}, {
 									"name": "meals_num",
 									"level": 4,
-									"weight": 0.25
+									"weight": 0.8
 								}
 							]
 						}, {
@@ -358,7 +358,7 @@
 							[{
 									"name": "sleep_time",
 									"level": 4,
-									"weight": 0.25
+									"weight": 1
 								}
 							]
 						}, {

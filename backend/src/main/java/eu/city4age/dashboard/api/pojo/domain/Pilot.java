@@ -114,7 +114,7 @@ public class Pilot implements Serializable {
 			return YearMonth
 					.from(this.latestConfigurationUpdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());*/
 		} else {
-			return YearMonth.of(2017, 1);
+			return YearMonth.of(2016, 12);
 		}
 	}
 
