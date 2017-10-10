@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.persist.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
@@ -38,6 +39,9 @@ public class GeriatricFactorRepositoryTest {
 	
 	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
+	
+	@Autowired
+	private DetectionVariableTypeRepository detectionVariableTypeRepository;
 	
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
@@ -62,73 +66,83 @@ public class GeriatricFactorRepositoryTest {
 		UserInRole userInRole = new UserInRole();
 		userInRole.setId(1L);
 		userInRole.setPilotCode("LCC");
-		userInRoleRepository.save(userInRole);
+		userInRole = userInRoleRepository.save(userInRole);
 		
 		UserInRole uir2 = new UserInRole ();
 		uir2.setId(2L);
 		uir2.setPilotCode("LCC");
-		userInRoleRepository.save(uir2);
+		uir2 = userInRoleRepository.save(uir2);
+		
+		DetectionVariableType dvt = DetectionVariableType.GEF;
+		dvt = detectionVariableTypeRepository.save(dvt);
 		
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
-		detectionVariableRepository.save(dv1);
+		dv1.setDetectionVariableName("DV1");
+		dv1 = detectionVariableRepository.save(dv1);
 		
 		DetectionVariable dv2 = new DetectionVariable();
 		dv2.setId(2L);
-		detectionVariableRepository.save(dv2);
+		dv2.setDetectionVariableName("DV2");
+		dv2 = detectionVariableRepository.save(dv2);
 		
 		TimeInterval ti1 = measuresService
 				.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		timeIntervalRepository.save(ti1);
+		//ti1 = timeIntervalRepository.save(ti1);
 		
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
 		pdv1.setPilotCode("LCC");
 		pdv1.setDetectionVariable(dv1);
 		pdv1.setDerivedDetectionVariable(dv2);
-		pilotDetectionVariableRepository.save(pdv1);
+		pdv1 = pilotDetectionVariableRepository.save(pdv1);
 		
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
 		pdv2.setId(2L);
 		pdv2.setPilotCode("LCC");
 		pdv2.setDetectionVariable(dv2);
 		pdv2.setDerivedDetectionVariable(dv1);
-		pilotDetectionVariableRepository.save(pdv2);
+		pdv2 = pilotDetectionVariableRepository.save(pdv2);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setId(1L);
 		gef1.setUserInRole(userInRole);
 		gef1.setDetectionVariable(dv1);
 		gef1.setTimeInterval(ti1);
-		geriatricFactorRepository.save(gef1);
+		gef1.setGefValue(new BigDecimal (1));
+		gef1 = geriatricFactorRepository.save(gef1);
 		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
 		gef2.setId(2L);
 		gef2.setUserInRole(userInRole);
 		gef2.setDetectionVariable(dv1);
 		gef2.setTimeInterval(ti1);
-		geriatricFactorRepository.save(gef2);
+		gef2.setGefValue(new BigDecimal (2));
+		gef2 = geriatricFactorRepository.save(gef2);
 		
 		GeriatricFactorValue gef3 = new GeriatricFactorValue();
 		gef3.setId(3L);
 		gef3.setUserInRole(userInRole);
 		gef3.setDetectionVariable(dv1);
 		gef3.setTimeInterval(ti1);
-		geriatricFactorRepository.save(gef3);
+		gef3.setGefValue(new BigDecimal (3));
+		gef3 = geriatricFactorRepository.save(gef3);
 		
 		GeriatricFactorValue gef4 = new GeriatricFactorValue();
 		gef4.setId(4L);
 		gef4.setUserInRole(uir2);
 		gef4.setDetectionVariable(dv1);
 		gef4.setTimeInterval(ti1);
-		geriatricFactorRepository.save(gef4);
+		gef4.setGefValue(new BigDecimal (4));
+		gef4 = geriatricFactorRepository.save(gef4);
 		
 		GeriatricFactorValue gef5 = new GeriatricFactorValue ();
 		gef5.setId(5L);
 		gef5.setUserInRole(userInRole);
 		gef5.setDetectionVariable(dv2);
 		gef5.setTimeInterval(ti1);
-		geriatricFactorRepository.save(gef5);
+		gef5.setGefValue(new BigDecimal (5));
+		gef5 = geriatricFactorRepository.save(gef5);
 		
 		List<GeriatricFactorValue> result = geriatricFactorRepository.findByDetectionVariableId(2L, 1L);
 		

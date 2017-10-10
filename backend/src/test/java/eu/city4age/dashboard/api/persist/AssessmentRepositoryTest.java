@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -90,58 +91,55 @@ public class AssessmentRepositoryTest {
 	@Rollback(true)
 	public void testFindForSelectedDataSet() throws Exception {
 		
-		System.out.println("1***Number of assessments in repository:"+assessmentRepository.findAll().size());
+		logger.info("1***Number of assessments in repository:" + assessmentRepository.findAll().size());
 		//data for assessment and other joined tables:
 
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
-		userInRoleRepository.save(uir1);
-
+		uir1 = userInRoleRepository.save(uir1);
 		UserInRole uir2 = new UserInRole();
 		uir2.setId(2L);
-		userInRoleRepository.save(uir2);
+		uir2 = userInRoleRepository.save(uir2);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setGefValue(new BigDecimal("5"));
 		gef1.setUserInRole(uir1);
-		geriatricFactorRepository.save(gef1);
-		
+		gef1 = geriatricFactorRepository.save(gef1);		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
 		gef2.setGefValue(new BigDecimal("6"));
 		gef2.setUserInRole(uir2);
-		geriatricFactorRepository.save(gef2);
+		gef2 = geriatricFactorRepository.save(gef2);
 
 		Role r1 = new Role();
 		r1.setId(1L);
-		roleRepository.save(r1);
+		r1 = roleRepository.save(r1);		
+		Role r2 = new Role();
+		r2.setId(2L);
+		r2 = roleRepository.save(r2);
 
-
-		AssessedGefValueSet ag1 = new AssessedGefValueSet();
+		/*
+		 * these seem to be added automaticaly, no need for manual addition
+		 * AssessedGefValueSet ag1 = new AssessedGefValueSet();
 		ag1.setGefValueId(1);
 		ag1.setAssessmentId(1);
-		assessedGefValuesRepository.save(ag1);
-		
+		ag1 = assessedGefValuesRepository.save(ag1);		
 		AssessedGefValueSet ag2 = new AssessedGefValueSet();
 		ag2.setGefValueId(2);
 		ag2.setAssessmentId(2);
-		assessedGefValuesRepository.save(ag2);
-
+		ag2 = assessedGefValuesRepository.save(ag2);
+		
 		AssessmentAudienceRole ar1 = new AssessmentAudienceRole();
 		ar1.setAssessmentId(1);
 		ar1.setRoleId(1);
 		ar1.setAssigned(new Timestamp(System.currentTimeMillis()));
-		audienceRolesRepository.save(ar1);
-		
+		ar1 = audienceRolesRepository.save(ar1);		
 		AssessmentAudienceRole ar2 = new AssessmentAudienceRole();
 		ar2.setAssessmentId(2);
 		ar2.setRoleId(2);
 		ar2.setAssigned(new Timestamp(System.currentTimeMillis()));
-		audienceRolesRepository.save(ar2);
+		ar2 = audienceRolesRepository.save(ar2); */
 		
-		Role r2 = new Role();
-		r2.setId(2L);
-		roleRepository.save(r2);
-			
+					
 		//data for second assessment and joined tables:
 
 
@@ -152,7 +150,7 @@ public class AssessmentRepositoryTest {
 		aa1.getRoles().add(r1);
 		aa1.setDataValidity('F');//F,Q
 		aa1.setRiskStatus('W');//W,A
-		assessmentRepository.save(aa1);
+		aa1 = assessmentRepository.save(aa1);
 	
 		Assessment aa2 = new Assessment();
 		aa2.setId(2L);
@@ -161,7 +159,7 @@ public class AssessmentRepositoryTest {
 		aa2.getRoles().add(r2);
 		aa2.setDataValidity('F');//F,Q
 		aa2.setRiskStatus('W');//W,A
-		assessmentRepository.save(aa2);
+		aa2 = assessmentRepository.save(aa2);
 
 		Assessment aa3 = new Assessment();
 		aa3.setId(3L);
@@ -170,7 +168,7 @@ public class AssessmentRepositoryTest {
 		aa3.getRoles().add(r1);
 		aa3.setDataValidity('Q');//F,Q
 		aa3.setRiskStatus('W');//W,A
-		assessmentRepository.save(aa3);
+		aa3 = assessmentRepository.save(aa3);
 		
 		Assessment aa4 = new Assessment();
 		aa4.setId(4L);
@@ -179,7 +177,7 @@ public class AssessmentRepositoryTest {
 		aa4.getRoles().add(r1);
 		aa4.setDataValidity('F');//F,Q
 		aa4.setRiskStatus('A');//W,A
-		assessmentRepository.save(aa4);
+		aa4 = assessmentRepository.save(aa4);
 		
 		Assessment aa5 = new Assessment();
 		aa5.setId(5L);
@@ -188,20 +186,19 @@ public class AssessmentRepositoryTest {
 		aa5.getRoles().add(r1);
 		aa5.setDataValidity('F');//F,Q
 		aa5.setRiskStatus('W');//W,A
-		assessmentRepository.save(aa5);
+		aa5 = assessmentRepository.save(aa5);
 		
 		Assessment aa6 = new Assessment();
 		aa6.setGeriatricFactorValue(gef2);
 		aa6.setId(6L);
-		assessmentRepository.save(aa6);
+		aa6 = assessmentRepository.save(aa6);
 		
 		Assessment aa7 = new Assessment();
-		assessmentRepository.save(aa7);
+		aa7.setId(7L);
+		aa7 = assessmentRepository.save(aa7);
 		
-		System.out.println("2***Number of assessments in repository:"+assessmentRepository.findAll().size());
-		
-
-		
+		logger.info ("2***Number of assessments in repository:" + assessmentRepository.findAll().size());
+		Assert.assertEquals(7, assessmentRepository.findAll().size());		
 		
 		List<Filter> filters = new ArrayList<Filter>();
 		List<Object> inParams = new ArrayList<Object>();
@@ -247,19 +244,20 @@ public class AssessmentRepositoryTest {
 
 		
 		Assert.assertEquals(7, assessmentRepository.findAll().size());
-		System.out.println("1BEFORE***(BEFORE filters)Number of assessments in repository:"+assessmentRepository.findAll().size());
+		logger.info("1BEFORE***(BEFORE filters)Number of assessments in repository:" + assessmentRepository.findAll().size());
 		
 		List<Filter> noFilters = new ArrayList<Filter>();
 		HashMap<String, Object> inQueryParams2 = new HashMap<String, Object>();
-		System.out.println("1@@@ assessmentRepository.findAll().size(): "+assessmentRepository.findAll().size());
+		logger.info ("1@@@ assessmentRepository.findAll().size(): "+assessmentRepository.findAll().size());
 		List<Assessment> resultWithoutFilters = assessmentRepository.doQueryWithFilter(noFilters , "findForSelectedDataSet",
 				inQueryParams);
-		System.out.println("2@@@ assessmentRepository.findAll().size(): "+assessmentRepository.findAll().size());
+		logger.info ("2@@@ assessmentRepository.findAll().size() no filters: " + assessmentRepository.findAll().size());
+		Assert.assertEquals(7, assessmentRepository.findAll().size());
 		
 		List<Assessment> resultWithFilters = assessmentRepository.doQueryWithFilter(filters, "findForSelectedDataSet",
-				inQueryParams);
-		
-		System.out.println("3@@@ assessmentRepository.findAll().size(): "+assessmentRepository.findAll().size());
+				inQueryParams);		
+		logger.info ("3@@@ assessmentRepository.findAll().size() filters: " + assessmentRepository.findAll().size());
+				
 		//filters are on:
 		Assert.assertNotNull(resultWithFilters);
 		Assert.assertNotNull(resultWithoutFilters);
@@ -267,13 +265,12 @@ public class AssessmentRepositoryTest {
 		Assert.assertEquals(5, resultWithoutFilters.size());
 		Assert.assertEquals(2, resultWithFilters.size());
 
-		System.out.println("2ENABLED***(filters ENABLED)Number of assessments in repository:"+assessmentRepository.findAll().size());
-		System.out.println("2ENABLED***For query without filter, FILTERS ENABLED number of assessments:"+resultWithoutFilters.size());
-		System.out.println("2ENABLED***For query WITH FILTERS, FILTERS ENABLED number of assessments:"+resultWithFilters.size());
+		logger.info ("2ENABLED***(filters ENABLED)Number of assessments in repository:" + assessmentRepository.findAll().size());
+		logger.info ("2ENABLED***For query without filter, FILTERS ENABLED number of assessments:" + resultWithoutFilters.size());
+		logger.info ("2ENABLED***For query WITH FILTERS, FILTERS ENABLED number of assessments:" + resultWithFilters.size());
 		
 		//Disabling filters:
-		assessmentRepository.disableFilter("riskStatus");
-		
+		assessmentRepository.disableFilter("riskStatus");		
 		
 		//After riskStatus filter switched off:
 		Assert.assertNotNull(resultWithFilters);
@@ -281,13 +278,10 @@ public class AssessmentRepositoryTest {
 		Assert.assertEquals(4, assessmentRepository.findAll().size());
 		Assert.assertEquals(5, resultWithoutFilters.size());
 		Assert.assertEquals(2, resultWithFilters.size());
-		logger.info("end of testFindForSelectedDataSet");
-
-		System.out.println("3ONE DISABLED***(after riskStatus (1) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
-		System.out.println("3ONE DISABLED***For query without filter, AFTER riskStatus (1) FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
-		System.out.println("3ONE DISABLED***For query WITH FILTERS, AFTER riskStatus (1) FILTERS DISABLED number of assessments:"+resultWithFilters.size());
 		
-
+		logger.info ("3ONE DISABLED***(after riskStatus (1) filter disabled)Number of assessments in repository:" + assessmentRepository.findAll().size());
+		logger.info ("3ONE DISABLED***For query without filter, AFTER riskStatus (1) FILTERS DISABLED number of assessments:" + resultWithoutFilters.size());
+		logger.info ("3ONE DISABLED***For query WITH FILTERS, AFTER riskStatus (1) FILTERS DISABLED number of assessments:" + resultWithFilters.size());
 
 		assessmentRepository.disableFilter("dataValidity");
 		
@@ -297,13 +291,10 @@ public class AssessmentRepositoryTest {
 		Assert.assertEquals(7, assessmentRepository.findAll().size());
 		Assert.assertEquals(5,resultWithoutFilters.size());
 		Assert.assertEquals(2, resultWithFilters.size());
-		logger.info("end of testFindForSelectedDataSet");
 
-		System.out.println("4TWO DISABLED***(after dataValidity (2) filter disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
-		System.out.println("4TWO DISABLED***For query without filter, AFTER dataValidity (2)FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
-		System.out.println("4TWO DISABLED***For query WITH FILTERS, AFTER dataValidity (2)FILTERS DISABLED number of assessments:"+resultWithFilters.size());
-		
-
+		logger.info ("4TWO DISABLED***(after dataValidity (2) filter disabled)Number of assessments in repository:" + assessmentRepository.findAll().size());
+		logger.info ("4TWO DISABLED***For query without filter, AFTER dataValidity (2)FILTERS DISABLED number of assessments:" + resultWithoutFilters.size());
+		logger.info ("4TWO DISABLED***For query WITH FILTERS, AFTER dataValidity (2)FILTERS DISABLED number of assessments:" + resultWithFilters.size());
 		
 		assessmentRepository.disableFilter("userInRoleId");
 		
@@ -313,14 +304,24 @@ public class AssessmentRepositoryTest {
 		Assert.assertEquals(7, assessmentRepository.findAll().size());
 		Assert.assertEquals(5,resultWithoutFilters.size());
 		Assert.assertEquals(2, resultWithFilters.size());
-		logger.info("end of testFindForSelectedDataSet");
+				
+		logger.info ("5ALL DISABLED***(after all filters disabled)Number of assessments in repository:" + assessmentRepository.findAll().size());
+		logger.info ("5ALL DISABLED***For query without filter, AFTER FILTERS DISABLED number of assessments:" + resultWithoutFilters.size());
+		logger.info ("5ALL DISABLED***For query WITH FILTERS, AFTER FILTERS DISABLED number of assessments:" + resultWithFilters.size());
 		
-		System.out.println("5ALL DISABLED***(after all filters disabled)Number of assessments in repository:"+assessmentRepository.findAll().size());
-		System.out.println("5ALL DISABLED***For query without filter, AFTER FILTERS DISABLED number of assessments:"+resultWithoutFilters.size());
-		System.out.println("5ALL DISABLED***For query WITH FILTERS, AFTER FILTERS DISABLED number of assessments:"+resultWithFilters.size());
+		//test sorting	
 		
+		List<Assessment> listA = resultWithoutFilters;		
+		logger.info("listA(0).assessmentId : " + listA.get(0).getId());
+		Assert.assertEquals(1, listA.get(0).getId ().intValue());
 		
-	
+		listA.sort(Comparator.comparing(Assessment::getRoleId).reversed());
+		logger.info("listA(0).assessmentId : " + listA.get(0).getId());
+		Assert.assertEquals(2, listA.get(0).getId ().intValue());
+		
+		listA.sort(Comparator.comparing(Assessment::getRoleId));
+		logger.info("listA(0).assessmentId : " + listA.get(0).getId());
+		Assert.assertEquals(1, listA.get(0).getId ().intValue());
 
 	}
 

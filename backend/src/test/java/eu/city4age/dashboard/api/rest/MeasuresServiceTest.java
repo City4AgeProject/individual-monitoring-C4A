@@ -56,15 +56,48 @@ public class MeasuresServiceTest {
 	public void getDailyMeasuresTest() throws Exception {
 
 		try {
-			String uri = "http://localhost:8080/C4A-dashboard/rest/measures/getDailyMeasures/userInRoleId/10/gesId/514";
-			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
-			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
-			if (!response.getStatusCode().equals(HttpStatus.OK)) {
-				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+			/*
+			 * insert in db for success: or run test/java/eu/city4age/dashboard/api/persist/VariationMeasureValueRepositoryTest::testFindByUserAndGes with rollback FALSE
+			 * 		cd_detection_variable: id = 91, detection_variable_name = MEA1, detection_variable_type = MEA
+			 *                             id = 95, detection_variable_name = MEA2, detection_variable_type = MEA
+			 *                             id = 98, detection_variable_name = MEA3, detection_variable_type = MEA
+			 *                             id = 514, detection_variable_name = GES, detection_variable_type = GES
+			 *      cd_detection_variable_type: MEA, GES
+			 *      md_pilot_detection_variable: id = 1, detection_variable_id = 91, derived_detection_variable_id = 514
+			 *                                   id = 2, detection_variable_id = 95, derived_detection_variable_id = 514
+			 *                                   id = 3, detection_variable_id = 98, derived_detection_variable_id = 514
+			 *      time_interval: id = 1, interval_start: 2017-03-05 00:00:00, interval_end: 2017-03-05 00:00:00
+			 *      user_in_role: id = 10
+			 *      variation_measure_value: id = 1, user_in_role = 10, measure_type_id = 91, time_interval_id = 1
+			 *                               id = 2, user_in_role = 10, measure_type_id = 95, time_interval_id = 1
+			 *                               id = 3, user_in_role = 10, measure_type_id = 98, time_interval_id = 1
+			 */
+			String uri1 = "http://localhost:8080/C4A-dashboard/rest/measures/getDailyMeasures/userInRoleId/10/gesId/514";
+			ResponseEntity<String> response1 = rest.getForEntity(uri1, String.class);
+			if (!response1.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response1.getStatusCode());
 			}
 			logger.info("Output from Server (INSIDE getDailyMeasures).... ");
-			logger.info(response);
-			logger.info("3: " + response.getBody());
+			logger.info(response1);
+			logger.info("1.1: " + response1.getBody());
+			
+			String uri2 = "http://localhost:8080/C4A-dashboard/rest/measures/getDailyMeasures/userInRoleId/9/gesId/514";
+			ResponseEntity<String> response2 = rest.getForEntity(uri2, String.class);
+			if (!response1.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response2.getStatusCode());
+			}
+			logger.info("Output from Server (INSIDE getDailyMeasures).... ");
+			logger.info(response2);
+			logger.info("1.2: " + response2.getBody());
+			
+			String uri3 = "http://localhost:8080/C4A-dashboard/rest/measures/getDailyMeasures/userInRoleId/10/gesId/513";
+			ResponseEntity<String> response3 = rest.getForEntity(uri3, String.class);
+			if (!response3.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response3.getStatusCode());
+			}
+			logger.info("Output from Server (INSIDE getDailyMeasures).... ");
+			logger.info(response3);
+			logger.info("1.3: " + response3.getBody());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,10 +106,10 @@ public class MeasuresServiceTest {
 	}
 		
 	@Test
-	public final void computeMeasuresTest() throws Exception {
+	public final void computeFromMeasuresTest() throws Exception {
 		
 		try {
-			String uri = "http://localhost:8080/C4A-dashboard/rest/measures/computeMeasures";
+			String uri = "http://localhost:8080/C4A-dashboard/rest/measures/computeFromMeasures";
 			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
 			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
 			if (!response.getStatusCode().equals(HttpStatus.OK)) {
@@ -96,15 +129,32 @@ public class MeasuresServiceTest {
 	public void getNuiValuesTest() throws Exception {
 
 		try {
-			String uri = "http://localhost:8080/C4A-dashboard/rest/measures/getNuiValues/userInRoleId/68/detectionVariableId/514";
-			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
-			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
-			if (!response.getStatusCode().equals(HttpStatus.OK)) {
-				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+			String uri1 = "http://localhost:8080/C4A-dashboard/rest/measures/getNuiValues/userInRoleId/1/detectionVariableId/1";
+			ResponseEntity<String> response1 = rest.getForEntity(uri1, String.class);
+			if (!response1.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response1.getStatusCode());
 			}
 			logger.info("Output from Server (INSIDE getNuiValuesTest).... ");
-			logger.info(response);
-			logger.info("2: " + response.getBody());
+			logger.info(response1);
+			logger.info("3.1: " + response1.getBody());
+			
+			String uri2 = "http://localhost:8080/C4A-dashboard/rest/measures/getNuiValues/userInRoleId/2/detectionVariableId/1";
+			ResponseEntity<String> response2 = rest.getForEntity(uri2, String.class);
+			if (!response2.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response2.getStatusCode());
+			}
+			logger.info("Output from Server (INSIDE getNuiValuesTest).... ");
+			logger.info(response2);
+			logger.info("3.2: " + response2.getBody());
+			
+			String uri3 = "http://localhost:8080/C4A-dashboard/rest/measures/getNuiValues/userInRoleId/1/detectionVariableId/2";
+			ResponseEntity<String> response3 = rest.getForEntity(uri3, String.class);
+			if (!response3.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response3.getStatusCode());
+			}
+			logger.info("Output from Server (INSIDE getNuiValuesTest).... ");
+			logger.info(response3);
+			logger.info("3.3: " + response3.getBody());
 
 		} catch (Exception e) {
 			e.printStackTrace();

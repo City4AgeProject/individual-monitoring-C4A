@@ -19,8 +19,7 @@ public class CodebookServiceTest {
 	@Test
 	public void selectTableTest() throws Exception {
 		try {
-			String uri = "http://localhost:8080/C4A-dashboard/rest/codebook/selectTable/assessment";
-			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
+			String uri = "http://localhost:8080/C4A-dashboard/rest/codebook/selectTable/cr_profile";
 			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
 			if (!response.getStatusCode().equals(HttpStatus.OK)) {
 				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());

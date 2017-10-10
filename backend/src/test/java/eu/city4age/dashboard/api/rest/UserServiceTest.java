@@ -20,16 +20,41 @@ public class UserServiceTest {
 	public void loginTest() throws Exception {
 
 		try {
+			/*
+			 * insert in db:
+			 * 		cd_role: id = 6
+			 *               id = 1
+			 *      user_in_role: id = 1, pilot_code = LCC, user_in_system = 1, role_id = 6
+			 *                    id = 2, pilot_code = LCC, user_in_system = 2, role_id = 1
+			 *      pilot: id = 1, pilot_name = Lecce, pilot_code = LCC
+			 */
 
-			String uri = "http://localhost:8080/C4A-dashboard/rest/users/login/username/letizia/password/lventurin1";
-			HttpHeaders headers = rest.getForEntity(uri, String.class).getHeaders();
-			ResponseEntity<String> response = rest.getForEntity(uri, String.class);
-			if (!response.getStatusCode().equals(HttpStatus.OK)) {
-				throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+			String uri1 = "http://localhost:8080/C4A-dashboard/rest/users/login/username/letizia/password/lventurin1";
+			ResponseEntity<String> response1 = rest.getForEntity(uri1, String.class);
+			if (!response1.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response1.getStatusCode());
 			}
 			logger.info("Output from Server .... ");
-			logger.info(response);
-			logger.info("1: " + response.getBody());
+			logger.info(response1);
+			logger.info("1.1: " + response1.getBody());
+			
+			String uri2 = "http://localhost:8080/C4A-dashboard/rest/users/login/username/aaaa/password/aaaa";
+			ResponseEntity<String> response2 = rest.getForEntity(uri2, String.class);
+			if (!response2.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response2.getStatusCode());
+			}
+			logger.info("Output from Server .... ");
+			logger.info(response2);
+			logger.info("1.2: " + response2.getBody());
+			
+			String uri3 = "http://localhost:8080/C4A-dashboard/rest/users/login/username/bbbb/password/bbbb";
+			ResponseEntity<String> response3 = rest.getForEntity(uri3, String.class);
+			if (!response3.getStatusCode().equals(HttpStatus.OK)) {
+				throw new RuntimeException("Failed : HTTP error code : " + response3.getStatusCode());
+			}
+			logger.info("Output from Server .... ");
+			logger.info(response3);
+			logger.info("1.3: " + response3.getBody());
 		} catch (Exception e) {
 			e.printStackTrace();
 			Assert.fail();

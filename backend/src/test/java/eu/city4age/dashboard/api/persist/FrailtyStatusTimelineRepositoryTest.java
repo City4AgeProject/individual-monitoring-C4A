@@ -51,40 +51,40 @@ public class FrailtyStatusTimelineRepositoryTest {
 
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
-		userInRoleRepository.save(uir1);
+		uir1 = userInRoleRepository.save(uir1);
 		
 		UserInRole uir2 = new UserInRole();
 		uir2.setId(2L);
-		userInRoleRepository.save(uir2);
+		uir2 = userInRoleRepository.save(uir2);
 
 		FrailtyStatus fs = new FrailtyStatus();
 		fs.setFrailtyStatus("F");
 		fs.setFrailtyStatusDescription("Frail");
-		frailtyStatusRepository.save(fs);
+		fs = frailtyStatusRepository.save(fs);
 
 		FrailtyStatusTimeline fst1 = new FrailtyStatusTimeline();
 		fst1.setTimeIntervalId(1L);
-		fst1.setUserInRoleId(1L);
+		fst1.setUserInRoleId(uir1.getId());
 		fst1.setFrailtyStatus("F");
 		fst1.setChanged(new Date());
 		fst1.setChangedBy(uir1);
-		frailtyStatusTimelineRepository.save(fst1);
+		fst1 = frailtyStatusTimelineRepository.save(fst1);
 
 		FrailtyStatusTimeline fst2 = new FrailtyStatusTimeline();
 		fst2.setTimeIntervalId(2L);
-		fst2.setUserInRoleId(2L);
+		fst2.setUserInRoleId(uir2.getId());
 		fst2.setFrailtyStatus("Q");
 		fst2.setChanged(new Date());
 		fst2.setChangedBy(uir2);
-		frailtyStatusTimelineRepository.save(fst2);
+		fst2 = frailtyStatusTimelineRepository.save(fst2);
 
 		FrailtyStatusTimeline fst3 = new FrailtyStatusTimeline();
 		fst3.setTimeIntervalId(3L);
-		fst3.setUserInRoleId(1L);
+		fst3.setUserInRoleId(uir1.getId());
 		fst3.setFrailtyStatus("W");
 		fst3.setChanged(new Date());
 		fst3.setChangedBy(uir1);
-		frailtyStatusTimelineRepository.save(fst3);
+		fst3 = frailtyStatusTimelineRepository.save(fst3);
 
 		List<TimeInterval> timeintervals = Arrays.asList(new TimeInterval(), new TimeInterval(), new TimeInterval());
 

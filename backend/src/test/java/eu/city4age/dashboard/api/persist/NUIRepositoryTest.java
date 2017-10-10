@@ -142,35 +142,35 @@ public class NUIRepositoryTest {
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(uirId);
 		uir1.setPilotCode("LCC");
-		userInRoleRepository.save(uir1);
+		uir1 = userInRoleRepository.save(uir1);
 		
 		UserInRole uir2 = new UserInRole ();
 		uir2.setId(2L);
 		uir2.setPilotCode("LCC");
-		userInRoleRepository.save(uir2);
+		uir2 = userInRoleRepository.save(uir2);
 		
 		UserInRole uir3 = new UserInRole ();
 		uir3.setId(3L);
 		uir3.setPilotCode("ATH");
-		userInRoleRepository.save(uir3);
+		uir3 = userInRoleRepository.save(uir3);
 
 		DetectionVariableType dvt1 = DetectionVariableType.GES;
-		detectionVariableTypeRepository.save(dvt1);
+		dvt1 = detectionVariableTypeRepository.save(dvt1);
 
 		DetectionVariableType dvt2 = DetectionVariableType.NUI;
-		detectionVariableTypeRepository.save(dvt2);
+		dvt2 = detectionVariableTypeRepository.save(dvt2);
 
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(dvId);
 		dv1.setDetectionVariableName("Ges");
 		dv1.setDetectionVariableType(dvt1);
-		detectionVariableRepository.save(dv1);
+		dv1 = detectionVariableRepository.save(dv1);
 
 		DetectionVariable dv2 = new DetectionVariable();
 		dv2.setId(2L);
 		dv2.setDetectionVariableName("Nui");
 		dv2.setDetectionVariableType(dvt2);
-		detectionVariableRepository.save(dv2);
+		dv2 = detectionVariableRepository.save(dv2);
 
 		NumericIndicatorValue nui1 = new NumericIndicatorValue();
 		nui1.setId(1L);
@@ -178,7 +178,7 @@ public class NUIRepositoryTest {
 		nui1.setDetectionVariable(dv2);
 		nui1.setUserInRole(uir1);
 		nui1.setTimeInterval(ti1);
-		nuiRepository.save(nui1);
+		nui1 = nuiRepository.save(nui1);
 
 		NumericIndicatorValue nui2 = new NumericIndicatorValue();
 		nui2.setId(2L);
@@ -186,7 +186,7 @@ public class NUIRepositoryTest {
 		nui2.setDetectionVariable(dv2);
 		nui2.setUserInRole(uir1);
 		nui2.setTimeInterval(ti2);
-		nuiRepository.save(nui2);
+		nui2 = nuiRepository.save(nui2);
 		
 		NumericIndicatorValue nui3 = new NumericIndicatorValue();
 		nui3.setId(3L);
@@ -194,7 +194,7 @@ public class NUIRepositoryTest {
 		nui3.setDetectionVariable(dv2);
 		nui3.setUserInRole(uir2);
 		nui3.setTimeInterval(ti1);
-		nuiRepository.save(nui3);
+		nui3 = nuiRepository.save(nui3);
 		
 		NumericIndicatorValue nui4 = new NumericIndicatorValue();
 		nui4.setId(4L);
@@ -202,7 +202,7 @@ public class NUIRepositoryTest {
 		nui4.setDetectionVariable(dv2);
 		nui4.setUserInRole(uir3);
 		nui4.setTimeInterval(ti2);
-		nuiRepository.save(nui4);
+		nui4 = nuiRepository.save(nui4);
 		
 		NumericIndicatorValue nui5 = new NumericIndicatorValue();
 		nui5.setId(5L);
@@ -210,19 +210,19 @@ public class NUIRepositoryTest {
 		nui5.setDetectionVariable(dv1);
 		nui5.setUserInRole(uir1);
 		nui5.setTimeInterval(ti2);
-		nuiRepository.save(nui5);
+		nui5 = nuiRepository.save(nui5);
 				
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
 		pdv1.setDetectionVariable(dv2);
 		pdv1.setDerivedDetectionVariable(dv1);
-		pilotDetectionVariableRepository.save(pdv1);
+		pdv1 = pilotDetectionVariableRepository.save(pdv1);
 		
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable();
 		pdv2.setId(2L);
 		pdv2.setDetectionVariable(dv1);
 		pdv2.setDerivedDetectionVariable(dv2);
-		pilotDetectionVariableRepository.save(pdv2);
+		pdv2 = pilotDetectionVariableRepository.save(pdv2);
 
 		List<NumericIndicatorValue> result = nuiRepository.getNuisForSelectedGes(uirId, dvId);
 		Assert.assertNotNull(result);
