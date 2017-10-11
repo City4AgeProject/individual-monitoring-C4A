@@ -106,7 +106,7 @@ CREATE OR REPLACE VIEW "testtest"."vw_mea_nui_derivation_per_pilots" AS
     vw_detection_variable_derivation_per_user_in_role.pilot_code,
     vw_detection_variable_derivation_per_user_in_role.detection_variable_id AS mea_id,
     vw_detection_variable_derivation_per_user_in_role.detection_variable_name AS mea_name,
-    vw_detection_variable_derivation_per_user_in_role.derivation_function_formula AS formula,
+	vw_detection_variable_derivation_per_user_in_role.derivation_function_formula AS formula,
     vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_id AS derived_nui_id,
     vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_name AS derived_nui_name,
     vw_detection_variable_derivation_per_user_in_role.derivation_weight
@@ -157,8 +157,8 @@ CREATE OR REPLACE VIEW "testtest"."vw_gef_values_persisted_source_ges_types" AS
     ti.typical_period,
     ti.interval_end
    FROM ((testtest.vw_detection_variable_derivation_per_user_in_role vggd
-     JOIN testtest.geriatric_factor_value gef_v ON (((gef_v.gef_type_id = vggd.derived_detection_variable_id) AND (gef_v.user_in_role_id = vggd.user_in_role_id))))
+     JOIN testtest.geriatric_factor_value gef_v ON (((gef_v.gef_type_id = vggd.detection_variable_id) AND (gef_v.user_in_role_id = vggd.user_in_role_id))))
      JOIN testtest.time_interval ti ON ((gef_v.time_interval_id = ti.id)))
-  WHERE ((vggd.derived_detection_variable_type)::text = ANY ((ARRAY['GEF'::character varying, 'GFG'::character varying, 'OVL'::character varying])::text[]));
+  WHERE ((vggd.detection_variable_type)::text = ANY (ARRAY[('GES'::character varying)::text, ('GEF'::character varying)::text, ('GFG'::character varying)::text, ('OVL'::character varying)::text]));
 
 ALTER TABLE "testtest"."vw_gef_values_persisted_source_ges_types" OWNER TO "city4age_dba";

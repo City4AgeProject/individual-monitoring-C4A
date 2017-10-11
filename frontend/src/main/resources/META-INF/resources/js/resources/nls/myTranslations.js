@@ -3,20 +3,20 @@ define({
 				
 				//FROM DB
 				role_lge: "Local/pilot geriatrician",
-                role_pge:"Project geriatrician",
-                role_bhs:"Behavioural scientist",
-                role_cg:"Formal caregiver",
-                role_cpp:"City policy planner",
-                role_cr:"Care recipient",
-                role_ece:"Elderly/community centre executive",
-                role_epi:"Epidemiologist",
-                role_gp:"General practioner",
-                role_ifc:"Informal caregiver",
-                role_mdr:"Medical researcher",
-                role_mpr:"Municipality representative",
-                role_pss:"Pilot source system",
-                role_sam:"Sheltered accommodation manager",
-                role_ssr:"Social service representative",
+                                role_pge:"Project geriatrician",
+                                role_bhs:"Behavioural scientist",
+                                role_cg:"Formal caregiver",
+                                role_cpp:"City policy planner",
+                                role_cr:"Care recipient",
+                                role_ece:"Elderly/community centre executive",
+                                role_epi:"Epidemiologist",
+                                role_gp:"General practioner",
+                                role_ifc:"Informal caregiver",
+                                role_mdr:"Medical researcher",
+                                role_mpr:"Municipality representative",
+                                role_pss:"Pilot source system",
+                                role_sam:"Sheltered accommodation manager",
+                                role_ssr:"Social service representative",
 
 				ges:"Geriatric sub-factor" ,
 				gef:"Geriatric factor" ,
@@ -199,7 +199,7 @@ define({
 				morphology:"Morphology" ,
 				valid_data: "Valid data" ,
 				questionable_data: "Questionable data", 
-                faulty_data: "Faulty data",
+                                faulty_data: "Faulty data",
 				
 				//detection_gef page
 				fit:"Fit",
@@ -214,10 +214,10 @@ define({
 				visualisations:"Visualisations",
 				geriatric_factors:" Geriatric factors",
 				
-                //detection_ges page
-                gender:"Gender:",
-                //"Select GEF:",
-                //"Period:",
+                                //detection_ges page
+                                gender:"Gender:",
+                                //"Select GEF:",
+                                //"Period:",
 				
 				//anagraph-assessment-view component
 				annotations_assessments: "annotations/assessments",
@@ -238,33 +238,33 @@ define({
 				warning_data: "Warning data",
 				no_risk_data: "No risk data",
                 
-                //assessments-preview
-                assessments: " assessment(s) " ,
-                view_annotations :"View annotations" ,
-                view_daily_measures :"View daily measures" ,
-                dpmw:" data points marked with " ,
-                warning_status: "Warning status" , 
-                alert_status: "Alert status" ,
-                
-                //add-assessment
-                no_data_set_selected:"No data set selected!" ,
-                full_annotation_comment: "Full annotation comment:" , 
-                chose_type :"Choose type" ,
-                for_select_role :"For (select multiple)" ,
-                comment :"Comment" ,
-                no_comment:"No comment yet." ,
-                chose_risk :"Choose risk..." ,
-                chose_data_validity:"Choose data validity..." ,
-                post_btn:"Post" ,
-                cancel_btn: "Cancel" ,
-                //Temporary keys
-                risk_status_a: "Risk alert" ,
-                risk_status_w: "Risk warning" ,
-                risk_status_n: "No Risk" ,
-                
-                //assessment-list
-                read_more :"Read more" ,
-                show_on_diagram :"Show on diagram"
+                                //assessments-preview
+                                assessments: " assessment(s) " ,
+                                view_annotations :"View annotations" ,
+                                view_daily_measures :"View daily measures" ,
+                                dpmw:" data points marked with " ,
+                                warning_status: "Warning status" , 
+                                alert_status: "Alert status" ,
+
+                                //add-assessment
+                                no_data_set_selected:"No data set selected!" ,
+                                full_annotation_comment: "Full annotation comment:" , 
+                                chose_type :"Choose type" ,
+                                for_select_role :"For (select multiple)" ,
+                                comment :"Comment" ,
+                                no_comment:"No comment yet." ,
+                                chose_risk :"Choose risk..." ,
+                                chose_data_validity:"Choose data validity..." ,
+                                post_btn:"Post" ,
+                                cancel_btn: "Cancel" ,
+                                //Temporary keys
+                                risk_status_a: "Risk alert" ,
+                                risk_status_w: "Risk warning" ,
+                                risk_status_n: "No Risk" ,
+
+                                //assessment-list
+                                read_more :"Read more" ,
+                                show_on_diagram :"Show on diagram"
 
 	},
 	

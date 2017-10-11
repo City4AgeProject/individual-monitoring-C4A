@@ -12,7 +12,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.usersOuter = ko.observableArray();
    			
                 var pilotCode = sessionStorage.getItem("pilotcode");
-                               
+                
                 $.getJSON(CARE_RECIPIENT_ALL + "/pilotCode/" + pilotCode).
                 
                        then(function (users) {
@@ -37,7 +37,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                 	frailNotice = this.frailtyNotice;
                                 }
 
-                                self.data.push({
+                                self.data.push({                                   
                                     cr_id: this.userId,
                                     fr_status: frailStatus,
                                     fr_notice: frailNotice,
@@ -58,8 +58,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                         });
 
-
                         
+                
                 self.dataSource = new oj.ArrayTableDataSource(
 
                         self.data, {

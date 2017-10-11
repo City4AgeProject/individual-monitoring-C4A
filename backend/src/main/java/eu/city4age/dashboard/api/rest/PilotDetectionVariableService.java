@@ -1,7 +1,5 @@
 package eu.city4age.dashboard.api.rest;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -14,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -53,8 +52,8 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.ex.ConfigurationValidityDateException;
 import eu.city4age.dashboard.api.pojo.ex.JsonValidationException;
 import eu.city4age.dashboard.api.pojo.ex.MissingKeyException;
-import eu.city4age.dashboard.api.pojo.json.Configuration;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
+import eu.city4age.dashboard.api.pojo.json.desobj.Configuration;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gef;
 import eu.city4age.dashboard.api.pojo.json.desobj.Ges;
 import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
@@ -107,7 +106,7 @@ public class PilotDetectionVariableService {
 			throws FileNotFoundException, IOException, ProcessingException, ContainerException, JsonParseException,
 			JsonValidationException, MissingKeyException, ConfigurationValidityDateException {
 
-		String response = "";
+		StringBuilder response = new StringBuilder();
 
 		JsonSchema jsonSchemaFromResource = ValidationUtils
 				.getSchemaNodeFromResource("/PilotConfigurationJsonValidator.json");
@@ -245,11 +244,17 @@ public class PilotDetectionVariableService {
 				}
 
 				List<PilotDetectionVariable> AllFromDB = pilotDetectionVariableRepository.findAll();
-
-				response += "\n\nNumber of ALL rows for all Pilot Codes and Valid Dates : " + startingNumberOfRows
-						+ "\n\tNumber of rows only For Pilot Code: " + pilotCode + "\nand Valid From Date: " + validFrom
-						+ " : " + "\n\tNumber of inserted rows from configuration file is: " + confCounter.getInserted()
-						+ "\n\tNumber of updated rows from configuration file is: " + confCounter.getUpdated();
+				
+				response.append("\n\nNumber of ALL rows for all Pilot Codes and Valid Dates : ");
+				response.append(startingNumberOfRows);
+				response.append("\n\tNumber of rows only For Pilot Code: ");
+				response.append(pilotCode);
+				response.append("\nand Valid From Date: ");
+				response.append(validFrom);
+				response.append(" : \n\tNumber of inserted rows from configuration file is: ");
+				response.append(confCounter.getInserted());
+				response.append("\n\tNumber of updated rows from configuration file is: ");
+				response.append(confCounter.getUpdated());
 
 				boolean exists;
 				int removed = 0;
@@ -347,15 +352,14 @@ public class PilotDetectionVariableService {
 						pilotDetectionVariableRepository.delete(one);
 						removed++;
 					}
-
 				}
-
-				response += "\n\tNumber of deleted rows is: " + removed + "\n\tNumber of rows in DB after update is: "
-						+ pilotDetectionVariableRepository.findAll().size();
+				response.append("\n\tNumber of deleted rows is: ");
+				response.append(removed);
+				response.append("\n\tNumber of rows in DB after update is: ");
+				response.append(pilotDetectionVariableRepository.findAll().size());
 			}
 		} else {
-
-			response += "Json is not valid!\nProperty(ies) is/are missing or it has incorrect data type!";
+			response.append("Json is not valid!\nProperty(ies) is/are missing or it has incorrect data type!");
 
 			Iterator<?> itr = ValidationUtils.getReport(jsonSchemaFromResource, jsonNodeAsString).iterator();
 			ProcessingMessage message;
@@ -368,54 +372,56 @@ public class PilotDetectionVariableService {
 				if (pointer.length() > 2) {
 					pointer = pointer.substring(2, pointer.length() - 1);
 					String[] parts = pointer.split("/");
-					String c = " ";
-					response += "\nError in configuration json file at location:";
+					StringBuilder c = new StringBuilder(" ");
+					response.append("\nError in configuration json file at location:");
 					for (String p : parts) {
-						c += " ";
-						response += "\n" + c + p + ":";
+						c.append(" ");
+						response.append("\n").append(c).append(p).append(":");
 					}
-					response = response.substring(0, response.length() - 1);
+					response.setLength(response.length()-1);
 				} else {
-					response += "\nError in configuration json file located:\n at the ROOT of the JSON file";
+					response.append("\nError in configuration json file located:\n at the ROOT of the JSON file");
 				}
 
 				if (message.asJson().get("keyword").toString().equals("\"type\"")) {
-					response += "\nExpected data type is: "
-							+ message.asJson().get("expected").toString().replaceAll("[\\[|\\]]", "");
-					response += ", but: " + message.asJson().get("found").toString() + " is found.";
-
+					
+					response.append("\nExpected data type is: ");
+					response.append(message.asJson().get("expected").toString().replaceAll("[\\[|\\]]", ""));
+					response.append(", but: ");
+					response.append(message.asJson().get("found").toString());
+					response.append(" is found.");
+					
 				} else if (message.asJson().get("keyword").toString().equals("\"required\"")) {
-					response += "\nMissing property is: "
-							+ message.asJson().get("missing").toString().replaceAll("[\\[|\\]]", "");
+					response.append("\nMissing property is: ");
+					response.append(message.asJson().get("missing").toString().replaceAll("[\\[|\\]]", ""));
 
 				} else {
-					response += "Other type of JsonValidationException!";
+					response.append("Other type of JsonValidationException!");
 				}
-
-				throw new JsonValidationException(response);
-
+				throw new JsonValidationException(response.toString());
 			}
-
 		}
 
 		try {
-			String uri = baseUri + "measures/computeFromMeasures";
-			response += "\n\tCalled Url: " + uri;
-			ResponseEntity<String> responseFromComputeMeasures = rest.getForEntity(uri, String.class);
+			StringBuilder uri = new StringBuilder(baseUri).append("measures/computeFromMeasures");
+			response.append("\n\tCalled Url: ").append(uri);
+			ResponseEntity<String> responseFromComputeMeasures = rest.getForEntity(uri.toString(), String.class);
 			if (!responseFromComputeMeasures.getStatusCode().equals(HttpStatus.OK)) {
-				response += "\n\t\tcomputeFromMeasures:\n\tEXCEPTION:\n\tFailed : HTTP error code : "
-						+ responseFromComputeMeasures.getStatusCode() + "\n\t\t\terror body: "
-						+ responseFromComputeMeasures.getBody();
+				response.append("\n\t\tcomputeFromMeasures:\n\tEXCEPTION:\n\tFailed : HTTP error code : ");
+				response.append(responseFromComputeMeasures.getStatusCode());
+				response.append("\n\t\t\terror body: ");
+				response.append(responseFromComputeMeasures.getBody());
 			} else {
-				response += "\n\t\tcomputeFromMeasures:\n\tstatus code: " + responseFromComputeMeasures.getStatusCode()
-						+ "\n\t\t\tbody: " + responseFromComputeMeasures.getBody();
+				response.append("\n\t\tcomputeFromMeasures:\n\tstatus code: ");
+				response.append(responseFromComputeMeasures.getStatusCode());
+				response.append("\n\t\t\tbody: ");
+				response.append(responseFromComputeMeasures.getBody());
 			}
 		} catch (Exception ex) {
-			response += "\n\tERROR while calling computeFromMeasures Service:\n\texception message: " + ex.getMessage();
+			response.append("\n\tERROR while calling computeFromMeasures Service:\n\texception message: ");
+			response.append(ex.getMessage());
 		}
-
-		return Response.ok().type(MediaType.TEXT_PLAIN).entity(response).build();
-
+		return Response.ok().type(MediaType.TEXT_PLAIN).entity(response.toString()).build();
 	}
 
 	private DetectionVariable findDetectionVariableOfType(String dvName, DetectionVariableType dvt)

@@ -1,54 +1,34 @@
 package eu.city4age.dashboard.api.persist;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
-import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
-import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
-import eu.city4age.dashboard.api.pojo.json.Configuration;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
-import eu.city4age.dashboard.api.rest.MeasuresServiceTest;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)

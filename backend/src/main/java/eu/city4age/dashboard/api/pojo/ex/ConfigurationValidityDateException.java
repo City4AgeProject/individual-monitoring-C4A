@@ -19,14 +19,14 @@ public class ConfigurationValidityDateException extends Exception implements Exc
 	 @Override
 	    public Response toResponse(ConfigurationValidityDateException ex) {
 		 
-		 String message="ConfigurationValidityDateException:\n\tCheck are Date properties in your JSON formatted correctly.";
+		 StringBuilder message = new StringBuilder("ConfigurationValidityDateException:\n\tCheck are Date properties in your JSON formatted correctly.");
 		 
-		 logger.info("EXCEPTION:\n"+message);
+		 logger.info(new StringBuilder(message).insert(0,"EXCEPTION:\n").toString());
 		 
 			    return Response
 		                .status(Response.Status.BAD_REQUEST)
 		                .type(MediaType.TEXT_PLAIN)
-		                .entity(message)
+		                .entity(message.toString())
 		                .build();
 		 }
 		

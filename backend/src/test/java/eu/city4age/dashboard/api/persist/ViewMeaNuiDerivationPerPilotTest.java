@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
-import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewMeaNuiDerivationPerPilot;
@@ -218,8 +217,9 @@ public class ViewMeaNuiDerivationPerPilotTest {
 		for (PilotDetectionVariable pdv : pilotDetectionVariableRepository.findAll()) {
 			logger.info("PDVformula: " + pdv.getFormula());
 			logger.info("PDVDetectionVariableName: " + pdv.getDetectionVariable().getDetectionVariableName());
-			if (pdv.getDetectionVariable().getDetectionVariableName().equals(pdv.getFormula() + "_" + "testtest"))
-				logger.info("JEDNAKO");
+			if (pdv.getDetectionVariable().getDetectionVariableName()
+					.equals(new StringBuilder(pdv.getFormula()).append("_testtest").toString()))
+				logger.info("EQUAL");
 		}
 		
 		for (ViewPilotDetectionVariable vpdv : viewPilotDetectionVariableRepository.findAll()) {

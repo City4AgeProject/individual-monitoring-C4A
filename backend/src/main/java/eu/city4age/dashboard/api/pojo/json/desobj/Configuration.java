@@ -1,9 +1,10 @@
-package eu.city4age.dashboard.api.pojo.json;
+package eu.city4age.dashboard.api.pojo.json.desobj;
 
 import java.util.List;
-
-import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
-
+/**
+ * @author Andrija Petrovic
+ *
+ */
 public class Configuration {
 
 	String name;

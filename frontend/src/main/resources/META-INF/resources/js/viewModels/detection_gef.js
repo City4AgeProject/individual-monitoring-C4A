@@ -25,12 +25,9 @@ function (oj, ko, $, sp, params) {
 
         function initCRData() {
             self.userAge = sp.userAge;
-            self.userGender = "male";
-            //self.textline = sp.userTextline;
-            self.textline = "example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text  example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text";
-            //self.textline = "example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text";
-            //self.textline = "example text example text example text example text example text example text";
-        }
+            self.userGender = "male";              
+            self.textline = sp.userTextline;
+           }
         
         
 
@@ -191,7 +188,7 @@ function (oj, ko, $, sp, params) {
             self.lineSeriesValue = data.series;
             
             //printing diagram data from json: 
-            //console.log('Diagram data from json :' + JSON.stringify(data));
+            //console.log('Diagram data from json :' + JSON.stringify(data,null,2));
             
            for(var ig = 0; ig < Object.keys(data.series).length; ig++){
         		data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
@@ -410,6 +407,9 @@ function (oj, ko, $, sp, params) {
                     		s.drilling = "off";
                     		s.color = '#999999';
                     		s.lineWidth = 2; 
+                                s.items.forEach(function(el){
+                                    el.drilling = "off";
+                                });
                     	} else if(s.name === 'Behavioural'){
                     		s.color = '#ea97f1';
                     		s.lineWidth = 5; 
@@ -459,3 +459,4 @@ function (oj, ko, $, sp, params) {
 
     return  GraphicsContentViewModel;
 });
+

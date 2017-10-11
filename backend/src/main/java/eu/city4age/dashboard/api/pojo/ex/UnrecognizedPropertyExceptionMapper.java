@@ -1,13 +1,14 @@
 package eu.city4age.dashboard.api.pojo.ex;
 
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.core.Response;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 @Provider
 public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<UnrecognizedPropertyException> {
@@ -18,13 +19,20 @@ public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<Unre
 	@Override
 	public Response toResponse(UnrecognizedPropertyException ex) {
 		
-		String message = "Property: \"" + ex.getUnrecognizedPropertyName() + "\" unrecognized!\n At line:"
-				+ ex.getLocation().getLineNr() + " and column:" + ex.getLocation().getColumnNr();
 		
-		logger.info("\nEXCEPTION:\n"+message+"\nORIGINAL MESSAGE: "+ex.getOriginalMessage());
+		StringBuilder message = new StringBuilder();
+		message.append("Property: \"");
+		message.append(ex.getUnrecognizedPropertyName());
+		message.append("\" unrecognized!\n At line:");
+		message.append(ex.getLocation().getLineNr());
+		message.append(" and column:");
+		message.append(ex.getLocation().getColumnNr());
+
+		
+		logger.info(new StringBuilder(message).insert(0, "\nEXCEPTION:\n").append("\nORIGINAL MESSAGE: ").append(ex.getOriginalMessage()).toString());
 		
 		 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN)
-				.entity(message)
+				.entity(message.toString())
 				.build();
 	}
 

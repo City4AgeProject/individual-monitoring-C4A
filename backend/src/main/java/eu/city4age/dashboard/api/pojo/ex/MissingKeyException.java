@@ -27,7 +27,7 @@ public class MissingKeyException extends Exception implements ExceptionMapper<Mi
 	 @Override
 	    public Response toResponse(MissingKeyException ex) {
 		 
-		 logger.info("EXCEPTION:\n"+ex.getMessage());
+		 logger.info(new StringBuilder("EXCEPTION:\n").append(ex.getMessage()));
 			    return Response
 		                .status(Response.Status.BAD_REQUEST)
 		                .type(MediaType.TEXT_PLAIN)
