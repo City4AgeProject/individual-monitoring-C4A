@@ -194,7 +194,7 @@ define({
 				//LABELS NOT FROM DB
 				
 					
-				add_annotation: "Add annotation" ,
+				add_annotation: "Add annotation",
 				from:"from",
 				morphology:"Morphology" ,
 				valid_data: "Valid data" ,

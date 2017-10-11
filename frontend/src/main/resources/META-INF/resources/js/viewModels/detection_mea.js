@@ -34,8 +34,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         });           	    	  
             	              	                	        
             	};
+            	
                 self.handleAttached = function (info) {
-                    /* Assign summary Show more/Show less  */
                     $('#summary').css({height: '20px', overflow: 'hidden'});
                     $('#showmore').on('click', function () {
                         console.log("clicked");
@@ -44,15 +44,25 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                             $("#showmore").html("Read more");
                             $this.animate({height: '20px'});
                             $this.data('open', 0);
+                            $("#readmore").css({"display": "inline", "overflow-y": "visible"});
 
                         } else {
+                        	var divheight = $("#readmore").height(); 
+                        	var lineheight = $("#readmore").css('line-height').replace("px","");
+                        	var numberOfLines = (Math.round(divheight/parseInt(lineheight)));
+                        	
                             $("#showmore").html("Read less");
-                            $this.animate({height: '200px'});
+                            if(numberOfLines>10) {
+                            	$("#readmore").css({"display": "block", "height": "180px", "overflow-y": "scroll"});
+                            	$this.animate({height: '200px'});
+                            } else {
+                            	$this.animate({height: numberOfLines * 20+'px'});
+                            }
+                            
                             $this.data('open', 1);
 
                         }
                     });
-                    /*End: Assign summary Show more/Show less */
                 };
             	
             	function initData() {
@@ -71,7 +81,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
       	        	self.careRecipientId = ko.observable(crId);
                         self.gesId = ko.observable(gesId);
       	        	self.userAge = ko.observable("0");	          	        	
-      	        	self.textline = ko.observable("N/A");	          	        	
+      	        	//self.textline = ko.observable("N/A");
+      	            self.textline = "example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text  example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text";
+      	            //self.textline = "example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text";
+      	            //self.textline = "example text example text example text example text example text example text";
+      	        	
       	        	self.userGender = ko.observable("male");
             	}
             	function setDataForDiagrams(data,nuiData) {

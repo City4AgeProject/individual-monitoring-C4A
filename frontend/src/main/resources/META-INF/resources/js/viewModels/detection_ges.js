@@ -16,7 +16,10 @@ function (oj, ko, $, sp) {
         
         self.userAge = sp.userAge;
         self.userGender = sp.userGender;
-        self.textline = sp.userTextline;
+        //self.textline = sp.userTextline;
+        self.textline = "example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text  example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text";
+        //self.textline = "example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text example text";
+        //self.textline = "example text example text example text example text example text example text";
         
         self.subFactorName = ko.observable();
         self.careRecipient = ko.observable();
@@ -80,15 +83,27 @@ function (oj, ko, $, sp) {
             $('#showmore').on('click', function () {
                 console.log("clicked");
                 var $this = $("#summary");
-                if ($this.data('open')) {   
+                if ($this.data('open')) {
                     $("#showmore").html("Read more");
                     $this.animate({height: '20px'});
                     $this.data('open', 0);
+                    $("#readmore").css({"display": "inline", "overflow-y": "visible"});
 
                 } else {
+                	var divheight = $("#readmore").height(); 
+                	var lineheight = $("#readmore").css('line-height').replace("px","");
+                	var numberOfLines = (Math.round(divheight/parseInt(lineheight)));
+                	
                     $("#showmore").html("Read less");
-                    $this.animate({height: '200px'});
+                    if(numberOfLines>10) {
+                    	$("#readmore").css({"display": "block", "height": "180px", "overflow-y": "scroll"});
+                    	$this.animate({height: '200px'});
+                    } else {
+                    	$this.animate({height: numberOfLines * 20+'px'});
+                    }
+                    
                     $this.data('open', 1);
+
                 }
             });
         };

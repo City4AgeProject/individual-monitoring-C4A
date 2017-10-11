@@ -202,13 +202,12 @@ function(oj, ko, $) {
 		/* Show popup dialog for adding new assessment */
 		self.clickShowPopupAddAssessment = function(data, event) {
 			
+            $('#addAssessment').prop('commentText', '');
+			$('#addAssessment').prop('selectedRiskStatus', []);
+			$('#addAssessment').prop('selectedDataValidity', []);
+			$('#addAssessment').prop('selectedRoles', []);
 			
 			if (self.dataPointsMarkedIds.length > 0) {
-
-				self.commentText = '';
-		    	self.selectedRiskStatus = [];
-		    	self.selectedDataValidity = [];
-		    	self.selectedRoles = [];
 
 				$('#addAssessment').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));
 
