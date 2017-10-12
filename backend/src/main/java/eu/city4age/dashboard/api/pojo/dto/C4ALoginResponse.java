@@ -1,87 +1,48 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.city4age.dashboard.api.pojo.dto;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
  * @author EMantziou
  */
 public class C4ALoginResponse {
-	
-	private Long id;
-	
-	private String message;
 
-	private int responseCode;
+    private int responseCode;
 
-	private String displayName;
-	
-	private short roleId;
-	
-	private String pilotName;
-	
-	private String pilotCode;
-	
-	public Long getId() {
-		return id;
-	}
+    private String jwToken;
 
-	@JsonProperty("ID")
-	public void setId(Long id) {
-		this.id = id;
-	}
+    String displayName;
 
-	public String getPilotCode() {
-		return pilotCode;
-	}
+    String pilotName;
 
-	public void setPilotCode(String pilotCode) {
-		this.pilotCode = pilotCode;
-	}
+    public int getResponseCode() {
+        return responseCode;
+    }
 
-	public String getpilotName() {
-		return pilotName;
-	}
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
+    }
 
-	public void setpilotName(String pilotName) {
-		this.pilotName = pilotName;
-	}
+    public String getJwToken() {
+        return jwToken;
+    }
 
-	public short getRoleId() {
-		return roleId;
-	}
+    public void setJwToken(String jwToken) {
+        this.jwToken = jwToken;
+    }
 
-	public void setRoleId(short roleId) {
-		this.roleId = roleId;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public String getPilotName() {
+        return pilotName;
+    }
 
-	public int getResponseCode() {
-		return responseCode;
-	}
-
-	public void setResponseCode(int responseCode) {
-		this.responseCode = responseCode;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
+    public void setPilotName(String pilotName) {
+        this.pilotName = pilotName;
+    }
 }

@@ -238,34 +238,51 @@ define({
 				warning_data: "Warning data",
 				no_risk_data: "No risk data",
                 
-                                //assessments-preview
-                                assessments: " assessment(s) " ,
-                                view_annotations :"View annotations" ,
-                                view_daily_measures :"View daily measures" ,
-                                dpmw:" data points marked with " ,
-                                warning_status: "Warning status" , 
-                                alert_status: "Alert status" ,
-
-                                //add-assessment
-                                no_data_set_selected:"No data set selected!" ,
-                                full_annotation_comment: "Full annotation comment:" , 
-                                chose_type :"Choose type" ,
-                                for_select_role :"For (select multiple)" ,
-                                comment :"Comment" ,
-                                no_comment:"No comment yet." ,
-                                chose_risk :"Choose risk..." ,
-                                chose_data_validity:"Choose data validity..." ,
-                                post_btn:"Post" ,
-                                cancel_btn: "Cancel" ,
-                                //Temporary keys
-                                risk_status_a: "Risk alert" ,
-                                risk_status_w: "Risk warning" ,
-                                risk_status_n: "No Risk" ,
-
-                                //assessment-list
-                                read_more :"Read more" ,
-                                show_on_diagram :"Show on diagram"
-
+                //assessments-preview
+                assessments: " assessment(s) " ,
+                view_annotations :"View annotations" ,
+                view_daily_measures :"View daily measures" ,
+                dpmw:" data points marked with " ,
+                warning_status: "Warning status" , 
+                alert_status: "Alert status" ,
+                
+                //add-assessment
+                no_data_set_selected:"No data set selected!" ,
+                full_annotation_comment: "Full annotation comment:" , 
+                chose_type :"Choose type" ,
+                for_select_role :"For (select multiple)" ,
+                comment :"Comment" ,
+                no_comment:"No comment yet." ,
+                chose_risk :"Choose risk..." ,
+                chose_data_validity:"Choose data validity..." ,
+                post_btn:"Post" ,
+                cancel_btn: "Cancel" ,
+                //Temporary keys
+                risk_status_a: "Risk alert" ,
+                risk_status_w: "Risk warning" ,
+                risk_status_n: "No Risk" ,
+                
+                //assessment-list
+                read_more :"Read more" ,
+                show_on_diagram :"Show on diagram",
+                
+                //login page translations
+                username :"Username:",
+                password :"Password:",
+                welcome_message_1 :"Welcome to the City4Age Individual Monitoring Dashboard Login page. Access is restricted to authorised members only. ",
+                welcome_message_2 :"Use our ",
+                welcome_message_3 :"Contact Form",
+                welcome_message_4 :" to request access.",
+                login :"Login:",
+                loggedinas : "Logged in as",
+                
+                //cr_list_full page translation
+                show_more :"Show more:",
+                view_more_details :"View more details",
+                view_intervention_summary : "View Intervention Summary",
+                view_detection_summary : "View Detection Summary",
+                open_detection_session : "Open Detection Session",
+                open_detection_intervention : "Open Detection Intervention"
 	},
 	
 		    "zh-Hant" : true,

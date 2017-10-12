@@ -1,26 +1,32 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojtable', 'ojs/ojgauge', 'ojs/ojarraytabledatasource', 'urls'],
         function (oj, ko, sp, $)
         {
-			var m=0;
-			
-			sessionStorage.setItem('clck',0);
-			
-            
-            function ListViewModel() {                                                              
+
+			var m=0;		
+
+            function ListViewModel() {
                 var self = this;
                 self.data = ko.observableArray();
                 self.usersOuter = ko.observableArray();
-   			
-                var pilotCode = sessionStorage.getItem("pilotcode");
-                
-                $.getJSON(CARE_RECIPIENT_ALL + "/pilotCode/" + pilotCode).
-                
-                       then(function (users) {
-                    	   
-                    	   //printing all cr from json:
-                    	   //console.log( JSON.stringify(users) );
-                    	   
-                    	   
+                                
+                //Labels on cr_list_full page with translate option
+                self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
+                self.ageLabel = oj.Translations.getTranslatedString("age");
+                self.showMoreLabel = oj.Translations.getTranslatedString("show_more");
+                self.viewMoreDetailsLabel = oj.Translations.getTranslatedString("view_more_details");
+                self.interventionLabel = oj.Translations.getTranslatedString("view_intervention_summary");
+                self.detectionSummaryLabel = oj.Translations.getTranslatedString("view_detection_summary");
+                self.detectionSessionLabel = oj.Translations.getTranslatedString("open_detection_session");
+                self.detectionInterventionLabel = oj.Translations.getTranslatedString("open_detection_intervention");
+                var jwt = sessionStorage.getItem("jwt");
+
+                $.ajaxSetup({
+                  cache: false,
+                  headers : {
+                    'Authorization' : jwt}
+                });
+                $.getJSON(CARE_RECIPIENT_ALL + "?t=" + Date.now()).
+                        then(function (users) {
                             $.each(users.itemList, function () {
                                 
                                 var frailStatus;

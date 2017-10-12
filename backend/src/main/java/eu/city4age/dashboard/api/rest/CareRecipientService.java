@@ -8,14 +8,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -29,6 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -60,6 +60,9 @@ import eu.city4age.dashboard.api.pojo.dto.Item;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie;
+import eu.city4age.dashboard.api.pojo.enu.AllPilotRoles;
+import eu.city4age.dashboard.api.pojo.enu.SamePilotRoles;
+import eu.city4age.dashboard.api.security.JwtIssuer;
 
 /**
  *
@@ -213,91 +216,90 @@ public class CareRecipientService {
 
 	}// end method
 
-	@Transactional("transactionManager")
-	@GET
-	@Path("getCareRecipients/pilotCode/{pilotCode}/")
-	@Produces("application/json")
-	public Response getCareRecipients(@PathParam("pilotCode") String pilotCode) throws IOException {
+    @Transactional("transactionManager")
+    @GET
+    @Path("getCareRecipients/")
+    @Produces("application/json")
+    public Response getJson(@HeaderParam("Authorization") String jwt) throws IOException {
 
-		/**
-		 * ****************Variables*************
-		 */
-		C4ACareRecipientsResponse response = new C4ACareRecipientsResponse();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        C4ACareRecipientsResponse response = new C4ACareRecipientsResponse();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        List<UserInRole> userinroleparamsList = new ArrayList<>();
+        Short defaultRoleId = Short.valueOf("1");
 
-		/**
-		 * ****************Action*************
-		 */
-		SortedSet<UserInRole> userInRoleParams;
-		
-		List<UserInRole> uirs;
-		if (pilotCode.equals("DEV")) {
-			uirs = userInRoleRepository.findAll();
-		} else {
-			uirs = userInRoleRepository.findByRoleIdAndPilotCode(Short.valueOf("1"), String.valueOf(pilotCode));
-		}
-		userInRoleParams = new TreeSet<UserInRole>(uirs);
+        // Verify and decode JWT token
+        DecodedJWT token;
+        try {
 
-		if (userInRoleParams.isEmpty()) {
-			response.setMessage("No users found");
-			response.setResponseCode(0);
-			return Response.ok(objectMapper.writeValueAsString(response)).build();
-		} else {
-			List<C4ACareRecipientListResponse> itemList = new ArrayList<C4ACareRecipientListResponse>();
+            token = JwtIssuer.INSTANCE.verify(jwt);
+        } catch (JWTVerificationException e) {
+            // NOT verified
+            return Response.ok("402").build();
+        }
+        Map<String, Claim> claims = token.getClaims();
+        Integer role = claims.get("rol").asInt();
+        String pilotCode = claims.get("plt").asString();
 
-			for (UserInRole user : userInRoleParams) {
-				response.setMessage("success");
-				response.setResponseCode(10);
+        // 
+        if (SamePilotRoles.getEnumAsSet().contains(role)) {
 
-				int age = 0;
+            userinroleparamsList = userInRoleRepository.findByRoleIdAndPilotCode(defaultRoleId, pilotCode);
+        } else if (AllPilotRoles.getEnumAsSet().contains(role)) {
 
-				if (user.getCrProfile() != null) {
+            userinroleparamsList = userInRoleRepository.findByRoleId(defaultRoleId);
+        }
 
-					LocalDate birthDate = user.getCrProfile().getBirthDate().toInstant().atZone(ZoneId.systemDefault())
-							.toLocalDate();
-					age = (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
+        if (userinroleparamsList.isEmpty()) {
+            response.setMessage("No users found");
+            response.setResponseCode(0);
+            return Response.ok(objectMapper.writeValueAsString(response)).build();
+        } else {
+            List<C4ACareRecipientListResponse> itemList = new ArrayList<C4ACareRecipientListResponse>();
+            for (UserInRole user : userinroleparamsList) {
+                response.setMessage("success");
+                response.setResponseCode(10);
 
-				}
+                int age = 0;
 
-				// **************************************
+                if (user.getCrProfile() != null) {
 
-				String frailtyStatus = "N/A";
-				String frailtyNotice = "N/A";
-				char attention = '\0';
-				String textline = "N/A";
-				char interventionstatus = '\0';
-				String interventionDate = "N/A";
-				String detectionStatus = "N/A";
-				String detectionDate = "N/A";
+                    LocalDate birthDate = user.getCrProfile().getBirthDate().toInstant().atZone(ZoneId.systemDefault())
+                            .toLocalDate();
+                    age = (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
 
-				if (user.getCareProfile() != null) {
-					attention = user.getCareProfile().getAttentionStatus();
-					textline = user.getCareProfile().getIndividualSummary();
-					interventionstatus = user.getCareProfile().getInterventionStatus();
-					interventionDate = sdf.format(user.getCareProfile().getLastInterventionDate());
-				}
+                }
 
-				
-				FrailtyStatusTimeline fs = frailtyStatusTimelineRepository.findLatest(user.getId());
-				
-				Set<FrailtyStatusTimeline> fsts = new HashSet<FrailtyStatusTimeline>();
-				
-				if(fs != null) {
-					frailtyStatus = fs.getCdFrailtyStatus().getFrailtyStatus();
-					frailtyNotice = fs.getFrailtyNotice();
-					fsts.add(fs);
-				}
-				
-				user.setFrailtyStatusTimeline(fsts);
-				
+                // **************************************
+                String frailtyStatus = "N/A";
+                String frailtyNotice = "N/A";
+                char attention = '\0';
+                String textline = "N/A";
+                char interventionstatus = '\0';
+                String interventionDate = "N/A";
+                String detectionStatus = "N/A";
+                String detectionDate = "N/A";
+
+                if (user.getCareProfile() != null) {
+                    attention = user.getCareProfile().getAttentionStatus();
+                    textline = user.getCareProfile().getIndividualSummary();
+                    interventionstatus = user.getCareProfile().getInterventionStatus();
+                    interventionDate = sdf.format(user.getCareProfile().getLastInterventionDate());
+                }
+
+                List<FrailtyStatusTimeline> frailtyparamsList = new ArrayList<FrailtyStatusTimeline>(
+                        user.getFrailtyStatusTimeline());
+
+                if (frailtyparamsList != null && frailtyparamsList.size() > 0) {
+                    frailtyStatus = frailtyparamsList.get(0).getCdFrailtyStatus().getFrailtyStatus();
+                    frailtyNotice = frailtyparamsList.get(0).getFrailtyNotice();
+                }
+
 				Pilot userPilot = pilotRepository.findOne(user.getPilotCode());
 
-				itemList.add(new C4ACareRecipientListResponse(user.getId(), age, frailtyStatus, frailtyNotice,
-						attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate,
-						userPilot.getPilotCode()));
-
-			} // detectionVariables loop
-			response.setItemList(itemList);
+                itemList.add(new C4ACareRecipientListResponse(user.getId(), age, frailtyStatus, frailtyNotice,
+                        attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate, userPilot.getPilotCode()));
+            } // detectionVariables loop
+            response.setItemList(itemList);
 
 		} // end detectionVariables is empty
 

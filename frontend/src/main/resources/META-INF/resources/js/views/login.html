@@ -5,18 +5,16 @@
 		class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline oj-panel oj-panel-shadow-sm">
 		
 		<p class="oj-train"><img src="images/City4AgeLogo_noBackground1.png" class="expand-logo" align="middle"></p>
-		<h1 class="oj-train">Login</h1>
+		<h1 class="oj-train"><span data-bind="text: loginLabel"></span></h1>
 		
 		<p class="oj-train">
-			Welcome to the City4Age Dashboard Login page. Access is restricted to
-			authorised members only.<br />Use our <a href="http://www.city4ageproject.eu/index.php/contact/">Contact Form</a> to request
-			access.
+			<span data-bind="text: welcome1Label"></span><br /><span data-bind="text: welcome2Label"></span><a href="http://www.city4ageproject.eu/index.php/contact/"><span data-bind="text: welcome3Label"></span></a> <span data-bind="text: welcome4Label"></span>
 		</p>
 		<div class="oj-flex">
 			<div class="oj-flex-item"></div>
 			<div class="oj-flex-item"></div>
 			<div class="oj-flex-item">
-				<label for="username">Username:</label>
+				<label for="username"><span data-bind="text: usernameLabel"></span></label>
 			</div>
 			<div class="oj-flex-item">
 				<input id="username"
@@ -25,7 +23,7 @@
                             }">
 			</div>
 			<div class="oj-flex-item">
-				<label for="password">Password:</label>
+				<label for="password"><span data-bind="text: passwordLabel"></span></label>
 			</div>
 			<div class="oj-flex-item">
 				<input type="password" id="password"
