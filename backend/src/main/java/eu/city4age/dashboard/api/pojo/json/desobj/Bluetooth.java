@@ -1,11 +1,9 @@
 package eu.city4age.dashboard.api.pojo.json.desobj;
 
-import java.util.List;
-
 public class Bluetooth {
 	
 	private String date;
-	private List<String> devices;
+	private String device;
 	
 	public String getDate() {
 		return date;
@@ -13,12 +11,11 @@ public class Bluetooth {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public List<String> getDevices() {
-		return devices;
+	public String getDevice() {
+		return device;
 	}
-	public void setDevices(List<String> devices) {
-		this.devices = devices;
+	public void setDevice(String device) {
+		this.device = device;
 	}
-	
 
 }

@@ -15,6 +15,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,6 +39,7 @@ import io.swagger.annotations.ApiResponses;
  * @author milos.holclajtner
  *
  */
+@Component
 @Transactional("transactionManager")
 @Path(CodebookService.PATH)
 @Api(value = "codebook", produces = "application/json")

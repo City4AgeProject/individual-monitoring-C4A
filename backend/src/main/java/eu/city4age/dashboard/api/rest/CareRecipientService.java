@@ -66,6 +66,7 @@ import eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie;
  * @author EMantziou
  */
 @Component(value = "wsService")
+@Transactional("transactionManager")
 @Path(CareRecipientService.PATH)
 public class CareRecipientService {
 

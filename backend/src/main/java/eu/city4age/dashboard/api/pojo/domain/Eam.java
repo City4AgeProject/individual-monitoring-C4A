@@ -21,19 +21,19 @@ public class Eam extends AbstractBaseEntity<Long> {
 	
 	@ManyToOne
     @JoinColumn(name="activity_id")
-	private Activity activity;
+	private ExecutedActivity activity;
 	
 	private Integer duration;
 
 	public Eam() {
 	}
 
-	public Eam(Action action, Activity activity) {
+	public Eam(Action action, ExecutedActivity activity) {
 		this.action = action;
 		this.activity = activity;
 	}
 
-	public Eam(Action action, Activity activity, Integer duration) {
+	public Eam(Action action, ExecutedActivity activity, Integer duration) {
 		this.action = action;
 		this.activity = activity;
 		this.duration = duration;
@@ -47,11 +47,11 @@ public class Eam extends AbstractBaseEntity<Long> {
 		this.action = action;
 	}
 
-	public Activity getActivity() {
+	public ExecutedActivity getActivity() {
 		return this.activity;
 	}
 
-	public void setActivity(Activity activity) {
+	public void setActivity(ExecutedActivity activity) {
 		this.activity = activity;
 	}
 

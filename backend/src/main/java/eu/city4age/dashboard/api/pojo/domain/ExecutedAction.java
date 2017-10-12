@@ -23,7 +23,7 @@ public class ExecutedAction extends AbstractBaseEntity<Long> {
 	
 	@ManyToOne
     @JoinColumn(name="activityid")
-	private Activity activity;
+	private ExecutedActivity activity;
 
 	@ManyToOne
     @JoinColumn(name="locationid")
@@ -57,7 +57,7 @@ public class ExecutedAction extends AbstractBaseEntity<Long> {
 		this.payload = payload;
 	}
 
-	public ExecutedAction(Action action, Activity activity, Location location, UserInRole userInRole, Date date,
+	public ExecutedAction(Action action, ExecutedActivity activity, Location location, UserInRole userInRole, Date date,
 			Integer rating, int sensorId, String payload, String extraInformation) {
 		this.action = action;
 		this.activity = activity;
@@ -78,11 +78,11 @@ public class ExecutedAction extends AbstractBaseEntity<Long> {
 		this.action = action;
 	}
 
-	public Activity getActivity() {
+	public ExecutedActivity getActivity() {
 		return this.activity;
 	}
 
-	public void setActivity(Activity activity) {
+	public void setActivity(ExecutedActivity activity) {
 		this.activity = activity;
 	}
 

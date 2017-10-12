@@ -10,9 +10,9 @@ public class Activity {
 	private String type;
 	private String start;
 	private String end;
-	private List<Gps> gps;
-	private List<Bluetooth> bluetooth;
-	private List<Wifi> wifi;
+	private List<Gps> gpss;
+	private List<Bluetooth> bluetooths;
+	private List<Wifi> wifis;
 	
 	public String getType() {
 		return type;
@@ -32,22 +32,22 @@ public class Activity {
 	public void setEnd(String end) {
 		this.end = end;
 	}
-	public List<Gps> getGps() {
-		return gps;
+	public List<Gps> getGpss() {
+		return gpss;
 	}
-	public void setGps(List<Gps> gps) {
-		this.gps = gps;
+	public void setGpss(List<Gps> gpss) {
+		this.gpss = gpss;
 	}
-	public List<Bluetooth> getBluetooth() {
-		return bluetooth;
+	public List<Bluetooth> getBluetooths() {
+		return bluetooths;
 	}
-	public void setBluetooth(List<Bluetooth> bluetooth) {
-		this.bluetooth = bluetooth;
+	public void setBluetooths(List<Bluetooth> bluetooths) {
+		this.bluetooths = bluetooths;
 	}
-	public List<Wifi> getWifi() {
-		return wifi;
+	public List<Wifi> getWifis() {
+		return wifis;
 	}
-	public void setWifi(List<Wifi> wifi) {
-		this.wifi = wifi;
+	public void setWifis(List<Wifi> wifis) {
+		this.wifis = wifis;
 	}
 }

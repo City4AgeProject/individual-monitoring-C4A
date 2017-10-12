@@ -17,11 +17,11 @@ public class InterActivityBehaviourVariation extends AbstractBaseEntity<Long> {
 	
 	@ManyToOne
     @JoinColumn(name="real_activity_id")
-	private Activity activityByRealActivityId;
+	private ExecutedActivity activityByRealActivityId;
 	
 	@ManyToOne
     @JoinColumn(name="expected_activity_id")
-	private Activity activityByExpectedActivityId;
+	private ExecutedActivity activityByExpectedActivityId;
 
 	@ManyToOne
     @JoinColumn(name="numeric_indicator_id")
@@ -32,34 +32,34 @@ public class InterActivityBehaviourVariation extends AbstractBaseEntity<Long> {
 	public InterActivityBehaviourVariation() {
 	}
 
-	public InterActivityBehaviourVariation(Activity activityByRealActivityId,
-			Activity activityByExpectedActivityId, NumericIndicatorValue numericIndicatorValue) {
+	public InterActivityBehaviourVariation(ExecutedActivity activityByRealActivityId,
+			ExecutedActivity activityByExpectedActivityId, NumericIndicatorValue numericIndicatorValue) {
 		this.activityByRealActivityId = activityByRealActivityId;
 		this.activityByExpectedActivityId = activityByExpectedActivityId;
 		this.numericIndicatorValue = numericIndicatorValue;
 	}
 
-	public InterActivityBehaviourVariation(Activity activityByRealActivityId,
-			Activity activityByExpectedActivityId, NumericIndicatorValue numericIndicatorValue, Float deviation) {
+	public InterActivityBehaviourVariation(ExecutedActivity activityByRealActivityId,
+			ExecutedActivity activityByExpectedActivityId, NumericIndicatorValue numericIndicatorValue, Float deviation) {
 		this.activityByRealActivityId = activityByRealActivityId;
 		this.activityByExpectedActivityId = activityByExpectedActivityId;
 		this.numericIndicatorValue = numericIndicatorValue;
 		this.deviation = deviation;
 	}
 
-	public Activity getActivityByRealActivityId() {
+	public ExecutedActivity getActivityByRealActivityId() {
 		return this.activityByRealActivityId;
 	}
 
-	public void setActivityByRealActivityId(Activity activityByRealActivityId) {
+	public void setActivityByRealActivityId(ExecutedActivity activityByRealActivityId) {
 		this.activityByRealActivityId = activityByRealActivityId;
 	}
 
-	public Activity getActivityByExpectedActivityId() {
+	public ExecutedActivity getActivityByExpectedActivityId() {
 		return this.activityByExpectedActivityId;
 	}
 
-	public void setActivityByExpectedActivityId(Activity activityByExpectedActivityId) {
+	public void setActivityByExpectedActivityId(ExecutedActivity activityByExpectedActivityId) {
 		this.activityByExpectedActivityId = activityByExpectedActivityId;
 	}
 

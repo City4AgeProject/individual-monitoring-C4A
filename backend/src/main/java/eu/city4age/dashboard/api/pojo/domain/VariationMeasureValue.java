@@ -41,7 +41,7 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	private static final long serialVersionUID = 2579000073949031381L;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "activity_id")
-	private Activity activity;
+	private ExecutedActivity activity;
 	
 	@JsonView(View.VariationMeasureValueView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -86,7 +86,7 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 		this.userInRole = userInRole;
 	}
 
-	public VariationMeasureValue(Activity activity, DetectionVariable detectionVariable, TimeInterval timeInterval,
+	public VariationMeasureValue(ExecutedActivity activity, DetectionVariable detectionVariable, TimeInterval timeInterval,
 			UserInRole userInRole, BigDecimal measureValue, String dataSourceType, String extraInformation) {
 		this.activity = activity;
 		this.detectionVariable = detectionVariable;
@@ -97,11 +97,11 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 		this.extraInformation = extraInformation;
 	}
 
-	public Activity getActivity() {
+	public ExecutedActivity getActivity() {
 		return this.activity;
 	}
 
-	public void setActivity(Activity activity) {
+	public void setActivity(ExecutedActivity activity) {
 		this.activity = activity;
 	}
 

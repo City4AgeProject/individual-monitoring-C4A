@@ -21,7 +21,7 @@ public class Action extends AbstractBaseEntity<Long> {
 	private static final long serialVersionUID = 5254461979420298384L;
 
 	@Column(name="action_name")
-	private String actionName;
+	private String name;
 
 	private String category;
 	
@@ -35,19 +35,19 @@ public class Action extends AbstractBaseEntity<Long> {
 
 	public Action() {}
 
-	public Action(String actionName, String category, Set<Eam> eams, Set<ExecutedAction> executedActions) {
-		this.actionName = actionName;
+	public Action(String name, String category, Set<Eam> eams, Set<ExecutedAction> executedActions) {
+		this.name = name;
 		this.category = category;
 		this.eams = eams;
 		this.executedActions = executedActions;
 	}
 
-	public String getActionName() {
-		return this.actionName;
+	public String getName() {
+		return this.name;
 	}
 
-	public void setActionName(String actionName) {
-		this.actionName = actionName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getCategory() {

@@ -88,7 +88,7 @@ public class TimeInterval implements Serializable {
 	@Transient
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "timeInterval", fetch = FetchType.LAZY)
-	private Set<Activity> activities = new HashSet<Activity>(0);
+	private Set<ExecutedActivity> activities = new HashSet<ExecutedActivity>(0);
 
 	@Transient
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -112,7 +112,7 @@ public class TimeInterval implements Serializable {
 	public TimeInterval() {
 	}
 
-	public TimeInterval(Timestamp intervalStart, Timestamp intervalEnd, String typicalPeriod, Set<Activity> activities,
+	public TimeInterval(Timestamp intervalStart, Timestamp intervalEnd, String typicalPeriod, Set<ExecutedActivity> activities,
 			Set<NumericIndicatorValue> numericIndicatorValues, Set<VariationMeasureValue> variationMeasureValues,
 			Set<GeriatricFactorValue> geriatricFactorValue, Set<FrailtyStatusTimeline> frailtyStatusTimeline) {
 		this.intervalStart = intervalStart;
@@ -151,11 +151,11 @@ public class TimeInterval implements Serializable {
 		this.typicalPeriod = typicalPeriod;
 	}
 
-	public Set<Activity> getActivities() {
+	public Set<ExecutedActivity> getActivities() {
 		return this.activities;
 	}
 
-	public void setActivities(Set<Activity> activities) {
+	public void setActivities(Set<ExecutedActivity> activities) {
 		this.activities = activities;
 	}
 

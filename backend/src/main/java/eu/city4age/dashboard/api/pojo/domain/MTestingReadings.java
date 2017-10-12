@@ -1,27 +1,57 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import eu.city4age.dashboard.api.pojo.json.desobj.Bluetooth;
+import eu.city4age.dashboard.api.pojo.json.desobj.Wifi;
+
 @Entity
-@Table(name="m-testing_readings")
-public class MTestingReadings extends AbstractBaseEntity<Long> {
+@Table(name="mtesting_readings")
+public class MTestingReadings implements Serializable {
+	
+	static protected Logger logger = LogManager.getLogger(AbstractBaseEntity.class);
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 118520501300973077L;
 	
+	@Id
+	@Basic(optional = false)
+	@SequenceGenerator(name = "mt_seq", sequenceName = "m-testing_readings_id_seq", allocationSize = 1)
+	@GeneratedValue(generator = "mt_seq", strategy = GenerationType.SEQUENCE)
+	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
+	protected Long id;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	@Column(name="start_time")
 	private Date start;
 	
-	@Column(name="start_end")
+	@Column(name="end_time")
 	private Date end;
 	
 	@Column(name="duration")
@@ -49,6 +79,20 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_in_role_id")
 	private UserInRole userInRole;
+	
+	@Column(name="gps_longitude")
+	private Long gpsLongitude;
+	
+	@Column(name="gps_latitude")
+	private Long gpsLatitude;
+	
+	@Column(name="bluetooth_devices")
+	private String bluetoothDevices;
+	
+	@Column(name="wifi_devices")
+	private String wifiDevices;
+	
+
 
 	public Date getStart() {
 		return start;
@@ -128,6 +172,60 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 
 	public void setActionName(String actionName) {
 		this.actionName = actionName;
+	}
+
+	public Long getGpsLongitude() {
+		return gpsLongitude;
+	}
+
+	public void setGpsLongitude(Long gpsLongitude) {
+		this.gpsLongitude = gpsLongitude;
+	}
+
+	public Long getGpsLatitude() {
+		return gpsLatitude;
+	}
+
+	public void setGpsLatitude(Long gpsLatitude) {
+		this.gpsLatitude = gpsLatitude;
+	}
+
+	public String getBluetoothDevices() {
+		return bluetoothDevices;
+	}
+
+	public void setBluetoothDevices(String bluetoothDevices) {
+		this.bluetoothDevices = bluetoothDevices;
+	}
+
+	public String getWifiDevices() {
+		return wifiDevices;
+	}
+
+	public void setWifiDevices(String wifiDevices) {
+		this.wifiDevices = wifiDevices;
+	}
+
+	public void addBluetooth(List<Bluetooth> bluetooth) {
+		if(bluetooth != null && bluetooth.size() > 0) {
+			StringBuffer bts = new StringBuffer();
+			for(Bluetooth bt : bluetooth){
+				logger.info("bt device: " + bt.getDevice());
+				bts.append(bt.getDevice()).append(";");
+			}
+			this.setBluetoothDevices(bts.toString());
+		}	
+	}
+
+	public void addWifi(List<Wifi> wifi) {
+		if(wifi != null && wifi.size() > 0) {
+			StringBuffer bts = new StringBuffer();
+			for(Wifi wf : wifi) {
+				logger.info("wf device: " + wf.getDevice());
+				bts.append(wf.getDevice()).append(";");
+			}
+			this.setWifiDevices(bts.toString());
+		}
 	}
 
 }
