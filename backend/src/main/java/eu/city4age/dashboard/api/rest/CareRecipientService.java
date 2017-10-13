@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -248,6 +249,7 @@ public class CareRecipientService {
 
             userinroleparamsList = userInRoleRepository.findByRoleId(defaultRoleId);
         }
+		userinroleparamsList.sort(Comparator.comparing(UserInRole::getId));
 
         if (userinroleparamsList.isEmpty()) {
             response.setMessage("No users found");

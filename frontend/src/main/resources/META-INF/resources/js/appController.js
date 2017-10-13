@@ -109,6 +109,7 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                 self.menuItemSelect = function (event, ui) {
                     switch (ui.item.attr("id")) {
                         case "out":
+							location.reload();
                             sessionStorage.removeItem("jwt");
                             sessionStorage.removeItem("displayname");
                             sessionStorage.removeItem("pilotname");
