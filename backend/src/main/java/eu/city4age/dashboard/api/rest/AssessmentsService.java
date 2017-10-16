@@ -28,6 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -286,29 +289,37 @@ public class AssessmentsService {
 		 */
 		@SuppressWarnings("deprecation")
 		AddAssessmentDeserializer data = objectMapper.reader(AddAssessmentDeserializer.class)
-				.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+		.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
-		UserInRole userInRole = userInRoleRepository.findOne(data.getAuthorId());
+		String token = data.getJwt();
+		try {
+			DecodedJWT jwt = JWT.decode(token);
+			String username = jwt.getClaim("usr").asString();
+			
+			UserInRole userInRole = userInRoleRepository.findBySystemUsername(username);
 
-		Assessment assessment = new Assessment.AssessmentBuilder().userInRole(userInRole)
-				.assessmentComment(data.getComment())
-				.riskStatus((data.getRiskStatus() != null) ? data.getRiskStatus().charValue() : null)
-				.dataValidity(data.getDataValidity().toChar()).build();
+			Assessment assessment = new Assessment.AssessmentBuilder().userInRole(userInRole)
+					.assessmentComment(data.getComment())
+					.riskStatus((data.getRiskStatus() != null) ? data.getRiskStatus().charValue() : null)
+					.dataValidity(data.getDataValidity().toChar()).build();
 
-		assessmentRepository.saveAndFlush(assessment);
+			assessmentRepository.saveAndFlush(assessment);
 
-		for (Long audienceId : data.getAudienceIds())
-			assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder()
-					.assessmentId(assessment.getId().intValue()).userInRoleId(audienceId.intValue()).build());
+			for (Long audienceId : data.getAudienceIds())
+				assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder()
+						.assessmentId(assessment.getId().intValue()).userInRoleId(audienceId.intValue()).build());
 
-		for (Long gefId : data.getGeriatricFactorValueIds())
-			assessedGefValueSets.add(new AssessedGefValueSet.AssessedGefValueSetBuilder()
-					.assessmentId(assessment.getId().intValue()).gefValueId(gefId.intValue()).build());
+			for (Long gefId : data.getGeriatricFactorValueIds())
+				assessedGefValueSets.add(new AssessedGefValueSet.AssessedGefValueSetBuilder()
+						.assessmentId(assessment.getId().intValue()).gefValueId(gefId.intValue()).build());
 
-		audienceRolesRepository.save(assessmentAudienceRoles);
-		assessedGefValuesRepository.save(assessedGefValueSets);
+			audienceRolesRepository.save(assessmentAudienceRoles);
+			assessedGefValuesRepository.save(assessedGefValueSets);
 
-		return Response.ok(objectMapper.writeValueAsString(assessment)).build();
+			return Response.ok(objectMapper.writeValueAsString(assessment)).build();
+		} catch (JWTDecodeException exception){
+			return Response.ok("402").build();
+		}
 	}
 
 	@GET

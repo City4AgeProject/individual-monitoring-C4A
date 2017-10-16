@@ -6,7 +6,7 @@ import eu.city4age.dashboard.api.pojo.enu.DataValidity;
 
 public class AddAssessmentDeserializer {
 
-	Long authorId;
+	String jwt;
 
 	String comment;
 
@@ -26,12 +26,12 @@ public class AddAssessmentDeserializer {
 		this.comment = comment;
 	}
 
-	public Long getAuthorId() {
-		return authorId;
+	public String getJwt() {
+		return jwt;
 	}
 
-	public void setAuthorId(Long authorId) {
-		this.authorId = authorId;
+	public void setJwt(String jwt) {
+		this.jwt = jwt;
 	}
 
 	public List<Long> getGeriatricFactorValueIds() {

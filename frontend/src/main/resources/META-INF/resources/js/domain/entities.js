@@ -174,7 +174,7 @@ Assessment.prototype.toJson = function() {
 
 /**
  * This is a object to post new assessement
- * @param {type} authorId
+ * @param {type} jwt
  * @param {type} comment
  * @param {type} riskStatus
  * @param {type} dataValidity
@@ -182,8 +182,8 @@ Assessment.prototype.toJson = function() {
  * @param {type} audienceIds
  * @returns {AddAssessment}
  */
-function AddAssessment(authorId, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds) {
-    this.authorId = authorId;
+function AddAssessment(jwt, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds) {
+    this.jwt = jwt;
     this.comment = comment;
     this.riskStatus = riskStatus;
     this.dataValidity = dataValidity;

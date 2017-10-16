@@ -19,6 +19,9 @@ public interface UserInRoleRepository extends GenericRepository<UserInRole, Long
 
 	@Query("SELECT u FROM UserInRole u INNER JOIN FETCH u.userInSystem AS userInSystem WHERE userInSystem.username = :username AND userInSystem.password=:password")
 	UserInRole findBySystemUsernameAndPassword(@Param("username") final String username, @Param("password") final String password);
+	
+	@Query("SELECT u FROM UserInRole u INNER JOIN FETCH u.userInSystem AS userInSystem WHERE userInSystem.username = :username")
+	UserInRole findBySystemUsername(@Param("username") final String username);
 
 	List<UserInRole> findByRoleId(Short roleId);
 	

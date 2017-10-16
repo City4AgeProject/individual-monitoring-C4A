@@ -111,17 +111,23 @@ define(['knockout', 'jquery', 'urls', 'entities'],
 
                 self.postAssessment = function (data, event) {
                     
-                    var authorId = sessionStorage.getItem ("userid");
+                    var jwt = sessionStorage.getItem("jwt");
                     var comment = ko.toJS(self.props.commentText);
-                    var riskStatus = self.props.selectedRiskStatus.length===1 ? ko.toJS(self.props.selectedRiskStatus)[0] : 'N'; // N-none
+                    var riskStatus = self.props.selectedRiskStatus.length===1 ? ko.toJS(self.props.selectedRiskStatus)[0] : 'XXX'; // N-none
                     var dataValidity = self.props.selectedDataValidity.length===1 ? ko.toJS(self.props.selectedDataValidity)[0] : 'VALID_DATA';
                     var geriatricFactorValueIds = self.props.dataPointsMarkedIds;
                     var audienceIds = ko.toJS(self.props.selectedRoles);
+                    console.log("audienceIds: " + audienceIds);
                     var assessmentToPost = new AddAssessment
-                            (authorId, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
-                    var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_SET,
-                            JSON.stringify(assessmentToPost), postAssessmentCallback);
-                    jqXHR.fail(serverErrorCallback);
+                            (jwt, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
+                    
+                    if (riskStatus === 'XXX' || audienceIds.length === 0) {
+                    	window.alert('You did not fill the required fields: Risk Status or Target Audience!');
+                    } else {
+                    	var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_SET,
+                                JSON.stringify(assessmentToPost), postAssessmentCallback);
+                        jqXHR.fail(serverErrorCallback);
+                    };
                     
                     return true;
                 };
