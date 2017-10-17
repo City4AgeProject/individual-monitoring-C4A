@@ -254,7 +254,6 @@ function(oj, ko, $) {
 
 		context.props.then(function(properties) {
 			self.props = properties;
-			
 		});
 		
 

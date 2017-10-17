@@ -2,7 +2,8 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 'promise',
     'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
-    'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view','anagraph-measure-view'],
+    'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view','anagraph-measure-view'
+    ,"care-recipient-view"],
 
 function (oj, ko, $, sp, params) {
 	
@@ -22,14 +23,6 @@ function (oj, ko, $, sp, params) {
         var PRE_FRAIL_SERIES_NAME = oj.Translations.getTranslatedString('pre-frail');
         var FRAIL_SERIES_NAME = oj.Translations.getTranslatedString('frail');
         var FIT_SERIES_NAME = oj.Translations.getTranslatedString('fit');
-
-        function initCRData() {
-            self.userAge = sp.userAge;
-            self.userGender = "male";              
-            self.textline = sp.userTextline;
-           }
-        
-        
 
         self.selectedGefName = "";
         self.parentFactorId = ko.observable();
@@ -106,17 +99,12 @@ function (oj, ko, $, sp, params) {
         }
 
     	//Labels on GEF page with translate option
-    	self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
-    	self.ageLabel = oj.Translations.getTranslatedString("age");
-    	self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician");
-    	self.summaryLabel= oj.Translations.getTranslatedString("summary");
+        
     	self.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detection_gef_groups_chart");
     	self.lineChartLabel = oj.Translations.getTranslatedString('line_chart');
     	self.morphologyLabel = oj.Translations.getTranslatedString('morphology');
     	self.visualisationsLabel = oj.Translations.getTranslatedString('visualisations');
-    	self.readMoreLabel = oj.Translations.getTranslatedString("read_more");
-    	self.genderLabel = oj.Translations.getTranslatedString("gender");
-
+    	
         /* End Detection FGR Groups Line Chart configuration  */
 
         var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Aug 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
@@ -304,8 +292,6 @@ function (oj, ko, $, sp, params) {
         self.nowrap = ko.observable(false);
 
         self.handleActivated = function(info) {
-            // Implement if needed
-            initCRData();
             
             self.careRecipientId = oj.Router.rootInstance.retrieve();
             
@@ -317,38 +303,6 @@ function (oj, ko, $, sp, params) {
             loadCRData();
             loadGefData();
           };
-
-        /* handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
-        self.handleAttached = function (info) {
-            $('#summary').css({height: '20px', overflow: 'hidden'});
-            $('#showmore').on('click', function () {
-                console.log("clicked");
-                var $this = $("#summary");
-                if ($this.data('open')) {
-                    $("#showmore").html("Read more");
-                    $this.animate({height: '20px'});
-                    $this.data('open', 0);
-                    $("#readmore").css({"display": "inline", "overflow-y": "visible"});
-
-                } else {
-                	var divheight = $("#readmore").height(); 
-                	var lineheight = $("#readmore").css('line-height').replace("px","");
-                	var numberOfLines = (Math.round(divheight/parseInt(lineheight)));
-                	
-                    $("#showmore").html("Read less");
-                    if(numberOfLines>10) {
-                    	$("#readmore").css({"display": "block", "height": "180px", "overflow-y": "scroll"});
-                    	$this.animate({height: '200px'});
-                    } else {
-                    	$this.animate({height: numberOfLines * 20+'px'});
-                    }
-                    
-                    $this.data('open', 1);
-
-                }
-            });
-        };
-        /* End: handleAttached; Use to perform tasks after the View is inserted into the DOM., str 103 */
 
         self.cdDetectionVariables = [];
 
@@ -454,7 +408,6 @@ function (oj, ko, $, sp, params) {
                         gefData = behavData;   
                     })
         }
-
     }
 
     return  GraphicsContentViewModel;

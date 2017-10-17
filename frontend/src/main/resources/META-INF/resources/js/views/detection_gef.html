@@ -5,35 +5,11 @@
 
 <div class="oj-panel oj-panel-shadow-sm"
 	style="border: none; background-color: #fcfcfc">	
+	
 	<!-- CR info -->
-	<div class="oj-panel oj-panel-shadow-sm"
-		style="border: none; background-color: #fcfcfc; max-width: 1300px;">
-		<span>
-		<span style="font-size: 16px" data-bind="text: careRecipientLabel "></span> 
-		   <b><span data-bind="text: careRecipientId"></span></b>
-		</span>
-		<span>
-		<span style="font-size: 16px; padding-left: 20px;" data-bind="text: ageLabel"></span>
-		  <b> <span data-bind="text: userAge"></span></b>
-		</span>
-		<span style="font-size: 16px; padding-left: 20px;" data-bind="text: genderLabel"></span> 
-		<span><b><span data-bind="text: userGender"></span></b></span>
-		<span>
-	    <span style="font-size: 16px; padding-left: 20px;" data-bind="text: assignGeriatricianLabel"></span>
-		  <b><span data-bind="text: $root.userLogin"></span></b>
-		</span>
-		<!--class="oj-header-border"-->
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br/>
-		
-		<div style="height: 20px; overflow: hidden; font-size: 16px; margin-top:5px" id="summary">
-			<b><span data-bind="text: summaryLabel"></span></b>
-			<span id="readmore"  data-bind="text: textline "></span>
-		</div>
-		<br>
-		<a href="#" id="showmore" data-bind="text: readMoreLabel"></a>
-	</div>
-
+	<care-recipient-view id="careRecipient" care-recipient-id="{{careRecipientId}}"/>
 	<!-- end CR info -->
+	
 	<div class="visualization-drop oj-flex-item" align="right">
 		<button class="demo-button-aqua" style="min-width: 100px;"
 			data-bind="ojComponent: { component: 'ojButton', 

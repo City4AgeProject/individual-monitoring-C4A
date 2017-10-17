@@ -3,7 +3,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
     'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view'
-    ],
+    ,"care-recipient-view"],
 
 function (oj, ko, $, sp) {
 
@@ -11,16 +11,13 @@ function (oj, ko, $, sp) {
     	var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
         
         var self = this;
+        
+        self.careRecipientId = ko.observable();
+        self.careRecipientId = oj.Router.rootInstance.retrieve()[0];
+        
         self.selectedId = ko.observable();
         self.titleValue = ko.observable("");
-        self.userAge = sp.userAge;
-        self.userGender = 'male';
-		//self.userGender = sp.userGender;
-        self.textline = sp.userTextline;
 
-        
-        
-        
         self.subFactorName = ko.observable();
         self.careRecipient = ko.observable();
         self.parentFactor = ko.observable();
@@ -28,7 +25,7 @@ function (oj, ko, $, sp) {
 
         self.groupsVal = ko.observableArray();
         self.seriesVal = ko.observableArray();
-        
+     
         self.groupsValue2 = ko.observableArray();
         self.lineSeriesValue = ko.observableArray();
         
@@ -44,19 +41,13 @@ function (oj, ko, $, sp) {
         
         self.queryParams = ko.observable();
 
-        self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
-        self.ageLabel = oj.Translations.getTranslatedString("age");
-        self.genderLabel = oj.Translations.getTranslatedString("gender");
-        self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician");
-        self.summaryLabel= oj.Translations.getTranslatedString("summary");
-        self.readMoreLabel = oj.Translations.getTranslatedString("read_more");
        // self.selectGefLabel = oj.Translations.getTranslatedString("select_gef");
         
         var serverErrorCallback = function (xhr, message, error) {
             console.log(error);
         };
 
-        self.handleActivated = function (info) {
+        self.handleActivated = function () {
             var selectedDetectionVariable = oj.Router.rootInstance.retrieve();            
             if(selectedDetectionVariable !== undefined) {
                     self.selectedId(selectedDetectionVariable[1].id);
@@ -77,36 +68,6 @@ function (oj, ko, $, sp) {
            
         };
 
-
-        self.handleAttached = function (info) {
-            $('#summary').css({height: '20px', overflow: 'hidden'});
-            $('#showmore').on('click', function () {
-                console.log("clicked");
-                var $this = $("#summary");
-                if ($this.data('open')) {
-                    $("#showmore").html("Read more");
-                    $this.animate({height: '20px'});
-                    $this.data('open', 0);
-                    $("#readmore").css({"display": "inline", "overflow-y": "visible"});
-
-                } else {
-                	var divheight = $("#readmore").height(); 
-                	var lineheight = $("#readmore").css('line-height').replace("px","");
-                	var numberOfLines = (Math.round(divheight/parseInt(lineheight)));
-                	
-                    $("#showmore").html("Read less");
-                    if(numberOfLines>10) {
-                    	$("#readmore").css({"display": "block", "height": "180px", "overflow-y": "scroll"});
-                    	$this.animate({height: '200px'});
-                    } else {
-                    	$this.animate({height: numberOfLines * 20+'px'});
-                    }
-                    
-                    $this.data('open', 1);
-
-                }
-            });
-        };
         
         /*Mouse handles .. should be deleted when we found better way to fix popup position */
         var clientX;

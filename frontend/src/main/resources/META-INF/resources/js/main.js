@@ -31,8 +31,9 @@ requirejs.config({
     'assessments-list': 'composites/anagraph-assessment-view/assessments-list/loader',
     'assessments-preview': 'composites/anagraph-assessment-view/assessments-preview/loader',
     'anagraph-assessment-view': 'composites/anagraph-assessment-view/loader',
+    'care-recipient-view': 'composites/care-recipient-view/loader',
+    'anagraph-measure-view': 'composites/anagraph-measure-view/loader',
     
-    'anagraph-measure-view': 'composites/anagraph-measure-view/loader'
   }
   //endinjector
   ,
