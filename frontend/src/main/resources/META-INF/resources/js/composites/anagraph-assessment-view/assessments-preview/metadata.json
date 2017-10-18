@@ -16,9 +16,13 @@
 			"description" : "Care recipient id.",
 			"type": "number"
 		},
-		"gesId": {
-			"description" : "Geriatric subfactor id.",
-			"type": "number"
+		"detectionVariable": {
+			"description" : "Detection variable",
+			"type": "object"
+		},
+                "gefName": {
+			"description" : "Name of the geriatric factor.",
+			"type": "string"
 		}
 	}
 }

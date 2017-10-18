@@ -8,7 +8,8 @@ function(oj, ko, $) {
 		var self = this;
 
 		self.crId = ko.observable();
-		self.gesId  = ko.observable(); 
+		self.detectionVariable  = ko.observable(); 
+                self.gefName = ko.observable();
 		self.parentFactorId = ko.observable();
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();
@@ -114,7 +115,7 @@ function(oj, ko, $) {
 			}
 		});
 		
-		//event triggers when user makes a selection on diagram
+		//event triggers when user hovers or clicks on chart lines
 		self.chartOptionChange = function(event, ui) {
 			if(ui !== undefined) {
 				if (ui['option'] === 'selection') {					
@@ -137,14 +138,21 @@ function(oj, ko, $) {
 								// Compose selections in get query parameters
 								if(ui['optionMetadata']['selectionData'].length == 1){
 									//if there is only 1 selection
-									var gefOrGesId = ui['optionMetadata']['selectionData'][0]['data']['gefTypeId'];									
-										$('#popupWrapper1').prop('gesId', gefOrGesId);
+									var gefOrGesId = ui['optionMetadata']['selectionData'][0]['data']['gefTypeId'];	
+                                                                        var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, gefOrGesId);
+                                                                        //console.log('this is selectiondetectionvariable ' + JSON.stringify(selectedDetectionVariable));
+                                                                        if(selectedDetectionVariable.detectionVariableType == 'GES'){
+                                                                            var gef = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, selectedDetectionVariable.derivedDetectionVariableId);
+										$('#popupWrapper1').prop('detectionVariable', selectedDetectionVariable);
 										$('#popupWrapper1').prop('crId', self.props.careRecipientId);
+                                                                                $('#popupWrapper1').prop('gefName', gef.detectionVariableName);
+                                                                        }
+                                                                        
 									
 								}else {
-									//if there is multiple selections, set gesid property from assessment-preview component 
+									//if there is multiple selections, set detectionVariable property from assessment-preview component 
 									//to 0 so that viewMeasures wont be displayed
-									$('#popupWrapper1').prop('gesId', 0);
+									$('#popupWrapper1').prop('detectionVariable', 0);
 								}
 								
 								self.queryParams = calculateSelectedIds(onlyDataPoints);
@@ -341,7 +349,7 @@ function(oj, ko, $) {
 			self.bGotoGESClick();
 
 		}
-
+                
 		/*
 		 * Mouse handles .. should be deleted when we find better way to
 		 * fix popup position
@@ -499,7 +507,7 @@ function(oj, ko, $) {
 					});
 		};
 		//shows either popup1 or popup2 on assessment preview component based on number of selected assessments
-		function showAssessmentsPopup( aLength) {			
+		function showAssessmentsPopup( aLength) {
 			self.selectedAnotations([]);
 			$('.popup').ojPopup('close');
 			// Popup1 or popup2 if there are any assessments
@@ -680,7 +688,7 @@ function(oj, ko, $) {
 				});
 			}
 		};
-		
+		            
 		self.toggleAnnotationsLabel = function(){
 			
 			if ($('#tabAnnotations').css('display') === 'none') {
@@ -693,13 +701,13 @@ function(oj, ko, $) {
 				});
 			}
 		};
-
-		self.selectDatapointsDiagram = function() {
+                		
+                self.selectDatapointsDiagram = function() {
 			self.showSelectionOnDiagram(true);
 
 			self.props.selectedItemsValue = selected;
 			self.props.subFactorName = "testtest";
-
+                        
 			self.chartOptionChange();
 			self.loadAssessmentsCached();
 			selected = [];

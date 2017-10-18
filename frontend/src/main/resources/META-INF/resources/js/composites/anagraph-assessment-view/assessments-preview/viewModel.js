@@ -11,10 +11,10 @@ function(ko, $) {
 		var self = this;
 		self.composite = context.element;
 		
-		//property changed event listener for gesId
-        $(self.composite).on('gesId-changed',function(event){
+		//property changed event listener for detectionVariable
+        $(self.composite).on('detectionVariable-changed',function(event){
         	 if (event.detail.updatedFrom === 'external'){
-        		 if(self.props.gesId > 513) {
+        		 if(self.props.detectionVariable.id > 513) {
         			 self.shouldSeeMea(true);
         		 }else {
         			 self.shouldSeeMea(false)
@@ -26,7 +26,7 @@ function(ko, $) {
         });
 		
 		self.viewMea = function(){
-			oj.Router.rootInstance.store([self.props.crId, self.props.gesId]);
+			oj.Router.rootInstance.store([self.props.crId, self.props.detectionVariable, self.props.gefName]);
             oj.Router.rootInstance.go("detection_mea");
 			  };
 					
@@ -43,10 +43,7 @@ function(ko, $) {
 		
 
 		self.attached = function(context) {
-			self.clickShowPopupAddAssessment = self.clickShowPopupAddAssessment;			
-			if(self.props.gesId) {				
-				self.isGes(true);
-			}
+			self.clickShowPopupAddAssessment = self.clickShowPopupAddAssessment;						
 		};
 
 		self.clickShowPopupAddAssessment = function(data, event) {
