@@ -8,7 +8,7 @@
             "pilotCode":"MAD",
             "groups":[  
                 {  
-                    "name":"contextual",
+                    "name":"geriatric_factors_second_group",
                     "level":1,
                     "weight":0.3,
                     "formula":"",
@@ -16,7 +16,7 @@
                             ]
                 },
                 {  
-                    "name":"behavioural",
+                    "name":"geriatric_factors_first_group",
                     "level":1,
                     "weight":0.7,
                     "formula":"",

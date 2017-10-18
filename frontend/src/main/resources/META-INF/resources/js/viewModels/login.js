@@ -3,6 +3,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
         function (oj, ko, sp, app, $) {
             function LoginViewModel() {
                 $(".loader-hover").hide();
+                
                 var self = this;
 
                 this.usernameLabel = oj.Translations.getTranslatedString('username');
@@ -20,27 +21,35 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                 // Create handler
                 self.loginUser = function (viewModel, event) {
-                    console.log("username " + self.loginValue() + " password " + self.passwordValue());
+                	
+                	if (sessionStorage.length !== 0 && sessionStorage.getItem("jwt") !== null) {
+                		
+                		window.alert("You must log out first!");
 
-                    $.getJSON(USER_LOGIN + "/username/" + self.loginValue() + "/password/" + self.passwordValue()).
-                            then(function (users) {
-                                if (users.responseCode === 200) {
-                                    /*logged in 
-                                     * keep in session storage username and display name
-                                     */
-                                    sp.setStorageData(users.jwToken, users.displayName, users.pilotName);
-
-                                    $('#appHeader').css({display: 'block'});
-                                    $('.user-menu').css({display: 'block'});
-
-                                    oj.Router.rootInstance.go("cr_list_full");
-                                    app.userLogin(users.displayName);
-                                    app.userPilotName(users.pilotName);
-
-                                } else if (users.responseCode === 401) {
-                                    console.log("wrong credentials ", users.message);
-                                }
-                            });
+                	} else {
+                		console.log("username " + self.loginValue() + " password " + self.passwordValue());
+	                    $.getJSON(USER_LOGIN + "/username/" + self.loginValue() + "/password/" + self.passwordValue()).
+	                            then(function (users) {
+	                            	if (users.responseCode === 200) {
+	                                    /*logged in 
+	                                     * keep in session storage username and display name
+	                                     */
+	                                    sp.setStorageData(users.jwToken, users.displayName, users.pilotName);
+	
+	                                    $('#appHeader').css({display: 'block'});
+	                                    $('.user-menu').css({display: 'block'});
+	
+	                                    oj.Router.rootInstance.go("cr_list_full");
+	                                    app.userLogin(users.displayName);
+	                                    app.userPilotName(users.pilotName);
+	                                    
+	                                    //console.log("sp: ", sessionStorage.length);
+	
+	                                } else if (users.responseCode === 401) {
+	                                    console.log("wrong credentials ", users.message);
+	                                }
+	                            });
+                    }
                 };
                 
                 self.resetForm = function (viewModel, event) {
