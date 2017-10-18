@@ -262,12 +262,15 @@ public class CareRecipientService {
                 response.setResponseCode(10);
 
                 int age = 0;
+                String gender="";
 
                 if (user.getCrProfile() != null) {
 
                     LocalDate birthDate = user.getCrProfile().getBirthDate().toInstant().atZone(ZoneId.systemDefault())
                             .toLocalDate();
                     age = (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
+                    gender = user.getCrProfile().isGender()?"male":"female";
+                    
 
                 }
 
@@ -299,7 +302,7 @@ public class CareRecipientService {
 				Pilot userPilot = pilotRepository.findOne(user.getPilotCode());
 
                 itemList.add(new C4ACareRecipientListResponse(user.getId(), age, frailtyStatus, frailtyNotice,
-                        attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate, userPilot.getPilotCode()));
+                        attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate, userPilot.getPilotCode(), gender));
             } // detectionVariables loop
             response.setItemList(itemList);
 

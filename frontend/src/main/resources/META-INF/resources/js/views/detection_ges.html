@@ -21,9 +21,10 @@ a:hover {
 </style>
 
 <div id='dges-container'>
-
+<div class="oj-panel oj-panel-shadow-sm"
+	style="border: none; background-color: #fcfcfc">	
 	<!-- CR info -->
-	<care-recipient-view id="careRecipient" care-recipient-id="{{careRecipientId}}"/>
+	<div data-bind="ojModule: { name: 'cr_info'}"></div>
 	<!-- end CR info -->
 	
 </div>
@@ -84,8 +85,8 @@ a:hover {
 					</div>
 				</div>
 				-->
-
-			<anagraph-assessment-view id="detectionGEFGroup1FactorsLineChart"
+</div>
+		<anagraph-assessment-view id="detectionGEFGroup1FactorsLineChart"
 				care-recipient-id="{{careRecipient}}" parent-factor-id="{{parentFactor}}" 
 				series="{{seriesVal}}" groups="{{groupsVal}}" title-value="{{titleValue}}"
                                 selected-id="{{selectedId}}" cd-detection-variables="{{cdDetectionVariables}}"

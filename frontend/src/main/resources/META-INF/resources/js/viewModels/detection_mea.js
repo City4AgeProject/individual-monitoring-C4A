@@ -1,6 +1,5 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery',
-    'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojbutton', 'urls','anagraph-measure-view'
-    ,"care-recipient-view"],
+    'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojbutton', 'urls','anagraph-measure-view'],
         function (oj, ko, sp, app, $) {
 
             function detectionMeaViewModel() {

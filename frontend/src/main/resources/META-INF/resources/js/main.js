@@ -31,7 +31,7 @@ requirejs.config({
     'assessments-list': 'composites/anagraph-assessment-view/assessments-list/loader',
     'assessments-preview': 'composites/anagraph-assessment-view/assessments-preview/loader',
     'anagraph-assessment-view': 'composites/anagraph-assessment-view/loader',
-    'care-recipient-view': 'composites/care-recipient-view/loader',
+
     'anagraph-measure-view': 'composites/anagraph-measure-view/loader',
     
   }
@@ -67,6 +67,20 @@ requirejs.config({
    'ojs/ojbutton', 'ojs/ojmenu'],
    function (oj, ko, app) { // this callback gets executed when all required modules are loaded
 
+	/* 
+	   oj.ModuleBinding.defaults.modelPath = 'viewModels/';
+	    oj.ModuleBinding.defaults.viewPath = 'text!views/';
+	    oj.ModuleBinding.defaults.viewSuffix = '.html';
+	    function RootViewModel() {
+	    }
+	    $(document).ready(
+	        function ()
+	        {
+	            ko.applyBindings(new RootViewModel());
+	        }
+	    );
+	    */
+	    
      oj.Router.sync().then(
        function () {
          // bind your ViewModel for the content of the whole page body.

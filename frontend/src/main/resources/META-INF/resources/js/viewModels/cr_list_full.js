@@ -54,7 +54,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                     interv_status: this.interventionstatus,
                                     interv_date: this.interventionDate,
                                     age: this.age,
-                                    pilotcode: this.pilotCode
+                                    pilotcode: this.pilotCode,
+                                    gender: this.gender
                                 });
                                 $(".loader-hover").hide();
                             });
@@ -119,14 +120,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 	                                      	}
 	                                      }
 	
-	                    self.viewGef(crData.cr_id,crData.textline,crData.age);
+	                    self.viewGef(crData.cr_id,crData.textline,crData.age,crData.gender);
                 };
 
-                self.viewGef = function (userId, textline, age) {
+                self.viewGef = function (userId, textline, age, gender) {
                     oj.Router.rootInstance.store(userId);
                     sp.setUserId(userId);
-                    sp.setuserTextline(textline);
-                    sp.setuserAge(age);
+                   // sp.setuserTextline(textline);
+                    sp.setuserAge(2233);
+                    sp.setuserGender(gender);
                     console.log("userId " + userId + " Age " + age + " textline " + textline);
 
                     oj.Router.rootInstance.go("detection_gef");
