@@ -84,6 +84,9 @@ public class TimeInterval implements Serializable {
 	
 	@Column(name = "typical_period")
 	private String typicalPeriod;
+	
+	@Column
+	private Timestamp created;
 
 	@Transient
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -200,6 +203,14 @@ public class TimeInterval implements Serializable {
 			return intervalEnd.toString();
 		else
 			return "";
+	}
+
+	public Timestamp getCreated() {
+		return created;
+	}
+
+	public void setCreated(Timestamp created) {
+		this.created = created;
 	}
 
 }

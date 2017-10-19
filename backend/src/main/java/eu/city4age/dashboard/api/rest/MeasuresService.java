@@ -685,6 +685,7 @@ public class MeasuresService {
 			ti = new TimeInterval();
 			ti.setIntervalStart(intervalStart);
 			ti.setTypicalPeriod(typicalPeriod.getDbName());
+			ti.setCreated(new Timestamp((new Date().getTime())));
 			timeIntervalRepository.save(ti);
 			timeIntervalRepository.flush();
 		}
