@@ -210,6 +210,7 @@ define({
 				assign_geriatrician: "Υπεύθυνος γιατρός/γηρίατρος",
 				summary: "Σύνοψη",
 				detection_gef_groups_chart: "Συμπεριφορικοί και συναφής γηριατρικοί παράγοντες",
+				detection_gef_groups_chart_groups: "Γηριατρικοί παράγοντας ομάδες",
 				line_chart: "Γράφημα γραμμής",
 				visualisations:"Απεικονίσεις",
 				geriatric_factors:"Γηριατρικοί παράγοντες",

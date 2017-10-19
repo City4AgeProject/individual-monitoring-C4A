@@ -52,7 +52,7 @@
 			"description": "Array of objects selected on diagram.",
 			"type": "Array<object>"
 		},
-		"cdDetectionVariables": {
+		"viewPilotDetectionVariables": {
 			"description": "Array of subfactors/factors.",
 			"type": "Array<object>"
 		}

@@ -210,6 +210,7 @@ define({
 				assign_geriatrician: "Gériatrician affecté :",
 				summary: "Résumé :",
 				detection_gef_groups_chart: "Facteurs de groupes gériatriques comportementaux et contextuels",
+				detection_gef_groups_chart_groups: "Facteurs de groupes gériatriques",
 				line_chart: "Graphique en ligne",
 				visualisations:"Visulatisations",
 				geriatric_factors:"Facteurs gériatriques",

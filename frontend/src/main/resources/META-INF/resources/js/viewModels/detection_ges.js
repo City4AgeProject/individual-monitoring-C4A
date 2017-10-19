@@ -32,7 +32,7 @@ function (oj, ko, $, sp) {
         
         self.selectedAnotations = ko.observableArray();
         
-        self.cdDetectionVariables = [];
+        self.viewPilotDetectionVariables = [];
                 
         self.val = ko.observableArray(["Month"]);
         
@@ -49,7 +49,7 @@ function (oj, ko, $, sp) {
         self.handleActivated = function () {
             var selectedDetectionVariable = oj.Router.rootInstance.retrieve();            
             if(selectedDetectionVariable !== undefined) {
-                    self.selectedId(selectedDetectionVariable[1].id);
+                    self.selectedId(selectedDetectionVariable[1].detectionVariableId);
 	            self.careRecipient(selectedDetectionVariable[0]);
 	            self.subFactorName(selectedDetectionVariable[1].detectionVariableName);                    
                     if(selectedDetectionVariable[1].detectionVariableType == 'GES')
@@ -57,13 +57,13 @@ function (oj, ko, $, sp) {
                         self.parentFactor(selectedDetectionVariable[1].derivedDetectionVariableId);               
                         self.titleValue(oj.Translations.getTranslatedString('GEF'.toLowerCase()) + " - " + oj.Translations.getTranslatedString(selectedDetectionVariable[2]));
                     }else {
-                        self.parentFactor(selectedDetectionVariable[1].id); //derivedDetectionVariableIds
+                        self.parentFactor(selectedDetectionVariable[1].detectionVariableId); //derivedDetectionVariableIds
                         self.subFactorType(selectedDetectionVariable[1].detectionVariableType);
                         self.titleValue(oj.Translations.getTranslatedString(self.subFactorType().toLowerCase()) + " - " + oj.Translations.getTranslatedString(self.subFactorName()));
                     }	            
 	            self.subFactorType(selectedDetectionVariable[1].detectionVariableType);                    	            
             } 
-             loadCdDetectionVariables();
+             loadViewPilotDetectionVariables();
            
         };
 
@@ -81,10 +81,10 @@ function (oj, ko, $, sp) {
         self.step = ko.observable(1);
         self.valueArray = ko.observableArray([0, 0]);
 
-        function loadCdDetectionVariables() {
-            $.getJSON(CODEBOOK_SELECT + '/cd_detection_variable', function(data) {               
-                self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);
-                $('#detectionGEFGroup1FactorsLineChart').prop('cdDetectionVariables', self.cdDetectionVariables);                   
+        function loadViewPilotDetectionVariables() {
+            $.getJSON(CODEBOOK_SELECT + '/vw_detection_variable_derivation_per_user_in_role', function(data) {               
+                self.viewPilotDetectionVariables = ViewPilotDetectionVariable.produceFromTable(data);
+                $('#detectionGEFGroup1FactorsLineChart').prop('viewPilotDetectionVariables', self.viewPilotDetectionVariables);                   
             });
         }
         

@@ -99,7 +99,7 @@ function (oj, ko, $, sp, params) {
 
     	//Labels on GEF page with translate option
         
-    	self.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detection_gef_groups_chart");
+    	self.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detection_gef_groups_chart_groups");
     	self.lineChartLabel = oj.Translations.getTranslatedString('line_chart');
     	self.morphologyLabel = oj.Translations.getTranslatedString('morphology');
     	self.visualisationsLabel = oj.Translations.getTranslatedString('visualisations');
@@ -298,18 +298,18 @@ function (oj, ko, $, sp, params) {
             self.lineSeriesValue = [];
             self.lineGroupsValue = [];
             
-            loadCdDetectionVariables();
+            loadViewPilotDetectionVariables();
             loadCRData();
             loadGefData();
           };
 
-        self.cdDetectionVariables = [];
+        self.viewPilotDetectionVariables = [];
 
         //Names Cd Detection Variable names are loaded from table
-        function loadCdDetectionVariables() {
-            $.getJSON(CODEBOOK_SELECT + '/cd_detection_variable', function(data) {
-                self.cdDetectionVariables = CdDetectionVariable.produceFromTable(data);             
-                $('#detectionGEFGroup1FactorsLineChart').prop('cdDetectionVariables', self.cdDetectionVariables);
+        function loadViewPilotDetectionVariables() {
+            $.getJSON(CODEBOOK_SELECT + '/vw_detection_variable_derivation_per_user_in_role', function(data) {
+                self.viewPilotDetectionVariables = ViewPilotDetectionVariable.produceFromTable(data);             
+                $('#detectionGEFGroup1FactorsLineChart').prop('viewPilotDetectionVariables', self.viewPilotDetectionVariables);
             });
         }
 

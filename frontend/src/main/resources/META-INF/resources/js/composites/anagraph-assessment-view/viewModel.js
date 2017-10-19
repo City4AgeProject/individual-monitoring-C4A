@@ -139,10 +139,10 @@ function(oj, ko, $) {
 								if(ui['optionMetadata']['selectionData'].length == 1){
 									//if there is only 1 selection
 									var gefOrGesId = ui['optionMetadata']['selectionData'][0]['data']['gefTypeId'];	
-                                                                        var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, gefOrGesId);
+                                                                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
                                                                         //console.log('this is selectiondetectionvariable ' + JSON.stringify(selectedDetectionVariable));
                                                                         if(selectedDetectionVariable.detectionVariableType == 'GES'){
-                                                                            var gef = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, selectedDetectionVariable.derivedDetectionVariableId);
+                                                                            var gef = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, selectedDetectionVariable.derivedDetectionVariableId, self.props.careRecipientId);
 										$('#popupWrapper1').prop('detectionVariable', selectedDetectionVariable);
 										$('#popupWrapper1').prop('crId', self.props.careRecipientId);
                                                                                 $('#popupWrapper1').prop('gefName', gef.detectionVariableName);
@@ -320,9 +320,9 @@ function(oj, ko, $) {
                         //if subfaktor lineseries is clicked, transfer to detection_mea page
                         if(self.props.selectedId > 513){
                             console.log('bigger than 513');        
-                            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, self.props.selectedId);                          
+                            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);                          
                             if(selectedDetectionVariable.detectionVariableType === 'GEF'){                               
-                                self.props.parentFactorId = selectedDetectionVariable.id;
+                                self.props.parentFactorId = selectedDetectionVariable.detectionVariableId;
                             }else {
                                 self.props.parentFactorId = selectedDetectionVariable.derivedDetectionVariableId;
                             }
@@ -747,10 +747,10 @@ function(oj, ko, $) {
 
         //Returns chart by ID for detection variable name that was drilled in (clicked on)
         self.bGotoGESClick = function() {
-            var selectedDetectionVariable = CdDetectionVariable.findByDetectionVariableId(self.props.cdDetectionVariables, self.props.selectedId);        
+            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);        
             oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable, selectedDetectionVariable.detectionVariableName]);
             if(selectedDetectionVariable.detectionVariableType === 'GEF'){                               
-                                self.props.parentFactorId = selectedDetectionVariable.id;
+                                self.props.parentFactorId = selectedDetectionVariable.detectionVariableId;
                             }
                             else {
                                 self.props.parentFactorId = selectedDetectionVariable.derivedDetectionVariableId;

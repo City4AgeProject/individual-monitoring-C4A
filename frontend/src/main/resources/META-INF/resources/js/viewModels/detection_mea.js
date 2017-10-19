@@ -10,7 +10,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             	self.handleActivated = function(info) {  
                         initData();
             		
-                        return new Promise(function(resolve, reject) {            	    	                         	    	  
+                        return new Promise(function(resolve, reject) {
 
                         $.when(
 
@@ -38,7 +38,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             	function initData() {
           	      	
           	      	var crId = oj.Router.rootInstance.retrieve()[0];
-          	      	var gesId = oj.Router.rootInstance.retrieve()[1].id;
+          	      	var gesId = oj.Router.rootInstance.retrieve()[1].detectionVariableId;
           	      	
           	      	//data
       	        	self.careRecipientId = ko.observable(crId);
@@ -46,7 +46,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
             	}
             	
-            	function setDataForDiagrams(data,nuiData) {
+            	function setDataForDiagrams(data, nuiData) {
             		 //building diagramData from json data
   	    		  var measureIds = [];
   	    		  var measures = [];

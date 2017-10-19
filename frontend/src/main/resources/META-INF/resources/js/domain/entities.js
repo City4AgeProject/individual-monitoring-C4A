@@ -199,89 +199,96 @@ function CdRole(){
     this.stakeholderAbbreviation= '';
 }
 
-function CdDetectionVariable() {
-	this.prefix = "detection_variable.";
-    this.id;
-    this.detectionVariableName;
+function ViewPilotDetectionVariable() {
+	this.prefix = "view_detection_variable.";
+	this.crId;
+	this.pilotCode;
+	this.detectionVariableId;
+	this.detectionVariableName;
     this.detectionVariableType;
-    this.validFrom;
-    this.validTo;
     this.derivedDetectionVariableId;
+	this.derivedDetectionVariableName;
+	this.derivedDetectionVariableType;
     this.derivationWeight;
 }
 
-CdDetectionVariable.produceFromOther = function(other) {
-    var result = new CdDetectionVariable();
-    result.id = other.id;
+ViewPilotDetectionVariable.produceFromOther = function(other) {
+    var result = new ViewPilotDetectionVariable();
+    result.crId = other.crId;
+	result.pilotCode = other.pilotCode;
+	result.detectionVariableId = other.detectionVariableId;
     result.detectionVariableName = other.detectionVariableName;
     result.detectionVariableType = other.detectionVariableType;
-    result.validFrom = other.validFrom;
-    result.validTo = other.validTo;
-    result.derivedDetectionVariableId = other.derivedDetectionVariableId;
+	result.derivedDetectionVariableId = other.derivedDetectionVariableId;
+	result.derivedDetectionVariableName = other.derivedDetectionVariableName;
+    result.derivedDetectionVariableType = other.derivedDetectionVariableType;
     result.derivationWeight = other.derivationWeight;
     return result;
 };
 
-CdDetectionVariable.produceFromTable = function(table) {
+ViewPilotDetectionVariable.produceFromTable = function(table) {
     var list = [];
     for(var i=0; i<table.length; i++) {
-        var result = new CdDetectionVariable();
-        result.id = table[i][0];
-        result.detectionVariableName = table[i][1];
-        result.detectionVariableType = table[i][2];
-        result.validFrom = table[i][3];
-        result.validTo = table[i][4];
-        result.derivedDetectionVariableId = table[i][5];
-        result.derivationWeight = table[i][6];
+        var result = new ViewPilotDetectionVariable();
+        result.crId = table[i][0];
+		result.pilotCode = table[i][2];
+		result.detectionVariableId = table[i][4];
+        result.detectionVariableName = table[i][5];
+        result.detectionVariableType = table[i][6];
+        result.derivedDetectionVariableId = table[i][7];
+		result.derivedDetectionVariableName = table[i][8];
+		result.derivedDetectionVariableType = table[i][9];
+        result.derivationWeight = table[i][11];
         list.push(result);
     }
     return list;
 };
 
-CdDetectionVariable.parentFactorId = function(list, factorId) {
+ViewPilotDetectionVariable.parentFactorId = function(list, factorId, crId) {
     for(var i=0; i<list.length; i++) {
-        var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
-        if(currentDetectionVariable.id === factorId) {
+        var currentDetectionVariable = ViewPilotDetectionVariable.produceFromOther(list[i]);
+        if(currentDetectionVariable.detectionVariableId === factorId && currentDetectionVariable.crId === crId) {
             return currentDetectionVariable.derivedDetectionVariableId;
         } 
     }
 };
 
-CdDetectionVariable.findByDetectionVariableName = function(list, detectionVariableName) {
+ViewPilotDetectionVariable.findByDetectionVariableName = function(list, detectionVariableName, crId) {
     for(var i=0; i<list.length; i++) {
-        var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
-        if(currentDetectionVariable.detectionVariableName === detectionVariableName) {
+        var currentDetectionVariable = ViewPilotDetectionVariable.produceFromOther(list[i]);
+        if(currentDetectionVariable.detectionVariableName === detectionVariableName && currentDetectionVariable.crId === crId) {
             return currentDetectionVariable;
         } 
     }
 };
 
-CdDetectionVariable.findByDetectionVariableId = function(list, id) {
+ViewPilotDetectionVariable.findByDetectionVariableId = function(list, dvId, crId) {
     for(var i=0; i<list.length; i++) {
-    	var currentDetectionVariable = CdDetectionVariable.produceFromOther(list[i]);
-       if(parseInt(currentDetectionVariable.id) === parseInt(id)) {
+    	var currentDetectionVariable = ViewPilotDetectionVariable.produceFromOther(list[i]);
+       if(parseInt(currentDetectionVariable.detectionVariableId) === parseInt(dvId) && currentDetectionVariable.crId === crId) {
             return currentDetectionVariable;
         }
     }
 };
 
-CdDetectionVariable.filterByType = function(list, detectionVariableType) {
+ViewPilotDetectionVariable.filterByType = function(list, detectionVariableType) {
     var result = [];
     for(var i=0; i<list.length; i++) {
-        if(list[i].detectionVariableType===detectionVariableType)
+        if(list[i].detectionVariableType === detectionVariableType)
             result.push(list[i]);
     }
     return result;
 };
 
-CdDetectionVariable.filterByParentFactorId = function(list, parentFactorId) {
+ViewPilotDetectionVariable.filterByParentFactorId = function(list, parentFactorId) {
     var result = [];
     for(var i=0; i<list.length; i++) {
-        if(list[i].derivedDetectionVariableId===parentFactorId)
+        if(list[i].derivedDetectionVariableId === parentFactorId)
             result.push(list[i]);
     }
     return result;
 };
+
 
 function CrProfile() {
     this.id = null;
