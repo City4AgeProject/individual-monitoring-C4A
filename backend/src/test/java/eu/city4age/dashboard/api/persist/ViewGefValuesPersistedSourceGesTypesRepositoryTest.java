@@ -74,31 +74,31 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
 		uir1.setPilotCode("LCC");
-		userInRoleRepository.save(uir1);
+		uir1 = userInRoleRepository.save(uir1);
 	
 		DetectionVariableType dvt1 = DetectionVariableType.GES;
-		detectionVariableTypeRepository.save(dvt1);
+		dvt1 = detectionVariableTypeRepository.save(dvt1);
 		
 		DetectionVariableType dvt2 = DetectionVariableType.GEF;
-		detectionVariableTypeRepository.save(dvt2);
+		dvt2 = detectionVariableTypeRepository.save(dvt2);
 	
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(111L);
 		dv1.setDetectionVariableName("First");
 		dv1.setDetectionVariableType(dvt1);
-		detectionVariableRepository.save(dv1);
+		dv1 = detectionVariableRepository.save(dv1);
 		
 		DetectionVariable dv2 = new DetectionVariable();
 		dv2.setId(222L);
 		dv2.setDetectionVariableName("Second");
 		dv2.setDetectionVariableType(dvt2);
-		detectionVariableRepository.save(dv2);
+		dv2 = detectionVariableRepository.save(dv2);
 
 		TimeInterval ti1 = new TimeInterval();
 		ti1.setTypicalPeriod("MON");
 		ti1.setIntervalStart(Timestamp.valueOf("2016-08-01 00:00:00"));
 		ti1.setIntervalEnd(Timestamp.valueOf("2016-09-01 00:00:00"));
-		timeIntervalRepository.save(ti1);
+		ti1 = timeIntervalRepository.save(ti1);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setId(1L);
@@ -106,7 +106,7 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		gef1.setDetectionVariable(dv2);
 		gef1.setTimeInterval(ti1);
 		gef1.setGefValue(BigDecimal.valueOf(2.1));
-		gefRepository.save(gef1);
+		gef1 = gefRepository.save(gef1);
 		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
 		gef2.setId(1L);
@@ -114,20 +114,18 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		gef2.setDetectionVariable(dv2);
 		gef2.setTimeInterval(ti1);
 		gef2.setGefValue(BigDecimal.valueOf(3.1));
-		gefRepository.save(gef2);
+		gef2 = gefRepository.save(gef2);
 		
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
-		pdv1.setDetectionVariable(dv1);
+		pdv1.setDetectionVariable(dv2);
 		pdv1.setPilotCode("LCC");
 		pdv1.setDerivationWeight(BigDecimal.valueOf(0.3));
-		pdv1.setDerivedDetectionVariable(dv2);
+		pdv1.setDerivedDetectionVariable(dv1);
 		pdv1.setFormula("Formula1");
 		pilotDetectionVariableRepository.save(pdv1);
 
 		List<ViewGefValuesPersistedSourceGesTypes> result = viewGefValuesPersistedSourceGesTypesRepository.findAll();
-		
-		System.out.println("#######################################: " + result.get(0).getId().getDerivedDetectionVariableId());
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(2, result.size());
@@ -141,37 +139,37 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 
 		String pilotCode = "LCC";
 		Timestamp startOfMonth = Timestamp.valueOf("2016-08-01 00:00:00");
-		Timestamp endOfMonth = Timestamp.valueOf("2016-08-02 00:00:00");
+		Timestamp endOfMonth = Timestamp.valueOf("2016-09-01 00:00:00");
 		String derivedType= "GEF";
 		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
 		uir1.setPilotCode(pilotCode);
-		userInRoleRepository.save(uir1);
+		uir1 = userInRoleRepository.save(uir1);
 	
 		DetectionVariableType dvt1 = DetectionVariableType.GES;
-		detectionVariableTypeRepository.save(dvt1);
+		dvt1 = detectionVariableTypeRepository.save(dvt1);
 		
 		DetectionVariableType dvt2 = DetectionVariableType.GEF;
-		detectionVariableTypeRepository.save(dvt2);
+		dvt2 = detectionVariableTypeRepository.save(dvt2);
 	
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setId(1L);
 		dv1.setDetectionVariableName("ges");
 		dv1.setDetectionVariableType(dvt1);
-		detectionVariableRepository.save(dv1);
+		dv1 = detectionVariableRepository.save(dv1);
 		
 		DetectionVariable dv2 = new DetectionVariable();
 		dv2.setId(2L);
 		dv2.setDetectionVariableName("gef");
 		dv2.setDetectionVariableType(dvt2);
-		detectionVariableRepository.save(dv2);
+		dv2 = detectionVariableRepository.save(dv2);
 		
 		TimeInterval ti1 = new TimeInterval();
 		ti1.setTypicalPeriod("MON");
 		ti1.setIntervalStart(startOfMonth);
-		ti1.setIntervalEnd(Timestamp.valueOf("2016-09-01 00:00:00"));
-		timeIntervalRepository.save(ti1);
+		ti1.setIntervalEnd(Timestamp.valueOf("2016-08-10 00:00:00"));
+		ti1 = timeIntervalRepository.save(ti1);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setId(1L);
@@ -179,7 +177,7 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		gef1.setDetectionVariable(dv2);
 		gef1.setTimeInterval(ti1);
 		gef1.setGefValue(BigDecimal.valueOf(2.5));
-		gefRepository.save(gef1);
+		gef1 = gefRepository.save(gef1);
 		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
 		gef2.setId(2L);
@@ -187,18 +185,18 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		gef2.setDetectionVariable(dv2);
 		gef2.setTimeInterval(ti1);
 		gef2.setGefValue(BigDecimal.valueOf(4.0));
-		gefRepository.save(gef2);
+		gef2 = gefRepository.save(gef2);
 		
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
-		pdv1.setDetectionVariable(dv1);
+		pdv1.setDetectionVariable(dv2);
 		pdv1.setPilotCode("LCC");
 		pdv1.setDerivationWeight(BigDecimal.valueOf(0.3));
-		pdv1.setDerivedDetectionVariable(dv2);
+		pdv1.setDerivedDetectionVariable(dv1);
 		pdv1.setFormula("Formula1");
-		pilotDetectionVariableRepository.save(pdv1);
+		pdv1 = pilotDetectionVariableRepository.save(pdv1);
 
-		List<ViewGefValuesPersistedSourceGesTypes> result = viewGefValuesPersistedSourceGesTypesRepository.findAllFor1MonthByUserAndDerived(uir1.getId(), startOfMonth, endOfMonth, dvt2);
+		List<ViewGefValuesPersistedSourceGesTypes> result = viewGefValuesPersistedSourceGesTypesRepository.findAllFor1MonthByUserAndDerived(uir1.getId(), startOfMonth, endOfMonth, dvt1);
 		
 		Assert.assertNotNull(result);
 		

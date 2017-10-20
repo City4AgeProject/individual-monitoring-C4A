@@ -293,15 +293,15 @@ public class AssessmentRepositoryTest {
 		
 		List<Assessment> listA = resultWithoutFilters;		
 		logger.info("listA(0).assessmentId : " + listA.get(0).getId());
-		Assert.assertEquals(1, listA.get(0).getId ().intValue());
+		Assert.assertEquals(aa1.getId().intValue(), listA.get(0).getId ().intValue());
 		
 		listA.sort(Comparator.comparing(Assessment::getRoleId).reversed());
 		logger.info("listA(0).assessmentId : " + listA.get(0).getId());
-		Assert.assertEquals(2, listA.get(0).getId ().intValue());
+		Assert.assertEquals(aa2.getId().intValue(), listA.get(0).getId ().intValue());
 		
 		listA.sort(Comparator.comparing(Assessment::getRoleId));
 		logger.info("listA(0).assessmentId : " + listA.get(0).getId());
-		Assert.assertEquals(1, listA.get(0).getId ().intValue());
+		Assert.assertEquals(aa1.getId().intValue(), listA.get(0).getId ().intValue());
 
 	}
 

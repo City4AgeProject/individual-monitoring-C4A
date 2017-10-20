@@ -183,7 +183,7 @@ public class ViewMeaNuiDerivationPerPilotTest {
 		dv1.setId(1L);
 		dv1.setDetectionVariableType(dvt1);
 		dv1.setDerivedDetectionVariable(dv2);
-		dv1.setDetectionVariableName("prefix_testtest");
+		dv1.setDetectionVariableName("prefix");
 		detectionVariableRepository.save(dv1);
 		
 				
@@ -238,7 +238,7 @@ public class ViewMeaNuiDerivationPerPilotTest {
 		
 		logger.info("SIZE: " + result1.size());
 
-		List<ViewMeaNuiDerivationPerPilot> result = viewMeaNuiDerivationPerPilotRepository.findAllDvNuisForMeasure("testtest", "LCC");
+		List<ViewMeaNuiDerivationPerPilot> result = viewMeaNuiDerivationPerPilotRepository.findAllDvNuisForMeasure("prefix", "LCC");
 		
 		Assert.assertNotNull(result);
 		Assert.assertEquals(2, result.size());
