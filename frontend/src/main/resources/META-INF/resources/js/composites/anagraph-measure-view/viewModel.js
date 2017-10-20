@@ -26,7 +26,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 var legend = new Object();
                 legend.title = "Hover to see NUI values";
                 legend.titleStyle = "font-size:10px";             
-                this.legendValue = ko.observable(legend);                            
+                this.legendValue = ko.observable(legend);                         
                    
             };
             return model;

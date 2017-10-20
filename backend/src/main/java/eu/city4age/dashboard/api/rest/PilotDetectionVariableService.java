@@ -401,7 +401,9 @@ public class PilotDetectionVariableService {
 				throw new JsonValidationException(response.toString());
 			}
 		}
-
+		
+		//CALLING OF computeMeasures SERVICE
+		/*
 		try {
 			StringBuilder uri = new StringBuilder(baseUri).append("measures/computeFromMeasures");
 			response.append("\n\tCalled Url: ").append(uri);
@@ -421,6 +423,8 @@ public class PilotDetectionVariableService {
 			response.append("\n\tERROR while calling computeFromMeasures Service:\n\texception message: ");
 			response.append(ex.getMessage());
 		}
+		*/
+		
 		return Response.ok().type(MediaType.TEXT_PLAIN).entity(response.toString()).build();
 	}
 

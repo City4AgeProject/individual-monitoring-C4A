@@ -2,7 +2,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
         function (oj, ko, sp, $)
         {
 
-			var m=0;		
+			var m=0;	
 
             function ListViewModel() {
                 var self = this;
@@ -127,7 +127,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     oj.Router.rootInstance.store(userId);
                     sp.setUserId(userId);
                    // sp.setuserTextline(textline);
-                    sp.setuserAge(2233);
+                    sp.setuserAge(age);
                     sp.setuserGender(gender);
                     console.log("userId " + userId + " Age " + age + " textline " + textline);
 

@@ -39,7 +39,7 @@ define(['ojs/ojcore', 'knockout'], function (oj, ko) {
 
         // Check if the data has already been stored, to enable keeping it across page refreshes
         self.noData = function () {
-            var data = sessionStorage.getItem("username");
+            var data = sessionStorage.getItem("pilotname");
             var isStored;
             if (data === undefined || data === null) {
                 isStored = false;
