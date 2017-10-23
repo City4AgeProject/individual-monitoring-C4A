@@ -35,7 +35,7 @@ public class MTestingReadings implements Serializable {
 	
 	@Id
 	@Basic(optional = false)
-	@SequenceGenerator(name = "mt_seq", sequenceName = "m-testing_readings_id_seq", allocationSize = 1)
+	@SequenceGenerator(name = "mt_seq", sequenceName = "mtesting_readings_id_seq", allocationSize = 1)
 	@GeneratedValue(generator = "mt_seq", strategy = GenerationType.SEQUENCE)
 	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
 	protected Long id;

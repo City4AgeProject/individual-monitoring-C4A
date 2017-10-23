@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.ActivityRepository;
@@ -62,54 +61,94 @@ public class AndroidService {
 	@Autowired
 	ActivityRepository activityRepository;
 
+	@SuppressWarnings("deprecation")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("postFromAndroid")
-	public Response postFromAndroid(String json) throws JsonProcessingException, IOException, ProcessingException, ParseException {
-
-
-		@SuppressWarnings("deprecation")
-		AndroidActivitiesDeserializer data = objectMapper.reader(AndroidActivitiesDeserializer.class)
-				.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+	public Response postFromAndroid(String json) throws IOException {
 
 		C4AAndroidResponse response = new C4AAndroidResponse();
-		UserInRole uir = userInRoleRepository.findOne(data.getId());
-
-		if (uir == null) {
-			response.setResult(0L);
-			response.setMessage("There are no users in role with this ID !");
-			return Response.ok(objectMapper.writeValueAsString(response)).build();
-		}
+		AndroidActivitiesDeserializer data;
 		
-		List<MTestingReadings> mtss = new ArrayList<MTestingReadings>();
-		for(Activity activity: data.getActivities()) {
+		try {
+			
+			data = objectMapper.reader(AndroidActivitiesDeserializer.class)
+					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+		
+		} catch (JsonProcessingException e) {
+			
+			e.printStackTrace();
+			response.setResult(0L);
+			response.getStatus().setResponseCode("400 - CONTENT NOT JSON/CONTENT EMPTY.");
+			response.getStatus().setConsole("Header content-type is not 'application/json' or content empty.");
+			return Response.status(400).type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
+		
+		}
 
-			MTestingReadings mts;
-			if(activity.getGpss() != null && activity.getGpss().size() > 0) {
-				for(Gps gps : activity.getGpss()) {
+		
+		try {
+			
+			UserInRole uir = userInRoleRepository.findOne(data.getId());
+			
+			if (uir == null) {
+			
+				response.setResult(0L);
+				response.getStatus().setResponseCode("401 - WRONG USER ID.");
+				response.getStatus().setConsole("No user with this id in database.");
+				return Response.status(401).type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
+			
+			}
+			
+			List<MTestingReadings> mtss = new ArrayList<MTestingReadings>();
+			
+			for (Activity activity : data.getActivities()) {
+
+				MTestingReadings mts;
+				
+				if (activity.getGpss() != null && activity.getGpss().size() > 0) {
+				
+					for (Gps gps : activity.getGpss()) {
+					
+						mts = createMTR(activity, uir);
+						mts.setGpsLatitude(gps.getLatitude());
+						mts.setGpsLongitude(gps.getLongitude());
+						mts.addBluetooth(activity.getBluetooths());
+						mts.addWifi(activity.getWifis());
+						mtss.add(mts);
+					
+					}
+				
+				} else {
+					
 					mts = createMTR(activity, uir);
-					mts.setGpsLatitude(gps.getLatitude());
-					mts.setGpsLongitude(gps.getLongitude());
 					mts.addBluetooth(activity.getBluetooths());
 					mts.addWifi(activity.getWifis());
 					mtss.add(mts);
+				
 				}
-			} else {
-				mts = createMTR(activity, uir);
-				mts.addBluetooth(activity.getBluetooths());
-				mts.addWifi(activity.getWifis());
-				mtss.add(mts);
+
 			}
+			
+			mTestingReadingsRepository.save(mtss);
+			response.setResult(1L);
+			response.setMtss(mtss);
+			response.getStatus().setResponseCode("200 - OK.");
+			response.getStatus().setConsole("Activities saved to database!");
+		
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			response.getStatus().setResponseCode("500 - INTERNAL_SERVER_ERROR");
+			String status = "The server encountered an unexpected condition that prevented it from fulfilling the request.";
+			response.getStatus().setConsole(status);
+			logger.info(status);
+
+			return Response.status(500).type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
 		
 		}
 		
-		mTestingReadingsRepository.save(mtss);
-
-		response.setResult(1L);
-		response.setMtss(mtss);	
-		response.setMessage("Activities saved to database!");
-		return Response.ok(objectMapper.writeValueAsString(response)).build();
+		return Response.ok().type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
 	}
 	
 	private MTestingReadings createMTR(Activity activity, UserInRole uir) throws ParseException {

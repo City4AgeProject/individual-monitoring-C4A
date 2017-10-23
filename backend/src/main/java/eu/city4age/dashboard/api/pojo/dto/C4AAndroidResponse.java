@@ -9,7 +9,7 @@ public class C4AAndroidResponse {
 
 	private Long result;
 	private List<MTestingReadings> mtss;
-	private String message;
+	private Status status = new Status();
 	
 	
 	
@@ -25,11 +25,11 @@ public class C4AAndroidResponse {
 	public void setMtss(List<MTestingReadings> mtss) {
 		this.mtss = mtss;
 	}
-	public String getMessage() {
-		return message;
+	public Status getStatus() {
+		return status;
 	}
-	public void setMessage(String message) {
-		this.message = message;
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 }

@@ -19,15 +19,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.server.ContainerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -93,9 +90,6 @@ public class PilotDetectionVariableService {
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
-	@Context
-	UriInfo uriInfo;
-
 	@POST
 	@ApiOperation("Insert configuration from Pilot Configuration Json into md_pilot_detection_variable table.")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -111,8 +105,6 @@ public class PilotDetectionVariableService {
 		JsonSchema jsonSchemaFromResource = ValidationUtils
 				.getSchemaNodeFromResource("/PilotConfigurationJsonValidator.json");
 		JsonNode jsonNodeAsString = ValidationUtils.getJsonNode(json);
-
-		String baseUri = uriInfo.getBaseUri().toString();
 
 		if (ValidationUtils.isJsonValid(jsonSchemaFromResource, jsonNodeAsString)) {
 			@SuppressWarnings("deprecation")
@@ -402,30 +394,8 @@ public class PilotDetectionVariableService {
 			}
 		}
 		
-		//CALLING OF computeMeasures SERVICE
-		/*
-		try {
-			StringBuilder uri = new StringBuilder(baseUri).append("measures/computeFromMeasures");
-			response.append("\n\tCalled Url: ").append(uri);
-			ResponseEntity<String> responseFromComputeMeasures = rest.getForEntity(uri.toString(), String.class);
-			if (!responseFromComputeMeasures.getStatusCode().equals(HttpStatus.OK)) {
-				response.append("\n\t\tcomputeFromMeasures:\n\tEXCEPTION:\n\tFailed : HTTP error code : ");
-				response.append(responseFromComputeMeasures.getStatusCode());
-				response.append("\n\t\t\terror body: ");
-				response.append(responseFromComputeMeasures.getBody());
-			} else {
-				response.append("\n\t\tcomputeFromMeasures:\n\tstatus code: ");
-				response.append(responseFromComputeMeasures.getStatusCode());
-				response.append("\n\t\t\tbody: ");
-				response.append(responseFromComputeMeasures.getBody());
-			}
-		} catch (Exception ex) {
-			response.append("\n\tERROR while calling computeFromMeasures Service:\n\texception message: ");
-			response.append(ex.getMessage());
-		}
-		*/
-		
 		return Response.ok().type(MediaType.TEXT_PLAIN).entity(response.toString()).build();
+
 	}
 
 	private DetectionVariable findDetectionVariableOfType(String dvName, DetectionVariableType dvt)
