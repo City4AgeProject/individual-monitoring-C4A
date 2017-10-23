@@ -19,6 +19,14 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.passwordValue = ko.observable();
                 self.loginValue = ko.observable();
 
+                self.handleActivated = function(info) {
+                    if (sessionStorage.length !== 0 && sessionStorage.getItem("jwt") !== null){
+                        console.log('user is logged in');
+                        oj.Router.rootInstance.go("cr_list_full");
+                        
+                    }
+                    
+                }
                 // Create handler
                 self.loginUser = function (viewModel, event) {
                 	

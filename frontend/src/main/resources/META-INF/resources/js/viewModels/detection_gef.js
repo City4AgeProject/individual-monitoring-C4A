@@ -291,9 +291,10 @@ function (oj, ko, $, sp, params) {
         self.nowrap = ko.observable(false);
 
         self.handleActivated = function(info) {
+            self.careRecipientId = parseInt(sessionStorage.getItem("crId"));
+           
             
-            self.careRecipientId = oj.Router.rootInstance.retrieve();
-            
+            //self.careRecipientId = oj.Router.rootInstance.retrieve();                      
             if(self.careRecipientId instanceof Array) self.careRecipientId = self.careRecipientId[0];
             self.lineSeriesValue = [];
             self.lineGroupsValue = [];

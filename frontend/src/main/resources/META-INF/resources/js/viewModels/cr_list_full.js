@@ -2,7 +2,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
         function (oj, ko, sp, $)
         {
 
-			var m=0;	
+			var m=0;		
 
             function ListViewModel() {
                 var self = this;
@@ -92,6 +92,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                             oj.Router.sync();
 
                             sp.setuserTextline(selectData['textline']);
+                            sessionStorage.setItem("crId", selectData['cr_id']);
 
                             
                             //app should be defined in define block for this below to work!

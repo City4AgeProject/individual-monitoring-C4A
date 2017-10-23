@@ -320,14 +320,16 @@ function(oj, ko, $) {
                         //if subfaktor lineseries is clicked, transfer to detection_mea page
                         if(self.props.selectedId > 513){
                             console.log('bigger than 513');        
-                            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);                          
+                            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);                            console.log('selected det is : ' + JSON.stringify(selectedDetectionVariable));
                             if(selectedDetectionVariable.detectionVariableType === 'GEF'){                               
                                 self.props.parentFactorId = selectedDetectionVariable.detectionVariableId;
                             }else {
                                 self.props.parentFactorId = selectedDetectionVariable.derivedDetectionVariableId;
                             }
                             var gefName = oj.Router.rootInstance.retrieve()[1].detectionVariableName;
-                            oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable, gefName]);          	
+                            oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable, gefName]); 
+                            //sessionStorage.setItem("gesObj", selectedDetectionVariable);
+                            //sessionStorage.setItem("gefName", gefName);
                             oj.Router.rootInstance.go("detection_mea");
                             return;
                         }
@@ -747,7 +749,7 @@ function(oj, ko, $) {
 
         //Returns chart by ID for detection variable name that was drilled in (clicked on)
         self.bGotoGESClick = function() {
-            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);        
+            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);    
             oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable, selectedDetectionVariable.detectionVariableName]);
             if(selectedDetectionVariable.detectionVariableType === 'GEF'){                               
                                 self.props.parentFactorId = selectedDetectionVariable.detectionVariableId;
@@ -755,7 +757,8 @@ function(oj, ko, $) {
                             else {
                                 self.props.parentFactorId = selectedDetectionVariable.derivedDetectionVariableId;
                             }                           
-                    
+            //sessionStorage.setItem("gefObj", selectedDetectionVariable);
+            //sessionStorage.setItem("gefName", gefName);      
             oj.Router.rootInstance.go('detection_ges');
         };
 

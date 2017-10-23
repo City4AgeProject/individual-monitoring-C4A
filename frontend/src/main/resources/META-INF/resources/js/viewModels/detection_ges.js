@@ -13,6 +13,7 @@ function (oj, ko, $, sp) {
         
         self.careRecipientId = ko.observable();
         self.careRecipientId = oj.Router.rootInstance.retrieve()[0];
+        //self.careRecipientId(parseInt(sessionStorage.getItem("crId")));
         
         self.selectedId = ko.observable();
         self.titleValue = ko.observable("");
