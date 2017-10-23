@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -129,12 +130,9 @@ public class MeasuresService {
 	@Autowired
 	private ViewGefValuesPersistedSourceGesTypesRepository viewGefValuesPersistedSourceGesTypesRepository;
 	
-	@Value("${local.server.port}")
-	private int port;
-	
-	@Value("${spring.application.name}")
-	private String appName;
-	
+	@Autowired
+	Environment environment;
+
 	@Bean
 	public RestTemplate restTemplate() {
 	    return new RestTemplate();
@@ -170,6 +168,8 @@ public class MeasuresService {
 	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
 	public void cronJob() throws UnknownHostException {
 		String host = InetAddress.getLocalHost().getHostAddress();
+		String port = environment.getProperty("local.server.port");
+		String appName = environment.getProperty("spring.application.name");
 		String uri = "http://" + host + ":" + port + "/" + appName + "/rest/measures/computeFromMeasures";
 		ResponseEntity<String> response = restTemplate().getForEntity(uri, String.class);
 		if (!response.getStatusCode().equals(HttpStatus.OK)) {
