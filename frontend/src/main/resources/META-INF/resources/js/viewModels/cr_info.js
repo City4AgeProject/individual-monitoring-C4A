@@ -14,7 +14,7 @@ define([ 'ojs/ojcore','knockout', 'jquery','setting_properties', 'urls', 'entiti
 				console.log(sp);
 				
 				self.userAge = sp.userAge;
-				
+                                
 				self.userGender = sp.userGender;
 				self.assignGeriatrician= sp.assignGeriatrician;
 				

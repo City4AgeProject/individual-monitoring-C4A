@@ -37,8 +37,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             	
             	function initData() {
           	      	
-          	      	var crId = oj.Router.rootInstance.retrieve()[0];
-          	      	var gesId = oj.Router.rootInstance.retrieve()[1].detectionVariableId;
+          	      	//var crId = oj.Router.rootInstance.retrieve()[0];
+          	      	//var gesId = oj.Router.rootInstance.retrieve()[1].detectionVariableId;
+                        var crId = parseInt(sessionStorage.getItem("crId"));
+                        var gesObj = JSON.parse(sessionStorage.getItem("gesObj"));
+                        var gesId = gesObj.detectionVariableId;
           	      	
           	      	//data
       	        	self.careRecipientId = ko.observable(crId);

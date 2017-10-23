@@ -12,8 +12,9 @@ function (oj, ko, $, sp) {
         var self = this;
         
         self.careRecipientId = ko.observable();
-        self.careRecipientId = oj.Router.rootInstance.retrieve()[0];
-        //self.careRecipientId(parseInt(sessionStorage.getItem("crId")));
+        //self.careRecipientId = oj.Router.rootInstance.retrieve()[0];
+        self.careRecipientId = parseInt(sessionStorage.getItem("crId"));
+       
         
         self.selectedId = ko.observable();
         self.titleValue = ko.observable("");
@@ -48,24 +49,28 @@ function (oj, ko, $, sp) {
         };
 
         self.handleActivated = function () {
-            var selectedDetectionVariable = oj.Router.rootInstance.retrieve();            
-            if(selectedDetectionVariable !== undefined) {
-                    self.selectedId(selectedDetectionVariable[1].detectionVariableId);
-	            self.careRecipient(selectedDetectionVariable[0]);
-	            self.subFactorName(selectedDetectionVariable[1].detectionVariableName);                    
-                    if(selectedDetectionVariable[1].detectionVariableType == 'GES')
+            //var selectedDetectionVariable = oj.Router.rootInstance.retrieve(); 
+            var routerData = JSON.parse(sessionStorage.getItem("gefObj"));           
+            var gefObj = JSON.parse(sessionStorage.getItem("gefObj"));
+            
+            
+            if(routerData !== undefined) {
+
+                    self.careRecipient(parseInt(sessionStorage.getItem("crId")));
+                    self.subFactorName(gefObj.detectionVariableName);
+                    if(gefObj.detectionVariableType == 'GES')
                     {                                             
-                        self.parentFactor(selectedDetectionVariable[1].derivedDetectionVariableId);               
-                        self.titleValue(oj.Translations.getTranslatedString('GEF'.toLowerCase()) + " - " + oj.Translations.getTranslatedString(selectedDetectionVariable[2]));
+                        self.parentFactor(gefObj.derivedDetectionVariableId);               
+                        self.titleValue(oj.Translations.getTranslatedString('GEF'.toLowerCase()) + " - " + oj.Translations.getTranslatedString(sessionStorage.getItem("gefName")));
                     }else {
-                        self.parentFactor(selectedDetectionVariable[1].detectionVariableId); //derivedDetectionVariableIds
-                        self.subFactorType(selectedDetectionVariable[1].detectionVariableType);
+                        self.parentFactor(gefObj.detectionVariableId); //derivedDetectionVariableIds
+                        self.subFactorType(gefObj.detectionVariableType);
                         self.titleValue(oj.Translations.getTranslatedString(self.subFactorType().toLowerCase()) + " - " + oj.Translations.getTranslatedString(self.subFactorName()));
                     }	            
-	            self.subFactorType(selectedDetectionVariable[1].detectionVariableType);                    	            
+	            self.subFactorType(gefObj.detectionVariableType);                    	            
             } 
              loadViewPilotDetectionVariables();
-           
+           $(".loader-hover").hide(); 
         };
 
         
