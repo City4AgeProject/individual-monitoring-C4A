@@ -32,6 +32,7 @@ import eu.city4age.dashboard.api.persist.MTestingReadingsRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.dto.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
 import eu.city4age.dashboard.api.pojo.json.desobj.Activity;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
@@ -60,9 +61,7 @@ public class AndroidService {
 	
 	@Autowired
 	ActivityRepository activityRepository;
-	
-	//private int i = 0;
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -74,11 +73,12 @@ public class AndroidService {
 		AndroidActivitiesDeserializer data = objectMapper.reader(AndroidActivitiesDeserializer.class)
 				.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
-		String response;
+		C4AAndroidResponse response = new C4AAndroidResponse();
 		UserInRole uir = userInRoleRepository.findOne(data.getId());
 
 		if (uir == null) {
-			response = "There are no users in role with this ID !";
+			response.setResult(0L);
+			response.setMessage("There are no users in role with this ID !");
 			return Response.ok(objectMapper.writeValueAsString(response)).build();
 		}
 		
@@ -106,7 +106,9 @@ public class AndroidService {
 		
 		mTestingReadingsRepository.save(mtss);
 
-		response = "Activities saved to database!";
+		response.setResult(1L);
+		response.setMtss(mtss);	
+		response.setMessage("Activities saved to database!");
 		return Response.ok(objectMapper.writeValueAsString(response)).build();
 	}
 	
@@ -116,8 +118,6 @@ public class AndroidService {
 		logger.info("activity.getEnd() " + activity.getEnd());
 		
 		MTestingReadings mts = new MTestingReadings();
-		//i++;
-		//mts.setId(Long.valueOf(i));
 		mts.setUserInRole(uir);
 		mts.setActivity(activityRepository.findOneByName(activity.getType()));
 		mts.setStart(sdf.parse(activity.getStart()));

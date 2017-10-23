@@ -1,27 +1,29 @@
 package eu.city4age.dashboard.api.pojo.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+
+import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 
 
 public class C4AAndroidResponse {
 
-	private Long id;
-	private int result;
+	private Long result;
+	private List<MTestingReadings> mtss;
 	private String message;
 	
-	public Long getId() {
-		return id;
-	}
-	@JsonProperty("ID")
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public int getResult() {
+	
+	
+	public Long getResult() {
 		return result;
 	}
-	public void setResult(int result) {
+	public void setResult(Long result) {
 		this.result = result;
+	}
+	public List<MTestingReadings> getMtss() {
+		return mtss;
+	}
+	public void setMtss(List<MTestingReadings> mtss) {
+		this.mtss = mtss;
 	}
 	public String getMessage() {
 		return message;

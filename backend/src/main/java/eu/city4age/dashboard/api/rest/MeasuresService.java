@@ -3,6 +3,8 @@ package eu.city4age.dashboard.api.rest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -28,8 +30,14 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -120,6 +128,17 @@ public class MeasuresService {
 
 	@Autowired
 	private ViewGefValuesPersistedSourceGesTypesRepository viewGefValuesPersistedSourceGesTypesRepository;
+	
+	@Value("${local.server.port}")
+	private int port;
+	
+	@Value("${spring.application.name}")
+	private String appName;
+	
+	@Bean
+	public RestTemplate restTemplate() {
+	    return new RestTemplate();
+	}
 
 	@GET
 	@ApiOperation("Get daily measures for care recipient within given geriatric subfactor.")
@@ -146,6 +165,16 @@ public class MeasuresService {
 				.ok(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures))
 				.build();
 
+	}
+	
+	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
+	public void cronJob() throws UnknownHostException {
+		String host = InetAddress.getLocalHost().getHostAddress();
+		String uri = "http://" + host + ":" + port + "/" + appName + "/rest/measures/computeFromMeasures";
+		ResponseEntity<String> response = restTemplate().getForEntity(uri, String.class);
+		if (!response.getStatusCode().equals(HttpStatus.OK)) {
+			throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
+		}
 	}
 
 	@GET
