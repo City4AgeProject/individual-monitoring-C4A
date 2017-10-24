@@ -36,7 +36,7 @@
 						data-bind="text: shortenText(comment, 190), attr: { title: comment}"></span>
 				</div>
 			</div>
-			<div class="oj-flex-item aa_c_more" data-bind="visible: comment.length > 190">
+			<div class="oj-flex-item aa_c_more" data-bind="visible:  (typeof comment !== 'undefined')?(comment.length>190):false ">
 				<a href="#" id="showmore_comment_1"
 					data-bind="click: $parent.readMore" data-bind="text: $parent.readMoreLabel">
 					<span data-bind="text: $parent.readMoreLabel"></span></a>

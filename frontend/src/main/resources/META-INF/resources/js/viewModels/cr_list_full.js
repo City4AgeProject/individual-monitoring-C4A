@@ -126,10 +126,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                 self.viewGef = function (userId, textline, age, gender) {
                     oj.Router.rootInstance.store(userId);
-                    sp.setUserId(userId);
-                   // sp.setuserTextline(textline);
-                    sp.setuserAge(age);
-                    sp.setuserGender(gender);
+                    sessionStorage.setItem("userId",userId);
+                    sessionStorage.setItem("textline",textline);
+                    sessionStorage.setItem("userAge",age);
+                    sessionStorage.setItem("gender",gender);
                     console.log("userId " + userId + " Age " + age + " textline " + textline);
 
                     oj.Router.rootInstance.go("detection_gef");
