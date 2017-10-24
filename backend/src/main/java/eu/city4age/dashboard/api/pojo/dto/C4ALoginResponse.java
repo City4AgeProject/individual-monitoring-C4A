@@ -5,16 +5,28 @@ package eu.city4age.dashboard.api.pojo.dto;
  * @author EMantziou
  */
 public class C4ALoginResponse {
+	
+	private Long uirId;
 
     private int responseCode;
 
     private String jwToken;
 
-    String displayName;
+    private String displayName;
 
-    String pilotName;
+    private String pilotName;
+    
+    
+ 
+    public Long getUirId() {
+		return uirId;
+	}
 
-    public int getResponseCode() {
+	public void setUirId(Long uirId) {
+		this.uirId = uirId;
+	}
+
+	public int getResponseCode() {
         return responseCode;
     }
 

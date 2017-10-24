@@ -29,11 +29,12 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.ActivityRepository;
 import eu.city4age.dashboard.api.persist.MTestingReadingsRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
+import eu.city4age.dashboard.api.pojo.domain.Activity;
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
-import eu.city4age.dashboard.api.pojo.json.desobj.Activity;
+import eu.city4age.dashboard.api.pojo.json.desobj.JSONActivity;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
 
 /**
@@ -102,29 +103,37 @@ public class AndroidService {
 			
 			List<MTestingReadings> mtss = new ArrayList<MTestingReadings>();
 			
-			for (Activity activity : data.getActivities()) {
+			for (JSONActivity jsonActivity : data.getActivities()) {
 
 				MTestingReadings mts;
 				
-				if (activity.getGpss() != null && activity.getGpss().size() > 0) {
+				if (jsonActivity.getGpss() != null && jsonActivity.getGpss().size() > 0) {
 				
-					for (Gps gps : activity.getGpss()) {
+					for (Gps gps : jsonActivity.getGpss()) {
 					
-						mts = createMTR(activity, uir);
+						mts = createMTR(jsonActivity, uir);
 						mts.setGpsLatitude(gps.getLatitude());
 						mts.setGpsLongitude(gps.getLongitude());
-						mts.addBluetooth(activity.getBluetooths());
-						mts.addWifi(activity.getWifis());
+						mts.addBluetooth(jsonActivity.getBluetooths());
+						mts.addWifi(jsonActivity.getWifis());
 						mtss.add(mts);
 					
 					}
 				
 				} else {
 					
-					mts = createMTR(activity, uir);
-					mts.addBluetooth(activity.getBluetooths());
-					mts.addWifi(activity.getWifis());
-					mtss.add(mts);
+					mts = createMTR(jsonActivity, uir);
+					if (mts != null) {
+						mts.addBluetooth(jsonActivity.getBluetooths());
+						mts.addWifi(jsonActivity.getWifis());
+						mtss.add(mts);
+					} else {
+						response.getStatus().setResponseCode("402 - ACTIVITY TYPE DOESN'T EXIST.");
+						String status = "Activity type isn't recognized: " + jsonActivity.getType();
+						response.getStatus().setConsole(status);
+						logger.info(status);
+						return Response.status(402).type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
+					}
 				
 				}
 
@@ -151,17 +160,22 @@ public class AndroidService {
 		return Response.ok().type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
 	}
 	
-	private MTestingReadings createMTR(Activity activity, UserInRole uir) throws ParseException {
-		logger.info("activity.getType() " + activity.getType());
-		logger.info("activity.getStart() " + activity.getStart());
-		logger.info("activity.getEnd() " + activity.getEnd());
+	private MTestingReadings createMTR(JSONActivity jsonActivity, UserInRole uir) throws ParseException {
+		logger.info("activity.getType() " + jsonActivity.getType());
+		logger.info("activity.getStart() " + jsonActivity.getStart());
+		logger.info("activity.getEnd() " + jsonActivity.getEnd());
 		
-		MTestingReadings mts = new MTestingReadings();
-		mts.setUserInRole(uir);
-		mts.setActivity(activityRepository.findOneByName(activity.getType()));
-		mts.setStart(sdf.parse(activity.getStart()));
-		mts.setEnd(sdf.parse(activity.getEnd()));
-		mts.setActionName("action");
+		Activity activity = activityRepository.findOneByName(jsonActivity.getType());
+		
+		MTestingReadings mts = null;
+		
+		if(activity != null) {
+			mts = new MTestingReadings();
+			mts.setUserInRole(uir);
+			mts.setActivity(activity);
+			mts.setStart(sdf.parse(jsonActivity.getStart()));
+			mts.setEnd(sdf.parse(jsonActivity.getEnd()));
+		}
 		
 		return mts;
 	}

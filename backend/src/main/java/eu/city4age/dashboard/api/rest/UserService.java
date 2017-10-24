@@ -59,7 +59,7 @@ public class UserService {
             // build response
             response.setResponseCode(401);
             
-            return Response.ok(response).build();
+            return Response.status(401).entity(response).build();
         }
 
         // get pilot name & code
@@ -77,6 +77,7 @@ public class UserService {
         response.setJwToken(token);
         response.setDisplayName(displayName);
         response.setPilotName(pilotName);
+        response.setUirId(user.getId());
         
         return Response.ok(response).build();
 

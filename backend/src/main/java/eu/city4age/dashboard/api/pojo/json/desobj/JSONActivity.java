@@ -5,7 +5,7 @@ import java.util.List;
  * @author Andrija Petrovic
  *
  */
-public class Activity {
+public class JSONActivity {
 	
 	private String type;
 	private String start;

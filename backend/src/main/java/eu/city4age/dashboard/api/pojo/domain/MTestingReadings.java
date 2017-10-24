@@ -53,18 +53,9 @@ public class MTestingReadings implements Serializable {
 	
 	@Column(name="end_time")
 	private Date end;
-	
-	@Column(name="duration")
-	private Integer duration;
 
-	@Column(name="rating")
-	private Float rating;
-	
 	@Column(name="sensor_id")
 	private Integer sensor_id;
-	
-	@Column(name="position")
-	private String position;
 	
 	@Column(name="extra_information")
 	private String extraInformation;
@@ -110,14 +101,6 @@ public class MTestingReadings implements Serializable {
 		this.end = end;
 	}
 
-	public Integer getDuration() {
-		return duration;
-	}
-
-	public void setDuration(Integer duration) {
-		this.duration = duration;
-	}
-
 	public Activity getActivity() {
 		return activity;
 	}
@@ -134,28 +117,12 @@ public class MTestingReadings implements Serializable {
 		this.userInRole = userInRole;
 	}
 
-	public Float getRating() {
-		return rating;
-	}
-
-	public void setRating(Float rating) {
-		this.rating = rating;
-	}
-
 	public Integer getSensor_id() {
 		return sensor_id;
 	}
 
 	public void setSensor_id(Integer sensor_id) {
 		this.sensor_id = sensor_id;
-	}
-
-	public String getPosition() {
-		return position;
-	}
-
-	public void setPosition(String position) {
-		this.position = position;
 	}
 
 	public String getExtraInformation() {

@@ -4,14 +4,14 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import eu.city4age.dashboard.api.pojo.json.desobj.Activity;
+import eu.city4age.dashboard.api.pojo.json.desobj.JSONActivity;
 
 
 public class AndroidActivitiesDeserializer {
 
 	private Long id;
 	private String date;
-	private List<Activity> activities;
+	private List<JSONActivity> activities;
 	
 	@JsonProperty("ID")
 	public Long getId() {
@@ -26,10 +26,10 @@ public class AndroidActivitiesDeserializer {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public List<Activity> getActivities() {
+	public List<JSONActivity> getActivities() {
 		return activities;
 	}
-	public void setActivities(List<Activity> activities) {
+	public void setActivities(List<JSONActivity> activities) {
 		this.activities = activities;
 	}
 
