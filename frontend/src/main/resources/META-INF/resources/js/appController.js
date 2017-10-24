@@ -110,9 +110,7 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                     switch (ui.item.attr("id")) {
                         case "out":
 							location.reload();
-                            sessionStorage.removeItem("jwt");
-                            sessionStorage.removeItem("displayname");
-                            sessionStorage.removeItem("pilotname");
+							sessionStorage.clear();
                             $('.user-menu').css({display: 'none'});
                             console.log(" user is not logged in");
                             oj.Router.rootInstance.go("login");
