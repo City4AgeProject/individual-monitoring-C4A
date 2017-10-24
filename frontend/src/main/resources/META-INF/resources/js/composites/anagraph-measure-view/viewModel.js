@@ -3,6 +3,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
             
             function model(context) {
                 var self = this;
+                self.zoom = ko.observable('live');
                 self.measureName = null;
                 self.lineSeries = [];
                 
@@ -15,7 +16,8 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     self.defaultTypicalPeriod = properties.defaultTypicalPeriod;
                     
                     if(self.defaultTypicalPeriod === 'MON'){
-                        self.lineGroups = ko.observable(["", ""]);
+                        self.lineGroups = ko.observable(["Start of month", "End of month"]);
+                        self.zoom('off');
                     }else{
                         self.lineGroups = ko.observable(["1", "2", "3", "4", "5","6","7","8","9","10",
                                 "11","12","13","14","15","16","17","18","19","20",

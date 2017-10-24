@@ -13,8 +13,8 @@ function(ko, $) {
 		
 		//property changed event listener for detectionVariable
         $(self.composite).on('detectionVariable-changed',function(event){
-        	 if (event.detail.updatedFrom === 'external'){
-        		 if(self.props.detectionVariable.id > 513) {
+        	 if (event.detail.updatedFrom === 'external'){                             
+        		 if(self.props.detectionVariable.detectionVariableId > 513) {
         			 self.shouldSeeMea(true);
         		 }else {
         			 self.shouldSeeMea(false)

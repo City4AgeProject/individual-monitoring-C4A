@@ -126,13 +126,13 @@ function(oj, ko, $) {
 							onlyDataPoints = getDataPoints(ui['optionMetadata']);
 							
 							//if there is no selected values
-							if (onlyDataPoints.length === 0) {								
+							if (onlyDataPoints.length === 0) {
 								for (var i = 0; i < ui['value'].length; i++) {
 									onlyDataPoints.push(ui['value'][i].id);
 								}
 							} else if (onlyDataPoints.length === 1
 									&& onlyDataPoints[0][0]
-									&& onlyDataPoints[0][0].id) {								
+									&& onlyDataPoints[0][0].id) {
 								refreshDataPointsMarked(1);
 							} else {								
 								// Compose selections in get query parameters
