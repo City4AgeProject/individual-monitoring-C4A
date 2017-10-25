@@ -144,6 +144,7 @@ define({
                 alert_status: "Stato di allerta" ,
                 
                 //add-assessment
+                required_label: "Required(IT)",
                 no_data_set_selected : "Nessun insieme di dati selezionato!" ,
                 full_annotation_comment: "Annotazione completa:" , 
                 chose_type :"Scegliere il tipo" ,

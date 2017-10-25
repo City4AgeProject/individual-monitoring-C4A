@@ -29,7 +29,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 }
                 // Create handler
                 self.loginUser = function (viewModel, event) {
-                	
+                	console.log('login user');
                 	if (sessionStorage.length !== 0 && sessionStorage.getItem("jwt") !== null) {
                 		
                 		window.alert("You must log out first!");
@@ -59,6 +59,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	                            });
                     }
                 };
+                //login on ENTER button
+                $(document).keypress(function(e) {
+                	if(e.which == 13){
+                		$("#password").blur();
+                		self.loginUser();
+                	}
+              	});
                 
                 self.resetForm = function (viewModel, event) {
                     self.loginValue('');

@@ -248,6 +248,7 @@ define({
                 alert_status: "Estados de alerta" ,
                 
                 //add-assessment
+                required_label: "Required(ES)",
                 no_data_set_selected:"¡Sin datos seleccionados!" ,
                 full_annotation_comment: "Comentarios:" , 
                 chose_type :"Elegir tipo" ,

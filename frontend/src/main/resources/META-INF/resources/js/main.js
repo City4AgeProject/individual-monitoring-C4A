@@ -79,7 +79,7 @@ requirejs.config({
 	            ko.applyBindings(new RootViewModel());
 	        }
 	    );
-	    */
+	 */
 	    
      oj.Router.sync().then(
        function () {

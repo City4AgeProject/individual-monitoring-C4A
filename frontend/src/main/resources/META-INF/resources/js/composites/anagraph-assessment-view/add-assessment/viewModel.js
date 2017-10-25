@@ -25,6 +25,32 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 self.cancelBtnLabel = oj.Translations.getTranslatedString("cancel_btn");
                 self.addAnnotationTitle = oj.Translations.getTranslatedString("add_annotation");
                 self.noDataSetSelectedLabel = oj.Translations.getTranslatedString("no_data_set_selected");
+                self.requiredLabel = oj.Translations.getTranslatedString("required_label");
+                
+             // console.log("##1# self.props.selectedRiskStatus:"+self.props.selectedRiskStatus);
+                $(document).ready(function(){
+                	
+                	$("#okButton").attr("disabled", true);
+       
+                	  $("#required").hide();
+                      $(".oj-dialog").on('mouseenter',function(){
+                      	$("#required").fadeIn();
+                      });
+                      
+                      $(".oj-dialog").on('mouseleave',function(){
+                        	$("#required").fadeOut();
+                      });
+                      
+                     $( ".oj-dialog" ).mouseover(function() {
+                    	 $("#okButton").attr("disabled", true);
+                    	  if(( self.props.selectedRiskStatus[0]=='A' || self.props.selectedRiskStatus[0]=='N' || self.props.selectedRiskStatus[0]=='W' )
+                        		  &&( self.props.selectedRoles[0] == 7 || self.props.selectedRoles[0] == 8 )){
+                        		  $("#okButton").attr("disabled", false);
+                        	  } 
+                      });
+                	 
+       	
+                });
 
         		context.props.then(function(properties) {
         			self.props = properties;

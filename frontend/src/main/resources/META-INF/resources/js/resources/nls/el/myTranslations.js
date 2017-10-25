@@ -248,6 +248,7 @@ define({
                 alert_status: "Κατάσταση προειδοποίησης" ,
                 
                 //add-assessment
+                required_label: "Required(EL)",
                 no_data_set_selected:"Δεν έχει επιλεχτεί κανένα δεδομένο" ,
                 full_annotation_comment: "Πλήρης σχολιασμός:" , 
                 chose_type :"Επιλογή τύπου" ,

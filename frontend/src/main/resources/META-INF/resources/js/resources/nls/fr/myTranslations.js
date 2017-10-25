@@ -248,6 +248,7 @@ define({
                 alert_status: "état d'alerte" ,
                 
                 //add-assessment
+                required_label: "Required(FR)",
                 no_data_set_selected:"Aucun ensemble de données sélectionné!" ,
                 full_annotation_comment: "Commentaire complet sur l'annotation:" , 
                 chose_type :"Choisissez le type" ,

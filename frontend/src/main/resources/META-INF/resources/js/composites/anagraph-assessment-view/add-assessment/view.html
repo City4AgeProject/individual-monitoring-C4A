@@ -1,6 +1,5 @@
 <div style="display: none;" id="dialog1"
 	data-bind="ojComponent:{
-
                             component: 'ojDialog', 
                             initialVisibility: 'hide',
                             rootAttributes: {style: 'width: 375px; height: 480px;'},
@@ -14,7 +13,7 @@
 				<div class="oj-form">
 					<div class="oj-flex">
 						<div class="oj-flex-item">
-							 <label id="selectgrouplabel" data-bind="text: choseTypeLabel"></label>
+							 <label id="selectgrouplabel" data-bind="text: choseTypeLabel+'*'"></label>
 							<div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
 								<ul id="riskList" style="display: none">
 									<!-- ko foreach: risksTags -->
@@ -25,6 +24,7 @@
 									</li>
 									<!-- /ko -->
 								</ul>
+								
 								<input id="riskSelect"
 									data-bind="ojComponent: {
                                                             component: 'ojCombobox',
@@ -55,7 +55,7 @@
 					</div>
 					<div class="oj-flex">
 						<div class="oj-flex-item">
-							<label for="selectRole" data-bind="text: forSelectRoleLabel"></label> 
+							<label for="selectRole" data-bind="text: forSelectRoleLabel+'*'"></label> 
 							<select id="selectRole"
 								data-bind="ojComponent: {
                                             component: 'ojSelect', 
@@ -88,6 +88,7 @@
 	</div>
 	<div class="oj-dialog-footer" style="padding-right: 15px;">
 		<div align="right">
+			<div id="required" style="margin: 4px"><label data-bind="text: '(*)='+requiredLabel"></label></div>
 			<button id="okButton"
 				data-bind="ojComponent: { 
                                 component: 'ojButton', 
