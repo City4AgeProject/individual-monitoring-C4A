@@ -16,9 +16,9 @@
 			"description" : "Care recipient id.",
 			"type": "number"
 		},
-		"detectionVariable": {
-			"description" : "Detection variable",
-			"type": "object"
+		"seeMeasures": {
+			"description" : "Visibility of view daily measures link ",
+			"type": "boolean"
 		},
                 "gefName": {
 			"description" : "Name of the geriatric factor.",

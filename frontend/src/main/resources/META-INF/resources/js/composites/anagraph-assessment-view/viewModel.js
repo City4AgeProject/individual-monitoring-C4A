@@ -13,10 +13,9 @@ function(oj, ko, $) {
 		self.parentFactorId = ko.observable();
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();
-		self.title = ko.observable();
 		self.legend = ko.observable();
 		self.drilling = ko.observable();
-		
+		self.seeMeasures = ko.observable(false);
 		
 		self.highlightValue = ko.observable();
 
@@ -142,17 +141,14 @@ function(oj, ko, $) {
                                                                         var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
                                                                         //console.log('this is selectiondetectionvariable ' + JSON.stringify(selectedDetectionVariable));
                                                                         if(selectedDetectionVariable.detectionVariableType == 'GES'){
-                                                                            var gef = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, selectedDetectionVariable.derivedDetectionVariableId, self.props.careRecipientId);
-										$('#popupWrapper1').prop('detectionVariable', selectedDetectionVariable);
-										$('#popupWrapper1').prop('crId', self.props.careRecipientId);
-                                                                                $('#popupWrapper1').prop('gefName', gef.detectionVariableName);
-                                                                        }
-                                                                        
-									
-								}else {
-									//if there is multiple selections, set detectionVariable property from assessment-preview component 
-									//to 0 so that viewMeasures wont be displayed
-									$('#popupWrapper1').prop('detectionVariable', 0);
+                                                                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));                                                                             
+                                                                            $('#popupWrapper1').prop('seeMeasures', true);
+                                                                            console.log('setting seeMeasures to true');
+                                                                        }else {
+									$('#popupWrapper1').prop('seeMeasures', false);
+								}
+								}else {				
+									$('#popupWrapper1').prop('seeMeasures', false);
 								}
 								
 								self.queryParams = calculateSelectedIds(onlyDataPoints);
@@ -311,44 +307,20 @@ function(oj, ko, $) {
 
 		self.chartDrill = function(event, ui) {
 			
-			console.log('drill on anagraph-assessment-view');
-
-                        var seriesVal = ui['series'];
-                        
+			console.log('drill on anagraph-assessment-view');                      
                         self.props.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
-                           
-                        //if subfaktor lineseries is clicked, transfer to detection_mea page
-                        if(self.props.selectedId > 513){
-                            console.log('bigger than 513'); 
-                            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);                            console.log('selected det is : ' + JSON.stringify(selectedDetectionVariable));
-                            if(selectedDetectionVariable.detectionVariableType === 'GEF'){                               
-                                self.props.parentFactorId = selectedDetectionVariable.detectionVariableId;
-                            }else {
-                                self.props.parentFactorId = selectedDetectionVariable.derivedDetectionVariableId;
-                            }
-                            //var gefName = oj.Router.rootInstance.retrieve()[1].detectionVariableName;
-                            var gefName = sessionStorage.getItem("gefName");
-                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));
-                            oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable, gefName]);            
+                                                   
+                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);                            console.log('selected det is : ' + JSON.stringify(selectedDetectionVariable));
+                        if(selectedDetectionVariable.detectionVariableType === 'GEF'){ 
+                            console.log('selected GEF');                                                                                                                                                                
+                            sessionStorage.setItem("gefObj", JSON.stringify(selectedDetectionVariable));      
+                            oj.Router.rootInstance.go('detection_ges');
+                            
+                        }else if(selectedDetectionVariable.detectionVariableType === 'GES'){
+                            console.log('selected GES');                           
+                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));                                    
                             oj.Router.rootInstance.go("detection_mea");
-                            return;
-                        }
-            
-                        self.props.titleValue = seriesVal + "Geriatric factors";
-                                              
-                                               
-                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
-                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
-
-
-                        console.log('seriesVal = ' + seriesVal);
-                        console.log('selectedID = ' + self.props.selectedId);
-                        console.log('titleValue = ' + self.props.titleValue);
-                        console.log('parentFactorId = ' + self.props.parentFactorId);
-         
-            
-
-			self.bGotoGESClick();
+                        }                                          
 
 		}
                 
@@ -747,20 +719,7 @@ function(oj, ko, $) {
 		}
 
 
-        //Returns chart by ID for detection variable name that was drilled in (clicked on)
-        self.bGotoGESClick = function() {
-            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);    
-            oj.Router.rootInstance.store([self.props.careRecipientId, selectedDetectionVariable, selectedDetectionVariable.detectionVariableName]);
-            if(selectedDetectionVariable.detectionVariableType === 'GEF'){                               
-                                self.props.parentFactorId = selectedDetectionVariable.detectionVariableId;
-                            }
-                            else {
-                                self.props.parentFactorId = selectedDetectionVariable.derivedDetectionVariableId;
-                            }                           
-            sessionStorage.setItem("gefObj", JSON.stringify(selectedDetectionVariable));
-            sessionStorage.setItem("gefName", selectedDetectionVariable.detectionVariableName);      
-            oj.Router.rootInstance.go('detection_ges');
-        };
+        
 
 
 	}

@@ -3,33 +3,9 @@ define([ 'knockout', 'jquery', 'urls', 'entities' ],
 function(ko, $) {
 
 	function model(context) {
-		context.props.then(function(properties) {
-			self.props = properties;
-			
-		});
+		
 
-		var self = this;
-		self.composite = context.element;
-		
-		//property changed event listener for detectionVariable
-        $(self.composite).on('detectionVariable-changed',function(event){
-        	 if (event.detail.updatedFrom === 'external'){                             
-        		 if(self.props.detectionVariable.detectionVariableId > 513) {
-        			 self.shouldSeeMea(true);
-        		 }else {
-        			 self.shouldSeeMea(false)
-        		 }
-                 
-                 
-               }
-            
-        });
-		
-		self.viewMea = function(){
-			oj.Router.rootInstance.store([self.props.crId, self.props.detectionVariable, self.props.gefName]);
-            oj.Router.rootInstance.go("detection_mea");
-			  };
-					
+		var self = this;											
 		self.dataPointsMarked = ko.observable('No data points marked.');
 		self.clickShowPopupAddAssessmentCallBack = null;
 
@@ -39,8 +15,28 @@ function(ko, $) {
 		self.fromLabel = oj.Translations.getTranslatedString("from");
 
 		self.shouldSeeMea = ko.observable(false);
+		self.composite = context.element;
+                
+                context.props.then(function(properties) {
+			self.props = properties;
+			
+		});
+                
+		//property changed event listener for detectionVariable
+                $(self.composite).on('seeMeasures-changed',function(event){
+                         if (event.detail.updatedFrom === 'external'){  
+                                 if(self.props.seeMeasures){
+                                     self.shouldSeeMea(true);
+                                 }else {
+                                     self.shouldSeeMea(false);
+                                 }                                
+                            }
+
+                });
 		
-		
+		self.viewMea = function(){			
+                        oj.Router.rootInstance.go("detection_mea");
+			  };
 
 		self.attached = function(context) {
 			self.clickShowPopupAddAssessment = self.clickShowPopupAddAssessment;						

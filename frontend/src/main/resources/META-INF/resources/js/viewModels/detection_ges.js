@@ -49,19 +49,14 @@ function (oj, ko, $, sp) {
         };
 
         self.handleActivated = function () {
-            //var selectedDetectionVariable = oj.Router.rootInstance.retrieve(); 
-            var routerData = JSON.parse(sessionStorage.getItem("gefObj"));           
             var gefObj = JSON.parse(sessionStorage.getItem("gefObj"));
-            
-            
-            if(routerData !== undefined) {
-
+            if(gefObj !== undefined) {
                     self.careRecipient(parseInt(sessionStorage.getItem("crId")));
                     self.subFactorName(gefObj.detectionVariableName);
                     if(gefObj.detectionVariableType == 'GES')
                     {                                             
                         self.parentFactor(gefObj.derivedDetectionVariableId);               
-                        self.titleValue(oj.Translations.getTranslatedString('GEF'.toLowerCase()) + " - " + oj.Translations.getTranslatedString(sessionStorage.getItem("gefName")));
+                        self.titleValue(oj.Translations.getTranslatedString('GEF'.toLowerCase()) + " - " + oj.Translations.getTranslatedString(gefObj.detectionVariableName));
                     }else {
                         self.parentFactor(gefObj.detectionVariableId); //derivedDetectionVariableIds
                         self.subFactorType(gefObj.detectionVariableType);
