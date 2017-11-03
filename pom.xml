@@ -34,7 +34,6 @@
 		<!-- <dependency> <groupId>eu.city4age.dashboard.api</groupId> <artifactId>C4A-frontend</artifactId> 
 			<version>1.0-SNAPSHOT</version> </dependency> -->
 
-
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -85,9 +84,6 @@
 		</dependency>
 		<!-- End Spring -->
 
-
-
-
 		<!-- Postgres -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -96,7 +92,6 @@
 		<!-- End Postgres -->
 
 		<!-- Jersey -->
-
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
 			<artifactId>jersey-spring3</artifactId>
@@ -176,6 +171,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<!-- End Swagger -->
+		
+		<dependency>
+		    <groupId>org.everit.json</groupId>
+		    <artifactId>org.everit.json.schema</artifactId>
+		    <version>1.5.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -187,22 +188,6 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.fge</groupId>
-			<artifactId>json-schema-validator</artifactId>
-			<version>2.2.6</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.fge</groupId>
-			<artifactId>jackson-coreutils</artifactId>
-			<version>1.8</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.fge</groupId>
-			<artifactId>json-schema-core</artifactId>
-			<version>1.2.5</version>
 		</dependency>
 		
 		<dependency>

@@ -2,19 +2,20 @@ package eu.city4age.dashboard.api.rest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -25,17 +26,15 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.server.ContainerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingMessage;
-import com.github.fge.jsonschema.main.JsonSchema;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
@@ -56,10 +55,15 @@ import eu.city4age.dashboard.api.pojo.json.desobj.Ges;
 import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
 import eu.city4age.dashboard.api.pojo.json.desobj.Mea;
 import eu.city4age.dashboard.api.pojo.other.ConfigurationCounter;
-import eu.city4age.dashboard.api.utils.ValidationUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * @author Andrija Petrovic
@@ -71,6 +75,9 @@ import io.swagger.annotations.ApiResponses;
 public class PilotDetectionVariableService {
 
 	public static final String PATH = "configuration";
+	
+	@Autowired
+	private ResourceLoader resourceLoader;
 
 	@Context
 	private HttpServletRequest request;
@@ -98,18 +105,21 @@ public class PilotDetectionVariableService {
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
 	public final Response updateConfigurationService(String json)
 			throws FileNotFoundException, IOException, ProcessingException, ContainerException, JsonParseException,
-			JsonValidationException, MissingKeyException, ConfigurationValidityDateException {
+			JsonValidationException, MissingKeyException, ConfigurationValidityDateException, ValidationException {
 
 		StringBuilder response = new StringBuilder();
-
-		JsonSchema jsonSchemaFromResource = ValidationUtils
-				.getSchemaNodeFromResource("/PilotConfigurationJsonValidator.json");
-		JsonNode jsonNodeAsString = ValidationUtils.getJsonNode(json);
-
-		if (ValidationUtils.isJsonValid(jsonSchemaFromResource, jsonNodeAsString)) {
+		
+		try {
+			
+			Resource resource  = resourceLoader.getResource("classpath:PilotConfigurationJsonValidator.json");
+			InputStream jsonValidator = resource.getInputStream();
+			JSONObject rawSchema = new JSONObject(new JSONTokener(jsonValidator));
+			Schema schema = SchemaLoader.load(rawSchema);
+			schema.validate(new JSONObject(json)); // throws a ValidationException if this object is invalid
+			
 			@SuppressWarnings("deprecation")
 			ConfigureDailyMeasuresDeserializer data = objectMapper.reader(ConfigureDailyMeasuresDeserializer.class)
-					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+			.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
 			for (int z = 0; z < data.getConfigurations().size(); z++) {
 				Configuration configuration = data.getConfigurations().get(z);
@@ -350,48 +360,9 @@ public class PilotDetectionVariableService {
 				response.append("\n\tNumber of rows in DB after update is: ");
 				response.append(pilotDetectionVariableRepository.findAll().size());
 			}
-		} else {
-			response.append("Json is not valid!\nProperty(ies) is/are missing or it has incorrect data type!");
-
-			Iterator<?> itr = ValidationUtils.getReport(jsonSchemaFromResource, jsonNodeAsString).iterator();
-			ProcessingMessage message;
-			while (itr.hasNext()) {
-
-				message = (ProcessingMessage) itr.next();
-
-				String pointer = message.asJson().get("instance").get("pointer").toString();
-
-				if (pointer.length() > 2) {
-					pointer = pointer.substring(2, pointer.length() - 1);
-					String[] parts = pointer.split("/");
-					StringBuilder c = new StringBuilder(" ");
-					response.append("\nError in configuration json file at location:");
-					for (String p : parts) {
-						c.append(" ");
-						response.append("\n").append(c).append(p).append(":");
-					}
-					response.setLength(response.length()-1);
-				} else {
-					response.append("\nError in configuration json file located:\n at the ROOT of the JSON file");
-				}
-
-				if (message.asJson().get("keyword").toString().equals("\"type\"")) {
-					
-					response.append("\nExpected data type is: ");
-					response.append(message.asJson().get("expected").toString().replaceAll("[\\[|\\]]", ""));
-					response.append(", but: ");
-					response.append(message.asJson().get("found").toString());
-					response.append(" is found.");
-					
-				} else if (message.asJson().get("keyword").toString().equals("\"required\"")) {
-					response.append("\nMissing property is: ");
-					response.append(message.asJson().get("missing").toString().replaceAll("[\\[|\\]]", ""));
-
-				} else {
-					response.append("Other type of JsonValidationException!");
-				}
-				throw new JsonValidationException(response.toString());
-			}
+		} 
+		catch(IOException e){
+			logger.info("Not a valid Json String: " + e.getMessage());
 		}
 		
 		return Response.ok().type(MediaType.TEXT_PLAIN).entity(response.toString()).build();

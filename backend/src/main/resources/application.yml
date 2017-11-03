@@ -3,14 +3,8 @@ server:
 logging:
   level:
     org:
-      hibernate: DEBUG
-      springframework: DEBUG
-      apache: DEBUG
-      glassfish: DEBUG
     com:
-      fasterxml: DEBUG
     eu:
-      city4age: DEBUG
   config: classpath:log4j2.yml
 spring:
   jersey:
