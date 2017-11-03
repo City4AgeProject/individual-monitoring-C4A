@@ -21,6 +21,32 @@
    -->
 </div>
 
+<!-- new for nuis -->
 
 
+<div id="collapsible" data-bind="ojComponent: {component: 'ojCollapsible' }">
+            <h3>NUI values</h3>
+            <div id="datagrid" 
+                style="width:100%;height:200px;" 
+                aria-label="Data Grid Formatted Row Based Grid Demo"
+                data-bind="ojComponent:
+                {
+                    component:'ojDataGrid', 
+                    data:dataSource,
+                    header:
+                        {
+                            column:
+                            {                                
+                                style: 'height:45px; width:125px; text-align:center'                        
+                            },
+                            row: 
+                            {   
+                                style: 'width:100px;'
+                                
+                            }
+                        }
+                                        
+                 }">
+            </div>
+</div>
 
