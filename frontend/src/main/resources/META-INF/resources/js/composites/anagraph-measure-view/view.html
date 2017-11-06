@@ -23,8 +23,23 @@
 
 <!-- new for nuis -->
 
+<!-- new for nuis -->
 
-<div id="collapsible" data-bind="ojComponent: {component: 'ojCollapsible' }">
+<div class="oj-flex-item">
+
+<div class="tabs-container oj-flex-item">
+
+<div class="tabs" data-bind="ojComponent:{component: 'ojTabs',edge: 'top'}">
+		                                               
+					<!-- tab bar -->	
+				<ul>
+					<li><span data-bind="text: 'NUI Values' " class="nuiValuesTabTitle"></span></li>
+					
+				</ul>
+						
+					<!-- tab contents -->
+					<div class="nuiValuesTab">
+					<div id="collapsible" data-bind="ojComponent: {component: 'ojCollapsible' }">
             <h3>NUI values</h3>
             <div id="datagrid" 
                 style="width:100%;height:200px;" 
@@ -32,7 +47,7 @@
                 data-bind="ojComponent:
                 {
                     component:'ojDataGrid', 
-                    data:dataSource,
+                    data: dataSource ,
                     header:
                         {
                             column:
@@ -49,4 +64,10 @@
                  }">
             </div>
 </div>
+	</div>
+   </div>
+</div>
+</div>
+
+
 

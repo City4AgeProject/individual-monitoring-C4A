@@ -4,7 +4,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
             function detectionMeaViewModel() {
                 $(".loader-hover").hide();
-                var self = this;           	
+                var self = this;   
             	                                                  
             	//this method loads data form ajax request before view is loaded
             	self.handleActivated = function(info) {  
@@ -26,7 +26,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                 ).then(function() {
 
                                     self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
-
                                     resolve();
                                 }).fail(function() {
                                     console.log( "error recieving json data from web service" );
@@ -61,8 +60,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    				  var meaObj = new Object();
   	    				  meaObj.detectionVariableId = element.detectionVariable.id;
   	    				  meaObj.measureName = element.detectionVariable.detectionVariableName;
-                                          meaObj.baseUnit = element.detectionVariable.baseUnit;
-                                          meaObj.defaultTypicalPeriod = element.detectionVariable.defaultTypicalPeriod;
+  	    				  meaObj.baseUnit = element.detectionVariable.baseUnit;
+  	    				  meaObj.defaultTypicalPeriod = element.detectionVariable.defaultTypicalPeriod;
+  	    				  meaObj.nuisForMeasure;
   	    				  measures.push(meaObj);
   	    			  }  
   	    			});
@@ -90,7 +90,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    			var differentMonthsForMeasure = [];
   	    			for(var i = 0; i< mea.measureValues.length; i++){
   	    				var date = new Date(mea.measureValues[i].intervalStart);
-        	    			
         	    			if(differentMonthsForMeasure.indexOf((months[date.getMonth()] + " " + date.getFullYear())) == -1){
         	    				differentMonthsForMeasure.push(months[date.getMonth()] + " " + date.getFullYear());
         	    			}
@@ -100,46 +99,70 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    			
     	    		  });
   	    		  
-  	              //creating lineSeries with mea and nui values for each month	    		  
-  	    		  measures.forEach(function(mea) {                             
-    	    			mea.lineSeries = []; 
-    	    			var avg, std, best, delta;
+  	    		  
+  	              //creating lineSeries with mea and nui values for each month	
+  	    		 
+  	    		var nuisForEachMeaArray = [];
+  	    		  
+  	    		  measures.forEach(function(mea) {
+
+  	    				var nuiName;
+  	    				mea.nuisForMeasure = [];
+    	    			mea.lineSeries = [];
+    	    			var avg, std, best, delta, _nui;
+    	    			
+    	    			var nuiObjects =[];
     	    			
     	    			mea.months.forEach(function(mon) {
     	    				var lineSerie = new Object();
+    	    				var nuis="";
     	    				lineSerie.name = mon;
     	    				lineSerie.items = [];
     	    	
     	    				//getting nuis from nuiData with timeinterval 
     	    				var nuisInMonth = getNuiForMeaAndMonth(mea, mon , nuiData);
-    	    				if(nuisInMonth.length == 0){   	    					
-    	    					avg = std = best = delta = 0;
+    	    				if(nuisInMonth.length == 0) {   	    					
+    	    					avg = std = best = delta = _nui = 0;
+    	    					nuis += "Average 0\n Standard 0\n Best 0\n Delta 0";
     	    				}
     	    				else {
+    	    					
     	    					nuisInMonth.forEach(function(nui){
     	    						var sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_");
-    	    						var nuiName = nui.detectionVariable.detectionVariableName.slice(0,sliceIndex);
+    	    						nuiKey = nui.detectionVariable.detectionVariableName.slice(0,sliceIndex);
+    	    						nuiName = nuiKey;
     	    						
     	    						switch(nuiName) {
-    	    					    case 'avg':
-    	    					        avg = nui.nuiValue;
-    	    					        break;
-    	    					    case 'std':
-    	    					        std = nui.nuiValue;
-    	    					        break;
-    	    					    case 'best':
-    	    					        best = nui.nuiValue;
-    	    					        break;
-    	    					    case 'delta':
-    	    					        delta = nui.nuiValue;
-    	    					        break;
-    	    					    
-    	    					}
+    	    					    case 'avg': 
+    	    					    	nuiName = "Average";
+    	    					    	break;
+    	    					    case 'std': 
+    	    					    	nuiName = "Standard";
+    	    					    	break;
+    	    					    case 'best': 
+    	    					    	nuiName = "Best";
+    	    					    	break;
+    	    					    case 'delta': 
+    	    					    	nuiName = "Delta";
+    	    					    	break;
+    	    						}
+    	    						
+    	    						  if(nuiObjects[nuiKey+"Object"]==null) {
+    	    							nuiObjects[nuiKey+"Object"]= new Object();
+    	    							nuiObjects[nuiKey+"Object"]["ID"] = nuiName;
+    	    						  }
+    	    						  
+    	    						nuiObjects[nuiKey+"Object"][mon] = nui.nuiValue;
+    	    						nuis += nuiName+" "+nui.nuiValue+"\n";
+    	    						
+    	    						if( ! mea.nuisForMeasure.includes(nuiObjects[nuiKey+"Object"]) ){
+    	    							mea.nuisForMeasure.push(nuiObjects[nuiKey+"Object"]);
+    	    						}
+    	    						
     	    					});
     	    				}
     	    				
-    	    				lineSerie.shortDesc = "Average "+ avg +" \n Standard "+ std +" \n Best " + best +" \n Delta " + delta +"";
-    	    				
+    	    				lineSerie.shortDesc =  nuis;
     	    				
     	    				mea.measureValues.forEach(function(mv) {
     	    					var date = new Date(mv.intervalStart);
@@ -150,13 +173,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    				});
     	    				mea.lineSeries.push(lineSerie);
     	    				
-    	    			});             	    				    			
-      	    			
+    	    				
+    	    			});  
+
   	    		  });
   	    		  
-
-  	    		 	    		
-  	    		  function getNuiForMeaAndMonth(mea, mon , nuiData) {   	    			  
+  	    		  function getNuiForMeaAndMonth(mea, mon , nuiData) {	    			  
   	    			  var nuiMonth = null;
   	    			  var nuiYear = null;
   	    			  var finalNuis = [];
@@ -166,7 +188,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    				  
   	    				  var sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_") + 1;
   	    				  if(nui.detectionVariable.detectionVariableName.slice(sliceIndex) == mea.measureName){
-  	    					 
   	    					    	    					  
   	    					  var date = new Date(nui.timeInterval.intervalStart);
   	    					  
@@ -218,27 +239,22 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    							  //if start date is the same as previous one
   	    							  //do nothing because this time interval ends on the i+1 date           	    							 
   	    						  }
-  	    						  else{            	    							 
+  	    						  else {        	    							 
   	    							var item = new Object();
-                                                                item.value = null;                    	    				                     	    				                     	    				  
-                                                                ls.items.splice(i, 0, item);	                    	    				  	                    	    				
+  	    							item.value = null;                    	    				                     	    				                     	    				  
+  	    							ls.items.splice(i, 0, item);	                    	    				  	                    	    				
   	    						  }
   	    						  
   	    					  }
   	    					 
-          	    			  
-          	    			 
           	    		  }
   	    			  });
                               }                             
   	    		  });                         
   	    		return measures;
 	    		  
-	    		  
             	}
             	
-            	
-            	   	
             }
             return  new detectionMeaViewModel();
             

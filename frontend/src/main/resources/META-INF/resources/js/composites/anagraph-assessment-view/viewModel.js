@@ -9,7 +9,7 @@ function(oj, ko, $) {
 
 		self.crId = ko.observable();
 		self.detectionVariable  = ko.observable(); 
-                self.gefName = ko.observable();
+        self.gefName = ko.observable();
 		self.parentFactorId = ko.observable();
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();

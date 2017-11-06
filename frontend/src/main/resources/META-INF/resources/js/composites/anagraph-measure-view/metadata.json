@@ -20,7 +20,12 @@
 		"lineSeries": {
 			"description" : "Object containing chart data.",
 			"type": "object"
+		},
+		"nuisForMeasure": {
+			"description" : "Object containing nui data.",
+			"type": "object"
 		}
+		
 				
 	}
 }
