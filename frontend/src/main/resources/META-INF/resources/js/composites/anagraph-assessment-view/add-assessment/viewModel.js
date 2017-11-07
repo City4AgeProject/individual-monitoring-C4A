@@ -27,35 +27,48 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 self.noDataSetSelectedLabel = oj.Translations.getTranslatedString("no_data_set_selected");
                 self.requiredLabel = oj.Translations.getTranslatedString("required_label");
                 
-             // console.log("##1# self.props.selectedRiskStatus:"+self.props.selectedRiskStatus);
+           		context.props.then(function(properties) {
+        			self.props = properties;
+        		});
+                
                 $(document).ready(function(){
-                	
                 	$("#okButton").attr("disabled", true);
        
                 	  $("#required").hide();
                       $(".oj-dialog").on('mouseenter',function(){
                       	$("#required").fadeIn();
                       });
-                      
                       $(".oj-dialog").on('mouseleave',function(){
                         	$("#required").fadeOut();
                       });
-                      
+                          
                      $( ".oj-dialog" ).mouseover(function() {
                     	 $("#okButton").attr("disabled", true);
                     	  if(( self.props.selectedRiskStatus[0]=='A' || self.props.selectedRiskStatus[0]=='N' || self.props.selectedRiskStatus[0]=='W' )
-                        		  &&( self.props.selectedRoles[0] == 7 || self.props.selectedRoles[0] == 8 )){
+                        		  &&( self.props.selectedRoles[0] == 7 || self.props.selectedRoles[0] == 8 )
+                        		  &&( 	self.props.selectedDataValidity[0]=='FAULTY_DATA' || 
+                        				self.props.selectedDataValidity[0]=='VALID_DATA' || 
+                        				self.props.selectedDataValidity[0]=='QUESTIONABLE_DATA' ||
+                        				((self.props.selectedDataValidity[0]===undefined)||(self.props.selectedDataValidity[0]==="undefined")||(self.props.selectedDataValidity[0]===null))
+                        			)
+                        		  ){
                         		  $("#okButton").attr("disabled", false);
                         	  } 
                       });
-                	 
-       	
+                     
+                     
+                     $(document).keypress(function(e) {
+             	  		if($(".postAssessment").is(":visible") && !$("#okButton").attr("disabled")){
+             	  			if(e.which == 13){
+             	  			$("#textareacontrol").blur();
+             	  				self.postAssessment();
+             	  			}
+             	  		}
+                     });
                 });
-
-        		context.props.then(function(properties) {
-        			self.props = properties;
-        		});
                 
+        
+
                 var serverErrorCallback = function (xhr, message, error) {
                     console.log(error);
                 };
@@ -69,7 +82,6 @@ define(['knockout', 'jquery', 'urls', 'entities'],
 
                 var postAssessmentCallback = function (data) {
                     $('#dialog1').ojDialog('close');
-
                     $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
 
                 };
@@ -146,13 +158,16 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                     console.log("audienceIds: " + audienceIds);
                     var assessmentToPost = new AddAssessment
                             (jwt, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
-                    
-                    if (riskStatus === 'XXX' || audienceIds.length === 0) {
-                    	window.alert('You did not fill the required fields: Risk Status or Target Audience!');
+                    if ( (riskStatus !== 'W' && riskStatus !== 'N' && riskStatus !== 'A') || audienceIds.length === 0
+                    		|| (dataValidity !== 'FAULTY_DATA' && dataValidity !== 'VALID_DATA' && dataValidity !== 'QUESTIONABLE_DATA')  ) {
+                    	console.log("1-1 INVALID-riskStatus: "+riskStatus+" audienceIds:"+audienceIds+" dataValidity: "+dataValidity);
+                    	console.log('You did not fill the required fields: Risk Status or Target Audience!');
                     } else {
+                    	console.log("1-2 VALID-riskStatus: "+riskStatus+" audienceIds:"+audienceIds+" dataValidity: "+dataValidity);
                     	var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_SET,
-                                JSON.stringify(assessmentToPost), postAssessmentCallback);
+                        JSON.stringify(assessmentToPost), postAssessmentCallback);
                         jqXHR.fail(serverErrorCallback);
+                        resetAddAssessment();
                     };
                     
                     return true;

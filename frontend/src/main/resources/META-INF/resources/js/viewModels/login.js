@@ -59,13 +59,18 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	                            });
                     }
                 };
+                
                 //login on ENTER button
-                $(document).keypress(function(e) {
-                	if(e.which == 13){
-                		$("#password").blur();
-                		self.loginUser();
-                	}
-              	});
+                	  $(document).keypress(function(e) {
+                		  if($(".login").is(":visible")){
+                			  if(e.which == 13){
+                				  $("#password").blur();
+                				  self.loginUser();
+                			  }
+                		  }
+                    	});
+                
+              
                 
                 self.resetForm = function (viewModel, event) {
                     self.loginValue('');

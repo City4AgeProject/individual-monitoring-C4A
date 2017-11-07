@@ -101,16 +101,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  
   	    		  
   	              //creating lineSeries with mea and nui values for each month	
-  	    		 
-  	    		var nuisForEachMeaArray = [];
   	    		  
   	    		  measures.forEach(function(mea) {
 
   	    				var nuiName;
   	    				mea.nuisForMeasure = [];
     	    			mea.lineSeries = [];
-    	    			var avg, std, best, delta, _nui;
-    	    			
     	    			var nuiObjects =[];
     	    			
     	    			mea.months.forEach(function(mon) {
@@ -122,7 +118,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    				//getting nuis from nuiData with timeinterval 
     	    				var nuisInMonth = getNuiForMeaAndMonth(mea, mon , nuiData);
     	    				if(nuisInMonth.length == 0) {   	    					
-    	    					avg = std = best = delta = _nui = 0;
     	    					nuis += "Average 0\n Standard 0\n Best 0\n Delta 0";
     	    				}
     	    				else {
