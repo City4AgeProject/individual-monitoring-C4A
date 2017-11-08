@@ -11,13 +11,9 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.measureName = null;
                 self.lineSeries = [];
                 
-                context.props.then(function(properties) {
-                	self.props = properties; 
-                	
-                	   self.dataSource = new oj.ArrayDataGridDataSource( 
-                			 properties.nuisForMeasure,
-      	            		 {rowHeader: 'ID'} ); 
-                	
+                context.props.then(function(properties) {                    
+                    self.props = properties; 
+                    self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
                     self.measureName = oj.Translations.getTranslatedString(properties.measureName);                    
                     if(properties.baseUnit){
                         self.measureName += " (" + properties.baseUnit + ")";

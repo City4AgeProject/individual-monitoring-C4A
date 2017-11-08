@@ -103,18 +103,33 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	              //creating lineSeries with mea and nui values for each month	
   	    		  
   	    		  measures.forEach(function(mea) {
-
-  	    				var nuiName;
-  	    				mea.nuisForMeasure = [];
+                                /*SETTING UP COLORS FOR SERIES*/
+                                //var colors2 = ["#8600ff","#5b00f4","#0d00f9","#0032f9","#0079ff","#09a3ff","#06daff","#06ffcd","#09ff77","#00ff0d","#89ff06","#c1f200"];
+  	    			var colors = ["#a746ff", "#7c51ff","#4a6aff","#48b1ff","#59daff","#59ffde","#42ff97","#5bff70","#93ff51","#c0ff4a","#d7ff37","#f5ff46"]
+                                var i = 0;
+                                var j = 0;
+                                if(mea.months.length < 3) {                                    
+                                    j = 6;
+                                }else if(mea.months.length < 5){
+                                    j = 3;
+                                }else if(mea.months.length < 7){
+                                    j = 2;
+                                }else j = 1;
+                                /*END COLORS*/
+                                
+                                var nuiName;
+  	    			mea.nuisForMeasure = [];
     	    			mea.lineSeries = [];
     	    			var nuiObjects =[];
-    	    			
-    	    			mea.months.forEach(function(mon) {
-    	    				var lineSerie = new Object();
+                                                                    	    			
+    	    			mea.months.forEach(function(mon) {                                      
+    	    				var lineSerie = new Object();                                                            
+                                        lineSerie.color = colors[i];
+                                        i = i + j;
     	    				var nuis="";
     	    				lineSerie.name = mon;
     	    				lineSerie.items = [];
-    	    	
+                                                                               
     	    				//getting nuis from nuiData with timeinterval 
     	    				var nuisInMonth = getNuiForMeaAndMonth(mea, mon , nuiData);
     	    				if(nuisInMonth.length == 0) {   	    					
