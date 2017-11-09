@@ -96,5 +96,5 @@ function (oj, ko, $, sp) {
         
     }
 
-    return new detectionGesContentViewModel();
+    return detectionGesContentViewModel;
 });
