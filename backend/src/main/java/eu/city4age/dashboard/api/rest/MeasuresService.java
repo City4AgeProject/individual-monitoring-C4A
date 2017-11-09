@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.persistence.Query;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -69,8 +68,10 @@ import eu.city4age.dashboard.api.pojo.domain.ViewGefValuesPersistedSourceGesType
 import eu.city4age.dashboard.api.pojo.domain.ViewMeaNuiDerivationPerPilot;
 import eu.city4age.dashboard.api.pojo.domain.ViewNuiValuesPersistedSourceMeaTypes;
 import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
+import eu.city4age.dashboard.api.pojo.dto.Nuis;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.json.view.View;
+import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -158,9 +159,7 @@ public class MeasuresService {
 			logger.info("getDailyMeasures REST service - query exception: ", e);
 		}
 
-		return Response
-				.ok(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures))
-				.build();
+		return JerseyResponse.build(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures));
 
 	}
 	
@@ -189,7 +188,7 @@ public class MeasuresService {
 		for (Pilot pilot : pilots)
 			computeGESsForPilot(pilot.getPilotCode(), pilot.getLastComputed());
 
-		return Response.ok().build();
+		return JerseyResponse.build(true);
 	}
 	
 	
@@ -275,7 +274,7 @@ public class MeasuresService {
 					logger.info("gesDerivationWeight: " + gesDerivationWeight);
 					BigDecimal multiply = gefValue.multiply(gesDerivationWeight.abs());
 					logger.info("multiply: " + multiply);
-					if(sumW2 != null && !sumW2.equals(new BigDecimal(0))) {
+					if(sumW2 != null && !sumW2.get(derivedDvId).equals(new BigDecimal(0))) {
 						BigDecimal divisor = sumW2.get(derivedDvId);
 						logger.info("divisor: " + divisor);
 						multiply = multiply.divide(divisor.abs(), 2, RoundingMode.HALF_UP);
@@ -576,6 +575,7 @@ public class MeasuresService {
 		ges.setDerivationWeight(weight);
 
 		geriatricFactorRepository.save(ges);
+		geriatricFactorRepository.flush();
 		
 		return ges;
 	}
@@ -631,71 +631,54 @@ public class MeasuresService {
 		logger.info("dvId: " + dv.getId());
 		logger.info("startOfMonth: " + startOfMonth);
 		logger.info("pilotCode: " + pilotCode);
-		// menja se where za upit jer smo izmenili upit i podelili na dva (upit
-		// i podupit)
-		String formula = "WITH subq AS (SELECT AVG (vm.measure_value) avg, COALESCE (STDDEV(vm.measure_value), 0) stDev, PERCENTILE_CONT (0.25) WITHIN GROUP (ORDER BY vm.measure_value DESC) best25 FROM variation_measure_value AS vm INNER JOIN time_interval AS ti ON ti. ID = vm.time_interval_id WHERE ti.interval_start >= '"
-				+ startOfMonth + "' AND ti.interval_start <= '" + endOfMonth + "' AND vm.user_in_role_id = "
-				+ uir.getId().toString() + " AND vm.measure_type_id = " + dv.getId().toString()
-				+ ") SELECT avg, (CASE WHEN avg != 0 THEN stDev / avg ELSE 0 END) std, (CASE WHEN avg != 0 THEN best25 / avg ELSE 0 END) best, (CASE WHEN avg != 0 THEN best25 - avg / avg ELSE 0 END) delta FROM subq";
-		Query sql = variationMeasureValueRepository.getEntityManager().createNativeQuery(formula);
-		variationMeasureValueRepository.getEntityManager().getEntityManagerFactory()
-				.addNamedQuery("VariationMeasureValue.dynamic", sql);
-		Query namedQuery = variationMeasureValueRepository.getEntityManager()
-				.createNamedQuery("VariationMeasureValue.dynamic");
-
-		Object[] nuiForMeasure = (Object[]) namedQuery.getSingleResult(); // Long
-																			// should
-																			// be
-																			// converted
-																			// to
-																			// BigDecimal
-																			// or
-																			// Double!!!
-
 		
-		if(nuiForMeasure != null && nuiForMeasure.length == 4) {
-
+		Nuis nui = variationMeasureValueRepository.doAllNui(startOfMonth, endOfMonth, uir.getId(), dv.getId());
 		
-			logger.info("nui1: " + nuiForMeasure[0]);
-			logger.info("nui2: " + nuiForMeasure[1]);
-			logger.info("nui3: " + nuiForMeasure[2]);
-			logger.info("nui4: " + nuiForMeasure[3]);
-	
-			if (nuiForMeasure[0] != null) {
+		
+		if(nui != null) {
+
+			logger.info("nui1: " + nui.getAvg());
+			logger.info("nui2: " + nui.getStd());
+			logger.info("nui3: " + nui.getBest());
+			logger.info("nui4: " + nui.getDelta());			
+			
+			if (nui.getAvg() != null) {
+				
 				List<ViewMeaNuiDerivationPerPilot> dvNuisForMeasure = viewMeaNuiDerivationPerPilotRepository
 						.findAllDvNuisForMeasure(dv.getDetectionVariableName(), pilotCode);
+				
 				BigDecimal nuiValue = new BigDecimal(0);
+				
 				for (int i = 0; i < 4; i++) {
 
 					if (dvNuisForMeasure.get(i).getFormula().contains("avg")) {
-						String nui1 = String.valueOf(nuiForMeasure[0]);
-						nuiValue = new BigDecimal(nui1);
+						nuiValue = nui.getAvg();
 					} else if (dvNuisForMeasure.get(i).getFormula().contains("std")) {
-						String nui2 = String.valueOf(nuiForMeasure[1]);
-						nuiValue = new BigDecimal(nui2);
+						nuiValue = nui.getStd();
 					} else if (dvNuisForMeasure.get(i).getFormula().contains("best")) {
-						String nui3 = String.valueOf(nuiForMeasure[2]);
-						nuiValue = new BigDecimal(nui3);
+						nuiValue = nui.getBest();
 					} else if (dvNuisForMeasure.get(i).getFormula().contains("delta")) {
-						String nui4 = String.valueOf(nuiForMeasure[3]);
-						nuiValue = new BigDecimal(nui4);
+						nuiValue = nui.getDelta();
 					}
 
-					NumericIndicatorValue nui = create1Nui(uir, nuiValue, dvNuisForMeasure.get(i).getDerivedNuiId(),
+					NumericIndicatorValue create1Nui = create1Nui(uir, nuiValue, dvNuisForMeasure.get(i).getDerivedNuiId(),
 							startOfMonth);
+					
+					nuis.add(create1Nui);
 
-					nuis.add(nui);
 				} 
 			} 
 		}
+
 		return nuis;
+
 	}
 
 	private NumericIndicatorValue create1Nui(UserInRole uir, BigDecimal nuiValue, Long nuiDvId,
 			Timestamp startOfMonth) {
 		NumericIndicatorValue nui = new NumericIndicatorValue();
 		if (nuiValue != null) {
-			nui.setNuiValue(new BigDecimal(nuiValue.toString()));
+			nui.setNuiValue(nuiValue);
 		} else {
 			nui.setNuiValue(new BigDecimal(0));
 		}
@@ -703,6 +686,7 @@ public class MeasuresService {
 		nui.setDetectionVariable(detectionVariableRepository.getOne(nuiDvId));
 		nui.setTimeInterval(getOrCreateTimeInterval(startOfMonth, TypicalPeriod.MONTH));
 		nuiRepository.save(nui);
+		nuiRepository.flush();
 		return nui;
 	}
 
@@ -726,10 +710,10 @@ public class MeasuresService {
 	public Response getNuiValues(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
 			@ApiParam(hidden = true) @PathParam("detectionVariableId") Long detectionVariableId) throws JsonProcessingException {
 		List<NumericIndicatorValue> nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, detectionVariableId);
-		return Response.ok(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis)).build();
+		return JerseyResponse.build(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis));
 	}
 	
-	public String test() {
+	public String mockitoTest() {
 		return "hello";
 	}
 

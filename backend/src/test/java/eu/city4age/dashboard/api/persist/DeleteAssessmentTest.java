@@ -2,23 +2,16 @@ package eu.city4age.dashboard.api.persist;
 
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -32,11 +25,9 @@ import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
-import eu.city4age.dashboard.api.pojo.persist.Filter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ApplicationTest.class)
+@SpringBootTest(classes = ApplicationTest.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class DeleteAssessmentTest {

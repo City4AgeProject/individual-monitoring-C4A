@@ -1,8 +1,9 @@
 package eu.city4age.dashboard.api.rest;
 
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,27 +13,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.ProcessingException;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.server.ContainerException;
+import org.apache.logging.log4j.core.util.IOUtils;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.TestRestTemplate;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,13 +41,14 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
 import eu.city4age.dashboard.api.persist.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.persist.PilotRepository;
+import eu.city4age.dashboard.api.persist.ViewPilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.ex.ConfigurationValidityDateException;
-import eu.city4age.dashboard.api.pojo.ex.JsonValidationException;
 import eu.city4age.dashboard.api.pojo.ex.MissingKeyException;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.json.desobj.Configuration;
@@ -55,15 +57,10 @@ import eu.city4age.dashboard.api.pojo.json.desobj.Ges;
 import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
 import eu.city4age.dashboard.api.pojo.json.desobj.Mea;
 import eu.city4age.dashboard.api.pojo.other.ConfigurationCounter;
+import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 /**
  * @author Andrija Petrovic
@@ -76,11 +73,8 @@ public class PilotDetectionVariableService {
 
 	public static final String PATH = "configuration";
 	
-	@Autowired
-	private ResourceLoader resourceLoader;
+	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableService.class);
 
-	@Context
-	private HttpServletRequest request;
 
 	@Autowired
 	private DetectionVariableRepository detectionVariableRepository;
@@ -90,11 +84,11 @@ public class PilotDetectionVariableService {
 
 	@Autowired
 	private PilotRepository pilotRepository;
+	
+	@Autowired
+	private ViewPilotDetectionVariableRepository viewPilotDetectionVariableRepository;
 
-	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableService.class);
-
-	static protected RestTemplate rest = new TestRestTemplate();
-
+	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@POST
@@ -103,23 +97,23 @@ public class PilotDetectionVariableService {
 	@Path("updateFromConfigFile")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Assessment.class),
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
-	public final Response updateConfigurationService(String json)
-			throws FileNotFoundException, IOException, ProcessingException, ContainerException, JsonParseException,
-			JsonValidationException, MissingKeyException, ConfigurationValidityDateException, ValidationException {
+	public Response updateConfigurationService(String json) throws Exception {
 
 		StringBuilder response = new StringBuilder();
+
 		
 		try {
 			
-			Resource resource  = resourceLoader.getResource("classpath:PilotConfigurationJsonValidator.json");
+			ClassPathResource resource = new ClassPathResource("PilotConfigurationJsonValidator.json");
 			InputStream jsonValidator = resource.getInputStream();
-			JSONObject rawSchema = new JSONObject(new JSONTokener(jsonValidator));
+			String validator = IOUtils.toString(new BufferedReader(new InputStreamReader(jsonValidator)));
+			JSONObject rawSchema = new JSONObject(new JSONTokener(validator));
 			Schema schema = SchemaLoader.load(rawSchema);
 			schema.validate(new JSONObject(json)); // throws a ValidationException if this object is invalid
 			
-			@SuppressWarnings("deprecation")
-			ConfigureDailyMeasuresDeserializer data = objectMapper.reader(ConfigureDailyMeasuresDeserializer.class)
+			ConfigureDailyMeasuresDeserializer data = objectMapper.readerFor(ConfigureDailyMeasuresDeserializer.class)
 			.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+
 
 			for (int z = 0; z < data.getConfigurations().size(); z++) {
 				Configuration configuration = data.getConfigurations().get(z);
@@ -139,16 +133,18 @@ public class PilotDetectionVariableService {
 				} catch (ParseException ex) {
 					throw new ConfigurationValidityDateException();
 				}
-
-				int startingNumberOfRows = pilotDetectionVariableRepository.findAll().size();
-
+				
 				String pilotCode = configuration.getPilotCode();
 
 				try {
 					Pilot pilot = pilotRepository.findByPilotCode(pilotCode);
+					
+					logger.info("pilotRepository: " + pilotRepository);
+					
 					pilot.setLatestConfigurationUpdate(new Date());
 					pilotRepository.save(pilot);
 				} catch (NullPointerException ex) {
+					ex.printStackTrace();
 					throw new MissingKeyException(
 							"MissingKeyException:\n\tName for property : pilotCode(pilot_code): "+pilotCode+"\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
 				}
@@ -246,9 +242,7 @@ public class PilotDetectionVariableService {
 				}
 
 				List<PilotDetectionVariable> AllFromDB = pilotDetectionVariableRepository.findAll();
-				
-				response.append("\n\nNumber of ALL rows for all Pilot Codes and Valid Dates : ");
-				response.append(startingNumberOfRows);
+
 				response.append("\n\tNumber of rows only For Pilot Code: ");
 				response.append(pilotCode);
 				response.append("\nand Valid From Date: ");
@@ -365,7 +359,7 @@ public class PilotDetectionVariableService {
 			logger.info("Not a valid Json String: " + e.getMessage());
 		}
 		
-		return Response.ok().type(MediaType.TEXT_PLAIN).entity(response.toString()).build();
+		return JerseyResponse.buildTextPlain(response.toString());
 
 	}
 
@@ -428,6 +422,22 @@ public class PilotDetectionVariableService {
 			return true;
 		else
 			return false;
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("findAllGes/{userId}")
+	public Response findAllGes(@PathParam("userId") Long userId) throws JsonProcessingException {
+		List<ViewPilotDetectionVariable> list = viewPilotDetectionVariableRepository.findAllGes(userId);
+		return JerseyResponse.build(objectMapper.writeValueAsString(list));
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("findAllGef/{userId}")
+	public Response findAllGef(@PathParam("userId") Long userId) throws JsonProcessingException {
+		List<ViewPilotDetectionVariable> list = viewPilotDetectionVariableRepository.findAllGef(userId);
+		return JerseyResponse.build(objectMapper.writeValueAsString(list));
 	}
 
 }

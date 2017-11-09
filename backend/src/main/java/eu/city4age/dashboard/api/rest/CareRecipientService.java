@@ -6,11 +6,12 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Comparator;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -23,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.glassfish.jersey.server.JSONP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,10 +53,6 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.dto.C4ACareRecipientListResponse;
-import eu.city4age.dashboard.api.pojo.dto.C4ACareRecipientsResponse;
-import eu.city4age.dashboard.api.pojo.dto.C4AGroupsResponse;
-import eu.city4age.dashboard.api.pojo.dto.C4ServiceGetOverallScoreListResponse;
 import eu.city4age.dashboard.api.pojo.dto.DataSet;
 import eu.city4age.dashboard.api.pojo.dto.Group;
 import eu.city4age.dashboard.api.pojo.dto.Item;
@@ -63,6 +61,11 @@ import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie;
 import eu.city4age.dashboard.api.pojo.enu.AllPilotRoles;
 import eu.city4age.dashboard.api.pojo.enu.SamePilotRoles;
+import eu.city4age.dashboard.api.pojo.ws.C4ACareRecipientListResponse;
+import eu.city4age.dashboard.api.pojo.ws.C4ACareRecipientsResponse;
+import eu.city4age.dashboard.api.pojo.ws.C4AGroupsResponse;
+import eu.city4age.dashboard.api.pojo.ws.C4ServiceGetOverallScoreListResponse;
+import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.security.JwtIssuer;
 
 /**
@@ -101,10 +104,11 @@ public class CareRecipientService {
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
+	@JSONP(queryParam = "callback")
 	@Transactional("transactionManager")
 	@GET
 	@Path("getGroups/careRecipientId/{careRecipientId}/parentFactors/{parentFactors : .+}")
-	@Produces("application/json")
+	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
 	public Response getGroups(@PathParam("careRecipientId") String careRecipientId,
 			@PathParam("parentFactors") List<PathSegment> parentFactorsPathSegment) throws IOException {
 
@@ -213,16 +217,15 @@ public class CareRecipientService {
 
 		}
 
-		return Response.ok(objectMapper.writeValueAsString(response)).build();
+		return JerseyResponse.build(objectMapper.writeValueAsString(response));
 
 	}// end method
 
     @Transactional("transactionManager")
     @GET
-    @Path("getCareRecipients/")
-    @Produces("application/json")
-    public Response getJson(@HeaderParam("Authorization") String jwt) throws IOException {
-
+    @Path("getCareRecipients")
+    @Produces({MediaType.APPLICATION_JSON, "application/javascript"})
+    public Response getCareRecipients(@HeaderParam("Authorization") String jwt) throws IOException {
         C4ACareRecipientsResponse response = new C4ACareRecipientsResponse();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         List<UserInRole> userinroleparamsList = new ArrayList<>();
@@ -231,11 +234,15 @@ public class CareRecipientService {
         // Verify and decode JWT token
         DecodedJWT token;
         try {
-
             token = JwtIssuer.INSTANCE.verify(jwt);
         } catch (JWTVerificationException e) {
-            // NOT verified
-            return Response.ok("402").build();
+			e.printStackTrace();
+			response.getStatus().setResponseCode("402 - JWT NOT VALID.");
+			String status = "No valid Jwt used for service authorisation.";
+			response.getStatus().setConsole(status);
+			response.getStatus().setCause(e.getMessage());
+			response.getStatus().setStackTrace(Arrays.toString(e.getStackTrace()));
+            return JerseyResponse.buildTextPlain("402");
         }
         Map<String, Claim> claims = token.getClaims();
         Integer role = claims.get("rol").asInt();
@@ -254,7 +261,7 @@ public class CareRecipientService {
         if (userinroleparamsList.isEmpty()) {
             response.setMessage("No users found");
             response.setResponseCode(0);
-            return Response.ok(objectMapper.writeValueAsString(response)).build();
+            return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response));
         } else {
             List<C4ACareRecipientListResponse> itemList = new ArrayList<C4ACareRecipientListResponse>();
             for (UserInRole user : userinroleparamsList) {
@@ -308,14 +315,14 @@ public class CareRecipientService {
 
 		} // end detectionVariables is empty
 
-		return Response.ok(objectMapper.writeValueAsString(response)).build();
+		return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response));
 
 	}// end method
 
 	@GET
 	@Path("getDiagramData/careRecipientId/{careRecipientId}/parentFactorId/{parentFactorId}")
-	@Produces("application/json")
-	public C4AGroupsResponse getDiagramData(@PathParam("careRecipientId") Long careRecipientId,
+	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
+	public Response getDiagramData(@PathParam("careRecipientId") Long careRecipientId,
 			@PathParam("parentFactorId") Long parentFactorId) throws IOException {
 		DataSet response = new DataSet();
 		List<GeriatricFactorValue> gfvList;
@@ -361,7 +368,7 @@ public class CareRecipientService {
 
 		}
 		response.setItemList(itemList);
-		return response;
+		return JerseyResponse.build(response);
 	}// end method
 
 	@GET
@@ -369,7 +376,7 @@ public class CareRecipientService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findOne(@PathParam("id") Long id) throws JsonProcessingException {
 		CrProfile crP = crProfileRepository.findOne(id);
-		return Response.ok(objectMapper.writeValueAsString(crP)).build();
+		return JerseyResponse.build(objectMapper.writeValueAsString(crP));
 	}
 
 	private OJDiagramFrailtyStatus transformToDto(List<FrailtyStatusTimeline> fs, List<DataIdValue> months) {

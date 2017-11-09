@@ -1,36 +1,43 @@
 package eu.city4age.dashboard.api.rest;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 
-public class PilotDetectionVariableServiceTest {
+public class PilotDetectionVariableServiceTest extends WebMvcConfigurationSupport {
 
 	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableServiceTest.class);
 
-	static protected RestTemplate rest = new TestRestTemplate();
+	static protected TestRestTemplate rest = new TestRestTemplate();
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
+	
+    @Override
+    protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
+    }
 		
 	@Test
 	public void updateConfigurationServiceTest() throws Exception {
 
 		try {
-			rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			String uri = "http://localhost:8080/C4A-dashboard/rest/configuration/updateFromConfigFile";
 			String input = "{\"configurations\":[{\"name\":\"overall\",\"level\":0,\"validFrom\":\"2016-01-01 00:00:01\",\"validTo\":\"2020-09-07 00:00:00\",\"pilotCode\":\"MAD\",\"groups\":[{\"name\":\"contextual\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[]},{\"name\":\"behavioural\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[{\"name\":\"motility\",\"level\":2,\"weight\":0.13,\"formula\":\"\",\"subFactors\":[{\"name\":\"walking\",\"level\":3,\"weight\":1,\"formula\":\"\",\"measures\":[{\"name\":\"walk_distance\",\"level\":4,\"weight\":0.4},{\"name\":\"walk_time_outdoor\",\"level\":4,\"weight\":0.3}]}]}]}]}]}";
 

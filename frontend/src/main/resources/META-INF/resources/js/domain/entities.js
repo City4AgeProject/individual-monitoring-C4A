@@ -182,8 +182,7 @@ Assessment.prototype.toJson = function() {
  * @param {type} audienceIds
  * @returns {AddAssessment}
  */
-function AddAssessment(jwt, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds) {
-    this.jwt = jwt;
+function AddAssessment(comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds) {
     this.comment = comment;
     this.riskStatus = riskStatus;
     this.dataValidity = dataValidity;
@@ -200,27 +199,27 @@ function CdRole(){
 }
 
 function ViewPilotDetectionVariable() {
-	this.prefix = "view_detection_variable.";
-	this.crId;
-	this.pilotCode;
-	this.detectionVariableId;
-	this.detectionVariableName;
+    this.prefix = "view_detection_variable.";
+    this.crId;
+    this.pilotCode;
+    this.detectionVariableId;
+    this.detectionVariableName;
     this.detectionVariableType;
     this.derivedDetectionVariableId;
-	this.derivedDetectionVariableName;
-	this.derivedDetectionVariableType;
+    this.derivedDetectionVariableName;
+    this.derivedDetectionVariableType;
     this.derivationWeight;
 }
 
 ViewPilotDetectionVariable.produceFromOther = function(other) {
     var result = new ViewPilotDetectionVariable();
     result.crId = other.crId;
-	result.pilotCode = other.pilotCode;
-	result.detectionVariableId = other.detectionVariableId;
+    result.pilotCode = other.pilotCode;
+    result.detectionVariableId = other.detectionVariableId;
     result.detectionVariableName = other.detectionVariableName;
     result.detectionVariableType = other.detectionVariableType;
-	result.derivedDetectionVariableId = other.derivedDetectionVariableId;
-	result.derivedDetectionVariableName = other.derivedDetectionVariableName;
+    result.derivedDetectionVariableId = other.derivedDetectionVariableId;
+    result.derivedDetectionVariableName = other.derivedDetectionVariableName;
     result.derivedDetectionVariableType = other.derivedDetectionVariableType;
     result.derivationWeight = other.derivationWeight;
     return result;
@@ -239,6 +238,24 @@ ViewPilotDetectionVariable.produceFromTable = function(table) {
 		result.derivedDetectionVariableName = table[i][8];
 		result.derivedDetectionVariableType = table[i][9];
         result.derivationWeight = table[i][11];
+        list.push(result);
+    }
+    return list;
+};
+
+ViewPilotDetectionVariable.produceFromVpdv = function(data) {
+    var list = [];
+    for(var i=0; i<data.length; i++) {
+        var result = new ViewPilotDetectionVariable();
+        result.crId = data[i].id.userInRoleId;
+		result.pilotCode = data[i].id.pilotCode;
+		result.detectionVariableId = data[i].id.detectionVariableId;
+        result.detectionVariableName = data[i].detectionVariableName;
+        result.detectionVariableType = data[i].detectionVariableType;
+        result.derivedDetectionVariableId = data[i].id.derivedDetectionVariableId;
+		result.derivedDetectionVariableName = data[i].derivedDetectionVariableName;
+		result.derivedDetectionVariableType = data[i].derivedDetectionVariableType;
+        result.derivationWeight = data[i].derivationWeight;
         list.push(result);
     }
     return list;

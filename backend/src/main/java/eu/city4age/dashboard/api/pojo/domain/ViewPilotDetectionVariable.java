@@ -6,9 +6,6 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Immutable;
@@ -35,9 +32,8 @@ public class ViewPilotDetectionVariable implements Serializable {
 	@Column(name = "detection_variable_name")
 	private String detectionVariableName;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "detection_variable_type")
-	private DetectionVariableType detectionVariableType;
+	@Column(name = "detection_variable_type")
+	private String detectionVariableType;
 	
 	@Column(name = "derived_detection_variable_name")
 	private String derivedDetectionVariableName;
@@ -85,11 +81,11 @@ public class ViewPilotDetectionVariable implements Serializable {
 		this.formula = formula;
 	}
 	
-	public DetectionVariableType getDetectionVariableType() {
+	public String getDetectionVariableType() {
 		return detectionVariableType;
 	}
 
-	public void setDetectionVariableType(DetectionVariableType detectionVariableType) {
+	public void setDetectionVariableType(String detectionVariableType) {
 		this.detectionVariableType = detectionVariableType;
 	}
 

@@ -60,7 +60,8 @@ function (oj, ko, $, sp) {
                     }else {
                         self.parentFactor(gefObj.detectionVariableId); //derivedDetectionVariableIds
                         self.subFactorType(gefObj.detectionVariableType);
-                        self.titleValue(oj.Translations.getTranslatedString(self.subFactorType().toLowerCase()) + " - " + oj.Translations.getTranslatedString(self.subFactorName()));
+                        if(self.subFactorType() === undefined) self.subFactorType("undefined");
+                        	self.titleValue(oj.Translations.getTranslatedString(self.subFactorType().toLowerCase()) + " - " + oj.Translations.getTranslatedString(self.subFactorName()));
                     }	            
 	            self.subFactorType(gefObj.detectionVariableType);                    	            
             } 
@@ -83,8 +84,8 @@ function (oj, ko, $, sp) {
         self.valueArray = ko.observableArray([0, 0]);
 
         function loadViewPilotDetectionVariables() {
-            $.getJSON(CODEBOOK_SELECT + '/vw_detection_variable_derivation_per_user_in_role', function(data) {               
-                self.viewPilotDetectionVariables = ViewPilotDetectionVariable.produceFromTable(data);
+            $.getJSON(CONFIG_ALL_GES + "/" + self.careRecipientId, function(data) {               
+                self.viewPilotDetectionVariables = ViewPilotDetectionVariable.produceFromVpdv(data);
                 $('#detectionGEFGroup1FactorsLineChart').prop('viewPilotDetectionVariables', self.viewPilotDetectionVariables);                   
             });
         }

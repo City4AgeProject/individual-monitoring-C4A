@@ -75,6 +75,9 @@ public class GeriatricFactorValue implements Serializable {
 	@JsonView(View.TimeIntervalView.class)
 	@OneToMany(mappedBy = "geriatricFactorValue", fetch = FetchType.LAZY)
 	private Set<Assessment> assessments = new HashSet<Assessment>();
+	
+	@OneToMany(mappedBy = "geriatricFactorValue", fetch = FetchType.LAZY)
+	private Set<SourceEvidence> sourceEvidence = new HashSet<SourceEvidence>();
 
 	public GeriatricFactorValue() {
 	}
@@ -152,6 +155,14 @@ public class GeriatricFactorValue implements Serializable {
 
 	public DetectionVariable getGefTypeId() {
 		return this.detectionVariable;
+	}
+
+	public Set<SourceEvidence> getSourceEvidence() {
+		return sourceEvidence;
+	}
+
+	public void setSourceEvidence(Set<SourceEvidence> sourceEvidence) {
+		this.sourceEvidence = sourceEvidence;
 	}
 
 }

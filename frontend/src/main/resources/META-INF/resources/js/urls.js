@@ -1,7 +1,7 @@
 var app = 'C4A-dashboard';
 var rest = 'rest';
 var hostname = location.hostname; //location.hostname, 'c4adashboard.atc.gr'
-var port = location.port;
+var port = location.port === '8383' ? '8080' : location.port;
 
 var root = location.protocol + "//" + hostname + (port === ''?'':":" + port) + '/' + app + '/' + rest + '/';
 
@@ -22,3 +22,6 @@ var DAILY_MEASURES_DATA = root + "measures/getDailyMeasures";
 var NUI_VALUES_DATA = root + "measures/getNuiValues";
 
 var USER_LOGIN = root + "users/login";
+
+var CONFIG_ALL_GEF = root + "configuration/findAllGef";
+var CONFIG_ALL_GES = root + "configuration/findAllGes";

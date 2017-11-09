@@ -15,35 +15,35 @@ public class SourceEvidenceId implements Serializable {
 	private static final long serialVersionUID = 5908214341407149708L;
 
 	@GeneratedValue
-	@Column(name="geriatric_factor_id")
-	private int geriatricFactorId;
+	@Column(name="value_id")
+	private int valueId;
 	
 	@GeneratedValue
-	@Column(name="author_id")
-	private int userInRoleId;
+	@Column(name="detection_variable_type")
+	private String detectionVariableType;
 
 	public SourceEvidenceId() {
 	}
 
-	public SourceEvidenceId(int geriatricFactorId, int userInRoleId) {
-		this.geriatricFactorId = geriatricFactorId;
-		this.userInRoleId = userInRoleId;
+	public SourceEvidenceId(int valueId, String detectionVariableType) {
+		this.valueId = valueId;
+		this.detectionVariableType = detectionVariableType;
 	}
 
-	public int getGeriatricFactorId() {
-		return this.geriatricFactorId;
+	public int getValueId() {
+		return valueId;
 	}
 
-	public void setGeriatricFactorId(int geriatricFactorId) {
-		this.geriatricFactorId = geriatricFactorId;
+	public void setValueId(int valueId) {
+		this.valueId = valueId;
 	}
 
-	public int getRoleId() {
-		return userInRoleId;
+	public String getDetectionVariableType() {
+		return detectionVariableType;
 	}
 
-	public void setUserInRoleId(int userInRoleId) {
-		this.userInRoleId = userInRoleId;
+	public void setDetectionVariableType(String detectionVariableType) {
+		this.detectionVariableType = detectionVariableType;
 	}
 
 	public boolean equals(Object other) {
@@ -55,16 +55,15 @@ public class SourceEvidenceId implements Serializable {
 			return false;
 		SourceEvidenceId castOther = (SourceEvidenceId) other;
 
-		return (this.getGeriatricFactorId() == castOther.getGeriatricFactorId())
-				&& ((this.getRoleId() == castOther.getRoleId()));
+		return (this.getValueId() == castOther.getValueId())
+				&& ((this.getDetectionVariableType() == castOther.getDetectionVariableType()));
 	}
 
 	public int hashCode() {
-		int result = 17;
-
-		result = 37 * result + this.getGeriatricFactorId();
-		result = 37 * result + this.getRoleId();
-		return result;
+	    StringBuilder builder = new StringBuilder();
+	    builder.append(String.valueOf(this.getValueId()));
+	    builder.append(this.getDetectionVariableType());
+	    return builder.toString().hashCode();
 	}
 
 }

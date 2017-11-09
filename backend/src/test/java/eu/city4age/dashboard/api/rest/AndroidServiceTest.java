@@ -1,48 +1,47 @@
 package eu.city4age.dashboard.api.rest;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.pojo.domain.Assessment;
-import eu.city4age.dashboard.api.pojo.dto.AddAssessment;
-import eu.city4age.dashboard.api.pojo.dto.C4AAndroidResponse;
-import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
 
 /**
  * @author Andrija Petrovic
  *
  */
-public class AndroidServiceTest {
+public class AndroidServiceTest extends WebMvcConfigurationSupport {
 
 	static protected Logger logger = LogManager.getLogger(AndroidServiceTest.class);
 
-	static protected RestTemplate rest = new TestRestTemplate();
+	static protected TestRestTemplate rest = new TestRestTemplate();
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
+	
+    @Override
+    protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
+    }
 	
 	@Test
 	public void AndroidServiceTest() throws Exception {
 
 		try {
-			rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			String uri = "http://localhost:8080/C4A-dashboard/rest/android/postFromAndroid";
 			/*
 			 * add these to db for successfull test:

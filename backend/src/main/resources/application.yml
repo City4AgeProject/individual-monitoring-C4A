@@ -3,8 +3,14 @@ server:
 logging:
   level:
     org:
+      hibernate: INFO
+      springframework: INFO
+      apache: INFO
+      glassfish: INFO
     com:
+      fasterxml: INFO
     eu:
+      city4age: INFO
   config: classpath:log4j2.yml
 spring:
   jersey:

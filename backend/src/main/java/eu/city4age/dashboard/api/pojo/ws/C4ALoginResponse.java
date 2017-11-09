@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.pojo.dto;
+package eu.city4age.dashboard.api.pojo.ws;
 
 /**
  *

@@ -308,8 +308,8 @@ function (oj, ko, $, sp, params) {
 
         //Names Cd Detection Variable names are loaded from table
         function loadViewPilotDetectionVariables() {
-            $.getJSON(CODEBOOK_SELECT + '/vw_detection_variable_derivation_per_user_in_role', function(data) {
-                self.viewPilotDetectionVariables = ViewPilotDetectionVariable.produceFromTable(data);             
+        	$.getJSON(CONFIG_ALL_GEF + "/" + self.careRecipientId, function(data) {
+                self.viewPilotDetectionVariables = ViewPilotDetectionVariable.produceFromVpdv(data);             
                 $('#detectionGEFGroup1FactorsLineChart').prop('viewPilotDetectionVariables', self.viewPilotDetectionVariables);
             });
         }

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.city4age.dashboard.api.persist.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
+import eu.city4age.dashboard.api.pojo.dto.Nuis;
 
 @Repository(value = "variationMeasureValueRepository")
 @Transactional(readOnly = true)
@@ -36,5 +37,8 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 
 	@Query("SELECT MIN(vm.id) FROM VariationMeasureValue vm WHERE vm.detectionVariable = :dv AND vm.userInRole.id = :uirId")
 	Long findMinId(@Param("dv") DetectionVariable dv, @Param("uirId") Long uirId);
+	
+	@Query(nativeQuery = true)
+	Nuis doAllNui(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("uirId") Long uirId, @Param("dvId") Long dvId);
 	
 }

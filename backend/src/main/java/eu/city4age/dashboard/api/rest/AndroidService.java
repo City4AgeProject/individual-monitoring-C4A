@@ -32,9 +32,10 @@ import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.Activity;
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.dto.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
 import eu.city4age.dashboard.api.pojo.json.desobj.JSONActivity;
+import eu.city4age.dashboard.api.pojo.ws.C4AAndroidResponse;
+import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
 
 /**
@@ -62,7 +63,6 @@ public class AndroidService {
 	@Autowired
 	ActivityRepository activityRepository;
 
-	@SuppressWarnings("deprecation")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -74,7 +74,7 @@ public class AndroidService {
 		
 		try {
 			
-			data = objectMapper.reader(AndroidActivitiesDeserializer.class)
+			data = objectMapper.readerFor(AndroidActivitiesDeserializer.class)
 					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 		
 		} catch (JsonProcessingException e) {
@@ -83,7 +83,7 @@ public class AndroidService {
 			response.setResult(0L);
 			response.getStatus().setResponseCode("400 - CONTENT NOT JSON/CONTENT EMPTY.");
 			response.getStatus().setConsole("Header content-type is not 'application/json' or content empty.");
-			return Response.status(400).type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
+			return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response), 400);
 		
 		}
 
@@ -97,7 +97,7 @@ public class AndroidService {
 				response.setResult(0L);
 				response.getStatus().setResponseCode("401 - WRONG USER ID.");
 				response.getStatus().setConsole("No user with this id in database.");
-				return Response.status(401).type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
+				return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response), 401);
 			
 			}
 			
@@ -132,7 +132,7 @@ public class AndroidService {
 						String status = "Activity type isn't recognized: " + jsonActivity.getType();
 						response.getStatus().setConsole(status);
 						logger.info(status);
-						return Response.status(402).type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
+						return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response), 402);
 					}
 				
 				}
@@ -153,11 +153,11 @@ public class AndroidService {
 			response.getStatus().setConsole(status);
 			logger.info(status);
 
-			return Response.status(500).type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
-		
+			return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response), 500);
+
 		}
 		
-		return Response.ok().type(MediaType.TEXT_PLAIN).entity(objectMapper.writeValueAsString(response)).build();
+		return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response));
 	}
 	
 	private MTestingReadings createMTR(JSONActivity jsonActivity, UserInRole uir) throws ParseException {

@@ -10,17 +10,18 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.8.RELEASE</version>
+		<version>1.5.2.RELEASE</version>
 	</parent>
 
 	<properties>
 		<main.basedir>${project.basedir}</main.basedir>
 		<start-class>eu.city4age.dashboard.api.Application</start-class>
 		<maven.test.skip>true</maven.test.skip>
-		<glassfish.home>C:\glassfish-4.1.1\glassfish4</glassfish.home>
+		<glassfish.home>C:\java_ee_sdk-8\glassfish5</glassfish.home>
 		<glassfish.domain>domain1</glassfish.domain>
 		<glassfish.domain.username>admin</glassfish.domain.username>
 		<glassfish.passwordFile>${glassfish.home}\glassfish\domains\domain1\config\domain-passwords</glassfish.passwordFile>
+		<hibernate.version>5.1.10.Final</hibernate.version>
 	</properties>
 
 	<modules>
@@ -31,8 +32,6 @@
 
 
 	<dependencies>
-		<!-- <dependency> <groupId>eu.city4age.dashboard.api</groupId> <artifactId>C4A-frontend</artifactId> 
-			<version>1.0-SNAPSHOT</version> </dependency> -->
 
 		<!-- Spring -->
 		<dependency>
@@ -61,6 +60,36 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jersey</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.jersey.ext</groupId>
+					<artifactId>jersey-spring3</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 			<exclusions>
 				<exclusion>
@@ -84,6 +113,7 @@
 		</dependency>
 		<!-- End Spring -->
 
+
 		<!-- Postgres -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -94,39 +124,11 @@
 		<!-- Jersey -->
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-spring3</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.glassfish.hk2.external</groupId>
-					<artifactId>bean-validator</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jersey-bean-validation</artifactId>
-					<groupId>org.glassfish.jersey.ext</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-bean-validation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
+			<artifactId>jersey-spring4</artifactId>
+			<version>2.26</version>
 		</dependency>
 		<!-- End Jersey -->
+
 
 		<!-- Jackson -->
 		<dependency>

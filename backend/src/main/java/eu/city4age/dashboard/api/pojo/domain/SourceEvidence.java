@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -22,12 +23,16 @@ public class SourceEvidence implements Serializable {
 	@EmbeddedId
 	private SourceEvidenceId sourceEvidenceId;
 
-	@ManyToOne
-	@JoinColumn(name="geriatric_factor_id", insertable=false, updatable=false)
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="value_id", referencedColumnName = "id", insertable=false, updatable=false)
 	private GeriatricFactorValue geriatricFactorValue;
 	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="value_id", referencedColumnName = "id", insertable=false, updatable=false)
+	private VariationMeasureValue variationMeasureValue;
+	
 	@ManyToOne
-	@JoinColumn(name="author_id", insertable=false, updatable=false)	
+	@JoinColumn(name="author_id")	
 	private UserInRole userInRole;
 	
 	@Column(name="text_evidence")
@@ -37,7 +42,7 @@ public class SourceEvidence implements Serializable {
 	private byte[] multimediaEvidence;
 
 	private Date uploaded;
-
+	
 	public SourceEvidence() {
 	}
 
@@ -54,8 +59,6 @@ public class SourceEvidence implements Serializable {
 		this.multimediaEvidence = multimediaEvidence;
 		this.uploaded = uploaded;
 	}
-	
-	
 
 	public SourceEvidenceId getSourceEvidenceId() {
 		return sourceEvidenceId;
@@ -71,6 +74,14 @@ public class SourceEvidence implements Serializable {
 
 	public void setGeriatricFactorValue(GeriatricFactorValue geriatricFactorValue) {
 		this.geriatricFactorValue = geriatricFactorValue;
+	}
+
+	public VariationMeasureValue getVariationMeasureValue() {
+		return variationMeasureValue;
+	}
+
+	public void setVariationMeasureValue(VariationMeasureValue variationMeasureValue) {
+		this.variationMeasureValue = variationMeasureValue;
 	}
 
 	public UserInRole getUserInRole() {

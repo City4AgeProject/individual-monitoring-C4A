@@ -20,7 +20,7 @@
 			"description" : "Visibility of view daily measures link ",
 			"type": "boolean"
 		},
-                "gefName": {
+            "gefName": {
 			"description" : "Name of the geriatric factor.",
 			"type": "string"
 		}

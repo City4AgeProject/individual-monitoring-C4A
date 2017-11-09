@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -54,6 +55,7 @@ import eu.city4age.dashboard.api.pojo.dto.oj.Serie;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
+import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -129,7 +131,7 @@ public class AssessmentsService {
 
 		OJDiagramLast5Assessment ojLfa = transformToOJ(l5a);
 
-		return Response.ok(objectMapper.writeValueAsString(ojLfa)).build();
+		return JerseyResponse.build(objectMapper.writeValueAsString(ojLfa));
 	}
 
 	@GET
@@ -220,7 +222,7 @@ public class AssessmentsService {
 			aa = aaList;
 		}
 
-		return Response.ok(objectMapper.writerWithView(View.AssessmentView.class).writeValueAsString(aa)).build();
+		return JerseyResponse.build(objectMapper.writerWithView(View.AssessmentView.class).writeValueAsString(aa));
 
 	}
 
@@ -274,27 +276,22 @@ public class AssessmentsService {
 	@POST
 	@ApiOperation("Add assessment for selected data sets.")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
 	@Path("addForSelectedDataSet")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Assessment.class),
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
-	public Response addForSelectedDataSet(String json) throws JsonProcessingException, IOException {
+	public Response addForSelectedDataSet(@HeaderParam("Authorization") String jwt, String json) throws JsonProcessingException, IOException {
 		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
 		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
 
-		/*
-		 * Avoiding to use readerFor method instead because of conflict with
-		 * older version of jackson jars in GLASSFISH_HOME/glassfish/modules of
-		 * Glassfish 4.1.1 which then would have to be replaced.
-		 */
-		@SuppressWarnings("deprecation")
-		AddAssessmentDeserializer data = objectMapper.reader(AddAssessmentDeserializer.class)
+		AddAssessmentDeserializer data = objectMapper.readerFor(AddAssessmentDeserializer.class)
 		.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
-		String token = data.getJwt();
+		//String token = data.getJwt();
+		DecodedJWT token;
 		try {
-			DecodedJWT jwt = JWT.decode(token);
-			String username = jwt.getClaim("usr").asString();
+			token = JWT.decode(jwt);
+			String username = token.getClaim("usr").asString();
 			
 			UserInRole userInRole = userInRoleRepository.findBySystemUsername(username);
 
@@ -316,10 +313,13 @@ public class AssessmentsService {
 			audienceRolesRepository.save(assessmentAudienceRoles);
 			assessedGefValuesRepository.save(assessedGefValueSets);
 
-			return Response.ok(objectMapper.writeValueAsString(assessment)).build();
+			return JerseyResponse.build(objectMapper.writeValueAsString(assessment));
 		} catch (JWTDecodeException exception){
-			return Response.ok("402").build();
+			
+			return JerseyResponse.build("402");
+		
 		}
+	
 	}
 
 	@GET
@@ -342,7 +342,8 @@ public class AssessmentsService {
 		assessedGefValuesRepository.flush();
 
 		assessmentRepository.delete(assessment);
-		return Response.ok("Deleted").build();
+
+		return JerseyResponse.build("Deleted");
 	}
 
 	private OJDiagramLast5Assessment transformToOJ(List<Last5Assessment> lfas) {

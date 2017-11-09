@@ -27,6 +27,7 @@ import eu.city4age.dashboard.api.persist.RoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.AbstractBaseEntity;
 import eu.city4age.dashboard.api.pojo.domain.RiskStatus;
 import eu.city4age.dashboard.api.pojo.domain.Role;
+import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -70,7 +71,7 @@ public class CodebookService {
 
 		List<RiskStatus> riskStatus = riskStatusRepository.findAll();
 
-		return Response.ok(objectMapper.writeValueAsString(riskStatus)).build();
+		return JerseyResponse.build(objectMapper.writeValueAsString(riskStatus));
 	}
 
 	@GET
@@ -85,7 +86,7 @@ public class CodebookService {
 			throws JsonProcessingException {
 		List<Role> roles = roleRepository.findByStakeholderAbbreviation(stakeholderAbbr);
 
-		return Response.ok(objectMapper.writeValueAsString(roles)).build();
+		return JerseyResponse.build(objectMapper.writeValueAsString(roles));
 	}
 
 	@GET
@@ -99,7 +100,8 @@ public class CodebookService {
 	public Response selectTable(@ApiParam(hidden = true) @PathParam(value = "tableName") String tableName) throws JsonProcessingException {
 		Session session = sessionFactory.openSession();
 		Query q = session.createSQLQuery("SELECT * from " + tableName);
-		return Response.ok(objectMapper.writeValueAsString(q.list())).build();
+		return JerseyResponse.build(objectMapper.writeValueAsString(q.list()));
 	}
+
 
 }

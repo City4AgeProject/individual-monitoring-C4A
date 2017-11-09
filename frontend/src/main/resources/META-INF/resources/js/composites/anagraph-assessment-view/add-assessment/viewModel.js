@@ -11,9 +11,6 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 	{value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
                     {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
                     {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
-
-                self.rolesCollection = ko.observable();
-                self.roleTags = ko.observableArray([]);
                 
                 self.choseTypeLabel = oj.Translations.getTranslatedString("chose_type");
                 self.choseTypePlcHoldLabel = oj.Translations.getTranslatedString("chose_risk");
@@ -73,13 +70,6 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                     console.log(error);
                 };
 
-                function resetAddAssessment() {
-                	self.props.commentText = '';
-                	self.props.selectedRiskStatus = [];
-                	self.props.selectedDataValidity = [];
-                	self.props.selectedRoles = [];
-                }
-
                 var postAssessmentCallback = function (data) {
                     $('#dialog1').ojDialog('close');
                     $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
@@ -119,33 +109,6 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                         }
                     });
                 }
-                
-                function loadRoles() {
-                    var role = new oj.Collection.extend({
-                        url: CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS",
-                        fetchSize: -1,
-                        model: new oj.Model.extend({
-                            idAttribute: 'id',
-                            parse: function(response){
-                                 return response.result;
-                            }
-                        })
-                    });
-                    self.rolesCollection(new role());
-                    self.rolesCollection().fetch({
-                        type: 'GET',
-                        success: function (collection, response, options) {
-                            if(self.roleTags.length === 0) {
-                                for (var i = 0; i < response.length; i++) {
-                                    var roleModel = response[i];
-                                    self.roleTags.push({value: roleModel.id, label: oj.Translations.getTranslatedString(roleModel.roleName.toLowerCase())});
-                                }
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                        }
-                    });
-                }
 
                 self.postAssessment = function (data, event) {
                     
@@ -157,13 +120,18 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                     var audienceIds = ko.toJS(self.props.selectedRoles);
                     console.log("audienceIds: " + audienceIds);
                     var assessmentToPost = new AddAssessment
-                            (jwt, comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
+                            (comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
                     if ( (riskStatus !== 'W' && riskStatus !== 'N' && riskStatus !== 'A') || audienceIds.length === 0
                     		|| (dataValidity !== 'FAULTY_DATA' && dataValidity !== 'VALID_DATA' && dataValidity !== 'QUESTIONABLE_DATA')  ) {
                     	console.log("1-1 INVALID-riskStatus: "+riskStatus+" audienceIds:"+audienceIds+" dataValidity: "+dataValidity);
                     	console.log('You did not fill the required fields: Risk Status or Target Audience!');
                     } else {
                     	console.log("1-2 VALID-riskStatus: "+riskStatus+" audienceIds:"+audienceIds+" dataValidity: "+dataValidity);
+                        $.ajaxSetup({
+                            cache: false,
+                            headers : {
+                              'Authorization' : jwt}
+                         });
                     	var jqXHR = $.postJSON(ASSESSMENT_ADD_FOR_DATA_SET,
                         JSON.stringify(assessmentToPost), postAssessmentCallback);
                         jqXHR.fail(serverErrorCallback);
@@ -173,8 +141,15 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                     return true;
                 };
                 
+                function resetAddAssessment() {
+                	self.props.commentText = '';
+                	self.props.selectedRiskStatus = [];
+                	self.props.selectedDataValidity = [];
+                	self.props.selectedRoles = [];
+                	self.props.roleTags = [];
+                }
+                
                 self.attached  = function(context) {
-                    loadRoles();
                     loadRisks();
                 };
                 

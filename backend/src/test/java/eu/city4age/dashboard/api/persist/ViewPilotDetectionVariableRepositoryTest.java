@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -25,7 +25,7 @@ import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
 import eu.city4age.dashboard.api.rest.AssessmentServiceTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ApplicationTest.class)
+@SpringBootTest(classes = ApplicationTest.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class ViewPilotDetectionVariableRepositoryTest {

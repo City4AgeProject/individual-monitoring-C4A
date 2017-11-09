@@ -1,14 +1,12 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojtable', 'ojs/ojgauge', 'ojs/ojarraytabledatasource', 'urls'],
         function (oj, ko, sp, $)
         {
-
 			var m=0;		
 
             function ListViewModel() {
                 var self = this;
                 self.data = ko.observableArray();
                 self.usersOuter = ko.observableArray();
-                                
                 //Labels on cr_list_full page with translate option
                 self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
                 self.ageLabel = oj.Translations.getTranslatedString("age");
@@ -25,8 +23,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                   headers : {
                     'Authorization' : jwt}
                 });
-                $.getJSON(CARE_RECIPIENT_ALL + "?t=" + Date.now()).
+                $.getJSON(CARE_RECIPIENT_ALL + "/?t=" + Date.now()).
                         then(function (users) {
+
                             $.each(users.itemList, function () {
                                 
                                 var frailStatus;
@@ -65,7 +64,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 
                         });
 
-                        
+
                 
                 self.dataSource = new oj.ArrayTableDataSource(
 

@@ -23,6 +23,10 @@
 		"selectedRoles": {
 			"description" : "Values of auditience roles selected in combobox.",
 			"type": "Array<object>"
-		}
+		},
+                "roleTags": {
+			"description" : "Values of all auditience roles showed in combobox.",
+			"type": "Array<object>"           
+                }
 	}
 }

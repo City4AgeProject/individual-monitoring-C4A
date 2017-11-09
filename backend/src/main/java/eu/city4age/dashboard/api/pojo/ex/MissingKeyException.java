@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 @Provider
 public class MissingKeyException extends Exception implements ExceptionMapper<MissingKeyException>{
-	//TODO make this exception rollback transaction ?
+
 	static protected Logger logger = LogManager.getLogger(MissingKeyException.class);
 
 	 private static final long serialVersionUID = 1L;

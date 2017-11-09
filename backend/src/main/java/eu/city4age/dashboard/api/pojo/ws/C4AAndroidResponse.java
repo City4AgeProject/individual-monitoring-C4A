@@ -1,8 +1,9 @@
-package eu.city4age.dashboard.api.pojo.dto;
+package eu.city4age.dashboard.api.pojo.ws;
 
 import java.util.List;
 
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
+import eu.city4age.dashboard.api.pojo.dto.Status;
 
 
 public class C4AAndroidResponse {

@@ -20,7 +20,7 @@ public class MeasureServiceTest {
 	@Test
 	public void test() throws Exception {
 
-		String test = measureService.test();
+		String test = measureService.mockitoTest();
 		
 		Assert.assertEquals("hello", test);
 		

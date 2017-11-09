@@ -210,9 +210,31 @@ function(oj, ko, $) {
 			$('#addAssessment').prop('selectedRiskStatus', []);
 			$('#addAssessment').prop('selectedDataValidity', []);
 			$('#addAssessment').prop('selectedRoles', []);
+                        
+			if (self.roleTags.length > 0) {
+                            console.log("ROLE TAGS FULL");
+                            $('#addAssessment').prop('roleTags', ko.toJS(self.roleTags));
+
+                            $('#dialog1').ojDialog();
+                            $('#dialog1').ojDialog('open');
+
+                            $("#dialog1").ojDialog('widget').css('top',String(document.body.scrollTop + screen.height/ 8)+ 'px');
+                            $("#dialog1").ojDialog('widget').css('left',String((screen.width - $("#dialog1").width()) / 2)+ 'px');
+
+                            return true;
+			} else {
+                            console.log("ROLE TAGS EMPTY");
+                            $('#dialog2').ojDialog();
+                            $('#dialog2').ojDialog('open');
+
+                            // position dialog and screen
+                            $("#dialog2").ojDialog('widget').css('top',String(document.body.scrollTop + screen.height/ 8)+ 'px');
+                            $("#dialog2").ojDialog('widget').css('left',String((screen.width - $("#dialog2").width()) / 2)+ 'px');
+
+                            return false;
+			}
 			
 			if (self.dataPointsMarkedIds.length > 0) {
-
 				$('#addAssessment').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));
 
 				$('#dialog1').ojDialog();
@@ -717,10 +739,6 @@ function(oj, ko, $) {
 			$('#popupWrapper1').prop('dataPointsMarked', self.dataPointsMarked);
 			
 		}
-
-
-        
-
 
 	}
 

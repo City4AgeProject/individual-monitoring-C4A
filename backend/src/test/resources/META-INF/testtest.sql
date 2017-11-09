@@ -62,14 +62,10 @@ create table testtest.inter_activity_behaviour_variation (id int8 not null, devi
 create table testtest.location (id int8 not null, location_name varchar(50), indoor int2, pilot_code varchar(3), primary key (id));
 create table testtest.numeric_indicator_value (id int8 not null, nui_type_id int8 , nui_value numeric(10, 2) , time_interval_id int8 , data_source_type varchar(3) , user_in_role_id int8, primary key (id));
 create table testtest.pilot (id int8 not null, name varchar(50), pilot_code varchar(3), population_size float8, latest_data_submission_completed date, latest_derived_detection_variables_computed date, latest_configuration_update date, primary key (id));
-create table testtest.source_evidence (geriatric_factor_id int4 not null, author_id int4 not null, text_evidence varchar(255), multimedia_evidence bytea, uploaded timestamp , primary key (geriatric_factor_id, author_id));
+create table testtest.source_evidence (value_id int8 not null, text_evidence text, multimedia_evidence bytea, uploaded timestamp(6), author_id int8, detection_variable_type varchar(3) not null, primary key (value_id, detection_variable_type));
 create table testtest.time_interval (id int8 not null, interval_start timestamp, interval_end timestamp, typical_period varchar(3), created timestamp, primary key (id), unique (interval_start, typical_period));
 create table testtest.user_in_role (id int8 not null, pilot_code varchar(3), valid_from timestamp, valid_to timestamp, user_in_system_id int4, role_id int2, primary key (id));
 create table testtest.user_in_system (id int8 not null, username varchar(25) unique, password varchar(25), created_date timestamp, display_name varchar(255), primary key (id));
-INSERT INTO "testtest"."user_in_system" VALUES ('1', 'aaaa', 'aaaa', null, 'aaaa');
-INSERT INTO "testtest"."user_in_system" VALUES ('2', 'bbbb', 'bbbb', null, 'bbbb');
-INSERT INTO "testtest"."user_in_system" VALUES ('3', 'cccc', 'cccc', null, 'cccc');
-INSERT INTO "testtest"."user_in_system" VALUES ('4', 'baba_baba', null, null, null);
 create table testtest.variation_measure_value (id int8 not null, activity_id int8, user_in_role_id int8 , measure_value float4, measure_type_id int8 , data_source_type varchar(3) , time_interval_id int8 , extra_information varchar(1000), primary key (id));
 create table testtest.cd_risk_status (risk_status varchar(3) not null, risk_status_description varchar(50), confidence_rating numeric(3, 2), icon_image bytea, icon_image_path varchar(255), primary key (risk_status));
 create table testtest.stakeholder (stakeholder_abbreviation varchar(3) not null, stakeholder_name varchar(50) , stakeholder_description varchar(50), valid_from timestamptz , valid_to timestamptz, primary key (stakeholder_abbreviation));

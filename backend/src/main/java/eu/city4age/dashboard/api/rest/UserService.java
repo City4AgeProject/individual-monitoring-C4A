@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +19,8 @@ import eu.city4age.dashboard.api.persist.PilotRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.dto.C4ALoginResponse;
+import eu.city4age.dashboard.api.pojo.ws.C4ALoginResponse;
+import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.security.JwtIssuer;
 
 /**
@@ -43,10 +45,9 @@ public class UserService {
     @Transactional("transactionManager")
     @GET
     @Path("login/username/{username}/password/{password}")
-    @Produces("application/json")
+    @Produces({MediaType.APPLICATION_JSON, "application/javascript"})
     public Response login(@PathParam("username") String username, @PathParam("password") String password)
             throws IOException {
-        
         C4ALoginResponse response = new C4ALoginResponse();
         Pilot userPilot;
         String displayName, pilotName, pilotCode;
@@ -59,7 +60,7 @@ public class UserService {
             // build response
             response.setResponseCode(401);
             
-            return Response.status(401).entity(response).build();
+            return JerseyResponse.build(response, 401);
         }
 
         // get pilot name & code
@@ -79,7 +80,7 @@ public class UserService {
         response.setPilotName(pilotName);
         response.setUirId(user.getId());
         
-        return Response.ok(response).build();
+        return JerseyResponse.build(response);
 
     }
     

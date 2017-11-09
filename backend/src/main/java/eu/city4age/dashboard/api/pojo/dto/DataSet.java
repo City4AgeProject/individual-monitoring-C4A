@@ -7,6 +7,8 @@ package eu.city4age.dashboard.api.pojo.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.city4age.dashboard.api.pojo.ws.C4AGroupsResponse;
+
 /**
  *
  * @author mnou2

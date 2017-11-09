@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ public class CodebookServiceTest {
 
 	static protected Logger logger = LogManager.getLogger(CodebookServiceTest.class);
 
-	static protected RestTemplate rest = new TestRestTemplate();
+	static protected TestRestTemplate rest = new TestRestTemplate();
 
 	@Test
 	public void selectTableTest() throws Exception {

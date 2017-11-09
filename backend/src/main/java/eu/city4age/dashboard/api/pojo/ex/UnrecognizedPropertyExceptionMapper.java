@@ -15,14 +15,13 @@ public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<Unre
 
 	static protected Logger logger = LogManager.getLogger(UnrecognizedPropertyExceptionMapper.class);
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public Response toResponse(UnrecognizedPropertyException ex) {
 		
 		
 		StringBuilder message = new StringBuilder();
 		message.append("Property: \"");
-		message.append(ex.getUnrecognizedPropertyName());
+		message.append(ex.getPropertyName());
 		message.append("\" unrecognized!\n At line:");
 		message.append(ex.getLocation().getLineNr());
 		message.append(" and column:");

@@ -42,6 +42,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	                                    /*logged in 
 	                                     * keep in session storage username and display name
 	                                     */
+                                            console.log('users.jwToken: ' + users.jwToken);
 	                                    sp.setStorageData(users.jwToken, users.displayName, users.pilotName);
 	
 	                                    $('#appHeader').css({display: 'block'});
@@ -50,8 +51,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	                                    oj.Router.rootInstance.go("cr_list_full");
 	                                    app.userLogin(users.displayName);
 	                                    app.userPilotName(users.pilotName);
-	                                    
-	                                    //console.log("sp: ", sessionStorage.length);
 	
 	                                } else if (users.responseCode === 401) {
 	                                    console.log("wrong credentials ", users.message);

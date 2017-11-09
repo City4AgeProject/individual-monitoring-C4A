@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.city4age.dashboard.api.pojo.dto;
+package eu.city4age.dashboard.api.pojo.ws;
 
 import java.util.List;
 
@@ -18,6 +18,8 @@ public class C4ACareRecipientsResponse {
 	private int responseCode;
 
 	private List<C4ACareRecipientListResponse> ItemList;
+	
+	private Status status = new Status();
 
 	public String getMessage() {
 		return message;
@@ -41,6 +43,14 @@ public class C4ACareRecipientsResponse {
 
 	public void setItemList(List<C4ACareRecipientListResponse> ItemList) {
 		this.ItemList = ItemList;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 }// end clas

@@ -53,9 +53,9 @@ public class AssessmentAudienceRoleId implements Serializable {
 			return false;
 		if (!(other instanceof SourceEvidenceId))
 			return false;
-		SourceEvidenceId castOther = (SourceEvidenceId) other;
+		AssessmentAudienceRoleId castOther = (AssessmentAudienceRoleId) other;
 
-		return (this.getAssessmentId() == castOther.getGeriatricFactorId())
+		return (this.getAssessmentId() == castOther.getAssessmentId())
 				&& ((this.getRoleId() == castOther.getRoleId()));
 	}
 

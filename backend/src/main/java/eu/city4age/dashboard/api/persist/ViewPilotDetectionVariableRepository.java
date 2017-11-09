@@ -21,5 +21,8 @@ public interface ViewPilotDetectionVariableRepository extends GenericRepository<
 	
 	@Query("SELECT vpdv FROM ViewPilotDetectionVariable vpdv WHERE vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'GES'")
 	List<ViewPilotDetectionVariable> findAllGes(@Param("userId") final Long userId);
+	
+	@Query("SELECT vpdv FROM ViewPilotDetectionVariable vpdv WHERE vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'GEF'")
+	List<ViewPilotDetectionVariable> findAllGef(@Param("userId") final Long userId);
 
 }
