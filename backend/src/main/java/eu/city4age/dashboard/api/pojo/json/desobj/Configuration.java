@@ -12,8 +12,18 @@ public class Configuration {
 	String validFrom;
 	String validTo;
 	String pilotCode;
-
+	String username;
+	String password;
 	List<Groups> groups;
+	
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
 
 	public String getName() {
 		return name;

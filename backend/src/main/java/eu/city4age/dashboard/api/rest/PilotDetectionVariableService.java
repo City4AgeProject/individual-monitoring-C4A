@@ -41,15 +41,19 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
 import eu.city4age.dashboard.api.persist.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.persist.PilotRepository;
+import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.persist.ViewPilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.ex.ConfigurationValidityDateException;
 import eu.city4age.dashboard.api.pojo.ex.MissingKeyException;
+import eu.city4age.dashboard.api.pojo.ex.NotAuthorizedException;
+import eu.city4age.dashboard.api.pojo.ex.NotLoggedInException;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.json.desobj.Configuration;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gef;
@@ -87,6 +91,9 @@ public class PilotDetectionVariableService {
 	
 	@Autowired
 	private ViewPilotDetectionVariableRepository viewPilotDetectionVariableRepository;
+	
+	@Autowired
+	private UserInRoleRepository userInRoleRepository;
 
 	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
@@ -117,242 +124,39 @@ public class PilotDetectionVariableService {
 
 			for (int z = 0; z < data.getConfigurations().size(); z++) {
 				Configuration configuration = data.getConfigurations().get(z);
-
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-				ConfigurationCounter confCounter = new ConfigurationCounter();
-
-				String validFromInString = configuration.getValidFrom();
-				String validToInString = configuration.getValidTo();
-				Date validFrom;
-				Date validTo;
-
-				try {
-					validFrom = formatter.parse(validFromInString);
-					validTo = formatter.parse(validToInString);
-				} catch (ParseException ex) {
-					throw new ConfigurationValidityDateException();
-				}
 				
 				String pilotCode = configuration.getPilotCode();
-
+				String password = configuration.getPassword();
+				String username = configuration.getUsername();
+				
+				UserInRole uir;
 				try {
-					Pilot pilot = pilotRepository.findByPilotCode(pilotCode);
+					uir = userInRoleRepository.findBySystemUsernameAndPassword(username,password);
 					
-					logger.info("pilotRepository: " + pilotRepository);
+					if(uir.getPilotCode().equals(pilotCode)) {
+						setConfiguration(pilotCode,configuration,response);
+					} else {
+						StringBuilder sb = new StringBuilder();
+						sb.append("You are not authorized !\nUser: ");
+						sb.append(username);
+						sb.append(" can't make changes for: ");
+						sb.append(pilotCode);
+						sb.append(" pilot configuration.");
+						throw new NotAuthorizedException(sb.toString());
+					}
 					
-					pilot.setLatestConfigurationUpdate(new Date());
-					pilotRepository.save(pilot);
-				} catch (NullPointerException ex) {
-					ex.printStackTrace();
-					throw new MissingKeyException(
-							"MissingKeyException:\n\tName for property : pilotCode(pilot_code): "+pilotCode+"\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
+				} catch (NullPointerException e) {
+					StringBuilder sb = new StringBuilder();
+					sb.append("Invalid login!\n");
+					sb.append("You must provide valid Username and Password\n");
+					sb.append("in the coresponding fields of configuration file.\n");
+					sb.append("You are not logged in!\nInvalid username: ");
+					sb.append(username);
+					sb.append(" and/or password: ");
+					sb.append(password);
+					throw new NotLoggedInException(sb.toString());
 				}
 
-				for (int i = 0; i < configuration.getGroups().size(); i++) {
-
-					Groups group = configuration.getGroups().get(i);
-
-					logger.info(" DETECTION_VAR(GFG): " + group.getName() + "  DERIVED_VAR(OVL): "
-							+ configuration.getName());
-
-					DetectionVariable gfgDetectionVariable = findDetectionVariableOfType(group.getName(),
-							DetectionVariableType.GFG);
-
-					DetectionVariable ovlDetectionVariable = findDetectionVariableOfType(configuration.getName(),
-							DetectionVariableType.OVL);
-
-					createOrUpdatePilotDetectionVariable(gfgDetectionVariable, ovlDetectionVariable, validFrom, validTo,
-							pilotCode, group.getFormula(), group.getWeight(), confCounter);
-
-					for (int j = 0; j < group.getFactors().size(); j++) {
-
-						Gef factor = group.getFactors().get(j);
-						logger.info(
-								" DETECTION_VAR(GEF): " + factor.getName() + "  DERIVED_VAR(GFG): " + group.getName());
-
-						DetectionVariable gefDetectionVariable = findDetectionVariableOfType(factor.getName(),
-								DetectionVariableType.GEF);
-
-						createOrUpdatePilotDetectionVariable(gefDetectionVariable, gfgDetectionVariable, validFrom,
-								validTo, pilotCode, factor.getFormula(), factor.getWeight(), confCounter);
-
-						for (int k = 0; k < factor.getSubFactors().size(); k++) {
-
-							Ges subFactor = factor.getSubFactors().get(k);
-							logger.info(" DETECTION_VAR(GES): " + subFactor.getName() + "  DERIVED_VAR(GEF): "
-									+ factor.getName());
-
-							DetectionVariable gesDetectionVariable = findDetectionVariableOfType(subFactor.getName(),
-									DetectionVariableType.GES);
-							createOrUpdatePilotDetectionVariable(gesDetectionVariable, gefDetectionVariable, validFrom,
-									validTo, pilotCode, subFactor.getFormula(), subFactor.getWeight(), confCounter);
-
-							for (int n = 0; n < subFactor.getMeasures().size(); n++) {
-
-								Mea measure = subFactor.getMeasures().get(n);
-								logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "
-										+ subFactor.getName());
-
-								DetectionVariable meaDetectionVariable = findDetectionVariableOfType(measure.getName(),
-										DetectionVariableType.MEA);
-								List<String> NuiList = Arrays.asList("avg", "std", "delta", "best");
-								Map<String, String> NuiListFormula = new HashMap<String, String>() {
-
-									private static final long serialVersionUID = 1L;
-
-									{
-										put("avg", "avg");
-										put("std", "std");
-										put("delta", "delta");
-										put("best", "best");
-									}
-								};
-
-								createOrUpdatePilotDetectionVariable(meaDetectionVariable, gesDetectionVariable,
-										validFrom, validTo, pilotCode, null, measure.getWeight(), confCounter);
-
-								if (meaDetectionVariable.getDefaultTypicalPeriod().equals("1WK")
-										|| meaDetectionVariable.getDefaultTypicalPeriod().equals("DAY")) {
-
-									BigDecimal nuiWeight = BigDecimal.valueOf((double) 1 / NuiListFormula.size());
-									String nuiFormula;
-									for (String nui : NuiList) {
-
-										DetectionVariable nuiDetectionVariable = findDetectionVariableOfType(
-												nui + '_' + measure.getName(), DetectionVariableType.NUI);
-
-										nuiFormula = NuiListFormula.get(nui);
-										logger.info(" DETECTION_VAR(NUI): " + nui + '_' + measure.getName()
-												+ "  DERIVED_VAR(GES): " + subFactor.getName());
-										logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "
-												+ nui + '_' + measure.getName());
-
-										createOrUpdatePilotDetectionVariable(nuiDetectionVariable, gesDetectionVariable,
-												validFrom, validTo, pilotCode, null, nuiWeight, confCounter);
-
-										createOrUpdatePilotDetectionVariable(meaDetectionVariable, nuiDetectionVariable,
-												validFrom, validTo, pilotCode, nuiFormula, nuiWeight, confCounter);
-									}
-								}
-
-							}
-						}
-					}
-				}
-
-				List<PilotDetectionVariable> AllFromDB = pilotDetectionVariableRepository.findAll();
-
-				response.append("\n\tNumber of rows only For Pilot Code: ");
-				response.append(pilotCode);
-				response.append("\nand Valid From Date: ");
-				response.append(validFrom);
-				response.append(" : \n\tNumber of inserted rows from configuration file is: ");
-				response.append(confCounter.getInserted());
-				response.append("\n\tNumber of updated rows from configuration file is: ");
-				response.append(confCounter.getUpdated());
-
-				boolean exists;
-				int removed = 0;
-
-				List<String> NUIList = Arrays.asList("avg", "std", "delta", "best");
-				for (PilotDetectionVariable one : AllFromDB) {
-					exists = true;
-					outerLoop: if (one.getPilotCode().equals(configuration.getPilotCode())
-							&& one.getValidFrom().compareTo(validFrom) == 0) {
-
-						exists = false;
-						for (int i = 0; i < configuration.getGroups().size(); i++) {
-
-							Groups group = configuration.getGroups().get(i);
-
-							if (existPdv(one, group.getName(), configuration.getName()) == false) {
-
-								exists = false;
-								for (int j = 0; j < group.getFactors().size(); j++) {
-
-									Gef factor = group.getFactors().get(j);
-
-									if (existPdv(one, factor.getName(), group.getName()) == false) {
-
-										exists = false;
-										for (int k = 0; k < factor.getSubFactors().size(); k++) {
-
-											Ges subFactor = factor.getSubFactors().get(k);
-
-											if (existPdv(one, subFactor.getName(), factor.getName()) == false) {
-
-												exists = false;
-												for (int n = 0; n < subFactor.getMeasures().size(); n++) {
-
-													Mea measure = subFactor.getMeasures().get(n);
-
-													DetectionVariable meaDetectionVariable = findDetectionVariableOfType(
-															measure.getName(), DetectionVariableType.MEA);
-
-													if (existPdv(one, measure.getName(),
-															subFactor.getName()) == false) {
-														exists = false;
-
-													} else {
-														exists = true;
-														break outerLoop;
-													}
-
-													if (meaDetectionVariable.getDefaultTypicalPeriod().equals("1WK")
-															|| meaDetectionVariable.getDefaultTypicalPeriod()
-																	.equals("DAY")) {
-
-														for (String nui : NUIList) {
-
-															if (existPdv(one, nui + '_' + measure.getName(),
-																	subFactor.getName()) == false) {
-																exists = false;
-
-																if (existPdv(one, measure.getName(),
-																		nui + '_' + measure.getName()) == false) {
-																	exists = false;
-
-																} else {
-																	exists = true;
-																	break outerLoop;
-																}
-
-															} else {
-																exists = true;
-																break outerLoop;
-															}
-														}
-
-													}
-												}
-
-											} else {
-												exists = true;
-												break outerLoop;
-											}
-										}
-									} else {
-										exists = true;
-										break outerLoop;
-									}
-								}
-							} else {
-								exists = true;
-								break outerLoop;
-							}
-						}
-					}
-
-					if (exists == false) {
-						pilotDetectionVariableRepository.delete(one);
-						removed++;
-					}
-				}
-				response.append("\n\tNumber of deleted rows is: ");
-				response.append(removed);
-				response.append("\n\tNumber of rows in DB after update is: ");
-				response.append(pilotDetectionVariableRepository.findAll().size());
 			}
 		} 
 		catch(IOException e){
@@ -363,13 +167,255 @@ public class PilotDetectionVariableService {
 
 	}
 
+	private void setConfiguration(String pilotCode,Configuration configuration, StringBuilder response) throws Exception {
+
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		ConfigurationCounter confCounter = new ConfigurationCounter();
+		
+		String validFromInString = configuration.getValidFrom();
+		String validToInString = configuration.getValidTo();
+		Date validFrom;
+		Date validTo;
+
+		try {
+			validFrom = formatter.parse(validFromInString);
+			validTo = formatter.parse(validToInString);
+		} catch (ParseException ex) {
+			throw new ConfigurationValidityDateException();
+		}
+		
+		
+		
+
+		try {
+			Pilot pilot = pilotRepository.findByPilotCode(pilotCode);
+			
+			logger.info("pilotRepository: " + pilotRepository);
+			
+			pilot.setLatestConfigurationUpdate(new Date());
+			pilotRepository.save(pilot);
+		} catch (NullPointerException ex) {
+			ex.printStackTrace();
+			throw new MissingKeyException(
+					"MissingKeyException:\n\tName for property : pilotCode(pilot_code): "+pilotCode+"\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
+		}
+
+		for (int i = 0; i < configuration.getGroups().size(); i++) {
+
+			Groups group = configuration.getGroups().get(i);
+
+			logger.info(" DETECTION_VAR(GFG): " + group.getName() + "  DERIVED_VAR(OVL): "
+					+ configuration.getName());
+
+			DetectionVariable gfgDetectionVariable = findDetectionVariableOfType(group.getName(),
+					DetectionVariableType.GFG);
+
+			DetectionVariable ovlDetectionVariable = findDetectionVariableOfType(configuration.getName(),
+					DetectionVariableType.OVL);
+
+			createOrUpdatePilotDetectionVariable(gfgDetectionVariable, ovlDetectionVariable, validFrom, validTo,
+					pilotCode, group.getFormula(), group.getWeight(), confCounter);
+
+			for (int j = 0; j < group.getFactors().size(); j++) {
+
+				Gef factor = group.getFactors().get(j);
+				logger.info(
+						" DETECTION_VAR(GEF): " + factor.getName() + "  DERIVED_VAR(GFG): " + group.getName());
+
+				DetectionVariable gefDetectionVariable = findDetectionVariableOfType(factor.getName(),
+						DetectionVariableType.GEF);
+
+				createOrUpdatePilotDetectionVariable(gefDetectionVariable, gfgDetectionVariable, validFrom,
+						validTo, pilotCode, factor.getFormula(), factor.getWeight(), confCounter);
+
+				for (int k = 0; k < factor.getSubFactors().size(); k++) {
+
+					Ges subFactor = factor.getSubFactors().get(k);
+					logger.info(" DETECTION_VAR(GES): " + subFactor.getName() + "  DERIVED_VAR(GEF): "
+							+ factor.getName());
+
+					DetectionVariable gesDetectionVariable = findDetectionVariableOfType(subFactor.getName(),
+							DetectionVariableType.GES);
+					createOrUpdatePilotDetectionVariable(gesDetectionVariable, gefDetectionVariable, validFrom,
+							validTo, pilotCode, subFactor.getFormula(), subFactor.getWeight(), confCounter);
+
+					for (int n = 0; n < subFactor.getMeasures().size(); n++) {
+
+						Mea measure = subFactor.getMeasures().get(n);
+						logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "
+								+ subFactor.getName());
+
+						DetectionVariable meaDetectionVariable = findDetectionVariableOfType(measure.getName(),
+								DetectionVariableType.MEA);
+						List<String> NuiList = Arrays.asList("avg", "std", "delta", "best");
+						Map<String, String> NuiListFormula = new HashMap<String, String>() {
+
+							private static final long serialVersionUID = 1L;
+
+							{
+								put("avg", "avg");
+								put("std", "std");
+								put("delta", "delta");
+								put("best", "best");
+							}
+						};
+
+						createOrUpdatePilotDetectionVariable(meaDetectionVariable, gesDetectionVariable,
+								validFrom, validTo, pilotCode, null, measure.getWeight(), confCounter);
+
+						if (meaDetectionVariable.getDefaultTypicalPeriod().equals("1WK")
+								|| meaDetectionVariable.getDefaultTypicalPeriod().equals("DAY")) {
+
+							BigDecimal nuiWeight = BigDecimal.valueOf((double) 1 / NuiListFormula.size());
+							String nuiFormula;
+							for (String nui : NuiList) {
+
+								DetectionVariable nuiDetectionVariable = findDetectionVariableOfType(
+										nui + '_' + measure.getName(), DetectionVariableType.NUI);
+
+								nuiFormula = NuiListFormula.get(nui);
+								logger.info(" DETECTION_VAR(NUI): " + nui + '_' + measure.getName()
+										+ "  DERIVED_VAR(GES): " + subFactor.getName());
+								logger.info(" DETECTION_VAR(MEA): " + measure.getName() + "  DERIVED_VAR(GES): "
+										+ nui + '_' + measure.getName());
+
+								createOrUpdatePilotDetectionVariable(nuiDetectionVariable, gesDetectionVariable,
+										validFrom, validTo, pilotCode, null, nuiWeight, confCounter);
+
+								createOrUpdatePilotDetectionVariable(meaDetectionVariable, nuiDetectionVariable,
+										validFrom, validTo, pilotCode, nuiFormula, nuiWeight, confCounter);
+							}
+						}
+
+					}
+				}
+			}
+		}
+
+		List<PilotDetectionVariable> AllFromDB = pilotDetectionVariableRepository.findAll();
+
+		response.append("\n\tNumber of rows only For Pilot Code: ");
+		response.append(pilotCode);
+		response.append("\nand Valid From Date: ");
+		response.append(validFrom);
+		response.append(" : \n\tNumber of inserted rows from configuration file is: ");
+		response.append(confCounter.getInserted());
+		response.append("\n\tNumber of updated rows from configuration file is: ");
+		response.append(confCounter.getUpdated());
+
+		boolean exists;
+		int removed = 0;
+
+		List<String> NUIList = Arrays.asList("avg", "std", "delta", "best");
+		for (PilotDetectionVariable one : AllFromDB) {
+			exists = true;
+			outerLoop: if (one.getPilotCode().equals(configuration.getPilotCode())
+					&& one.getValidFrom().compareTo(validFrom) == 0) {
+
+				exists = false;
+				for (int i = 0; i < configuration.getGroups().size(); i++) {
+
+					Groups group = configuration.getGroups().get(i);
+
+					if (existPdv(one, group.getName(), configuration.getName()) == false) {
+
+						exists = false;
+						for (int j = 0; j < group.getFactors().size(); j++) {
+
+							Gef factor = group.getFactors().get(j);
+
+							if (existPdv(one, factor.getName(), group.getName()) == false) {
+
+								exists = false;
+								for (int k = 0; k < factor.getSubFactors().size(); k++) {
+
+									Ges subFactor = factor.getSubFactors().get(k);
+
+									if (existPdv(one, subFactor.getName(), factor.getName()) == false) {
+
+										exists = false;
+										for (int n = 0; n < subFactor.getMeasures().size(); n++) {
+
+											Mea measure = subFactor.getMeasures().get(n);
+
+											DetectionVariable meaDetectionVariable = findDetectionVariableOfType(
+													measure.getName(), DetectionVariableType.MEA);
+
+											if (existPdv(one, measure.getName(),
+													subFactor.getName()) == false) {
+												exists = false;
+
+											} else {
+												exists = true;
+												break outerLoop;
+											}
+
+											if (meaDetectionVariable.getDefaultTypicalPeriod().equals("1WK")
+													|| meaDetectionVariable.getDefaultTypicalPeriod()
+															.equals("DAY")) {
+
+												for (String nui : NUIList) {
+
+													if (existPdv(one, nui + '_' + measure.getName(),
+															subFactor.getName()) == false) {
+														exists = false;
+
+														if (existPdv(one, measure.getName(),
+																nui + '_' + measure.getName()) == false) {
+															exists = false;
+
+														} else {
+															exists = true;
+															break outerLoop;
+														}
+
+													} else {
+														exists = true;
+														break outerLoop;
+													}
+												}
+
+											}
+										}
+
+									} else {
+										exists = true;
+										break outerLoop;
+									}
+								}
+							} else {
+								exists = true;
+								break outerLoop;
+							}
+						}
+					} else {
+						exists = true;
+						break outerLoop;
+					}
+				}
+			}
+
+			if (exists == false) {
+				pilotDetectionVariableRepository.delete(one);
+				removed++;
+			}
+		}
+		response.append("\n\tNumber of deleted rows is: ");
+		response.append(removed);
+		response.append("\n\tNumber of rows in DB after update is: ");
+		response.append(pilotDetectionVariableRepository.findAll().size());
+		
+	}
+
 	private DetectionVariable findDetectionVariableOfType(String dvName, DetectionVariableType dvt)
 			throws MissingKeyException {
 		DetectionVariable dv = detectionVariableRepository.findByDetectionVariableNameAndDetectionVariableType(dvName,
 				dvt);
 		if (dv == null) {
-			throw new MissingKeyException(
-					"MissingKeyException:\n\tName of property : name(detection_variable_name): "+dvName+"\n\tin JSON file doesn't match to any key\n\tin corresponding table: cd_detection_variable.\n\t");
+			StringBuilder sb = new StringBuilder("MissingKeyException:\n\tName of property : name(detection_variable_name): ");
+			sb.append(dvName);
+			sb.append("\n\tin JSON file doesn't match to any key\n\tin corresponding table: cd_detection_variable.\n\t");
+			throw new MissingKeyException(sb.toString());
 		}
 		return dv;
 	}

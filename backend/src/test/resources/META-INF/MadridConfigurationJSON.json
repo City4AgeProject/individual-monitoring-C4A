@@ -6,6 +6,8 @@
             "validFrom":"2016-01-01 00:00:01",
             "validTo":"2020-09-07 00:00:00",
             "pilotCode":"MAD",
+			"username":"",
+			"password":"",
             "groups":[  
                 {  
                     "name":"context_and_status_factors",
