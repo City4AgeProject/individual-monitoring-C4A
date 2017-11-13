@@ -9,7 +9,7 @@ function(oj, ko, $) {
 
 		self.crId = ko.observable();
 		self.detectionVariable  = ko.observable(); 
-        self.gefName = ko.observable();
+                self.gefName = ko.observable();
 		self.parentFactorId = ko.observable();
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();
@@ -139,9 +139,7 @@ function(oj, ko, $) {
 									//if there is only 1 selection
 									var gefOrGesId = ui['optionMetadata']['selectionData'][0]['data']['gefTypeId'];	
                                                                         var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
-                                                                        //console.log('this is selectiondetectionvariable ' + JSON.stringify(selectedDetectionVariable));
                                                                         if(selectedDetectionVariable.detectionVariableType == 'GES'){
-                                                                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));                                                                             
                                                                             $('#popupWrapper1').prop('seeMeasures', true);
                                                                             console.log('setting seeMeasures to true');
                                                                         }else {

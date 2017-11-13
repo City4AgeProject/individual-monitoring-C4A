@@ -11,18 +11,11 @@
 		"dataPointsMarked": {
 			"description" : "Label for selected datapoint ids counter.",
 			"type": "number"
-		},
-		"crId": {
-			"description" : "Care recipient id.",
-			"type": "number"
-		},
+		},		
 		"seeMeasures": {
 			"description" : "Visibility of view daily measures link ",
 			"type": "boolean"
-		},
-            "gefName": {
-			"description" : "Name of the geriatric factor.",
-			"type": "string"
 		}
+            
 	}
 }

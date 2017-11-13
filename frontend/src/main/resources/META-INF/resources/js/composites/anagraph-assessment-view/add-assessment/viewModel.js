@@ -8,7 +8,7 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 self.risksTags = ko.observableArray();
                 
                 self.dataValiditiesTags = ko.observableArray([
-                	{value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
+                    {value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
                     {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
                     {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
                 
@@ -146,7 +146,7 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 	self.props.selectedRiskStatus = [];
                 	self.props.selectedDataValidity = [];
                 	self.props.selectedRoles = [];
-                	self.props.roleTags = [];
+                	
                 }
                 
                 self.attached  = function(context) {

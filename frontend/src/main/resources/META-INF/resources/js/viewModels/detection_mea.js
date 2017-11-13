@@ -104,8 +104,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  
   	    		  measures.forEach(function(mea) {
                                 /*SETTING UP COLORS FOR SERIES*/
-                                //var colors2 = ["#8600ff","#5b00f4","#0d00f9","#0032f9","#0079ff","#09a3ff","#06daff","#06ffcd","#09ff77","#00ff0d","#89ff06","#c1f200"];
-  	    			var colors = ["#a746ff", "#7c51ff","#4a6aff","#48b1ff","#59daff","#59ffde","#42ff97","#5bff70","#93ff51","#c0ff4a","#d7ff37","#f5ff46"]
+                                var colors = ["#d1ff1a","#afff1a","#93ff51","#5bff70","#42ff97","#59ffde","#59daff","#48b1ff","#4a6aff","#7c51ff","#a746ff","#7700e6"];                                
                                 var i = 0;
                                 var j = 0;
                                 if(mea.months.length < 3) {                                    
@@ -133,7 +132,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    				//getting nuis from nuiData with timeinterval 
     	    				var nuisInMonth = getNuiForMeaAndMonth(mea, mon , nuiData);
     	    				if(nuisInMonth.length == 0) {   	    					
-    	    					nuis += "Average 0\n Standard 0\n Best 0\n Delta 0";
+    	    					nuis += "Nui1 0\n Nui2 0\n Nui3 0\n Nui4 0";
     	    				}
     	    				else {
     	    					
@@ -144,16 +143,16 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    						
     	    						switch(nuiName) {
     	    					    case 'avg': 
-    	    					    	nuiName = "Average";
+    	    					    	nuiName = "Nui1";
     	    					    	break;
     	    					    case 'std': 
-    	    					    	nuiName = "Standard";
+    	    					    	nuiName = "Nui2";
     	    					    	break;
     	    					    case 'best': 
-    	    					    	nuiName = "Best";
+    	    					    	nuiName = "Nui3";
     	    					    	break;
     	    					    case 'delta': 
-    	    					    	nuiName = "Delta";
+    	    					    	nuiName = "Nui4";
     	    					    	break;
     	    						}
     	    						
