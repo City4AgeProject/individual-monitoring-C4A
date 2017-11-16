@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -62,9 +63,15 @@ import eu.city4age.dashboard.api.pojo.json.desobj.Groups;
 import eu.city4age.dashboard.api.pojo.json.desobj.Mea;
 import eu.city4age.dashboard.api.pojo.other.ConfigurationCounter;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 
 /**
  * @author Andrija Petrovic
@@ -72,6 +79,7 @@ import io.swagger.annotations.ApiResponses;
  */
 @Component
 @Transactional("transactionManager")
+@Api(value = "configuration", produces = "application/json")
 @Path(PilotDetectionVariableService.PATH)
 public class PilotDetectionVariableService {
 
@@ -101,14 +109,14 @@ public class PilotDetectionVariableService {
 	@POST
 	@ApiOperation("Insert configuration from Pilot Configuration Json into md_pilot_detection_variable table.")
 	@Produces(MediaType.TEXT_PLAIN)
-	@Path("updateFromConfigFile")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Assessment.class),
+	@Path("updateFromConfigFile")	
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = String.class),
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
-	public Response updateConfigurationService(String json) throws Exception {
+	public Response updateConfigurationService(@ApiParam(name = "json", value = "configuration string from JSON file", required = true, examples = @Example (value = {
+			@ExampleProperty (value = "{\"configurations\":[{\"name\":\"overall\",\"level\":0,\"validFrom\":\"2016-01-01 00:00:01\",\"validTo\":\"2020-09-07 00:00:00\",\"pilotCode\":\"MAD\",\"groups\":[{\"name\":\"contextual\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[]},{\"name\":\"behavioural\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[{\"name\":\"motility\",\"level\":2,\"weight\":0.13,\"formula\":\"\",\"subFactors\":[{\"name\":\"walking\",\"level\":3,\"weight\":1,\"formula\":\"\",\"measures\":[{\"name\":\"walk_distance\",\"level\":4,\"weight\":0.4},{\"name\":\"walk_time_outdoor\",\"level\":4,\"weight\":0.3}]}]}]}]}]}" )
+	})) @RequestBody String json) throws Exception {
 
-		StringBuilder response = new StringBuilder();
-
-		
+		StringBuilder response = new StringBuilder();	
 		try {
 			
 			ClassPathResource resource = new ClassPathResource("PilotConfigurationJsonValidator.json");
@@ -471,17 +479,27 @@ public class PilotDetectionVariableService {
 	}
 	
 	@GET
+	@ApiOperation("Get all Geriatric Subfactors for specific user.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("findAllGes/{userId}")
-	public Response findAllGes(@PathParam("userId") Long userId) throws JsonProcessingException {
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "userId", value = "id of user", required = false, dataType = "long", paramType = "path", defaultValue = "10")})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = ViewPilotDetectionVariable.class),
+			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
+	public Response findAllGes(@ApiParam(hidden = true) @PathParam("userId") Long userId) throws JsonProcessingException {
 		List<ViewPilotDetectionVariable> list = viewPilotDetectionVariableRepository.findAllGes(userId);
 		return JerseyResponse.build(objectMapper.writeValueAsString(list));
 	}
 	
 	@GET
+	@ApiOperation("Get all Geriatric Factors for specific user.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("findAllGef/{userId}")
-	public Response findAllGef(@PathParam("userId") Long userId) throws JsonProcessingException {
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "userId", value = "id of user", required = false, dataType = "long", paramType = "path", defaultValue = "10")})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = ViewPilotDetectionVariable.class),
+			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
+	public Response findAllGef(@ApiParam(hidden = true) @PathParam("userId") Long userId) throws JsonProcessingException {
 		List<ViewPilotDetectionVariable> list = viewPilotDetectionVariableRepository.findAllGef(userId);
 		return JerseyResponse.build(objectMapper.writeValueAsString(list));
 	}

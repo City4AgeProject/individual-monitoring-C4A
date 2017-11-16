@@ -21,9 +21,12 @@ import org.apache.logging.log4j.Logger;
 
 import eu.city4age.dashboard.api.pojo.json.desobj.Bluetooth;
 import eu.city4age.dashboard.api.pojo.json.desobj.Wifi;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 @Table(name="mtesting_readings")
+@ApiModel ()
 public class MTestingReadings implements Serializable {
 	
 	static protected Logger logger = LogManager.getLogger(AbstractBaseEntity.class);
@@ -38,49 +41,63 @@ public class MTestingReadings implements Serializable {
 	@SequenceGenerator(name = "mt_seq", sequenceName = "mtesting_readings_id_seq", allocationSize = 1)
 	@GeneratedValue(generator = "mt_seq", strategy = GenerationType.SEQUENCE)
 	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
+	@ApiModelProperty (hidden = true)
 	protected Long id;
 
+	@ApiModelProperty (hidden = true)
 	public Long getId() {
 		return id;
 	}
 
+	@ApiModelProperty (hidden = true)
 	public void setId(Long id) {
 		this.id = id;
 	}
 	
 	@Column(name="start_time")
+	@ApiModelProperty (value = "start time of recording", hidden = false)
 	private Date start;
 	
+	@ApiModelProperty (value = "end time of recording", hidden = false)
 	@Column(name="end_time")
 	private Date end;
 
+	@ApiModelProperty (value = "id of type of sensor in database", hidden = false)
 	@Column(name="sensor_id")
 	private Integer sensor_id;
 	
 	@Column(name="extra_information")
+	@ApiModelProperty (value = "additional comment about recording", hidden = false)
 	private String extraInformation;
 	
 	@Column(name="action_name")
+	@ApiModelProperty (hidden = false)
 	private String actionName;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cd_activity_id")
+	@ApiModelProperty (hidden = true)
 	private Activity activity;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_in_role_id")
+	@ApiModelProperty (hidden = true)
 	private UserInRole userInRole;
 	
 	@Column(name="gps_longitude")
+	@ApiModelProperty (value = "geographic longitude of location of recording", hidden = false)
 	private Long gpsLongitude;
 	
 	@Column(name="gps_latitude")
+	@ApiModelProperty (value = "geographic latitude of location of recording", hidden = false)
 	private Long gpsLatitude;
 	
 	@Column(name="bluetooth_devices")
+	@ApiModelProperty (hidden = false)
 	private String bluetoothDevices;
 	
 	@Column(name="wifi_devices")
+	@ApiModelProperty (hidden = false)
 	private String wifiDevices;
 	
 
@@ -104,11 +121,11 @@ public class MTestingReadings implements Serializable {
 	public Activity getActivity() {
 		return activity;
 	}
-
+	
 	public void setActivity(Activity activity) {
 		this.activity = activity;
 	}
-
+	
 	public UserInRole getUserInRole() {
 		return userInRole;
 	}
@@ -116,11 +133,11 @@ public class MTestingReadings implements Serializable {
 	public void setUserInRole(UserInRole userInRole) {
 		this.userInRole = userInRole;
 	}
-
+	
 	public Integer getSensor_id() {
 		return sensor_id;
 	}
-
+	
 	public void setSensor_id(Integer sensor_id) {
 		this.sensor_id = sensor_id;
 	}
@@ -149,6 +166,7 @@ public class MTestingReadings implements Serializable {
 		this.gpsLongitude = gpsLongitude;
 	}
 
+	@ApiModelProperty (hidden = true)
 	public Long getGpsLatitude() {
 		return gpsLatitude;
 	}
@@ -164,11 +182,11 @@ public class MTestingReadings implements Serializable {
 	public void setBluetoothDevices(String bluetoothDevices) {
 		this.bluetoothDevices = bluetoothDevices;
 	}
-
+	
 	public String getWifiDevices() {
 		return wifiDevices;
 	}
-
+	
 	public void setWifiDevices(String wifiDevices) {
 		this.wifiDevices = wifiDevices;
 	}
@@ -183,7 +201,7 @@ public class MTestingReadings implements Serializable {
 			this.setBluetoothDevices(bts.toString());
 		}	
 	}
-
+	
 	public void addWifi(List<Wifi> wifi) {
 		if(wifi != null && wifi.size() > 0) {
 			StringBuffer bts = new StringBuffer();

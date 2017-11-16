@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -30,12 +31,21 @@ import eu.city4age.dashboard.api.persist.ActivityRepository;
 import eu.city4age.dashboard.api.persist.MTestingReadingsRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.Activity;
+import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
 import eu.city4age.dashboard.api.pojo.json.desobj.JSONActivity;
 import eu.city4age.dashboard.api.pojo.ws.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
 
 /**
@@ -45,6 +55,7 @@ import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
 @Component
 @Transactional("transactionManager")
 @Path(AndroidService.PATH)
+@Api(value = "android", consumes = "application/json" ,produces = "application/json")
 public class AndroidService {
 
 	public static final String PATH = "android";
@@ -64,10 +75,21 @@ public class AndroidService {
 	ActivityRepository activityRepository;
 
 	@POST
+	@ApiOperation(value = "Post activity data from android app.", notes = "Processing of data collected with android app, creating new MTestingReading objects and persisting those objects in database"
+	)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("postFromAndroid")
-	public Response postFromAndroid(String json) throws IOException {
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = C4AAndroidResponse.class),
+			@ApiResponse(code = 400, message = "Header content-type is not 'application/json' or content empty."),
+			@ApiResponse(code = 401, message = "No user with this id in database."),
+			@ApiResponse(code = 402, message = "Activity type isn't recognized."),
+			@ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 500, message = "Failure") })
+	public Response postFromAndroid(@ApiParam (name = "json", value = "response string from android app", required = true,
+			examples = @Example ( value = {
+				@ExampleProperty (value = "{\"ID\": \"3\", \"date\": \"Tue Aug 01 22:11:31 GMT+00:00 2017\", \"activities\": [{\"type\": \"Walking\",\"start\": \"Tue Aug 01 22:04:50 GMT+00:00 2017\", \"end\": \"Tue Aug 01 22:05:02 GMT+00:00 2017\",\"gps\": [{\"longitude\": -122.084, \"latitude\": 37.421998333333, \"date\": \"Tue Aug 01 22:04:50 GMT+00:00 2017\"}]}]}")	
+			})) @RequestBody String json) throws IOException {
 
 		C4AAndroidResponse response = new C4AAndroidResponse();
 		AndroidActivitiesDeserializer data;
