@@ -35,5 +35,7 @@ public interface GenericRepository<T, ID extends Serializable>
 	EntityManager getEntityManager();
 	
 	<S extends T> S merge(S entity);
+	
+	void clear();
 
 }

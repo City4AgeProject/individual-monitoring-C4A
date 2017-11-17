@@ -52,8 +52,11 @@ public class NumericIndicatorValue implements Serializable {
 
 	@JsonView(View.NUIView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "nui_type_id")
+	@JoinColumn(name = "nui_type_id", insertable = false, updatable = false)
 	private DetectionVariable detectionVariable;
+	
+	@Column(name = "nui_type_id")
+	private Long detectionVariableId;
 
 	@JsonView(View.NUIView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -62,8 +65,11 @@ public class NumericIndicatorValue implements Serializable {
 
 	@JsonView(View.NUIView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_in_role_id")
+	@JoinColumn(name = "user_in_role_id", insertable = false, updatable = false)
 	private UserInRole userInRole;
+	
+	@Column(name = "user_in_role_id")
+	private Long userInRoleId;
 	
 	@JsonView(View.NUIView.class)
 	@Column(name = "nui_value", precision = 20, scale = 8)
@@ -109,6 +115,14 @@ public class NumericIndicatorValue implements Serializable {
 		this.detectionVariable = detectionVariable;
 	}
 
+	public Long getDetectionVariableId() {
+		return detectionVariableId;
+	}
+
+	public void setDetectionVariableId(Long detectionVariableId) {
+		this.detectionVariableId = detectionVariableId;
+	}
+
 	public TimeInterval getTimeInterval() {
 		return this.timeInterval;
 	}
@@ -123,6 +137,14 @@ public class NumericIndicatorValue implements Serializable {
 
 	public void setUserInRole(UserInRole userInRole) {
 		this.userInRole = userInRole;
+	}
+
+	public Long getUserInRoleId() {
+		return userInRoleId;
+	}
+
+	public void setUserInRoleId(Long userInRoleId) {
+		this.userInRoleId = userInRoleId;
 	}
 
 	public BigDecimal getNuiValue() {
