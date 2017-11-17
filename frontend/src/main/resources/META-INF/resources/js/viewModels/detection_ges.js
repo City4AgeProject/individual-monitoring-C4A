@@ -10,9 +10,8 @@ function (oj, ko, $, sp) {
     	var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
         
         var self = this;
-        
+
         self.careRecipientId = ko.observable();
-        //self.careRecipientId = oj.Router.rootInstance.retrieve()[0];
         self.careRecipientId = parseInt(sessionStorage.getItem("crId"));
        
         

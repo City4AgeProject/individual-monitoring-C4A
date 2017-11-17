@@ -10,7 +10,7 @@
 		},
 		"dataPointsMarked": {
 			"description" : "Label for selected datapoint ids counter.",
-			"type": "number"
+			"type": "string"
 		},		
 		"seeMeasures": {
 			"description" : "Visibility of view daily measures link ",
