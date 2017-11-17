@@ -24,7 +24,11 @@
 		"nuisForMeasure": {
 			"description" : "Object containing nui data.",
 			"type": "object"
-		}
+		},
+                "lineType": {
+                        "description" : "Line type of the measure",
+			"type": "string"
+                }
 		
 				
 	}

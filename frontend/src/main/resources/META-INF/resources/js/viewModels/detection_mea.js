@@ -226,37 +226,74 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  });
   	    		                                                                                 
   	    		  
-  	    		  measures.forEach(function(mea) {                              
+  	    		  measures.forEach(function(mea) {
                               if(mea.defaultTypicalPeriod === 'MON'){
+                                  mea.lineType = "straight";
                                   mea.lineSeries.forEach(function(ls) {
                                       ls.items[1] = ls.items[0];
                                   });
-                              }else {
-  	    			  mea.lineSeries.forEach(function(ls) {
-  	    				  //inserting empty dates
-  	    				  for(var i = 0; i< 30; i++){           	    					  
-  	    					  if(ls.items[i] == null || ls.items[i] == undefined){            	    						  
-  	    						var item = new Object();
-                                                        item.value = null;                    	    				                     	    				                     	    				  
-                                                        ls.items.splice(i, 0, item);
-                                                        continue;
-  	    					  }
-  	    					  var dateStart = new Date(ls.items[i].intervalStart);
-  	    					             	    					 
-  	    					  if(dateStart.getDate() !== i+1){          	    						  
-  	    						  if(dateStart.getDate() == i){
-  	    							  //if start date is the same as previous one
-  	    							  //do nothing because this time interval ends on the i+1 date           	    							 
-  	    						  }
-  	    						  else {        	    							 
-  	    							var item = new Object();
-  	    							item.value = null;                    	    				                     	    				                     	    				  
-  	    							ls.items.splice(i, 0, item);	                    	    				  	                    	    				
-  	    						  }
-  	    						  
-  	    					  }
-  	    					 
-          	    		  }
+                              }else if(mea.defaultTypicalPeriod === '1WK'){
+                                        mea.lineType = "stepped";                                                                   
+                                        mea.lineSeries.forEach(function(ls){
+                                          var arr = [];
+                                              for(var i = 0; i<= 30; i++){
+                                                  var item = new Object();
+                                                  item.value = null;
+                                                  arr.push(item);
+                                              }
+                                            ls.items.forEach(function(item){
+                                              var date = new Date(item.intervalStart);
+                                              var dateInMonth = date.getDate();
+                                              var month = date.getMonth();
+                                              var bigMonths = [0,2,4,6,7,9,11];
+                                              var smallMonths = [3,5,8,10];
+                                              var j;
+                                              if(month === 1) {
+                                                  j = 28;
+                                              } else if(bigMonths.includes(month)){
+                                                  j = 30;
+                                              }else {
+                                                  j = 29;
+                                              }
+                                             
+                                              for(var i = 0; i<j; i++){
+                                                    if(i >= dateInMonth && i < (dateInMonth + 7)){
+                                                        arr[i].value = item.value;
+                                                  }
+                                              }
+                                              
+
+                                            });                                          
+                                            ls.items = arr;
+                                        });                                 
+                              }
+                                  else {
+                                        mea.lineType = "straight";
+                                        mea.lineSeries.forEach(function(ls) {
+                                                //inserting empty dates
+                                                for(var i = 0; i< 30; i++){           	    					  
+                                                        if(ls.items[i] == null || ls.items[i] == undefined){            	    						  
+                                                              var item = new Object();
+                                                              item.value = null;                    	    				                     	    				                     	    				  
+                                                              ls.items.splice(i, 0, item);
+                                                              continue;
+                                                        }
+                                                        var dateStart = new Date(ls.items[i].intervalStart);
+
+                                                        if(dateStart.getDate() !== i+1){          	    						  
+                                                                if(dateStart.getDate() == i){
+                                                                        //if start date is the same as previous one
+                                                                        //do nothing because this time interval ends on the i+1 date           	    							 
+                                                                }
+                                                                else {        	    							 
+                                                                      var item = new Object();
+                                                                      item.value = null;                    	    				                     	    				                     	    				  
+                                                                      ls.items.splice(i, 0, item);	                    	    				  	                    	    				
+                                                                }
+
+                                                        }
+
+                                        }
   	    			  });
                               }                             
   	    		  });                         
