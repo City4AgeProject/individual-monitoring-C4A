@@ -27,5 +27,5 @@ public interface PilotDetectionVariableRepository extends GenericRepository<Pilo
 
 	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE pdv.pilotCode = :pilotCode AND dv.detectionVariableType = :type")
 	List<PilotDetectionVariable> findDerived(@Param("pilotCode") final String pilotCode, @Param("type") final DetectionVariableType type);
-
+	
 }

@@ -4,9 +4,16 @@ import java.math.BigDecimal;
 
 public class Element {
 
+
 		private String name;
 		private Integer level;
 		private BigDecimal weight;
+		
+		public Element(String name,Integer level,BigDecimal weight) {
+			this.name = name;
+			this.level = level;
+			this.weight = weight;
+			}
 
 		
 		public String getName() {

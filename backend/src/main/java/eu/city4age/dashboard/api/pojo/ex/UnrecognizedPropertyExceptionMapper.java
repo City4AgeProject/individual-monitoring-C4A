@@ -18,17 +18,16 @@ public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<Unre
 	@Override
 	public Response toResponse(UnrecognizedPropertyException ex) {
 		
-		
 		StringBuilder message = new StringBuilder();
+		
+		message.append("Exception: ");
+		message.append(ex.getClass().getSimpleName());
 		message.append("Property: \"");
 		message.append(ex.getPropertyName());
-		message.append("\" unrecognized!\n At line:");
-		message.append(ex.getLocation().getLineNr());
-		message.append(" and column:");
-		message.append(ex.getLocation().getColumnNr());
+		message.append("\" unrecognized!");
 
 		
-		logger.info(new StringBuilder(message).insert(0, "\nEXCEPTION:\n").append("\nORIGINAL MESSAGE: ").append(ex.getOriginalMessage()).toString());
+		logger.info(message.toString());
 		
 		 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN)
 				.entity(message.toString())

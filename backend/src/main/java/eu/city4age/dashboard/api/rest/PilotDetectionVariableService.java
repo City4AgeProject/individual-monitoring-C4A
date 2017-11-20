@@ -1,9 +1,5 @@
 package eu.city4age.dashboard.api.rest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,20 +19,16 @@ import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.util.IOUtils;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
@@ -44,7 +36,6 @@ import eu.city4age.dashboard.api.persist.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.persist.PilotRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.persist.ViewPilotDetectionVariableRepository;
-import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
@@ -52,6 +43,7 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.ex.ConfigurationValidityDateException;
+import eu.city4age.dashboard.api.pojo.ex.JsonMappingExceptionUD;
 import eu.city4age.dashboard.api.pojo.ex.MissingKeyException;
 import eu.city4age.dashboard.api.pojo.ex.NotAuthorizedException;
 import eu.city4age.dashboard.api.pojo.ex.NotLoggedInException;
@@ -116,19 +108,25 @@ public class PilotDetectionVariableService {
 			@ExampleProperty (value = "{\"configurations\":[{\"name\":\"overall\",\"level\":0,\"validFrom\":\"2016-01-01 00:00:01\",\"validTo\":\"2020-09-07 00:00:00\",\"pilotCode\":\"MAD\",\"groups\":[{\"name\":\"contextual\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[]},{\"name\":\"behavioural\",\"level\":1,\"weight\":0.5,\"formula\":\"\",\"factors\":[{\"name\":\"motility\",\"level\":2,\"weight\":0.13,\"formula\":\"\",\"subFactors\":[{\"name\":\"walking\",\"level\":3,\"weight\":1,\"formula\":\"\",\"measures\":[{\"name\":\"walk_distance\",\"level\":4,\"weight\":0.4},{\"name\":\"walk_time_outdoor\",\"level\":4,\"weight\":0.3}]}]}]}]}]}" )
 	})) @RequestBody String json) throws Exception {
 
-		StringBuilder response = new StringBuilder();	
-		try {
-			
-			ClassPathResource resource = new ClassPathResource("PilotConfigurationJsonValidator.json");
-			InputStream jsonValidator = resource.getInputStream();
-			String validator = IOUtils.toString(new BufferedReader(new InputStreamReader(jsonValidator)));
-			JSONObject rawSchema = new JSONObject(new JSONTokener(validator));
-			Schema schema = SchemaLoader.load(rawSchema);
-			schema.validate(new JSONObject(json)); // throws a ValidationException if this object is invalid
-			
-			ConfigureDailyMeasuresDeserializer data = objectMapper.readerFor(ConfigureDailyMeasuresDeserializer.class)
-			.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
+			StringBuilder response = new StringBuilder();
+			
+			ConfigureDailyMeasuresDeserializer data=null;
+			 try {
+				 data = objectMapper.readerFor(ConfigureDailyMeasuresDeserializer.class)
+						 .with(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+						 .readValue(json);
+				 
+			        logger.info(data);
+			        String serialized = objectMapper.writeValueAsString(data);
+			        logger.info(serialized);
+			
+			   	} catch (JsonMappingException e) {
+			    	if(e instanceof UnrecognizedPropertyException) {
+			    		throw e;
+			    	}
+					throw new JsonMappingExceptionUD(e);
+			    }
 
 			for (int z = 0; z < data.getConfigurations().size(); z++) {
 				Configuration configuration = data.getConfigurations().get(z);
@@ -140,42 +138,46 @@ public class PilotDetectionVariableService {
 				UserInRole uir;
 				try {
 					uir = userInRoleRepository.findBySystemUsernameAndPassword(username,password);
-					
-					if(uir.getPilotCode().equals(pilotCode)) {
-						setConfiguration(pilotCode,configuration,response);
+					StringBuilder sb;
+					if(uir!=null) {
+						
+						if(uir.getPilotCode().equals(pilotCode)) {
+							setConfiguration(pilotCode,configuration,response);
+						} else {
+							sb = new StringBuilder();
+							sb.append("You are not authorized !\nUser: ");
+							sb.append(username);
+							sb.append(" can't make changes for: ");
+							sb.append(pilotCode);
+							sb.append(" pilot configuration.");
+							throw new NotAuthorizedException(sb.toString());
+						}
+						
 					} else {
-						StringBuilder sb = new StringBuilder();
-						sb.append("You are not authorized !\nUser: ");
+						sb = new StringBuilder();
+						sb.append("Invalid login!\n");
+						sb.append("You must provide valid Username and Password\n");
+						sb.append("in the coresponding fields of configuration file.\n");
+						sb.append("You are not logged in!\nInvalid username: ");
 						sb.append(username);
-						sb.append(" can't make changes for: ");
-						sb.append(pilotCode);
-						sb.append(" pilot configuration.");
-						throw new NotAuthorizedException(sb.toString());
+						sb.append(" and/or password: ");
+						sb.append(password);
+						throw new NotLoggedInException(sb.toString());
 					}
 					
+					
+					
 				} catch (NullPointerException e) {
-					StringBuilder sb = new StringBuilder();
-					sb.append("Invalid login!\n");
-					sb.append("You must provide valid Username and Password\n");
-					sb.append("in the coresponding fields of configuration file.\n");
-					sb.append("You are not logged in!\nInvalid username: ");
-					sb.append(username);
-					sb.append(" and/or password: ");
-					sb.append(password);
-					throw new NotLoggedInException(sb.toString());
+					logger.info("NULLPINTEREX::"+e.getMessage());
 				}
 
 			}
-		} 
-		catch(IOException e){
-			logger.info("Not a valid Json String: " + e.getMessage());
-		}
 		
 		return JerseyResponse.buildTextPlain(response.toString());
 
 	}
 
-	private void setConfiguration(String pilotCode,Configuration configuration, StringBuilder response) throws Exception {
+	private void setConfiguration(String pilotCode,Configuration configuration, StringBuilder response) throws ConfigurationValidityDateException, MissingKeyException {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		ConfigurationCounter confCounter = new ConfigurationCounter();
@@ -192,21 +194,17 @@ public class PilotDetectionVariableService {
 			throw new ConfigurationValidityDateException();
 		}
 		
-		
-		
 
-		try {
 			Pilot pilot = pilotRepository.findByPilotCode(pilotCode);
+			if(pilot.equals(null)) {
+				throw new MissingKeyException(
+						"MissingKeyException:\n\tName for property : pilotCode(pilot_code): "+pilotCode+"\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
+			}
 			
 			logger.info("pilotRepository: " + pilotRepository);
-			
 			pilot.setLatestConfigurationUpdate(new Date());
 			pilotRepository.save(pilot);
-		} catch (NullPointerException ex) {
-			ex.printStackTrace();
-			throw new MissingKeyException(
-					"MissingKeyException:\n\tName for property : pilotCode(pilot_code): "+pilotCode+"\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
-		}
+			
 
 		for (int i = 0; i < configuration.getGroups().size(); i++) {
 

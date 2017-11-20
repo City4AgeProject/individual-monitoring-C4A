@@ -1,4 +1,4 @@
-{
+	{
     "configurations": [
         {
             "name": "overall",
@@ -6,6 +6,8 @@
             "validFrom": "2016-01-01 00:00:01",
             "validTo": "2020-09-07 00:00:00",
             "pilotCode": "ATH",
+			"username":"ATH_PSS",
+            "password":"PASSWORD_FOR_ATH_PSS",
             "groups": [
                 {
                     "name": "geriatric_factors_first_group",
@@ -431,6 +433,8 @@
             "validFrom": "2016-01-01 00:00:01",
             "validTo": "2020-09-07 00:00:00",
             "pilotCode": "BHX",
+			"username":"BHX_PSS",
+            "password":"PASSWORD_FOR_BHX_PSS",
             "groups": [
                 {
                     "name": "geriatric_factors_first_group",
@@ -716,6 +720,8 @@
             "validFrom": "2016-01-01 00:00:01",
             "validTo": "2020-09-07 00:00:00",
             "pilotCode": "LCC",
+			"username":"LCC_PSS",
+            "password":"PASSWORD_FOR_LCC_PSS",
             "groups": [
                 {
                     "name": "geriatric_factors_first_group",
@@ -1170,6 +1176,8 @@
             "validFrom": "2016-01-01 00:00:01",
             "validTo": "2020-09-07 00:00:00",
             "pilotCode": "MAD",
+            "username":"MAD_PSS",
+            "password":"$2a$13$9LdoweBXnXNSi1DgvYbE3eao3qkqOyuPFbLlSFQSMQsSPh7qQoTm6",
             "groups": [
                 {
                     "name": "context_and_status_factors",
@@ -1418,6 +1426,8 @@
             "validFrom": "2016-01-01 00:00:01",
             "validTo": "2020-09-07 00:00:00",
             "pilotCode": "MPL",
+			"username":"MPL_PSS",
+            "password":"PASSWORD_FOR_MPL_PSS",
             "groups": [
                 {
                     "name": "geriatric_factors_first_group",
@@ -1866,6 +1876,8 @@
             "validFrom": "2016-01-01 00:00:01",
             "validTo": "2020-09-07 00:00:00",
             "pilotCode": "SIN",
+			"username":"SIN_PSS",
+            "password":"PASSWORD_FOR_SIN_PSS",
             "groups": [
                 {
                     "name": "geriatric_factors_first_group",

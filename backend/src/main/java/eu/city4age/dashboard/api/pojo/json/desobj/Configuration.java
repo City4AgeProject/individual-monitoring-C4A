@@ -1,30 +1,53 @@
 package eu.city4age.dashboard.api.pojo.json.desobj;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author Andrija Petrovic
  *
  */
 public class Configuration {
 
-	String name;
-	Integer level;
-	String validFrom;
-	String validTo;
-	String pilotCode;
-	String username;
-	String password;
-	List<Groups> groups;
+	private String name;
+	private Integer level;
+	private String validFrom;
+	private String validTo;
+	private String pilotCode;
+	private String username;
+	private String password;
+	private List<Groups> groups;
 	
+
+	public Configuration(	@JsonProperty(value= "name", required = true)String name,
+							@JsonProperty(value= "level",required = true)Integer level,
+							@JsonProperty(value= "validFrom",required = true)String validFrom,
+            				@JsonProperty(value= "validTo",required = true)String validTo,
+            				@JsonProperty(value= "pilotCode",required = true)String pilotCode,
+            				@JsonProperty(value= "username",required = true)String username,
+            				@JsonProperty(value= "password",required = true)String password,
+            				@JsonProperty(value= "groups",required = true)List<Groups> groups) {
+		this.name = name;
+		this.level = level;
+		this.validFrom = validFrom;
+		this.validTo = validTo;
+		this.pilotCode = pilotCode;
+		this.username = username;
+		this.password = password;
+		this.groups = groups;
+	}
+	
+	@JsonProperty("username")
 	public String getUsername() {
 		return username;
 	}
 
+	@JsonProperty("password")
 	public String getPassword() {
 		return password;
 	}
 
-
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
@@ -33,6 +56,7 @@ public class Configuration {
 		this.name = name;
 	}
 
+	@JsonProperty("pilotCode")
 	public String getPilotCode() {
 		return pilotCode;
 	}
@@ -41,6 +65,7 @@ public class Configuration {
 		this.pilotCode = pilotCode;
 	}
 
+	@JsonProperty("level")
 	public Integer getLevel() {
 		return level;
 	}
@@ -49,6 +74,7 @@ public class Configuration {
 		this.level = level;
 	}
 
+	@JsonProperty("groups")
 	public List<Groups> getGroups() {
 		return groups;
 	}
@@ -57,6 +83,7 @@ public class Configuration {
 		this.groups = groups;
 	}
 
+	@JsonProperty("validFrom")
 	public String getValidFrom() {
 		return validFrom;
 	}
@@ -65,6 +92,7 @@ public class Configuration {
 		this.validFrom = validFrom;
 	}
 
+	@JsonProperty("validTo")
 	public String getValidTo() {
 		return validTo;
 	}
