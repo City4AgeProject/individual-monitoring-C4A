@@ -21,6 +21,8 @@ public interface PilotDetectionVariableRepository extends GenericRepository<Pilo
 	
 	PilotDetectionVariable findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(
 			String pilotCode, Long id, Long id2);
+	
+	List<PilotDetectionVariable> findByPilotCodeOrderByDetectionVariableId (String pilotCode );
 
 	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN FETCH pdv.detectionVariable dv INNER JOIN FETCH pdv.derivedDetectionVariable ddv WHERE dv.id = :detectionVariableId AND pdv.pilotCode = :pilotCode")
 	PilotDetectionVariable findByDetectionVariableAndPilotCode(@Param("detectionVariableId") Long detectionVariableId, @Param("pilotCode") String pilotCode);

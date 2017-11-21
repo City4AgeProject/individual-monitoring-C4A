@@ -5,7 +5,15 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Gef extends ElementWithFormula {
+public class Gef {
+	
+	private String name;
+	
+	private int level;
+	
+	private String formula;
+	
+	private BigDecimal weight;
 
 	private List<Ges> subFactors;
 	
@@ -15,7 +23,11 @@ public class Gef extends ElementWithFormula {
 			@JsonProperty(value= "name", required = true)String name, 
 			@JsonProperty(value= "level",required = true)Integer level, 
 			@JsonProperty(value= "weight",required = true)BigDecimal weight) {
-		super(formula, name, level, weight);
+		
+		this.name = name;
+		this.formula = formula;
+		this.level = level;
+		this.weight = weight;
 		this.subFactors = subFactors;
 		
 	}
@@ -27,5 +39,39 @@ public class Gef extends ElementWithFormula {
 	public void setSubFactors(List<Ges> subFactors) {
 		this.subFactors = subFactors;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public String getFormula() {
+		return formula;
+	}
+
+	public void setFormula(String formula) {
+		this.formula = formula;
+	}
+
+	public BigDecimal getWeight() {
+		return weight;
+	}
+
+	public void setWeight(BigDecimal weight) {
+		this.weight = weight;
+	}
+	
+	
 
 }

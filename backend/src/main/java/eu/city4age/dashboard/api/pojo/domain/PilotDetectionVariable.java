@@ -79,6 +79,20 @@ public class PilotDetectionVariable implements Serializable {
 		this.detectionVariable = derivedDetectionVariable;
 		this.formula = formula;
 	}
+	
+	
+
+	public PilotDetectionVariable(String pilotCode, DetectionVariable derivedDetectionVariable,
+			DetectionVariable detectionVariable, String formula, BigDecimal derivationWeight, Date validFrom,
+			Date validTo) {
+		this.pilotCode = pilotCode;
+		this.derivedDetectionVariable = derivedDetectionVariable;
+		this.detectionVariable = detectionVariable;
+		this.formula = formula;
+		this.derivationWeight = derivationWeight;
+		this.validFrom = validFrom;
+		this.validTo = validTo;
+	}
 
 	public PilotDetectionVariable(DetectionVariable derivedDetectionVariable, DetectionVariable detectionVariable,
 			String formula, Date validFrom, Date validTo) {
