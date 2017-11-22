@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.persist.generic.GenericRepository;
-import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 
 @Repository(value = "pilotDetectionVariableRepository")
@@ -27,7 +26,4 @@ public interface PilotDetectionVariableRepository extends GenericRepository<Pilo
 	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN FETCH pdv.detectionVariable dv INNER JOIN FETCH pdv.derivedDetectionVariable ddv WHERE dv.id = :detectionVariableId AND pdv.pilotCode = :pilotCode")
 	PilotDetectionVariable findByDetectionVariableAndPilotCode(@Param("detectionVariableId") Long detectionVariableId, @Param("pilotCode") String pilotCode);
 
-	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE pdv.pilotCode = :pilotCode AND dv.detectionVariableType = :type")
-	List<PilotDetectionVariable> findDerived(@Param("pilotCode") final String pilotCode, @Param("type") final DetectionVariableType type);
-	
 }

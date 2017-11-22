@@ -4,5 +4,9 @@ import java.math.BigDecimal;
 
 public interface NuisProjection {
 	
+	Long getUserId();
+	
+	Long getNuiDvId();
+	
 	BigDecimal getNuiValue();
 }

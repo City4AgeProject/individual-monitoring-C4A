@@ -11,12 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.city4age.dashboard.api.persist.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefValuesPersistedSourceGesTypes;
+import eu.city4age.dashboard.api.pojo.dto.Gfvs;
 
 @Repository(value = "viewGefValuesPersistedSourceGesTypesRepository")
 @Transactional(readOnly = true)
 public interface ViewGefValuesPersistedSourceGesTypesRepository extends GenericRepository<ViewGefValuesPersistedSourceGesTypes, Long> {
 
-	@Query("SELECT vg FROM ViewGefValuesPersistedSourceGesTypes vg WHERE vg.id.userInRoleId = :uirId AND vg.intervalStart >= :startOfMonth AND vg.intervalStart <= :endOfMonth AND vg.typicalPeriod = 'MON' AND vg.derivedGefType = :derivedType")
-	List<ViewGefValuesPersistedSourceGesTypes> findAllFor1MonthByUserAndDerived(@Param("uirId") Long uirId, @Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("derivedType") DetectionVariableType derivedType);
+	@Query(nativeQuery = true)
+	List<Gfvs> doAllGfvs(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("detectionVariableType") DetectionVariableType detectionVariableType);
 
 }

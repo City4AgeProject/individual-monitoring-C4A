@@ -146,7 +146,6 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 	self.props.selectedRiskStatus = [];
                 	self.props.selectedDataValidity = [];
                 	self.props.selectedRoles = [];
-                	
                 }
                 
                 self.attached  = function(context) {

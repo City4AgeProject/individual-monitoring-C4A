@@ -34,7 +34,6 @@ public class JerseyInitialization extends ResourceConfig {
 	 */
 	public JerseyInitialization() {
 		packages("eu.city4age.dashboard.api");
-		//this.register(new CORSFilter());
 		this.registerEndpoints();
 	}
 	

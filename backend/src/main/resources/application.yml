@@ -32,6 +32,11 @@ spring:
         cache.region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
         cache.use_second_level_cache: false
         cache.use_query_cache: false
+        order_updates: true
+        order_inserts: true
+        jdbc:
+          batch_size: 1000
+          batch_versioned_data: true
       javax:
         persistence:
           sharedCache:

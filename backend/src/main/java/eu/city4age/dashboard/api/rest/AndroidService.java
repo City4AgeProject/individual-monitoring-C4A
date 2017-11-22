@@ -31,10 +31,10 @@ import eu.city4age.dashboard.api.persist.ActivityRepository;
 import eu.city4age.dashboard.api.persist.MTestingReadingsRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.Activity;
-import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
+import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
 import eu.city4age.dashboard.api.pojo.json.desobj.JSONActivity;
 import eu.city4age.dashboard.api.pojo.ws.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
@@ -43,10 +43,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
 import io.swagger.annotations.Example;
 import io.swagger.annotations.ExampleProperty;
-import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
 
 /**
  * @author milos.holclajtner

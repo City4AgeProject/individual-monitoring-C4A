@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.persist;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefValuesPersistedSourceGesTypes;
+import eu.city4age.dashboard.api.pojo.dto.Gfvs;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -126,76 +128,24 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		Assert.assertEquals(2, result.size());
 		
 	}
-	
+
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void testFindAllForMonthByPilotCode() {
-
-		String pilotCode = "LCC";
+	public void testDoAllGess() {
+		
 		Timestamp startOfMonth = Timestamp.valueOf("2016-08-01 00:00:00");
 		Timestamp endOfMonth = Timestamp.valueOf("2016-09-01 00:00:00");
-		String derivedType= "GEF";
 		
-		UserInRole uir1 = new UserInRole();
-		uir1.setId(1L);
-		uir1.setPilotCode(pilotCode);
-		uir1 = userInRoleRepository.save(uir1);
-	
-		DetectionVariableType dvt1 = DetectionVariableType.GES;
-		dvt1 = detectionVariableTypeRepository.save(dvt1);
+		DetectionVariableType derivedDetectionVariableType = DetectionVariableType.GEF;
+		detectionVariableTypeRepository.save(derivedDetectionVariableType);
 		
-		DetectionVariableType dvt2 = DetectionVariableType.GEF;
-		dvt2 = detectionVariableTypeRepository.save(dvt2);
-	
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(1L);
-		dv1.setDetectionVariableName("ges");
-		dv1.setDetectionVariableType(dvt1);
-		dv1 = detectionVariableRepository.save(dv1);
-		
-		DetectionVariable dv2 = new DetectionVariable();
-		dv2.setId(2L);
-		dv2.setDetectionVariableName("gef");
-		dv2.setDetectionVariableType(dvt2);
-		dv2 = detectionVariableRepository.save(dv2);
-		
-		TimeInterval ti1 = new TimeInterval();
-		ti1.setTypicalPeriod("MON");
-		ti1.setIntervalStart(startOfMonth);
-		ti1.setIntervalEnd(Timestamp.valueOf("2016-08-10 00:00:00"));
-		ti1 = timeIntervalRepository.save(ti1);
-		
-		GeriatricFactorValue gef1 = new GeriatricFactorValue();
-		gef1.setId(1L);
-		gef1.setUserInRole(uir1);
-		gef1.setDetectionVariable(dv2);
-		gef1.setTimeInterval(ti1);
-		gef1.setGefValue(BigDecimal.valueOf(2.5));
-		gef1 = gefRepository.save(gef1);
-		
-		GeriatricFactorValue gef2 = new GeriatricFactorValue();
-		gef2.setId(2L);
-		gef2.setUserInRole(uir1);
-		gef2.setDetectionVariable(dv2);
-		gef2.setTimeInterval(ti1);
-		gef2.setGefValue(BigDecimal.valueOf(4.0));
-		gef2 = gefRepository.save(gef2);
-		
-		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
-		pdv1.setId(1L);
-		pdv1.setDetectionVariable(dv2);
-		pdv1.setPilotCode("LCC");
-		pdv1.setDerivationWeight(BigDecimal.valueOf(0.3));
-		pdv1.setDerivedDetectionVariable(dv1);
-		pdv1.setFormula("Formula1");
-		pdv1 = pilotDetectionVariableRepository.save(pdv1);
-
-		List<ViewGefValuesPersistedSourceGesTypes> result = viewGefValuesPersistedSourceGesTypesRepository.findAllFor1MonthByUserAndDerived(uir1.getId(), startOfMonth, endOfMonth, dvt1);
+		List<Gfvs> result = viewGefValuesPersistedSourceGesTypesRepository.doAllGfvs(startOfMonth, endOfMonth, derivedDetectionVariableType);
 		
 		Assert.assertNotNull(result);
 		
-		Assert.assertEquals(2L, result.size());
+		Assert.assertEquals(0, result.size());
 		
 	}
+
 }

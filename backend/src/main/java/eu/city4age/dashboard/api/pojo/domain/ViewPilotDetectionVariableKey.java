@@ -25,9 +25,7 @@ public class ViewPilotDetectionVariableKey implements Serializable {
 	@Column(name = "derived_detection_variable_id")
 	private Long derivedDetectionVariableId;
 	
-	public ViewPilotDetectionVariableKey() {
-		
-	}
+	public ViewPilotDetectionVariableKey() {}
 	
 	public ViewPilotDetectionVariableKey(String pilotCode, Long userInRoleId, Long detectionVariableId, Long derivedDetectionVariableId) {
 		this.pilotCode = pilotCode;
