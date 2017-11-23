@@ -10,7 +10,8 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.zoom = ko.observable('live');
                 self.measureName = null;
                 self.lineSeries = [];
-             
+                self.hiddenCategories = ko.observableArray();
+                self.visibleCategory = null;
                 context.props.then(function(properties) {                    
                     self.props = properties; 
                     self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
@@ -20,7 +21,13 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                         self.measureName += " (" + properties.baseUnit + ")";
                     }     
                     self.defaultTypicalPeriod = properties.defaultTypicalPeriod;
+                    self.lineSeries = properties.lineSeries;                    
+                    self.lineSeriesNames = [];
                     
+                    self.lineSeries.forEach(function(ls){
+                        self.lineSeriesNames.push(ls.name);                                              
+                    });
+                                                          
                     if(self.defaultTypicalPeriod === 'MON'){
                         self.lineGroups = ko.observable(["Start of month", "End of month"]);
                         self.zoom('off');
@@ -30,34 +37,52 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 	"21","22","23","24","25","26","27","28","29","30","31"]);
 
                     }
-
+                    
                 });
-                          
+                self.optChanged = function (event, ui){
+                    //if user clicked on dataGrid Header, show lineseries of that month                   
+                    if(ui['value']){                          
+                        if(ui['value']['axis'] === 'column'){                       
+                            var seriesName = ui['value']['key'];
+                            showLineSerie(seriesName);                       
+                        }     
+                    }
+                };
+                self.chartDrill = function(event, ui) {
+                    var seriesName = ui['seriesData']['name'];                  
+                    showLineSerie(seriesName);                    
+		};
+                function sleep(miliseconds) {
+                    var currentTime = new Date().getTime();
+
+                    while (currentTime + miliseconds >= new Date().getTime()) {
+                    }
+                 }
+                function showLineSerie(seriesName){
+                    if(self.visibleCategory === null){
+                            self.visibleCategory = seriesName;
+                            self.hiddenCategories(self.lineSeriesNames);
+                            var index = self.hiddenCategories.indexOf(seriesName);
+                            self.hiddenCategories.splice(index,1);
+                        }
+                        else if(self.visibleCategory === seriesName){
+                            console.log('already visible!');
+                            return;
+                        }else {
+                            var index = self.hiddenCategories.indexOf(seriesName);
+                            self.hiddenCategories.splice(index,1);
+                            self.hiddenCategories.push(self.visibleCategory);                       
+                            self.visibleCategory = seriesName;
+                        }     
+                }                                              
                 var legend = new Object();
                 legend.title = "Hover to see NUI values";
                 legend.titleStyle = "font-size:10px";             
                 this.legendValue = ko.observable(legend); 
-
-	             $(document).ready(function(){
-	            	 $('.nuiValuesTabTitle').click(function(e){
-		            	  e.preventDefault();
-		            	  var $tab =  $(this).closest(".tabs").find(".nuiValuesTab");
-
-		            	  if ( $tab.css('display') === "none") {
-		            		  $tab.css({
-			     					display : 'block'
-			     				});
-			     			} else {
-			     				$tab.css({
-			     					display : 'none'
-			     				});
-			     			}
-		            	});
-	             });
-	             
-	            };
+	             	             
+	    };
 	            
-	            return model;
-        	}
+	    return model;
+        }
 
 );
