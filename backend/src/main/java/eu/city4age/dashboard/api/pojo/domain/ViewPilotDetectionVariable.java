@@ -7,8 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Immutable;
+import javax.annotation.concurrent.Immutable;
 
 @Entity
 @Table(name = "vw_detection_variable_derivation_per_user_in_role")

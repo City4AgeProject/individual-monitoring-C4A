@@ -10,8 +10,6 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -46,7 +44,6 @@ import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
 import eu.city4age.dashboard.api.persist.UserInRoleRepository;
 import eu.city4age.dashboard.api.persist.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.persist.ViewGefValuesPersistedSourceGesTypesRepository;
-import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
@@ -160,9 +157,6 @@ public class MeasuresService {
 		computeNuisForAllPilots();
 		computeGESsForAllPilots();
 		setVariablesComputedForAllPilots();
-		
-		geriatricFactorRepository.flush();
-		geriatricFactorRepository.clear();
 
 		return JerseyResponse.build();
 	}
@@ -196,12 +190,26 @@ public class MeasuresService {
 			List<Gfvs> list = viewGefValuesPersistedSourceGesTypesRepository.doAllGfvs(startOfMonth, endOfMonth, factor);
 		
 			if (list != null && list.size() > 0) {
-
+				
+				int i = 0;
+				int batchSize = 20;
+				
 				for(Gfvs ges: list) {
+					
 					createGFV(ges.getDdvId(), ges.getGesValue(), ges.getWeight(), startOfMonth, endOfMonth, ges.getUirId());
-
+					
+					i++;
+					if (i % batchSize == 0) {
+			            //flush a batch of inserts and release memory
+			            geriatricFactorRepository.flush();
+			            geriatricFactorRepository.clear();
+			        }
+				
 				}
-
+				
+				geriatricFactorRepository.flush();
+	            geriatricFactorRepository.clear();
+	   
 			}
 
 	}
@@ -228,14 +236,27 @@ public class MeasuresService {
 		List<Gfvs> gess = nuiRepository.doAllGess(startOfMonth, endOfMonth);
 
 		if(gess != null && gess.size() > 0) {
+			
+			int i = 0;
+			int batchSize = 20;
 
 			for (Gfvs ges : gess) {
 				if(ges.getGesValue() != null) {
 					logger.info("gesValue before createGFG: " + ges.getGesValue());
 					createGFV(ges.getDdvId(), ges.getGesValue(), ges.getWeight(), startOfMonth, endOfMonth, ges.getUirId());
 				
+					i++;
+					if (i % batchSize == 0) {
+			            //flush a batch of inserts and release memory
+			            geriatricFactorRepository.flush();
+			            geriatricFactorRepository.clear();
+			        }
+
 				}
 			}
+			
+			geriatricFactorRepository.flush();
+            geriatricFactorRepository.clear();
 
 		}
 
@@ -270,18 +291,9 @@ public class MeasuresService {
 		if (weight == null) weight = new BigDecimal(1);
 		ges.setDerivationWeight(weight);
 
-		geriatricFactorRepository.save(ges);
+		geriatricFactorRepository.saveWithoutFlush(ges);
 		
 		return ges;
-	}
-
-
-	public List<VariationMeasureValue> filterListByDetectionVariable(final List<VariationMeasureValue> list,
-			final DetectionVariable dv) {
-		Stream<VariationMeasureValue> filter = list.stream()
-				.filter(o -> dv.getId().equals(o.getDetectionVariable().getId()));
-		List<VariationMeasureValue> findAll = filter.collect(Collectors.toList());
-		return findAll;
 	}
 
 	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth) {
@@ -302,6 +314,9 @@ public class MeasuresService {
 		List<Nuis> nuisList = variationMeasureValueRepository.doAllNuis(startOfMonth, endOfMonth);
 
 		if(!nuisList.isEmpty() && nuisList.size() != 0) {
+			
+			int i = 0;
+			int batchSize = 20;
 
 			for (Nuis nui:nuisList) {
 
@@ -309,8 +324,18 @@ public class MeasuresService {
 				NumericIndicatorValue create1Nui = create1Nui(nui.getUserId(), nui.getNuiDvId(), nuiValue, startOfMonth);
 			
 				nuis.add(create1Nui);
+				
+				i++;
+				if (i % batchSize == 0) {
+		            //flush a batch of inserts and release memory
+		            nuiRepository.flush();
+		            nuiRepository.clear();
+		        }
 
 			}
+			
+            nuiRepository.flush();
+            nuiRepository.clear();
 		
 		}
 
@@ -329,7 +354,7 @@ public class MeasuresService {
 		nui.setDetectionVariableId(nuiDvId);
 		nui.setTimeInterval(getOrCreateTimeInterval(startOfMonth, TypicalPeriod.MONTH));
 
-		nuiRepository.save(nui);
+		nuiRepository.saveWithoutFlush(nui);
 		return nui;
 	}
 

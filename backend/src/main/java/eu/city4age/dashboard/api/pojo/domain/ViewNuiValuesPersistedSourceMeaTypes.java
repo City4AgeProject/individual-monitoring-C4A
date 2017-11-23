@@ -9,8 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Immutable;
+import javax.annotation.concurrent.Immutable;
 
 @Entity
 @Table(name = "vw_nui_values_persisted_source_mea_types")

@@ -3,6 +3,7 @@ package eu.city4age.dashboard.api.pojo.domain;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.annotation.concurrent.Immutable;
 import javax.persistence.Column;
 import javax.persistence.ColumnResult;
 import javax.persistence.ConstructorResult;
@@ -11,13 +12,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.NamedNativeQueries;
-import org.hibernate.annotations.NamedNativeQuery;
 
 import eu.city4age.dashboard.api.pojo.dto.Gfvs;
 

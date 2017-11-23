@@ -174,52 +174,7 @@ public class VariationMeasureValueRepositoryTest {
 		Assert.assertEquals(3, result.size());
 		
 	}
-	
 
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testFilterListByDetectionVariable() {
-
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(91L);
-		detectionVariableRepository.save(dv1);
-
-		DetectionVariable dv2 = new DetectionVariable();
-		dv2.setId(95L);
-		detectionVariableRepository.save(dv2);
-
-		DetectionVariable dv3 = new DetectionVariable();
-		dv3.setId(97L);
-		detectionVariableRepository.save(dv3);
-
-		VariationMeasureValue vm1 = new VariationMeasureValue();
-		vm1.setId(1L);
-		vm1.setMeasureValue(new BigDecimal(10));
-		vm1.setDetectionVariable(dv1);
-		variationMeasureValueRepository.save(vm1);
-
-		VariationMeasureValue vm2 = new VariationMeasureValue();
-		vm2.setId(2L);
-		vm2.setMeasureValue(new BigDecimal(20));
-		vm2.setDetectionVariable(dv2);
-		variationMeasureValueRepository.save(vm2);
-
-		List<VariationMeasureValue> testList = new ArrayList<VariationMeasureValue>();
-
-		testList.add(vm1);
-		testList.add(vm1);
-		testList.add(vm2);
-
-		List<VariationMeasureValue> result1 = measuresService.filterListByDetectionVariable(testList, dv1);
-		List<VariationMeasureValue> result2 = measuresService.filterListByDetectionVariable(testList, dv2);
-		List<VariationMeasureValue> result3 = measuresService.filterListByDetectionVariable(testList, dv3);
-		
-		Assert.assertEquals(testList.subList(0, 2), result1);
-		Assert.assertEquals(testList.subList(2, 3), result2);
-		Assert.assertEquals(result3.size(), 0);
-	}
-	
 	@Test
 	@Transactional
 	@Rollback(true)
