@@ -11,8 +11,6 @@ public class Configuration {
 
 	private String name;
 	private Integer level;
-	private String validFrom;
-	private String validTo;
 	private String pilotCode;
 	private String username;
 	private String password;
@@ -21,16 +19,12 @@ public class Configuration {
 
 	public Configuration(	@JsonProperty(value= "name", required = true)String name,
 							@JsonProperty(value= "level",required = true)Integer level,
-							@JsonProperty(value= "validFrom",required = true)String validFrom,
-            				@JsonProperty(value= "validTo",required = true)String validTo,
             				@JsonProperty(value= "pilotCode",required = true)String pilotCode,
             				@JsonProperty(value= "username",required = true)String username,
             				@JsonProperty(value= "password",required = true)String password,
             				@JsonProperty(value= "groups",required = true)List<Groups> groups) {
 		this.name = name;
 		this.level = level;
-		this.validFrom = validFrom;
-		this.validTo = validTo;
 		this.pilotCode = pilotCode;
 		this.username = username;
 		this.password = password;
@@ -81,24 +75,6 @@ public class Configuration {
 
 	public void setGroups(List<Groups> groups) {
 		this.groups = groups;
-	}
-
-	@JsonProperty("validFrom")
-	public String getValidFrom() {
-		return validFrom;
-	}
-
-	public void setValidFrom(String validFrom) {
-		this.validFrom = validFrom;
-	}
-
-	@JsonProperty("validTo")
-	public String getValidTo() {
-		return validTo;
-	}
-
-	public void setValidTo(String validTo) {
-		this.validTo = validTo;
 	}
 
 

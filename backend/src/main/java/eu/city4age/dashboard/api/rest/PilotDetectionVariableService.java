@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -110,6 +111,7 @@ public class PilotDetectionVariableService {
 		
 		StringBuilder response = new StringBuilder();
 		boolean doneSomething = false;
+		Timestamp validFrom = new Timestamp (System.currentTimeMillis());
 		
 		ConfigureDailyMeasuresDeserializer data=null;
 		try {
@@ -133,7 +135,7 @@ public class PilotDetectionVariableService {
 				StringBuilder sb;
 				if(uir!=null) {
 					if(uir.getPilotCode().equals(pilotCode)) {
-						setConfiguration(pilotCode,configuration,response);
+						setConfiguration(pilotCode,configuration, validFrom, response);
 						doneSomething = true;
 					}
 					else {
@@ -173,32 +175,19 @@ public class PilotDetectionVariableService {
 
 	}
 
-	private void setConfiguration(String pilotCode,Configuration configuration, StringBuilder response) throws ConfigurationValidityDateException, MissingKeyException {
+	private void setConfiguration(String pilotCode,Configuration configuration, Timestamp validFrom, StringBuilder response) throws ConfigurationValidityDateException, MissingKeyException {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		ConfigurationCounter confCounter = new ConfigurationCounter();
 		
-		String validFromInString = configuration.getValidFrom();
-		String validToInString = configuration.getValidTo();
-		Date validFrom;
-		Date validTo;
-
-		try {
-			validFrom = formatter.parse(validFromInString);
-			validTo = formatter.parse(validToInString);
-		} catch (ParseException ex) {
-			throw new ConfigurationValidityDateException();
-		}
-		
-
-			Pilot pilot = pilotRepository.findByPilotCode(pilotCode);
-			if(pilot.equals(null)) {
-				throw new MissingKeyException(
-						"MissingKeyException:\n\tName for property : pilotCode(pilot_code): "+pilotCode+"\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
+		Pilot pilot = pilotRepository.findByPilotCode(pilotCode);
+		if(pilot.equals(null)) {
+			throw new MissingKeyException(
+					"MissingKeyException:\n\tName for property : pilotCode(pilot_code): "+pilotCode+"\n\tin JSON file doesn't match to any key\n\tin corresponding table: pilot.\n\t");
 			}
 						
-			pilot.setLatestConfigurationUpdate(new Date());
-			pilotRepository.saveWithoutFlush(pilot);
+		pilot.setLatestConfigurationUpdate(validFrom);
+		pilotRepository.saveWithoutFlush(pilot);
 		
 		List<PilotDetectionVariable> currPilotRepository = pilotDetectionVariableRepository.findByPilotCodeOrderByDetectionVariableId(pilotCode);
 
@@ -210,7 +199,7 @@ public class PilotDetectionVariableService {
 			DetectionVariable ovlDetectionVariable = findDetectionVariableOfType(configuration.getName(),
 					DetectionVariableType.OVL);
 
-			createOrUpdatePilotDetectionVariable(gfgDetectionVariable, ovlDetectionVariable, validFrom, validTo,
+			createOrUpdatePilotDetectionVariable(gfgDetectionVariable, ovlDetectionVariable, validFrom,
 					pilotCode, group.getFormula(), group.getWeight(), confCounter, currPilotRepository);
 
 			for (Gef factor : group.getFactors()) {
@@ -219,7 +208,7 @@ public class PilotDetectionVariableService {
 						DetectionVariableType.GEF);
 
 				createOrUpdatePilotDetectionVariable(gefDetectionVariable, gfgDetectionVariable, validFrom,
-						validTo, pilotCode, factor.getFormula(), factor.getWeight(), confCounter, currPilotRepository);
+						pilotCode, factor.getFormula(), factor.getWeight(), confCounter, currPilotRepository);
 
 				for (Ges subFactor : factor.getSubFactors()) {
 					
@@ -227,7 +216,7 @@ public class PilotDetectionVariableService {
 							DetectionVariableType.GES);
 					
 					createOrUpdatePilotDetectionVariable(gesDetectionVariable, gefDetectionVariable, validFrom,
-							validTo, pilotCode, subFactor.getFormula(), subFactor.getWeight(), confCounter, currPilotRepository);
+							pilotCode, subFactor.getFormula(), subFactor.getWeight(), confCounter, currPilotRepository);
 
 					for (Mea measure : subFactor.getMeasures()) {
 						
@@ -235,7 +224,7 @@ public class PilotDetectionVariableService {
 								DetectionVariableType.MEA);
 						
 						createOrUpdatePilotDetectionVariable(meaDetectionVariable, gesDetectionVariable,
-								validFrom, validTo, pilotCode, emptyString, measure.getWeight(), confCounter, currPilotRepository);
+								validFrom, pilotCode, emptyString, measure.getWeight(), confCounter, currPilotRepository);
 											
 						for (Nui nui : measure.getNuis()) {
 							
@@ -243,32 +232,35 @@ public class PilotDetectionVariableService {
 									DetectionVariableType.NUI);
 														
 							createOrUpdatePilotDetectionVariable(nuiDetectionVariable, gesDetectionVariable,
-									validFrom, validTo, pilotCode, emptyString, nui.getWeight(), confCounter, currPilotRepository);
+									validFrom, pilotCode, emptyString, nui.getWeight(), confCounter, currPilotRepository);
 
 							createOrUpdatePilotDetectionVariable(meaDetectionVariable, nuiDetectionVariable,
-									validFrom, validTo, pilotCode, nui.getFormula(), nui.getWeight(), confCounter, currPilotRepository);
+									validFrom, pilotCode, nui.getFormula(), nui.getWeight(), confCounter, currPilotRepository);
 						}
 					}
 				}
 			}
 		}
 		
-		response.append("\n\tNumber of rows only For Pilot Code: ");
+		response.append("\n\tNumber of rows for Pilot: ");
 		response.append(pilotCode);
 		
-		response.append("\n\tValid From Date: ");
-		response.append(validFrom);
+		response.append("\n\tafter configuration update done on: ");
+		response.append(validFrom).append (" UTC");
 		
-		response.append(" : \n\tNumber of inserted rows from configuration file is: ");
+		response.append(" : \n\tNumber of inserted rows in configuration is: ");
 		response.append(confCounter.getInserted());
 		
-		response.append("\n\tNumber of updated rows from configuration file is: ");
+		response.append("\n\tNumber of updated rows in configuration is: ");
 		response.append(confCounter.getUpdated());
 		
-		response.append("\n\tNumber of deleted rows from configuration file is: ");
+		response.append("\n\tNumber of inactive rows in configuration is: ");
 		response.append(currPilotRepository.size());
 		
-		for (PilotDetectionVariable pdv : currPilotRepository) pilotDetectionVariableRepository.delete(pdv);
+		for (PilotDetectionVariable pdv : currPilotRepository) {
+			pdv.setValidTo(validFrom);
+			pilotDetectionVariableRepository.saveWithoutFlush(pdv);
+		}
 
 		response.append("\n\tNumber of rows in DB after update is: ");
 		response.append(pilotDetectionVariableRepository.count());
@@ -288,8 +280,8 @@ public class PilotDetectionVariableService {
 		return dv;
 	}
 
-	private void createOrUpdatePilotDetectionVariable(DetectionVariable dv, DetectionVariable ddv, Date validFrom,
-			Date validTo, String pilotCode, String formula, BigDecimal weight, ConfigurationCounter cfc,
+	private void createOrUpdatePilotDetectionVariable(DetectionVariable dv, DetectionVariable ddv, Timestamp validFrom,
+			String pilotCode, String formula, BigDecimal weight, ConfigurationCounter cfc,
 			List<PilotDetectionVariable> currList) {
 		
 		long dvID = dv.getId();
@@ -297,20 +289,22 @@ public class PilotDetectionVariableService {
 		int index = 0;
 		if (currList.size() > 0) {
 			for (PilotDetectionVariable pdv : currList) {
+				
 				if (pdv.getDetectionVariable().getId() == dvID && 
 						pdv.getDerivedDetectionVariable().getId() == ddvID) {
+					
 					if (pdv.getDerivationWeight().compareTo(weight) != 0
 							|| !pdv.getFormula().equals(formula)
-							|| pdv.getValidFrom().compareTo(validFrom) != 0
-							|| pdv.getValidTo().compareTo(validTo) != 0) {
+							|| pdv.getValidTo() != null) {
 					
 						pdv.setFormula(formula);
 						pdv.setDerivationWeight(weight);
 						pdv.setValidFrom(validFrom);
-						pdv.setValidTo(validTo);
+						pdv.setValidTo(null);
 						cfc.incrementUpdated();
 						pilotDetectionVariableRepository.saveWithoutFlush(pdv);								
 					}
+					
 					currList.remove(index);
 					return;				
 				}
@@ -319,13 +313,13 @@ public class PilotDetectionVariableService {
 		}
 		
 		if (!dv.getDetectionVariableType().toString().equals("MEA") || !ddv.getDetectionVariableType().toString().equals("NUI")) {
-			pilotDetectionVariableRepository.saveWithoutFlush (new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, validTo));
+			pilotDetectionVariableRepository.saveWithoutFlush (new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 			cfc.incrementInserted();
 		}
 		else {
 			PilotDetectionVariable pdv = pilotDetectionVariableRepository.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode, dvID, ddvID);
 			if (pdv == null) {
-				pilotDetectionVariableRepository.saveWithoutFlush (new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, validTo));
+				pilotDetectionVariableRepository.saveWithoutFlush (new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 				cfc.incrementInserted();
 			}
 		}
