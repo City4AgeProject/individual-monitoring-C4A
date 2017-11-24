@@ -2,6 +2,7 @@ package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
@@ -52,7 +53,6 @@ import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.dto.Gfvs;
-import eu.city4age.dashboard.api.pojo.dto.Nuis;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
@@ -311,17 +311,21 @@ public class MeasuresService {
 		List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
 		logger.info("startOfMonth: " + startOfMonth);
 
-		List<Nuis> nuisList = variationMeasureValueRepository.doAllNuis(startOfMonth, endOfMonth);
+		List<Object[]> nuisList = variationMeasureValueRepository.doAllNuis(startOfMonth, endOfMonth);
+		
+		logger.info("size nuisList: " + nuisList.size());
 
 		if(!nuisList.isEmpty() && nuisList.size() != 0) {
 			
 			int i = 0;
 			int batchSize = 20;
 
-			for (Nuis nui:nuisList) {
+			for (Object[] nui:nuisList) {
+				logger.info("nui[0]: " + nui[0]);
+				logger.info("nui[1]: " + nui[1]);
+				logger.info("nui[2]: " + nui[2]);
 
-				BigDecimal nuiValue = nui.getNuiValue();
-				NumericIndicatorValue create1Nui = create1Nui(nui.getUserId(), nui.getNuiDvId(), nuiValue, startOfMonth);
+				NumericIndicatorValue create1Nui = create1Nui((BigInteger) nui[0], (Short) nui[1], (Double) nui[2], startOfMonth);
 			
 				nuis.add(create1Nui);
 				
@@ -343,12 +347,17 @@ public class MeasuresService {
 
 	}
 
-	private NumericIndicatorValue create1Nui(Long userId, Long nuiDvId, BigDecimal nuiValue, Timestamp startOfMonth) {
+	private NumericIndicatorValue create1Nui(BigInteger userId, Short nuiDvId, Double nuiValue, Timestamp startOfMonth) {
+		logger.info("create1Nui");
+		logger.info("userId: ", userId);
+		logger.info("nuiDvId: ", nuiDvId);
+		logger.info("nuiValue: ", nuiValue);
+		
 		NumericIndicatorValue nui = new NumericIndicatorValue();
 		if (nuiValue != null) {
 			nui.setNuiValue(nuiValue);
 		} else {
-			nui.setNuiValue(new BigDecimal(0));
+			nui.setNuiValue(new Double(0));
 		}
 		nui.setUserInRoleId(userId);
 		nui.setDetectionVariableId(nuiDvId);

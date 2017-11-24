@@ -94,7 +94,7 @@ public class ViewNuiValuesPersistedSourceMeaTypesRepositoryTest {
 		nui1.setUserInRole(uir1);
 		nui1.setDetectionVariable(dv2);
 		nui1.setTimeInterval(ti1);
-		nui1.setNuiValue(BigDecimal.valueOf(10.1));
+		nui1.setNuiValue(Double.valueOf(10.1));
 		nuiRepository.save(nui1);
 		
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();

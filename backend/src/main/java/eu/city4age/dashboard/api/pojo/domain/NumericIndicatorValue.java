@@ -2,6 +2,7 @@ package eu.city4age.dashboard.api.pojo.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,7 +74,7 @@ public class NumericIndicatorValue implements Serializable {
 	private DetectionVariable detectionVariable;
 	
 	@Column(name = "nui_type_id")
-	private Long detectionVariableId;
+	private Short detectionVariableId;
 
 	@JsonView(View.NUIView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -86,11 +87,11 @@ public class NumericIndicatorValue implements Serializable {
 	private UserInRole userInRole;
 	
 	@Column(name = "user_in_role_id")
-	private Long userInRoleId;
+	private BigInteger userInRoleId;
 	
 	@JsonView(View.NUIView.class)
 	@Column(name = "nui_value", precision = 20, scale = 8)
-	private BigDecimal nuiValue;
+	private Double nuiValue;
 
 	@Column(name = "data_source_type", length = 1000)
 	private String dataSourceType;
@@ -104,7 +105,7 @@ public class NumericIndicatorValue implements Serializable {
 	}
 
 	public NumericIndicatorValue(String dataSourceType, DetectionVariable detectionVariable,
-			TimeInterval timeInterval, BigDecimal nuiValue) {
+			TimeInterval timeInterval, Double nuiValue) {
 
 		this.dataSourceType = dataSourceType;
 		this.detectionVariable = detectionVariable;
@@ -113,7 +114,7 @@ public class NumericIndicatorValue implements Serializable {
 	}
 
 	public NumericIndicatorValue(DetectionVariable detectionVariable, String dataSourceType,
-			TimeInterval timeInterval, UserInRole userInRole, BigDecimal nuiValue, 
+			TimeInterval timeInterval, UserInRole userInRole, Double nuiValue, 
 			Set<InterActivityBehaviourVariation> interActivityBehaviourVariations) {
 
 		this.dataSourceType = dataSourceType;
@@ -132,11 +133,11 @@ public class NumericIndicatorValue implements Serializable {
 		this.detectionVariable = detectionVariable;
 	}
 
-	public Long getDetectionVariableId() {
+	public Short getDetectionVariableId() {
 		return detectionVariableId;
 	}
 
-	public void setDetectionVariableId(Long detectionVariableId) {
+	public void setDetectionVariableId(Short detectionVariableId) {
 		this.detectionVariableId = detectionVariableId;
 	}
 
@@ -156,19 +157,19 @@ public class NumericIndicatorValue implements Serializable {
 		this.userInRole = userInRole;
 	}
 
-	public Long getUserInRoleId() {
+	public BigInteger getUserInRoleId() {
 		return userInRoleId;
 	}
 
-	public void setUserInRoleId(Long userInRoleId) {
+	public void setUserInRoleId(BigInteger userInRoleId) {
 		this.userInRoleId = userInRoleId;
 	}
 
-	public BigDecimal getNuiValue() {
+	public Double getNuiValue() {
 		return this.nuiValue;
 	}
 
-	public void setNuiValue(BigDecimal nuiValue) {
+	public void setNuiValue(Double nuiValue) {
 		this.nuiValue = nuiValue;
 	}
 

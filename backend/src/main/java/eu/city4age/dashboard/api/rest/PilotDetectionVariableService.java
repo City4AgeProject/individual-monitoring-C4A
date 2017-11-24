@@ -2,9 +2,6 @@ package eu.city4age.dashboard.api.rest;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -177,7 +174,6 @@ public class PilotDetectionVariableService {
 
 	private void setConfiguration(String pilotCode,Configuration configuration, Timestamp validFrom, StringBuilder response) throws ConfigurationValidityDateException, MissingKeyException {
 
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		ConfigurationCounter confCounter = new ConfigurationCounter();
 		
 		Pilot pilot = pilotRepository.findByPilotCode(pilotCode);

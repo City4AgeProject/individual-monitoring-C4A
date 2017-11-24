@@ -117,7 +117,7 @@ public class NUIRepositoryTest {
 
 		NumericIndicatorValue nui1 = new NumericIndicatorValue();
 		nui1.setId(1L);
-		nui1.setNuiValue(new BigDecimal(0));
+		nui1.setNuiValue(new Double(0));
 		nui1.setDetectionVariable(dv2);
 		nui1.setUserInRole(uir1);
 		nui1.setTimeInterval(ti1);
@@ -125,7 +125,7 @@ public class NUIRepositoryTest {
 
 		NumericIndicatorValue nui2 = new NumericIndicatorValue();
 		nui2.setId(2L);
-		nui2.setNuiValue(new BigDecimal(1));
+		nui2.setNuiValue(new Double(1));
 		nui2.setDetectionVariable(dv2);
 		nui2.setUserInRole(uir1);
 		nui2.setTimeInterval(ti2);
@@ -133,7 +133,7 @@ public class NUIRepositoryTest {
 		
 		NumericIndicatorValue nui3 = new NumericIndicatorValue();
 		nui3.setId(3L);
-		nui3.setNuiValue(new BigDecimal(2));
+		nui3.setNuiValue(new Double(2));
 		nui3.setDetectionVariable(dv2);
 		nui3.setUserInRole(uir2);
 		nui3.setTimeInterval(ti1);
@@ -141,7 +141,7 @@ public class NUIRepositoryTest {
 		
 		NumericIndicatorValue nui4 = new NumericIndicatorValue();
 		nui4.setId(4L);
-		nui4.setNuiValue(new BigDecimal(3));
+		nui4.setNuiValue(new Double(3));
 		nui4.setDetectionVariable(dv2);
 		nui4.setUserInRole(uir3);
 		nui4.setTimeInterval(ti2);
@@ -149,7 +149,7 @@ public class NUIRepositoryTest {
 		
 		NumericIndicatorValue nui5 = new NumericIndicatorValue();
 		nui5.setId(5L);
-		nui5.setNuiValue(new BigDecimal(4));
+		nui5.setNuiValue(new Double(4));
 		nui5.setDetectionVariable(dv1);
 		nui5.setUserInRole(uir1);
 		nui5.setTimeInterval(ti2);
@@ -231,7 +231,7 @@ public class NUIRepositoryTest {
 		
 		NumericIndicatorValue nui1 = new NumericIndicatorValue();
 		nui1.setId(1L);
-		nui1.setNuiValue(new BigDecimal(0));
+		nui1.setNuiValue(new Double(0));
 		nui1.setDetectionVariable(dv2);
 		nui1.setUserInRole(uir1);
 		nui1.setTimeInterval(ti1);
@@ -239,7 +239,7 @@ public class NUIRepositoryTest {
 
 		NumericIndicatorValue nui2 = new NumericIndicatorValue();
 		nui2.setId(2L);
-		nui2.setNuiValue(new BigDecimal(1));
+		nui2.setNuiValue(new Double(1));
 		nui2.setDetectionVariable(dv2);
 		nui2.setUserInRole(uir1);
 		nui2.setTimeInterval(ti2);
@@ -247,7 +247,7 @@ public class NUIRepositoryTest {
 		
 		NumericIndicatorValue nui3 = new NumericIndicatorValue();
 		nui3.setId(3L);
-		nui3.setNuiValue(new BigDecimal(2));
+		nui3.setNuiValue(new Double(2));
 		nui3.setDetectionVariable(dv2);
 		nui3.setUserInRole(uir2);
 		nui3.setTimeInterval(ti1);
@@ -255,7 +255,7 @@ public class NUIRepositoryTest {
 		
 		NumericIndicatorValue nui4 = new NumericIndicatorValue();
 		nui4.setId(4L);
-		nui4.setNuiValue(new BigDecimal(3));
+		nui4.setNuiValue(new Double(3));
 		nui4.setDetectionVariable(dv2);
 		nui4.setUserInRole(uir3);
 		nui4.setTimeInterval(ti2);
@@ -263,7 +263,7 @@ public class NUIRepositoryTest {
 		
 		NumericIndicatorValue nui5 = new NumericIndicatorValue();
 		nui5.setId(5L);
-		nui5.setNuiValue(new BigDecimal(4));
+		nui5.setNuiValue(new Double(4));
 		nui5.setDetectionVariable(dv1);
 		nui5.setUserInRole(uir1);
 		nui5.setTimeInterval(ti2);

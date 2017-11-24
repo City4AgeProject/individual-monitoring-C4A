@@ -1,17 +1,11 @@
 package eu.city4age.dashboard.api.persist;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.typeCompatibleWith;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,7 +29,6 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
-import eu.city4age.dashboard.api.pojo.dto.Nuis;
 import eu.city4age.dashboard.api.rest.MeasuresService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -209,7 +202,7 @@ public class VariationMeasureValueRepositoryTest {
 		vmv1.setMeasureValue(new BigDecimal(5));
 		variationMeasureValueRepository.save(vmv1);
 	
-		List<Nuis> result = variationMeasureValueRepository.doAllNuis(startOfMonth, endOfMonth);
+		List<Object[]> result = variationMeasureValueRepository.doAllNuis(startOfMonth, endOfMonth);
 		
 		Assert.assertNotNull(result);
 		
@@ -264,7 +257,7 @@ public class VariationMeasureValueRepositoryTest {
 		vmv2.setMeasureValue(new BigDecimal(4));
 		variationMeasureValueRepository.save(vmv2);
 
-		List<Nuis> result = variationMeasureValueRepository.doAllNuis(startOfMonth, endOfMonth);
+		List<Object[]> result = variationMeasureValueRepository.doAllNuis(startOfMonth, endOfMonth);
 		
 		Assert.assertNotNull(result);
 		
