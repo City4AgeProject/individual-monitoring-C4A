@@ -5,31 +5,14 @@ import java.util.Date;
 
 import javax.annotation.concurrent.Immutable;
 import javax.persistence.Column;
-import javax.persistence.ColumnResult;
-import javax.persistence.ConstructorResult;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.SqlResultSetMapping;
-import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 
-import eu.city4age.dashboard.api.pojo.dto.Gfvs;
 
-@SqlResultSetMappings(value = { @SqlResultSetMapping(name = "gfvs", classes = {
-				@ConstructorResult(targetClass = Gfvs.class,
-			    columns = { @ColumnResult(name = "uir_id", type = Long.class),
-			    		@ColumnResult(name = "ddv_id", type = Long.class),
-			    		@ColumnResult(name = "ges_value", type = BigDecimal.class),
-			    		@ColumnResult(name = "weight", type = BigDecimal.class)}) })
-})
-@NamedNativeQueries(value = {
-	@NamedNativeQuery(name = "ViewGefValuesPersistedSourceGesTypes.doAllGfvs", resultSetMapping = "gfvs", query = "WITH subq1 AS ( SELECT user_in_role_id AS uir_id, derived_detection_variable_id AS ddv_id, SUM (derivation_weight) AS sum_weight, SUM (gef_value*derivation_weight) AS sum_ges_value_weight FROM vw_gef_values_persisted_source_ges_types WHERE interval_start >= :startOfMonth AND interval_start <= :endOfMonth AND typical_period = 'MON' AND derived_detection_variable_type = :detectionVariableType GROUP BY ( user_in_role_id, derived_detection_variable_id ) ORDER BY (user_in_role_id) ), subq2 AS ( SELECT user_in_role_id AS uir_id, derivation_weight, detection_variable_id AS dv_id FROM vw_gef_values_persisted_source_ges_types WHERE interval_start >= :startOfMonth AND interval_start <= :endOfMonth AND typical_period = 'MON' AND detection_variable_type = :detectionVariableType )SELECT subq1.uir_id, subq1.ddv_id, subq1.sum_ges_value_weight/subq1.sum_weight as ges_value, subq2.derivation_weight as weight FROM subq1 LEFT JOIN subq2 ON subq1.uir_id = subq2.uir_id AND subq1.ddv_id = subq2.dv_id ORDER BY subq1.uir_id,subq1.ddv_id")
-})
 @Entity
 @Table(name = "vw_gef_values_persisted_source_ges_types")
 @Immutable

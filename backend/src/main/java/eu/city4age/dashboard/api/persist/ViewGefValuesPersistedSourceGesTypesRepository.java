@@ -10,12 +10,11 @@ import org.springframework.stereotype.Repository;
 import eu.city4age.dashboard.api.persist.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefValuesPersistedSourceGesTypes;
-import eu.city4age.dashboard.api.pojo.dto.Gfvs;
 
 @Repository(value = "viewGefValuesPersistedSourceGesTypesRepository")
 public interface ViewGefValuesPersistedSourceGesTypesRepository extends GenericRepository<ViewGefValuesPersistedSourceGesTypes, Long> {
 
 	@Query(nativeQuery = true)
-	List<Gfvs> doAllGfvs(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("detectionVariableType") DetectionVariableType detectionVariableType);
+	List<Object[]> doAllGfvs(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("detectionVariableType") DetectionVariableType detectionVariableType);
 
 }

@@ -330,7 +330,8 @@ function(oj, ko, $) {
 			console.log('drill on anagraph-assessment-view');                      
                         self.props.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
                                                    
-                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);                            console.log('selected det is : ' + JSON.stringify(selectedDetectionVariable));
+                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);
+                        console.log('selected det is : ' + JSON.stringify(selectedDetectionVariable));
                         if(selectedDetectionVariable.detectionVariableType === 'GEF'){ 
                             console.log('selected GEF');                                                                                                                                                                
                             sessionStorage.setItem("gefObj", JSON.stringify(selectedDetectionVariable));      

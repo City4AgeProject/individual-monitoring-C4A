@@ -47,6 +47,9 @@ public class GeriatricFactorValue implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	@Column(name = "user_in_role_id")
+	private Long userInRoleId;
 
 	@JsonView(View.TimeIntervalView.class)
 	@Column(name = "gef_value")
@@ -57,13 +60,15 @@ public class GeriatricFactorValue implements Serializable {
 	@JoinColumn(name = "time_interval_id", referencedColumnName = "id")
 	private TimeInterval timeInterval;
 	
+	@Column(name = "gef_type_id")
+	private Long detectionVariableId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "gef_type_id")
+	@JoinColumn(name = "gef_type_id", insertable = false, updatable = false)
 	private DetectionVariable detectionVariable;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_in_role_id")
+	@JoinColumn(name = "user_in_role_id", insertable = false, updatable = false)
 	private UserInRole userInRole;
 
 	@Column(name = "data_source_type")
@@ -163,6 +168,22 @@ public class GeriatricFactorValue implements Serializable {
 
 	public void setSourceEvidence(Set<SourceEvidence> sourceEvidence) {
 		this.sourceEvidence = sourceEvidence;
+	}
+
+	public Long getUserInRoleId() {
+		return userInRoleId;
+	}
+
+	public void setUserInRoleId(Long userInRoleId) {
+		this.userInRoleId = userInRoleId;
+	}
+
+	public Long getDetectionVariableId() {
+		return detectionVariableId;
+	}
+
+	public void setDetectionVariableId(Long detectionVariableId) {
+		this.detectionVariableId = detectionVariableId;
 	}
 
 }

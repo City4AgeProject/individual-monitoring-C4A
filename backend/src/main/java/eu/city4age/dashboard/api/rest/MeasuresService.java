@@ -37,7 +37,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.persist.DetectionVariableRepository;
 import eu.city4age.dashboard.api.persist.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.persist.NUIRepository;
 import eu.city4age.dashboard.api.persist.PilotDetectionVariableRepository;
@@ -53,7 +52,6 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
-import eu.city4age.dashboard.api.pojo.dto.Gfvs;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
@@ -80,9 +78,6 @@ public class MeasuresService {
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@Autowired
-	private DetectionVariableRepository detectionVariableRepository;
-
-	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
 	@Autowired
@@ -105,13 +100,13 @@ public class MeasuresService {
 
 	@Autowired
 	private ViewGefValuesPersistedSourceGesTypesRepository viewGefValuesPersistedSourceGesTypesRepository;
-	
+
 	@Autowired
 	Environment environment;
 
 	@Bean
 	public RestTemplate restTemplate() {
-	    return new RestTemplate();
+		return new RestTemplate();
 	}
 
 	@GET
@@ -120,8 +115,8 @@ public class MeasuresService {
 	@JsonView(View.VariationMeasureValueView.class)
 	@Path("getDailyMeasures/userInRoleId/{userInRoleId}/gesId/{gesId}")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "userInRoleId", value = "id of care recipient", required = false, dataType = "long", paramType = "path", defaultValue = "1"),
-			@ApiImplicitParam(name = "gesId", value = "id of geriatric subfactor", required = false, dataType = "long", paramType = "path", defaultValue = "2") })
+		@ApiImplicitParam(name = "userInRoleId", value = "id of care recipient", required = false, dataType = "long", paramType = "path", defaultValue = "1"),
+		@ApiImplicitParam(name = "gesId", value = "id of geriatric subfactor", required = false, dataType = "long", paramType = "path", defaultValue = "2") })
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = VariationMeasureValue.class),
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
 	public Response getDailyMeasures(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
@@ -137,7 +132,7 @@ public class MeasuresService {
 		return JerseyResponse.build(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures));
 
 	}
-	
+
 	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
 	public void cronJob() throws UnknownHostException {
 		String host = InetAddress.getLocalHost().getHostAddress();
@@ -182,36 +177,39 @@ public class MeasuresService {
 		}
 	}
 
-	
+
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
 			Timestamp endOfMonth) {
 
 		logger.info("computeFor1Month: " + factor);
 
-			List<Gfvs> list = viewGefValuesPersistedSourceGesTypesRepository.doAllGfvs(startOfMonth, endOfMonth, factor);
-		
-			if (list != null && list.size() > 0) {
-				
-				int i = 0;
-				int batchSize = 20;
-				
-				for(Gfvs ges: list) {
-					
-					createGFV(ges.getDdvId(), ges.getGesValue(), ges.getWeight(), startOfMonth, endOfMonth, ges.getUirId());
-					
-					i++;
-					if (i % batchSize == 0) {
-			            //flush a batch of inserts and release memory
-			            geriatricFactorRepository.flush();
-			            geriatricFactorRepository.clear();
-			        }
-				
+		List<Object[]> list = viewGefValuesPersistedSourceGesTypesRepository.doAllGfvs(startOfMonth, endOfMonth, factor);
+
+		if (list != null && list.size() > 0) {
+
+			int i = 0;
+			int batchSize = 20;
+
+			for(Object[] ges: list) {
+				logger.info("ddvId gfvs: " + ges[1]);
+				logger.info("gesValue gfvs: " + ges[2]);
+				logger.info("userId gfvs: " + ges[0]);
+
+				createGFV((Short) ges[1], (BigDecimal) ges[2], (BigDecimal) ges[3], startOfMonth, endOfMonth, (BigInteger) ges[0]);
+
+				i++;
+				if (i % batchSize == 0) {
+					//flush a batch of inserts and release memory
+					geriatricFactorRepository.flush();
+					geriatricFactorRepository.clear();
 				}
-				
-				geriatricFactorRepository.flush();
-	            geriatricFactorRepository.clear();
-	   
+
 			}
+
+			geriatricFactorRepository.flush();
+			geriatricFactorRepository.clear();
+
+		}
 
 	}
 
@@ -233,36 +231,38 @@ public class MeasuresService {
 
 	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth) {
 		logger.info("computeGESsFor1Month");
-		
-		List<Gfvs> gess = nuiRepository.doAllGess(startOfMonth, endOfMonth);
+
+		List<Object[]> gess = nuiRepository.doAllGess(startOfMonth, endOfMonth);
 
 		if(gess != null && gess.size() > 0) {
-			
+
 			int i = 0;
 			int batchSize = 20;
 
-			for (Gfvs ges : gess) {
-				if(ges.getGesValue() != null) {
-					logger.info("gesValue before createGFG: " + ges.getGesValue());
-					createGFV(ges.getDdvId(), ges.getGesValue(), ges.getWeight(), startOfMonth, endOfMonth, ges.getUirId());
-				
+			for (Object[] ges : gess) {
+				if(ges[3] != null) {
+					logger.info("ddvId gess: " + ges[1]);
+					logger.info("gesValue gess: " + ges[3]);
+					logger.info("userId gess: " + ges[0]);
+					createGFV((Short) ges[1], (BigDecimal) ges[3], (BigDecimal) ges[2], startOfMonth, endOfMonth, (BigInteger) ges[0]);
+
 					i++;
 					if (i % batchSize == 0) {
-			            //flush a batch of inserts and release memory
-			            geriatricFactorRepository.flush();
-			            geriatricFactorRepository.clear();
-			        }
+						//flush a batch of inserts and release memory
+						geriatricFactorRepository.flush();
+						geriatricFactorRepository.clear();
+					}
 
 				}
 			}
-			
+
 			geriatricFactorRepository.flush();
-            geriatricFactorRepository.clear();
+			geriatricFactorRepository.clear();
 
 		}
 
 	}
-	
+
 	private void setVariablesComputedForAllPilots() {
 		List<Pilot> pilots = pilotRepository.findAll();
 		for(Pilot pilot : pilots)
@@ -270,8 +270,8 @@ public class MeasuresService {
 		pilotRepository.save(pilots);
 	}
 
-	private GeriatricFactorValue createGFV(Long dvId, BigDecimal gesValue, BigDecimal weight, Timestamp startOfMonth,
-			Timestamp endOfMonth, Long userId) {
+	private GeriatricFactorValue createGFV(Short dvId, BigDecimal gesValue, BigDecimal weight, Timestamp startOfMonth,
+			Timestamp endOfMonth, BigInteger userId) {
 
 		logger.info("dvId: " + dvId);
 		logger.info("gesValue: " + gesValue);
@@ -280,20 +280,20 @@ public class MeasuresService {
 		logger.info("userId: " + userId);
 
 		TimeInterval ti = getOrCreateTimeInterval(startOfMonth, TypicalPeriod.MONTH);
-		UserInRole uir = userInRoleRepository.findOne(userId);
-		
+		UserInRole uir = userInRoleRepository.findOne(userId.longValue());
+
 		GeriatricFactorValue ges = new GeriatricFactorValue();
 		ges.setGefValue(gesValue);
 		ges.setTimeInterval(ti);
-		ges.setDetectionVariable(detectionVariableRepository.findOne(dvId));
-		ges.setUserInRole(uir);
-		
-		if (weight == null) weight = pilotDetectionVariableRepository.findWeightByDetectionVariableAndPilotCodeGesGef(dvId, uir.getPilotCode());
+		ges.setDetectionVariableId(dvId.longValue());
+		ges.setUserInRoleId(userId.longValue());
+
+		if (weight == null) weight = pilotDetectionVariableRepository.findWeightByDetectionVariableAndPilotCodeGesGef(dvId.longValue(), uir.getPilotCode());
 		if (weight == null) weight = new BigDecimal(1);
 		ges.setDerivationWeight(weight);
 
 		geriatricFactorRepository.saveWithoutFlush(ges);
-		
+
 		return ges;
 	}
 
@@ -308,16 +308,16 @@ public class MeasuresService {
 	}
 
 	private List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth) {
-		
+
 		List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
 		logger.info("startOfMonth: " + startOfMonth);
 
 		List<Object[]> nuisList = variationMeasureValueRepository.doAllNuis(startOfMonth, endOfMonth);
-		
+
 		logger.info("size nuisList: " + nuisList.size());
 
 		if(!nuisList.isEmpty() && nuisList.size() != 0) {
-			
+
 			int i = 0;
 			int batchSize = 20;
 
@@ -327,21 +327,21 @@ public class MeasuresService {
 				logger.info("nui[2]: " + nui[2]);
 
 				NumericIndicatorValue create1Nui = create1Nui((BigInteger) nui[0], (Short) nui[1], (Double) nui[2], startOfMonth);
-			
+
 				nuis.add(create1Nui);
-				
+
 				i++;
 				if (i % batchSize == 0) {
-		            //flush a batch of inserts and release memory
-		            nuiRepository.flush();
-		            nuiRepository.clear();
-		        }
+					//flush a batch of inserts and release memory
+					nuiRepository.flush();
+					nuiRepository.clear();
+				}
 
 			}
-			
-            nuiRepository.flush();
-            nuiRepository.clear();
-		
+
+			nuiRepository.flush();
+			nuiRepository.clear();
+
 		}
 
 		return nuis;
@@ -353,7 +353,7 @@ public class MeasuresService {
 		logger.info("userId: ", userId);
 		logger.info("nuiDvId: ", nuiDvId);
 		logger.info("nuiValue: ", nuiValue);
-		
+
 		NumericIndicatorValue nui = new NumericIndicatorValue();
 		if (nuiValue != null) {
 			nui.setNuiValue(nuiValue);
@@ -380,7 +380,7 @@ public class MeasuresService {
 		}
 		return ti;
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("getNuiValues/userInRoleId/{userInRoleId}/detectionVariableId/{detectionVariableId}")
@@ -389,7 +389,7 @@ public class MeasuresService {
 		List<NumericIndicatorValue> nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, detectionVariableId);
 		return JerseyResponse.build(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis));
 	}
-	
+
 	public String mockitoTest() {
 		return "hello";
 	}

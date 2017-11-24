@@ -142,8 +142,8 @@ public class CareRecipientService {
 				if (gef.getDetectionVariable() != null) {
 	
 					detectionvarsparamsList.add(gef.getDetectionVariable());
-					fMap.put(gef.getDetectionVariable().getId(), new ArrayList<Float>());
-					idMap.put(gef.getDetectionVariable().getId(), new ArrayList<Long>());
+					fMap.put(gef.getDetectionVariableId(), new ArrayList<Float>());
+					idMap.put(gef.getDetectionVariableId(), new ArrayList<Long>());
 	
 				}
 	
@@ -163,7 +163,7 @@ public class CareRecipientService {
 
 					gereatricfactparamsList.add(gef);
 
-					if (gef.getDetectionVariable() != null && gef.getDetectionVariable().equals(type)) {
+					if (gef.getDetectionVariableId() != null && gef.getDetectionVariableId().equals(type.getId())) {
 						fMap.get(type.getId()).add(gef.getGefValue().floatValue());
 						idMap.get(type.getId()).add(gef.getId());
 

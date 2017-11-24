@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import eu.city4age.dashboard.api.persist.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
-import eu.city4age.dashboard.api.pojo.dto.Gfvs;
 
 @Repository(value = "nuiRepository")
 public interface NUIRepository extends GenericRepository<NumericIndicatorValue, Long> {
@@ -18,6 +17,6 @@ public interface NUIRepository extends GenericRepository<NumericIndicatorValue, 
 	List<NumericIndicatorValue> getNuisForSelectedGes(@Param("uirId") Long uirId, @Param("dvId") Long dvId);
 
 	@Query(nativeQuery = true)
-	List<Gfvs> doAllGess(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth);
+	List<Object[]> doAllGess(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth);
 
 }

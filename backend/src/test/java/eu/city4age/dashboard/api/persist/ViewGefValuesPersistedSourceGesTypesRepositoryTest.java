@@ -26,7 +26,6 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefValuesPersistedSourceGesTypes;
-import eu.city4age.dashboard.api.pojo.dto.Gfvs;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -140,7 +139,7 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		DetectionVariableType derivedDetectionVariableType = DetectionVariableType.GEF;
 		detectionVariableTypeRepository.save(derivedDetectionVariableType);
 		
-		List<Gfvs> result = viewGefValuesPersistedSourceGesTypesRepository.doAllGfvs(startOfMonth, endOfMonth, derivedDetectionVariableType);
+		List<Object[]> result = viewGefValuesPersistedSourceGesTypesRepository.doAllGfvs(startOfMonth, endOfMonth, derivedDetectionVariableType);
 		
 		Assert.assertNotNull(result);
 		
