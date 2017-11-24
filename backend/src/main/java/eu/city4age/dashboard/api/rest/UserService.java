@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.persist.PilotRepository;
@@ -28,7 +29,7 @@ import eu.city4age.dashboard.api.security.JwtIssuer;
  *
  */
 @Component
-@Transactional("transactionManager")
+@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 @Path(UserService.PATH)
 public class UserService {
     
@@ -41,8 +42,7 @@ public class UserService {
     
     @Autowired
     private PilotRepository pilotRepository;
-    
-    @Transactional("transactionManager")
+
     @GET
     @Path("login/username/{username}/password/{password}")
     @Produces({MediaType.APPLICATION_JSON, "application/javascript"})

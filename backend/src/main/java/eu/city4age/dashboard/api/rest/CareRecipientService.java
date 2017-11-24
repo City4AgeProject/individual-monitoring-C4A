@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.server.JSONP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -73,7 +74,7 @@ import eu.city4age.dashboard.api.security.JwtIssuer;
  * @author EMantziou
  */
 @Component(value = "wsService")
-@Transactional("transactionManager")
+@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 @Path(CareRecipientService.PATH)
 public class CareRecipientService {
 
@@ -105,7 +106,6 @@ public class CareRecipientService {
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@JSONP(queryParam = "callback")
-	@Transactional("transactionManager")
 	@GET
 	@Path("getGroups/careRecipientId/{careRecipientId}/parentFactors/{parentFactors : .+}")
 	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
@@ -221,7 +221,6 @@ public class CareRecipientService {
 
 	}// end method
 
-    @Transactional("transactionManager")
     @GET
     @Path("getCareRecipients")
     @Produces({MediaType.APPLICATION_JSON, "application/javascript"})

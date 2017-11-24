@@ -16,6 +16,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,7 +42,7 @@ import io.swagger.annotations.ApiResponses;
  *
  */
 @Component
-@Transactional("transactionManager")
+@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 @Path(CodebookService.PATH)
 @Api(value = "codebook", produces = "application/json")
 public class CodebookService {
