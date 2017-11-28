@@ -124,7 +124,7 @@ public class AssessmentsService {
 		List<Last5Assessment> l5a = new ArrayList<Last5Assessment>();
 
 		try {
-			l5a = timeIntervalRepository.getLastFiveForDiagram(userInRoleId, parentDetectionVariableId,
+			l5a = timeIntervalRepository.getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId,
 					intervalStartTimestamp, intervalEndTimestamp);
 		} catch (Exception e) {
 			logger.info("getLastFiveForDiagram REST service - query exception: ", e);
@@ -354,13 +354,9 @@ public class AssessmentsService {
 		for (Last5Assessment lfa : lfas) {
 			ojLfa.getGroups().add(new DataIdValue(lfa.getTimeIntervalId(), lfa.getIntervalStart()));
 		}
+		
+		ojLfa.getSeries().add(new Serie("Only", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
 
-		ojLfa.getSeries()
-				.add(new Serie("Alert", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
-		ojLfa.getSeries()
-				.add(new Serie("Warning", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
-		ojLfa.getSeries()
-				.add(new Serie("Comment", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
 
 		for (DataIdValue group : ojLfa.getGroups()) {
 
@@ -368,30 +364,33 @@ public class AssessmentsService {
 
 				if (lfas.get(i).getTimeIntervalId().equals(group.getId())) {
 
-					for (Serie serie : ojLfa.getSeries()) {
-						if (lfas.get(i).getId() != null) {
-							DataIdValueLastFiveAssessment item = new DataIdValueLastFiveAssessment();
-							item.setId(lfas.get(i).getGefId());
-							item.setValue(lfas.get(i).getGefValue().toString());
-							item.getAssessmentObjects().add(lfas.get(i));
+					Serie serie = ojLfa.getSeries().iterator().next();
 
-							for (Last5Assessment lfa : lfas) {
-								if (lfa.getId() != null && lfa.getTimeIntervalId().equals(group.getId())
-										&& lfas.get(i).getGefValue().equals(lfa.getGefValue())
-										&& !lfas.get(i).getId().equals(lfa.getId())) {
+					if (lfas.get(i).getId() != null) {
+						DataIdValueLastFiveAssessment item = new DataIdValueLastFiveAssessment();
+						item.setId(lfas.get(i).getGefId());
+						item.setValue(lfas.get(i).getGefValue().toString());
+						item.getAssessmentObjects().add(lfas.get(i));
 
-									item.getAssessmentObjects().add(lfa);
-								}
+						for (Last5Assessment lfa : lfas) {
+							if (lfa.getId() != null && lfa.getTimeIntervalId().equals(group.getId())
+									&& lfas.get(i).getGefValue().equals(lfa.getGefValue())
+									&& !lfas.get(i).getId().equals(lfa.getId())) {
+
+								item.getAssessmentObjects().add(lfa);
 							}
-
-							serie.getItems().add(item);
 						}
+
+						serie.getItems().add(item);
 					}
+				
 
 				}
 
 			}
 		}
+		
+		ojLfa.setGroups(new HashSet<DataIdValue>());
 
 		return ojLfa;
 

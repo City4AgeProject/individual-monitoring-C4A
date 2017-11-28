@@ -19,7 +19,7 @@ public interface TimeIntervalRepository extends GenericRepository<TimeInterval, 
 	List<TimeInterval> getGroups(@Param("userId") final Long userId, @Param("gefType") final List<DetectionVariableType.Type> parentFactors);
 
 	@Query(nativeQuery = true)
-	List<Last5Assessment> getLastFiveForDiagram(@Param("userInRoleId") final Long userInRoleId, @Param("parentDetectionVariableId") final Long parentDetectionVariableId,
+	List<Last5Assessment> getLast5AssessmentsForDiagramTimeline(@Param("userInRoleId") final Long userInRoleId, @Param("parentDetectionVariableId") final Long parentDetectionVariableId,
 			@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);
 	
 	TimeInterval findByIntervalStartAndTypicalPeriod(Timestamp intervalStart, String typicalPeriod);

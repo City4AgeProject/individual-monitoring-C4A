@@ -208,7 +208,7 @@ public class TimeIntervalRepositoryTest {
 		Timestamp start = Timestamp.valueOf("2015-01-01 00:00:00");
 		Timestamp end = Timestamp.valueOf("2017-01-01 00:00:00");
 
-		List<Last5Assessment> list = timeIntervalRepository.getLastFiveForDiagram(uir1.getId(), ddv1.getId(), start, end); // added
+		List<Last5Assessment> list = timeIntervalRepository.getLast5AssessmentsForDiagramTimeline(uir1.getId(), ddv1.getId(), start, end); // added
 																										// 1L
 																										// for
 																										// parentDetectionVariableId
@@ -237,7 +237,7 @@ public class TimeIntervalRepositoryTest {
 
 		Assert.assertEquals("2017-05-22 12:00:00", list.get(0).getDateAndTime());
 		
-		list = timeIntervalRepository.getLastFiveForDiagram(uir2.getId(), ddv1.getId(), start, end);
+		list = timeIntervalRepository.getLast5AssessmentsForDiagramTimeline(uir2.getId(), ddv1.getId(), start, end);
 		
 		i = 1;
 		for (Iterator <Last5Assessment> l5a = list.iterator(); l5a.hasNext();) {
@@ -259,7 +259,7 @@ public class TimeIntervalRepositoryTest {
 		start = Timestamp.valueOf("2017-01-01 00:00:00");
 		end = Timestamp.valueOf("2018-01-01 00:00:00");
 		
-		list = timeIntervalRepository.getLastFiveForDiagram(uir2.getId(), ddv1.getId(), start, end);
+		list = timeIntervalRepository.getLast5AssessmentsForDiagramTimeline(uir2.getId(), ddv1.getId(), start, end);
 		
 		logger.info("LISTSIZE: " + list.size());
 
