@@ -16,6 +16,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.jpa.RoleRepository;
+import eu.city4age.dashboard.api.jpa.StakeholderRepository;
 import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.Stakeholder;
 

@@ -32,7 +32,7 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import eu.city4age.dashboard.api.config.JerseyInitialization;
-import eu.city4age.dashboard.api.persist.generic.GenericRepositoryFactoryBean;
+import eu.city4age.dashboard.api.jpa.generic.GenericRepositoryFactoryBean;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
@@ -43,9 +43,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class,
 		DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class })
 @EnableSwagger2
-@ComponentScan(basePackages = { "eu.city4age.dashboard.api.persist", "eu.city4age.dashboard.api.rest",
+@ComponentScan(basePackages = { "eu.city4age.dashboard.api.jpa", "eu.city4age.dashboard.api.rest",
 		"eu.city4age.dashboard.api.config" })
-@EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.persist", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
+@EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.jpa", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
 @EnableScheduling
 /**
  * Main configuration of spring-boot.

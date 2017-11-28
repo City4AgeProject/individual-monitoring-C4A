@@ -28,9 +28,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.persist.ActivityRepository;
-import eu.city4age.dashboard.api.persist.MTestingReadingsRepository;
-import eu.city4age.dashboard.api.persist.UserInRoleRepository;
+import eu.city4age.dashboard.api.jpa.ActivityRepository;
+import eu.city4age.dashboard.api.jpa.MTestingReadingsRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.Activity;
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;

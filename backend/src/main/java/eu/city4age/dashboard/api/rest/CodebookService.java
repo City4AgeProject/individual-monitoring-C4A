@@ -23,8 +23,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.persist.RiskStatusRepository;
-import eu.city4age.dashboard.api.persist.RoleRepository;
+import eu.city4age.dashboard.api.jpa.RiskStatusRepository;
+import eu.city4age.dashboard.api.jpa.RoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.AbstractBaseEntity;
 import eu.city4age.dashboard.api.pojo.domain.RiskStatus;
 import eu.city4age.dashboard.api.pojo.domain.Role;

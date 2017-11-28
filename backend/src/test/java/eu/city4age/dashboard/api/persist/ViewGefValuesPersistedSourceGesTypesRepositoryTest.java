@@ -19,6 +19,15 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
+import eu.city4age.dashboard.api.jpa.DetectionVariableTypeRepository;
+import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
+import eu.city4age.dashboard.api.jpa.NUIRepository;
+import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
+import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.jpa.ViewGefValuesPersistedSourceGesTypesRepository;
+import eu.city4age.dashboard.api.jpa.ViewNuiValuesPersistedSourceMeaTypesRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
@@ -125,25 +134,6 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(2, result.size());
-		
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testDoAllGess() {
-		
-		Timestamp startOfMonth = Timestamp.valueOf("2016-08-01 00:00:00");
-		Timestamp endOfMonth = Timestamp.valueOf("2016-09-01 00:00:00");
-		
-		DetectionVariableType derivedDetectionVariableType = DetectionVariableType.GEF;
-		detectionVariableTypeRepository.save(derivedDetectionVariableType);
-		
-		List<Object[]> result = viewGefValuesPersistedSourceGesTypesRepository.doAllGfvs(startOfMonth, endOfMonth, derivedDetectionVariableType);
-		
-		Assert.assertNotNull(result);
-		
-		Assert.assertEquals(0, result.size());
 		
 	}
 

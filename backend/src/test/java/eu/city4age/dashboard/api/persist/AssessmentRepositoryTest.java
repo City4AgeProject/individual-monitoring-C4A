@@ -24,6 +24,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.jpa.AssessedGefValuesRepository;
+import eu.city4age.dashboard.api.jpa.AssessmentRepository;
+import eu.city4age.dashboard.api.jpa.AudienceRolesRepository;
+import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
+import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
+import eu.city4age.dashboard.api.jpa.RoleRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Role;

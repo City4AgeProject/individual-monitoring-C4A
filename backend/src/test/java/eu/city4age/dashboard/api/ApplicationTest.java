@@ -28,14 +28,14 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import eu.city4age.dashboard.api.persist.generic.GenericRepositoryFactoryBean;
+import eu.city4age.dashboard.api.jpa.generic.GenericRepositoryFactoryBean;
 
 
 @Profile("test")
 @EnableAutoConfiguration
 @Configuration
 @ComponentScan(basePackages = { "eu.city4age.dashboard.api.persist", "eu.city4age.dashboard.api.rest" })
-@EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.persist", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
+@EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.jpa", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
 @PropertySource("classpath:application-test.yml")
 
 public class ApplicationTest {

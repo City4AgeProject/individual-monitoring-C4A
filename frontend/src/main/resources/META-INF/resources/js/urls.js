@@ -11,7 +11,7 @@ var CODEBOOK_SELECT = root + 'codebook/selectTable';
 
 var ASSESSMENT_FOR_DATA_SET = root + 'assessment/findForSelectedDataSet';
 var ASSESSMENT_ADD_FOR_DATA_SET = root + 'assessment/addForSelectedDataSet';
-var ASSESSMENT_LAST_FIVE_FOR_DIAGRAM = root + 'assessment/getLastFiveForDiagram';
+var ASSESSMENT_LAST_FIVE_FOR_DIAGRAM = root + 'assessment/getLast5AssessmentsForDiagramTimeline';
 
 var CARE_RECIPIENT_FOR_ID = root + 'careRecipient/findOne';
 var CARE_RECIPIENT_ALL = root + "careRecipient/getCareRecipients";

@@ -19,6 +19,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.jpa.AssessedGefValuesRepository;
+import eu.city4age.dashboard.api.jpa.AssessmentRepository;
+import eu.city4age.dashboard.api.jpa.AudienceRolesRepository;
+import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
+import eu.city4age.dashboard.api.jpa.RoleRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;

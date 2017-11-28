@@ -14,6 +14,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.jpa.RiskStatusRepository;
 import eu.city4age.dashboard.api.pojo.domain.RiskStatus;
 
 @RunWith(SpringJUnit4ClassRunner.class)

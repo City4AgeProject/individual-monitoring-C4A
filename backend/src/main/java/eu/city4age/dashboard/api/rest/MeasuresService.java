@@ -37,14 +37,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.persist.GeriatricFactorRepository;
-import eu.city4age.dashboard.api.persist.NUIRepository;
-import eu.city4age.dashboard.api.persist.PilotDetectionVariableRepository;
-import eu.city4age.dashboard.api.persist.PilotRepository;
-import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
-import eu.city4age.dashboard.api.persist.UserInRoleRepository;
-import eu.city4age.dashboard.api.persist.VariationMeasureValueRepository;
-import eu.city4age.dashboard.api.persist.ViewGefValuesPersistedSourceGesTypesRepository;
+import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
+import eu.city4age.dashboard.api.jpa.NUIRepository;
+import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
+import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
+import eu.city4age.dashboard.api.jpa.PilotRepository;
+import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
@@ -99,8 +99,8 @@ public class MeasuresService {
 	private UserInRoleRepository userInRoleRepository;
 
 	@Autowired
-	private ViewGefValuesPersistedSourceGesTypesRepository viewGefValuesPersistedSourceGesTypesRepository;
-
+	private NativeQueryRepository nativeQueryRepository;
+	
 	@Autowired
 	Environment environment;
 
@@ -183,7 +183,7 @@ public class MeasuresService {
 
 		logger.info("computeFor1Month: " + factor);
 
-		List<Object[]> list = viewGefValuesPersistedSourceGesTypesRepository.doAllGfvs(startOfMonth, endOfMonth, factor);
+		List<Object[]> list = nativeQueryRepository.doAllGfvs(startOfMonth, endOfMonth, factor);
 
 		if (list != null && list.size() > 0) {
 
@@ -232,7 +232,7 @@ public class MeasuresService {
 	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth) {
 		logger.info("computeGESsFor1Month");
 
-		List<Object[]> gess = nuiRepository.doAllGess(startOfMonth, endOfMonth);
+		List<Object[]> gess = nativeQueryRepository.doAllGess(startOfMonth, endOfMonth);
 
 		if(gess != null && gess.size() > 0) {
 
@@ -249,15 +249,15 @@ public class MeasuresService {
 					i++;
 					if (i % batchSize == 0) {
 						//flush a batch of inserts and release memory
-						geriatricFactorRepository.flush();
-						geriatricFactorRepository.clear();
+						nativeQueryRepository.flush();
+						nativeQueryRepository.clear();
 					}
 
 				}
 			}
 
-			geriatricFactorRepository.flush();
-			geriatricFactorRepository.clear();
+			nativeQueryRepository.flush();
+			nativeQueryRepository.clear();
 
 		}
 
@@ -312,7 +312,7 @@ public class MeasuresService {
 		List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
 		logger.info("startOfMonth: " + startOfMonth);
 
-		List<Object[]> nuisList = variationMeasureValueRepository.doAllNuis(startOfMonth, endOfMonth);
+		List<Object[]> nuisList = nativeQueryRepository.doAllNuis(startOfMonth, endOfMonth);
 
 		logger.info("size nuisList: " + nuisList.size());
 
@@ -333,14 +333,14 @@ public class MeasuresService {
 				i++;
 				if (i % batchSize == 0) {
 					//flush a batch of inserts and release memory
-					nuiRepository.flush();
-					nuiRepository.clear();
+					nativeQueryRepository.flush();
+					nativeQueryRepository.clear();
 				}
 
 			}
 
-			nuiRepository.flush();
-			nuiRepository.clear();
+			nativeQueryRepository.flush();
+			nativeQueryRepository.clear();
 
 		}
 

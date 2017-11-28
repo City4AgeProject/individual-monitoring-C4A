@@ -39,11 +39,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.persist.AssessedGefValuesRepository;
-import eu.city4age.dashboard.api.persist.AssessmentRepository;
-import eu.city4age.dashboard.api.persist.AudienceRolesRepository;
-import eu.city4age.dashboard.api.persist.TimeIntervalRepository;
-import eu.city4age.dashboard.api.persist.UserInRoleRepository;
+import eu.city4age.dashboard.api.jpa.AssessedGefValuesRepository;
+import eu.city4age.dashboard.api.jpa.AssessmentRepository;
+import eu.city4age.dashboard.api.jpa.AudienceRolesRepository;
+import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
@@ -104,7 +104,7 @@ public class AssessmentsService {
 	@ApiOperation("Get last five assessments for data sets in specific time interval.")
 	@Produces(MediaType.APPLICATION_JSON)
 	@JsonView(View.AssessmentView.class)
-	@Path("getLastFiveForDiagram/userInRoleId/{userInRoleId}/parentDetectionVariableId/{parentDetectionVariableId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
+	@Path("getLast5AssessmentsForDiagramTimeline/userInRoleId/{userInRoleId}/parentDetectionVariableId/{parentDetectionVariableId}/intervalStart/{intervalStart}/intervalEnd/{intervalEnd}")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "userInRoleId", value = "id of care recipient", required = false, dataType = "long", paramType = "path", defaultValue = "1"),
 		@ApiImplicitParam(name = "parentDetectionVariableId", value = "id of parent detection variable", required = false, dataType = "long", paramType = "path", defaultValue = "2"),
