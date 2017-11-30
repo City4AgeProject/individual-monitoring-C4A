@@ -7,7 +7,6 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import eu.city4age.dashboard.api.pojo.dto.Last5Assessment;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 
 public class DataIdValueLastFiveAssessment implements Serializable {
@@ -24,13 +23,13 @@ public class DataIdValueLastFiveAssessment implements Serializable {
 	private String value;
 	
 	@JsonView(View.TimeIntervalView.class)
-	private List<Last5Assessment> assessmentObjects = new ArrayList<Last5Assessment>();
+	private List<Object[]> assessmentObjects = new ArrayList<Object[]>();
 	
 
 	public DataIdValueLastFiveAssessment() {
 	}
 
-	public DataIdValueLastFiveAssessment(Long id, String value, List<Last5Assessment> assessmentObjects) {
+	public DataIdValueLastFiveAssessment(Long id, String value, List<Object[]> assessmentObjects) {
 		this.id = id;
 		this.value = value;
 		this.assessmentObjects = assessmentObjects;
@@ -52,11 +51,11 @@ public class DataIdValueLastFiveAssessment implements Serializable {
 		this.value = value;
 	}
 
-	public List<Last5Assessment> getAssessmentObjects() {
+	public List<Object[]> getAssessmentObjects() {
 		return assessmentObjects;
 	}
 
-	public void setAssessmentObjects(List<Last5Assessment> assessmentObjects) {
+	public void setAssessmentObjects(List<Object[]> assessmentObjects) {
 		this.assessmentObjects = assessmentObjects;
 	}
 

@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,13 +43,12 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.AssessedGefValuesRepository;
 import eu.city4age.dashboard.api.jpa.AssessmentRepository;
 import eu.city4age.dashboard.api.jpa.AudienceRolesRepository;
-import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
+import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.dto.Last5Assessment;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValueLastFiveAssessment;
@@ -83,7 +83,7 @@ public class AssessmentsService {
 	private AssessmentRepository assessmentRepository;
 
 	@Autowired
-	private TimeIntervalRepository timeIntervalRepository;
+	private NativeQueryRepository nativeQueryRepository;
 
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
@@ -121,10 +121,10 @@ public class AssessmentsService {
 		Timestamp intervalStartTimestamp = Timestamp.valueOf(intervalStart.concat(" 00:00:00"));
 		Timestamp intervalEndTimestamp = Timestamp.valueOf(intervalEnd.concat(" 00:00:00"));
 
-		List<Last5Assessment> l5a = new ArrayList<Last5Assessment>();
+		List<Object[]> l5a = new ArrayList<Object[]>();
 
 		try {
-			l5a = timeIntervalRepository.getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId,
+			l5a = nativeQueryRepository.getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId,
 					intervalStartTimestamp, intervalEndTimestamp);
 		} catch (Exception e) {
 			logger.info("getLastFiveForDiagram REST service - query exception: ", e);
@@ -347,12 +347,12 @@ public class AssessmentsService {
 		return JerseyResponse.build("Deleted");
 	}
 
-	private OJDiagramLast5Assessment transformToOJ(List<Last5Assessment> lfas) {
+	private OJDiagramLast5Assessment transformToOJ(List<Object[]> lfas) {
 
 		OJDiagramLast5Assessment ojLfa = new OJDiagramLast5Assessment();
 
-		for (Last5Assessment lfa : lfas) {
-			ojLfa.getGroups().add(new DataIdValue(lfa.getTimeIntervalId(), lfa.getIntervalStart()));
+		for (Object[] lfa : lfas) {
+			ojLfa.getGroups().add(new DataIdValue(((BigInteger) lfa[0]).longValue(), lfa[1].toString()));//(time_interval_id, interval_start)
 		}
 		
 		ojLfa.getSeries().add(new Serie("Only", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
@@ -362,20 +362,20 @@ public class AssessmentsService {
 
 			for (int i = 0; i < lfas.size(); i++) {
 
-				if (lfas.get(i).getTimeIntervalId().equals(group.getId())) {
+				if (group.getId().equals(new Long(((BigInteger)lfas.get(i)[0]).longValue()))) {//time_interval_id
 
 					Serie serie = ojLfa.getSeries().iterator().next();
 
-					if (lfas.get(i).getId() != null) {
+					if (lfas.get(i)[4] != null) {//assessment_id
 						DataIdValueLastFiveAssessment item = new DataIdValueLastFiveAssessment();
-						item.setId(lfas.get(i).getGefId());
-						item.setValue(lfas.get(i).getGefValue().toString());
+						item.setId(((BigInteger)lfas.get(i)[2]).longValue());//gef_id
+						item.setValue(lfas.get(i)[3].toString());//gef_value
 						item.getAssessmentObjects().add(lfas.get(i));
 
-						for (Last5Assessment lfa : lfas) {
-							if (lfa.getId() != null && lfa.getTimeIntervalId().equals(group.getId())
-									&& lfas.get(i).getGefValue().equals(lfa.getGefValue())
-									&& !lfas.get(i).getId().equals(lfa.getId())) {
+						for (Object[] lfa : lfas) {
+							if (lfa[4] != null && group.getId().equals(new Long(((BigInteger)lfa[0]).longValue()))//assessment_id, time_interval_id
+									&& lfas.get(i)[3].equals(lfa[3])//gef_value
+									&& !lfas.get(i)[4].equals(lfa[4])) {//assessment_id
 
 								item.getAssessmentObjects().add(lfa);
 							}

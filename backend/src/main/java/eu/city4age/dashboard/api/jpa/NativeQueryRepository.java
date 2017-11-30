@@ -20,5 +20,9 @@ public interface NativeQueryRepository extends GenericRepository<NativeQuery, Lo
 
 	@Query(nativeQuery = true)
 	List<Object[]> doAllGfvs(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("detectionVariableType") DetectionVariableType detectionVariableType);
-
+	
+	@Query(nativeQuery = true)
+	List<Object[]> getLast5AssessmentsForDiagramTimeline(@Param("userInRoleId") final Long userInRoleId, @Param("parentDetectionVariableId") final Long parentDetectionVariableId,
+			@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);
+	
 }

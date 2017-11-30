@@ -301,19 +301,16 @@ function(oj, ko, $) {
 			if (self.showSelectionOnDiagram()) {				
 				selected = [];
 				for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
-					for (var jg = 0; jg < Object
-							.keys(self.props.series[ig].items).length; jg++) {
+					for (var jg = 0; jg < Object.keys(self.props.series[ig].items).length; jg++) {
 						if (self.props.series[ig].items[jg].assessmentObjects
-								&& Object
-										.keys(self.props.series[ig].items[jg].assessmentObjects).length > 0) {
-							for (var kg = 0; kg < Object
-									.keys(self.props.series[ig].items[jg].assessmentObjects).length; kg++) {
-								if (self.props.series[ig].items[jg].assessmentObjects[kg].id === self.props.assessmentId()) {
-									selected
-											.push(self.props.series[ig].items[jg].assessmentObjects[kg].gefId
-													.toString());
-								}
-							}
+								&& self.props.series[ig].items[jg].assessmentObjects[0].length > 0) {
+                                                            for (var kg = 0; kg < self.props.series[ig].items[jg].assessmentObjects[0].length; kg++) {
+                                                                if (self.props.series[ig].items[jg].assessmentObjects[kg] !== undefined) {
+                                                                    if (self.props.series[ig].items[jg].assessmentObjects[kg][4] === self.props.assessmentId()) {//self.props.series[ig].items[jg].assessmentObjects[0][4] - assessment_id (index 4)
+                                                                            selected.push(self.props.series[ig].items[jg].assessmentObjects[0][2].toString());//self.props.series[ig].items[jg].assessmentObjects[0][2] - gef_id (index 2)
+                                                                    }
+                                                                }
+                                                            }
 						}
 					}
 				}
@@ -413,25 +410,28 @@ function(oj, ko, $) {
 									series = self.series;
 								}
 								if (series !== undefined) {
+                                                                    //risk status icon priority settings 
 									for (var i = 0; i < series.length; i++) {
 										for (var j = 0; j < series[i].items.length; j++) {
 											if (series[i].items[j] !== undefined
 													&& series[i].items[j].assessmentObjects
-													&& series[i].items[j].assessmentObjects.length > 0) {
+													&& series[i].items[j].assessmentObjects[0].length > 0) {
 												var hasWarning = false;
 												var hasAlert = false;
-												for (var k = 0; k < series[i].items[j].assessmentObjects.length; k++) {
-													if ('W' === series[i].items[j].assessmentObjects[k].riskStatus) {
-														series[i].items[j].source = 'images/risk_warning_unsel.png';
+												for (var k = 0; k < series[i].items[j].assessmentObjects[0].length; k++) {
+                                                                                                    if (series[i].items[j].assessmentObjects[k] !== undefined) {
+													if ('W' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
+                                                                                                                series[i].items[j].source = 'images/risk_warning_unsel.png';
 														series[i].items[j].sourceSelected = 'images/risk_warning_sel.png';
 														hasWarning = true;
 													}
-													if ('A' === series[i].items[j].assessmentObjects[k].riskStatus) {
+													if ('A' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
 														series[i].items[j].source = 'images/risk_alert_unsel.png';
 														series[i].items[j].sourceSelected = 'images/risk_alert_sel.png';
 														hasAlert = true;
 														break;
 													}
+                                                                                                    }
 
 												}
 											}
@@ -707,19 +707,16 @@ function(oj, ko, $) {
 			self.loadAssessmentsCached();
 			selected = [];
 			for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
-				for (var jg = 0; jg < Object
-						.keys(self.props.series[ig].items).length; jg++) {
+				for (var jg = 0; jg < Object.keys(self.props.series[ig].items).length; jg++) {
 					if (self.props.series[ig].items[jg].assessmentObjects
-							&& Object
-									.keys(self.props.series[ig].items[jg].assessmentObjects).length > 0) {
-						for (var kg = 0; kg < Object
-								.keys(self.props.series[ig].items[jg].assessmentObjects).length; kg++) {
-							if (self.props.series[ig].items[jg].assessmentObjects[kg].id === self.props.assessmentId) {
-								selected
-										.push(self.props.series[ig].items[jg].assessmentObjects[kg].gefId
-												.toString());
-							}
-						}
+							&& self.props.series[ig].items[jg].assessmentObjects[0].length > 0) {
+                                                    for (var kg = 0; kg < self.props.series[ig].items[jg].assessmentObjects[0].length; kg++) {
+                                                        if (self.props.series[ig].items[jg].assessmentObjects[kg] !== undefined) {
+                                                            if (self.props.series[ig].items[jg].assessmentObjects[kg][4] === self.props.assessmentId) {//self.props.series[ig].items[jg].assessmentObjects[0][4] - assessment_id (index 4)
+                                                                    selected.push(self.props.series[ig].items[jg].assessmentObjects[0][2].toString());//self.props.series[ig].items[jg].assessmentObjects[0][2] - gef_id (index 2)
+                                                            }
+                                                        }
+                                                    }
 					}
 				}
 			}
