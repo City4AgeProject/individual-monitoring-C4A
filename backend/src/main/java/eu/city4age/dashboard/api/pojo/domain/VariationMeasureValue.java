@@ -1,18 +1,17 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import eu.city4age.dashboard.api.pojo.json.view.View;
@@ -29,7 +28,6 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	 * 
 	 */
 	private static final long serialVersionUID = 2579000073949031381L;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "activity_id")
 	private ExecutedActivity activity;
@@ -60,10 +58,12 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 
 	
 	@Column(name = "data_source_type", length = 1000)
-	private String dataSourceType;
-	
-	@OneToMany(mappedBy = "variationMeasureValue", fetch = FetchType.LAZY)
-	private Set<SourceEvidence> sourceEvidence = new HashSet<SourceEvidence>();
+	private String dataSourceType;	
+		
+	@JsonView(View.VariationMeasureValueView.class)
+	@JsonInclude ()
+	@OneToOne (mappedBy = "value", fetch = FetchType.LAZY)
+	private ValueEvidenceNotice valueEvidenceNotice; 
 
 
 	public VariationMeasureValue() {
@@ -143,12 +143,12 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 		this.extraInformation = extraInformation;
 	}
 
-	public Set<SourceEvidence> getSourceEvidence() {
-		return sourceEvidence;
+	public ValueEvidenceNotice getValueEvidenceNotice() {
+		return valueEvidenceNotice;
 	}
 
-	public void setSourceEvidence(Set<SourceEvidence> sourceEvidence) {
-		this.sourceEvidence = sourceEvidence;
+	public void setValueEvidenceNotice (ValueEvidenceNotice valueEvidenceNotice) {
+		this.valueEvidenceNotice = valueEvidenceNotice;
 	}
 
 }
