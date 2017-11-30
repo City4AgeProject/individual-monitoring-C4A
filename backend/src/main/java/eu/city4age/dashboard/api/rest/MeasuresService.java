@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -40,17 +42,14 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.NUIRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
-import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
-import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
-import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.json.view.View;
@@ -72,13 +71,12 @@ import io.swagger.annotations.ApiResponses;
 public class MeasuresService {
 
 	public static final String PATH = "measures";
-
+	
 	static protected Logger logger = LogManager.getLogger(MeasuresService.class);
+	
+	static protected SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
-
-	@Autowired
-	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
 	@Autowired
 	private VariationMeasureValueRepository variationMeasureValueRepository;
@@ -91,13 +89,6 @@ public class MeasuresService {
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
-
-	@Autowired
-	private GeriatricFactorRepository geriatricFactorRepository;
-
-	@Autowired
-	private UserInRoleRepository userInRoleRepository;
-
 	@Autowired
 	private NativeQueryRepository nativeQueryRepository;
 	
@@ -180,37 +171,12 @@ public class MeasuresService {
 
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
 			Timestamp endOfMonth) {
-
-		logger.info("computeFor1Month: " + factor);
-
-		List<Object[]> list = nativeQueryRepository.doAllGfvs(startOfMonth, endOfMonth, factor);
+		List<Object[]> list = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, factor);
 
 		if (list != null && list.size() > 0) {
-
-			int i = 0;
-			int batchSize = 20;
-
-			for(Object[] ges: list) {
-				logger.info("ddvId gfvs: " + ges[1]);
-				logger.info("gesValue gfvs: " + ges[2]);
-				logger.info("userId gfvs: " + ges[0]);
-
-				createGFV((Short) ges[1], (BigDecimal) ges[2], (BigDecimal) ges[3], startOfMonth, endOfMonth, (BigInteger) ges[0]);
-
-				i++;
-				if (i % batchSize == 0) {
-					//flush a batch of inserts and release memory
-					geriatricFactorRepository.flush();
-					geriatricFactorRepository.clear();
-				}
-
-			}
-
-			geriatricFactorRepository.flush();
-			geriatricFactorRepository.clear();
-
+			List<GeriatricFactorValue> gfvs = createAllGFVs(list, startOfMonth, endOfMonth);
+			nuiRepository.bulkSave(gfvs);
 		}
-
 	}
 
 	private void computeNuisForAllPilots() {
@@ -230,35 +196,11 @@ public class MeasuresService {
 	}
 
 	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth) {
-		logger.info("computeGESsFor1Month");
-
-		List<Object[]> gess = nativeQueryRepository.doAllGess(startOfMonth, endOfMonth);
+		List<Object[]> gess = nativeQueryRepository.computeAllGess(startOfMonth, endOfMonth);
 
 		if(gess != null && gess.size() > 0) {
-
-			int i = 0;
-			int batchSize = 20;
-
-			for (Object[] ges : gess) {
-				if(ges[3] != null) {
-					logger.info("ddvId gess: " + ges[1]);
-					logger.info("gesValue gess: " + ges[3]);
-					logger.info("userId gess: " + ges[0]);
-					createGFV((Short) ges[1], (BigDecimal) ges[3], (BigDecimal) ges[2], startOfMonth, endOfMonth, (BigInteger) ges[0]);
-
-					i++;
-					if (i % batchSize == 0) {
-						//flush a batch of inserts and release memory
-						nativeQueryRepository.flush();
-						nativeQueryRepository.clear();
-					}
-
-				}
-			}
-
-			nativeQueryRepository.flush();
-			nativeQueryRepository.clear();
-
+			List<GeriatricFactorValue> gfvs = createAllGFVs(gess, startOfMonth, endOfMonth);
+			nuiRepository.bulkSave(gfvs);
 		}
 
 	}
@@ -269,91 +211,54 @@ public class MeasuresService {
 			pilot.setLatestVariablesComputed(new Date());
 		pilotRepository.save(pilots);
 	}
-
-	private GeriatricFactorValue createGFV(Short dvId, BigDecimal gesValue, BigDecimal weight, Timestamp startOfMonth,
-			Timestamp endOfMonth, BigInteger userId) {
-
-		logger.info("dvId: " + dvId);
-		logger.info("gesValue: " + gesValue);
-		logger.info("weight: " + weight);
-		logger.info("startOfMonth: " + startOfMonth);
-		logger.info("userId: " + userId);
-
-		TimeInterval ti = getOrCreateTimeInterval(startOfMonth, TypicalPeriod.MONTH);
-		UserInRole uir = userInRoleRepository.findOne(userId.longValue());
-
-		GeriatricFactorValue ges = new GeriatricFactorValue();
-		ges.setGefValue(gesValue);
-		ges.setTimeInterval(ti);
-		ges.setDetectionVariableId(dvId.longValue());
-		ges.setUserInRoleId(userId.longValue());
-
-		if (weight == null) weight = pilotDetectionVariableRepository.findWeightByDetectionVariableAndPilotCodeGesGef(dvId.longValue(), uir.getPilotCode());
-		if (weight == null) weight = new BigDecimal(1);
-		ges.setDerivationWeight(weight);
-
-		geriatricFactorRepository.saveWithoutFlush(ges);
-
-		return ges;
+	
+	private List<GeriatricFactorValue> createAllGFVs(List<Object[]> list, Timestamp startOfMonth, Timestamp endOfMonth) {
+		final List<GeriatricFactorValue> gfvs = new ArrayList<GeriatricFactorValue>();
+		final TimeInterval ti = getOrCreateTimeInterval(startOfMonth, TypicalPeriod.MONTH);
+		for(Object[] arr : list) {
+			GeriatricFactorValue ges = new GeriatricFactorValue();
+			ges.setGefValue((BigDecimal) arr[2]);
+			ges.setTimeInterval(ti);
+			ges.setDetectionVariableId(((Short) arr[1]).longValue());
+			ges.setUserInRoleId(((BigInteger) arr[0]).longValue());
+			ges.setDerivationWeight(arr[3] == null? new BigDecimal(1) : (BigDecimal) arr[3]);
+			gfvs.add(ges);
+		}
+		return gfvs;
 	}
 
 	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth) {
-
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth);
 
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
-			createAllNuis(startOfMonth, endOfMonth);
+			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth);
+			nuiRepository.bulkSave(nuis);
 		}
 	}
 
 	private List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth) {
+		final List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
+		
 
-		List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
-		logger.info("startOfMonth: " + startOfMonth);
-
-		List<Object[]> nuisList = nativeQueryRepository.doAllNuis(startOfMonth, endOfMonth);
-
-		logger.info("size nuisList: " + nuisList.size());
+		List<Object[]> nuisList = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth);
 
 		if(!nuisList.isEmpty() && nuisList.size() != 0) {
 
-			int i = 0;
-			int batchSize = 20;
-
 			for (Object[] nui:nuisList) {
-				logger.info("nui[0]: " + nui[0]);
-				logger.info("nui[1]: " + nui[1]);
-				logger.info("nui[2]: " + nui[2]);
 
-				NumericIndicatorValue create1Nui = create1Nui((BigInteger) nui[0], (Short) nui[1], (Double) nui[2], startOfMonth);
+				NumericIndicatorValue create1Nui = create1Nui((BigInteger) nui[0],  (Short) nui[1], (Double) nui[2], startOfMonth);
 
 				nuis.add(create1Nui);
 
-				i++;
-				if (i % batchSize == 0) {
-					//flush a batch of inserts and release memory
-					nativeQueryRepository.flush();
-					nativeQueryRepository.clear();
-				}
-
 			}
 
-			nativeQueryRepository.flush();
-			nativeQueryRepository.clear();
-
 		}
-
 		return nuis;
 
 	}
 
 	private NumericIndicatorValue create1Nui(BigInteger userId, Short nuiDvId, Double nuiValue, Timestamp startOfMonth) {
-		logger.info("create1Nui");
-		logger.info("userId: ", userId);
-		logger.info("nuiDvId: ", nuiDvId);
-		logger.info("nuiValue: ", nuiValue);
-
 		NumericIndicatorValue nui = new NumericIndicatorValue();
 		if (nuiValue != null) {
 			nui.setNuiValue(nuiValue);
@@ -364,7 +269,6 @@ public class MeasuresService {
 		nui.setDetectionVariableId(nuiDvId);
 		nui.setTimeInterval(getOrCreateTimeInterval(startOfMonth, TypicalPeriod.MONTH));
 
-		nuiRepository.saveWithoutFlush(nui);
 		return nui;
 	}
 

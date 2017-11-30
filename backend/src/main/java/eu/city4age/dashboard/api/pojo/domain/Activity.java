@@ -4,17 +4,18 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="cd_activity")
+@SequenceGenerator(name = "default_gen", sequenceName = "cd_activity_id_seq", allocationSize = 1)
 public class Activity extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2798372020376275382L;
-
 
 	@Column(name="activity_name")
 	private String name;

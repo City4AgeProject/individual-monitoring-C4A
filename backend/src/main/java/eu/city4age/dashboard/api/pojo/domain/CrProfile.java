@@ -7,12 +7,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "cr_profile")
+@SequenceGenerator(name = "default_gen", sequenceName = "cr_profile_id_seq", allocationSize = 1)
 public class CrProfile extends AbstractBaseEntity<Long> {
 
 	/**

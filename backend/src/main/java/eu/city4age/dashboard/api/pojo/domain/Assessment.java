@@ -1,19 +1,14 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -37,12 +32,13 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "assessment")
+@SequenceGenerator(name = "default_gen", sequenceName = "assessment_id_seq", allocationSize = 1)
 @FilterDefs(value = { @FilterDef(name = "riskStatus", parameters = @ParamDef(name = "riskStatus", type = "char")),
 		@FilterDef(name = "dataValidity", parameters = @ParamDef(name = "dataValidity", type = "char")),
 		@FilterDef(name = "roleId", parameters = @ParamDef(name = "roleId", type = "long")) })
 @Filters(value = { @Filter(name = "riskStatus", condition = "risk_status in (:riskStatus)"),
 		@Filter(name = "dataValidity", condition = "data_validity_status in (:dataValidity)") })
-public class Assessment implements Serializable {
+public class Assessment extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
@@ -50,22 +46,6 @@ public class Assessment implements Serializable {
 	private static final long serialVersionUID = -8849726716647395001L;
 
 	static protected Logger logger = LogManager.getLogger(Assessment.class);
-
-	@JsonView(View.AssessmentView.class)
-	@Id
-	@Basic(optional = false)
-	@SequenceGenerator(name = "aa_seq", sequenceName = "assessment_id_seq", allocationSize = 1)
-	@GeneratedValue(generator = "aa_seq", strategy = GenerationType.SEQUENCE)
-	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
-	protected Long id;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	@JsonView(View.AssessmentView.class)
 	@ManyToOne(fetch = FetchType.LAZY)

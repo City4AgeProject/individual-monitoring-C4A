@@ -3,16 +3,17 @@ package eu.city4age.dashboard.api.pojo.domain;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import eu.city4age.dashboard.api.pojo.json.view.View;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Superclass for domain model.
@@ -20,6 +21,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
  * @author Milos Holclajtner (milos.holclajtner at belit.co.rs)
  */
 @MappedSuperclass
+@ApiModel
 public abstract class AbstractBaseEntity<T> implements Serializable {
 
 	/**
@@ -29,14 +31,17 @@ public abstract class AbstractBaseEntity<T> implements Serializable {
 
 	@JsonView(View.BaseView.class)
 	@Id
-	@Generated(GenerationTime.INSERT)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "default_gen")
 	@Column(name = "id", columnDefinition = "serial", insertable = true, updatable = true, unique = true)
+	@ApiModelProperty (hidden = true)
 	protected T id;
 
+	@ApiModelProperty (hidden = true)
 	public T getId() {
 		return id;
 	}
 
+	@ApiModelProperty (hidden = true)
 	public void setId(T id) {
 		this.id = id;
 	}

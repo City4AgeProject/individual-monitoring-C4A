@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -21,12 +22,14 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
  */
 @Entity
 @Table(name = "variation_measure_value")
+@SequenceGenerator(name = "default_gen", sequenceName = "variation_measure_value_id_seq", allocationSize = 1)
 public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2579000073949031381L;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "activity_id")
 	private ExecutedActivity activity;

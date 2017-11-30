@@ -1,22 +1,18 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -28,27 +24,13 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
  */
 @Entity
 @Table(name = "numeric_indicator_value")
-public class NumericIndicatorValue implements Serializable {
+@SequenceGenerator(name = "default_gen", sequenceName = "numeric_indicator_value_id_seq", allocationSize = 1)
+public class NumericIndicatorValue extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2422155784673783252L;
-	
-	@Id
-	@Basic(optional = false)
-	@SequenceGenerator(name = "nui_seq", sequenceName = "numeric_indicator_value_id_seq", allocationSize = 1)
-	@GeneratedValue(generator = "nui_seq", strategy = GenerationType.SEQUENCE)
-	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
-	protected Long id;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	@JsonView(View.NUIView.class)
 	@ManyToOne(fetch = FetchType.LAZY)

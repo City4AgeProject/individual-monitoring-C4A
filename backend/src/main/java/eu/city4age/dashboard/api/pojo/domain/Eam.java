@@ -3,10 +3,12 @@ package eu.city4age.dashboard.api.pojo.domain;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="eam")
+@SequenceGenerator(name = "default_gen", sequenceName = "eam_id_seq", allocationSize = 1)
 public class Eam extends AbstractBaseEntity<Long> {
 
 	/**
@@ -14,7 +16,6 @@ public class Eam extends AbstractBaseEntity<Long> {
 	 */
 	private static final long serialVersionUID = 2984515729314887339L;
 
-	
 	@ManyToOne
     @JoinColumn(name="action_id")
 	private Action action;

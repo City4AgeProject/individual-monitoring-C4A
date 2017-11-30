@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.persist;
+package eu.city4age.dashboard.api.jpa;
 
 import java.util.List;
 
@@ -65,21 +65,21 @@ public class RoleRepositoryTest {
 		stakeholderRepository.save(sh4);
 
 		Role r1 = new Role();
-		r1.setId(1L);
+		//r1.setId(1L);
 		r1.setRoleName("Caregiver");
 		r1.setRoleAbbreviation("CRG");
 		r1.setStakeholderAbbreviation("DRL");
 		roleRepository.save(r1);
 		
 		Role r2 = new Role();
-		r2.setId(2L);
+		//r2.setId(2L);
 		r2.setRoleName("Geriatrician");
 		r2.setRoleAbbreviation("GER");
 		r2.setStakeholderAbbreviation("DRL");
 		roleRepository.save(r2);
 		
 		Role r3 = new Role();
-		r3.setId(3L);
+		//r3.setId(3L);
 		r3.setRoleName("Intervention staff");
 		r3.setRoleAbbreviation("INS");
 		r3.setStakeholderAbbreviation("DRL");

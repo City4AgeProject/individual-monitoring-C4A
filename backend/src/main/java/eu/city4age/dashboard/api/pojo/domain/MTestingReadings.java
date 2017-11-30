@@ -1,16 +1,11 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -26,8 +21,9 @@ import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 @Table(name="mtesting_readings")
-@ApiModel ()
-public class MTestingReadings implements Serializable {
+@SequenceGenerator(name = "default_gen", sequenceName = "mtesting_readings_id_seq", allocationSize = 1)
+@ApiModel
+public class MTestingReadings extends AbstractBaseEntity<Long> {
 	
 	static protected Logger logger = LogManager.getLogger(AbstractBaseEntity.class);
 
@@ -35,25 +31,7 @@ public class MTestingReadings implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 118520501300973077L;
-	
-	@Id
-	@Basic(optional = false)
-	@SequenceGenerator(name = "mt_seq", sequenceName = "mtesting_readings_id_seq", allocationSize = 1)
-	@GeneratedValue(generator = "mt_seq", strategy = GenerationType.SEQUENCE)
-	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
-	@ApiModelProperty (hidden = true)
-	protected Long id;
 
-	@ApiModelProperty (hidden = true)
-	public Long getId() {
-		return id;
-	}
-
-	@ApiModelProperty (hidden = true)
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
 	@Column(name="start_time")
 	@ApiModelProperty (value = "start time of recording", hidden = false)
 	private Date start;

@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.persist;
+package eu.city4age.dashboard.api.jpa;
 
 
 import java.math.BigDecimal;

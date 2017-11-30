@@ -7,18 +7,25 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name="action")
+@SequenceGenerator(name = "default_gen", sequenceName = "action_id_seq", allocationSize = 1)
 public class Action extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5254461979420298384L;
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	@Column(name="action_name")
 	private String name;

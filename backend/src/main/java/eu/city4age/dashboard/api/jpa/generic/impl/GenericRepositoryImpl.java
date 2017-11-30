@@ -3,33 +3,41 @@ package eu.city4age.dashboard.api.jpa.generic.impl;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Filter;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
 import eu.city4age.dashboard.api.jpa.annotation.EntityFilter;
 import eu.city4age.dashboard.api.jpa.annotation.FilterQuery;
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
+import eu.city4age.dashboard.api.pojo.domain.AbstractBaseEntity;
 
 /**
  * Generic jpa repository implementation.
  * 
  * @author milos.holclajtner
  */
+@NoRepositoryBean
 public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
 		implements GenericRepository<T, ID> {
 
 	private final JpaEntityInformation<T, ID> entityInformation;
 
 	private final EntityManager entityManager;
+	
+	private final int batchSize = 50;
 
 	private Class<?> springDataRepositoryInterface;
 
@@ -158,6 +166,30 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	@Override
 	public void clear() {
 		this.entityManager.clear();
+	}
+	
+	public <T extends AbstractBaseEntity> Collection<T> bulkSave(Collection<T> entities) {
+		final List<T> savedEntities = new ArrayList<>(entities.size());
+		int i = 0;
+		for (T t : entities) {
+			savedEntities.add(persistOrMerge(t));
+			i++;
+			if (i % batchSize == 0) {
+				// Flush a batch of inserts and release memory
+				entityManager.flush();
+				entityManager.clear();
+			}
+		}
+		return savedEntities;
+	}
+
+	public <T extends AbstractBaseEntity> T persistOrMerge(T t) {
+		if (t.getId() == null) {
+			entityManager.persist(t);
+			return t;
+		} else {
+			return entityManager.merge(t);
+		}
 	}
 
 

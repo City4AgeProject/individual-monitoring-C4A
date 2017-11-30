@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -12,6 +13,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name="user_in_system")
+@SequenceGenerator(name = "default_gen", sequenceName = "user_in_system_id_seq", allocationSize = 1)
 public class UserInSystem extends AbstractBaseEntity<Long> {
 
 	/**

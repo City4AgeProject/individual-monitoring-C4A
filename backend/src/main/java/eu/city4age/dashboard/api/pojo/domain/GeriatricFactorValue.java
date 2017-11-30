@@ -1,17 +1,12 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -25,28 +20,13 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "geriatric_factor_value")
-
-public class GeriatricFactorValue implements Serializable {
+@SequenceGenerator(name = "default_gen", sequenceName = "geriatric_factor_value_id_seq", allocationSize = 1)
+public class GeriatricFactorValue extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3206256298218071133L;
-	
-	@Id
-	@Basic(optional = false)
-	@SequenceGenerator(name = "gef_seq", sequenceName = "geriatric_factor_value_id_seq", allocationSize = 1)
-	@GeneratedValue(generator = "gef_seq", strategy = GenerationType.SEQUENCE)
-	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
-	protected Long id;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 	
 	@Column(name = "user_in_role_id")
 	private Long userInRoleId;

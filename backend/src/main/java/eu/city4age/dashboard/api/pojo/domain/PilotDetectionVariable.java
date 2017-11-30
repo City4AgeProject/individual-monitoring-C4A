@@ -1,15 +1,11 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -22,25 +18,10 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "md_pilot_detection_variable")
-public class PilotDetectionVariable implements Serializable {
+@SequenceGenerator(name = "default_gen", sequenceName = "md_pilot_detection_variable_id_seq", allocationSize = 1)
+public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 
 	private static final long serialVersionUID = 7337284221184594172L;
-	
-	
-	@Id
-	@SequenceGenerator(name = "pdv_seq", sequenceName = "md_pilot_detection_variable_id_seq", allocationSize = 1)
-	@GeneratedValue(generator = "pdv_seq", strategy = GenerationType.SEQUENCE)
-	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
-	private Long id;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
 	
 	@Column(name="pilot_code")
 	private String pilotCode;

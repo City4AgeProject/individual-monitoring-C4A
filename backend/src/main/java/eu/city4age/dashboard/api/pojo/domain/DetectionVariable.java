@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,6 +21,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "cd_detection_variable")
+@SequenceGenerator(name = "default_gen", sequenceName = "cd_detection_variable_id_seq", allocationSize = 1)
 public class DetectionVariable extends AbstractBaseEntity<Long> {
 
 	/**

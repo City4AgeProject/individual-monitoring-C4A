@@ -9,12 +9,14 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name="location")
+@SequenceGenerator(name = "default_gen", sequenceName = "location_id_seq", allocationSize = 1)
 public class Location extends AbstractBaseEntity<Long> {
 
     /**

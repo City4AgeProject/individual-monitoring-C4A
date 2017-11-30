@@ -27,6 +27,7 @@ spring:
     database: POSTGRESQL
     properties:
       hibernate:
+        flushMode: MANUAL
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
         cache.region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
@@ -35,7 +36,7 @@ spring:
         order_updates: true
         order_inserts: true
         jdbc:
-          batch_size: 20
+          batch_size: 50
           batch_versioned_data: true
       javax:
         persistence:

@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.jpa.generic;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 
+import eu.city4age.dashboard.api.pojo.domain.AbstractBaseEntity;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 
 /**
@@ -37,5 +39,9 @@ public interface GenericRepository<T, ID extends Serializable>
 	<S extends T> S merge(S entity);
 	
 	void clear();
+	
+	<T extends AbstractBaseEntity> Collection<T> bulkSave(Collection<T> entities);
+	
+	<T extends AbstractBaseEntity> T persistOrMerge(T t);
 
 }

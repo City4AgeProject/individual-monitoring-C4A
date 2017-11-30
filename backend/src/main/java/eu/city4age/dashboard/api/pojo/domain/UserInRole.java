@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,6 +25,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "user_in_role")
+@SequenceGenerator(name = "default_gen", sequenceName = "user_in_role_id_seq", allocationSize = 1)
 public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<AbstractBaseEntity<Long>> {
 
 	/**

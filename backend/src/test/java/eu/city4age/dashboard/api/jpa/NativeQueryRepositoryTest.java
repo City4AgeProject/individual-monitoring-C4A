@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.persist;
+package eu.city4age.dashboard.api.jpa;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -132,7 +132,7 @@ public class NativeQueryRepositoryTest {
 		vmv1.setMeasureValue(new BigDecimal(5));
 		variationMeasureValueRepository.save(vmv1);
 	
-		List<Object[]> result = nativeQueryRepository.doAllNuis(startOfMonth, endOfMonth);
+		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth);
 		
 		Assert.assertNotNull(result);
 		
@@ -187,7 +187,7 @@ public class NativeQueryRepositoryTest {
 		vmv2.setMeasureValue(new BigDecimal(4));
 		variationMeasureValueRepository.save(vmv2);
 
-		List<Object[]> result = nativeQueryRepository.doAllNuis(startOfMonth, endOfMonth);
+		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth);
 		
 		Assert.assertNotNull(result);
 		
@@ -320,7 +320,7 @@ public class NativeQueryRepositoryTest {
 		DetectionVariableType derivedDetectionVariableType = DetectionVariableType.GEF;
 		detectionVariableTypeRepository.save(derivedDetectionVariableType);
 		
-		List<Object[]> result = nativeQueryRepository.doAllGfvs(startOfMonth, endOfMonth, derivedDetectionVariableType);
+		List<Object[]> result = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, derivedDetectionVariableType);
 		
 		Assert.assertNotNull(result);
 		

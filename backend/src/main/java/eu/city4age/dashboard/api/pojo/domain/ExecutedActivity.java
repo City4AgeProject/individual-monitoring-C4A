@@ -9,12 +9,14 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name="executed_activity")
+@SequenceGenerator(name = "default_gen", sequenceName = "executed_activity_id_seq", allocationSize = 1)
 public class ExecutedActivity extends AbstractBaseEntity<Long> {
 
 	/**

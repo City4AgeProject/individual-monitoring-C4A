@@ -4,12 +4,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="cd_role")
+@SequenceGenerator(name = "default_gen", sequenceName = "cd_role_id_seq", allocationSize = 1)
 public class Role extends AbstractBaseEntity<Long> {
 
 	/**

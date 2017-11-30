@@ -1,17 +1,12 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -26,28 +21,13 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 @Entity
 @Table(name = "time_interval", uniqueConstraints = @UniqueConstraint(columnNames = { "interval_start",
 		"typical_period" }, name = "time_interval_interval_start_typical_period_key"))
-public class TimeInterval implements Serializable {
+@SequenceGenerator(name = "default_gen", sequenceName = "time_interval_id_seq", allocationSize = 1)
+public class TimeInterval extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -865550404227746101L;
-
-	@Id
-	@Basic(optional = false)
-	@SequenceGenerator(name = "ti_seq", sequenceName = "time_interval_id_seq", allocationSize = 1)
-	@GeneratedValue(generator = "ti_seq", strategy = GenerationType.SEQUENCE)
-	@Column(name = "id", insertable = true, updatable = true, unique = true, nullable = false)
-	protected Long id;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 
 	@JsonView(View.VariationMeasureValueView.class)
 	@Column(name = "interval_start")
@@ -58,14 +38,12 @@ public class TimeInterval implements Serializable {
 	@Column(name = "interval_end")
 	private Timestamp intervalEnd;
 
-	@JsonView(View.TimeIntervalView.class) // Only on start not end, check
-											// this!!!	
+	@JsonView(View.TimeIntervalView.class)
 	@Transient
 	private String start;
 
 	@Transient
 	private String end;
-	
 	
 	@Column(name = "typical_period")
 	private String typicalPeriod;

@@ -3,17 +3,18 @@ package eu.city4age.dashboard.api.pojo.domain;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="inter_activity_behaviour_variation")
+@SequenceGenerator(name = "default_gen", sequenceName = "inter_activity_behaviour_variation_id_seq", allocationSize = 1)
 public class InterActivityBehaviourVariation extends AbstractBaseEntity<Long> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5543250919034763161L;
-
 	
 	@ManyToOne
     @JoinColumn(name="real_activity_id")

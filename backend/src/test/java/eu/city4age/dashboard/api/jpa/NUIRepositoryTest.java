@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.persist;
+package eu.city4age.dashboard.api.jpa;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
