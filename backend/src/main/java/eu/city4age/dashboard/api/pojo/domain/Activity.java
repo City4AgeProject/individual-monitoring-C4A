@@ -28,8 +28,6 @@ public class Activity extends AbstractBaseEntity<Long> {
 
 	private Integer instrumental;
 
-
-
 	public String getName() {
 		return name;
 	}

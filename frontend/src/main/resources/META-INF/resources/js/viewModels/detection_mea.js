@@ -77,6 +77,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    					  mv.value = data[i].measureValue;
   	    					  mv.intervalStart = data[i].timeInterval.intervalStart;
   	    					  mea.measureValues.push(mv);
+                                                  if(data[i].valueEvidenceNotice){
+                                                      mv.valueEvidenceNotice = data[i].valueEvidenceNotice;
+                                                  }
+                                                  
   	    				  }
   	    			  }
   	    		  });           	    		 
@@ -119,6 +123,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                 var nuiName;
   	    			mea.nuisForMeasure = [];
     	    			mea.lineSeries = [];
+                                mea.hasComments = false;
     	    			var nuiObjects =[];
                                                                     	    			
     	    			mea.months.forEach(function(mon) {                                      
@@ -132,7 +137,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    				//getting nuis from nuiData with timeinterval 
     	    				var nuisInMonth = getNuiForMeaAndMonth(mea, mon , nuiData);
     	    				if(nuisInMonth.length == 0) {   	    					
-    	    					nuis += "Nui1 0\n Nui2 0\n Nui3 0\n Nui4 0";
+    	    					//nuis += "Nui1 0\n Nui2 0\n Nui3 0\n Nui4 0";
     	    				}
     	    				else {
     	    					
@@ -231,6 +236,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                   mea.lineType = "straight";
                                   mea.lineSeries.forEach(function(ls) {
                                       ls.items[1] = ls.items[0];
+                                      if(ls.items[0].valueEvidenceNotice){
+                                          mea.hasComments = true;
+                                      }
                                   });
                               }else if(mea.defaultTypicalPeriod === '1WK'){
                                         mea.lineType = "stepped";                                                                   

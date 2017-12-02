@@ -140,6 +140,7 @@ function (oj, ko, $, sp, params) {
 
  
         self.chartDrill = function (event, ui) {
+            if(ui['series']){
             document.getElementById('polarChart1').style.display = 'none';
             document.getElementById('polarChart2').style.display = 'none';
             chartClicked = true;
@@ -163,6 +164,7 @@ function (oj, ko, $, sp, params) {
                     console.log('CARE_RECIPIENT_DIAGRAM_DATA web service error');
                 }); 
             }
+        }
 
         };
 

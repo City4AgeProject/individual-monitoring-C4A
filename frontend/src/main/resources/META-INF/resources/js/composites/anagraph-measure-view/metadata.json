@@ -28,6 +28,10 @@
                 "lineType": {
                         "description" : "Line type of the measure",
 			"type": "string"
+                },
+                "hasComments": {
+                        "description" : "Value is true if measure has value evidence notice comments.",
+			"type": "boolean"
                 }
 		
 				

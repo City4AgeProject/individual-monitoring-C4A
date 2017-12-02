@@ -1,6 +1,6 @@
+<!-- ko if: showNuis -->
 <div class="oj-flex-item">		                                               										
     <div id="collapsible" data-bind="ojComponent: {component: 'ojCollapsible',expanded: true }">
-<!--        <button data-bind="ojComponent: {component: 'ojButton'}">NUI values</button>-->
                 <h5>NUI values</h5>
                 <div id="datagrid" 
                     style="width:100%;height:200px;display: grid; background-color:transparent;" 
@@ -8,7 +8,7 @@
                     data-bind="ojComponent:
                     {
                         component:'ojDataGrid', 
-                        optionChange: optChanged,
+                        optionChange: gridOptChanged,
                         data: dataSource ,                    
                         header:
                             {
@@ -28,7 +28,9 @@
                 </div>
     </div>	  
 </div>
-<div id='measure-view-container' style="border:1px solid silver;">
+<!-- /ko -->
+
+<div id='measure-view-container' style="border:1px solid silver;">   
     <div id="lineChart" data-bind="ojComponent: {
         component: 'ojChart',
     	title: {text: measureName, halign: 'center'}, 
@@ -44,15 +46,21 @@
         legend: legendValue,
         hiddenCategories: hiddenCategories,
         drilling: 'on',
-        drill: chartDrill
+        drill: chartDrill,
+        optionChange: chartOptChanged
+        
                   
         }"
          style="width:100%;height:350px;">
+        <!-- ko if: hasComments -->
+        <div style="position: absolute; right: 15px; top:15px;"><img src='images/comment_unsel.png' height="32" width="32" style="opacity: .7;"></div>
+            <div  id="panelCollapse" class="oj-panel  oj-sm-margin-2x demo-mypanel oj-panel-shadow-sm" style="position: absolute; bottom: 10%; left: 0; right: 0;margin-left: auto; margin-right: auto; width: 500px; max-height: 200px; overflow: auto;text-align: justify; display: none;">            
+                  <oj-collapsible  id="ojCollapse" expanded="false" on-oj-before-expand='[[beforeExpand]]' on-oj-before-collapse='[[beforeCollapse]]'>                 
+                    <p id="callapse-header" slot="header" data-bind="text: meaCommentPreview" style="margin-left: 10px; margin-right: 10px;"></p>                
+                  </oj-collapsible>
+            </div>
+        <!-- /ko -->
     </div>
-   <!--    If needed, add properties to lineChart:   
-   Base unit on left side of charts:  yAxis: {title: $props.baseUnit},
-   Curved edges on lines: styleDefaults: {lineType: 'curved'}
-   -->
 </div>
 
-
+          

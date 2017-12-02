@@ -323,7 +323,7 @@ function(oj, ko, $) {
 		};
 
 		self.chartDrill = function(event, ui) {
-			
+                    if(ui['series']){
 			console.log('drill on anagraph-assessment-view');                      
                         self.props.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
                                                    
@@ -338,7 +338,8 @@ function(oj, ko, $) {
                             console.log('selected GES');                           
                             sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));                                    
                             oj.Router.rootInstance.go("detection_mea");
-                        }                                          
+                        }
+                    }
 
 		}
                 

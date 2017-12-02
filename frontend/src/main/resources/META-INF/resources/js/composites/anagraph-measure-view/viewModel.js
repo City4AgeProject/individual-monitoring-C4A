@@ -1,17 +1,22 @@
 define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'ojs/ojtable', 'ojs/ojarraytabledatasource','ojs/ojtabs', 'ojs/ojconveyorbelt',
 	'ojs/ojdatagrid', 'ojs/ojcollectiondatagriddatasource', 'ojs/ojvalidation-datetime',
-	'ojs/ojvalidation-number','ojs/ojcollapsible','ojs/ojarraydatagriddatasource'],
+	'ojs/ojvalidation-number','ojs/ojcollapsible','ojs/ojarraydatagriddatasource','ojs/ojinputtext'],
         function (ko, $) {
 			
             function model(context) {
             	
             	var self = this;
-            	
+            	                                                     
                 self.zoom = ko.observable('live');
                 self.measureName = null;
                 self.lineSeries = [];
                 self.hiddenCategories = ko.observableArray();
                 self.visibleCategory = null;
+                self.meaComment = ko.observable();
+                self.meaCommentPreview = ko.observable();
+                self.hasComments;
+                self.showNuis = true;
+                self.legendValue = new Object();
                 context.props.then(function(properties) {                    
                     self.props = properties; 
                     self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
@@ -19,7 +24,8 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     self.measureName = oj.Translations.getTranslatedString(properties.measureName);                    
                     if(properties.baseUnit){
                         self.measureName += " (" + properties.baseUnit + ")";
-                    }     
+                    }    
+                    self.hasComments = properties.hasComments;
                     self.defaultTypicalPeriod = properties.defaultTypicalPeriod;
                     self.lineSeries = properties.lineSeries;                    
                     self.lineSeriesNames = [];
@@ -29,35 +35,57 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     });
                                                           
                     if(self.defaultTypicalPeriod === 'MON'){
+                        self.showNuis = false;
                         self.lineGroups = ko.observable(["Start of month", "End of month"]);
-                        self.zoom('off');
-                    }else{
+                        self.zoom('off');                                                                
+                    }else{                       
                         self.lineGroups = ko.observable(["1", "2", "3", "4", "5","6","7","8","9","10",
                                 "11","12","13","14","15","16","17","18","19","20",
                 	"21","22","23","24","25","26","27","28","29","30","31"]);
 
                     }
+                   
                     
-                });
-                self.optChanged = function (event, ui){
+                     if(self.showNuis){
+                        self.legendValue.title = "Hover to see NUI values";                                                            
+                    }else {
+                        self.legendValue.title = "Click to see evidence notice";                        
+                    }
+                     self.legendValue.titleStyle = "font-size:10px";
+                    
+                    
+                });             
+                self.gridOptChanged = function (event, ui){
                     //if user clicked on dataGrid Header, show lineseries of that month                   
                     if(ui['value']){                          
                         if(ui['value']['axis'] === 'column'){                       
                             var seriesName = ui['value']['key'];
-                            showLineSerie(seriesName);                       
+                            showLineSerie(seriesName);
                         }     
                     }
                 };
-                self.chartDrill = function(event, ui) {
-                    var seriesName = ui['seriesData']['name'];                  
-                    showLineSerie(seriesName);                    
-		};
-                function sleep(miliseconds) {
-                    var currentTime = new Date().getTime();
-
-                    while (currentTime + miliseconds >= new Date().getTime()) {
+                self.chartOptChanged = function(event, ui) {
+                };
+                self.chartDrill = function(event, ui) { 
+                    if(ui['series']){
+                        var seriesName = ui['seriesData']['name'];                  
+                        showLineSerie(seriesName); 
+                        if(self.defaultTypicalPeriod === 'MON'){
+                            if(ui.seriesData.items[0].valueEvidenceNotice){
+                                self.meaComment(ui.seriesData.items[0].valueEvidenceNotice.notice);
+                                if(self.meaComment().length > 200){
+                                    self.meaCommentPreview(self.meaComment().slice(0,200) + "...");
+                                }else{
+                                    self.meaCommentPreview(self.meaComment());
+                                }                                                              
+                                $("#panelCollapse").fadeIn();
+                            }else{
+                                $("#panelCollapse").fadeOut();
+                            }
+                            
+                        }
                     }
-                 }
+		};               
                 function showLineSerie(seriesName){
                     if(self.visibleCategory === null){
                             self.visibleCategory = seriesName;
@@ -74,12 +102,18 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                             self.hiddenCategories.push(self.visibleCategory);                       
                             self.visibleCategory = seriesName;
                         }     
-                }                                              
-                var legend = new Object();
-                legend.title = "Hover to see NUI values";
-                legend.titleStyle = "font-size:10px";             
-                this.legendValue = ko.observable(legend); 
-	             	             
+                }
+                self.beforeExpand = function(event, ui) {                  
+                    self.meaCommentPreview(self.meaComment());
+                };
+                self.beforeCollapse = function(event, ui) {                   
+                    if(self.meaComment().length > 200){
+                        self.meaCommentPreview(self.meaComment().slice(0,200) + "...");
+                            }else{
+                        self.meaCommentPreview(self.meaComment());
+                            }                                      
+                };  
+                
 	    };
 	            
 	    return model;
