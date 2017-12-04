@@ -38,11 +38,11 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
-import eu.city4age.dashboard.api.pojo.ex.ConfigurationValidityDateException;
 import eu.city4age.dashboard.api.pojo.ex.JsonMappingExceptionUD;
 import eu.city4age.dashboard.api.pojo.ex.MissingKeyException;
 import eu.city4age.dashboard.api.pojo.ex.NotAuthorizedException;
 import eu.city4age.dashboard.api.pojo.ex.NotLoggedInException;
+import eu.city4age.dashboard.api.pojo.ex.TypicalPeriodException;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.json.desobj.Configuration;
 import eu.city4age.dashboard.api.pojo.json.desobj.Gef;
@@ -108,7 +108,7 @@ public class PilotDetectionVariableService {
 	})) @RequestBody String json) throws Exception {
 		
 		StringBuilder response = new StringBuilder();
-		boolean doneSomething = false;
+		//boolean doneSomething = false;
 		Timestamp validFrom = new Timestamp (System.currentTimeMillis());
 		
 		ConfigureDailyMeasuresDeserializer data=null;
@@ -134,7 +134,6 @@ public class PilotDetectionVariableService {
 				if(uir!=null) {
 					if(uir.getPilotCode().equals(pilotCode)) {
 						setConfiguration(pilotCode,configuration, validFrom, response);
-						doneSomething = true;
 					}
 					else {
 						sb = new StringBuilder();
@@ -163,17 +162,12 @@ public class PilotDetectionVariableService {
 			}
 		}
 		
-		if (doneSomething) {
-			pilotDetectionVariableRepository.flush();
-			pilotDetectionVariableRepository.clear();		
-			pilotRepository.flush();
-			pilotRepository.clear();
-		}
+		response.append("\n\tNumber of rows in db after configuration update is: ").append(pilotDetectionVariableRepository.count());
 		return JerseyResponse.buildTextPlain(response.toString());
 
 	}
 
-	private void setConfiguration(String pilotCode,Configuration configuration, Timestamp validFrom, StringBuilder response) throws ConfigurationValidityDateException, MissingKeyException {
+	private void setConfiguration(String pilotCode,Configuration configuration, Timestamp validFrom, StringBuilder response) throws TypicalPeriodException, MissingKeyException {
 
 		ConfigurationCounter confCounter = new ConfigurationCounter();
 		
@@ -184,7 +178,7 @@ public class PilotDetectionVariableService {
 			}
 						
 		pilot.setLatestConfigurationUpdate(validFrom);
-		pilotRepository.saveWithoutFlush(pilot);
+		pilotRepository.save(pilot);
 		
 		List<PilotDetectionVariable> currPilotRepository = pilotDetectionVariableRepository.findByPilotCodeOrderByDetectionVariableId(pilotCode);
 
@@ -222,17 +216,66 @@ public class PilotDetectionVariableService {
 						
 						createOrUpdatePilotDetectionVariable(meaDetectionVariable, gesDetectionVariable,
 								validFrom, pilotCode, emptyString, measure.getWeight(), confCounter, currPilotRepository);
-											
-						for (Nui nui : measure.getNuis()) {
+						
+						List<Nui> nuis = measure.getNuis();
+						String meaTypicalPeriod = meaDetectionVariable.getDefaultTypicalPeriod();
+						
+						if (nuis == null || nuis.isEmpty()) {
 							
-							DetectionVariable nuiDetectionVariable = findDetectionVariableOfType(nui.getName(),
-									DetectionVariableType.NUI);
+							if (meaTypicalPeriod.equals("DAY") ||
+									meaTypicalPeriod.equals("1WK")) {
+								
+								StringBuilder sb = new StringBuilder ();
+								
+								if (meaTypicalPeriod.equals("DAY")) {
+									sb.append("Daily measure exception: Daily measures must have NUIs. Measure ").
+										append (gfgDetectionVariable.getDetectionVariableName()).append(" -> ").
+										append (gefDetectionVariable.getDetectionVariableName()).append(" -> ").
+										append (gesDetectionVariable.getDetectionVariableName()).append(" -> ").
+										append (meaDetectionVariable.getDetectionVariableName()).
+										append (" in config file doesnt have NUIs");
+								}
+								else {
+									sb.append("Weekly measure exception: Weekly measures must have NUIs. Measure ").
+										append (gfgDetectionVariable.getDetectionVariableName()).append(" -> ").
+										append (gefDetectionVariable.getDetectionVariableName()).append(" -> ").
+										append (gesDetectionVariable.getDetectionVariableName()).append(" -> ").
+										append (meaDetectionVariable.getDetectionVariableName()).
+										append (" in config file doesnt have NUIs");
+								}
+									
+								throw new TypicalPeriodException (sb.toString());
+							}
+						}
+						
+						else {
+							
+							if (meaTypicalPeriod.equals("MON")) {
+								
+								StringBuilder sb = new StringBuilder ();
+								sb.append("Monthly measure exception: Monthly measures shouldn't have NUIs. Measure ").
+									append (gfgDetectionVariable.getDetectionVariableName()).append(" -> ").
+									append (gefDetectionVariable.getDetectionVariableName()).append(" -> ").
+									append (gesDetectionVariable.getDetectionVariableName()).append(" -> ").
+									append (meaDetectionVariable.getDetectionVariableName()).
+									append (" in config file has NUIs");
+								
+								throw new TypicalPeriodException (sb.toString());
+							}
+							else {
+						
+								for (Nui nui : nuis) {								
+							
+									DetectionVariable nuiDetectionVariable = findDetectionVariableOfType(nui.getName(),
+											DetectionVariableType.NUI);
 														
-							createOrUpdatePilotDetectionVariable(nuiDetectionVariable, gesDetectionVariable,
-									validFrom, pilotCode, emptyString, nui.getWeight(), confCounter, currPilotRepository);
+									createOrUpdatePilotDetectionVariable(nuiDetectionVariable, gesDetectionVariable,
+											validFrom, pilotCode, emptyString, nui.getWeight(), confCounter, currPilotRepository);
 
-							createOrUpdatePilotDetectionVariable(meaDetectionVariable, nuiDetectionVariable,
-									validFrom, pilotCode, nui.getFormula(), nui.getWeight(), confCounter, currPilotRepository);
+									createOrUpdatePilotDetectionVariable(meaDetectionVariable, nuiDetectionVariable,
+											validFrom, pilotCode, nui.getFormula(), nui.getWeight(), confCounter, currPilotRepository);
+								}
+							}
 						}
 					}
 				}
@@ -256,11 +299,11 @@ public class PilotDetectionVariableService {
 		
 		for (PilotDetectionVariable pdv : currPilotRepository) {
 			pdv.setValidTo(validFrom);
-			pilotDetectionVariableRepository.saveWithoutFlush(pdv);
+			pilotDetectionVariableRepository.save(pdv);
 		}
 
-		response.append("\n\tNumber of rows in DB after update is: ");
-		response.append(pilotDetectionVariableRepository.count());
+		response.append("\n\tNumber of rows in DB after update for this pilot is: ");
+		response.append(pilotDetectionVariableRepository.findByPilotCodeOrderByDetectionVariableId(pilotCode).size());
 		
 	}
 
@@ -299,7 +342,8 @@ public class PilotDetectionVariableService {
 						pdv.setValidFrom(validFrom);
 						pdv.setValidTo(null);
 						cfc.incrementUpdated();
-						pilotDetectionVariableRepository.saveWithoutFlush(pdv);								
+						pilotDetectionVariableRepository.save(pdv);		
+						logger.info("uradjen update na: " + pdv.getDetectionVariable().getDetectionVariableName());
 					}
 					
 					currList.remove(index);
@@ -310,14 +354,16 @@ public class PilotDetectionVariableService {
 		}
 		
 		if (!dv.getDetectionVariableType().toString().equals("MEA") || !ddv.getDetectionVariableType().toString().equals("NUI")) {
-			pilotDetectionVariableRepository.saveWithoutFlush (new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
+			pilotDetectionVariableRepository.save(new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 			cfc.incrementInserted();
+			logger.info("uradjen insert na: " + dv.getDetectionVariableName());
 		}
 		else {
 			PilotDetectionVariable pdv = pilotDetectionVariableRepository.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode, dvID, ddvID);
 			if (pdv == null) {
-				pilotDetectionVariableRepository.saveWithoutFlush (new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
+				pilotDetectionVariableRepository.save (new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 				cfc.incrementInserted();
+				logger.info("uradjen insert na: " + dv.getDetectionVariableName());
 			}
 		}
 	}

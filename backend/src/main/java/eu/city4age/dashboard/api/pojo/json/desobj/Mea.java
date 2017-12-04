@@ -20,7 +20,7 @@ public class Mea {
 			@JsonProperty(value= "name", required = true)String name, 
 			@JsonProperty(value= "level",required = true)Integer level, 
 			@JsonProperty(value= "weight",required = true)BigDecimal weight,
-			@JsonProperty(value= "nuis", required = true) List<Nui> nuis) {
+			@JsonProperty(value= "nuis", required = false) List<Nui> nuis) {
 		this.name = name;
 		this.level = level;
 		this.weight = weight;
