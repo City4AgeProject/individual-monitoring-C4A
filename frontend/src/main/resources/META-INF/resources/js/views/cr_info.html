@@ -4,6 +4,10 @@
 		<span style="font-size: 16px" data-bind="text: careRecipientLabel "></span> 
 		   <b><span data-bind="text: careRecipientId"></span></b>
 		</span>
+		
+		<!-- comment out for now, probably will completely delete -->
+		
+		<!-- 
 		<span>
 		<span style="font-size: 16px; padding-left: 20px;" data-bind="text: ageLabel"></span>
 		  <b> <span data-bind="text: userAge"></span></b>
@@ -15,7 +19,7 @@
 		  <b><span data-bind="text: assignGeriatrician"></span></b>
 		</span>
 		<!--class="oj-header-border"-->
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br/>
+		<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br/>
 		
 		<div id="summary" style="height: 20px; overflow: hidden; font-size: 16px; margin-top:5px">
 			<b><span data-bind="text: summaryLabel"></span></b>
@@ -23,4 +27,20 @@
 		</div>
 		<br>
 		<a id="showmore" href="#" data-bind="text: readMoreLabel, click: readMoreClick"></a>
+		 -->
+		
+		<div id="personal_data" class="pdata_title">	
+		  <div class="pdata_inner">Local Pilot Data: </div>
+		  <div class="pdata_inner">
+			<table data-bind="foreach: {data: pilotLocalData, as: '_data'}">
+ 			 	<tbody data-bind="foreach: {data: Object.keys(personal_data), as: '_propkey'}">
+   				 <tr>
+   				 	  <td class="pdata_head" data-bind="text: _propkey"></td>
+    				  <td data-bind="text: _data.personal_data[_propkey]"></td>
+   				 </tr>
+  				</tbody>
+			</table>	
+		  </div>		
+		</div>
+		
 	</div>
