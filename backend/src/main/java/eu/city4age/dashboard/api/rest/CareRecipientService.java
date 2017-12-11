@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
@@ -317,6 +318,19 @@ public class CareRecipientService {
 		return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response));
 
 	}// end method
+    
+	@GET
+	@Path("getCareRecipientPilotLocalData/{careRecipientId}")
+	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
+	public String getRemoteCareRecipientData(@PathParam("careRecipientId") Long careRecipientId) {
+		
+		// TODO: Get the pilot's baseurl from the Pilot Configuration Json
+		final String uri = "http://c4amobile.atc.gr/backend/cityForAgeServices2/platform/routes/getCareRecipientData/" + careRecipientId.toString();
+
+	    RestTemplate restTemplate = new RestTemplate();
+	    String result = restTemplate.getForObject(uri, String.class);
+	    return result;
+	}
 
 	@GET
 	@Path("getDiagramData/careRecipientId/{careRecipientId}/parentFactorId/{parentFactorId}")

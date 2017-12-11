@@ -141,3 +141,21 @@
 	display:inline-block;	
 }
 
+
+/* Local pilot Data*/
+.pdata_inner{
+	display:inline-block;
+	vertical-align:top;
+}
+
+.pdata_title{
+	padding-top:15px;
+	font-size: 16px;
+}
+
+.pdata_head{
+	font-weight: bold;
+	padding: 0px 10px 5px 5px;
+}
+
+
