@@ -54,7 +54,7 @@
          style="width:100%;height:350px;">
         <!-- ko if: hasComments -->
         <div style="position: absolute; right: 15px; top:15px;"><img src='images/comment_unsel.png' height="32" width="32" style="opacity: .7;"></div>
-            <div  id="panelCollapse" class="oj-panel  oj-sm-margin-2x demo-mypanel oj-panel-shadow-sm" style="position: absolute; bottom: 10%; left: 0; right: 0;margin-left: auto; margin-right: auto; width: 500px; max-height: 200px; overflow: auto;text-align: justify; display: none;">            
+        <div  data-bind="visible: shouldSeeNotice"  class="oj-panel  oj-sm-margin-2x demo-mypanel oj-panel-shadow-sm" style="position: absolute; bottom: 10%; left: 0; right: 0;margin-left: auto; margin-right: auto; width: 500px; max-height: 200px; overflow: auto;text-align: justify;">            
                   <oj-collapsible  id="ojCollapse" expanded="false" on-oj-before-expand='[[beforeExpand]]' on-oj-before-collapse='[[beforeCollapse]]'>                 
                     <p id="callapse-header" slot="header" data-bind="text: meaCommentPreview" style="margin-left: 10px; margin-right: 10px;"></p>                
                   </oj-collapsible>

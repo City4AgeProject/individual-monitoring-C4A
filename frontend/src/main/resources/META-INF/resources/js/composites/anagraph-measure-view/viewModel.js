@@ -16,8 +16,9 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.meaCommentPreview = ko.observable();
                 self.hasComments;
                 self.showNuis = true;
+                self.shouldSeeNotice = ko.observable(false);
                 self.legendValue = new Object();
-                context.props.then(function(properties) {                    
+                context.props.then(function(properties) {
                     self.props = properties; 
                     self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
 
@@ -54,7 +55,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                      self.legendValue.titleStyle = "font-size:10px";
                     
                     
-                });             
+                });  
                 self.gridOptChanged = function (event, ui){
                     //if user clicked on dataGrid Header, show lineseries of that month                   
                     if(ui['value']){                          
@@ -66,7 +67,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 };
                 self.chartOptChanged = function(event, ui) {
                 };
-                self.chartDrill = function(event, ui) { 
+                self.chartDrill = function(event, ui) {
                     if(ui['series']){
                         var seriesName = ui['seriesData']['name'];                  
                         showLineSerie(seriesName); 
@@ -77,10 +78,10 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                                     self.meaCommentPreview(self.meaComment().slice(0,200) + "...");
                                 }else{
                                     self.meaCommentPreview(self.meaComment());
-                                }                                                              
-                                $("#panelCollapse").fadeIn();
-                            }else{
-                                $("#panelCollapse").fadeOut();
+                                } 
+                                self.shouldSeeNotice(true);
+                            }else{                               
+                                self.shouldSeeNotice(false);
                             }
                             
                         }
