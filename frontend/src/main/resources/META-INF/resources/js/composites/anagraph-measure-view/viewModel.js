@@ -11,7 +11,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.measureName = null;
                 self.lineSeries = [];
                 self.hiddenCategories = ko.observableArray();
-                self.visibleCategory = null;
+                self.visibleCategories = [];
                 self.meaComment = ko.observable();
                 self.meaCommentPreview = ko.observable();
                 self.hasComments;
@@ -59,18 +59,26 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.gridOptChanged = function (event, ui){
                     //if user clicked on dataGrid Header, show lineseries of that month                   
                     if(ui['value']){                          
-                        if(ui['value']['axis'] === 'column'){                       
+                        if(ui['value']['axis'] === 'column'){   
                             var seriesName = ui['value']['key'];
-                            showLineSerie(seriesName);
+                            showLineSerieFromGridHeader(seriesName);
                         }     
                     }
                 };
+                function showLineSerieFromGridHeader(seriesName){
+                    self.visibleCategories = [];
+                    self.visibleCategories.push(seriesName);
+                    var cloneArray = self.lineSeriesNames.slice(0);
+                    self.hiddenCategories(cloneArray);
+                    var index = self.hiddenCategories.indexOf(seriesName);
+                    self.hiddenCategories.splice(index,1);
+                } 
                 self.chartOptChanged = function(event, ui) {
                 };
                 self.chartDrill = function(event, ui) {
                     if(ui['series']){
                         var seriesName = ui['seriesData']['name'];                  
-                        showLineSerie(seriesName); 
+                        showLineSeriesFromLegend(seriesName); 
                         if(self.defaultTypicalPeriod === 'MON'){
                             if(ui.seriesData.items[0].valueEvidenceNotice){
                                 self.meaComment(ui.seriesData.items[0].valueEvidenceNotice.notice);
@@ -86,23 +94,27 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                             
                         }
                     }
-		};               
-                function showLineSerie(seriesName){
-                    if(self.visibleCategory === null){
-                            self.visibleCategory = seriesName;
-                            self.hiddenCategories(self.lineSeriesNames);
+		}; 
+                
+                function showLineSeriesFromLegend(seriesName){                    
+                    if(self.visibleCategories.length === 0){  
+                            self.visibleCategories.push(seriesName);
+                            var cloneArray = self.lineSeriesNames.slice(0);
+                            self.hiddenCategories(cloneArray);
                             var index = self.hiddenCategories.indexOf(seriesName);
                             self.hiddenCategories.splice(index,1);
-                        }
-                        else if(self.visibleCategory === seriesName){
-                            console.log('already visible!');
-                            return;
+                    }else {
+                            if(self.visibleCategories.indexOf(seriesName) !== -1){
+                            var index = self.visibleCategories.indexOf(seriesName);
+                            self.visibleCategories.splice(index,1);
+                            self.hiddenCategories.push(seriesName);                            
                         }else {
                             var index = self.hiddenCategories.indexOf(seriesName);
                             self.hiddenCategories.splice(index,1);
-                            self.hiddenCategories.push(self.visibleCategory);                       
-                            self.visibleCategory = seriesName;
+                            self.visibleCategories.push(seriesName);
                         }     
+                    }
+                       
                 }
                 self.beforeExpand = function(event, ui) {                  
                     self.meaCommentPreview(self.meaComment());
