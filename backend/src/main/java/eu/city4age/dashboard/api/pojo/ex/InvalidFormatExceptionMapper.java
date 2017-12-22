@@ -8,22 +8,24 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 @Provider
-public class UnrecognizedPropertyExceptionMapper implements ExceptionMapper<UnrecognizedPropertyException> {
+public class InvalidFormatExceptionMapper implements ExceptionMapper<InvalidFormatException> {
 
-	static protected Logger logger = LogManager.getLogger(UnrecognizedPropertyExceptionMapper.class);
+	static protected Logger logger = LogManager.getLogger(InvalidFormatExceptionMapper.class);
 
 	@Override
-	public Response toResponse(UnrecognizedPropertyException ex) {
+	public Response toResponse(InvalidFormatException ex) {
 		
 		StringBuilder message = new StringBuilder();
-		
-		message.append("Error: ");
-		message.append("Property \"");
+				
+		message.append(ex.getCause());/*
+		message.append(ex.getClass().getSimpleName());
+		message.append("Property: \"");
 		message.append(ex.getPropertyName());
-		message.append("\" unrecognized at line ").append(ex.getLocation().getLineNr());
+		message.append("\" unrecognized!");*/
+
 		
 		logger.info(message.toString());
 		

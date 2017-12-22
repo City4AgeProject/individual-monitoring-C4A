@@ -18,13 +18,14 @@ public class Configuration {
 	
 
 	public Configuration(	@JsonProperty(value= "name", required = true)String name,
-							@JsonProperty(value= "level",required = true)Integer level,
+							@JsonProperty(value= "level",required = false)Integer level,
             				@JsonProperty(value= "pilotCode",required = true)String pilotCode,
             				@JsonProperty(value= "username",required = true)String username,
             				@JsonProperty(value= "password",required = true)String password,
             				@JsonProperty(value= "groups",required = true)List<Groups> groups) {
 		this.name = name;
-		this.level = level;
+		if (level != null) this.level = level;
+		else this.level = 0;
 		this.pilotCode = pilotCode;
 		this.username = username;
 		this.password = password;
