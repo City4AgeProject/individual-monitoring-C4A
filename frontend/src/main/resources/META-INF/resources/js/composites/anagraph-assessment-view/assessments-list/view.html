@@ -46,13 +46,8 @@
 	</div>
 </div>
 
-<div style="display: none;" id="commentPopup"
-	data-bind="ojComponent:{
-                            component: 'ojDialog', 
-                            initialVisibility: 'hide',
-                            title: fullAnnotationCommentLabel ,
-                            rootAttributes: {style: 'width: 420px; height: 320px;'}
-             }">
+<oj-dialog style="display: none;width: 420px; height: 320px;" id="commentPopup" initialVisibility="hide"
+	data-bind="attr: {title: fullAnnotationCommentLabel}">
 	<div class="demo-flex-display oj-flex-items-pad">
 		<div class="oj-flex oj-sm-flex-direction-column">
 			<div class="oj-flex-item">
@@ -62,5 +57,4 @@
 			</div>
 		</div>
 	</div>
-
-</div>
+</oj-dialog>

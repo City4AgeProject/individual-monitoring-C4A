@@ -38,25 +38,18 @@
 
 </style>
 
-<div style="display:none;" id="popup1" class="popup"
-     data-bind="ojComponent:{
-     				component: 'ojPopup',
-           			rootAttributes: {style:'width: 360px;height:330px;'}
-                              }">
+<oj-popup style="display:none; width: 360px; height:330px" id="popup1" class="popup">
     <div class="demo-flex-display oj-flex-items-pad">
         <div class="oj-flex oj-sm-flex-direction-column">
             <div class="oj-flex-item">
                 <h3><span data-bind="text: $props.dataPointsMarked">&nbsp;</span></h3>
-                <button id="btnClose" class="oj-panel-remove-button" 
-                        data-bind="
-                                    ojComponent: {
-                                      component: 'ojButton', 
-                                      chroming: 'half',
-                                      display: 'icons', 
-                                      icons: {end: 'oj-panel-remove-icon'}, 
-                                      label: 'remove'},
-                                      click: function() {$('#popup1').ojPopup('close', '#btnClose');}  ">
-                </button>
+                <oj-button class="oj-panel-remove-button demo-button"
+                           chroming="half"
+                           display="icons"
+                           on-click="[[closePopup1]]">
+                  <span slot="startIcon" class="oj-panel-remove-icon"></span> 
+                  <span>remove</span>
+                </oj-button>
             </div>
             <div class="oj-flex-item oj-dialog-body" style="height:176px;">
                 <!-- ko foreach: props.selectedAssessments -->
@@ -105,27 +98,20 @@
         </div>
 	        <div class="oj-flex-item" style="height:10px"></div>
 	</div>
-</div>
-
-<div style="display:none;" id="popup2" class="popup"
-     data-bind="ojComponent:{component: 'ojPopup',
-                               rootAttributes: {style:'width:360px;height:330px;'}
-                              }">
+</oj-popup>
+<!-- Popup2 is showing when selected data points have no assessments in them -->
+<oj-popup style="display:none;width:360px;height:330px;" id="popup2" class="popup">
     <div class="demo-flex-display oj-flex-items-pad">
         <div class="oj-flex oj-sm-flex-direction-column">
-            <div class="oj-flex-item">
+            <div class="oj-flex-item">               
                 <h3><span data-bind="text: $props.dataPointsMarked">&nbsp;</span></h3>
-                <button id="btnClose" class="oj-panel-remove-button" 
-                        data-bind="
-                                    ojComponent: {
-                                      component: 'ojButton', 
-                                      chroming: 'half',
-                                      display: 'icons', 
-                                      icons: {end: 'oj-panel-remove-icon'}, 
-                                      label: 'remove'},
-                                      click: function() {$('#popup2').ojPopup('close', '#btnClose');
-                                      					}  ">
-                </button>
+                <oj-button class="oj-panel-remove-button demo-button"
+                           chroming="half"
+                           display="icons"
+                           on-click="[[closePopup2]]">
+                  <span slot="startIcon" class="oj-panel-remove-icon"></span>
+                  <span>remove</span>
+                </oj-button>
             </div>
             <div class="oj-flex-item oj-dialog-body" style="height:176px;">
                 <!-- ko foreach: $props.selectedAssessments -->
@@ -142,7 +128,7 @@
             <div class="oj-flex-item oj-flex-items-pad">
                 <div class="oj-flex">
                     <div class="oj-flex-item message" >
-                        <a class="link" href="#" id="addAnnotation" data-bind="click: clickShowPopupAddAssessment">
+                        <a class="link" href="#" id="addAnnotation2" data-bind="click: clickShowPopupAddAssessment">
                             <img src="images/comment_add.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
                             <span  data-bind="text: addAnnotationLabel"></span>
                         </a>
@@ -164,5 +150,5 @@
         <div class="oj-flex-item" style="height:10px"></div>
         <div class="oj-flex-item" style="height:10px"></div>
      </div>                               
-</div>
+</oj-popup>
         

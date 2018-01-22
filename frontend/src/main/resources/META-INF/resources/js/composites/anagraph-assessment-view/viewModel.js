@@ -42,16 +42,22 @@ function(oj, ko, $) {
                 self.dataValiditiesTags = ko.observableArray([
                     {value: 'QUESTIONABLE_DATA',label: oj.Translations.getTranslatedString( 'questionable_data' ), imagePath: 'images/questionable_data.png'},
                     {value: 'FAULTY_DATA',label: oj.Translations.getTranslatedString( 'faulty_data' ), imagePath: 'images/faulty_data.png'},
-                    {value: 'VALID_DATA',label: oj.Translations.getTranslatedString( 'valid_data' ), imagePath: 'images/valid_data.png'}]);
+                    {value: 'VALID_DATA',label: oj.Translations.getTranslatedString( 'valid_data' ), imagePath: 'images/valid_data.png'}
+                ]);
+                
                 self.checkedFilterValidityData = ko.observableArray();
 
-	    
-        
+
+                self.roleTags = ko.observableArray([
+                    {value : 7, label : oj.Translations.getTranslatedString("role_lge")},
+                    {value : 8, label : oj.Translations.getTranslatedString("role_pge")}
+                ]);
+                
         
 		self.isChecked = ko.observable();
 		self.selectedRoles = ko.observableArray([]);
 		self.rolesCollection = ko.observable();
-		self.roleTags = ko.observableArray([]);
+		
 		self.val = ko.observableArray([ "Month" ]);
 		self.typeValue = ko.observable('line');
 		self.stackValue = ko.observable('off');
@@ -62,7 +68,7 @@ function(oj, ko, $) {
 		self.commentText = ko.observable('');
                 self.selectedRiskStatus = ko.observableArray([]);
                 self.selectedDataValidity = ko.observableArray([]);
-
+                
 		var selected = [];
 
 		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase() + oj.Translations.getTranslatedString("annotations_assessments").substring(1);
@@ -85,8 +91,8 @@ function(oj, ko, $) {
                 self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc");
                 self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
                 self.typeLabel = oj.Translations.getTranslatedString("type");
-
-		var role = new oj.Collection.extend({
+                
+                    var role = new oj.Collection.extend({
 			url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS",
 			fetchSize : -1,
 			model : new oj.Model.extend({
@@ -103,10 +109,11 @@ function(oj, ko, $) {
 				if (self.roleTags.length === 0) {
 					for (var i = 0; i < response.length; i++) {
 						var roleModel = response[i];
-						self.roleTags.push({
-							value : roleModel.id,
-							label : oj.Translations.getTranslatedString(roleModel.roleName)
-						});
+                                                //commented code because it does not work on oracle jet 4.0 for add assessment
+//						self.roleTags.push({
+//							value : roleModel.id,
+//							label : oj.Translations.getTranslatedString(roleModel.roleName)
+//						});
 					}
 				}
 			},
@@ -115,57 +122,59 @@ function(oj, ko, $) {
 		});
 		
 		//event triggers when user hovers or clicks on chart lines
-		self.chartOptionChange = function(event, ui) {
-			if(ui !== undefined) {
-				if (ui['option'] === 'selection') {					
+		self.chartOptionChange = function(event) {
+			
+									
 					if (!self.showSelectionOnDiagram()) {
+                                            if(event){
 						//if there is any selected values:
-						if (ui['value'].length > 0) {							
-							var onlyDataPoints = [];						
-							onlyDataPoints = getDataPoints(ui['optionMetadata']);
-							
+						if (event.detail.selectionData.length > 0) {							
+                                                        var onlyDataPoints = [];						
+							onlyDataPoints = getDataPoints(event.detail.selectionData);
+                                       
 							//if there is no selected values
 							if (onlyDataPoints.length === 0) {
-								for (var i = 0; i < ui['value'].length; i++) {
-									onlyDataPoints.push(ui['value'][i].id);
-								}
+//								for (var i = 0; i < ui['value'].length; i++) {
+//									onlyDataPoints.push(ui['value'][i].id);
+//								}
 							} else if (onlyDataPoints.length === 1
-									&& onlyDataPoints[0][0]
-									&& onlyDataPoints[0][0].id) {
-								refreshDataPointsMarked(1);
-							} else {								
-								// Compose selections in get query parameters
-								if(ui['optionMetadata']['selectionData'].length == 1){
-									//if there is only 1 selection
-									var gefOrGesId = ui['optionMetadata']['selectionData'][0]['data']['gefTypeId'];	
-                                                                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
-                                                                        if(selectedDetectionVariable.detectionVariableType == 'GES'){
-                                                                            $('#popupWrapper1').prop('seeMeasures', true);
-                                                                            console.log('setting seeMeasures to true');
-                                                                        }else {
-									$('#popupWrapper1').prop('seeMeasures', false);
-								}
-								}else {				
-									$('#popupWrapper1').prop('seeMeasures', false);
-								}
-								
-								self.queryParams = calculateSelectedIds(onlyDataPoints);
-								loadAssessments(self.queryParams);
-							}
+                                                        && onlyDataPoints[0][0]
+                                                        && onlyDataPoints[0][0].id) {
+                                                refreshDataPointsMarked(1);
+                                        } else {								
+                                                // Compose selections in get query parameters
+                                                if(event.detail.selectionData.length == 1){
+                                                        //if there is only 1 selection
+                                                        var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
+                                                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
+                                                        if(selectedDetectionVariable.detectionVariableType == 'GES'){
+                                                            $('#popupWrapper1').prop('seeMeasures', true);
+                                                            console.log('setting seeMeasures to true');
+                                                        }else {
+                                                        $('#popupWrapper1').prop('seeMeasures', false);
+                                                }
+                                                }else {				
+                                                        $('#popupWrapper1').prop('seeMeasures', false);
+                                                }
 
-							//showAssessmentsPopup();
-	
-							$('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
-	
+                                                self.queryParams = calculateSelectedIds(onlyDataPoints);
+                                                loadAssessments(self.queryParams);
+                                        }
+
+                                        //showAssessmentsPopup();
+
+                                        $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
+			
 
 						} else {
 							self.dataPointsMarkedIds = [];
 						}
+                                            }
 					} else {
 						self.showSelectionOnDiagram(false);
 					}
-				}
-			}
+				
+			
 		};
 		
 		var loadDiagramDataCallback = function(data) {
@@ -322,10 +331,10 @@ function(oj, ko, $) {
 			console.log(error);
 		};
 
-		self.chartDrill = function(event, ui) {
-                    if(ui['series']){
+		self.chartDrill = function(event) {
+                    if(event.detail['series']){
 			console.log('drill on anagraph-assessment-view');                      
-                        self.props.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
+                        self.props.selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);
                                                    
                         var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);
                         console.log('selected det is : ' + JSON.stringify(selectedDetectionVariable));
@@ -450,17 +459,18 @@ function(oj, ko, $) {
 							});
 		};
 
-		function getDataPoints(dataSelection) {
+		function getDataPoints(selectionData) {
 			var filteredSelection = [];
-			if (dataSelection.selectionData !== undefined) {
-				for (var i = 0; i < dataSelection.selectionData.length; i++) {
-					var selectedDataPoint = dataSelection.selectionData[i];
+			if (selectionData !== undefined) {
+				for (var i = 0; i < selectionData.length; i++) {
+					var selectedDataPoint = selectionData[i];
 					// skip assessment
 					if (selectedDataPoint.seriesData.name === 'Assessments')
-						;
+                                        {
+                                            
+                                        }
 					else {
-						filteredSelection
-								.push(selectedDataPoint.data.id);
+						filteredSelection.push(selectedDataPoint.data.id);
 					}
 				}
 			}
@@ -665,8 +675,8 @@ function(oj, ko, $) {
 		self.resetClick = function() {
 			$( ".selector" ).ojSelect( "getNodeBySubId", {'subId': 'oj-select-chosen'} ).textContent="";
 			self.selectedRoles = null;
-			this.checkedFilterRiskStatus([]);
-			this.checkedFilterValidityData([]);
+			self.checkedFilterRiskStatus([]);
+			self.checkedFilterValidityData([]);
 			filterAssessments(self.queryParams,
 					self.checkedFilterValidityData);
 	

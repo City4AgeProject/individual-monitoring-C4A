@@ -20,13 +20,19 @@
 			"description" : "Value of data validity selected in combobox.",
 			"type": "Array<object>"
 		},
-		"selectedRoles": {
-			"description" : "Values of auditience roles selected in combobox.",
-			"type": "Array<object>"
-		},
+		
                 "roleTags": {
 			"description" : "Values of all auditience roles showed in combobox.",
 			"type": "Array<object>"           
+                },
+                "risksTags": {
+			"description" : "Values of all risk tags showed in combobox.",
+			"type": "Array<object>" 
+                },
+                "dataValiditiesTags": {
+			"description" : "Values of all data validity tags showed in combobox.",
+			"type": "Array<object>" 
                 }
+                
 	}
 }

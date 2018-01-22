@@ -1,4 +1,4 @@
-define(['knockout', 'jquery', 'urls', 'entities'],
+define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 'ojs/ojselectcombobox','ojs/ojinputtext','ojs/ojlabel','ojs/ojbutton','ojs/ojarraydataprovider','promise'],
         function (ko, $) {
             
             function model(context) {
@@ -6,11 +6,10 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 
                 self.risksCollection = ko.observable();
                 self.risksTags = ko.observableArray();
-                
-                self.dataValiditiesTags = ko.observableArray([
-                    {value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
-                    {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
-                    {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
+                self.roleTags = ko.observableArray();
+                self.dataValiditiesTags = ko.observableArray();
+                               
+               
                 
                 self.choseTypeLabel = oj.Translations.getTranslatedString("chose_type");
                 self.choseTypePlcHoldLabel = oj.Translations.getTranslatedString("chose_risk");
@@ -24,8 +23,22 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 self.noDataSetSelectedLabel = oj.Translations.getTranslatedString("no_data_set_selected");
                 self.requiredLabel = oj.Translations.getTranslatedString("required_label");
                 
+                
+                self.selectedRiskStatus = ko.observable();
+                self.selectedDataValidity = ko.observable();
+                self.selectedRoles = ko.observableArray([]);
+                
+                self.closeDialog = function(){
+                    $('#dialog1').ojDialog('close');
+                };                                   
            		context.props.then(function(properties) {
-        			self.props = properties;
+        			self.props = properties;                               
+                                self.risksTags = self.props.risksTags;
+                                self.dataValiditiesTags = self.props.dataValiditiesTags;
+                                self.roleTags = self.props.roleTags;
+                                
+                                console.log('selected role tags iss : ' + ko.toJSON(self.props.roleTags));
+                                self.roleTagsDP = new oj.ArrayDataProvider(self.roleTags, {idAttribute: 'value'});                               
         		});
                 
                 $(document).ready(function(){
@@ -41,12 +54,12 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                           
                      $( ".oj-dialog" ).mouseover(function() {
                     	 $("#okButton").attr("disabled", true);
-                    	  if(( self.props.selectedRiskStatus[0]=='A' || self.props.selectedRiskStatus[0]=='N' || self.props.selectedRiskStatus[0]=='W' )
-                        		  &&( self.props.selectedRoles[0] == 7 || self.props.selectedRoles[0] == 8 )
-                        		  &&( 	self.props.selectedDataValidity[0]=='FAULTY_DATA' || 
-                        				self.props.selectedDataValidity[0]=='VALID_DATA' || 
-                        				self.props.selectedDataValidity[0]=='QUESTIONABLE_DATA' ||
-                        				((self.props.selectedDataValidity[0]===undefined)||(self.props.selectedDataValidity[0]==="undefined")||(self.props.selectedDataValidity[0]===null))
+                    	  if(( self.selectedRiskStatus[0]=='A' || self.selectedRiskStatus[0]=='N' || self.selectedRiskStatus[0]=='W' )
+                        		  &&( self.selectedRoles[0] == 7 || self.selectedRoles[0] == 8 )
+                        		  &&( 	self.selectedDataValidity[0]=='FAULTY_DATA' || 
+                        				self.selectedDataValidity[0]=='VALID_DATA' || 
+                        				self.selectedDataValidity[0]=='QUESTIONABLE_DATA' ||
+                        				((self.selectedDataValidity[0]===undefined)||(self.selectedDataValidity[0]==="undefined")||(self.selectedDataValidity[0]===null))
                         			)
                         		  ){
                         		  $("#okButton").attr("disabled", false);
@@ -111,14 +124,19 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 }
 
                 self.postAssessment = function (data, event) {
-                    
+                    console.log('selected role tags : ' + ko.toJSON(self.selectedRoles));
+                    console.log('selected risk tags : ' + self.selectedRiskStatus());
+                    console.log('selected data validity tags : ' + ko.toJSON(self.selectedDataValidity));
+                    console.log('comment text is : ' + ko.toJSON(self.props.commentText));
                     var jwt = sessionStorage.getItem("jwt");
                     var comment = ko.toJS(self.props.commentText);
-                    var riskStatus = self.props.selectedRiskStatus.length===1 ? ko.toJS(self.props.selectedRiskStatus)[0] : 'XXX'; // N-none
-                    var dataValidity = self.props.selectedDataValidity.length===1 ? ko.toJS(self.props.selectedDataValidity)[0] : 'VALID_DATA';
+                    var riskStatus = (self.selectedRiskStatus()) ? self.selectedRiskStatus() : 'XXX'; // N-none
+                    var dataValidity = (self.selectedDataValidity()) ? self.selectedDataValidity() : 'VALID_DATA';
                     var geriatricFactorValueIds = self.props.dataPointsMarkedIds;
-                    var audienceIds = ko.toJS(self.props.selectedRoles);
+                    
+                    var audienceIds = ko.toJS(self.selectedRoles);
                     console.log("audienceIds: " + audienceIds);
+                    console.log("geriatric factor value ids: " + ko.toJSON(geriatricFactorValueIds));
                     var assessmentToPost = new AddAssessment
                             (comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
                     if ( (riskStatus !== 'W' && riskStatus !== 'N' && riskStatus !== 'A') || audienceIds.length === 0
@@ -143,9 +161,9 @@ define(['knockout', 'jquery', 'urls', 'entities'],
                 
                 function resetAddAssessment() {
                 	self.props.commentText = '';
-                	self.props.selectedRiskStatus = [];
-                	self.props.selectedDataValidity = [];
-                	self.props.selectedRoles = [];
+                	self.selectedRiskStatus(null);
+                	self.selectedDataValidity(null);
+                	self.selectedRoles([]);
                 }
                 
                 self.attached  = function(context) {

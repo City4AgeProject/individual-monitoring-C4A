@@ -22,6 +22,7 @@ define(
 				}
 
 				self.readMore = function() {
+                                    console.log('read more');
 					document.getElementById('commentSpan').textContent = this.comment;
 
 					$('#commentPopup').ojDialog();

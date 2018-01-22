@@ -64,6 +64,12 @@ function(ko, $) {
             
             //return true;
         };
+        self.closePopup1 = function() {
+            $('#popup1').ojPopup('close', '#btnClose');
+        };
+        self.closePopup2 = function() {
+            $('#popup2').ojPopup('close', '#btnClose');
+        };
 	}
 
 	return model;
