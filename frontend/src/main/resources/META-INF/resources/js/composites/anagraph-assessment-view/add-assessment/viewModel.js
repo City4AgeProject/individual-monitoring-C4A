@@ -35,36 +35,32 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
         			self.props = properties;                               
                                 self.risksTags = self.props.risksTags;
                                 self.dataValiditiesTags = self.props.dataValiditiesTags;
-                                self.roleTags = self.props.roleTags;
-                                
-                                console.log('selected role tags iss : ' + ko.toJSON(self.props.roleTags));
+                                self.roleTags = self.props.roleTags;                              
                                 self.roleTagsDP = new oj.ArrayDataProvider(self.roleTags, {idAttribute: 'value'});                               
         		});
                 
-                $(document).ready(function(){
-                	$("#okButton").attr("disabled", true);
-       
-                	  $("#required").hide();
-                      $(".oj-dialog").on('mouseenter',function(){
-                      	$("#required").fadeIn();
+                $(document).ready(function(){  
+                    $("#okButton").on('click', function() {
+                        var riskSelect = document.getElementById("riskSelect");
+                        riskSelect.validate();
+                        var roleSelect = document.getElementById("selectRole");
+                        roleSelect.validate();
                       });
-                      $(".oj-dialog").on('mouseleave',function(){
-                        	$("#required").fadeOut();
-                      });
+                    $("#okButton").attr("disabled", true);
                           
-                     $( ".oj-dialog" ).mouseover(function() {
-                    	 $("#okButton").attr("disabled", true);
-                    	  if(( self.selectedRiskStatus[0]=='A' || self.selectedRiskStatus[0]=='N' || self.selectedRiskStatus[0]=='W' )
-                        		  &&( self.selectedRoles[0] == 7 || self.selectedRoles[0] == 8 )
-                        		  &&( 	self.selectedDataValidity[0]=='FAULTY_DATA' || 
-                        				self.selectedDataValidity[0]=='VALID_DATA' || 
-                        				self.selectedDataValidity[0]=='QUESTIONABLE_DATA' ||
-                        				((self.selectedDataValidity[0]===undefined)||(self.selectedDataValidity[0]==="undefined")||(self.selectedDataValidity[0]===null))
-                        			)
-                        		  ){
-                        		  $("#okButton").attr("disabled", false);
-                        	  } 
-                      });
+                    $( ".oj-dialog" ).mouseover(function() {
+                        $("#okButton").attr("disabled", true);
+                        if(( self.selectedRiskStatus[0]=='A' || self.selectedRiskStatus[0]=='N' || self.selectedRiskStatus[0]=='W' )
+                                          &&( self.selectedRoles[0] == 7 || self.selectedRoles[0] == 8 )
+                                          &&( 	self.selectedDataValidity[0]=='FAULTY_DATA' || 
+                                                        self.selectedDataValidity[0]=='VALID_DATA' || 
+                                                        self.selectedDataValidity[0]=='QUESTIONABLE_DATA' ||
+                                                        ((self.selectedDataValidity[0]===undefined)||(self.selectedDataValidity[0]==="undefined")||(self.selectedDataValidity[0]===null))
+                                                )
+                                          ){
+                            $("#okButton").attr("disabled", false);
+                        } 
+                    });
                      
                      
                      $(document).keypress(function(e) {
@@ -122,12 +118,8 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                         }
                     });
                 }
-
-                self.postAssessment = function (data, event) {
-                    console.log('selected role tags : ' + ko.toJSON(self.selectedRoles));
-                    console.log('selected risk tags : ' + self.selectedRiskStatus());
-                    console.log('selected data validity tags : ' + ko.toJSON(self.selectedDataValidity));
-                    console.log('comment text is : ' + ko.toJSON(self.props.commentText));
+               
+                self.postAssessment = function (data, event) {                   
                     var jwt = sessionStorage.getItem("jwt");
                     var comment = ko.toJS(self.props.commentText);
                     var riskStatus = (self.selectedRiskStatus()) ? self.selectedRiskStatus() : 'XXX'; // N-none
@@ -161,8 +153,8 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                 
                 function resetAddAssessment() {
                 	self.props.commentText = '';
-                	self.selectedRiskStatus(null);
-                	self.selectedDataValidity(null);
+                	//self.selectedRiskStatus(null);
+                	//self.selectedDataValidity(null);
                 	self.selectedRoles([]);
                 }
                 
@@ -171,6 +163,6 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                 };
                 
             };
-            return model;
+            return model;            
         }
 );

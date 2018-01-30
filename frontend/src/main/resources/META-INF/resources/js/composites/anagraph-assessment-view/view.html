@@ -1,6 +1,6 @@
 <div class="oj-panel oj-panel-shadow-sm"
 	style="border: none; background-color: #fcfcfc">
-	<div class="oj-flex-item" style="width: 100%; height: 400pxf; display: block;">
+	<div class="oj-flex-item" style="width: 100%; height: 400pxf; display: block; background-color: #F1F1F1; padding-top: 15px;">
 		<!-- line chart GES -->
 		<!-- title = /'{/"text/": ."Geriatric Sub factor - /" + subFactorName(), /"halign/": /"center/"}/' -->
 <!-- title: {text: detectionGEFGroupsLineChartLabel , halign: 'center'}, -->
@@ -19,7 +19,7 @@
                     orientation="vertical" 
                     hover-behavior="dim"              
                     zoom-and-scroll="off" 
-                    legend="[[legend]]"                    
+                    legend.position="bottom"
                     drilling="[[$props.drilling]]"
                     on-oj-drill="[[chartDrill]]" 
                     on-selection-changed="[[chartOptionChange]]"
@@ -40,12 +40,12 @@
 
 	<div class="oj-flex-item">
 			<!-- tabs with annotation list and polar chart -->
-			<div id="tabs-container" class="oj-flex-item">
-			<oj-tab-bar id="tabs" style="display: none;" edge="top">
-                            <ul>
+			<div id="tabs-container" class="oj-flex-item" style="display: none;">
+<!--			<oj-tab-bar id="tabs" style="display: none;" edge="top">-->
+<!--                            <ul>
                                 <li><span data-bind="text: annotationsLabel , click: toggleAnnotationsLabel" ></span></li>
 				<li><span data-bind="text: morphologyLabel , click: toggleMorphologyLabel"></span></li>
-                            </ul>                        
+                            </ul>                        -->
 					
 					<!-- tab contents -->
 					<div id="tabAnnotations">
@@ -63,10 +63,12 @@
 									</div>
 									<div class="oj-flex-bar-end">
 										<div>
+                                                                                    <!--  add button (assessment)-->
                                                                                     <oj-button id="buttonAddComment" style="margin-bottom:0px; margin-top:10px;"
                                                                                             on-click="[[clickShowPopupAddAssessment]]">
                                                                                         <span data-bind='text: addLabel'></span>
                                                                                     </oj-button>
+                                                                                    <!--  options button -->
                                                                                     <oj-button style="margin-bottom:0px; margin-top:10px;" 
                                                                                                display="icons"
                                                                                                on-click="[[toggleFilterAssessmentBar]]">
@@ -130,19 +132,6 @@
                                                                                 <oj-select-one id="selectRole" options="[[roleTags]]" 
                                                                                     value="{{selectedRoles}}" style="width: 180px; max-width: 334px;">
                                                                                   </oj-select-one>
-                                                                                
-<!--										<select  id="selectRole" class="selector"
-											data-bind="ojComponent: {
-                                                                                            component: 'ojSelect', 
-                                                                                            value: selectedRoles ,
-                                                                                            required: true ,
-                                                                                            placeholder: '' ,
-                                                                                            multiple: false,
-                                                                                            options: roleTags ,
-                                                                                            rootAttributes: {style:'width: 180px; max-width: 334px;'}
-                                                                                        }">
-                                                   
-										</select>-->
 									</div>
 
 
@@ -181,11 +170,11 @@
 					</div>
                                         
 
-					<div id="tabShowMorphology">
+<!--					<div id="tabShowMorphology">
 						<div id="polarChart-container" class="oj-flex"
 							data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
 
-							<!-- polar chart -->
+							 polar chart 
                                                         <oj-chart id="polarChart1"
                                                             type="[[typeValue]]"
                                                             coordinate-system="polar"
@@ -199,8 +188,8 @@
                                                         </oj-chart>
 
 						</div>
-					</div>
-				</oj-tab-bar>
+					</div>-->
+				<!--</oj-tab-bar>-->
 			</div>
 	</div>
 </div>

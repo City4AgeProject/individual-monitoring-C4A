@@ -153,10 +153,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    					    case 'std': 
     	    					    	nuiName = "Nui2";
     	    					    	break;
-    	    					    case 'best': 
+    	    					    case 'delta': 
     	    					    	nuiName = "Nui3";
     	    					    	break;
-    	    					    case 'delta': 
+    	    					    case 'best': 
     	    					    	nuiName = "Nui4";
     	    					    	break;
     	    						}

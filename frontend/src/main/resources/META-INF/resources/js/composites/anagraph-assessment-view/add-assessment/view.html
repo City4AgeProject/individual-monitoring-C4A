@@ -1,4 +1,4 @@
-<oj-dialog style="display: none;width: 375px; height: 480px;" id="dialog1" initial-visibility="hide" 
+<oj-dialog style="display: none;width: 370px; max-height: 550px;" id="dialog1" initial-visibility="hide" resize-behavior="none" 
            data-bind="attr: {title: addAnnotationTitle}"
              >
 	<div class="oj-dialog-body">
@@ -39,16 +39,16 @@
                                             </div>
 					</div>
 					<div class="oj-flex">
-						<div class="oj-flex-item">
+                                            <div class="oj-flex-item">
 							<label for="selectRole" data-bind="text: forSelectRoleLabel+'*'"></label>
-                                                        <oj-combobox-many id="selectRole"  options="{{roleTagsDP}}" value="{{selectedRoles}}" style="max-width:334px"></oj-combobox-many> 
+                                                        <oj-combobox-many required id="selectRole"  options="{{roleTagsDP}}" value="{{selectedRoles}}" style="max-width:370px"></oj-combobox-many> 
 						</div>
 					</div>
 
 					<div class="oj-flex">
 						<div class="oj-flex-item">
 							<label for="textareacontrol"  data-bind="text: commentLabel"></label>
-                                                        <oj-text-area id="textareacontrol" rows="5" value="{{$props.commentText}}" style="max-width:334px" placeholder="[[commentPlcHoldLabel]]"></oj-text-area>
+                                                        <oj-text-area id="textareacontrol" rows="5" value="{{$props.commentText}}" style="max-width:370px" placeholder="[[commentPlcHoldLabel]]"></oj-text-area>
 						</div>
 					</div>
 

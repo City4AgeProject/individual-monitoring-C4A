@@ -13,7 +13,7 @@ function(oj, ko, $) {
 		self.parentFactorId = ko.observable();
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();
-		self.legend = ko.observable();
+		
 		self.drilling = ko.observable();
 		self.seeMeasures = ko.observable(false);
 		
@@ -123,58 +123,51 @@ function(oj, ko, $) {
 		
 		//event triggers when user hovers or clicks on chart lines
 		self.chartOptionChange = function(event) {
-			
-									
-					if (!self.showSelectionOnDiagram()) {
-                                            if(event){
-						//if there is any selected values:
-						if (event.detail.selectionData.length > 0) {							
-                                                        var onlyDataPoints = [];						
-							onlyDataPoints = getDataPoints(event.detail.selectionData);
-                                       
-							//if there is no selected values
-							if (onlyDataPoints.length === 0) {
-//								for (var i = 0; i < ui['value'].length; i++) {
-//									onlyDataPoints.push(ui['value'][i].id);
-//								}
-							} else if (onlyDataPoints.length === 1
-                                                        && onlyDataPoints[0][0]
-                                                        && onlyDataPoints[0][0].id) {
-                                                refreshDataPointsMarked(1);
-                                        } else {								
-                                                // Compose selections in get query parameters
-                                                if(event.detail.selectionData.length == 1){
-                                                        //if there is only 1 selection
-                                                        var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
-                                                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
-                                                        if(selectedDetectionVariable.detectionVariableType == 'GES'){
-                                                            $('#popupWrapper1').prop('seeMeasures', true);
-                                                            console.log('setting seeMeasures to true');
-                                                        }else {
-                                                        $('#popupWrapper1').prop('seeMeasures', false);
-                                                }
-                                                }else {				
-                                                        $('#popupWrapper1').prop('seeMeasures', false);
-                                                }
+                    if (!self.showSelectionOnDiagram()) {
+                        if(event){                            
+                            if(event.detail.selectionData){                                                                                                    
+                                if (event.detail.selectionData.length > 0) {							
+                                    var onlyDataPoints = [];						
+                                    onlyDataPoints = getDataPoints(event.detail.selectionData);
 
-                                                self.queryParams = calculateSelectedIds(onlyDataPoints);
-                                                loadAssessments(self.queryParams);
-                                        }
+                                    if (onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id) {
+                                        refreshDataPointsMarked(1);
+                                    } else {								
+                                            // Compose selections in get query parameters
+                                            if(event.detail.selectionData.length == 1){
+                                                //if there is only 1 selection
+                                                var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
+                                                var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
+                                                if(selectedDetectionVariable.detectionVariableType == 'GES'){
+                                                    sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
+                                                    $('#popupWrapper1').prop('seeMeasures', true);
+                                                    console.log('setting seeMeasures to true');
+                                                }else {
+                                                $('#popupWrapper1').prop('seeMeasures', false);
+                                                }
+                                            }else {				
+                                                    $('#popupWrapper1').prop('seeMeasures', false);
+                                            }
 
-                                        //showAssessmentsPopup();
+                                            self.queryParams = calculateSelectedIds(onlyDataPoints);
+                                            loadAssessments(self.queryParams);
+                                    }
+
+                                    //showAssessmentsPopup();
 
                                         $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
-			
 
-						} else {
-							self.dataPointsMarkedIds = [];
-						}
-                                            }
-					} else {
-						self.showSelectionOnDiagram(false);
-					}
-				
+
+                                } else {
+                                        self.dataPointsMarkedIds = [];
+                                }
+                            }
+                        }
+                    } else {
+                            self.showSelectionOnDiagram(false);
+                    }
 			
+                    
 		};
 		
 		var loadDiagramDataCallback = function(data) {
@@ -218,7 +211,7 @@ function(oj, ko, $) {
 			$('#addAssessment').prop('selectedDataValidity', []);
 			$('#addAssessment').prop('selectedRoles', []);
                         
-			if (self.roleTags.length > 0) {
+			if (self.roleTags().length > 0) {
                             console.log("ROLE TAGS FULL");
                             $('#addAssessment').prop('roleTags', ko.toJS(self.roleTags));
 
@@ -267,15 +260,11 @@ function(oj, ko, $) {
 
 		self.shownFilterBar = false;
 		self.toggleFilterAssessmentBar = function(e) {
-			if ($('#assessment-filter').css('display') === 'none') {
-				$('#assessment-filter').css({
-					display : 'block'
-				});
+			if ($('#assessment-filter').css('display') === 'none') {				
+                                $( "#assessment-filter" ).fadeIn();
 				self.shownFilterBar = true;
 			} else {
-				$('#assessment-filter').css({
-					display : 'none'
-				});
+				$('#assessment-filter').fadeOut();
 				self.shownFilterBar = false;
 			}
 		};
@@ -340,12 +329,12 @@ function(oj, ko, $) {
                         console.log('selected det is : ' + JSON.stringify(selectedDetectionVariable));
                         if(selectedDetectionVariable.detectionVariableType === 'GEF'){ 
                             console.log('selected GEF');                                                                                                                                                                
-                            sessionStorage.setItem("gefObj", JSON.stringify(selectedDetectionVariable));      
+                            sessionStorage.setItem("gefObj", JSON.stringify(selectedDetectionVariable));  
                             oj.Router.rootInstance.go('detection_ges');
                             
                         }else if(selectedDetectionVariable.detectionVariableType === 'GES'){
                             console.log('selected GES');                           
-                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));                                    
+                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
                             oj.Router.rootInstance.go("detection_mea");
                         }
                     }
@@ -733,9 +722,9 @@ function(oj, ko, $) {
 			}
 			self.props.selectedItemsValue = selected;
 		}
-
+                //this method makes annotation list with filters visible and sets dataPointsMarked to assessment-preview component 
 		function refreshDataPointsMarked(assessmentsResultLength) {
-			document.getElementById('tabs').style.display = 'block';
+			document.getElementById('tabs-container').style.display = 'block';
 			$('#tabAnnotations').css({
 				display : 'block'
 			});

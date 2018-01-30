@@ -139,10 +139,12 @@ function (oj, ko, $, sp, params) {
         self.titleObj = ko.observable();
 
  
-        self.chartDrill = function (event, ui) {
+        self.chartDrill = function (event) {
+            var ui = event.detail;
             if(ui['series']){
-            document.getElementById('polarChart1').style.display = 'none';
-            document.getElementById('polarChart2').style.display = 'none';
+                //hiding polar charts (polar charts currently not in function)
+//            document.getElementById('polarChart1').style.display = 'none';
+//            document.getElementById('polarChart2').style.display = 'none';
             chartClicked = true;
             
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
@@ -203,20 +205,7 @@ function (oj, ko, $, sp, params) {
             
         };
         
-        self.chartDrill2 = function (ui) {
-
-            var seriesVal = ui['series'];
-
-            document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
-            document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
-
-            self.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
-
-            self.titleValue(seriesVal + "Geriatric factors");
-            self.parentFactorId = ui['seriesData'].items[0].gefTypeId;
-            
         
-        };
         /* End Detection GEF Groups Line Chart configuration*/
 
         /* polar chart - uradjen za drugu grupu i to za mesece M1, M2 i M5 */

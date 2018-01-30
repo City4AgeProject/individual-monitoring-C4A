@@ -10,7 +10,7 @@
 	<div data-bind="ojModule: { name: 'cr_info'}"></div>
 	<!-- end CR info -->
 	
-	<div class="visualization-drop oj-flex-item" align="right">
+<!--	<div class="visualization-drop oj-flex-item" align="right">
 		<button class="demo-button-aqua" style="min-width: 100px;"
 			data-bind="ojComponent: { component: 'ojButton', 
                                                     label: visualisationsLabel ,
@@ -26,12 +26,12 @@
 			<li id="morphology"><a href="#" data-bind="text: morphologyLabel"></a></li>
 		</ul>
 	
-	</div>
-	<div class="demo-flex-display oj-flex-items-pad">
+	</div>-->
+<div class="demo-flex-display oj-flex-items-pad" style="padding-top: 15px;">
 		<!-- <div class="oj-flex oj-sm-flex-direction-column "></div> -->
 		<!-- end context menu for Detection chart -->
 
-		<div class="oj-flex-item">
+                <div class="oj-flex-item" style="background-color: #F1F1F1; padding-top: 5px;">
 			<form
 				style="position: absolute; z-index: 10; right: 25px; margin-top: 5px;"
 				id="formId" class="formShow">
@@ -44,31 +44,28 @@
 			</form>
 			<!-- chart for overall situation with two groups of geriatric factors -->
 			<!--detectionGEFGroupsLineChart-->
-			
-				<div id="detectionGEFGroupsLineChart" class="oj-flex-item"
-					data-bind="ojComponent: {
-	                component: 'ojChart', 
-	                type: 'line',                
-	                drilling: 'on', 
-	                series: seriesVal , 
-	                groups: groupsVal ,
-	                animationOnDisplay: 'auto',
-	                animationOnDataChange: 'auto',
-	                drill: chartDrill,
-	                hideAndShowBehavior: 'withoutRescale',
-	                orientation: 'vertical',
-	                hoverBehavior: 'dim',
-	                highlightMatch: highlightValue,
-	                title: {text: detectionGEFGroupsLineChartLabel , halign: 'center'},
-	                yAxis:{step:0.5},
-	                legend: {position: 'bottom'}
-	                }"
-					style="width: 100%;">
-				</div>
+			<h3 id="measureName" data-bind="text: detectionGEFGroupsLineChartLabel" align="center" style="margin-top: 20px;"></h3>
+                        <oj-chart id="detectionGEFGroupsLineChart" class="oj-flex-item" style="width: 100%;"               
+                            
+                            type="line"
+                            drilling="on"
+                            series="[[seriesVal]]"
+                            groups="[[groupsVal]]"
+                            animation-on-display="auto"
+                            animation-on-data-change="auto"
+                            on-oj-drill="[[chartDrill]]"
+                            hide-and-show-begavior="withoutRescale"
+                            orientation="vertical" 
+                            hover-behavior="dim"   
+                            highlight-match="[[highlightValue]]"
+                            y-axis.step="0.5"
+                            legend.position="bottom"
+                            >
+                        </oj-chart> 
 			
 		</div>
 	</div>
-		<div id="polarChart-container" class="oj-flex"
+<!--		<div id="polarChart-container" class="oj-flex"
 			data-bind="css: {'oj-sm-flex-wrap-nowrap': nowrap()}">
 			<div class="oj-flex-item">
 				<div id="polarChart1"
@@ -90,7 +87,7 @@
 					style="width: 100%;"></div>
 			</div>
 			<div class="oj-flex-item">
-				<!-- polar chart for Group 2 -->
+				 polar chart for Group 2 
 				<div id="polarChart2"
 					data-bind="ojComponent: {
 		                            component: 'ojChart', 
@@ -108,7 +105,7 @@
 		                            }"
 					style="width: 100%; height: 400px;"></div>
 			</div>
-		</div>	
+		</div>	-->
 </div>
 
 <anagraph-assessment-view id="detectionGEFGroup1FactorsLineChart"
