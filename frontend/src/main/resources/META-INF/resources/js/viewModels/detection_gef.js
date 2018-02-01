@@ -173,37 +173,66 @@ function (oj, ko, $, sp, params) {
 
         /***********************************************/
         //Diagram on GEF page
-        var loadDiagramDataCallback = function (data) {
+                var loadDiagramDataCallback = function (data) {
 
-            self.lineGroupsValue = data.groups;
-            self.lineSeriesValue = data.series;
-            
-            //printing diagram data from json: 
-            //console.log('Diagram data from json :' + JSON.stringify(data,null,2));
-            
-           for(var ig = 0; ig < Object.keys(data.series).length; ig++){
-        		data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
-        	} 
-           
-           data.groups = data.groups.map(function(obj){
-        	   return obj.name;
-           });
-         
-           formatDate(data.groups);
-           
-            $('#detectionGEFGroup1FactorsLineChart').prop('groups', data.groups);
-            $('#detectionGEFGroup1FactorsLineChart').prop('series', data.series); 
-            
-            var param = [self.careRecipientId, self.parentFactorId];
-            
-            $('#detectionGEFGroup1FactorsLineChart').prop('selectedItemsValue', []);
+                    self.lineGroupsValue = data.groups;
+                    self.lineSeriesValue = data.series;
 
-            $('#detectionGEFGroup1FactorsLineChart')[0].chartOptionChange();
-            $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
+                    //printing diagram data from json: 
+                    //console.log('Diagram data from json :' + JSON.stringify(data,null,2));
+
+                    for (var ig = 0; ig < Object.keys(data.series).length; ig++) {
+                        data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
+                    }
 
 
-            
-        };
+                    var grupe = ko.observableArray(data.groups);
+
+
+                    for (var jg = 0; jg < self.lineSeriesValue.length; jg++) {
+                        var pomocni = [];
+                        var timeIntervals = [];
+                        for (var m = 0; m < self.lineSeriesValue[jg].items.length; m++) {
+                            timeIntervals.push(self.lineSeriesValue[jg].items[m].timeIntervalId);
+                        }
+                        for (var ig = 0; ig < grupe().length; ig++) {                            
+                            for (var kg = 0; kg < self.lineSeriesValue[jg].items.length; kg++) {
+                                if (grupe()[ig].id === self.lineSeriesValue[jg].items[kg].timeIntervalId) {
+                                    pomocni.push(self.lineSeriesValue[jg].items[kg]);
+                                } else  if (!timeIntervals.includes(grupe()[ig].id)) {
+                                    var item = new Object();
+                                    item.id = null;
+                                    item.value = null;
+                                    item.gefTypeId = self.lineSeriesValue[jg].items[kg].gefTypeId;
+                                    item.timeIntervalId = grupe()[ig].id;
+
+                                    pomocni.push(item);
+                                    timeIntervals.push(item.timeIntervalId);
+                                }
+                            }                            
+                        }
+                        self.lineSeriesValue[jg].items = pomocni;
+                    }
+
+                    data.groups = data.groups.map(function (obj) {
+                        return obj.name;
+                    });
+
+                    formatDate(data.groups);
+
+                    $('#detectionGEFGroup1FactorsLineChart').prop('groups', self.lineGroupsValue);
+                    $('#detectionGEFGroup1FactorsLineChart').prop('series', self.lineSeriesValue);
+
+                    var param = [self.careRecipientId, self.parentFactorId];
+
+                    $('#detectionGEFGroup1FactorsLineChart').prop('selectedItemsValue', []);
+
+                    $('#detectionGEFGroup1FactorsLineChart')[0].chartOptionChange();
+                    $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
+
+
+
+                };
         
         
         /* End Detection GEF Groups Line Chart configuration*/

@@ -20,28 +20,28 @@ public class ExecutedAction extends AbstractBaseEntity<Long> {
 	private static final long serialVersionUID = 1443827774597428823L;
 
 	@ManyToOne
-    @JoinColumn(name="actionid")
+    @JoinColumn(name="cd_action_id")
 	private Action action;
 	
 	@ManyToOne
-    @JoinColumn(name="activityid")
+    @JoinColumn(name="executed_activity_id")
 	private ExecutedActivity activity;
 
 	@ManyToOne
-    @JoinColumn(name="locationid")
+    @JoinColumn(name="location_id")
 	private Location location;
 	
-	@Column(name="userinroleid")
+	@Column(name="user_in_role_id")
 	private UserInRole userInRole;
 
-	private Date date;
+	//private Date date;
 
 	private Integer rating;
 	
 	@Column(name="sensor_id")
 	private int sensorId;
 
-	private String payload;
+	//private String payload;
 	
 	@Column(name="extra_information")
 	private String extraInformation;
@@ -54,9 +54,9 @@ public class ExecutedAction extends AbstractBaseEntity<Long> {
 		this.action = action;
 		this.location = location;
 		this.userInRole = userInRole;
-		this.date = date;
+		//this.date = date;
 		this.sensorId = sensorId;
-		this.payload = payload;
+		//this.payload = payload;
 	}
 
 	public ExecutedAction(Action action, ExecutedActivity activity, Location location, UserInRole userInRole, Date date,
@@ -65,10 +65,10 @@ public class ExecutedAction extends AbstractBaseEntity<Long> {
 		this.activity = activity;
 		this.location = location;
 		this.userInRole = userInRole;
-		this.date = date;
+		//this.date = date;
 		this.rating = rating;
 		this.sensorId = sensorId;
-		this.payload = payload;
+		//this.payload = payload;
 		this.extraInformation = extraInformation;
 	}
 
@@ -104,13 +104,13 @@ public class ExecutedAction extends AbstractBaseEntity<Long> {
 		this.userInRole = userInRole;
 	}
 
-	public Date getDate() {
+	/*public Date getDate() {
 		return this.date;
 	}
 
 	public void setDate(Date date) {
 		this.date = date;
-	}
+	}*/
 
 	public Integer getRating() {
 		return this.rating;
@@ -128,13 +128,13 @@ public class ExecutedAction extends AbstractBaseEntity<Long> {
 		this.sensorId = sensorId;
 	}
 
-	public String getPayload() {
+	/*public String getPayload() {
 		return this.payload;
 	}
 
 	public void setPayload(String payload) {
 		this.payload = payload;
-	}
+	}*/
 
 	public String getExtraInformation() {
 		return this.extraInformation;

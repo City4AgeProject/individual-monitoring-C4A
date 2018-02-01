@@ -218,12 +218,12 @@ public class PilotDetectionVariableService {
 						
 						if (nuis == null || nuis.isEmpty()) {
 							
-							if (meaTypicalPeriod.equals("DAY") ||
-									meaTypicalPeriod.equals("1WK")) {
+							if (meaTypicalPeriod.equals("day") ||
+									meaTypicalPeriod.equals("1wk")) {
 								
 								StringBuilder sb = new StringBuilder ();
 								
-								if (meaTypicalPeriod.equals("DAY")) {
+								if (meaTypicalPeriod.equals("day")) {
 									sb.append("Daily measure exception: Daily measures must have NUIs. Measure ").
 										append (gfgDetectionVariable.getDetectionVariableName()).append(" -> ").
 										append (gefDetectionVariable.getDetectionVariableName()).append(" -> ").
@@ -246,7 +246,7 @@ public class PilotDetectionVariableService {
 						
 						else {
 							
-							if (meaTypicalPeriod.equals("MON")) {
+							if (meaTypicalPeriod.equals("mon")) {
 								
 								StringBuilder sb = new StringBuilder ();
 								sb.append("Monthly measure exception: Monthly measures shouldn't have NUIs. Measure ").
@@ -349,7 +349,7 @@ public class PilotDetectionVariableService {
 			}
 		}
 		
-		if (!dv.getDetectionVariableType().toString().equals("MEA") || !ddv.getDetectionVariableType().toString().equals("NUI")) {
+		if (!dv.getDetectionVariableType().toString().equals("mea") || !ddv.getDetectionVariableType().toString().equals("nui")) {
 			pilotDetectionVariableRepository.save(new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 			cfc.incrementInserted();
 			logger.info("uradjen insert na: " + dv.getDetectionVariableName());

@@ -21,7 +21,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
  */
 @Entity
 @Table(name = "variation_measure_value")
-@SequenceGenerator(name = "default_gen", sequenceName = "variation_measure_value_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "variation_measure_value_seq", allocationSize = 1)
 public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 
 	/**
@@ -29,7 +29,7 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	 */
 	private static final long serialVersionUID = 2579000073949031381L;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "activity_id")
+	@JoinColumn(name = "executed_activity_id")
 	private ExecutedActivity activity;
 	
 	@JsonView(View.VariationMeasureValueView.class)

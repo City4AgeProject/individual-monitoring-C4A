@@ -2,13 +2,11 @@ package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,8 +23,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -87,6 +83,7 @@ public class MeasuresService {
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
+	
 	@Autowired
 	private NativeQueryRepository nativeQueryRepository;
 	
@@ -122,54 +119,23 @@ public class MeasuresService {
 
 	}
 
-	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
-	public void cronJob() throws UnknownHostException {
-		String host = InetAddress.getLocalHost().getHostAddress();
-		String port = environment.getProperty("local.server.port");
-		String appName = environment.getProperty("spring.application.name");
-		String uri = "http://" + host + ":" + port + "/" + appName + "/rest/measures/computeFromMeasures";
-		ResponseEntity<String> response = restTemplate().getForEntity(uri, String.class);
-		if (!response.getStatusCode().equals(HttpStatus.OK)) {
-			throw new RuntimeException("Failed : HTTP error code : " + response.getStatusCode());
-		}
-	}
-
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("computeFromMeasures")
+	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
 	public Response computeFromMeasures() throws JsonProcessingException, IOException {
+		
+		logger.info("pokrenuo compute: " + new Date());
 
-		computeNuisForAllPilots();
-		computeGESsForAllPilots();
-		setVariablesComputedForAllPilots();
+		computeForAllPilots();
 
-		return JerseyResponse.build();
+		logger.info("izvrsio compute: " + new Date());
+		return JerseyResponse.build("success", 200);
 	}
-
-	private void computeGESsForAllPilots() {
-		YearMonth lastComputedYearMonth = pilotRepository.getOne("ATH").getLastComputed();
-		YearMonth currentYearMonth = YearMonth.now();
-		YearMonth currentComputedYearMonth = lastComputedYearMonth.plusMonths(1L);
-		Timestamp startOfMonth;
-		Timestamp endOfMonth;
-
-		if (currentYearMonth.compareTo(currentComputedYearMonth) > 1) {
-			while (!currentComputedYearMonth.equals(currentYearMonth)) {
-				startOfMonth = Timestamp.valueOf(currentComputedYearMonth.atDay(1).atStartOfDay());
-				endOfMonth = Timestamp.valueOf(currentComputedYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
-				computeGESsFor1Month(startOfMonth, endOfMonth);
-				computeFor1Month(DetectionVariableType.GEF, startOfMonth, endOfMonth);
-				computeFor1Month(DetectionVariableType.GFG, startOfMonth, endOfMonth);
-				computeFor1Month(DetectionVariableType.OVL, startOfMonth, endOfMonth);
-				currentComputedYearMonth = currentComputedYearMonth.plusMonths(1L);
-			}
-		}
-	}
-
 
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
-			Timestamp endOfMonth) {
-		List<Object[]> list = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, factor);
+			Timestamp endOfMonth, List<String> pilotCodes) {
+		List<Object[]> list = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, factor, pilotCodes);
 
 		if (list != null && list.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(list, startOfMonth, endOfMonth);
@@ -177,34 +143,82 @@ public class MeasuresService {
 		}
 	}
 
-	private void computeNuisForAllPilots() {
-		YearMonth lastComputedYearMonth = pilotRepository.getOne("ATH").getLastComputed();
+	private void computeForAllPilots() {
+		
+		List<Pilot> nevers = pilotRepository.findAllNeverComputed();
+		List<Pilot> comps = pilotRepository.findAllComputed();
+	
 		YearMonth currentYearMonth = YearMonth.now();
+		YearMonth lastComputedYearMonth = null;
+		List<String> pilotCodes = new ArrayList<String>();
+		
+		if(nevers != null && nevers.size() > 0) {
+			lastComputedYearMonth = nevers.get(0).getComputedStartDate();
+			for(Pilot pilot : nevers) {
+				pilotCodes.add(pilot.getPilotCode());
+			}
+		} else {
+			for(Pilot pilot : comps) {
+				YearMonth lastComputedPilot = YearMonth.from(pilot.getLatestVariablesComputed().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+				if(lastComputedYearMonth == null || lastComputedYearMonth.isBefore(lastComputedPilot)) {
+					lastComputedYearMonth = lastComputedPilot;
+				}
+			}
+		}
+		if (lastComputedYearMonth == null) {
+			
+			logger.info("No new data submitted!");
+			
+			return;
+		}
+		
 		YearMonth currentComputedYearMonth = lastComputedYearMonth.plusMonths(1L);
+		
 		Timestamp startOfMonth;
 		Timestamp endOfMonth;
-		if (currentYearMonth.compareTo(currentComputedYearMonth) > 1) {
+		if (currentYearMonth.compareTo(currentComputedYearMonth) > 0) {
 			while (!currentComputedYearMonth.equals(currentYearMonth)) {
+				
+				for(Pilot pilot : nevers) {
+					if(currentComputedYearMonth.isAfter(YearMonth.from(pilot.getLatestSubmissionCompleted().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()))) {
+						pilotCodes.remove(pilot.getPilotCode());
+					}
+				}
+				
+				for(Pilot pilot : comps) {
+					YearMonth lastComputedPilot = YearMonth.from(pilot.getLatestVariablesComputed().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+					if(currentComputedYearMonth.equals(lastComputedPilot.plusMonths(1L))) {
+						pilotCodes.add(pilot.getPilotCode());
+					}
+					if(currentComputedYearMonth.isAfter(YearMonth.from(pilot.getLatestSubmissionCompleted().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()))) {
+						pilotCodes.remove(pilot.getPilotCode());
+					}
+				} 
 				startOfMonth = Timestamp.valueOf(currentComputedYearMonth.atDay(1).atStartOfDay());
 				endOfMonth = Timestamp.valueOf(currentComputedYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
-				computeNuisFor1Month(startOfMonth, endOfMonth);
+				computeNuisFor1Month(startOfMonth, endOfMonth, pilotCodes);
+				computeGESsFor1Month(startOfMonth, endOfMonth, pilotCodes);
+				computeFor1Month(DetectionVariableType.GEF, startOfMonth, endOfMonth, pilotCodes);
+				computeFor1Month(DetectionVariableType.GFG, startOfMonth, endOfMonth, pilotCodes);
+				computeFor1Month(DetectionVariableType.OVL, startOfMonth, endOfMonth, pilotCodes);
 				currentComputedYearMonth = currentComputedYearMonth.plusMonths(1L);
 			}
 		}
+		comps.addAll(nevers);
+		setVariablesComputedForAllPilots(comps);
 	}
 
-	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth) {
-		List<Object[]> gess = nativeQueryRepository.computeAllGess(startOfMonth, endOfMonth);
-
+	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, List<String> pilotCodes) {
+		List<Object[]> gess = nativeQueryRepository.computeAllGess(startOfMonth, endOfMonth, pilotCodes);
+		
 		if(gess != null && gess.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(gess, startOfMonth, endOfMonth);
 			nuiRepository.bulkSave(gfvs);
 		}
-
+	
 	}
 
-	private void setVariablesComputedForAllPilots() {
-		List<Pilot> pilots = pilotRepository.findAll();
+	private void setVariablesComputedForAllPilots(List<Pilot> pilots) {
 		for(Pilot pilot : pilots)
 			pilot.setLatestVariablesComputed(new Date());
 		pilotRepository.save(pilots);
@@ -217,35 +231,35 @@ public class MeasuresService {
 			GeriatricFactorValue ges = new GeriatricFactorValue();
 			ges.setGefValue((BigDecimal) arr[2]);
 			ges.setTimeInterval(ti);
-			ges.setDetectionVariableId(((Short) arr[1]).longValue());
-			ges.setUserInRoleId(((BigInteger) arr[0]).longValue());
+			ges.setDetectionVariableId(((Integer) arr[1]).longValue());
+			ges.setUserInRoleId(((Integer) arr[0]).longValue());
 			ges.setDerivationWeight(arr[3] == null? new BigDecimal(1) : (BigDecimal) arr[3]);
 			gfvs.add(ges);
 		}
 		return gfvs;
 	}
 
-	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth) {
+	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, List<String> pilotCodes) {
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
-				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth);
+				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCodes);
 
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
-			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth);
+			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth, pilotCodes);
 			nuiRepository.bulkSave(nuis);
 		}
 	}
 
-	private List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth) {
+	private List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth, List<String> pilotCodes) {
 		final List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
 		
 
-		List<Object[]> nuisList = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth);
+		List<Object[]> nuisList = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilotCodes);
 
 		if(!nuisList.isEmpty() && nuisList.size() != 0) {
 
 			for (Object[] nui:nuisList) {
 
-				NumericIndicatorValue create1Nui = create1Nui((BigInteger) nui[0],  (Short) nui[1], (Double) nui[2], startOfMonth);
+				NumericIndicatorValue create1Nui = create1Nui((Integer) nui[0],  (Integer) nui[1], (Double) nui[2], startOfMonth);
 
 				nuis.add(create1Nui);
 
@@ -256,7 +270,7 @@ public class MeasuresService {
 
 	}
 
-	private NumericIndicatorValue create1Nui(BigInteger userId, Short nuiDvId, Double nuiValue, Timestamp startOfMonth) {
+	private NumericIndicatorValue create1Nui(Integer userId, Integer nuiDvId, Double nuiValue, Timestamp startOfMonth) {
 		NumericIndicatorValue nui = new NumericIndicatorValue();
 		if (nuiValue != null) {
 			nui.setNuiValue(nuiValue);

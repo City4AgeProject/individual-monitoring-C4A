@@ -22,13 +22,17 @@ public class DataSourceType implements Serializable {
 	
 	@Column(name="data_source_type_description")
 	private String dataSourceTypeDescription;
+	
+	@Column (name = "obtrusive")
+	private Boolean obtrusive;
 
 	public DataSourceType() {
 	}
 
-	public DataSourceType(String dataSourceType, String dataSourceTypeDescription) {
+	public DataSourceType(String dataSourceType, String dataSourceTypeDescription, Boolean obtrusive) {
 		this.dataSourceType = dataSourceType;
 		this.dataSourceTypeDescription = dataSourceTypeDescription;
+		this.obtrusive = obtrusive;
 	}
 
 	public String getDataSourceType() {
@@ -45,5 +49,13 @@ public class DataSourceType implements Serializable {
 
 	public void setDataSourceTypeDescription(String dataSourceTypeDescription) {
 		this.dataSourceTypeDescription = dataSourceTypeDescription;
+	}
+
+	public Boolean getObtrusive() {
+		return obtrusive;
+	}
+
+	public void setObtrusive(Boolean obtrusive) {
+		this.obtrusive = obtrusive;
 	}
 }

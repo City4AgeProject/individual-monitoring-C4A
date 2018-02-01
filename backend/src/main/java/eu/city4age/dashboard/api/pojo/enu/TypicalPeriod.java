@@ -1,7 +1,7 @@
 package eu.city4age.dashboard.api.pojo.enu;
 
 public enum TypicalPeriod {
-	DAY("DAY"), MONTH("MON");
+	DAY("day"), MONTH("mon");
 	
 	private final String dbName;
 	

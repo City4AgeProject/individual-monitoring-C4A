@@ -136,12 +136,14 @@ public class CareRecipientService {
 		}
 
 		List<TimeInterval> tis = timeIntervalRepository.getGroups(Long.valueOf(careRecipientId), parentFactors);
+		logger.info("tis.size(): " + tis.size());
 
 		if(tis != null && tis.size() > 0) {
 			for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
 	
 				if (gef.getDetectionVariable() != null) {
 	
+					logger.info("gef: " + gef.getDetectionVariable().getDetectionVariableType().getDetectionVariableType().getName());
 					detectionvarsparamsList.add(gef.getDetectionVariable());
 					fMap.put(gef.getDetectionVariableId(), new ArrayList<Float>());
 					idMap.put(gef.getDetectionVariableId(), new ArrayList<Long>());
@@ -200,7 +202,7 @@ public class CareRecipientService {
 					response.setFrailtyStatus(frailtyStatus);
 					
 					logger.info("2 tis: " + tis);
-					logger.info("2 pilottype: " + type);
+					logger.info("2 pilottype: " + type.getDetectionVariableName());
 
 					String pilotCode = gereatricfactparamsList.get(0).getUserInRole().getPilotCode();						
 					PilotDetectionVariable pdv = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(type.getId(), pilotCode);
@@ -361,6 +363,7 @@ public class CareRecipientService {
 					g.setName(sdf.format(gfv.getTimeInterval().getIntervalStart()));
 					response.getGroups().add(g);
 				}
+				
 				eu.city4age.dashboard.api.pojo.dto.Serie s = findOrCreateSerie(response, gfv.getGefTypeId());
 				if (s == null) {
 					s = new eu.city4age.dashboard.api.pojo.dto.Serie();
@@ -374,6 +377,7 @@ public class CareRecipientService {
 					i.setId(gfv.getId());
 					i.setValue(gfv.getGefValue().floatValue());
 					i.setGefTypeId(gfv.getGefTypeId().getId().intValue());
+					i.setTimeIntervalId(gfv.getTimeInterval().getId());
 					s.getItems().add(i);
 				}
 

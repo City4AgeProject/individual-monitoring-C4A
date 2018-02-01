@@ -35,7 +35,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                         self.lineSeriesNames.push(ls.name);                                              
                     });
                                                           
-                    if(self.defaultTypicalPeriod === 'MON'){
+                    if(self.defaultTypicalPeriod === 'mon'){
                         self.showNuis = false;
                         self.lineGroups = ko.observable(["Start of month", "End of month"]);
                         self.zoom('off');                                                                
@@ -79,7 +79,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     if(detail['series']){
                        var seriesName = detail['series'];                         
                         showLineSeriesFromChartDrill(seriesName); 
-                        if(self.defaultTypicalPeriod === 'MON'){
+                        if(self.defaultTypicalPeriod === 'mon'){
                             if(detail.seriesData.items[0].valueEvidenceNotice){
                                 self.meaComment(detail.seriesData.items[0].valueEvidenceNotice.notice);
                                 if(self.meaComment().length > 200){
@@ -98,7 +98,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 
                 function showLineSeriesFromChartDrill(lineSerie){
                     var allSeries = self.lineSeriesNames.slice(0);
-                    if(self.defaultTypicalPeriod === 'MON'){                        
+                    if(self.defaultTypicalPeriod === 'mon'){                        
                         self.hiddenCategories(allSeries);
                         var index = self.hiddenCategories.indexOf(lineSerie);
                         self.hiddenCategories.splice(index,1);

@@ -1,6 +1,5 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,7 +23,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
  */
 @Entity
 @Table(name = "numeric_indicator_value")
-@SequenceGenerator(name = "default_gen", sequenceName = "numeric_indicator_value_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "numeric_indicator_value_seq", allocationSize = 1)
 public class NumericIndicatorValue extends AbstractBaseEntity<Long> {
 
 	/**
@@ -38,7 +37,7 @@ public class NumericIndicatorValue extends AbstractBaseEntity<Long> {
 	private DetectionVariable detectionVariable;
 	
 	@Column(name = "nui_type_id")
-	private Short detectionVariableId;
+	private int detectionVariableId;
 
 	@JsonView(View.NUIView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -51,7 +50,7 @@ public class NumericIndicatorValue extends AbstractBaseEntity<Long> {
 	private UserInRole userInRole;
 	
 	@Column(name = "user_in_role_id")
-	private BigInteger userInRoleId;
+	private Integer userInRoleId;
 	
 	@JsonView(View.NUIView.class)
 	@Column(name = "nui_value", precision = 20, scale = 8)
@@ -97,11 +96,11 @@ public class NumericIndicatorValue extends AbstractBaseEntity<Long> {
 		this.detectionVariable = detectionVariable;
 	}
 
-	public Short getDetectionVariableId() {
+	public int getDetectionVariableId() {
 		return detectionVariableId;
 	}
 
-	public void setDetectionVariableId(Short detectionVariableId) {
+	public void setDetectionVariableId(int detectionVariableId) {
 		this.detectionVariableId = detectionVariableId;
 	}
 
@@ -121,11 +120,11 @@ public class NumericIndicatorValue extends AbstractBaseEntity<Long> {
 		this.userInRole = userInRole;
 	}
 
-	public BigInteger getUserInRoleId() {
+	public Integer getUserInRoleId() {
 		return userInRoleId;
 	}
 
-	public void setUserInRoleId(BigInteger userInRoleId) {
+	public void setUserInRoleId(Integer userInRoleId) {
 		this.userInRoleId = userInRoleId;
 	}
 

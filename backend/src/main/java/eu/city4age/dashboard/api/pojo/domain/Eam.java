@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="eam")
-@SequenceGenerator(name = "default_gen", sequenceName = "eam_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "eam_seq", allocationSize = 1)
 public class Eam extends AbstractBaseEntity<Long> {
 
 	/**
@@ -17,11 +17,11 @@ public class Eam extends AbstractBaseEntity<Long> {
 	private static final long serialVersionUID = 2984515729314887339L;
 
 	@ManyToOne
-    @JoinColumn(name="action_id")
+    @JoinColumn(name="cd_action_id")
 	private Action action;
 	
 	@ManyToOne
-    @JoinColumn(name="activity_id")
+    @JoinColumn(name="executed_activity_id")
 	private ExecutedActivity activity;
 	
 	private Integer duration;

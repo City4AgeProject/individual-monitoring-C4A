@@ -49,6 +49,11 @@ function(oj, ko, $) {
 
 
                 self.roleTags = ko.observableArray([
+                    {value : 2, label : oj.Translations.getTranslatedString("role_ifc")},
+                    {value : 3, label : oj.Translations.getTranslatedString("role_cg")},
+                    {value : 4, label : oj.Translations.getTranslatedString("role_ece")},
+                    {value : 5, label : oj.Translations.getTranslatedString("role_sam")},
+                    {value : 6, label : oj.Translations.getTranslatedString("role_gp")},
                     {value : 7, label : oj.Translations.getTranslatedString("role_lge")},
                     {value : 8, label : oj.Translations.getTranslatedString("role_pge")}
                 ]);
@@ -93,7 +98,7 @@ function(oj, ko, $) {
                 self.typeLabel = oj.Translations.getTranslatedString("type");
                 
                     var role = new oj.Collection.extend({
-			url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS",
+			url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/grs",
 			fetchSize : -1,
 			model : new oj.Model.extend({
 				idAttribute : 'id',
@@ -138,7 +143,8 @@ function(oj, ko, $) {
                                                 //if there is only 1 selection
                                                 var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
                                                 var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
-                                                if(selectedDetectionVariable.detectionVariableType == 'GES'){
+
+                                                if(selectedDetectionVariable.detectionVariableType == 'ges'){
                                                     sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
                                                     $('#popupWrapper1').prop('seeMeasures', true);
                                                     console.log('setting seeMeasures to true');
@@ -170,28 +176,56 @@ function(oj, ko, $) {
                     
 		};
 		
-		var loadDiagramDataCallback = function(data) {
-                    
-			if(data !== undefined && data.groups !== undefined && data.series !== undefined) {
-			
-                            data.groups = data.groups.map(function(obj){
-                                    return obj.name;
-                            });
+		var loadDiagramDataCallback = function (data) {
 
-                            formatDate(data.groups);
+                    var grupe = ko.observableArray(data.groups);
 
-                            self.props.groups = data.groups;
-                            self.props.series = data.series;
+                    if (data !== undefined && data.groups !== undefined && data.series !== undefined) {
 
-			}
-			
-			if (self.props !== undefined
-					&& self.props.series !== undefined) {
-				for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
-					self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
-				}
-			}
-		};
+                        data.groups = data.groups.map(function (obj) {
+                            return obj.name;
+                        });
+
+                        formatDate(data.groups);
+
+                        self.props.groups = data.groups;
+                        self.props.series = data.series;
+
+                    }
+
+                    if (self.props !== undefined
+                            && self.props.series !== undefined) {
+                        for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
+                            self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
+                        }
+
+
+                        for (var jg = 0; jg < self.props.series.length; jg++) {
+                            var pomocni = [];
+                            var timeIntervals = [];
+                            for (var m = 0; m < self.props.series[jg].items.length; m++) {
+                                timeIntervals.push(self.props.series[jg].items[m].timeIntervalId);
+                            }
+                            for (var ig = 0; ig < grupe().length; ig++) {
+                                for (var kg = 0; kg < self.props.series[jg].items.length; kg++) {
+                                    if (grupe()[ig].id === self.props.series[jg].items[kg].timeIntervalId) {
+                                        pomocni.push(self.props.series[jg].items[kg]);
+                                    } else if (!timeIntervals.includes(grupe()[ig].id)) {
+                                        var item = new Object();
+                                        item.id = null;
+                                        item.value = null;
+                                        item.gefTypeId = self.props.series[jg].items[kg].gefTypeId;
+                                        item.timeIntervalId = grupe()[ig].id;
+
+                                        pomocni.push(item);
+                                        timeIntervals.push(item.timeIntervalId);
+                                    }
+                                }
+                            }
+                            self.props.series[jg].items = pomocni;
+                        }
+                    }
+                };
 
 		var loadDataSet = function(data) {                  
 			var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA
@@ -327,12 +361,12 @@ function(oj, ko, $) {
                                                    
                         var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);
                         console.log('selected det is : ' + JSON.stringify(selectedDetectionVariable));
-                        if(selectedDetectionVariable.detectionVariableType === 'GEF'){ 
+                        if(selectedDetectionVariable.detectionVariableType === 'gef'){ 
                             console.log('selected GEF');                                                                                                                                                                
                             sessionStorage.setItem("gefObj", JSON.stringify(selectedDetectionVariable));  
                             oj.Router.rootInstance.go('detection_ges');
                             
-                        }else if(selectedDetectionVariable.detectionVariableType === 'GES'){
+                        }else if(selectedDetectionVariable.detectionVariableType === 'ges'){
                             console.log('selected GES');                           
                             sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
                             oj.Router.rootInstance.go("detection_mea");

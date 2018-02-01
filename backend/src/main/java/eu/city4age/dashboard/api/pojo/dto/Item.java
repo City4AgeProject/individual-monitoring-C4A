@@ -13,6 +13,7 @@ public class Item {
     private Long id;
     private Float value;
     private Integer gefTypeId;
+    private Long timeIntervalId;
     
 
     /**
@@ -56,6 +57,14 @@ public class Item {
     public void setGefTypeId(Integer gefTypeId) {
         this.gefTypeId = gefTypeId;
     }
+
+	public Long getTimeIntervalId() {
+		return timeIntervalId;
+	}
+
+	public void setTimeIntervalId(Long timeIntervalId) {
+		this.timeIntervalId = timeIntervalId;
+	}
     
     
     

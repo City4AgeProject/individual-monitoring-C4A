@@ -21,7 +21,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "cd_detection_variable")
-@SequenceGenerator(name = "default_gen", sequenceName = "cd_detection_variable_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "cd_detection_variable_seq", allocationSize = 1)
 public class DetectionVariable extends AbstractBaseEntity<Long> {
 
 	/**
@@ -42,11 +42,11 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 	private Date validTo;
 	
 	
-	@Column(name = "derivation_weight")
+	@Column(name = "default_derivation_weight")
 	private BigDecimal derivationWeight;
         
-        @JsonView(View.VariationMeasureValueView.class)
-        @Column(name = "base_unit")
+    @JsonView(View.VariationMeasureValueView.class)
+    @Column(name = "base_unit")
 	private String  baseUnit;
 
 	@JsonIgnore

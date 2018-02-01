@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="inter_activity_behaviour_variation")
-@SequenceGenerator(name = "default_gen", sequenceName = "inter_activity_behaviour_variation_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "inter_activity_behaviour_variation_seq", allocationSize = 1)
 public class InterActivityBehaviourVariation extends AbstractBaseEntity<Long> {
 
 	/**

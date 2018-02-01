@@ -51,8 +51,28 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "valid_to", length = 29)
 	private Date validTo;
+	
+	@Column (name = "detection_variable_usage_status", length = 3)
+	private String detectionVariableUsageStatus;
+	
+	@Column (name = "main_data_source_type", length = 3)
+	private String mainDataSourceType;
 
 	public PilotDetectionVariable() {
+	}
+
+	public PilotDetectionVariable(String pilotCode, DetectionVariable derivedDetectionVariable,
+			DetectionVariable detectionVariable, String formula, BigDecimal derivationWeight, Date validFrom,
+			Date validTo, String detectionVariableUsageStatus, String mainDataSourceType) {
+		this.pilotCode = pilotCode;
+		this.derivedDetectionVariable = derivedDetectionVariable;
+		this.detectionVariable = detectionVariable;
+		this.formula = formula;
+		this.derivationWeight = derivationWeight;
+		this.validFrom = validFrom;
+		this.validTo = validTo;
+		this.detectionVariableUsageStatus = detectionVariableUsageStatus;
+		this.mainDataSourceType = mainDataSourceType;
 	}
 
 	public PilotDetectionVariable(DetectionVariable derivedDetectionVariable,
@@ -138,6 +158,22 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 
 	public void setDerivationWeight(BigDecimal derivationWeight) {
 		this.derivationWeight = derivationWeight;
+	}
+
+	public String getDetectionVariableUsageStatus() {
+		return detectionVariableUsageStatus;
+	}
+
+	public void setDetectionVariableUsageStatus(String detectionVariableUsageStatus) {
+		this.detectionVariableUsageStatus = detectionVariableUsageStatus;
+	}
+
+	public String getMainDataSourceType() {
+		return mainDataSourceType;
+	}
+
+	public void setMainDataSourceType(String mainDataSourceType) {
+		this.mainDataSourceType = mainDataSourceType;
 	}
 
 }
