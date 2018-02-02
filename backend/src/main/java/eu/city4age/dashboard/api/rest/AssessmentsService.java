@@ -116,7 +116,7 @@ public class AssessmentsService {
 
 		DataSet response = new DataSet();
 		
-    	List<TimeInterval> tis = timeIntervalRepository.getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
+    	List<TimeInterval> tis = getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
     	
     	List<String> monthLabels = createMonthLabels(tis);
     	
@@ -132,24 +132,30 @@ public class AssessmentsService {
     	
     	for(DetectionVariable dv : dvs) {
     		
+			String detectionVariableName = dv.getDetectionVariableName();
+			
 			eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie series
-				= new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie("");
-			response.getSeries().add(series);
+				= new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie(detectionVariableName);
     		
 			for(TimeInterval ti : tis) {
+				Boolean gefAdded = false;
     			for(GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
-	    			if(dv.getId().equals(gef.getDetectionVariable().getId())) {
+	    			if(gefAdded != true && dv.getId().equals(gef.getDetectionVariable().getId())) {
 	    				series.getItems().add(gef.getGefValue());
-	    			} else {
-	    				series.getItems().add(null);
+	    				gefAdded = true;
 	    			}
-	    			response.getSeries().add(series);
     			}
+				if(gefAdded != true) series.getItems().add(null);	
     		}
+			response.getSeries().add(series);
     	}
     	
 		return JerseyResponse.build(response);	
 
+	}
+	
+	public List<TimeInterval> getDiagramDataForUserInRoleId(Long careRecipientId, Long parentFactorId) {
+		return timeIntervalRepository.getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
 	}
 	
 	private List<String> createMonthLabels(List<TimeInterval> months) {
