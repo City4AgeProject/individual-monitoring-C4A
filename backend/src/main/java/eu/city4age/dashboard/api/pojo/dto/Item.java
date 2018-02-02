@@ -4,6 +4,9 @@
  */
 package eu.city4age.dashboard.api.pojo.dto;
 
+import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
+import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
+
 /**
  *
  * @author mnou2
@@ -56,7 +59,6 @@ public class Item {
     public void setGefTypeId(Integer gefTypeId) {
         this.gefTypeId = gefTypeId;
     }
-    
     
     
 }

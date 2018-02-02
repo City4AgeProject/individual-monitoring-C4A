@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -44,14 +45,19 @@ import eu.city4age.dashboard.api.jpa.AssessedGefValuesRepository;
 import eu.city4age.dashboard.api.jpa.AssessmentRepository;
 import eu.city4age.dashboard.api.jpa.AudienceRolesRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
+import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
+import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValueLastFiveAssessment;
+import eu.city4age.dashboard.api.pojo.dto.oj.DataSet;
 import eu.city4age.dashboard.api.pojo.dto.oj.Serie;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
@@ -93,12 +99,68 @@ public class AssessmentsService {
 
 	@Autowired
 	private AssessedGefValuesRepository assessedGefValuesRepository;
+	
+	@Autowired
+	private TimeIntervalRepository timeIntervalRepository;
 
 	@Context
 	private ContextResolver<ObjectMapper> mapperResolver;
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
+	
+	@GET
+	@Path("getDiagramData/careRecipientId/{careRecipientId}/parentFactorId/{parentFactorId}")
+	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
+	public Response getDiagramData(@PathParam("careRecipientId") Long careRecipientId,
+			@PathParam("parentFactorId") Long parentFactorId) throws IOException {
 
+		DataSet response = new DataSet();
+		
+    	List<TimeInterval> tis = timeIntervalRepository.getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
+    	
+    	List<String> monthLabels = createMonthLabels(tis);
+    	
+    	response.setGroups(monthLabels);
+
+    	Set<DetectionVariable> dvs = new HashSet<DetectionVariable>();
+    	
+    	for(TimeInterval ti : tis) {
+    		for(GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
+    			dvs.add(gef.getDetectionVariable());
+    		}
+    	}
+    	
+    	for(DetectionVariable dv : dvs) {
+    		
+			eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie series
+				= new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie("");
+			response.getSeries().add(series);
+    		
+			for(TimeInterval ti : tis) {
+    			for(GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
+	    			if(dv.getId().equals(gef.getDetectionVariable().getId())) {
+	    				series.getItems().add(gef.getGefValue());
+	    			} else {
+	    				series.getItems().add(null);
+	    			}
+	    			response.getSeries().add(series);
+    			}
+    		}
+    	}
+    	
+		return JerseyResponse.build(response);	
+
+	}
+	
+	private List<String> createMonthLabels(List<TimeInterval> months) {
+		List<String> monthLabels = new ArrayList<String>();
+    	
+    	for (int i = 0; i < months.size() ; i++) {
+    		monthLabels.add(months.get(i).getStart());
+    	}
+
+		return monthLabels;
+	}
 
 	@GET
 	@ApiOperation("Get last five assessments for data sets in specific time interval.")

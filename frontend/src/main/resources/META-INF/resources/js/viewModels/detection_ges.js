@@ -1,10 +1,10 @@
-define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
+define(['ojs/ojcore', 'knockout', 'jquery',
      'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
     'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view'],
 
-function (oj, ko, $, sp) {
+function (oj, ko, $) {
 
     function detectionGesContentViewModel() {
     	var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
@@ -52,7 +52,7 @@ function (oj, ko, $, sp) {
             if(gefObj !== undefined) {
                     self.careRecipient(parseInt(sessionStorage.getItem("crId")));
                     self.subFactorName(gefObj.detectionVariableName);
-                    if(gefObj.detectionVariableType == 'GES')
+                    if(gefObj.detectionVariableType === 'GES')
                     {                                             
                         self.parentFactor(gefObj.derivedDetectionVariableId);               
                         self.titleValue(oj.Translations.getTranslatedString('GEF'.toLowerCase()) + " - " + oj.Translations.getTranslatedString(gefObj.detectionVariableName));

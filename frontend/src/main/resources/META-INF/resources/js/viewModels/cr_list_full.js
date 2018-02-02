@@ -78,7 +78,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     
                   //finding cr with cr_id = selectedRow.keyId
 		              for(var i = 0; i< self.data().length; i++){                    	                   	
-			                         if(self.data()[i].cr_id == currentRow.rowKey){                   		
+			                         if(self.data()[i].cr_id === currentRow.rowKey){                   		
 			                              		selectData = self.data()[i];
 			                                      	}
 			               }
@@ -115,7 +115,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     var crData;
 	                  //finding cr with cr_id = selectedRow.keyId
 	                  for(var i = 0; i< self.data().length; i++){                    	                    	
-	                        if(self.data()[i].cr_id == currentTableRow.rowKey){                   		
+	                        if(self.data()[i].cr_id === currentTableRow.rowKey){                   		
 	                                      		crData = self.data()[i];
 	                                      	}
 	                                      }

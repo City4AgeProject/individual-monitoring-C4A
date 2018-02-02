@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +44,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -98,6 +100,9 @@ public class NativeQueryRepositoryTest {
 	@Autowired
 	private NativeQueryRepository nativeQueryRepository;
 	
+	@Autowired
+	private PilotRepository pilotRepository;
+	
 	@Test
 	@Transactional
 	@Rollback(true)
@@ -109,9 +114,13 @@ public class NativeQueryRepositoryTest {
 		Timestamp startOfMonth = Timestamp.valueOf(YearMonth.parse("2017 MAY", formatter).atDay(1).atStartOfDay());
 		Timestamp endOfMonth = Timestamp.valueOf(YearMonth.parse("2017 MAY", formatter).atEndOfMonth().atTime(LocalTime.MAX));
 		
+		Pilot p = new Pilot();
+		p.setPilotCode("LCC");
+		pilotRepository.save(p);
 		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(uirId);
+		uir1.setPilotCode("LCC");
 		userInRoleRepository.save(uir1);
 		
 		DetectionVariable dv1 = new DetectionVariable();
@@ -132,7 +141,8 @@ public class NativeQueryRepositoryTest {
 		vmv1.setMeasureValue(new BigDecimal(5));
 		variationMeasureValueRepository.save(vmv1);
 	
-		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth);
+		List<String> pilotCodes = Arrays.asList("LCC");
+		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilotCodes );
 		
 		Assert.assertNotNull(result);
 		
@@ -187,7 +197,7 @@ public class NativeQueryRepositoryTest {
 		vmv2.setMeasureValue(new BigDecimal(4));
 		variationMeasureValueRepository.save(vmv2);
 
-		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth);
+		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, null);
 		
 		Assert.assertNotNull(result);
 		
@@ -320,7 +330,7 @@ public class NativeQueryRepositoryTest {
 		DetectionVariableType derivedDetectionVariableType = DetectionVariableType.GEF;
 		detectionVariableTypeRepository.save(derivedDetectionVariableType);
 		
-		List<Object[]> result = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, derivedDetectionVariableType);
+		List<Object[]> result = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, derivedDetectionVariableType, null);
 		
 		Assert.assertNotNull(result);
 		

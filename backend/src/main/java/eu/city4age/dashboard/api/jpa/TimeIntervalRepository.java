@@ -19,5 +19,7 @@ public interface TimeIntervalRepository extends GenericRepository<TimeInterval, 
 	
 	TimeInterval findByIntervalStartAndTypicalPeriod(Timestamp intervalStart, String typicalPeriod);
 	
-
+	@Query("SELECT ti FROM TimeInterval ti LEFT JOIN FETCH ti.geriatricFactorValue AS gfv LEFT JOIN FETCH gfv.detectionVariable AS dv LEFT JOIN FETCH dv.pilotDetectionVariable AS pdv LEFT JOIN FETCH gfv.userInRole AS uir WHERE (uir IS NULL OR pdv IS NULL OR (uir.id = :careRecipientId AND pdv.derivedDetectionVariable.id = :parentFactorId AND pdv.pilotCode = uir.pilotCode)) AND ti.typicalPeriod = 'MON' AND DATE_TRUNC('month', TIMEZONE('UTC',ti.intervalStart) ) = TIMEZONE('UTC',ti.intervalStart) ORDER BY ti.intervalStart ASC")
+	List<TimeInterval> getDiagramDataForUserInRoleId(@Param("careRecipientId") final Long careRecipientId, @Param("parentFactorId") final Long parentFactorId);
+	
 }

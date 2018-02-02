@@ -40,8 +40,8 @@ public interface GenericRepository<T, ID extends Serializable>
 	
 	void clear();
 	
-	<T extends AbstractBaseEntity> Collection<T> bulkSave(Collection<T> entities);
+	<S extends AbstractBaseEntity<?>> Collection<S> bulkSave(Collection<S> entities);
 	
-	<T extends AbstractBaseEntity> T persistOrMerge(T t);
+	<S extends AbstractBaseEntity<?>> S persistOrMerge(S s);
 
 }

@@ -91,15 +91,8 @@ create table testtest.cd_risk_status (risk_status varchar(3) not null, risk_stat
 create table testtest.stakeholder (stakeholder_abbreviation varchar(3) not null, stakeholder_name varchar(50) , stakeholder_description varchar(50), valid_from timestamptz , valid_to timestamptz, primary key (stakeholder_abbreviation));
 create sequence testtest.hibernate_sequence;
 create sequence testtest.assessment_id_seq;
-create sequence testtest.cd_detection_variable_id_seq;
-create sequence testtest.md_pilot_detection_variable_id_seq;
-create sequence testtest.time_interval_id_seq;
-create sequence testtest.numeric_indicator_value_id_seq;
-create sequence testtest.geriatric_factor_value_id_seq;
-create sequence testtest.cd_role_id_seq;
 create sequence testtest.action_id_seq;
 create sequence testtest.cd_activity_id_seq;
-create sequence testtest.assessment_id_seq;
 create sequence testtest.cr_profile_id_seq;
 create sequence testtest.cd_detection_variable_id_seq;
 create sequence testtest.eam_id_seq;

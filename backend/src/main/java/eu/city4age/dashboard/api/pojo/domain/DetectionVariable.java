@@ -157,5 +157,6 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 
         public void setBaseUnit(String baseUnit) {
             this.baseUnit = baseUnit;
-        }               
+        }
+
 }

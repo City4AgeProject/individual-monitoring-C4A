@@ -174,7 +174,6 @@ Assessment.prototype.toJson = function() {
 
 /**
  * This is a object to post new assessement
- * @param {type} jwt
  * @param {type} comment
  * @param {type} riskStatus
  * @param {type} dataValidity
@@ -366,9 +365,9 @@ function remove_item(arr, value) {
 Array.prototype.contains = function(obj) {
     var i = this.length;
     while (i--) {
-        if (this[i] == obj) {
+        if (this[i] === obj) {
             return true;
         }
     }
     return false;
-}
+};

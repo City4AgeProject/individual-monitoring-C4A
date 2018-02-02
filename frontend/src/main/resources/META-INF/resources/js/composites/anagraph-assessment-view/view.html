@@ -38,7 +38,7 @@
 	<!-- end main graph panel -->
 
 	<div id="dialogWrapper1">
-		<add-assessment id="addAssessment" class="oj-flex-item" data-points-marked-ids="{{dataPointsMarkedIds}}" comment-text="{{commentText}}" selected-risk-status="{{selectedRiskStatus}}" selected-data-validity="{{selectedDataValidity}}" selected-roles="{{selectedRoles}}" role-tags="{{roleTags}}"> </add-assessment>
+		<add-assessment id="addAssessment" class="oj-flex-item" data-points-marked-ids="{{dataPointsMarkedIds}}" comment-text="{{commentText}}" selected-risk-status="{{selectedRiskStatus}}" selected-data-validity="{{selectedDataValidity}}" selected-roles="{{selectedRoles}}" risks-tags="{{$props.risksTags}}" data-validities-tags="{{$props.dataValiditiesTags}}" role-tags="{{$props.roleTags}}"> </add-assessment>
 	</div>
 
 	<div class="oj-flex-item">
@@ -114,7 +114,7 @@
 		                                                        chroming: 'outlined',
 		                                                        checked: checkedFilterRiskStatus
 		                                                    }">
-														<!-- ko foreach: risksTags -->
+														<!-- ko foreach: $props.risksTags -->
 														<label data-bind="attr: {for: value}"><img
 															data-bind="attr: {src: imagePath, title: label}"
 															style="vertical-align: bottom; width: 20px; height: 20px;" /></label>
@@ -130,7 +130,7 @@
 		                                                        chroming: 'outlined',
 		                                                        checked: checkedFilterValidityData
 		                                                    }">
-														<!-- ko foreach: dataValiditiesTags -->
+														<!-- ko foreach: $props.dataValiditiesTags -->
 														<label data-bind="attr: {for: value}"><img
 															data-bind="attr: {src: imagePath, title: label}"
 															style="vertical-align: bottom; width: 20px; height: 20px;" /></label>
@@ -162,7 +162,7 @@
                                                         required: true ,
                                                         placeholder: '' ,
                                                         multiple: false,
-                                                        options: roleTags ,
+                                                        options: $props.roleTags ,
                                                         rootAttributes: {style:'width: 180px; max-width: 334px;'}
                                                     }">
                                                    

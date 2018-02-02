@@ -66,10 +66,10 @@ public class TimeInterval extends AbstractBaseEntity<Long> {
 	@OneToMany(mappedBy = "timeInterval", fetch = FetchType.LAZY)
 	private Set<VariationMeasureValue> variationMeasureValues = new HashSet<VariationMeasureValue>(0);
 
-	@JsonView(View.TimeIntervalView.class)
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	//@JsonView(View.TimeIntervalView.class)
+	//@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "timeInterval", fetch = FetchType.LAZY)
-	private Set<GeriatricFactorValue> geriatricFactorValue;
+	private Set<GeriatricFactorValue> geriatricFactorValue = new HashSet<GeriatricFactorValue>();
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy = "timeInterval", fetch = FetchType.LAZY)

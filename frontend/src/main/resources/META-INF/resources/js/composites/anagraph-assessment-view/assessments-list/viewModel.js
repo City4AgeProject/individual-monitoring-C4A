@@ -19,7 +19,7 @@ define(
 					$('#detectionGEFGroup1FactorsLineChart').prop('assessmentId', self.assessmentId());
 
 					$('#detectionGEFGroup1FactorsLineChart')[0].selectDatapointsDiagram();
-				}
+				};
 
 				self.readMore = function() {
 					document.getElementById('commentSpan').textContent = this.comment;
@@ -37,7 +37,7 @@ define(
 							String((docWidth - $("#commentPopup").width()) / 2)
 									+ 'px');
 					window.scrollTo();
-				}
+				};
 			}
 			return model;
 		});

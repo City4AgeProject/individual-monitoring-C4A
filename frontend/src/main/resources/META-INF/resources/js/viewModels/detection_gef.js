@@ -1,12 +1,10 @@
-define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 'promise',
+define(['ojs/ojcore', 'knockout', 'jquery',
     'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
     'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view','anagraph-measure-view'],
 
-function (oj, ko, $, sp, params) {
-	
-	var aas = document.getElementById('detectionGEFGroup1FactorsLineChart');
+function (oj, ko, $) {
 
     function GraphicsContentViewModel() {
 
@@ -16,7 +14,7 @@ function (oj, ko, $, sp, params) {
         self.highlightValue = ko.observable();
 
         self.selectedId = ko.observable();
-        var chartClicked = false;
+
         var lineColors = ['#b4b2b2','#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
 
         var PRE_FRAIL_SERIES_NAME = oj.Translations.getTranslatedString('pre-frail');
@@ -68,13 +66,27 @@ function (oj, ko, $, sp, params) {
         self.selectedAnotations = ko.observableArray([]);
         
         /* Risks select */
-        self.risksTags = ko.observableArray([]);
+       //self.risksTags = ko.observableArray([{value: "1", label: "1", imagePath: ""}, {value: "2", label: "2", imagePath: ""}, {value: "3", label: "3", imagePath: ""}]);
+        //self.risksTags = ko.observableArray([{"value":"A","label":"Risk alert111","imagePath":"images/risk_alert.png"},{"value":"N","label":"No Risk","imagePath":"images/comment.png"},{"value":"W","label":"Risk warning","imagePath":"images/risk_warning.png"}]);
         
+        self.risksTags = ko.observableArray([]);
+        /*self.risksTags.push({"value":"A","label":"Risk alert","imagePath":"images/risk_alert.png"});
+        self.risksTags.push({"value":"N","label":"No Risk","imagePath":"images/comment.png"});
+        self.risksTags.push({"value":"W","label":"Risk warning","imagePath":"images/risk_warning.png"});
+        */
         self.isChecked = ko.observable();
         
-        self.checkedFilterRiskStatus = ko.observableArray([]);
-        self.checkedFilterValidityData = ko.observableArray([]);
+        /*self.checkedFilterRiskStatus = ko.observableArray([]);
+        self.checkedFilterValidityData = ko.observableArray([]);*/
         
+        self.risksCollection = ko.observable();
+                
+        self.dataValiditiesTags = ko.observableArray([
+            {value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
+            {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
+            {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
+
+        self.rolesCollection = ko.observable();
         self.roleTags = ko.observableArray([]);  
         self.selectedRoles = ko.observableArray([]);
         
@@ -89,9 +101,9 @@ function (oj, ko, $, sp, params) {
         self.polarChartSeriesValue = ko.observableArray([]);
         self.polarChartGroupsValue = ko.observableArray([]);
         
-		self.filterList = function() {
-            filterAssessments(self.queryParams, self.checkedFilterValidityData);
-	    };
+	self.filterList = function() {
+            filterAssessments(self.queryParams);
+	};
 
         function createItems(id, value, gefTypeId) {
             return {id: id, value: value, gefTypeId: gefTypeId};
@@ -137,14 +149,86 @@ function (oj, ko, $, sp, params) {
         self.titleValue = ko.observable("");
         self.titlePart = ko.observable("");
         self.titleObj = ko.observable();
+        
+        
+        var role = new oj.Collection.extend({
+                url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS",
+                fetchSize : -1,
+                model : new oj.Model.extend({
+                        idAttribute : 'id',
+                        parse : function(response) {
+                                return response.result;
+                        }
+                })
+        });
+        self.rolesCollection(new role());
+        /*self.rolesCollection().fetch({
+                type : 'GET',
+                success : function(collection, response, options) {
+                        if (self.roleTags.length === 0) {
+                                for (var i = 0; i < response.length; i++) {
+                                        var roleModel = response[i];
+                                        self.roleTags.push({
+                                                value : roleModel.id,
+                                                label : oj.Translations.getTranslatedString(roleModel.roleName)
+                                        });
+                                }
+                        }
+                },
+                error : function(jqXHR, textStatus, errorThrown) {
+                }
+        });*/
+        
+        parseRisks = function (response) {
+            return {
+                riskStatus: response['riskStatus'],
+                riskStatusDesc: response['riskStatusDescription'],
+                imagePath: response['iconImagePath']};
+        };
 
+        var collectionRisks = new oj.Collection.extend({
+            url: CODEBOOK_SELECT_ALL_RISKS,
+            fetchSize: -1,
+            model: new oj.Model.extend({
+                idAttribute: 'riskStatus',
+                parse: parseRisks
+            })
+        });
+
+        self.risksCollection(new collectionRisks());
+
+        function loadRisks() {
+            console.log("loadRisks");
+
+            self.risksCollection().fetch({
+                success: function (collection, response, options) {
+                    console.log("response from risk ws start");
+                    if (self.risksTags.length === 0) {
+                        console.log("1");
+                        self.risksTags([]);
+                        for (var i = 0; i < collection.size(); i++) {
+                            var riskModel = collection.at(i);
+                            //Temporary key (risk_status_+(a||w||n))
+                            self.risksTags.push({value: riskModel.attributes.riskStatus, label: oj.Translations.getTranslatedString("risk_status_"+riskModel.attributes.riskStatus.toLowerCase()) , imagePath: riskModel.attributes.imagePath});
+                        }
+                        console.log("2");
+                    }
+                    console.log("3");
+                    console.log("test: " + JSON.stringify(self.risksTags()));
+                    //$('#detectionGEFGroup1FactorsLineChart').prop('risksTags', self.risksTags());
+                    //$('#detectionGEFGroup1FactorsLineChart').ojButtonset( "refresh" );
+                    console.log("response from risk ws ended");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                }
+            });
+        }
  
         self.chartDrill = function (event, ui) {
             if(ui['series']){
             document.getElementById('polarChart1').style.display = 'none';
             document.getElementById('polarChart2').style.display = 'none';
-            chartClicked = true;
-            
+
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
@@ -267,7 +351,7 @@ function (oj, ko, $, sp, params) {
 
                 document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
                 
-                if(document.getElementById('polarChart1').style.display == 'block' &&  document.getElementById('polarChart2').style.display == 'block'){
+                if(document.getElementById('polarChart1').style.display === 'block' &&  document.getElementById('polarChart2').style.display === 'block'){
                 	document.getElementById('polarChart1').style.display = 'none';
                     document.getElementById('polarChart2').style.display = 'none';
                 } else {
@@ -277,9 +361,9 @@ function (oj, ko, $, sp, params) {
                 
                 document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
 
-            } else  if (launcherId.indexOf("Line chart") !== -1 && document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility == 'visible'){
+            } else  if (launcherId.indexOf("Line chart") !== -1 && document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility === 'visible'){
                 //document.getElementById('detectionGEFGroupsLineChart').style.display = 'block';
-            	if(document.getElementById('detectionGEFGroup1FactorsLineChart').style.display == 'block'){
+            	if(document.getElementById('detectionGEFGroup1FactorsLineChart').style.display === 'block'){
             		document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
             	}else{                   
             		document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';                        
@@ -293,6 +377,8 @@ function (oj, ko, $, sp, params) {
         self.nowrap = ko.observable(false);
 
         self.handleActivated = function(info) {
+            //loadRisks();
+            
             self.careRecipientId = parseInt(sessionStorage.getItem("crId"));
            
             
@@ -304,6 +390,48 @@ function (oj, ko, $, sp, params) {
             loadViewPilotDetectionVariables();
             loadCRData();
             loadGefData();
+            
+            self.roleTags = [];
+            self.risksTags = [];
+            
+              return new Promise(function(resolve, reject) {
+
+                       $.when(
+
+                                 $.get(CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS", function(rolesData) {
+                                           rolesData.forEach(function(role){
+                                               self.roleTags.push({
+                                                    value : role.id,
+                                                    label : oj.Translations.getTranslatedString(role.roleName)
+                                               }); 
+                                           });
+                                       }),
+                                 
+                                 $.get(CODEBOOK_SELECT_ALL_RISKS, function(risksData) {
+                                   risksData.forEach(function(risk){
+                                       console.log('risk arrived : ' + JSON.stringify(risk));
+                                       self.risksTags.push(
+                                        {
+                                            value: risk.riskStatus, 
+                                            label: oj.Translations.getTranslatedString("risk_status_" + risk.riskStatus.toLowerCase()) , 
+                                            imagePath: risk.iconImagePath
+                                        }
+                                               );
+                                       console.log('this is roletags now : ' + JSON.stringify(self.roleTags));
+                                   });
+                                 })
+
+                               ).then(function() {
+
+                                   console.log('successfully loaded risks and roles');
+                                   console.log('here are risk tags : ' + JSON.stringify(self.risksTags));
+                                   console.log('here are role tags : ' + JSON.stringify(self.roleTags));
+                                   resolve();
+                               }).fail(function() {
+                                   console.log( "error recieving roles and risks data from web service" );
+                       })
+           });     
+            console.log("handleActivated ended");
           };
 
         self.viewPilotDetectionVariables = [];
@@ -387,7 +515,7 @@ function (oj, ko, $, sp, params) {
                     //console.log("monthsNum: " + monthsNum)
                     var counter = 0;
                     self.seriesVal().forEach(function(el) {
-                        if(el.items == undefined){
+                        if(el.items === undefined){
                         	el.items = [];
                         	counter++;
                         	for (i = 1; i <= monthsNum; i++) {
@@ -408,7 +536,7 @@ function (oj, ko, $, sp, params) {
             $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/GEF")
                     .then(function (behavData) {
                         gefData = behavData;   
-                    })
+                    });
         }
     }
 

@@ -16,7 +16,7 @@
 							 <label id="selectgrouplabel" data-bind="text: choseTypeLabel+'*'"></label>
 							<div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
 								<ul id="riskList" style="display: none">
-									<!-- ko foreach: risksTags -->
+									<!-- ko foreach: $props.risksTags -->
 									<li data-bind="attr: {'oj-data-value': value}">
 									<img data-bind="attr: {src: imagePath}" role="presentation"
 										style="vertical-align: middle; width: 16px; height: 16px;" />
@@ -34,7 +34,7 @@
                                                             placeholder: choseTypePlcHoldLabel }"/>
 
 								<ul id="dataValiditiesList" style="display: none">
-									<!-- ko foreach: dataValiditiesTags -->
+									<!-- ko foreach: $props.dataValiditiesTags -->
 									<li data-bind="attr: {'oj-data-value': value}">
 									<img data-bind="attr: {src: imagePath}" 
 											role="presentation" style="vertical-align: middle; width: 16px; height: 16px;" />

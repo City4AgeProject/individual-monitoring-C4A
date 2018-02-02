@@ -103,18 +103,12 @@ public class Pilot implements Serializable {
 		this.lastSubmitted = lastSubmitted;
 	}
 
-	public YearMonth getLastComputed() {
-		if (this.latestSubmissionCompleted != null) {
-			return YearMonth
-					.from(this.latestSubmissionCompleted.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-		} else if (this.latestVariablesComputed != null) {
+	public YearMonth getComputedStartDate() {
+		if (this.latestVariablesComputed != null) {
 			return YearMonth
 					.from(this.latestVariablesComputed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-		/*} else if (this.latestConfigurationUpdate != null) {
-			return YearMonth
-					.from(this.latestConfigurationUpdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());*/
 		} else {
-			return YearMonth.of(2016, 12);
+			return YearMonth.of(2015, 12);
 		}
 	}
 

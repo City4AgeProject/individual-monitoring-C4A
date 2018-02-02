@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -337,6 +338,7 @@ public class CareRecipientService {
 	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
 	public Response getDiagramData(@PathParam("careRecipientId") Long careRecipientId,
 			@PathParam("parentFactorId") Long parentFactorId) throws IOException {
+		
 		DataSet response = new DataSet();
 		List<GeriatricFactorValue> gfvList;
 		ArrayList<C4ServiceGetOverallScoreListResponse> itemList = new ArrayList<C4ServiceGetOverallScoreListResponse>();
@@ -398,9 +400,9 @@ public class CareRecipientService {
 
 		Collections.sort(fs, new FSTComparator());
 
-		Serie preFrail = new Serie("Pre-Frail", new ArrayList<Double>());
-		Serie frail = new Serie("Frail", new ArrayList<Double>());
-		Serie fit = new Serie("Fit", new ArrayList<Double>());
+		Serie preFrail = new Serie("Pre-Frail", new ArrayList<BigDecimal>());
+		Serie frail = new Serie("Frail", new ArrayList<BigDecimal>());
+		Serie fit = new Serie("Fit", new ArrayList<BigDecimal>());
 
 		for (FrailtyStatusTimeline frailty : fs) {
 
@@ -408,17 +410,17 @@ public class CareRecipientService {
 				switch (frailty.getCdFrailtyStatus().getFrailtyStatus()) {
 
 				case "Pre-frail":
-					preFrail.getItems().add(0.1);
+					preFrail.getItems().add(new BigDecimal(0.1));
 					frail.getItems().add(null);
 					fit.getItems().add(null);
 					break;
 				case "Frail":
-					frail.getItems().add(0.1);
+					frail.getItems().add(new BigDecimal(0.1));
 					preFrail.getItems().add(null);
 					fit.getItems().add(null);
 					break;
 				case "Fit":
-					fit.getItems().add(0.1);
+					fit.getItems().add(new BigDecimal(0.1));
 					preFrail.getItems().add(null);
 					frail.getItems().add(null);
 					break;

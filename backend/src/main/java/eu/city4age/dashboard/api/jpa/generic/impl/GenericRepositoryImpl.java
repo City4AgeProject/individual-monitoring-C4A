@@ -166,11 +166,11 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 		this.entityManager.clear();
 	}
 	
-	public <T extends AbstractBaseEntity> Collection<T> bulkSave(Collection<T> entities) {
-		final List<T> savedEntities = new ArrayList<>(entities.size());
+	public <S extends AbstractBaseEntity<?>> Collection<S> bulkSave(Collection<S> entities) {
+		final List<S> savedEntities = new ArrayList<>(entities.size());
 		int i = 0;
-		for (T t : entities) {
-			savedEntities.add(persistOrMerge(t));
+		for (S s : entities) {
+			savedEntities.add(persistOrMerge(s));
 			i++;
 			if (i % batchSize == 0) {
 				// Flush a batch of inserts and release memory
@@ -181,12 +181,12 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 		return savedEntities;
 	}
 
-	public <T extends AbstractBaseEntity> T persistOrMerge(T t) {
-		if (t.getId() == null) {
-			entityManager.persist(t);
-			return t;
+	public <S extends AbstractBaseEntity<?>> S persistOrMerge(S entity) {
+		if (entity.getId() == null) {
+			entityManager.persist(entity);
+			return entity;
 		} else {
-			return entityManager.merge(t);
+			return entityManager.merge(entity);
 		}
 	}
 
