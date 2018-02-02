@@ -24,6 +24,8 @@ import eu.city4age.dashboard.api.pojo.ws.C4ALoginResponse;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.security.JwtIssuer;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  * @author EMantziou
  *
@@ -52,10 +54,12 @@ public class UserService {
         Pilot userPilot;
         String displayName, pilotName, pilotCode;
         
-        UserInRole user = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
+        //UserInRole user = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
+        UserInRole user = userInRoleRepository.findBySystemUsername(username);
+        
 
         // Wrong credentials
-        if (user == null) {
+        if (user == null || !BCrypt.checkpw(password, user.getUserInSystem().getPassword())) {
 
             // build response
             response.setResponseCode(401);
