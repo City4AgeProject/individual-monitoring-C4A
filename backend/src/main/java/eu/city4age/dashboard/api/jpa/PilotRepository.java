@@ -13,10 +13,10 @@ public interface PilotRepository extends GenericRepository<Pilot, String> {
 
 	Pilot findByPilotCode(String pilotCode);
 
-	@Query("SELECT p FROM Pilot p WHERE p.latestSubmissionCompleted IS NOT NULL AND p.latestVariablesComputed IS NULL ")
+	@Query("SELECT p FROM Pilot p WHERE p.latestSubmissionCompleted IS NOT NULL AND p.latestVariablesComputed IS NULL AND p.latestConfigurationUpdate IS NOT NULL")
 	List<Pilot> findAllNeverComputed();
 
-	@Query("SELECT p FROM Pilot p WHERE p.latestSubmissionCompleted IS NOT NULL AND p.latestVariablesComputed IS NOT NULL AND p.latestSubmissionCompleted > p.latestVariablesComputed")
+	@Query("SELECT p FROM Pilot p WHERE p.latestSubmissionCompleted IS NOT NULL AND p.latestVariablesComputed IS NOT NULL AND p.latestSubmissionCompleted > p.latestVariablesComputed AND p.latestConfigurationUpdate IS NOT NULL")
 	List<Pilot> findAllComputed();
 
 }

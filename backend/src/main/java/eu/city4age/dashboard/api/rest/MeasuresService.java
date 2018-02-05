@@ -125,12 +125,12 @@ public class MeasuresService {
 	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
 	public Response computeFromMeasures() throws JsonProcessingException, IOException {
 		
-		logger.info("pokrenuo compute: " + new Date());
+		logger.info("computation started: " + new Date());
 
 		computeForAllPilots();
 
-		logger.info("izvrsio compute: " + new Date());
-		return JerseyResponse.build("success", 200);
+		logger.info("computation completed: " + new Date());
+		return JerseyResponse.buildTextPlain("success", 200);
 	}
 
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
@@ -165,7 +165,7 @@ public class MeasuresService {
 				}
 			}
 		}
-		if (lastComputedYearMonth == null) {
+		if (lastComputedYearMonth == null ) {
 			
 			logger.info("No new data submitted!");
 			

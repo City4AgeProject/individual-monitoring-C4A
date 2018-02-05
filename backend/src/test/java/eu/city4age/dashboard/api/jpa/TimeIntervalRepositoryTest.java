@@ -101,7 +101,7 @@ public class TimeIntervalRepositoryTest {
 		logger.info("start of testGetGroups");
 
 		TypicalPeriod tp = new TypicalPeriod();
-		tp.setTypicalPeriod("MON");
+		tp.setTypicalPeriod("mon");
 		tp.setPeriodDescription("Month");
 		typicalPeriodRepository.save(tp);
 		
@@ -127,12 +127,15 @@ public class TimeIntervalRepositoryTest {
 				
 		UserInSystem uis1 = new UserInSystem ();
 		uis1.setId(1L);
+		
 		UserInSystem uis2 = new UserInSystem ();
 		uis2.setId(2L);
+		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
 		uir1.setUserInSystem(uis1);
 		uir1 = userInRoleRepository.save(uir1);
+		
 		UserInRole uir2 = new UserInRole();
 		uir2.setId(2L);
 		uir2.setUserInSystem(uis2);
@@ -145,6 +148,7 @@ public class TimeIntervalRepositoryTest {
 		fst1.setChanged(new Date());
 		fst1.setChangedBy(uir1);
 		fst1 = frailtyStatusTimelineRepository.save(fst1);
+		
 		FrailtyStatusTimeline fst2 = new FrailtyStatusTimeline();
 		fst2.setTimeIntervalId(ti2.getId());
 		fst2.setUserInRoleId(uir2.getId());
@@ -180,6 +184,7 @@ public class TimeIntervalRepositoryTest {
 		gef1.setUserInRole(uir1);
 		gef1.setDetectionVariable(dv1);
 		gef1 = geriatricFactorRepository.save(gef1);
+		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
 		gef2.setId(2L);
 		gef2.setGefValue(new BigDecimal(4));
@@ -187,6 +192,7 @@ public class TimeIntervalRepositoryTest {
 		gef2.setUserInRole(uir1);
 		gef2.setDetectionVariable(dv1);
 		gef2 = geriatricFactorRepository.save(gef2);
+		
 		GeriatricFactorValue gef3 = new GeriatricFactorValue();
 		gef3.setId(3L);
 		gef3.setGefValue(new BigDecimal(5));
@@ -194,6 +200,7 @@ public class TimeIntervalRepositoryTest {
 		gef3.setUserInRole(uir1);
 		gef3.setDetectionVariable(dv2);
 		gef3 = geriatricFactorRepository.save(gef3);
+		
 		GeriatricFactorValue gef4 = new GeriatricFactorValue();
 		gef4.setId(4L);
 		gef4.setGefValue(new BigDecimal(6));
@@ -209,7 +216,9 @@ public class TimeIntervalRepositoryTest {
 			logger.info("parentFactor: " + i.next().name());
 		}
 
-		List<TimeInterval> result = timeIntervalRepository.getGroups(1L, parentFactors);
+		List<TimeInterval> result = timeIntervalRepository.getGroups(uir1.getId(), parentFactors);
+		
+		logger.info("result: " + result);
 		
 		for (TimeInterval ttii : result) {
 			logger.info("time_interval_id: " + ttii.getId());
@@ -233,7 +242,7 @@ public class TimeIntervalRepositoryTest {
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
 		TimeInterval tif = timeIntervalRepository
-				.findByIntervalStartAndTypicalPeriod(Timestamp.valueOf("2016-01-05 10:00:16"), "MON");
+				.findByIntervalStartAndTypicalPeriod(Timestamp.valueOf("2016-01-05 10:00:16"), "mon");
 
 		Long returnedId = tif.getId();
 
@@ -245,7 +254,7 @@ public class TimeIntervalRepositoryTest {
 	@Rollback(true)
 	public void setTimeIntervalNotExistsTest() {
 		TimeInterval tif = timeIntervalRepository
-				.findByIntervalStartAndTypicalPeriod(Timestamp.valueOf("2016-01-05 10:00:16"), "MON");
+				.findByIntervalStartAndTypicalPeriod(Timestamp.valueOf("2016-01-05 10:00:16"), "mon");
 		
 		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-05 10:00:16"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);

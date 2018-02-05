@@ -1,0 +1,366 @@
+{
+    "configurations": [
+        {
+            "name": "overall",
+            "level": 0,
+            "pilotCode": "bhx",
+            "username": "BHX_PSS",
+            "password": "$2a$13$aHfJ4GeTSloAoou2i0uSPOjoxgoEqJAPIWJ8voS6XSzyBOAfBTuU.",
+            "groups": [
+                {
+                    "name": "geriatric_factors_first_group",
+                    "level": 1,
+                    "weight": 1,
+                    "formula": "",
+                    "factors": [
+                        {
+                            "name": "motility",
+                            "level": 2,
+                            "weight": 0.33,
+                            "formula": "",
+                            "subFactors": [
+                                {
+                                    "name": "walking",
+                                    "level": 3,
+                                    "weight": 1,
+                                    "formula": "",
+                                    "measures": [
+                                        {
+                                            "name": "walk_distance",
+                                            "level": 4,
+                                            "weight": 0.6,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_walk_distance",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_walk_distance",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_walk_distance",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_walk_distance",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "walk_steps",
+                                            "level": 4,
+                                            "weight": 0.4,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_walk_steps",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_walk_steps",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_walk_steps",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_walk_steps",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "health-physical",
+                            "level": 2,
+                            "weight": 0.33,
+                            "formula": "",
+                            "subFactors": [
+                                {
+                                    "name": "sleep_quality",
+                                    "level": 3,
+                                    "weight": 1,
+                                    "formula": "",
+                                    "measures": [
+                                        {
+                                            "name": "sleep_light_time",
+                                            "level": 4,
+                                            "weight": 0.1,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_sleep_light_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_sleep_light_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_sleep_light_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_sleep_light_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "sleep_deep_time",
+                                            "level": 4,
+                                            "weight": 0.3,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_sleep_deep_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_sleep_deep_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_sleep_deep_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_sleep_deep_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "sleep_awake_time",
+                                            "level": 4,
+                                            "weight": -0.1,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_sleep_awake_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_sleep_awake_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_sleep_awake_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_sleep_awake_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "sleep_wakeup_num",
+                                            "level": 4,
+                                            "weight": -0.3,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_sleep_wakeup_num",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_sleep_wakeup_num",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_sleep_wakeup_num",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_sleep_wakeup_num",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "sleep_tosleep_time",
+                                            "level": 4,
+                                            "weight": -0.2,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_sleep_tosleep_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_sleep_tosleep_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_sleep_tosleep_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_sleep_tosleep_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "physical_activity",
+                            "level": 2,
+                            "weight": 0.33,
+                            "formula": "",
+                            "subFactors": [
+                                {
+                                    "name": "physical_activity",
+                                    "level": 3,
+                                    "weight": 1,
+                                    "formula": "",
+                                    "measures": [
+                                        {
+                                            "name": "physicalactivity_soft_time",
+                                            "level": 4,
+                                            "weight": 0.1,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_physicalactivity_soft_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_physicalactivity_soft_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_physicalactivity_soft_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_physicalactivity_soft_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "physicalactivity_moderate_time",
+                                            "level": 4,
+                                            "weight": 0.1,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_physicalactivity_moderate_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_physicalactivity_moderate_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_physicalactivity_moderate_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_physicalactivity_moderate_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "physicalactivity_intense_time",
+                                            "level": 4,
+                                            "weight": 0.5,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_physicalactivity_intense_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_physicalactivity_intense_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_physicalactivity_intense_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_physicalactivity_intense_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "physicalactivity_calories",
+                                            "level": 4,
+                                            "weight": 0.3,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_physicalactivity_calories",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_physicalactivity_calories",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_physicalactivity_calories",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_physicalactivity_calories",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

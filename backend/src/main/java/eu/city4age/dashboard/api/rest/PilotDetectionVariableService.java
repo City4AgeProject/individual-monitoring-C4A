@@ -132,7 +132,7 @@ public class PilotDetectionVariableService {
 			
 			UserInRole uir;
 			try {
-				uir = userInRoleRepository.findBySystemUsernameAndPassword(username,password);
+				uir = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
 				StringBuilder sb;
 				if(uir!=null) {
 					if(uir.getPilotCode().equals(pilotCode)) {
@@ -339,7 +339,7 @@ public class PilotDetectionVariableService {
 						pdv.setValidTo(null);
 						cfc.incrementUpdated();
 						pilotDetectionVariableRepository.save(pdv);		
-						logger.info("uradjen update na: " + pdv.getDetectionVariable().getDetectionVariableName());
+						//logger.info("uradjen update na: " + pdv.getDetectionVariable().getDetectionVariableName());
 					}
 					
 					currList.remove(index);
@@ -352,14 +352,14 @@ public class PilotDetectionVariableService {
 		if (!dv.getDetectionVariableType().toString().equals("mea") || !ddv.getDetectionVariableType().toString().equals("nui")) {
 			pilotDetectionVariableRepository.save(new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 			cfc.incrementInserted();
-			logger.info("uradjen insert na: " + dv.getDetectionVariableName());
+			//logger.info("uradjen insert na: " + dv.getDetectionVariableName());
 		}
 		else {
 			PilotDetectionVariable pdv = pilotDetectionVariableRepository.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode, dvID, ddvID);
 			if (pdv == null) {
 				pilotDetectionVariableRepository.save (new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 				cfc.incrementInserted();
-				logger.info("uradjen insert na: " + dv.getDetectionVariableName());
+				//logger.info("uradjen insert na: " + dv.getDetectionVariableName());
 			}
 		}
 	}

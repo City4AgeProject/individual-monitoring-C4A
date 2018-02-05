@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.jpa;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +22,7 @@ import eu.city4age.dashboard.api.jpa.SourceEvidenceRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.ValueEvidenceNoticeRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.SourceEvidence;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -49,7 +51,7 @@ public class ValueEvidenceNoticeRepositoryTest {
 	
 	@Test
 	@Transactional
-	@Rollback(false)
+	@Rollback(true)
 	public void test() throws Exception {
 		
 		List<ValueEvidenceNotice> ven = valueEvidenceNoticeRepository.findAll();
@@ -58,12 +60,14 @@ public class ValueEvidenceNoticeRepositoryTest {
 		
 		SourceEvidence se1 = new SourceEvidence ();
 		se1.setId(1L);
+		se1.setUploaded(Timestamp.valueOf("2016-04-01 00:00:00"));
 		se1 = sourceEvidenceRepository.save(se1);
 		
 		Assert.assertNotNull(se1);
 		
 		SourceEvidence se2 = new SourceEvidence ();
 		se2.setId(2L);
+		se2.setUploaded(Timestamp.valueOf("2016-04-01 00:00:00"));
 		se2 = sourceEvidenceRepository.save(se2);
 		
 		Assert.assertNotNull(se2);
@@ -80,14 +84,18 @@ public class ValueEvidenceNoticeRepositoryTest {
 		
 		Assert.assertNotNull(uir2);
 		
+		DetectionVariable dv1 = new DetectionVariable();
+		
 		VariationMeasureValue vmv1 = new VariationMeasureValue();
 		vmv1.setId(1L);
 		vmv1.setMeasureValue(new BigDecimal (2));
+		vmv1.setUserInRole(uir1);
 		vmv1 = variationMeasureValueRepository.save (vmv1);
 		
 		VariationMeasureValue vmv2 = new VariationMeasureValue();
 		vmv2.setId(2L);
 		vmv2.setMeasureValue(new BigDecimal (22));
+		vmv2.setUserInRole(uir2);
 		vmv2 = variationMeasureValueRepository.save (vmv2);
 		
 		ValueEvidenceNotice ven1 = new ValueEvidenceNotice ();
