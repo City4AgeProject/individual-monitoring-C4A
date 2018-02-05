@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,8 +11,11 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -30,8 +34,11 @@ public class TimeInterval extends AbstractBaseEntity<Long> {
 	private static final long serialVersionUID = -865550404227746101L;
 
 	@JsonView(View.VariationMeasureValueView.class)
-	@Column(name = "interval_start")
-	private Timestamp intervalStart;
+	@Column(name = "interval_start", columnDefinition= "TIMESTAMP WITH TIME ZONE")
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	//@Column(name = "interval_start")
+	private Date intervalStart;
 
 
 	@JsonView(View.VariationMeasureValueView.class)
@@ -78,7 +85,7 @@ public class TimeInterval extends AbstractBaseEntity<Long> {
 	public TimeInterval() {
 	}
 
-	public TimeInterval(Timestamp intervalStart, Timestamp intervalEnd, String typicalPeriod, Set<ExecutedActivity> activities,
+	public TimeInterval(Date intervalStart, Timestamp intervalEnd, String typicalPeriod, Set<ExecutedActivity> activities,
 			Set<NumericIndicatorValue> numericIndicatorValues, Set<VariationMeasureValue> variationMeasureValues,
 			Set<GeriatricFactorValue> geriatricFactorValue, Set<FrailtyStatusTimeline> frailtyStatusTimeline) {
 		this.intervalStart = intervalStart;
@@ -93,11 +100,11 @@ public class TimeInterval extends AbstractBaseEntity<Long> {
 		this.frailtyStatusTimeline = frailtyStatusTimeline;
 	}
 
-	public Timestamp getIntervalStart() {
+	public Date getIntervalStart() {
 		return intervalStart;
 	}
 
-	public void setIntervalStart(Timestamp intervalStart) {
+	public void setIntervalStart(Date intervalStart) {
 		this.intervalStart = intervalStart;
 	}
 

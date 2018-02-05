@@ -19,6 +19,7 @@ import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.jpa.CrProfileRepository;
 import eu.city4age.dashboard.api.jpa.RoleRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
@@ -56,25 +57,25 @@ public class UserInRoleRepositoryTest {
 		
 		UserInRole uir1 = new UserInRole ();
 		uir1.setId(1L);
-		uir1.setPilotCode("LCC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		uir1.setRoleId((short)1);
 		userInRoleRepository.save(uir1);
 		
 		UserInRole uir2 = new UserInRole ();
 		uir2.setId(2L);
-		uir2.setPilotCode("LCC");
+		uir2.setPilotCode(Pilot.PilotCode.LCC);
 		uir2.setRoleId((short)1);
 		userInRoleRepository.save(uir2);
 		
 		UserInRole uir3 = new UserInRole ();
 		uir3.setId(3L);
-		uir3.setPilotCode("ATH");
+		uir3.setPilotCode(Pilot.PilotCode.ATH);
 		uir3.setRoleId((short)1);
 		userInRoleRepository.save(uir3);
 		
 		UserInRole uir4 = new UserInRole ();
 		uir4.setId(4L);
-		uir4.setPilotCode("ATH");
+		uir4.setPilotCode(Pilot.PilotCode.ATH);
 		uir4.setRoleId((short)2);
 		userInRoleRepository.save(uir4);
 		

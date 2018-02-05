@@ -2,6 +2,7 @@ package eu.city4age.dashboard.api.jpa;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,16 +18,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
-import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
-import eu.city4age.dashboard.api.jpa.DetectionVariableTypeRepository;
-import eu.city4age.dashboard.api.jpa.NUIRepository;
-import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
-import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
-import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
-import eu.city4age.dashboard.api.jpa.ViewNuiValuesPersistedSourceMeaTypesRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -69,7 +64,7 @@ public class ViewNuiValuesPersistedSourceMeaTypesRepositoryTest {
 		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
-		uir1.setPilotCode("LCC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		userInRoleRepository.save(uir1);
 	
 		DetectionVariableType dvt1 = DetectionVariableType.MEA;
@@ -107,13 +102,13 @@ public class ViewNuiValuesPersistedSourceMeaTypesRepositoryTest {
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
 		pdv1.setDetectionVariable(dv1);
-		pdv1.setPilotCode("LCC");
+		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pdv1.setDerivationWeight(BigDecimal.valueOf(0.3));
 		pdv1.setDerivedDetectionVariable(dv2);
 		pdv1.setFormula("Formula1");
 		pilotDetectionVariableRepository.save(pdv1);
 
-		ViewNuiValuesPersistedSourceMeaTypes result = viewNuiValuesPersistedSourceMeaTypesRepository.findNuiFor1Month(nui1.getTimeInterval().getIntervalStart(), pdv1.getDerivedDetectionVariable().getId(), nui1.getUserInRole().getId());
+		ViewNuiValuesPersistedSourceMeaTypes result = viewNuiValuesPersistedSourceMeaTypesRepository.findNuiFor1Month(new Date(nui1.getTimeInterval().getIntervalStart().getTime()), pdv1.getDerivedDetectionVariable().getId(), nui1.getUserInRole().getId());
 		System.out.println("@@@@@@@@@@@@@@@@@@" + result);
 		Assert.assertNotNull(result);
 		Assert.assertEquals("LCC", result.getPilotCode());

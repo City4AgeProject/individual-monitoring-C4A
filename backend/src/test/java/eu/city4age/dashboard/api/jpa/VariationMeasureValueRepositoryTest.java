@@ -33,6 +33,7 @@ import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -215,7 +216,7 @@ public class VariationMeasureValueRepositoryTest {
 		//user
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(uirId);
-		uir1.setPilotCode("LCC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		uir1 = userInRoleRepository.save(uir1);
 		userInRoleRepository.flush();
 		
@@ -262,7 +263,7 @@ public class VariationMeasureValueRepositoryTest {
 		
 		Timestamp intervalStart = Timestamp.valueOf("2017-05-03 00:00:00");
 		Timestamp intervalEnd = Timestamp.valueOf("2017-05-03 00:00:00");
-		List<String> pilots = Arrays.asList("LCC");
+		List<Pilot.PilotCode> pilots = Arrays.asList(Pilot.PilotCode.LCC);
 		
 		List result = variationMeasureValueRepository.findAllForMonthByPilotCodeNui(intervalStart, intervalEnd, pilots);
 		Assert.assertNotNull(result);

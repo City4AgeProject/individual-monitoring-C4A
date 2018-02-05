@@ -9,9 +9,9 @@ import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 
 @Repository(value = "pilotRepository")
-public interface PilotRepository extends GenericRepository<Pilot, String> {
+public interface PilotRepository extends GenericRepository<Pilot, Pilot.PilotCode> {
 
-	Pilot findByPilotCode(String pilotCode);
+	Pilot findByPilotCode(Pilot.PilotCode pilotCode);
 
 	@Query("SELECT p FROM Pilot p WHERE p.latestSubmissionCompleted IS NOT NULL AND p.latestVariablesComputed IS NULL ")
 	List<Pilot> findAllNeverComputed();

@@ -6,6 +6,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
+
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -118,7 +121,7 @@ public enum JwtIssuer {
      * @param pilot
      * @return
      */
-    public String createAndSign(String username, Short roleId, String pilot) {
+    public String createAndSign(String username, Short roleId, Pilot.PilotCode pilot) {
 
         String token = null;
         try {
@@ -126,7 +129,7 @@ public enum JwtIssuer {
                     .withIssuer(issuer)
                     .withClaim("usr", username)
                     .withClaim("rol", (int) roleId)
-                    .withClaim("plt", pilot)
+                    .withClaim("plt", pilot.getName())
                     .sign(algorithmRS);
         } catch (JWTCreationException e) {
         }

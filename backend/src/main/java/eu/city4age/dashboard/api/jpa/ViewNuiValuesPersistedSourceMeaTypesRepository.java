@@ -1,6 +1,6 @@
 package eu.city4age.dashboard.api.jpa;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +13,6 @@ import eu.city4age.dashboard.api.pojo.domain.ViewNuiValuesPersistedSourceMeaType
 public interface ViewNuiValuesPersistedSourceMeaTypesRepository extends GenericRepository<ViewNuiValuesPersistedSourceMeaTypes, Long> {
 	
 	@Query("SELECT vnv FROM ViewNuiValuesPersistedSourceMeaTypes vnv WHERE vnv.userInRoleId = :uirId AND vnv.derivedNuiId = :gesDvId AND vnv.intervalStart = :yearMonth")
-	ViewNuiValuesPersistedSourceMeaTypes findNuiFor1Month(@Param("yearMonth") final Timestamp yearMonth, @Param("gesDvId") final Long gesDvId, @Param("uirId") final Long uirId);
+	ViewNuiValuesPersistedSourceMeaTypes findNuiFor1Month(@Param("yearMonth") final Date yearMonth, @Param("gesDvId") final Long gesDvId, @Param("uirId") final Long uirId);
 
 }

@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,7 +26,8 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 	private static final long serialVersionUID = 7337284221184594172L;
 	
 	@Column(name="pilot_code")
-	private String pilotCode;
+	@Enumerated(EnumType.STRING)
+	private Pilot.PilotCode pilotCode;
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -63,7 +66,7 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 	
 	
 
-	public PilotDetectionVariable(String pilotCode, DetectionVariable derivedDetectionVariable,
+	public PilotDetectionVariable(Pilot.PilotCode pilotCode, DetectionVariable derivedDetectionVariable,
 			DetectionVariable detectionVariable, String formula, BigDecimal derivationWeight, Date validFrom,
 			Date validTo) {
 		this.pilotCode = pilotCode;
@@ -124,11 +127,11 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 		this.validTo = validTo;
 	}
 
-	public String getPilotCode() {
+	public Pilot.PilotCode getPilotCode() {
 		return pilotCode;
 	}
 
-	public void setPilotCode(String pilotCode) {
+	public void setPilotCode(Pilot.PilotCode pilotCode) {
 		this.pilotCode = pilotCode;
 	}
 

@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -20,12 +22,27 @@ public class Pilot implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -1267893598090303628L;
+	
+	public enum PilotCode {
+		MAD("MAD"), LCC("LCC"), SIN("SIN"), MPL("MPL"), ATH("ATH"), BHX("BHX");
+		
+		private final String name;
+		
+		PilotCode(String name) {
+			this.name = name;
+		}
 
+		public String getName() {
+			return name;
+		}
+	};
+	
 	private String name;
 
 	@Id
 	@Column(name = "pilot_code")
-	private String pilotCode;
+	@Enumerated(EnumType.STRING)
+	private Pilot.PilotCode pilotCode;
 
 	@Column(name = "population_size")
 	private Double populationSize;
@@ -52,11 +69,14 @@ public class Pilot implements Serializable {
 	@Transient
 	private YearMonth lastConfigured;
 
+	@Column(name = "time_zone")
+	private String timeZone;
+
 	public Pilot() {
 		lastSubmitted = YearMonth.of(2017, 2);
 	}
 
-	public Pilot(String name, String pilotCode, Double populationSize, Set<Location> locations) {
+	public Pilot(String name, Pilot.PilotCode pilotCode, Double populationSize, Set<Location> locations) {
 		this.name = name;
 		this.pilotCode = pilotCode;
 		this.populationSize = populationSize;
@@ -71,11 +91,11 @@ public class Pilot implements Serializable {
 		this.name = name;
 	}
 
-	public String getPilotCode() {
+	public Pilot.PilotCode getPilotCode() {
 		return pilotCode;
 	}
 
-	public void setPilotCode(String pilotCode) {
+	public void setPilotCode(Pilot.PilotCode pilotCode) {
 		this.pilotCode = pilotCode;
 	}
 
@@ -147,5 +167,23 @@ public class Pilot implements Serializable {
 	public void setLatestConfigurationUpdate(Date latestConfigurationUpdate) {
 		this.latestConfigurationUpdate = latestConfigurationUpdate;
 	}
+	
+	public String getTimeZone() {
+		switch(this.pilotCode) {
+			case ATH:
+				return "Europe/Athens";			
+			case BHX:
+				return "Europe/London";
+			case SIN:
+				return "Asia/Singapore";
+			default:
+				return "Europe/Paris";
+		}
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
+
 
 }

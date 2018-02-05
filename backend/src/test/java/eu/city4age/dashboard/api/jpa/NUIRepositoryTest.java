@@ -36,6 +36,7 @@ import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -88,17 +89,17 @@ public class NUIRepositoryTest {
 
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(uirId);
-		uir1.setPilotCode("LCC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		uir1 = userInRoleRepository.save(uir1);
 		
 		UserInRole uir2 = new UserInRole ();
 		uir2.setId(2L);
-		uir2.setPilotCode("LCC");
+		uir2.setPilotCode(Pilot.PilotCode.LCC);
 		uir2 = userInRoleRepository.save(uir2);
 		
 		UserInRole uir3 = new UserInRole ();
 		uir3.setId(3L);
-		uir3.setPilotCode("ATH");
+		uir3.setPilotCode(Pilot.PilotCode.ATH);
 		uir3 = userInRoleRepository.save(uir3);
 
 		DetectionVariableType dvt1 = DetectionVariableType.GES;

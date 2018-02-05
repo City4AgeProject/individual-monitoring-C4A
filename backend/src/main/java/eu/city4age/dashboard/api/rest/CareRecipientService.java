@@ -203,7 +203,7 @@ public class CareRecipientService {
 					logger.info("2 tis: " + tis);
 					logger.info("2 pilottype: " + type);
 
-					String pilotCode = gereatricfactparamsList.get(0).getUserInRole().getPilotCode();						
+					Pilot.PilotCode pilotCode = gereatricfactparamsList.get(0).getUserInRole().getPilotCode();						
 					PilotDetectionVariable pdv = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(type.getId(), pilotCode);
 
 					itemList.add(new C4ServiceGetOverallScoreListResponse(tis, fMap.get(type.getId()),

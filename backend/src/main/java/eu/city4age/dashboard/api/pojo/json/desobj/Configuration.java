@@ -3,6 +3,8 @@ package eu.city4age.dashboard.api.pojo.json.desobj;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 /**
  * @author Andrija Petrovic
  *
@@ -11,7 +13,7 @@ public class Configuration {
 
 	private String name;
 	private Integer level;
-	private String pilotCode;
+	private Pilot.PilotCode pilotCode;
 	private String username;
 	private String password;
 	private List<Groups> groups;
@@ -19,7 +21,7 @@ public class Configuration {
 
 	public Configuration(	@JsonProperty(value= "name", required = true)String name,
 							@JsonProperty(value= "level",required = true)Integer level,
-            				@JsonProperty(value= "pilotCode",required = true)String pilotCode,
+            				@JsonProperty(value= "pilotCode",required = true)Pilot.PilotCode pilotCode,
             				@JsonProperty(value= "username",required = true)String username,
             				@JsonProperty(value= "password",required = true)String password,
             				@JsonProperty(value= "groups",required = true)List<Groups> groups) {
@@ -51,11 +53,11 @@ public class Configuration {
 	}
 
 	@JsonProperty("pilotCode")
-	public String getPilotCode() {
+	public Pilot.PilotCode getPilotCode() {
 		return pilotCode;
 	}
 
-	public void setPilotCode(String pilotCode) {
+	public void setPilotCode(Pilot.PilotCode pilotCode) {
 		this.pilotCode = pilotCode;
 	}
 

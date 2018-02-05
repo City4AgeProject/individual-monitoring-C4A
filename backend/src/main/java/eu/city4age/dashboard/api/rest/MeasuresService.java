@@ -5,13 +5,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -147,7 +147,7 @@ public class MeasuresService {
 	}
 
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
-			Timestamp endOfMonth, List<String> pilotCodes) {
+			Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
 		List<Object[]> list = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, factor, pilotCodes);
 
 		if (list != null && list.size() > 0) {
@@ -163,7 +163,7 @@ public class MeasuresService {
 	
 		YearMonth currentYearMonth = YearMonth.now();
 		YearMonth lastComputedYearMonth = null;
-		List<String> pilotCodes = new ArrayList<String>();
+		List<Pilot.PilotCode> pilotCodes = new ArrayList<Pilot.PilotCode>();
 		
 		if(!nevers.isEmpty()) {
 			lastComputedYearMonth = nevers.get(0).getComputedStartDate();
@@ -214,7 +214,7 @@ public class MeasuresService {
 		}
 	}
 
-	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, List<String> pilotCodes) {
+	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
 		List<Object[]> gess = nativeQueryRepository.computeAllGess(startOfMonth, endOfMonth, pilotCodes);
 
 		if(gess != null && gess.size() > 0) {
@@ -246,7 +246,7 @@ public class MeasuresService {
 		return gfvs;
 	}
 
-	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, List<String> pilotCodes) {
+	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCodes);
 
@@ -256,7 +256,7 @@ public class MeasuresService {
 		}
 	}
 
-	private List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth, List<String> pilotCodes) {
+	private List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
 		final List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
 		
 
@@ -291,7 +291,7 @@ public class MeasuresService {
 		return nui;
 	}
 
-	public TimeInterval getOrCreateTimeInterval(Timestamp intervalStart, TypicalPeriod typicalPeriod) {
+	public TimeInterval getOrCreateTimeInterval(Date intervalStart, TypicalPeriod typicalPeriod) {
 		TimeInterval ti = timeIntervalRepository.findByIntervalStartAndTypicalPeriod(intervalStart,
 				typicalPeriod.getDbName());
 		if (ti == null) {
@@ -311,10 +311,6 @@ public class MeasuresService {
 			@ApiParam(hidden = true) @PathParam("detectionVariableId") Long detectionVariableId) throws JsonProcessingException {
 		List<NumericIndicatorValue> nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, detectionVariableId);
 		return JerseyResponse.build(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis));
-	}
-
-	public String mockitoTest() {
-		return "hello";
 	}
 
 }

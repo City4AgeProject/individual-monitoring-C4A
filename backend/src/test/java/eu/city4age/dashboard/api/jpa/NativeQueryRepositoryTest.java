@@ -115,12 +115,12 @@ public class NativeQueryRepositoryTest {
 		Timestamp endOfMonth = Timestamp.valueOf(YearMonth.parse("2017 MAY", formatter).atEndOfMonth().atTime(LocalTime.MAX));
 		
 		Pilot p = new Pilot();
-		p.setPilotCode("LCC");
+		p.setPilotCode(Pilot.PilotCode.LCC);
 		pilotRepository.save(p);
 		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(uirId);
-		uir1.setPilotCode("LCC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		userInRoleRepository.save(uir1);
 		
 		DetectionVariable dv1 = new DetectionVariable();
@@ -141,8 +141,8 @@ public class NativeQueryRepositoryTest {
 		vmv1.setMeasureValue(new BigDecimal(5));
 		variationMeasureValueRepository.save(vmv1);
 	
-		List<String> pilotCodes = Arrays.asList("LCC");
-		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilotCodes );
+		List<Pilot.PilotCode> pilotCodes = Arrays.asList(Pilot.PilotCode.LCC);
+		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilotCodes);
 		
 		Assert.assertNotNull(result);
 		
@@ -228,17 +228,17 @@ public class NativeQueryRepositoryTest {
 		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
-		uir1.setPilotCode("LLC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		userInRoleRepository.save(uir1);
 		
 		UserInRole uir2 = new UserInRole ();
 		uir2.setId(2L);
-		uir2.setPilotCode("LCC");
+		uir2.setPilotCode(Pilot.PilotCode.LCC);
 		uir2 = userInRoleRepository.save(uir2);
 		
 		UserInRole uir3 = new UserInRole ();
 		uir3.setId(3L);
-		uir3.setPilotCode("ATH");
+		uir3.setPilotCode(Pilot.PilotCode.ATH);
 		uir3 = userInRoleRepository.save(uir3);
 		
 		DetectionVariableType dvt1 = DetectionVariableType.GES;
@@ -390,14 +390,14 @@ public class NativeQueryRepositoryTest {
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable ();
 		pdv1.setId(1L);
 		pdv1.setDerivedDetectionVariable(ddv1);
-		pdv1.setPilotCode("LCC");
+		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pdv1.setDetectionVariable(dv1);
 		pdv1.setDerivedDetectionVariable(ddv1);
 		pdv1 = pilotDetectionVariableRepository.save(pdv1);
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
 		pdv2.setId(2L);
 		pdv2.setDerivedDetectionVariable(ddv1);
-		pdv2.setPilotCode("ATH");
+		pdv2.setPilotCode(Pilot.PilotCode.ATH);
 		pdv2.setDetectionVariable(dv1);
 		pdv2.setDerivedDetectionVariable(ddv1);
 		pdv2 = pilotDetectionVariableRepository.save(pdv2);
@@ -406,12 +406,12 @@ public class NativeQueryRepositoryTest {
 		uis.setId(1L);
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
-		uir1.setPilotCode("LCC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		uir1.setUserInSystem(uis);
 		uir1 = userInRoleRepository.save(uir1);
 		UserInRole uir2 = new UserInRole();
 		uir2.setId(2L);
-		uir2.setPilotCode("ATH");
+		uir2.setPilotCode(Pilot.PilotCode.ATH);
 		uir2.setUserInSystem(uis);
 		uir2 = userInRoleRepository.save(uir2);
 

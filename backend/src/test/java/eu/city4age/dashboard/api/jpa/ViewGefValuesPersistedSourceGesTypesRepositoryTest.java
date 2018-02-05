@@ -31,6 +31,7 @@ import eu.city4age.dashboard.api.jpa.ViewNuiValuesPersistedSourceMeaTypesReposit
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -78,7 +79,7 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
-		uir1.setPilotCode("LCC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		uir1 = userInRoleRepository.save(uir1);
 	
 		DetectionVariableType dvt1 = DetectionVariableType.GES;
@@ -124,7 +125,7 @@ public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setId(1L);
 		pdv1.setDetectionVariable(dv2);
-		pdv1.setPilotCode("LCC");
+		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pdv1.setDerivationWeight(BigDecimal.valueOf(0.3));
 		pdv1.setDerivedDetectionVariable(dv1);
 		pdv1.setFormula("Formula1");

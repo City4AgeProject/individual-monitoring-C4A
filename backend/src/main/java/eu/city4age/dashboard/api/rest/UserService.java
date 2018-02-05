@@ -50,7 +50,8 @@ public class UserService {
             throws IOException {
         C4ALoginResponse response = new C4ALoginResponse();
         Pilot userPilot;
-        String displayName, pilotName, pilotCode;
+        String displayName, pilotName;
+        Pilot.PilotCode pilotCode;
         
         UserInRole user = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
 

@@ -123,7 +123,7 @@ public class PilotDetectionVariableService {
 		}
 		
 		for (Configuration configuration: data.getConfigurations()) {
-			String pilotCode = configuration.getPilotCode();
+			Pilot.PilotCode pilotCode = configuration.getPilotCode();
 			String password = configuration.getPassword();
 			String username = configuration.getUsername();
 			
@@ -167,7 +167,7 @@ public class PilotDetectionVariableService {
 
 	}
 
-	private void setConfiguration(String pilotCode,Configuration configuration, Timestamp validFrom, StringBuilder response) throws TypicalPeriodException, MissingKeyException {
+	private void setConfiguration(Pilot.PilotCode pilotCode,Configuration configuration, Timestamp validFrom, StringBuilder response) throws TypicalPeriodException, MissingKeyException {
 
 		ConfigurationCounter confCounter = new ConfigurationCounter();
 		
@@ -321,7 +321,7 @@ public class PilotDetectionVariableService {
 	}
 
 	private void createOrUpdatePilotDetectionVariable(DetectionVariable dv, DetectionVariable ddv, Timestamp validFrom,
-			String pilotCode, String formula, BigDecimal weight, ConfigurationCounter cfc,
+			Pilot.PilotCode pilotCode, String formula, BigDecimal weight, ConfigurationCounter cfc,
 			List<PilotDetectionVariable> currList) {
 		
 		long dvID = dv.getId();

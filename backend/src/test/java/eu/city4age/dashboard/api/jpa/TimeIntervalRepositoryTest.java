@@ -2,6 +2,8 @@ package eu.city4age.dashboard.api.jpa;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -248,23 +250,26 @@ public class TimeIntervalRepositoryTest {
 	@Rollback(true)
 	public void testGetDiagramDataForUserInRoleIdAndParentId() throws Exception {
 		
-		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
+		String zone = "UTC";
+		
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of("UTC+2")).toInstant()),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 				
-		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-01-01").atStartOfDay(ZoneId.of("UTC+1")).toInstant()),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		
-		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"),
+		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+1
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 				
-		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),
+		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-02-01").atStartOfDay(ZoneId.of("UTC+1")).toInstant()),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		
-		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
+		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		
+	
 		Pilot p1 = new Pilot();
-		p1.setPilotCode("LCC");
+		p1.setPilotCode(Pilot.PilotCode.LCC);
+		p1.setTimeZone(zone);
 		pilotRepository.save(p1);
 		
 		UserInSystem uis1 = new UserInSystem ();
@@ -272,7 +277,7 @@ public class TimeIntervalRepositoryTest {
 
 		UserInRole uir1 = new UserInRole();
 		uir1.setUserInSystem(uis1);
-		uir1.setPilotCode("LCC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		userInRoleRepository.save(uir1);
 		
 		DetectionVariableType dvt1 = DetectionVariableType.GEF;
@@ -289,25 +294,23 @@ public class TimeIntervalRepositoryTest {
 		DetectionVariable dv2 = new DetectionVariable();
 		dv2.setDetectionVariableName("GES1");
 		dv2.setDetectionVariableType(dvt2);
-		//dv2.setDerivedDetectionVariable(dv1);
 		detectionVariableRepository.save(dv2);
 		
 		DetectionVariable dv3 = new DetectionVariable();
 		dv3.setDetectionVariableName("GES2");
 		dv3.setDetectionVariableType(dvt2);
-		//dv3.setDerivedDetectionVariable(dv1);
 		detectionVariableRepository.save(dv3);
 		
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setDetectionVariable(dv2);
 		pdv1.setDerivedDetectionVariable(dv1);
-		pdv1.setPilotCode("LCC");
+		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pilotDetectionVariableRepository.save(pdv1);
 		
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable();
 		pdv2.setDetectionVariable(dv3);
 		pdv2.setDerivedDetectionVariable(dv1);
-		pdv2.setPilotCode("LCC");
+		pdv2.setPilotCode(Pilot.PilotCode.LCC);
 		pilotDetectionVariableRepository.save(pdv2);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
@@ -340,25 +343,21 @@ public class TimeIntervalRepositoryTest {
 		
 		Assert.assertNotNull(result);
 
-		Assert.assertEquals(5, result.size());
+		Assert.assertEquals(3, result.size());
 
-		Assert.assertEquals(0, result.get(0).getGeriatricFactorValue().size());
+		Assert.assertEquals(1, result.get(0).getGeriatricFactorValue().size());
 		Assert.assertEquals(0, result.get(1).getGeriatricFactorValue().size());
 		Assert.assertEquals(1, result.get(2).getGeriatricFactorValue().size());
-		Assert.assertEquals(0, result.get(3).getGeriatricFactorValue().size());
-		Assert.assertEquals(1, result.get(4).getGeriatricFactorValue().size());
 		
-		Assert.assertEquals(Timestamp.valueOf("2016-01-01 00:00:00"), result.get(0).getIntervalStart());
-		Assert.assertEquals(Timestamp.valueOf("2016-02-01 00:00:00"), result.get(1).getIntervalStart());
-		Assert.assertEquals(Timestamp.valueOf("2016-03-01 00:00:00"), result.get(2).getIntervalStart());
-		Assert.assertEquals(Timestamp.valueOf("2016-04-01 00:00:00"), result.get(3).getIntervalStart());
-		Assert.assertEquals(Timestamp.valueOf("2016-05-01 00:00:00"), result.get(4).getIntervalStart());
+		Assert.assertEquals(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of("UTC")).toInstant()), result.get(0).getIntervalStart());
+		Assert.assertEquals(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of("UTC+2")).toInstant()), result.get(1).getIntervalStart());
+		Assert.assertEquals(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of("UTC")).toInstant()), result.get(2).getIntervalStart());
 		
-		Assert.assertEquals("GES1", result.get(2).getGeriatricFactorValue().iterator().next().getDetectionVariable().getDetectionVariableName());
-		Assert.assertEquals("GES2", result.get(4).getGeriatricFactorValue().iterator().next().getDetectionVariable().getDetectionVariableName());
+		Assert.assertEquals("GES1", result.get(0).getGeriatricFactorValue().iterator().next().getDetectionVariable().getDetectionVariableName());
+		Assert.assertEquals("GES2", result.get(2).getGeriatricFactorValue().iterator().next().getDetectionVariable().getDetectionVariableName());
 		
-		Assert.assertEquals("LCC", result.get(2).getGeriatricFactorValue().iterator().next().getDetectionVariable().getPilotDetectionVariable().iterator().next().getPilotCode());
-		Assert.assertEquals("LCC", result.get(4).getGeriatricFactorValue().iterator().next().getDetectionVariable().getPilotDetectionVariable().iterator().next().getPilotCode());		
+		Assert.assertEquals(Pilot.PilotCode.LCC, result.get(0).getGeriatricFactorValue().iterator().next().getDetectionVariable().getPilotDetectionVariable().iterator().next().getPilotCode());		
+		Assert.assertEquals(Pilot.PilotCode.LCC, result.get(2).getGeriatricFactorValue().iterator().next().getDetectionVariable().getPilotDetectionVariable().iterator().next().getPilotCode());	
 	}
 
 }

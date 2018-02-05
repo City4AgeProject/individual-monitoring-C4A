@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -34,7 +36,12 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 	private static final long serialVersionUID = -1957422483462322553L;
 	
 	@Column(name = "pilot_code")
-	private String pilotCode;
+	@Enumerated(EnumType.STRING)
+	private Pilot.PilotCode pilotCode;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "pilot_code", updatable = false, insertable = false)
+	private Pilot pilot;
 
 	@JsonIgnore
 	@Column(name = "valid_from")
@@ -68,7 +75,7 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 	public UserInRole() {
 	}
 
-	public UserInRole(String pilotCode, Date validFrom, Date validTo, UserInSystem userInSystem, Short roleId,
+	public UserInRole(Pilot.PilotCode pilotCode, Date validFrom, Date validTo, UserInSystem userInSystem, Short roleId,
 			CrProfile crProfile, CareProfile careProfile, Set<FrailtyStatusTimeline> frailtyStatusTimeline) {
 		this.pilotCode = pilotCode;
 		this.validFrom = validFrom;
@@ -136,19 +143,27 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 		this.frailtyStatusTimeline = frailtyStatusTimeline;
 	}
 
-	public String getPilotCode() {
+	public Pilot.PilotCode getPilotCode() {
 		return pilotCode;
 	}
 
-	public void setPilotCode(String pilotCode) {
+	public void setPilotCode(Pilot.PilotCode pilotCode) {
 		this.pilotCode = pilotCode;
+	}
+	
+	
+
+	public Pilot getPilot() {
+		return pilot;
+	}
+
+	public void setPilot(Pilot pilot) {
+		this.pilot = pilot;
 	}
 
 	@Override
 	public int compareTo(AbstractBaseEntity<Long> o) {
 		return this.getId().compareTo(o.getId());
 	}
-
-
 
 }

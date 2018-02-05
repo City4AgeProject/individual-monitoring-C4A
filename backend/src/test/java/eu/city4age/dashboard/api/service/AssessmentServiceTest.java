@@ -47,6 +47,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
+import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -144,7 +145,7 @@ public class AssessmentServiceTest {
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		
 		Pilot p1 = new Pilot();
-		p1.setPilotCode("LCC");
+		p1.setPilotCode(Pilot.PilotCode.LCC);
 		pilotRepository.save(p1);
 		
 		UserInSystem uis1 = new UserInSystem();
@@ -152,7 +153,7 @@ public class AssessmentServiceTest {
 
 		UserInRole uir1 = new UserInRole();
 		uir1.setUserInSystem(uis1);
-		uir1.setPilotCode("LCC");
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		userInRoleRepository.save(uir1);
 		
 		DetectionVariableType dvt1 = DetectionVariableType.GEF;
@@ -179,13 +180,13 @@ public class AssessmentServiceTest {
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setDetectionVariable(dv2);
 		pdv1.setDerivedDetectionVariable(dv1);
-		pdv1.setPilotCode("LCC");
+		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pilotDetectionVariableRepository.save(pdv1);
 		
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable();
 		pdv2.setDetectionVariable(dv3);
 		pdv2.setDerivedDetectionVariable(dv1);
-		pdv2.setPilotCode("LCC");
+		pdv2.setPilotCode(Pilot.PilotCode.LCC);
 		pilotDetectionVariableRepository.save(pdv2);
 		
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();

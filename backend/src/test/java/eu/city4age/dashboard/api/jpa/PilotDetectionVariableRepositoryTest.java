@@ -24,6 +24,7 @@ import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -80,7 +81,7 @@ public class PilotDetectionVariableRepositoryTest {
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable ();
 		pdv1.setId(1L);
 		pdv1.setDetectionVariable(dv2);
-		pdv1.setPilotCode("LCC");
+		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pdv1.setDerivationWeight(new BigDecimal (1));
 		pdv1.setDerivedDetectionVariable(dv1);
 		pilotDetectionVariableRepository.save(pdv1);
@@ -88,7 +89,7 @@ public class PilotDetectionVariableRepositoryTest {
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
 		pdv2.setId(2L);
 		pdv2.setDetectionVariable(dv2);
-		pdv2.setPilotCode("ATH");
+		pdv2.setPilotCode(Pilot.PilotCode.ATH);
 		pdv2.setDerivationWeight(new BigDecimal (2));
 		pdv2.setDerivedDetectionVariable(dv1);
 		pilotDetectionVariableRepository.save(pdv2);
@@ -96,7 +97,7 @@ public class PilotDetectionVariableRepositoryTest {
 		PilotDetectionVariable pdv3 = new PilotDetectionVariable ();
 		pdv3.setId(3L);
 		pdv3.setDetectionVariable(dv3);
-		pdv3.setPilotCode("LCC");
+		pdv3.setPilotCode(Pilot.PilotCode.LCC);
 		pdv3.setDerivationWeight(new BigDecimal (3));
 		pdv3.setDerivedDetectionVariable(dv1);
 		pilotDetectionVariableRepository.save(pdv3);
@@ -104,7 +105,7 @@ public class PilotDetectionVariableRepositoryTest {
 		PilotDetectionVariable pdv4 = new PilotDetectionVariable ();
 		pdv4.setId(4L);
 		pdv4.setDetectionVariable(dv2);
-		pdv4.setPilotCode("LCC");
+		pdv4.setPilotCode(Pilot.PilotCode.LCC);
 		pdv4.setDerivationWeight(new BigDecimal (3));
 		pdv4.setDerivedDetectionVariable(dv3);
 		pilotDetectionVariableRepository.save(pdv4);
@@ -126,8 +127,8 @@ public class PilotDetectionVariableRepositoryTest {
 	@Transactional
 	@Rollback(true)
 	public void testFindOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId () {
-		String pilotCode1 = "LCC";
-		String pilotCode2 = "ATH";
+		Pilot.PilotCode pilotCode1 = Pilot.PilotCode.LCC;
+		Pilot.PilotCode pilotCode2 = Pilot.PilotCode.ATH;
 		
 		DetectionVariableType dvt = DetectionVariableType.MEA;
 		detectionVariableTypeRepository.save(dvt);
@@ -215,7 +216,7 @@ public class PilotDetectionVariableRepositoryTest {
 		
 		Long dvId1 = 1L;
 		Long dvId2 = 2L;
-		String pilotCode = "LCC";
+		Pilot.PilotCode pilotCode = Pilot.PilotCode.LCC;
 		
 		DetectionVariable dv1 = new DetectionVariable();
 		DetectionVariable dv2 = new DetectionVariable ();
@@ -239,7 +240,7 @@ public class PilotDetectionVariableRepositoryTest {
 		result = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(dvId2, pilotCode );		
 		Assert.assertNull(result);
 		
-		result = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(dvId1, "ATH" );		
+		result = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(dvId1, Pilot.PilotCode.ATH);		
 		Assert.assertNull(result);
 		
 	}

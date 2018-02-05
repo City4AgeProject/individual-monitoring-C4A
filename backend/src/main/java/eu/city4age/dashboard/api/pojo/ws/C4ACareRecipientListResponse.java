@@ -5,6 +5,8 @@
  */
 package eu.city4age.dashboard.api.pojo.ws;
 
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
+
 /**
  *
  * @author EMantziou
@@ -30,13 +32,13 @@ public class C4ACareRecipientListResponse {
 
 	private String detectionDate;
 	
-	private String pilotCode;
+	private Pilot.PilotCode pilotCode;
 	
 	private String gender;
 
 	public C4ACareRecipientListResponse(long userId, int age, String frailtyStatus, String frailtyNotice, char attention,
 			String textline, char interventionstatus, String interventionDate, String detectionStatus,
-			String detectionDate, String pilotCode,String gender) {
+			String detectionDate, Pilot.PilotCode pilotCode,String gender) {
 		this.userId = userId;
 		this.age = age;
 		this.frailtyStatus = frailtyStatus;
@@ -131,11 +133,11 @@ public class C4ACareRecipientListResponse {
 		this.detectionDate = detectionDate;
 	}
 	
-	public String getPilotCode() {
+	public Pilot.PilotCode getPilotCode() {
 		return pilotCode;
 	}
 
-	public void setPilotCode(String pilotCode) {
+	public void setPilotCode(Pilot.PilotCode pilotCode) {
 		this.pilotCode = pilotCode;
 	}
 	
