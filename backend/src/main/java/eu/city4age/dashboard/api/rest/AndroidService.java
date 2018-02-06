@@ -178,7 +178,7 @@ public class AndroidService {
 
 		}
 		
-		return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response));
+		return JerseyResponse.buildTextPlain(response);
 	}
 	
 	private MTestingReadings createMTR(JSONActivity jsonActivity, UserInRole uir) throws ParseException {
