@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="cd_role")
-@SequenceGenerator(name = "default_gen", sequenceName = "cd_role_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "cd_role_seq", allocationSize = 1)
 public class Role extends AbstractBaseEntity<Long> {
 
 	/**

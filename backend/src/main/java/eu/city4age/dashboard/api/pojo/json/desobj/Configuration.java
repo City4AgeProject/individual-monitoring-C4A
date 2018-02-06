@@ -26,7 +26,8 @@ public class Configuration {
             				@JsonProperty(value= "password",required = true)String password,
             				@JsonProperty(value= "groups",required = true)List<Groups> groups) {
 		this.name = name;
-		this.level = level;
+		if (level != null) this.level = level;
+		else this.level = 0;
 		this.pilotCode = pilotCode;
 		this.username = username;
 		this.password = password;

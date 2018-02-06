@@ -24,17 +24,17 @@
 			"description" : "Values of auditience role selected in combobox.",
 			"type": "Array<object>"
 		},
-                "risksTags": {
+		"risksTags": {
 			"description" : "Values of all risk statuses showed in combobox.",
 			"type": "Array<object>"           
-                },
-                "dataValiditiesTags": {
+		},
+		"dataValiditiesTags": {
 			"description" : "Values of all data validity statuses showed in combobox.",
 			"type": "Array<object>"           
-                },
-                "roleTags": {
+		},
+		"roleTags": {
 			"description" : "Values of all auditience roles showed in combobox.",
 			"type": "Array<object>"           
-                }
+		}
 	}
 }

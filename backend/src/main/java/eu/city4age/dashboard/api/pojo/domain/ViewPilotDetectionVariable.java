@@ -22,7 +22,7 @@ public class ViewPilotDetectionVariable implements Serializable {
 	@EmbeddedId
 	private ViewPilotDetectionVariableKey id;
 
-	@Column(name = "role_id")
+	@Column(name = "cd_role_id")
 	private Long roleId;
 	
 	@Column(name = "mpdv_id")

@@ -27,17 +27,17 @@ public class JsonMappingExceptionUD extends Exception  implements ExceptionMappe
 	}
 
 	public JsonMappingExceptionUD(JsonMappingException e) {
-		super("JsonMappingExceptionUD");
+		logger.info(e.getPathReference());
 		StringBuilder message = new StringBuilder();
-		message.append("Exception: ");
-		message.append(e.getClass().getSimpleName());
-		message.append("\n");
-		message.append("\tLocation:\n\tAt Line: ");
-		message.append(e.getLocation().getLineNr());
-		message.append("\n\tAt column: ");
-		message.append(e.getLocation().getColumnNr());
-		message.append("\nError message: \n");
-		message.append(e.getMessage());
+		message.append("Error: ");
+		if (e.getLocalizedMessage().contains("Missing required creator property")) message.append(e.getOriginalMessage()).append(" at line ").append (e.getLocation().getLineNr());
+		else if (e.getLocalizedMessage().contains("Unexpected character")) message.append("Unexpected character at line ").append (e.getLocation().getLineNr());
+		//super("JsonMappingExceptionUD");
+		
+		//message.append("Exception: ");
+		//message.append(e.getClass().getSimpleName());
+		//message.append("\n");
+		else message.append(e.getOriginalMessage());
 		this.message = message;
 	}
 	

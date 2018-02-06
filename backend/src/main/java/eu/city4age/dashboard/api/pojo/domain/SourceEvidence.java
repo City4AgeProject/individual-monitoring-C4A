@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="source_evidence")
-@SequenceGenerator(name = "default_gen", sequenceName = "source_evidence_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "source_evidence_seq", allocationSize = 1)
 public class SourceEvidence extends AbstractBaseEntity<Long> {
 
 	/**

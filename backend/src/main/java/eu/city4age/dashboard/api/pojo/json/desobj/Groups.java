@@ -19,13 +19,15 @@ public class Groups{
 	
 	public Groups(
 			@JsonProperty(value= "factors",required = true) List<Gef> factors,
-			@JsonProperty(value= "formula",required = true)String formula,
+			@JsonProperty(value= "formula",required = false)String formula,
 			@JsonProperty(value= "name",required = true)String name,
-			@JsonProperty(value= "level",required = true)Integer level,
+			@JsonProperty(value= "level",required = false)Integer level,
 			@JsonProperty(value= "weight",required = true)BigDecimal weight) {
-		this.formula = formula;
+		if (formula != null) this.formula = formula;
+		else this.formula = "";
+		if (level != null) this.level = level;
+		else this.level = 0;
 		this.name = name;
-		this.level = level;
 		this.weight = weight;
 		this.factors = factors;		
 		}

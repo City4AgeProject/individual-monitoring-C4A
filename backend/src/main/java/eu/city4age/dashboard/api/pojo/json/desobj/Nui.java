@@ -14,11 +14,12 @@ public class Nui  {
 	
 	public Nui(
 			@JsonProperty(value= "name", required = true)String name, 
-			@JsonProperty(value= "formula", required = true) String formula,
+			@JsonProperty(value= "formula", required = false) String formula,
 			@JsonProperty(value= "weight",required = true)BigDecimal weight) {
 		
-		this.name = name;
-		this.formula = formula;
+		if (formula != null) this.formula = formula;
+		else this.formula = "";
+		this.name = name;		
 		this.weight = weight;		
 	}
 

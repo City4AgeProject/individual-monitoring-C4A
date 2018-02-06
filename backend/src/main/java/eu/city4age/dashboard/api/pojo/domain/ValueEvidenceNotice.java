@@ -15,7 +15,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table (name = "value_evidence_notice")
-@SequenceGenerator(name = "default_gen", sequenceName = "value_evidence_notice_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "value_evidence_notice_seq", allocationSize = 1)
 public class ValueEvidenceNotice extends AbstractBaseEntity<Long> {
 
 	/**

@@ -153,10 +153,10 @@ define(['ojs/ojcore', 'knockout', 'jquery',
     	    					    case 'std': 
     	    					    	nuiName = "Nui2";
     	    					    	break;
-    	    					    case 'best': 
+    	    					    case 'delta': 
     	    					    	nuiName = "Nui3";
     	    					    	break;
-    	    					    case 'delta': 
+    	    					    case 'best': 
     	    					    	nuiName = "Nui4";
     	    					    	break;
     	    						}
@@ -232,7 +232,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
   	    		                                                                                 
   	    		  
   	    		  measures.forEach(function(mea) {
-                              if(mea.defaultTypicalPeriod === 'MON'){
+                              if(mea.defaultTypicalPeriod === 'mon'){
                                   mea.lineType = "straight";
                                   mea.lineSeries.forEach(function(ls) {
                                       ls.items[1] = ls.items[0];
@@ -240,7 +240,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                                           mea.hasComments = true;
                                       }
                                   });
-                              }else if(mea.defaultTypicalPeriod === '1WK'){
+                              }else if(mea.defaultTypicalPeriod === '1wk'){
                                         mea.lineType = "stepped";                                                                   
                                         mea.lineSeries.forEach(function(ls){
                                           var arr = [];

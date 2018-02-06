@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "cr_profile")
-@SequenceGenerator(name = "default_gen", sequenceName = "cr_profile_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "cr_profile_seq", allocationSize = 1)
 public class CrProfile extends AbstractBaseEntity<Long> {
 
 	/**

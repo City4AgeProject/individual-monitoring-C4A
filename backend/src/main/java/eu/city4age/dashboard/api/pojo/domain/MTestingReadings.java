@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.city4age.dashboard.api.pojo.json.desobj.Bluetooth;
+import eu.city4age.dashboard.api.pojo.json.desobj.Recognition;
 import eu.city4age.dashboard.api.pojo.json.desobj.Wifi;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -64,11 +65,11 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 	
 	@Column(name="gps_longitude")
 	@ApiModelProperty (value = "geographic longitude of location of recording", hidden = false)
-	private Long gpsLongitude;
+	private Float gpsLongitude;
 	
 	@Column(name="gps_latitude")
 	@ApiModelProperty (value = "geographic latitude of location of recording", hidden = false)
-	private Long gpsLatitude;
+	private Float gpsLatitude;
 	
 	@Column(name="bluetooth_devices")
 	@ApiModelProperty (hidden = false)
@@ -78,8 +79,10 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 	@ApiModelProperty (hidden = false)
 	private String wifiDevices;
 	
-
-
+	@Column (name = "google_api_movement_recognition")
+	@ApiModelProperty (hidden = false)
+	private String recognitions;
+	
 	public Date getStart() {
 		return start;
 	}
@@ -136,20 +139,20 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 		this.actionName = actionName;
 	}
 
-	public Long getGpsLongitude() {
+	public Float getGpsLongitude() {
 		return gpsLongitude;
 	}
 
-	public void setGpsLongitude(Long gpsLongitude) {
+	public void setGpsLongitude(Float gpsLongitude) {
 		this.gpsLongitude = gpsLongitude;
 	}
 
 	@ApiModelProperty (hidden = true)
-	public Long getGpsLatitude() {
+	public Float getGpsLatitude() {
 		return gpsLatitude;
 	}
 
-	public void setGpsLatitude(Long gpsLatitude) {
+	public void setGpsLatitude(Float gpsLatitude) {
 		this.gpsLatitude = gpsLatitude;
 	}
 
@@ -169,6 +172,14 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 		this.wifiDevices = wifiDevices;
 	}
 
+	public String getRecognitions() {
+		return recognitions;
+	}
+
+	public void setRecognitions(String recognitions) {
+		this.recognitions = recognitions;
+	}
+	
 	public void addBluetooth(List<Bluetooth> bluetooth) {
 		if(bluetooth != null && bluetooth.size() > 0) {
 			StringBuffer bts = new StringBuffer();
@@ -184,10 +195,21 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 		if(wifi != null && wifi.size() > 0) {
 			StringBuffer bts = new StringBuffer();
 			for(Wifi wf : wifi) {
-				logger.info("wf device: " + wf.getDevice());
-				bts.append(wf.getDevice()).append(";");
+				logger.info("wf device: " + wf.getDevices());
+				bts.append(wf.getDevices()).append(";");
 			}
 			this.setWifiDevices(bts.toString());
+		}
+	}
+	
+	public void addRecognition (List<Recognition> recognitions) {
+		if(recognitions != null && recognitions.size() > 0) {
+			StringBuffer sb = new StringBuffer();
+			for(Recognition recognition : recognitions) {
+				logger.info("recog: " + recognition.getType());
+				sb.append(recognition.getType()).append(";");
+			}
+			this.setRecognitions(sb.toString());
 		}
 	}
 

@@ -20,7 +20,7 @@ public class Stakeholder implements Serializable {
 	private static final long serialVersionUID = 1493165258846574863L;
 
 	@Id
-	@Column(name="stakeholder_abbreviation")
+	@Column(name="abbreviation")
 	private String stakeholderAbbreviation;
 	
 	@Column(name="stakeholder_name")

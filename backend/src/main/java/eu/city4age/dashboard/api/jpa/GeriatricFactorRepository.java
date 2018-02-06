@@ -16,4 +16,7 @@ public interface GeriatricFactorRepository extends GenericRepository<GeriatricFa
 	List<GeriatricFactorValue> findByDetectionVariableId(@Param("varId") final Long dvId,
 			@Param("userId") final Long uId);
 
+	@Query("SELECT g FROM GeriatricFactorValue g INNER JOIN g.detectionVariable dv WHERE dv.detectionVariableType = 'ges'")
+	List<GeriatricFactorValue> findAllGes();
+
 }

@@ -1,34 +1,17 @@
-	<!-- <div id='ges-chart-container'>
-		<h3><span data-bind="text: data.gesName"></span> and its measures</h3>
-	    <div id="lineChart" data-bind="ojComponent: {
-	        component: 'ojChart', 
-	        type: 'line',
-	        series: data.monthlyMeasures.series, 
-	        groups: data.monthlyMeasures.groups,
-	        animationOnDisplay: 'auto',
-	        animationOnDataChange: 'auto',
-	        orientation: 'vertical',
-	        hoverBehavior: 'dim'              
-	        }"
-	         style="width:100%;height:350px;">
-	    </div>
-	    
-	</div> -->
-	<div class="oj-panel oj-panel-shadow-sm" style="border: none; background-color: #fcfcfc">
+		<div class="oj-panel oj-panel-shadow-sm" style="border: none; background-color: #fcfcfc">
 	
-		<!-- CR info -->
-		<div data-bind="ojModule: { name: 'cr_info'}"></div>
-		<!-- end CR info -->
-		
-		<br><br>
-		<div id="daily-measures-container">			
-			<!-- ko foreach: data.dailyMeasures-->
-			    <anagraph-measure-view  nuis-for-measure="{{nuisForMeasure}}" measure-name="{{measureName}}"  line-series="{{lineSeries}}" base-unit= "{{baseUnit}}" default-typical-period="{{defaultTypicalPeriod}}" line-type="{{lineType}}" has-comments="{{hasComments}}"/>
-			    <br><br>
-			<!-- /ko -->
+                    <!-- CR info -->
+                    <div data-bind="ojModule: { name: 'cr_info'}"></div>
+                    <!-- end CR info -->
+
+                    <br><br>
+                    <div id="daily-measures-container">			
+                            <!-- ko foreach: data.dailyMeasures-->
+                                <anagraph-measure-view  nuis-for-measure="{{nuisForMeasure}}" measure-name="{{measureName}}"  line-series="{{lineSeries}}" base-unit= "{{baseUnit}}" default-typical-period="{{defaultTypicalPeriod}}" line-type="{{lineType}}" has-comments="{{hasComments}}"/>
+                                <br><br>
+                            <!-- /ko -->
+                    </div>
 		</div>
-		
-	</div>
 	
 	
 

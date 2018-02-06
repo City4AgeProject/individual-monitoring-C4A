@@ -19,14 +19,16 @@ public class Gef {
 	
 	public Gef(
 			@JsonProperty(value= "subFactors",required = true)List<Ges> subFactors, 
-			@JsonProperty(value= "formula",required = true)String formula, 
+			@JsonProperty(value= "formula",required = false)String formula, 
 			@JsonProperty(value= "name", required = true)String name, 
-			@JsonProperty(value= "level",required = true)Integer level, 
+			@JsonProperty(value= "level",required = false)Integer level, 
 			@JsonProperty(value= "weight",required = true)BigDecimal weight) {
 		
-		this.name = name;
-		this.formula = formula;
-		this.level = level;
+		if (formula != null) this.formula = formula;
+		else this.formula = "";
+		if (level != null) this.level = level;
+		else this.level = 0;
+		this.name = name;				
 		this.weight = weight;
 		this.subFactors = subFactors;
 		

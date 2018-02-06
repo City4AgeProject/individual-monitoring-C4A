@@ -2,20 +2,20 @@ package eu.city4age.dashboard.api.pojo.json.desobj;
 
 public class Gps {
 	
-	private Long longitude;
-	private Long latitude;
+	private Float longitude;
+	private Float latitude;
 	private String date;
 	
-	public Long getLongitude() {
+	public Float getLongitude() {
 		return longitude;
 	}
-	public void setLongitude(Long longitude) {
+	public void setLongitude(Float longitude) {
 		this.longitude = longitude;
 	}
-	public Long getLatitude() {
+	public Float getLatitude() {
 		return latitude;
 	}
-	public void setLatitude(Long latitude) {
+	public void setLatitude(Float latitude) {
 		this.latitude = latitude;
 	}
 	public String getDate() {

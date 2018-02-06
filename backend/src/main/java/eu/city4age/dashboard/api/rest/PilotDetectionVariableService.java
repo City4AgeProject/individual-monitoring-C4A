@@ -38,6 +38,7 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
+import eu.city4age.dashboard.api.pojo.ex.JsonEmptyException;
 import eu.city4age.dashboard.api.pojo.ex.JsonMappingExceptionUD;
 import eu.city4age.dashboard.api.pojo.ex.MissingKeyException;
 import eu.city4age.dashboard.api.pojo.ex.NotAuthorizedException;
@@ -118,8 +119,10 @@ public class PilotDetectionVariableService {
 					.readValue(json);
 		} 
 		catch (JsonMappingException e) {
+			logger.info(e.getClass().getName());
 				if(e instanceof UnrecognizedPropertyException) throw e;
-				throw new JsonMappingExceptionUD(e);
+				else if (json.equals("")) throw new JsonEmptyException ("Configuration JSON is empty");				
+				else throw new JsonMappingExceptionUD(e);
 		}
 		
 		for (Configuration configuration: data.getConfigurations()) {
@@ -129,7 +132,7 @@ public class PilotDetectionVariableService {
 			
 			UserInRole uir;
 			try {
-				uir = userInRoleRepository.findBySystemUsernameAndPassword(username,password);
+				uir = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
 				StringBuilder sb;
 				if(uir!=null) {
 					if(uir.getPilotCode().equals(pilotCode)) {
@@ -137,23 +140,16 @@ public class PilotDetectionVariableService {
 					}
 					else {
 						sb = new StringBuilder();
-						sb.append("You are not authorized !\nUser: ");
-						sb.append(username);
-						sb.append(" can't make changes for: ");
-						sb.append(pilotCode);
-						sb.append(" pilot configuration.");
+						sb.append("You are not authorized to make changes for pilot: ");
+						sb.append(pilotRepository.findByPilotCode(pilotCode).getName());
 						throw new NotAuthorizedException(sb.toString());
 					}						
 				}
 				else {
 					sb = new StringBuilder();
-					sb.append("Invalid login!\n");
-					sb.append("You must provide valid Username and Password\n");
-					sb.append("in the coresponding fields of configuration file.\n");
-					sb.append("You are not logged in!\nInvalid username: ");
-					sb.append(username);
-					sb.append(" and/or password: ");
-					sb.append(password);
+					sb.append("Invalid login! ");
+					sb.append("You must provide valid username and password ");
+					sb.append("in the coresponding fields of configuration file.");					
 					throw new NotLoggedInException(sb.toString());
 				}					
 			}
@@ -222,12 +218,12 @@ public class PilotDetectionVariableService {
 						
 						if (nuis == null || nuis.isEmpty()) {
 							
-							if (meaTypicalPeriod.equals("DAY") ||
-									meaTypicalPeriod.equals("1WK")) {
+							if (meaTypicalPeriod.equals("day") ||
+									meaTypicalPeriod.equals("1wk")) {
 								
 								StringBuilder sb = new StringBuilder ();
 								
-								if (meaTypicalPeriod.equals("DAY")) {
+								if (meaTypicalPeriod.equals("day")) {
 									sb.append("Daily measure exception: Daily measures must have NUIs. Measure ").
 										append (gfgDetectionVariable.getDetectionVariableName()).append(" -> ").
 										append (gefDetectionVariable.getDetectionVariableName()).append(" -> ").
@@ -250,7 +246,7 @@ public class PilotDetectionVariableService {
 						
 						else {
 							
-							if (meaTypicalPeriod.equals("MON")) {
+							if (meaTypicalPeriod.equals("mon")) {
 								
 								StringBuilder sb = new StringBuilder ();
 								sb.append("Monthly measure exception: Monthly measures shouldn't have NUIs. Measure ").
@@ -312,9 +308,9 @@ public class PilotDetectionVariableService {
 		DetectionVariable dv = detectionVariableRepository.findByDetectionVariableNameAndDetectionVariableType(dvName,
 				dvt);
 		if (dv == null) {
-			StringBuilder sb = new StringBuilder("MissingKeyException:\n\tName of property : name(detection_variable_name): ");
+			StringBuilder sb = new StringBuilder("MissingKeyException: name of property: ");
 			sb.append(dvName);
-			sb.append("\n\tin JSON file doesn't match to any key\n\tin corresponding table: cd_detection_variable.\n\t");
+			sb.append(" in JSON file doesn't match to any key in table: cd_detection_variable.");
 			throw new MissingKeyException(sb.toString());
 		}
 		return dv;
@@ -343,7 +339,7 @@ public class PilotDetectionVariableService {
 						pdv.setValidTo(null);
 						cfc.incrementUpdated();
 						pilotDetectionVariableRepository.save(pdv);		
-						logger.info("uradjen update na: " + pdv.getDetectionVariable().getDetectionVariableName());
+						//logger.info("uradjen update na: " + pdv.getDetectionVariable().getDetectionVariableName());
 					}
 					
 					currList.remove(index);
@@ -357,14 +353,14 @@ public class PilotDetectionVariableService {
 		if (!dv.getDetectionVariableType().equals(DetectionVariableType.MEA) || !ddv.getDetectionVariableType().equals(DetectionVariableType.NUI)) {
 			pilotDetectionVariableRepository.save(new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 			cfc.incrementInserted();
-			logger.info("uradjen insert na: " + dv.getDetectionVariableName());
+			//logger.info("uradjen insert na: " + dv.getDetectionVariableName());
 		}
 		else {
 			PilotDetectionVariable pdv = pilotDetectionVariableRepository.findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(pilotCode, dvID, ddvID);
 			if (pdv == null) {
 				pilotDetectionVariableRepository.save (new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 				cfc.incrementInserted();
-				logger.info("uradjen insert na: " + dv.getDetectionVariableName());
+				//logger.info("uradjen insert na: " + dv.getDetectionVariableName());
 			}
 		}
 	}

@@ -12,10 +12,10 @@ import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
 @Repository(value = "viewPilotDetectionVariableRepository")
 public interface ViewPilotDetectionVariableRepository extends GenericRepository<ViewPilotDetectionVariable, Long> {
 	
-	@Query("SELECT vpdv FROM ViewPilotDetectionVariable vpdv WHERE vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'GES'")
+	@Query("SELECT vpdv FROM ViewPilotDetectionVariable vpdv WHERE vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'ges'")
 	List<ViewPilotDetectionVariable> findAllGes(@Param("userId") final Long userId);
 	
-	@Query("SELECT vpdv FROM ViewPilotDetectionVariable vpdv WHERE vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'GEF'")
+	@Query("SELECT vpdv FROM ViewPilotDetectionVariable vpdv WHERE vpdv.id.userInRoleId = :userId AND vpdv.detectionVariableType = 'gef'")
 	List<ViewPilotDetectionVariable> findAllGef(@Param("userId") final Long userId);
 
 }

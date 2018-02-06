@@ -18,6 +18,6 @@
       <property name="hibernate.classloading.use_current_tccl_as_parent" value="false" />
       <property name="hibernate.id.new_generator_mappings" value="true" />
       <property name="org.hibernate.flushMode" value="MANUAL" />
-    </properties>
+    </properties>    
   </persistence-unit>
 </persistence>

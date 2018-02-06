@@ -1,66 +1,46 @@
 <!-- ko if: showNuis -->
 <div class="oj-flex-item">		                                               										
-    <div id="collapsible" data-bind="ojComponent: {component: 'ojCollapsible',expanded: true }">
-                <h5>NUI values</h5>
-                <div id="datagrid" 
-                    style="width:100%;height:200px;display: grid; background-color:transparent;" 
-                    aria-label="Data Grid Formatted Row Based Grid Demo"
-                    data-bind="ojComponent:
-                    {
-                        component:'ojDataGrid', 
-                        optionChange: gridOptChanged,
-                        data: dataSource ,                    
-                        header:
-                            {
-                                column:
-                                {                                
-                                    style: 'height:45px; width:125px; text-align:center;',
-                                    sortable: 'disabled'
-                                },
-                                row: 
-                                {   
-                                    style: 'width:100px;'
-
-                                }
-                            }
-
-                     }">
-                </div>
-    </div>	  
+    <oj-collapsible id="collapsible" expanded="true">
+                <h5 slot="header">NUI values</h5>
+                <oj-data-grid id="datagrid" 
+                    style="width:100%;height:200px;display: grid; background-color:transparent;"                   
+                    data= "[[dataSource]]"  
+                    header.column.style = "height:45px; width:125px; text-align:center;"
+                    header.column.sortable = "disable"
+                    header.row.style ="width:100px;"
+                    on-oj-before-current-cell='[[beforeCurrentCellListener]]'                  
+                 ></oj-data-grid>               
+    </oj-collapsible>	  
 </div>
 <!-- /ko -->
 
-<div id='measure-view-container' style="border:1px solid silver;">   
-    <div id="lineChart" data-bind="ojComponent: {
-        component: 'ojChart',
-    	title: {text: measureName, halign: 'center'}, 
-        styleDefaults: {lineType: $props.lineType}, 
-        type: 'line',
-        series: $props.lineSeries, 
-        groups: lineGroups, 
-        animationOnDisplay: 'auto',
-        animationOnDataChange: 'auto',
-        orientation: 'vertical',
-        hoverBehavior: 'none',               
-        zoomAndScroll: zoom,
-        legend: legendValue,
-        hiddenCategories: hiddenCategories,
-        drilling: 'on',
-        drill: chartDrill,
-        optionChange: chartOptChanged
+<div id='measure-view-container' style="border:1px solid silver;">
+    <h3 id="measureName" data-bind="text: measureName" align="center" style="margin-top: 20px;"></h3>
+    <oj-chart id="lineChart"                
+        style-defaults.line-type="[[$props.lineType]]"
+        type="line"
+        series="[[$props.lineSeries]]"
+        groups="[[lineGroups]]"
+        animation-on-display="auto"
+        animation-on-data-change="auto" 
+        orientation="vertical" 
+        hover-behavior="none"              
+        zoom-and-scroll="live" 
+        legend="[[legendValue]]" 
+        hidden-categories="[[hiddenCategories]]" 
+        drilling="on"
+        on-oj-drill="[[chartDrill]]" 
+        style="width:100%;height:350px;">
         
-                  
-        }"
-         style="width:100%;height:350px;">
-        <!-- ko if: hasComments -->
+        <!-- ko if: hasComments -->      
         <div style="position: absolute; right: 15px; top:15px;"><img src='images/comment_unsel.png' height="32" width="32" style="opacity: .7;"></div>
-        <div  data-bind="visible: shouldSeeNotice"  class="oj-panel  oj-sm-margin-2x demo-mypanel oj-panel-shadow-sm" style="position: absolute; bottom: 10%; left: 0; right: 0;margin-left: auto; margin-right: auto; width: 500px; max-height: 200px; overflow: auto;text-align: justify;">            
+        <div  data-bind="visible: shouldSeeNotice"  class="oj-panel  oj-sm-margin-2x demo-mypanel oj-panel-shadow-sm" style="position: absolute; bottom: 12%; left: 0; right: 0;margin-left: auto; margin-right: auto; width: 500px; max-height: 200px; overflow: auto;text-align: justify;">            
                   <oj-collapsible  id="ojCollapse" expanded="false" on-oj-before-expand='[[beforeExpand]]' on-oj-before-collapse='[[beforeCollapse]]'>                 
                     <p id="callapse-header" slot="header" data-bind="text: meaCommentPreview" style="margin-left: 10px; margin-right: 10px;"></p>                
                   </oj-collapsible>
             </div>
         <!-- /ko -->
-    </div>
+    </oj-chart>  
 </div>
 
           

@@ -3,9 +3,9 @@
         {
             "name": "overall",
             "level": 0,
-            "pilotCode": "ath",
-            "username": "ATH_PSS",
-            "password": "$2a$13$wfBXnBrz//3pR5tOOe.YvuXt4mARxzPSap1GvSYqJ.CN9g7DDsyQK",
+            "pilotCode": "lcc",
+            "username": "LCC_PSS",
+            "password": "$2a$13$c.ng0MbEdI8pg.kug5rOAeNC2VHgBujYClep8TFKFtEpF/nmKXfFa",
             "groups": [
                 {
                     "name": "geriatric_factors_first_group",
@@ -22,13 +22,13 @@
                                 {
                                     "name": "walking",
                                     "level": 3,
-                                    "weight": 1,
+                                    "weight": 0.6,
                                     "formula": "",
                                     "measures": [
                                         {
                                             "name": "walk_distance_outdoor",
                                             "level": 4,
-                                            "weight": 0.3,
+                                            "weight": 0.1,
                                             "nuis": [
                                                 {
                                                     "name": "avg_walk_distance_outdoor",
@@ -53,54 +53,394 @@
                                             ]
                                         },
                                         {
-                                            "name": "walk_speed_outdoor",
+                                            "name": "walk_distance_outdoor_fast",
                                             "level": 4,
-                                            "weight": 0.35,
+                                            "weight": 0.15,
                                             "nuis": [
                                                 {
-                                                    "name": "avg_walk_speed_outdoor",
+                                                    "name": "avg_walk_distance_outdoor_fast",
                                                     "formula": "avg",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "best_walk_speed_outdoor",
+                                                    "name": "best_walk_distance_outdoor_fast",
                                                     "formula": "best",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "std_walk_speed_outdoor",
+                                                    "name": "std_walk_distance_outdoor_fast",
                                                     "formula": "std",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "delta_walk_speed_outdoor",
+                                                    "name": "delta_walk_distance_outdoor_fast",
                                                     "formula": "delta",
                                                     "weight": 0.25
                                                 }
                                             ]
                                         },
                                         {
-                                            "name": "walk_time_outdoor",
+                                            "name": "walk_distance_outdoor_fast_perc",
                                             "level": 4,
-                                            "weight": 0.35,
+                                            "weight": 0.15,
                                             "nuis": [
                                                 {
-                                                    "name": "avg_walk_time_outdoor",
+                                                    "name": "avg_walk_distance_outdoor_fast_perc",
                                                     "formula": "avg",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "best_walk_time_outdoor",
+                                                    "name": "best_walk_distance_outdoor_fast_perc",
                                                     "formula": "best",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "std_walk_time_outdoor",
+                                                    "name": "std_walk_distance_outdoor_fast_perc",
                                                     "formula": "std",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "delta_walk_time_outdoor",
+                                                    "name": "delta_walk_distance_outdoor_fast_perc",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "walk_time_outdoor_fast",
+                                            "level": 4,
+                                            "weight": 0.3,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_walk_time_outdoor_fast",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_walk_time_outdoor_fast",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_walk_time_outdoor_fast",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_walk_time_outdoor_fast",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "walk_speed_outdoor_fast",
+                                            "level": 4,
+                                            "weight": 0.3,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_walk_speed_outdoor_fast",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_walk_speed_outdoor_fast",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_walk_speed_outdoor_fast",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_walk_speed_outdoor_fast",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "still-moving",
+                                    "level": 3,
+                                    "weight": 0.2,
+                                    "formula": "",
+                                    "measures": [
+                                        {
+                                            "name": "still_time",
+                                            "level": 4,
+                                            "weight": -1,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_still_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_still_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_still_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_still_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "moving_rooms",
+                                    "level": 3,
+                                    "weight": 0.2,
+                                    "formula": "",
+                                    "measures": [
+                                        {
+                                            "name": "room_changes",
+                                            "level": 4,
+                                            "weight": 0.6,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_room_changes",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_room_changes",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_room_changes",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_room_changes",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "bedroom_visits",
+                                            "level": 4,
+                                            "weight": 0.08,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_bedroom_visits",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_bedroom_visits",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_bedroom_visits",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_bedroom_visits",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "bedroom_time",
+                                            "level": 4,
+                                            "weight": -0.02,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_bedroom_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_bedroom_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_bedroom_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_bedroom_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "livingroom_visits",
+                                            "level": 4,
+                                            "weight": 0.08,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_livingroom_visits",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_livingroom_visits",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_livingroom_visits",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_livingroom_visits",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "livingroom_time",
+                                            "level": 4,
+                                            "weight": 0.02,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_livingroom_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_livingroom_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_livingroom_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_livingroom_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "restroom_visits",
+                                            "level": 4,
+                                            "weight": 0.08,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_restroom_visits",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_restroom_visits",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_restroom_visits",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_restroom_visits",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "restroom_time",
+                                            "level": 4,
+                                            "weight": -0.02,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_restroom_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_restroom_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_restroom_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_restroom_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "kitchen_visits",
+                                            "level": 4,
+                                            "weight": 0.08,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_kitchen_visits",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_kitchen_visits",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_kitchen_visits",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_kitchen_visits",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "kitchen_time",
+                                            "level": 4,
+                                            "weight": 0.02,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_kitchen_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_kitchen_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_kitchen_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_kitchen_time",
                                                     "formula": "delta",
                                                     "weight": 0.25
                                                 }
@@ -111,48 +451,70 @@
                             ]
                         },
                         {
-                            "name": "health-physical",
+                            "name": "adl",
                             "level": 2,
                             "weight": 0.5,
                             "formula": "",
                             "subFactors": [
                                 {
-                                    "name": "visits_health-related_places",
+                                    "name": "going_out",
                                     "level": 3,
                                     "weight": 1,
                                     "formula": "",
                                     "measures": [
                                         {
-                                            "name": "pharmacy_time",
+                                            "name": "home_time",
                                             "level": 4,
                                             "weight": -0.4,
                                             "nuis": [
                                                 {
-                                                    "name": "avg_pharmacy_time",
+                                                    "name": "avg_home_time",
                                                     "formula": "avg",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "best_pharmacy_time",
+                                                    "name": "best_home_time",
                                                     "formula": "best",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "std_pharmacy_time",
+                                                    "name": "std_home_time",
                                                     "formula": "std",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "delta_pharmacy_time",
+                                                    "name": "delta_home_time",
                                                     "formula": "delta",
                                                     "weight": 0.25
                                                 }
                                             ]
                                         },
                                         {
-                                            "name": "pharmacy_visits_month",
+                                            "name": "outdoor_time",
                                             "level": 4,
-                                            "weight": -0.6
+                                            "weight": 0.6,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_outdoor_time",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_outdoor_time",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_outdoor_time",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_outdoor_time",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
                                         }
                                     ]
                                 }
@@ -173,96 +535,112 @@
                             "formula": "",
                             "subFactors": [
                                 {
-                                    "name": "shopping",
+                                    "name": "laundry",
                                     "level": 3,
-                                    "weight": 0.5,
+                                    "weight": 0.33,
                                     "formula": "",
                                     "measures": [
                                         {
-                                            "name": "shops_visits",
+                                            "name": "washingmachine_sessions",
                                             "level": 4,
-                                            "weight": 0.2,
+                                            "weight": 1,
                                             "nuis": [
                                                 {
-                                                    "name": "avg_shops_visits",
+                                                    "name": "avg_washingmachine_sessions",
                                                     "formula": "avg",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "best_shops_visits",
+                                                    "name": "best_washingmachine_sessions",
                                                     "formula": "best",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "std_shops_visits",
+                                                    "name": "std_washingmachine_sessions",
                                                     "formula": "std",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "delta_shops_visits",
+                                                    "name": "delta_washingmachine_sessions",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "phone_comm",
+                                    "level": 3,
+                                    "weight": 0.33,
+                                    "formula": "",
+                                    "measures": [
+                                        {
+                                            "name": "phonecalls_placed",
+                                            "level": 4,
+                                            "weight": 0.6,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_phonecalls_placed",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_phonecalls_placed",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_phonecalls_placed",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_phonecalls_placed",
                                                     "formula": "delta",
                                                     "weight": 0.25
                                                 }
                                             ]
                                         },
                                         {
-                                            "name": "shops_time",
+                                            "name": "phonecalls_received",
                                             "level": 4,
-                                            "weight": 0.1,
+                                            "weight": 0.4,
                                             "nuis": [
                                                 {
-                                                    "name": "avg_shops_time",
+                                                    "name": "avg_phonecalls_received",
                                                     "formula": "avg",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "best_shops_time",
+                                                    "name": "best_phonecalls_received",
                                                     "formula": "best",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "std_shops_time",
+                                                    "name": "std_phonecalls_received",
                                                     "formula": "std",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "delta_shops_time",
+                                                    "name": "delta_phonecalls_received",
                                                     "formula": "delta",
                                                     "weight": 0.25
                                                 }
                                             ]
-                                        },
-                                        {
-                                            "name": "shops_outdoor_time_perc",
-                                            "level": 4,
-                                            "weight": 0.1,
-                                            "nuis": [
-                                                {
-                                                    "name": "avg_shops_outdoor_time_perc",
-                                                    "formula": "avg",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "best_shops_outdoor_time_perc",
-                                                    "formula": "best",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "std_shops_outdoor_time_perc",
-                                                    "formula": "std",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "delta_shops_outdoor_time_perc",
-                                                    "formula": "delta",
-                                                    "weight": 0.25
-                                                }
-                                            ]
-                                        },
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "shopping",
+                                    "level": 3,
+                                    "weight": 0.33,
+                                    "formula": "",
+                                    "measures": [
                                         {
                                             "name": "supermarket_visits",
                                             "level": 4,
-                                            "weight": 0.2,
+                                            "weight": 0.6,
                                             "nuis": [
                                                 {
                                                     "name": "avg_supermarket_visits",
@@ -316,69 +694,7 @@
                                         {
                                             "name": "pharmacy_visits_month",
                                             "level": 4,
-                                            "weight": 0.2
-                                        },
-                                        {
-                                            "name": "pharmacy_time",
-                                            "level": 4,
-                                            "weight": 0.1,
-                                            "nuis": [
-                                                {
-                                                    "name": "avg_pharmacy_time",
-                                                    "formula": "avg",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "best_pharmacy_time",
-                                                    "formula": "best",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "std_pharmacy_time",
-                                                    "formula": "std",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "delta_pharmacy_time",
-                                                    "formula": "delta",
-                                                    "weight": 0.25
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "name": "transportation_usage",
-                                    "level": 3,
-                                    "weight": 0.5,
-                                    "formula": "",
-                                    "measures": [
-                                        {
-                                            "name": "transport_time",
-                                            "level": 4,
-                                            "weight": 1,
-                                            "nuis": [
-                                                {
-                                                    "name": "avg_transport_time",
-                                                    "formula": "avg",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "best_transport_time",
-                                                    "formula": "best",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "std_transport_time",
-                                                    "formula": "std",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "delta_transport_time",
-                                                    "formula": "delta",
-                                                    "weight": 0.25
-                                                }
-                                            ]
+                                            "weight": 0.3
                                         }
                                     ]
                                 }
@@ -391,104 +707,15 @@
                             "formula": "",
                             "subFactors": [
                                 {
-                                    "name": "going_restaurants",
-                                    "level": 3,
-                                    "weight": 0.2,
-                                    "formula": "",
-                                    "measures": [
-                                        {
-                                            "name": "restaurants_time",
-                                            "level": 4,
-                                            "weight": 0.4,
-                                            "nuis": [
-                                                {
-                                                    "name": "avg_restaurants_time",
-                                                    "formula": "avg",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "best_restaurants_time",
-                                                    "formula": "best",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "std_restaurants_time",
-                                                    "formula": "std",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "delta_restaurants_time",
-                                                    "formula": "delta",
-                                                    "weight": 0.25
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "name": "restaurants_visits_week",
-                                            "level": 4,
-                                            "weight": 0.6,
-                                            "nuis": [
-                                                {
-                                                    "name": "avg_restaurants_visits_week",
-                                                    "formula": "avg",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "best_restaurants_visits_week",
-                                                    "formula": "best",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "std_restaurants_visits_week",
-                                                    "formula": "std",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "delta_restaurants_visits_week",
-                                                    "formula": "delta",
-                                                    "weight": 0.25
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
                                     "name": "attending_senior_centers",
                                     "level": 3,
-                                    "weight": 0.4,
+                                    "weight": 1,
                                     "formula": "",
                                     "measures": [
-                                        {
-                                            "name": "seniorcenter_time",
-                                            "level": 4,
-                                            "weight": 0.4,
-                                            "nuis": [
-                                                {
-                                                    "name": "avg_seniorcenter_time",
-                                                    "formula": "avg",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "best_seniorcenter_time",
-                                                    "formula": "best",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "std_seniorcenter_time",
-                                                    "formula": "std",
-                                                    "weight": 0.25
-                                                },
-                                                {
-                                                    "name": "delta_seniorcenter_time",
-                                                    "formula": "delta",
-                                                    "weight": 0.25
-                                                }
-                                            ]
-                                        },
                                         {
                                             "name": "seniorcenter_visits",
                                             "level": 4,
-                                            "weight": 0.6,
+                                            "weight": 0.4,
                                             "nuis": [
                                                 {
                                                     "name": "avg_seniorcenter_visits",
@@ -511,64 +738,56 @@
                                                     "weight": 0.25
                                                 }
                                             ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "name": "attending_social_places",
-                                    "level": 3,
-                                    "weight": 0.4,
-                                    "formula": "",
-                                    "measures": [
+                                        },
                                         {
-                                            "name": "othersocial_time",
+                                            "name": "seniorcenter_long_visits",
                                             "level": 4,
-                                            "weight": 0.4,
+                                            "weight": 0.3,
                                             "nuis": [
                                                 {
-                                                    "name": "avg_othersocial_time",
+                                                    "name": "avg_seniorcenter_long_visits",
                                                     "formula": "avg",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "best_othersocial_time",
+                                                    "name": "best_seniorcenter_long_visits",
                                                     "formula": "best",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "std_othersocial_time",
+                                                    "name": "std_seniorcenter_long_visits",
                                                     "formula": "std",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "delta_othersocial_time",
+                                                    "name": "delta_seniorcenter_long_visits",
                                                     "formula": "delta",
                                                     "weight": 0.25
                                                 }
                                             ]
                                         },
                                         {
-                                            "name": "othersocial_visits",
+                                            "name": "seniorcenter_time",
                                             "level": 4,
-                                            "weight": 0.6,
+                                            "weight": 0.3,
                                             "nuis": [
                                                 {
-                                                    "name": "avg_othersocial_visits",
+                                                    "name": "avg_seniorcenter_time",
                                                     "formula": "avg",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "best_othersocial_visits",
+                                                    "name": "best_seniorcenter_time",
                                                     "formula": "best",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "std_othersocial_visits",
+                                                    "name": "std_seniorcenter_time",
                                                     "formula": "std",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "delta_othersocial_visits",
+                                                    "name": "delta_seniorcenter_time",
                                                     "formula": "delta",
                                                     "weight": 0.25
                                                 }
@@ -585,42 +804,64 @@
                             "formula": "",
                             "subFactors": [
                                 {
-                                    "name": "visiting_culture-entertaimment_places",
+                                    "name": "watching_tv",
                                     "level": 3,
                                     "weight": 1,
                                     "formula": "",
                                     "measures": [
                                         {
-                                            "name": "cinema_time",
+                                            "name": "tvwatching_time",
                                             "level": 4,
                                             "weight": 0.4,
                                             "nuis": [
                                                 {
-                                                    "name": "avg_cinema_time",
+                                                    "name": "avg_tvwatching_time",
                                                     "formula": "avg",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "best_cinema_time",
+                                                    "name": "best_tvwatching_time",
                                                     "formula": "best",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "std_cinema_time",
+                                                    "name": "std_tvwatching_time",
                                                     "formula": "std",
                                                     "weight": 0.25
                                                 },
                                                 {
-                                                    "name": "delta_cinema_time",
+                                                    "name": "delta_tvwatching_time",
                                                     "formula": "delta",
                                                     "weight": 0.25
                                                 }
                                             ]
                                         },
                                         {
-                                            "name": "cinema_visits_month",
+                                            "name": "tvwatching_time_perc",
                                             "level": 4,
-                                            "weight": 0.6
+                                            "weight": 0.6,
+                                            "nuis": [
+                                                {
+                                                    "name": "avg_tvwatching_time_perc",
+                                                    "formula": "avg",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "best_tvwatching_time_perc",
+                                                    "formula": "best",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "std_tvwatching_time_perc",
+                                                    "formula": "std",
+                                                    "weight": 0.25
+                                                },
+                                                {
+                                                    "name": "delta_tvwatching_time_perc",
+                                                    "formula": "delta",
+                                                    "weight": 0.25
+                                                }
+                                            ]
                                         }
                                     ]
                                 }

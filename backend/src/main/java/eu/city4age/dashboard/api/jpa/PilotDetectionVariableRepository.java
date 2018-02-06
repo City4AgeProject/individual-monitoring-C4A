@@ -14,7 +14,7 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 @Repository(value = "pilotDetectionVariableRepository")
 public interface PilotDetectionVariableRepository extends GenericRepository<PilotDetectionVariable, Long> {
 	
-	@Query("SELECT pdv.derivationWeight FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN pdv.derivedDetectionVariable ddv WHERE dv.id = :detectionVariableId AND pdv.pilotCode = :pilotCode AND dv.detectionVariableType = 'GES' AND ddv.detectionVariableType = 'GEF'")
+	@Query("SELECT pdv.derivationWeight FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN pdv.derivedDetectionVariable ddv WHERE dv.id = :detectionVariableId AND pdv.pilotCode = :pilotCode AND dv.detectionVariableType = 'ges' AND ddv.detectionVariableType = 'gef'")
 	BigDecimal findWeightByDetectionVariableAndPilotCodeGesGef(@Param("detectionVariableId") Long detectionVariableId, @Param("pilotCode") String pilotCode);
 	
 	PilotDetectionVariable findOneByPilotCodeAndDetectionVariableIdAndDerivedDetectionVariableId(

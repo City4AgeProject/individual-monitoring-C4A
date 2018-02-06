@@ -13,7 +13,7 @@ function(oj, ko, $) {
 		self.parentFactorId = ko.observable();
 		self.series = ko.observableArray();
 		self.groups = ko.observableArray();
-		self.legend = ko.observable();
+		
 		self.drilling = ko.observable();
 		self.seeMeasures = ko.observable(false);
 		
@@ -33,12 +33,8 @@ function(oj, ko, $) {
                 self.risksTags.push({"value":"W","label":"Risk warning","imagePath":"images/risk_warning.png"});
                 
 		self.nowrap = ko.observable(false);
-
-                self.checkedFilterRiskStatus = ko.observableArray([]);
-                self.checkedFilterValidityData = ko.observableArray([]);
-	    
-        
-        
+		self.checkedFilterRiskStatus = ko.observableArray([]);
+		self.checkedFilterValidityData = ko.observableArray([]);
 		self.isChecked = ko.observable();
 		self.val = ko.observableArray([ "Month" ]);
 		self.typeValue = ko.observable('line');
@@ -46,15 +42,12 @@ function(oj, ko, $) {
 		self.polarGridShapeValue = ko.observable('polygon');
 		self.polarChartSeriesValue = ko.observableArray();
 		self.polarChartGroupsValue = ko.observableArray();
-                
-                self.series = ko.observableArray();
-                self.groups = ko.observableArray();
-		
+		self.series = ko.observableArray();
+		self.groups = ko.observableArray();
 		self.commentText = ko.observable('');
-                self.selectedRiskStatus = ko.observableArray([]);
-                self.selectedDataValidity = ko.observableArray([]);
-                self.selectedRoles = ko.observableArray([]);
-
+		self.selectedRiskStatus = ko.observableArray([]);
+		self.selectedDataValidity = ko.observableArray([]);
+		self.selectedRoles = ko.observableArray([]);
 		var selected = [];
 
 		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase() + oj.Translations.getTranslatedString("annotations_assessments").substring(1);
@@ -77,83 +70,133 @@ function(oj, ko, $) {
                 self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc");
                 self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
                 self.typeLabel = oj.Translations.getTranslatedString("type");
-		
-		//event triggers when user hovers or clicks on chart lines
-		self.chartOptionChange = function(event, ui) {
-			if(ui !== undefined) {
-				if (ui['option'] === 'selection') {					
-					if (!self.showSelectionOnDiagram()) {
-						//if there is any selected values:
-						if (ui['value'].length > 0) {							
-							var onlyDataPoints = [];						
-							onlyDataPoints = getDataPoints(ui['optionMetadata']);
-							
-							//if there is no selected values
-							if (onlyDataPoints.length === 0) {
-								for (var i = 0; i < ui['value'].length; i++) {
-									onlyDataPoints.push(ui['value'][i].id);
-								}
-							} else if (onlyDataPoints.length === 1
-									&& onlyDataPoints[0][0]
-									&& onlyDataPoints[0][0].id) {
-								refreshDataPointsMarked(1);
-							} else {								
-								// Compose selections in get query parameters
-								if(ui['optionMetadata']['selectionData'].length === 1){
-									//if there is only 1 selection
-									var gefOrGesId = ui['optionMetadata']['selectionData'][0]['data']['gefTypeId'];	
-                                                                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
-                                                                        if(selectedDetectionVariable.detectionVariableType === 'GES'){
-                                                                            $('#popupWrapper1').prop('seeMeasures', true);
-                                                                            console.log('setting seeMeasures to true');
-                                                                        }else {
-									$('#popupWrapper1').prop('seeMeasures', false);
-								}
-								}else {				
-									$('#popupWrapper1').prop('seeMeasures', false);
-								}
-								
-								self.queryParams = calculateSelectedIds(onlyDataPoints);
-								loadAssessments(self.queryParams);
-							}
-
-							//showAssessmentsPopup();
-	
-							$('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
-	
-
-						} else {
-							self.dataPointsMarkedIds = [];
-						}
-					} else {
-						self.showSelectionOnDiagram(false);
+                    var role = new oj.Collection.extend({
+			url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/grs",
+			fetchSize : -1,
+			model : new oj.Model.extend({
+				idAttribute : 'id',
+				parse : function(response) {
+					return response.result;
+				}
+			})
+		});
+		self.rolesCollection(new role());
+		self.rolesCollection().fetch({
+			type : 'GET',
+			success : function(collection, response, options) {
+				if (self.roleTags.length === 0) {
+					for (var i = 0; i < response.length; i++) {
+						var roleModel = response[i];
+                                                //commented code because it does not work on oracle jet 4.0 for add assessment
+//						self.roleTags.push({
+//							value : roleModel.id,
+//							label : oj.Translations.getTranslatedString(roleModel.roleName)
+//						});
 					}
 				}
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
 			}
+		});
+		
+		//event triggers when user hovers or clicks on chart lines
+		self.chartOptionChange = function(event) {
+                    if (!self.showSelectionOnDiagram()) {
+                        if(event){                            
+                            if(event.detail.selectionData){                                                                                                    
+                                if (event.detail.selectionData.length > 0) {							
+                                    var onlyDataPoints = [];						
+                                    onlyDataPoints = getDataPoints(event.detail.selectionData);
+
+                                    if (onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id) {
+                                        refreshDataPointsMarked(1);
+                                    } else {								
+                                            // Compose selections in get query parameters
+                                            if(event.detail.selectionData.length == 1){
+                                                //if there is only 1 selection
+                                                var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
+                                                var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
+
+                                                if(selectedDetectionVariable.detectionVariableType == 'ges'){
+                                                    sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
+                                                    $('#popupWrapper1').prop('seeMeasures', true);
+                                                    console.log('setting seeMeasures to true');
+                                                }else {
+                                                $('#popupWrapper1').prop('seeMeasures', false);
+                                                }
+                                            }else {				
+                                                    $('#popupWrapper1').prop('seeMeasures', false);
+                                            }
+
+                                            self.queryParams = calculateSelectedIds(onlyDataPoints);
+                                            loadAssessments(self.queryParams);
+                                    }
+
+                                    //showAssessmentsPopup();
+
+                                        $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
+
+
+                                } else {
+                                        self.dataPointsMarkedIds = [];
+                                }
+                            }
+                        }
+                    } else {
+                            self.showSelectionOnDiagram(false);
+                    }
 		};
 		
-		var loadDiagramDataCallback = function(data) {
-                    
-			if(data !== undefined && data.groups !== undefined && data.series !== undefined) {
-			
-                            data.groups = data.groups.map(function(obj){
-                                    return obj.name;
-                            });
+		var loadDiagramDataCallback = function (data) {
 
-                            formatDate(data.groups);
+                    var grupe = ko.observableArray(data.groups);
 
-                            self.props.groups = data.groups;
-                            self.props.series = data.series;
+                    if (data !== undefined && data.groups !== undefined && data.series !== undefined) {
 
-			}
-			
-			if (self.props !== undefined
-					&& self.props.series !== undefined) {
-				for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
-					self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
-				}
-			}
-		};
+                        data.groups = data.groups.map(function (obj) {
+                            return obj.name;
+                        });
+
+                        formatDate(data.groups);
+
+                        self.props.groups = data.groups;
+                        self.props.series = data.series;
+
+                    }
+
+                    if (self.props !== undefined
+                            && self.props.series !== undefined) {
+                        for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
+                            self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
+                        }
+
+
+                        for (var jg = 0; jg < self.props.series.length; jg++) {
+                            var pomocni = [];
+                            var timeIntervals = [];
+                            for (var m = 0; m < self.props.series[jg].items.length; m++) {
+                                timeIntervals.push(self.props.series[jg].items[m].timeIntervalId);
+                            }
+                            for (var ig = 0; ig < grupe().length; ig++) {
+                                for (var kg = 0; kg < self.props.series[jg].items.length; kg++) {
+                                    if (grupe()[ig].id === self.props.series[jg].items[kg].timeIntervalId) {
+                                        pomocni.push(self.props.series[jg].items[kg]);
+                                    } else if (!timeIntervals.includes(grupe()[ig].id)) {
+                                        var item = new Object();
+                                        item.id = null;
+                                        item.value = null;
+                                        item.gefTypeId = self.props.series[jg].items[kg].gefTypeId;
+                                        item.timeIntervalId = grupe()[ig].id;
+
+                                        pomocni.push(item);
+                                        timeIntervals.push(item.timeIntervalId);
+                                    }
+                                }
+                            }
+                            self.props.series[jg].items = pomocni;
+                        }
+                    }
+                };
 
 		var loadDataSet = function(data) {                  
 			var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA
@@ -172,10 +215,9 @@ function(oj, ko, $) {
 			$('#addAssessment').prop('selectedRiskStatus', []);
 			$('#addAssessment').prop('selectedDataValidity', []);
 			$('#addAssessment').prop('selectedRoles', []);
-                        
+
 			if (self.props.roleTags.length > 0) {
                             $('#addAssessment').prop('roleTags', ko.toJS(self.props.roleTags));
-
                             $('#dialog1').ojDialog();
                             $('#dialog1').ojDialog('open');
 
@@ -219,15 +261,11 @@ function(oj, ko, $) {
 
 		self.shownFilterBar = false;
 		self.toggleFilterAssessmentBar = function(e) {
-			if ($('#assessment-filter').css('display') === 'none') {
-				$('#assessment-filter').css({
-					display : 'block'
-				});
+			if ($('#assessment-filter').css('display') === 'none') {				
+                                $( "#assessment-filter" ).fadeIn();
 				self.shownFilterBar = true;
 			} else {
-				$('#assessment-filter').css({
-					display : 'none'
-				});
+				$('#assessment-filter').fadeOut();
 				self.shownFilterBar = false;
 			}
 		};
@@ -284,21 +322,21 @@ function(oj, ko, $) {
 			console.log(error);
 		};
 
-		self.chartDrill = function(event, ui) {
-                    if(ui['series']){
+		self.chartDrill = function(event) {
+                    if(event.detail['series']){
 			console.log('drill on anagraph-assessment-view');                      
-                        self.props.selectedId = JSON.stringify(ui['seriesData']['items'][0]['gefTypeId']);
+                        self.props.selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);
                                                    
                         var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);
                         console.log('selected det is : ' + JSON.stringify(selectedDetectionVariable));
-                        if(selectedDetectionVariable.detectionVariableType === 'GEF'){ 
+                        if(selectedDetectionVariable.detectionVariableType === 'gef'){ 
                             console.log('selected GEF');                                                                                                                                                                
-                            sessionStorage.setItem("gefObj", JSON.stringify(selectedDetectionVariable));      
+                            sessionStorage.setItem("gefObj", JSON.stringify(selectedDetectionVariable));  
                             oj.Router.rootInstance.go('detection_ges');
                             
-                        }else if(selectedDetectionVariable.detectionVariableType === 'GES'){
+                        }else if(selectedDetectionVariable.detectionVariableType === 'ges'){
                             console.log('selected GES');                           
-                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));                                    
+                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
                             oj.Router.rootInstance.go("detection_mea");
                         }
                     }
@@ -411,17 +449,18 @@ function(oj, ko, $) {
 							});
 		};
 
-		function getDataPoints(dataSelection) {
+		function getDataPoints(selectionData) {
 			var filteredSelection = [];
-			if (dataSelection.selectionData !== undefined) {
-				for (var i = 0; i < dataSelection.selectionData.length; i++) {
-					var selectedDataPoint = dataSelection.selectionData[i];
+			if (selectionData !== undefined) {
+				for (var i = 0; i < selectionData.length; i++) {
+					var selectedDataPoint = selectionData[i];
 					// skip assessment
 					if (selectedDataPoint.seriesData.name === 'Assessments')
-						;
+                                        {
+                                            
+                                        }
 					else {
-						filteredSelection
-								.push(selectedDataPoint.data.id);
+						filteredSelection.push(selectedDataPoint.data.id);
 					}
 				}
 			}
@@ -627,9 +666,10 @@ function(oj, ko, $) {
 		// Reset Selected Risk and data type ojButtonset-s
 		self.resetClick = function() {
 			$( ".selector" ).ojSelect( "getNodeBySubId", {'subId': 'oj-select-chosen'} ).textContent="";
+
 			self.props.selectedRiskStatus = [];
-                        self.props.selectedDataValidity = [];
-                        self.props.selectedRoles = [];
+			self.props.selectedDataValidity = [];
+			self.props.selectedRoles = [];
 			self.checkedFilterRiskStatus([]);
 			self.checkedFilterValidityData([]);
 			filterAssessments(self.queryParams);
@@ -687,9 +727,9 @@ function(oj, ko, $) {
 			}
 			self.props.selectedItemsValue = selected;
 		};
-
+		//this method makes annotation list with filters visible and sets dataPointsMarked to assessment-preview component 
 		function refreshDataPointsMarked(assessmentsResultLength) {
-			document.getElementById('tabs').style.display = 'block';
+			document.getElementById('tabs-container').style.display = 'block';
 			$('#tabAnnotations').css({
 				display : 'block'
 			});

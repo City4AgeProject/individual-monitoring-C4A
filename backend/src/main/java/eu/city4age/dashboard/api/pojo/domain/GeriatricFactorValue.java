@@ -20,7 +20,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "geriatric_factor_value")
-@SequenceGenerator(name = "default_gen", sequenceName = "geriatric_factor_value_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "geriatric_factor_value_seq", allocationSize = 1)
 public class GeriatricFactorValue extends AbstractBaseEntity<Long> {
 
 	/**

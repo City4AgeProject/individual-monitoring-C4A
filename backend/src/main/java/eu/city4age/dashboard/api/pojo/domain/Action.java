@@ -13,8 +13,8 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
-@Table(name="action")
-@SequenceGenerator(name = "default_gen", sequenceName = "action_id_seq", allocationSize = 1)
+@Table(name="cd_action")
+@SequenceGenerator(name = "default_gen", sequenceName = "cd_action_id_seq", allocationSize = 1)
 public class Action extends AbstractBaseEntity<Long> {
 
 	/**
@@ -27,10 +27,14 @@ public class Action extends AbstractBaseEntity<Long> {
 		this.id = id;
 	}
 
-	@Column(name="action_name")
+	@Column (name = "action_name", length = 50)
 	private String name;
 
+	@Column (name = "action_category", length = 25)
 	private String category;
+	
+	@Column (name = "action_description", length = 250)
+	private String description;
 	
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@OneToMany(mappedBy="action",fetch=FetchType.LAZY)
@@ -41,6 +45,12 @@ public class Action extends AbstractBaseEntity<Long> {
 	private Set<ExecutedAction> executedActions = new HashSet<ExecutedAction>(0);
 
 	public Action() {}
+
+	public Action(String name, String category, String description) {
+		this.name = name;
+		this.category = category;
+		this.description = description;
+	}
 
 	public Action(String name, String category, Set<Eam> eams, Set<ExecutedAction> executedActions) {
 		this.name = name;
@@ -79,6 +89,14 @@ public class Action extends AbstractBaseEntity<Long> {
 
 	public void setExecutedActions(Set<ExecutedAction> executedActions) {
 		this.executedActions = executedActions;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

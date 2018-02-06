@@ -22,7 +22,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 @Entity
 @Table(name = "time_interval", uniqueConstraints = @UniqueConstraint(columnNames = { "interval_start",
 		"typical_period" }, name = "time_interval_interval_start_typical_period_key"))
-@SequenceGenerator(name = "default_gen", sequenceName = "time_interval_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "time_interval_seq", allocationSize = 1)
 public class TimeInterval extends AbstractBaseEntity<Long> {
 
 	/**

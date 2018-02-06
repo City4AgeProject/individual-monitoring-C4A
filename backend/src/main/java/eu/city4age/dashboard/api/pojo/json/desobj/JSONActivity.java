@@ -13,6 +13,7 @@ public class JSONActivity {
 	private List<Gps> gpss;
 	private List<Bluetooth> bluetooths;
 	private List<Wifi> wifis;
+	private List<Recognition> recognitions;
 	
 	public String getType() {
 		return type;
@@ -49,5 +50,11 @@ public class JSONActivity {
 	}
 	public void setWifis(List<Wifi> wifis) {
 		this.wifis = wifis;
+	}
+	public List<Recognition> getRecognitions() {
+		return recognitions;
+	}
+	public void setRecognitions(List<Recognition> recognitions) {
+		this.recognitions = recognitions;
 	}
 }

@@ -18,11 +18,13 @@ public class Mea {
 	private List<Nui> nuis;
 	public Mea(
 			@JsonProperty(value= "name", required = true)String name, 
-			@JsonProperty(value= "level",required = true)Integer level, 
+			@JsonProperty(value= "level",required = false)Integer level, 
 			@JsonProperty(value= "weight",required = true)BigDecimal weight,
 			@JsonProperty(value= "nuis", required = false) List<Nui> nuis) {
-		this.name = name;
-		this.level = level;
+		
+		if (level != null) this.level = level;
+		else this.level = 0;
+		this.name = name;		
 		this.weight = weight;
 		this.nuis = nuis;
 	}

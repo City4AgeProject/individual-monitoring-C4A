@@ -11,7 +11,7 @@ define(['knockout', 'urls', 'entities','ojs/ojknockout', 'promise', 'ojs/ojtable
                 self.measureName = null;
                 self.lineSeries = [];
                 self.hiddenCategories = ko.observableArray();
-                self.visibleCategory = null;
+                self.visibleCategories = [];
                 self.meaComment = ko.observable();
                 self.meaCommentPreview = ko.observable();
                 self.hasComments;
@@ -35,7 +35,7 @@ define(['knockout', 'urls', 'entities','ojs/ojknockout', 'promise', 'ojs/ojtable
                         self.lineSeriesNames.push(ls.name);                                              
                     });
                                                           
-                    if(self.defaultTypicalPeriod === 'MON'){
+                    if(self.defaultTypicalPeriod === 'mon'){
                         self.showNuis = false;
                         self.lineGroups = ko.observable(["Start of month", "End of month"]);
                         self.zoom('off');                                                                
@@ -56,24 +56,32 @@ define(['knockout', 'urls', 'entities','ojs/ojknockout', 'promise', 'ojs/ojtable
                     
                     
                 });  
-                self.gridOptChanged = function (event, ui){
-                    //if user clicked on dataGrid Header, show lineseries of that month                   
-                    if(ui['value']){                          
-                        if(ui['value']['axis'] === 'column'){                       
-                            var seriesName = ui['value']['key'];
-                            showLineSerie(seriesName);
-                        }     
-                    }
+                
+                self.beforeCurrentCellListener = function (event) {
+                    var currentCell = event.detail.currentCell;
+                    if(currentCell){                        
+                        if(currentCell.axis === "column"){                            
+                            showLineSerieFromGridHeader(currentCell.key);
+                        }  
+                    }                   
                 };
-                self.chartOptChanged = function(event, ui) {
-                };
-                self.chartDrill = function(event, ui) {
-                    if(ui['series']){
-                        var seriesName = ui['seriesData']['name'];                  
-                        showLineSerie(seriesName); 
-                        if(self.defaultTypicalPeriod === 'MON'){
-                            if(ui.seriesData.items[0].valueEvidenceNotice){
-                                self.meaComment(ui.seriesData.items[0].valueEvidenceNotice.notice);
+                function showLineSerieFromGridHeader(seriesName){
+                    self.visibleCategories = [];
+                    self.visibleCategories.push(seriesName);
+                    var cloneArray = self.lineSeriesNames.slice(0);
+                    self.hiddenCategories(cloneArray);
+                    var index = self.hiddenCategories.indexOf(seriesName);
+                    self.hiddenCategories.splice(index,1);
+                } 
+               
+                self.chartDrill = function(event) {
+                    var detail = event.detail; 
+                    if(detail['series']){
+                       var seriesName = detail['series'];                         
+                        showLineSeriesFromChartDrill(seriesName); 
+                        if(self.defaultTypicalPeriod === 'mon'){
+                            if(detail.seriesData.items[0].valueEvidenceNotice){
+                                self.meaComment(detail.seriesData.items[0].valueEvidenceNotice.notice);
                                 if(self.meaComment().length > 200){
                                     self.meaCommentPreview(self.meaComment().slice(0,200) + "...");
                                 }else{
@@ -84,25 +92,35 @@ define(['knockout', 'urls', 'entities','ojs/ojknockout', 'promise', 'ojs/ojtable
                                 self.shouldSeeNotice(false);
                             }
                             
+                        } 
+                    }                                          
+		}; 
+                
+                function showLineSeriesFromChartDrill(lineSerie){
+                    var allSeries = self.lineSeriesNames.slice(0);
+                    if(self.defaultTypicalPeriod === 'mon'){                        
+                        self.hiddenCategories(allSeries);
+                        var index = self.hiddenCategories.indexOf(lineSerie);
+                        self.hiddenCategories.splice(index,1);
+                    }else{
+                        if(self.visibleCategories.length === 0){  
+                                self.visibleCategories.push(lineSerie);                               
+                                self.hiddenCategories(allSeries);
+                                var index = self.hiddenCategories.indexOf(lineSerie);
+                                self.hiddenCategories.splice(index,1);
+                        }else {
+                                if(self.visibleCategories.indexOf(lineSerie) !== -1){
+                                var index = self.visibleCategories.indexOf(lineSerie);
+                                self.visibleCategories.splice(index,1);
+                                self.hiddenCategories.push(lineSerie);                            
+                            }else {
+                                var index = self.hiddenCategories.indexOf(lineSerie);
+                                self.hiddenCategories.splice(index,1);
+                                self.visibleCategories.push(lineSerie);
+                            }     
                         }
                     }
-		};               
-                function showLineSerie(seriesName){
-                    if(self.visibleCategory === null){
-                            self.visibleCategory = seriesName;
-                            self.hiddenCategories(self.lineSeriesNames);
-                            var index = self.hiddenCategories.indexOf(seriesName);
-                            self.hiddenCategories.splice(index,1);
-                        }
-                        else if(self.visibleCategory === seriesName){
-                            console.log('already visible!');
-                            return;
-                        }else {
-                            var index = self.hiddenCategories.indexOf(seriesName);
-                            self.hiddenCategories.splice(index,1);
-                            self.hiddenCategories.push(self.visibleCategory);                       
-                            self.visibleCategory = seriesName;
-                        }     
+                       
                 }
                 self.beforeExpand = function(event, ui) {                  
                     self.meaCommentPreview(self.meaComment());

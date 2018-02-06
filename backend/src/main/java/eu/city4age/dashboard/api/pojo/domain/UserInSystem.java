@@ -13,7 +13,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name="user_in_system")
-@SequenceGenerator(name = "default_gen", sequenceName = "user_in_system_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "user_in_system_seq", allocationSize = 1)
 public class UserInSystem extends AbstractBaseEntity<Long> {
 
 	/**
@@ -31,15 +31,19 @@ public class UserInSystem extends AbstractBaseEntity<Long> {
 	@JsonView(View.AssessmentView.class)
 	@Column(name="display_name")
 	private String displayName;
+	
+	@Column (name = "is_active")
+	private Boolean isActive;
 
 	public UserInSystem() {
-	}
+	}	
 
-	public UserInSystem(String username, String password, Date createdDate, String displayName) {
+	public UserInSystem(String username, String password, Date createdDate, String displayName, Boolean isActive) {
 		this.username = username;
 		this.password = password;
 		this.createdDate = createdDate;
 		this.displayName = displayName;
+		this.isActive = isActive;
 	}
 
 	public String getUsername() {
@@ -72,6 +76,14 @@ public class UserInSystem extends AbstractBaseEntity<Long> {
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }

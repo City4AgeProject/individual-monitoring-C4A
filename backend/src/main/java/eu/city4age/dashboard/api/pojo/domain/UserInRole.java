@@ -27,7 +27,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "user_in_role")
-@SequenceGenerator(name = "default_gen", sequenceName = "user_in_role_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "user_in_role_seq", allocationSize = 1)
 public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<AbstractBaseEntity<Long>> {
 
 	/**
@@ -56,7 +56,7 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 	@JoinColumn(name = "user_in_system_id")
 	private UserInSystem userInSystem;
 
-	@Column(name = "role_id")
+	@Column(name = "cd_role_id")
 	private Short roleId;
 
 	@JsonManagedReference

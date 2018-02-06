@@ -131,12 +131,13 @@ public class AndroidService {
 				if (jsonActivity.getGpss() != null && jsonActivity.getGpss().size() > 0) {
 				
 					for (Gps gps : jsonActivity.getGpss()) {
-					
+						
 						mts = createMTR(jsonActivity, uir);
 						mts.setGpsLatitude(gps.getLatitude());
 						mts.setGpsLongitude(gps.getLongitude());
 						mts.addBluetooth(jsonActivity.getBluetooths());
 						mts.addWifi(jsonActivity.getWifis());
+						mts.addRecognition(jsonActivity.getRecognitions());
 						mtss.add(mts);
 					
 					}

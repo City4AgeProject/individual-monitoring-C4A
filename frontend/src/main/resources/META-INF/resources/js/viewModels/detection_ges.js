@@ -52,7 +52,7 @@ function (oj, ko, $) {
             if(gefObj !== undefined) {
                     self.careRecipient(parseInt(sessionStorage.getItem("crId")));
                     self.subFactorName(gefObj.detectionVariableName);
-                    if(gefObj.detectionVariableType === 'GES')
+                    if(gefObj.detectionVariableType == 'ges')
                     {                                             
                         self.parentFactor(gefObj.derivedDetectionVariableId);               
                         self.titleValue(oj.Translations.getTranslatedString('GEF'.toLowerCase()) + " - " + oj.Translations.getTranslatedString(gefObj.detectionVariableName));

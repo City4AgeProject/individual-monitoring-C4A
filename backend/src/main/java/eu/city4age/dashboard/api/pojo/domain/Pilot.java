@@ -35,12 +35,14 @@ public class Pilot implements Serializable {
 		PilotCode(String name) {
 			this.name = name;
 		}
-
+		
 		public String getName() {
 			return name;
 		}
 	};
 	
+
+	@Column(name = "pilot_name")
 	private String name;
 
 	@Id
