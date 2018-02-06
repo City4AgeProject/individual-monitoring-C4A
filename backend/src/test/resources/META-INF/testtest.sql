@@ -1,124 +1,642 @@
-DROP TABLE IF EXISTS testtest.action;
-DROP TABLE IF EXISTS testtest.activity;
-DROP TABLE IF EXISTS testtest.assessed_gef_value_set;
-DROP TABLE IF EXISTS testtest.assessment;
-DROP TABLE IF EXISTS testtest.assessment_audience_role;
-DROP TABLE IF EXISTS testtest.care_profile;
-DROP TABLE IF EXISTS testtest.cd_data_source_type;
-DROP TABLE IF EXISTS testtest.cd_detection_variable;
-DROP TABLE IF EXISTS testtest.cd_detection_variable_type;
-DROP TABLE IF EXISTS testtest.cd_pilot_detection_variable;
-DROP TABLE IF EXISTS testtest.md_pilot_detection_variable;
-DROP TABLE IF EXISTS testtest.cd_role;
-DROP TABLE IF EXISTS testtest.cd_typical_period;
-DROP TABLE IF EXISTS testtest.cr_profile;
-DROP TABLE IF EXISTS testtest.eam;
-DROP TABLE IF EXISTS testtest.eam_startrange;
-DROP TABLE IF EXISTS testtest.entity;
-DROP TABLE IF EXISTS testtest.executed_action;
-DROP TABLE IF EXISTS testtest.frailty_status_timeline;
-DROP TABLE IF EXISTS testtest.geriatric_factor_value;
-DROP TABLE IF EXISTS testtest.inter_activity_behaviour_variation;
-DROP TABLE IF EXISTS testtest.location;
-DROP TABLE IF EXISTS testtest.nui_gef;
-DROP TABLE IF EXISTS testtest.numeric_indicator_value;
-DROP TABLE IF EXISTS testtest.pilot;
-DROP TABLE IF EXISTS testtest.simplelocation;
-DROP TABLE IF EXISTS testtest.simplelocation_eam;
-DROP TABLE IF EXISTS testtest.source_evidence;
-DROP TABLE IF EXISTS testtest.startrange;
-DROP TABLE IF EXISTS testtest.time_interval;
-DROP TABLE IF EXISTS testtest.user_in_role;
-DROP TABLE IF EXISTS testtest.user_in_system;
-DROP TABLE IF EXISTS testtest.variation_measure_value;
-DROP TABLE IF EXISTS testtest.cd_risk_status;
-DROP TABLE IF EXISTS testtest.stakeholder;
-DROP sequence IF EXISTS testtest.hibernate_sequence;
-DROP sequence IF EXISTS testtest.assessment_id_seq;
-DROP sequence IF EXISTS testtest.cd_detection_variable_id_seq;
-DROP sequence IF EXISTS testtest.md_pilot_detection_variable_id_seq;
-DROP sequence IF EXISTS testtest.time_interval_id_seq;
-DROP sequence IF EXISTS testtest.numeric_indicator_value_id_seq;
-DROP sequence IF EXISTS testtest.geriatric_factor_value_id_seq;
-DROP sequence IF EXISTS testtest.cd_role_id_seq;
-DROP sequence IF EXISTS testtest.action_id_seq;
-DROP sequence IF EXISTS testtest.cd_activity_id_seq;
-DROP sequence IF EXISTS testtest.assessment_id_seq;
-DROP sequence IF EXISTS testtest.cr_profile_id_seq;
-DROP sequence IF EXISTS testtest.cd_detection_variable_id_seq;
-DROP sequence IF EXISTS testtest.eam_id_seq;
-DROP sequence IF EXISTS testtest.executed_action_id_seq;
-DROP sequence IF EXISTS testtest.executed_activity_id_seq;
-DROP sequence IF EXISTS testtest.geriatric_factor_value_id_seq;
-DROP sequence IF EXISTS testtest.inter_activity_behaviour_variation_id_seq;
-DROP sequence IF EXISTS testtest.location_id_seq;
-DROP sequence IF EXISTS testtest.mtesting_readings_id_seq;
-DROP sequence IF EXISTS testtest.numeric_indicator_value_id_seq;
-DROP sequence IF EXISTS testtest.md_pilot_detection_variable_id_seq;
-DROP sequence IF EXISTS testtest.cd_role_id_seq;
-DROP sequence IF EXISTS testtest.time_interval_id_seq;
-DROP sequence IF EXISTS testtest.user_in_role_id_seq;
-DROP sequence IF EXISTS testtest.user_in_system_id_seq;
-DROP sequence IF EXISTS testtest.variation_measure_value_id_seq;
-create table testtest.action (id int8 not null, action_name varchar(50), category varchar(25), primary key (id));
-create table testtest.activity (id int8 not null, activity_name varchar(50), user_in_role_id int8 , time_interval_id int8 , data_source_type varchar(3) , primary key (id));
-create table testtest.assessed_gef_value_set (gef_value_id int4 not null, assessment_id int4 not null, detection_variable_type varchar(3) , data_point_id int8, primary key (gef_value_id, assessment_id));
-create table testtest.assessment (id int8 not null, assessment_comment varchar(255), risk_status char(1), data_validity_status char(1), created timestamptz , updated timestamptz, author_id int8, primary key (id));
-create table testtest.assessment_audience_role (assessment_id int8 not null, role_id int8 not null, assigned timestamptz , primary key (assessment_id,role_id));
-create table testtest.care_profile (user_in_role_id int4 not null, individual_summary varchar(255) , attention_status char(1), intervention_status char(1), last_intervention_date date, created timestamptz , last_updated timestamptz, created_by int8 , last_updated_by int8, primary key (user_in_role_id));
-create table testtest.cd_data_source_type (data_source_type varchar(3) not null, data_source_type_description varchar(250) , primary key (data_source_type));
-create table testtest.cd_detection_variable (id int8 not null, detection_variable_name varchar(100), detection_variable_type varchar(3), valid_from timestamptz, valid_to timestamptz, derived_detection_variable_id int2, derivation_weight numeric(3, 2), default_typical_period varchar(3), source_datatype varchar(25), base_unit varchar(50), primary key (id));
-create table testtest.cd_detection_variable_type (detection_variable_type varchar(3) not null, detection_variable_type_description varchar(50), primary key (detection_variable_type));
-create table testtest.cd_frailty_status (frailty_status varchar(9) not null, frailty_status_description varchar(255), primary key (frailty_status));
-create table testtest.md_pilot_detection_variable (id int8 not null, pilot_code varchar(3), detection_variable_id int2, derivation_function_formula varchar(1000), derived_detection_variable_id int4, valid_from timestamp(6), valid_to timestamp(6), derivation_weight numeric(3, 2), primary key (id));
-create table testtest.cd_role (id int8 not null, role_name varchar(50), role_abbreviation varchar(3), role_description varchar(200), valid_from timestamp, valid_to timestamp, stakeholder_abbreviation varchar(3), primary key (id));
-create table testtest.cd_typical_period (typical_period varchar(3) not null, period_description varchar(50), typical_duration time, primary key (typical_period));
-create table testtest.cr_profile (id int8 not null, ref_height float4, ref_weight float4, ref_mean_blood_pressure numeric(5, 2), date time, user_in_role_id int8 , birth_date date , gender bool , primary key (id));
-create table testtest.eam (id int8 not null, duration int4, action_id int8 , activity_id int8 , primary key (id));
-create table testtest.executed_action (id int8 not null, date timestamptz , locationid int8 , actionid int8 , activityid int8, userinroleid int8 , rating int4, sensor_id int4 , payload varchar(50) , extra_information varchar(255), primary key (id));
-create table testtest.frailty_status_timeline (time_interval_id int8 not null, changed_by int8 not null, changed timestamptz , user_in_role_id int8 , frailty_status varchar(9) , frailty_notice varchar(200), primary key (time_interval_id, changed_by));
-create table testtest.geriatric_factor_value (id int8 not null, gef_value numeric(3, 2), time_interval_id int8, gef_type_id int8, user_in_role_id int4, data_source_type varchar(3), derivation_weight numeric(3, 2), primary key (id));
-create table testtest.inter_activity_behaviour_variation (id int8 not null, deviation float4, expected_activity_id int8 not null, real_activity_id int8 , numeric_indicator_id int8 , primary key (id));
-create table testtest.location (id int8 not null, location_name varchar(50), indoor int2, pilot_code varchar(3), primary key (id));
-create table testtest.numeric_indicator_value (id int8 not null, nui_type_id int8 , nui_value numeric(10, 2) , time_interval_id int8 , data_source_type varchar(3) , user_in_role_id int8, primary key (id));
-create table testtest.pilot (id int8 not null, name varchar(50), pilot_code varchar(3), population_size float8, latest_data_submission_completed date, latest_derived_detection_variables_computed date, latest_configuration_update date, primary key (id));
-create table testtest.source_evidence (value_id int8 not null, text_evidence text, multimedia_evidence bytea, uploaded timestamp(6), author_id int8, detection_variable_type varchar(3) not null, primary key (value_id, detection_variable_type));
-create table testtest.time_interval (id int8 not null, interval_start timestamp, interval_end timestamp, typical_period varchar(3), created timestamp, primary key (id), unique (interval_start, typical_period));
-create table testtest.user_in_role (id int8 not null, pilot_code varchar(3), valid_from timestamp, valid_to timestamp, user_in_system_id int4, role_id int2, primary key (id));
-create table testtest.user_in_system (id int8 not null, username varchar(25) unique, password varchar(25), created_date timestamp, display_name varchar(255), primary key (id));
-create table testtest.variation_measure_value (id int8 not null, activity_id int8, user_in_role_id int8 , measure_value float4, measure_type_id int8 , data_source_type varchar(3) , time_interval_id int8 , extra_information varchar(1000), primary key (id));
-create table testtest.cd_risk_status (risk_status varchar(3) not null, risk_status_description varchar(50), confidence_rating numeric(3, 2), icon_image bytea, icon_image_path varchar(255), primary key (risk_status));
-create table testtest.stakeholder (stakeholder_abbreviation varchar(3) not null, stakeholder_name varchar(50) , stakeholder_description varchar(50), valid_from timestamptz , valid_to timestamptz, primary key (stakeholder_abbreviation));
-create sequence testtest.hibernate_sequence;
-create sequence testtest.assessment_id_seq;
-create sequence testtest.cd_detection_variable_id_seq;
-create sequence testtest.md_pilot_detection_variable_id_seq;
-create sequence testtest.time_interval_id_seq;
-create sequence testtest.numeric_indicator_value_id_seq;
-create sequence testtest.geriatric_factor_value_id_seq;
-create sequence testtest.cd_role_id_seq;
-create sequence testtest.action_id_seq;
-create sequence testtest.cd_activity_id_seq;
-create sequence testtest.assessment_id_seq;
-create sequence testtest.cr_profile_id_seq;
-create sequence testtest.cd_detection_variable_id_seq;
-create sequence testtest.eam_id_seq;
-create sequence testtest.executed_action_id_seq;
-create sequence testtest.executed_activity_id_seq;
-create sequence testtest.geriatric_factor_value_id_seq;
-create sequence testtest.inter_activity_behaviour_variation_id_seq;
-create sequence testtest.location_id_seq;
-create sequence testtest.mtesting_readings_id_seq;
-create sequence testtest.numeric_indicator_value_id_seq;
-create sequence testtest.md_pilot_detection_variable_id_seq;
-create sequence testtest.cd_role_id_seq;
-create sequence testtest.time_interval_id_seq;
-create sequence testtest.user_in_role_id_seq;
-create sequence testtest.user_in_system_id_seq;
-create sequence testtest.variation_measure_value_id_seq;
-CREATE OR REPLACE VIEW "testtest"."vw_detection_variable_derivation_per_user_in_role" AS 
+DROP SEQUENCE IF EXISTS "testtest"."assessment_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."cd_action_id_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."cd_activity_id_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."cd_detection_variable_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."location_type_id_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."cd_role_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."cd_metric_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."cr_profile_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."eam_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."executed_action_id_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."executed_activity_id_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."geriatric_factor_value_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."inter_activity_behaviour_variation_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."location_id_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."mtesting_readings_id_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."md_pilot_detection_variable_id_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."numeric_indicator_value_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."source_evidence_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."time_interval_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."user_action_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."user_in_role_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."user_in_system_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."value_evidence_notice_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."variation_measure_value_seq" CASCADE;
+
+DROP TABLE IF EXISTS "testtest"."assessed_gef_value_set" CASCADE;
+DROP TABLE IF EXISTS "testtest"."assessment" CASCADE;
+DROP TABLE IF EXISTS "testtest"."assessment_audience_role" CASCADE;
+DROP TABLE IF EXISTS "testtest"."care_profile" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_action" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_activity" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_data_source_type" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_detection_variable" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_detection_variable_type" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_frailty_status" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_location_type" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_metric" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_risk_status" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_role" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_typical_period" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cr_profile" CASCADE;
+DROP TABLE IF EXISTS "testtest"."eam" CASCADE;
+DROP TABLE IF EXISTS "testtest"."executed_action" CASCADE;
+DROP TABLE IF EXISTS "testtest"."executed_activity" CASCADE;
+DROP TABLE IF EXISTS "testtest"."executed_activity_executed_action_rel" CASCADE;
+DROP TABLE IF EXISTS "testtest"."frailty_status_timeline" CASCADE;
+DROP TABLE IF EXISTS "testtest"."geriatric_factor_value" CASCADE;
+DROP TABLE IF EXISTS "testtest"."inter_activity_behaviour_variation" CASCADE;
+DROP TABLE IF EXISTS "testtest"."location" CASCADE;
+DROP TABLE IF EXISTS "testtest"."location_cd_location_type_rel" CASCADE;
+DROP TABLE IF EXISTS "testtest"."location_location_type_rel" CASCADE;
+DROP TABLE IF EXISTS "testtest"."location_type" CASCADE;
+DROP TABLE IF EXISTS "testtest"."md_pilot_detection_variable" CASCADE;
+DROP TABLE IF EXISTS "testtest"."mtesting_readings" CASCADE;
+DROP TABLE IF EXISTS "testtest"."numeric_indicator_value" CASCADE;
+DROP TABLE IF EXISTS "testtest"."payload_value" CASCADE;
+DROP TABLE IF EXISTS "testtest"."pilot" CASCADE;
+DROP TABLE IF EXISTS "testtest"."source_evidence" CASCADE;
+DROP TABLE IF EXISTS "testtest"."stakeholder" CASCADE;
+DROP TABLE IF EXISTS "testtest"."time_interval" CASCADE;
+DROP TABLE IF EXISTS "testtest"."user_action" CASCADE;
+DROP TABLE IF EXISTS "testtest"."user_in_role" CASCADE;
+DROP TABLE IF EXISTS "testtest"."user_in_system" CASCADE;
+DROP TABLE IF EXISTS "testtest"."value_evidence_notice" CASCADE;
+DROP TABLE IF EXISTS "testtest"."variation_measure_value" CASCADE;
+
+DROP VIEW IF EXISTS "testtest"."vw_detection_variable_derivation_per_user_in_role" CASCADE;
+DROP VIEW IF EXISTS "testtest"."vw_gef_values_persisted_source_ges_types" CASCADE;
+DROP VIEW IF EXISTS "testtest"."vw_mea_ges_timeinterval" CASCADE;
+DROP VIEW IF EXISTS "testtest"."vw_mea_nui_derivation_per_pilots" CASCADE;
+DROP VIEW IF EXISTS "testtest"."vw_nui_values_persisted_source_mea_types" CASCADE;
+
+CREATE SEQUENCE assessment_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE cd_action_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE cd_activity_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE cd_detection_variable_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE location_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE cd_role_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE cd_metric_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE cr_profile_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE eam_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE executed_action_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE executed_activity_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE geriatric_factor_value_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE inter_activity_behaviour_variation_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE location_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE mtesting_readings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE md_pilot_detection_variable_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE numeric_indicator_value_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE source_evidence_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE time_interval_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE user_action_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE user_in_role_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE user_in_system_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE value_evidence_notice_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE SEQUENCE variation_measure_value_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE assessed_gef_value_set (
+    gef_value_id integer NOT NULL,
+    assessment_id integer,
+	CONSTRAINT assessed_gef_value_set_pkey PRIMARY KEY (gef_value_id, assessment_id)
+);
+
+CREATE TABLE assessment (
+    id integer DEFAULT nextval('assessment_seq'::regclass) NOT NULL,
+    assessment_comment character varying,
+    data_validity_status character varying(1),
+    created timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    updated timestamp with time zone,
+    risk_status character varying(1),
+    author_id integer,
+	CONSTRAINT assessment_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE assessment_audience_role (
+    assessment_id integer NOT NULL,
+    role_id integer,
+    assigned timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+	CONSTRAINT assessment_audience_role_pkey PRIMARY KEY (assessment_id, role_id)
+);
+
+CREATE TABLE care_profile (
+    user_in_role_id integer NOT NULL,
+    individual_summary character varying,
+    attention_status character varying(1),
+    intervention_status character varying(1),
+    last_intervention_date timestamp with time zone,
+    created timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    last_updated timestamp with time zone,
+    created_by integer,
+    last_updated_by integer,
+	CONSTRAINT care_profile_pkey PRIMARY KEY (user_in_role_id)
+);
+
+CREATE TABLE cd_action (
+    id integer DEFAULT nextval('cd_action_id_seq'::regclass) NOT NULL,
+    action_name character varying(50),
+    action_category character varying(25),
+    action_description character varying(250),
+	CONSTRAINT cd_action_action_name_key UNIQUE (action_name),
+	CONSTRAINT cd_action_pkey PRIMARY KEY (id)
+	
+);
+
+CREATE TABLE cd_activity (
+    id integer DEFAULT nextval('cd_activity_id_seq'::regclass) NOT NULL,
+    activity_name character varying(50),
+    activity_description character varying(200),
+    creation_date timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    instrumental boolean,
+	CONSTRAINT cd_activity_activity_name_key UNIQUE (activity_name),
+	CONSTRAINT cd_activity_pkey PRIMARY KEY (id)	
+);
+
+CREATE TABLE cd_data_source_type (
+    data_source_type character varying(3) NOT NULL,
+    data_source_type_description character varying(250),
+    obtrusive boolean,
+	CONSTRAINT cd_data_source_type_pkey PRIMARY KEY (data_source_type)
+);
+
+CREATE TABLE cd_detection_variable (
+    id integer DEFAULT nextval('cd_detection_variable_seq'::regclass) NOT NULL,
+    detection_variable_name character varying(100),
+    valid_from timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    valid_to timestamp with time zone,
+    default_derivation_weight numeric(5,2),
+    source_datatype character varying(25),
+    base_unit character varying(50),
+    detection_variable_type character varying(3),
+    default_typical_period character varying(3),
+    derived_detection_variable_id integer,
+	CONSTRAINT cd_detection_variable_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE cd_detection_variable_type (
+    detection_variable_type character varying(3) NOT NULL,
+    detection_variable_type_description character varying(255),
+	CONSTRAINT cd_detection_variable_type_pkey PRIMARY KEY (detection_variable_type)
+);
+
+CREATE TABLE cd_frailty_status (
+    frailty_status character varying(9) NOT NULL,
+    frailty_status_description character varying(255),
+	CONSTRAINT cd_frailty_status_pkey PRIMARY KEY (frailty_status)
+);
+
+CREATE TABLE cd_location_type (
+    id integer DEFAULT nextval('location_type_id_seq'::regclass) NOT NULL,
+    location_type_name character varying(50),
+	CONSTRAINT cd_location_type_location_type_name_key UNIQUE (location_type_name),
+	CONSTRAINT cd_location_type_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE cd_metric (
+    id integer DEFAULT nextval('cd_metric_seq'::regclass) NOT NULL,
+    metric_name character varying(50),
+    metric_description character varying(255),
+    metric_base_unit character varying(50),
+	CONSTRAINT cd_metric_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE cd_risk_status (
+    risk_status character varying(1) NOT NULL,
+    risk_status_description character varying(250),
+    confidence_rating numeric(3,2),
+    icon_image bytea,
+    icon_image_path character varying(200),
+	CONSTRAINT cd_risk_status_pkey PRIMARY KEY (risk_status)
+);
+
+CREATE TABLE cd_role (
+    id integer DEFAULT nextval('cd_role_seq'::regclass) NOT NULL,
+    role_name character varying(50),
+    role_abbreviation character varying(3),
+    role_description character varying(350),
+    valid_from timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    valid_to timestamp with time zone,
+    stakeholder_abbreviation character varying(3),
+	CONSTRAINT cd_role_pkey PRIMARY KEY (id),
+	CONSTRAINT cd_role_role_name_key UNIQUE (role_name)
+);
+
+CREATE TABLE cd_typical_period (
+    typical_period character varying(3) NOT NULL,
+    period_description character varying(50),
+    typical_duration integer,
+	CONSTRAINT cd_typical_period_pkey PRIMARY KEY (typical_period)
+);
+
+CREATE TABLE cr_profile (
+    id integer DEFAULT nextval('cr_profile_seq'::regclass) NOT NULL,
+    ref_height real,
+    ref_weight real,
+    ref_mean_blood_pressure numeric(5,2),
+    date timestamp with time zone,
+    birth_date timestamp with time zone,
+    gender boolean,
+    user_in_role_id integer,
+	CONSTRAINT cr_profile_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE eam (
+    id integer DEFAULT nextval('eam_seq'::regclass) NOT NULL,
+    duration integer,
+    executed_activity_id integer,
+    cd_action_id integer,
+	CONSTRAINT eam_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE executed_action (
+    id integer DEFAULT nextval('executed_action_id_seq'::regclass) NOT NULL,
+    acquisition_datetime timestamp with time zone DEFAULT timezone('utc'::text, clock_timestamp()),
+    execution_datetime timestamp with time zone,
+    rating numeric(5,2),
+    sensor_id integer,
+    "position" character varying(25),
+    data_source_type character varying(1000),
+    extra_information character varying(1000),
+    user_in_role_id integer,
+    cd_action_id integer,
+    executed_activity_id integer,
+    location_id integer,
+	CONSTRAINT executed_action_pkey PRIMARY KEY (id),
+	CONSTRAINT executed_action_uq UNIQUE (execution_datetime, user_in_role_id, cd_action_id, location_id)
+);
+
+CREATE TABLE executed_activity (
+    id integer DEFAULT nextval('executed_activity_id_seq'::regclass) NOT NULL,
+    start_time timestamp with time zone,
+    end_time timestamp with time zone,
+    duration integer,
+    data_source_type character varying(200),
+    user_in_role_id integer,
+    time_interval_id integer,
+    cd_activity_id integer,
+	CONSTRAINT executed_activity_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE executed_activity_executed_action_rel (
+    executed_activity_id integer NOT NULL,
+    executed_action_id integer NOT NULL,
+	CONSTRAINT executed_activity_executed_action_rel_pkey PRIMARY KEY (executed_activity_id, executed_action_id)
+);
+
+CREATE TABLE frailty_status_timeline (
+    time_interval_id integer NOT NULL,
+    user_in_role_id integer,
+    changed timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    frailty_status character varying(9),
+    frailty_notice character varying(200),
+    changed_by integer,
+	CONSTRAINT frailty_status_timeline1_uq UNIQUE (time_interval_id, user_in_role_id, frailty_status),
+	CONSTRAINT frailty_status_timeline_pkey PRIMARY KEY (time_interval_id, user_in_role_id, changed, frailty_status)
+);
+
+CREATE TABLE geriatric_factor_value (
+    id integer DEFAULT nextval('geriatric_factor_value_seq'::regclass) NOT NULL,
+    gef_value numeric(3,2),
+    derivation_weight numeric(5,2),
+    data_source_type character varying(1000),
+    time_interval_id integer,
+    user_in_role_id integer,
+    gef_type_id integer,
+	CONSTRAINT geriatric_factor_value_pkey PRIMARY KEY (id),
+	CONSTRAINT geriatric_factor_value_uq UNIQUE (user_in_role_id, gef_type_id, time_interval_id)
+);
+
+CREATE TABLE inter_activity_behaviour_variation (
+    id integer DEFAULT nextval('inter_activity_behaviour_variation_seq'::regclass) NOT NULL,
+    deviation real,
+    expected_activity_id integer,
+    real_activity_id integer,
+    numeric_indicator_id integer,
+	CONSTRAINT inter_activity_behaviour_variation_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE location (
+    id integer DEFAULT nextval('location_id_seq'::regclass) NOT NULL,
+    location_name character varying(500),
+    indoor boolean,
+    pilot_code character varying(3),
+	CONSTRAINT location_location_name_key UNIQUE (location_name),
+	CONSTRAINT location_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE location_cd_location_type_rel (
+    location_id integer NOT NULL,
+    location_type_id integer NOT NULL,
+    parent_location_type_id integer,
+	CONSTRAINT location_cd_location_type_rel_pkey PRIMARY KEY (location_id, location_type_id)
+);
+
+CREATE TABLE location_location_type_rel (
+    location_id integer NOT NULL,
+    location_type_id integer NOT NULL,
+	CONSTRAINT location_location_type_rel_pkey PRIMARY KEY (location_id, location_type_id)
+);
+
+CREATE TABLE location_type (
+    id integer DEFAULT nextval('location_type_id_seq'::regclass) NOT NULL,
+    location_type_name character varying(50),
+	CONSTRAINT location_type_location_type_name_key UNIQUE (location_type_name),
+	CONSTRAINT location_type_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE md_pilot_detection_variable (
+    id integer DEFAULT nextval('md_pilot_detection_variable_id_seq'::regclass) NOT NULL,
+    derivation_function_formula text,
+    derivation_weight numeric(5,2),
+    valid_from timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    valid_to timestamp with time zone,
+    detection_variable_usage_status character varying(3),
+    pilot_code character varying(3),
+    main_data_source_type character varying(3),
+    detection_variable_id integer,
+    derived_detection_variable_id integer,
+	CONSTRAINT md_pilot_detection_variable_natural1_uq UNIQUE (pilot_code, detection_variable_id, derived_detection_variable_id),
+	CONSTRAINT md_pilot_detection_variable_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE mtesting_readings (
+    id integer DEFAULT nextval('mtesting_readings_id_seq'::regclass) NOT NULL,
+    start_time timestamp(6) with time zone,
+    end_time timestamp(6) with time zone,
+    cd_activity_id integer,
+    user_in_role_id integer,
+    sensor_id character varying(50),
+    extra_information character varying(5000),
+    action_name character varying(50),
+    gps_longitude numeric(11,8),
+    gps_latitude numeric(10,8),
+    bluetooth_devices character varying(5000),
+    wifi_devices character varying(5000) DEFAULT ''::character varying,
+    google_api_movement_recognition character varying(5000)
+);
+
+CREATE TABLE numeric_indicator_value (
+    id integer DEFAULT nextval('numeric_indicator_value_seq'::regclass) NOT NULL,
+    nui_value numeric(10,2),
+    data_source_type character varying(1000),
+    nui_type_id integer,
+    time_interval_id integer,
+    user_in_role_id integer,
+	CONSTRAINT numeric_indicator_value_pkey PRIMARY KEY (id),
+	CONSTRAINT numeric_indicator_value_uq UNIQUE (user_in_role_id, nui_type_id, time_interval_id)
+);
+
+CREATE TABLE payload_value (
+    cd_metric_id integer NOT NULL,
+    cd_action_id integer NOT NULL,
+    acquisition_datetime timestamp with time zone NOT NULL,
+    execution_datetime timestamp with time zone NOT NULL,
+    value character varying(50) NOT NULL,
+	CONSTRAINT payload_value_pkey PRIMARY KEY (cd_metric_id, cd_action_id, acquisition_datetime)
+);
+
+CREATE TABLE pilot (
+    pilot_code character varying(3) NOT NULL,
+    pilot_name character varying(50),
+    population_size bigint,
+    latest_data_submission_completed timestamp with time zone,
+    latest_derived_detection_variables_computed timestamp with time zone,
+    latest_configuration_update timestamp with time zone,
+	CONSTRAINT pilot_pilot_name_key UNIQUE (pilot_name),
+	CONSTRAINT pilot_pkey PRIMARY KEY (pilot_code)
+);
+
+CREATE TABLE source_evidence (
+    id integer DEFAULT nextval('source_evidence_seq'::regclass) NOT NULL,
+    text_evidence text,
+    multimedia_evidence bytea,
+    uploaded timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    author_id integer,
+	CONSTRAINT source_evidence_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE stakeholder (
+    abbreviation character varying(3) NOT NULL,
+    stakeholder_name character varying(100),
+    stakeholder_description character varying(250),
+    valid_from timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    valid_to timestamp with time zone,
+	CONSTRAINT stakeholder_pkey PRIMARY KEY (abbreviation)
+);
+
+CREATE TABLE time_interval (
+    id integer DEFAULT nextval('time_interval_seq'::regclass) NOT NULL,
+    interval_start timestamp with time zone,
+    interval_end timestamp with time zone,
+    typical_period character varying(3),
+    created timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+	CONSTRAINT time_interval_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE user_action (
+    id integer DEFAULT nextval('user_action_seq'::regclass) NOT NULL,
+    route character varying(25),
+    data character varying(255),
+    ip character varying(60),
+    agent character varying(255),
+    date timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    status_code integer,
+    user_in_system_id integer,
+	CONSTRAINT user_action_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE user_in_role (
+    id integer DEFAULT nextval('user_in_role_seq'::regclass) NOT NULL,
+    valid_from timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    valid_to timestamp with time zone,
+    pilot_source_user_id character varying(20),
+    user_in_system_id integer,
+    cd_role_id integer,
+    pilot_code character varying(3),
+	CONSTRAINT user_in_role_natural1_uq UNIQUE (user_in_system_id, cd_role_id, pilot_code, valid_from, valid_to),
+	CONSTRAINT user_in_role_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE user_in_system (
+    id integer DEFAULT nextval('user_in_system_seq'::regclass) NOT NULL,
+    username character varying(50),
+    password text,
+    display_name character varying(100),
+    created_date timestamp with time zone DEFAULT timezone('utc'::text, CURRENT_TIMESTAMP),
+    is_active boolean,
+	CONSTRAINT user_in_system_pkey PRIMARY KEY (id),
+	CONSTRAINT user_in_system_username_key UNIQUE (username)
+);
+
+CREATE TABLE value_evidence_notice (
+    id integer DEFAULT nextval('value_evidence_notice_seq'::regclass) NOT NULL,
+    notice character varying(2000),
+    source_evidence_id integer,
+    author_id integer,
+    value_id integer,
+	CONSTRAINT value_evidence_notice_pkey PRIMARY KEY (id),
+	CONSTRAINT value_evidence_notice_uq UNIQUE (value_id, notice)
+);
+
+CREATE TABLE variation_measure_value (
+    id integer DEFAULT nextval('variation_measure_value_seq'::regclass) NOT NULL,
+    measure_value numeric(30,10),
+    data_source_type character varying(1000),
+    extra_information character varying(1000),
+    executed_activity_id integer,
+    user_in_role_id integer,
+    measure_type_id integer,
+    time_interval_id integer,
+	CONSTRAINT variation_measure_value_pkey PRIMARY KEY (id),
+	CONSTRAINT variation_measure_value_uq UNIQUE (user_in_role_id, measure_type_id, time_interval_id)
+);
+
+CREATE VIEW vw_detection_variable_derivation_per_user_in_role AS
  SELECT uir.id AS user_in_role_id,
-    uir.role_id,
+    uir.cd_role_id,
     uir.pilot_code,
     mpdv.id AS mpdv_id,
     mpdv.detection_variable_id,
@@ -129,53 +647,15 @@ CREATE OR REPLACE VIEW "testtest"."vw_detection_variable_derivation_per_user_in_
     cdv1.detection_variable_type AS derived_detection_variable_type,
     mpdv.derivation_weight,
     mpdv.derivation_function_formula,
-    cdv1.default_typical_period AS detection_variable_default_period
-   FROM (((testtest.user_in_role uir
-     JOIN testtest.md_pilot_detection_variable mpdv ON (((uir.pilot_code)::text = (mpdv.pilot_code)::text)))
-     JOIN testtest.cd_detection_variable cdv0 ON ((mpdv.detection_variable_id = cdv0.id)))
-     JOIN testtest.cd_detection_variable cdv1 ON ((mpdv.derived_detection_variable_id = cdv1.id)))
+    cdv0.default_typical_period AS detection_variable_default_period,
+    cdv1.default_typical_period AS derived_detection_variable_default_period
+   FROM (((user_in_role uir
+     JOIN md_pilot_detection_variable mpdv ON (((uir.pilot_code)::text = (mpdv.pilot_code)::text)))
+     JOIN cd_detection_variable cdv0 ON ((mpdv.detection_variable_id = cdv0.id)))
+     JOIN cd_detection_variable cdv1 ON ((mpdv.derived_detection_variable_id = cdv1.id)))
   WHERE (mpdv.pilot_code IS NOT NULL);
 
-ALTER TABLE "testtest"."vw_detection_variable_derivation_per_user_in_role" OWNER TO "testtest";
-CREATE OR REPLACE VIEW "testtest"."vw_mea_nui_derivation_per_pilots" AS 
- SELECT DISTINCT vw_detection_variable_derivation_per_user_in_role.mpdv_id,
-    vw_detection_variable_derivation_per_user_in_role.pilot_code,
-    vw_detection_variable_derivation_per_user_in_role.detection_variable_id AS mea_id,
-    vw_detection_variable_derivation_per_user_in_role.detection_variable_name AS mea_name,
-	vw_detection_variable_derivation_per_user_in_role.derivation_function_formula AS formula,
-    vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_id AS derived_nui_id,
-    vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_name AS derived_nui_name,
-    vw_detection_variable_derivation_per_user_in_role.derivation_weight
-   FROM testtest.vw_detection_variable_derivation_per_user_in_role
-  WHERE (((vw_detection_variable_derivation_per_user_in_role.detection_variable_type)::text = 'MEA'::text) AND ((vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_type)::text = 'NUI'::text));
-
-ALTER TABLE "testtest"."vw_mea_nui_derivation_per_pilots" OWNER TO "city4age_dba";
-
-COMMENT ON VIEW "testtest"."vw_mea_nui_derivation_per_pilots" IS 'Derivation of NUIs from MEAs';
-CREATE OR REPLACE VIEW "testtest"."vw_nui_values_persisted_source_mea_types" AS 
- SELECT DISTINCT vmnd.mpdv_id,
-    vmnd.pilot_code,
-    nui_v.user_in_role_id,
-    vmnd.mea_id,
-    vmnd.mea_name,
-    vmnd.derived_nui_id,
-    vmnd.derived_nui_name,
-    nui_v.id,
-    nui_v.nui_value,
-    vmnd.derivation_weight,
-    ti.id AS time_interval_id,
-    ti.interval_start,
-    ti.typical_period,
-    ti.interval_end
-   FROM ((testtest.vw_mea_nui_derivation_per_pilots vmnd
-     JOIN testtest.numeric_indicator_value nui_v ON ((nui_v.nui_type_id = vmnd.derived_nui_id)))
-     JOIN testtest.time_interval ti ON ((nui_v.time_interval_id = ti.id)))
-  WHERE (nui_v.user_in_role_id IN ( SELECT user_in_role.id
-           FROM testtest.user_in_role
-          WHERE ((user_in_role.pilot_code)::text = (vmnd.pilot_code)::text)));
-
-ALTER TABLE "testtest"."vw_nui_values_persisted_source_mea_types" OWNER TO "postgres";
-CREATE OR REPLACE VIEW "testtest"."vw_gef_values_persisted_source_ges_types" AS 
+CREATE VIEW vw_gef_values_persisted_source_ges_types AS
  SELECT vggd.mpdv_id,
     vggd.pilot_code,
     gef_v.user_in_role_id,
@@ -192,9 +672,64 @@ CREATE OR REPLACE VIEW "testtest"."vw_gef_values_persisted_source_ges_types" AS
     ti.interval_start,
     ti.typical_period,
     ti.interval_end
-   FROM ((testtest.vw_detection_variable_derivation_per_user_in_role vggd
-     JOIN testtest.geriatric_factor_value gef_v ON (((gef_v.gef_type_id = vggd.detection_variable_id) AND (gef_v.user_in_role_id = vggd.user_in_role_id))))
-     JOIN testtest.time_interval ti ON ((gef_v.time_interval_id = ti.id)))
-  WHERE ((vggd.detection_variable_type)::text = ANY (ARRAY[('GES'::character varying)::text, ('GEF'::character varying)::text, ('GFG'::character varying)::text, ('OVL'::character varying)::text]));
+   FROM ((vw_detection_variable_derivation_per_user_in_role vggd
+     JOIN geriatric_factor_value gef_v ON (((gef_v.gef_type_id = vggd.detection_variable_id) AND (gef_v.user_in_role_id = vggd.user_in_role_id))))
+     JOIN time_interval ti ON ((gef_v.time_interval_id = ti.id)))
+  WHERE ((vggd.detection_variable_type)::text = ANY (ARRAY[('ges'::character varying)::text, ('gef'::character varying)::text, ('gfg'::character varying)::text, ('ovl'::character varying)::text]));
 
-ALTER TABLE "testtest"."vw_gef_values_persisted_source_ges_types" OWNER TO "city4age_dba";
+CREATE VIEW vw_mea_ges_timeinterval AS
+ SELECT vwdv.user_in_role_id,
+    vwdv.pilot_code,
+    vwdv.detection_variable_id,
+    vwdv.detection_variable_type,
+    vwdv.derived_detection_variable_id,
+    vwdv.derivation_weight,
+    vwdv.detection_variable_default_period,
+    vwdv2.derivation_weight AS w2,
+    ti.interval_start,
+    ti.interval_end
+   FROM (((vw_detection_variable_derivation_per_user_in_role vwdv
+     JOIN vw_detection_variable_derivation_per_user_in_role vwdv2 ON (((vwdv2.detection_variable_id = vwdv.derived_detection_variable_id) AND (vwdv.user_in_role_id = vwdv2.user_in_role_id))))
+     JOIN variation_measure_value vmv ON ((vwdv.user_in_role_id = vmv.user_in_role_id)))
+     JOIN time_interval ti ON ((ti.id = vmv.time_interval_id)))
+  WHERE (((vwdv.detection_variable_type)::text = 'mea'::text) AND (vwdv.derived_detection_variable_id IN ( SELECT vwd.detection_variable_id
+           FROM vw_detection_variable_derivation_per_user_in_role vwd
+          WHERE ((vwd.detection_variable_type)::text = 'ges'::text))));
+
+CREATE VIEW vw_mea_nui_derivation_per_pilots AS
+ SELECT DISTINCT vw_detection_variable_derivation_per_user_in_role.mpdv_id,
+    vw_detection_variable_derivation_per_user_in_role.pilot_code,
+    vw_detection_variable_derivation_per_user_in_role.detection_variable_id AS mea_id,
+    vw_detection_variable_derivation_per_user_in_role.detection_variable_name AS mea_name,
+    vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_id AS derived_nui_id,
+    vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_name AS derived_nui_name,
+    vw_detection_variable_derivation_per_user_in_role.derivation_weight,
+    vw_detection_variable_derivation_per_user_in_role.derivation_function_formula AS formula
+   FROM vw_detection_variable_derivation_per_user_in_role
+  WHERE (((vw_detection_variable_derivation_per_user_in_role.detection_variable_type)::text = 'mea'::text) AND ((vw_detection_variable_derivation_per_user_in_role.derived_detection_variable_type)::text = 'nui'::text));
+
+CREATE VIEW vw_nui_values_persisted_source_mea_types AS
+ SELECT DISTINCT vmnd.mpdv_id,
+    vmnd.pilot_code,
+    nui_v.user_in_role_id,
+    vmnd.mea_id,
+    vmnd.mea_name,
+    vmnd.derived_nui_id,
+    vmnd.derived_nui_name,
+    nui_v.id,
+    nui_v.nui_value,
+    vmnd.derivation_weight,
+    ti.id AS time_interval_id,
+    ti.interval_start,
+    ti.typical_period,
+    ti.interval_end
+   FROM ((vw_mea_nui_derivation_per_pilots vmnd
+     JOIN numeric_indicator_value nui_v ON ((nui_v.nui_type_id = vmnd.derived_nui_id)))
+     JOIN time_interval ti ON ((nui_v.time_interval_id = ti.id)))
+  WHERE (nui_v.user_in_role_id IN ( SELECT user_in_role.id
+           FROM user_in_role
+          WHERE ((user_in_role.pilot_code)::text = (vmnd.pilot_code)::text)));
+
+CREATE UNIQUE INDEX time_interval_with_end_uq ON time_interval USING btree (interval_start, interval_end) WHERE (interval_end IS NOT NULL);
+
+CREATE UNIQUE INDEX time_interval_with_typical_period_uq ON time_interval USING btree (interval_start, typical_period) WHERE (typical_period IS NOT NULL);
