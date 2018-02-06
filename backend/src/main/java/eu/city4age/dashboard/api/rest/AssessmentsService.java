@@ -118,7 +118,7 @@ public class AssessmentsService {
 
 		DataSet response = new DataSet();
 		
-    	List<TimeInterval> tis = getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
+    	List<TimeInterval> tis = timeIntervalRepository.getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
     	
     	if (tis.size() > 0) {
 			String timeZone = tis.get(0).getGeriatricFactorValue().iterator().next().getUserInRole().getPilot().getTimeZone();
@@ -162,10 +162,6 @@ public class AssessmentsService {
 
 	}
 	
-	public List<TimeInterval> getDiagramDataForUserInRoleId(Long careRecipientId, Long parentFactorId) {
-		return timeIntervalRepository.getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
-	}
-	
 	private List<String> createMonthLabels(List<TimeInterval> months, String timeZone) {
 		List<String> monthLabels = new ArrayList<String>();
     	
@@ -203,8 +199,7 @@ public class AssessmentsService {
 		List<Object[]> l5a = new ArrayList<Object[]>();
 
 		try {
-			l5a = getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId,
-					intervalStartTimestamp, intervalEndTimestamp);
+			l5a = nativeQueryRepository.getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId, intervalStartTimestamp, intervalEndTimestamp);
 		} catch (Exception e) {
 			logger.info("getLastFiveForDiagram REST service - query exception: ", e);
 		}
@@ -212,11 +207,6 @@ public class AssessmentsService {
 		OJDiagramLast5Assessment ojLfa = transformToOJ(l5a);
 
 		return JerseyResponse.build(objectMapper.writeValueAsString(ojLfa));
-	}
-	
-
-	public List<Object[]> getLast5AssessmentsForDiagramTimeline(Long userInRoleId, Long parentDetectionVariableId, Timestamp start, Timestamp end) {
-		return nativeQueryRepository.getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId, start, end);
 	}
 
 	@GET

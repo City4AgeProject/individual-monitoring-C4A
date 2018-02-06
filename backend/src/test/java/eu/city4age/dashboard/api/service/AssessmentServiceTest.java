@@ -20,22 +20,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
@@ -57,18 +54,15 @@ import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.UserInSystemRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
-import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
-import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataSet;
-import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.rest.AssessmentsService;
 import eu.city4age.dashboard.api.rest.MeasuresService;
 
@@ -105,6 +99,9 @@ public class AssessmentServiceTest {
 
 	@Autowired
 	private TypicalPeriodRepository typicalPeriodRepository;
+	
+	@Mock
+	private TimeIntervalRepository timeIntervalRepositoryMock;
 
 	@Autowired
 	private AssessmentRepository assessmentRepository;
@@ -117,6 +114,9 @@ public class AssessmentServiceTest {
 	
 	@Autowired
 	private PilotRepository pilotRepository;
+	
+	@Mock
+	private NativeQueryRepository nativeQueryRepositoryMock;
 	
 	@Autowired
 	private NativeQueryRepository nativeQueryRepository;
@@ -280,7 +280,7 @@ public class AssessmentServiceTest {
 		
 		List<Object[]> result = nativeQueryRepository.getLast5AssessmentsForDiagramTimeline(uir1.getId(), ddv1.getId(), start, end);
 		
-		Mockito.doReturn(result).when(assessmentService).getLast5AssessmentsForDiagramTimeline(uir1.getId(), ddv1.getId(), start, end);
+		Mockito.when(nativeQueryRepositoryMock.getLast5AssessmentsForDiagramTimeline(uir1.getId(), ddv1.getId(), start, end)).thenReturn(result);
 		
 		Response response = assessmentService.getLast5ForDiagram(uir1.getId(), ddv1.getId(), "2015-01-01", "2017-01-01");
 		
@@ -399,7 +399,7 @@ public class AssessmentServiceTest {
 
 		List<TimeInterval> result = timeIntervalRepository.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId());
 		
-		Mockito.doReturn(result).when(assessmentService).getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId());
+		Mockito.when(timeIntervalRepositoryMock.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId())).thenReturn(result);
 		
 		Response response = assessmentService.getDiagramData(uir1.getId(), dv1.getId());
 		
