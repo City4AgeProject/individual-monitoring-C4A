@@ -203,7 +203,7 @@ public class AssessmentsService {
 		List<Object[]> l5a = new ArrayList<Object[]>();
 
 		try {
-			l5a = nativeQueryRepository.getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId,
+			l5a = getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId,
 					intervalStartTimestamp, intervalEndTimestamp);
 		} catch (Exception e) {
 			logger.info("getLastFiveForDiagram REST service - query exception: ", e);
@@ -212,6 +212,11 @@ public class AssessmentsService {
 		OJDiagramLast5Assessment ojLfa = transformToOJ(l5a);
 
 		return JerseyResponse.build(objectMapper.writeValueAsString(ojLfa));
+	}
+	
+
+	public List<Object[]> getLast5AssessmentsForDiagramTimeline(Long userInRoleId, Long parentDetectionVariableId, Timestamp start, Timestamp end) {
+		return nativeQueryRepository.getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId, start, end);
 	}
 
 	@GET
@@ -474,5 +479,6 @@ public class AssessmentsService {
 		return ojLfa;
 
 	}
+
 
 }
