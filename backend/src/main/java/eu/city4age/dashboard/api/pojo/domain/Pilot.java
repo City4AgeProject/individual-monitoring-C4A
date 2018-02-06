@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,9 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Entity
 @Table(name = "pilot")
 public class Pilot implements Serializable {
+	
+	static protected Logger logger = LogManager.getLogger(Pilot.class);
 
 	/**
 	 * 
@@ -47,10 +51,6 @@ public class Pilot implements Serializable {
 	@Column(name = "population_size")
 	private Double populationSize;
 
-	/*@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	@OneToMany(mappedBy = "pilot", fetch = FetchType.LAZY)
-	private Set<Location> locations = new HashSet<Location>(0);*/
-
 	@Column(name = "latest_data_submission_completed")
 	private Date latestSubmissionCompleted;
 
@@ -73,14 +73,14 @@ public class Pilot implements Serializable {
 	private String timeZone;
 
 	public Pilot() {
-		lastSubmitted = YearMonth.of(2017, 2);
+		this.lastSubmitted = YearMonth.of(2017, 2);
 	}
 
-	public Pilot(String name, Pilot.PilotCode pilotCode, Double populationSize, Set<Location> locations) {
+	public Pilot(String name, Pilot.PilotCode pilotCode, Double populationSize) {
+		this.lastSubmitted = YearMonth.of(2017, 2);
 		this.name = name;
 		this.pilotCode = pilotCode;
 		this.populationSize = populationSize;
-		//this.locations = locations;
 	}
 
 	public String getName() {
@@ -106,14 +106,6 @@ public class Pilot implements Serializable {
 	public void setPopulationSize(Double populationSize) {
 		this.populationSize = populationSize;
 	}
-
-	/*public Set<Location> getLocations() {
-		return this.locations;
-	}
-
-	public void setLocations(Set<Location> locations) {
-		this.locations = locations;
-	}*/
 
 	public YearMonth getLastSubmitted() {
 		return lastSubmitted;
@@ -167,21 +159,14 @@ public class Pilot implements Serializable {
 	public void setLatestConfigurationUpdate(Date latestConfigurationUpdate) {
 		this.latestConfigurationUpdate = latestConfigurationUpdate;
 	}
-	
+
 	public String getTimeZone() {
-		switch(this.pilotCode) {
-			case ATH:
-				return "Europe/Athens";			
-			case BHX:
-				return "Europe/London";
-			case SIN:
-				return "Asia/Singapore";
-			default:
-				return "Europe/Paris";
-		}
+		logger.info("pilot timeZone getter: " + timeZone);
+		return timeZone;
 	}
 
 	public void setTimeZone(String timeZone) {
+		logger.info("pilot timeZone setter: " + timeZone);
 		this.timeZone = timeZone;
 	}
 

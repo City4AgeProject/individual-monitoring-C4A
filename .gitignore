@@ -1,1 +1,7 @@
-/frontend/nbproject/
+/frontend/nbproject/*
+/frontend/target/*
+/backend/target/*
+/backend/bin/*
+/build/target/*
+/build/RemoteSystemsTempFiles/*
+/target/*

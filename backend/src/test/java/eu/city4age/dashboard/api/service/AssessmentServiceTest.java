@@ -2,8 +2,12 @@ package eu.city4age.dashboard.api.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.ws.rs.core.Response;
 
@@ -14,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -47,7 +50,6 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
-import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -55,7 +57,6 @@ import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataSet;
 import eu.city4age.dashboard.api.rest.AssessmentsService;
 import eu.city4age.dashboard.api.rest.MeasuresService;
-import org.mockito.runners.MockitoJUnitRunner;
 
 
 
@@ -129,24 +130,28 @@ public class AssessmentServiceTest {
 		 * 1 value for each detection variable
 		 */
 		
-		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
-				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-				
-		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),
-				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		String zone = "Europe/Athens";
 		
-		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"),
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+3
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);	
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-01-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-				
-		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),
+		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		
-		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
+		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-02-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		
+		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+3
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+	
 		Pilot p1 = new Pilot();
 		p1.setPilotCode(Pilot.PilotCode.LCC);
+		p1.setTimeZone(zone);
 		pilotRepository.save(p1);
+		
+
+		SimpleDateFormat isoFormat = new SimpleDateFormat("MM/yyyy");
+		isoFormat.setTimeZone(TimeZone.getTimeZone(p1.getTimeZone()));
+		String dateInTZ = isoFormat.format(ti1.getIntervalStart());
 		
 		UserInSystem uis1 = new UserInSystem();
 		userInSystemRepository.save(uis1);
@@ -154,6 +159,7 @@ public class AssessmentServiceTest {
 		UserInRole uir1 = new UserInRole();
 		uir1.setUserInSystem(uis1);
 		uir1.setPilotCode(Pilot.PilotCode.LCC);
+		uir1.setPilot(p1);
 		userInRoleRepository.save(uir1);
 		
 		DetectionVariableType dvt1 = DetectionVariableType.GEF;
@@ -192,6 +198,7 @@ public class AssessmentServiceTest {
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setTimeInterval(ti3);
 		gef1.setUserInRoleId(uir1.getId());
+		gef1.setUserInRole(uir1);
 		gef1.setDetectionVariableId(dv2.getId());
 		gef1.setDetectionVariable(dv2);
 		gef1.setGefValue(new BigDecimal(4.0));
@@ -200,6 +207,7 @@ public class AssessmentServiceTest {
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
 		gef2.setTimeInterval(ti5);
 		gef2.setUserInRoleId(uir1.getId());
+		gef2.setUserInRole(uir1);
 		gef2.setDetectionVariableId(dv3.getId());
 		gef2.setDetectionVariable(dv3);
 		gef2.setGefValue(new BigDecimal(1.8).setScale(1, RoundingMode.HALF_UP));
@@ -218,6 +226,7 @@ public class AssessmentServiceTest {
 		detectionVariableRepository.save(dv3);
 
 		List<TimeInterval> result = timeIntervalRepository.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId());
+		
 		Mockito.doReturn(result).when(assessmentService).getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId());
 		
 		Response response = assessmentService.getDiagramData(uir1.getId(), dv1.getId());
@@ -226,7 +235,7 @@ public class AssessmentServiceTest {
 		
 		String json = objectMapper.writeValueAsString(output);
 		
-		Assert.assertEquals("{\"groups\":[\"2016-01-01 00:00:00.0\",\"2016-02-01 00:00:00.0\",\"2016-03-01 00:00:00.0\",\"2016-04-01 00:00:00.0\",\"2016-05-01 00:00:00.0\"],\"series\":[{\"name\":\"GES1\",\"items\":[null,null,4,null,null]},{\"name\":\"GES2\",\"items\":[null,null,null,null,1.8]}]}", json);
+		Assert.assertEquals("{\"groups\":[\"03/2016\",\"04/2016\",\"05/2016\"],\"series\":[{\"name\":\"GES1\",\"items\":[4,null,null]},{\"name\":\"GES2\",\"items\":[null,null,1.8]}]}", json);
 		
 	}
 

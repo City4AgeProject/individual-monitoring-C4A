@@ -2,8 +2,13 @@ package eu.city4age.dashboard.api.jpa;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -250,21 +255,17 @@ public class TimeIntervalRepositoryTest {
 	@Rollback(true)
 	public void testGetDiagramDataForUserInRoleIdAndParentId() throws Exception {
 		
-		String zone = "UTC";
+		String zone = "Europe/Athens";
 		
-		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of("UTC+2")).toInstant()),
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+3
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);	
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-01-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-				
-		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-01-01").atStartOfDay(ZoneId.of("UTC+1")).toInstant()),
+		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		
-		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+1
+		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-02-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-				
-		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-02-01").atStartOfDay(ZoneId.of("UTC+1")).toInstant()),
-				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		
-		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
+		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+3
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 	
 		Pilot p1 = new Pilot();
@@ -272,12 +273,15 @@ public class TimeIntervalRepositoryTest {
 		p1.setTimeZone(zone);
 		pilotRepository.save(p1);
 		
+		p1.getTimeZone();
+		
 		UserInSystem uis1 = new UserInSystem ();
 		userInSystemRepository.save(uis1);
 
 		UserInRole uir1 = new UserInRole();
 		uir1.setUserInSystem(uis1);
 		uir1.setPilotCode(Pilot.PilotCode.LCC);
+		uir1.setPilot(p1);
 		userInRoleRepository.save(uir1);
 		
 		DetectionVariableType dvt1 = DetectionVariableType.GEF;
@@ -316,6 +320,7 @@ public class TimeIntervalRepositoryTest {
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
 		gef1.setTimeInterval(ti3);
 		gef1.setUserInRoleId(uir1.getId());
+		gef1.setUserInRole(uir1);
 		gef1.setDetectionVariableId(dv2.getId());
 		gef1.setDetectionVariable(dv2);
 		geriatricFactorRepository.save(gef1);
@@ -323,6 +328,7 @@ public class TimeIntervalRepositoryTest {
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
 		gef2.setTimeInterval(ti5);
 		gef2.setUserInRoleId(uir1.getId());
+		gef2.setUserInRole(uir1);
 		gef2.setDetectionVariableId(dv3.getId());
 		gef2.setDetectionVariable(dv3);
 		geriatricFactorRepository.save(gef2);
@@ -349,15 +355,16 @@ public class TimeIntervalRepositoryTest {
 		Assert.assertEquals(0, result.get(1).getGeriatricFactorValue().size());
 		Assert.assertEquals(1, result.get(2).getGeriatricFactorValue().size());
 		
-		Assert.assertEquals(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of("UTC")).toInstant()), result.get(0).getIntervalStart());
-		Assert.assertEquals(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of("UTC+2")).toInstant()), result.get(1).getIntervalStart());
-		Assert.assertEquals(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of("UTC")).toInstant()), result.get(2).getIntervalStart());
+		Assert.assertEquals(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(0).getIntervalStart());
+		Assert.assertEquals(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(1).getIntervalStart());
+		Assert.assertEquals(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(2).getIntervalStart());
 		
 		Assert.assertEquals("GES1", result.get(0).getGeriatricFactorValue().iterator().next().getDetectionVariable().getDetectionVariableName());
 		Assert.assertEquals("GES2", result.get(2).getGeriatricFactorValue().iterator().next().getDetectionVariable().getDetectionVariableName());
 		
 		Assert.assertEquals(Pilot.PilotCode.LCC, result.get(0).getGeriatricFactorValue().iterator().next().getDetectionVariable().getPilotDetectionVariable().iterator().next().getPilotCode());		
 		Assert.assertEquals(Pilot.PilotCode.LCC, result.get(2).getGeriatricFactorValue().iterator().next().getDetectionVariable().getPilotDetectionVariable().iterator().next().getPilotCode());	
+	
 	}
 
 }

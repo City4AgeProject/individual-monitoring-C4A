@@ -3,6 +3,7 @@ package eu.city4age.dashboard.api.rest;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -118,38 +120,44 @@ public class AssessmentsService {
 		
     	List<TimeInterval> tis = getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
     	
-    	List<String> monthLabels = createMonthLabels(tis);
-    	
-    	response.setGroups(monthLabels);
-
-    	Set<DetectionVariable> dvs = new HashSet<DetectionVariable>();
-    	
-    	for(TimeInterval ti : tis) {
-    		for(GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
-    			dvs.add(gef.getDetectionVariable());
-    		}
-    	}
-    	
-    	for(DetectionVariable dv : dvs) {
-    		
-			String detectionVariableName = dv.getDetectionVariableName();
+    	if (tis.size() > 0) {
+			String timeZone = tis.get(0).getGeriatricFactorValue().iterator().next().getUserInRole().getPilot().getTimeZone();
 			
-			eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie series
-				= new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie(detectionVariableName);
-    		
-			for(TimeInterval ti : tis) {
-				Boolean gefAdded = false;
-    			for(GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
-	    			if(gefAdded != true && dv.getId().equals(gef.getDetectionVariable().getId())) {
-	    				series.getItems().add(gef.getGefValue());
-	    				gefAdded = true;
-	    			}
-    			}
-				if(gefAdded != true) series.getItems().add(null);	
-    		}
-			response.getSeries().add(series);
-    	}
-    	
+			List<String> monthLabels = createMonthLabels(tis, timeZone);
+			
+			response.setGroups(monthLabels);
+			
+			Set<DetectionVariable> dvs = new HashSet<DetectionVariable>();
+			
+			for (TimeInterval ti : tis) {
+				for (GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
+					dvs.add(gef.getDetectionVariable());
+				}
+			}
+			
+			for (DetectionVariable dv : dvs) {
+
+				String detectionVariableName = dv.getDetectionVariableName();
+
+				eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie series = new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie(
+						detectionVariableName);
+
+				for (TimeInterval ti : tis) {
+					Boolean gefAdded = false;
+					for (GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
+						if (gefAdded != true && dv.getId().equals(gef.getDetectionVariable().getId())) {
+							series.getItems().add(gef.getGefValue());
+							gefAdded = true;
+						}
+					}
+					if (gefAdded != true)
+						series.getItems().add(null);
+				}
+				response.getSeries().add(series);
+			} 
+			
+		}
+  
 		return JerseyResponse.build(response);	
 
 	}
@@ -158,11 +166,14 @@ public class AssessmentsService {
 		return timeIntervalRepository.getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
 	}
 	
-	private List<String> createMonthLabels(List<TimeInterval> months) {
+	private List<String> createMonthLabels(List<TimeInterval> months, String timeZone) {
 		List<String> monthLabels = new ArrayList<String>();
     	
+		SimpleDateFormat formatWithTz = new SimpleDateFormat("MM/yyyy");
+		formatWithTz.setTimeZone(TimeZone.getTimeZone(timeZone));
+
     	for (int i = 0; i < months.size() ; i++) {
-    		monthLabels.add(months.get(i).getStart());
+    		monthLabels.add(formatWithTz.format(months.get(i).getIntervalStart()));
     	}
 
 		return monthLabels;
