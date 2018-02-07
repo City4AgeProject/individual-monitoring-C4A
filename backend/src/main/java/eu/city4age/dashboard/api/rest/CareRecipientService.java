@@ -137,14 +137,12 @@ public class CareRecipientService {
 		}
 
 		List<TimeInterval> tis = timeIntervalRepository.getGroups(Long.valueOf(careRecipientId), parentFactors);
-		logger.info("tis.size(): " + tis.size());
 
 		if(tis != null && tis.size() > 0) {
 			for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
 	
 				if (gef.getDetectionVariable() != null) {
-	
-					logger.info("gef: " + gef.getDetectionVariable().getDetectionVariableType().getDetectionVariableType().getName());
+
 					detectionvarsparamsList.add(gef.getDetectionVariable());
 					fMap.put(gef.getDetectionVariableId(), new ArrayList<Float>());
 					idMap.put(gef.getDetectionVariableId(), new ArrayList<Long>());
@@ -201,9 +199,6 @@ public class CareRecipientService {
 					OJDiagramFrailtyStatus frailtyStatus = transformToDto(fs, months);
 
 					response.setFrailtyStatus(frailtyStatus);
-					
-					logger.info("2 tis: " + tis);
-					logger.info("2 pilottype: " + type.getDetectionVariableName());
 
 					Pilot.PilotCode pilotCode = gereatricfactparamsList.get(0).getUserInRole().getPilotCode();						
 					PilotDetectionVariable pdv = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(type.getId(), pilotCode);

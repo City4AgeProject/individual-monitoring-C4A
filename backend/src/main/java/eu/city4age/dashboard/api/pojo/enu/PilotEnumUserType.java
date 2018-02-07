@@ -12,16 +12,17 @@ import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.UserType;
 
-import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 
-public class DVTEnumUserType implements UserType, Serializable  {   
+
+public class PilotEnumUserType implements UserType, Serializable  {   
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7596750082666353230L;
 
-	static protected Logger logger = LogManager.getLogger(DVTEnumUserType.class);
+	static protected Logger logger = LogManager.getLogger(PilotEnumUserType.class);
 
     private static final int[] SQL_TYPES = {Types.VARCHAR};
 
@@ -31,7 +32,7 @@ public class DVTEnumUserType implements UserType, Serializable  {
 
     @SuppressWarnings("rawtypes")
 	public Class returnedClass() {
-        return DetectionVariableType.Type.class;
+        return Pilot.PilotCode.class;
     }
 
 	@Override
@@ -74,9 +75,9 @@ public class DVTEnumUserType implements UserType, Serializable  {
 	public Object nullSafeGet(ResultSet resultSet, String[] names, SessionImplementor session, Object owner)
 			throws HibernateException, SQLException {
 		String typeName = resultSet.getString(names[0]);   
-		DetectionVariableType.Type result = null;   
+		Pilot.PilotCode result = null;   
         if (!resultSet.wasNull()) {
-            result = DetectionVariableType.Type.valueOf(typeName.toUpperCase());
+            result = Pilot.PilotCode.valueOf(typeName.toUpperCase());
         }   
         return result;
 	}
@@ -87,7 +88,7 @@ public class DVTEnumUserType implements UserType, Serializable  {
 		if (null == value) {
             preparedStatement.setNull(index, Types.VARCHAR);
         } else {
-            preparedStatement.setString(index, ((DetectionVariableType.Type)value).getName().toLowerCase());   
+            preparedStatement.setString(index, ((Pilot.PilotCode)value).getName().toLowerCase());
         }
 		
 	}

@@ -36,7 +36,7 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 	private static final long serialVersionUID = -1957422483462322553L;
 	
 	@Column(name = "pilot_code")
-	@Enumerated(EnumType.STRING)
+	@org.hibernate.annotations.Type(type = "PilotEnumUserType")
 	private Pilot.PilotCode pilotCode;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

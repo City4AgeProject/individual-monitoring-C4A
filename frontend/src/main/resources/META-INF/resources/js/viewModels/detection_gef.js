@@ -152,7 +152,7 @@ function (oj, ko, $) {
         
         
         var role = new oj.Collection.extend({
-                url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS",
+                url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/grs",
                 fetchSize : -1,
                 model : new oj.Model.extend({
                         idAttribute : 'id',
@@ -416,7 +416,7 @@ function (oj, ko, $) {
 
                        $.when(
 
-                                 $.get(CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/GRS", function(rolesData) {
+                                 $.get(CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/grs", function(rolesData) {
                                            rolesData.forEach(function(role){
                                                self.roleTags.push({
                                                     value : role.id,
@@ -439,8 +439,9 @@ function (oj, ko, $) {
                                    });
                                  })
 
-                               ).then(function() {
-
+                               ).then(function() {                                   
+                                   sessionStorage.setItem('roleTags',ko.toJSON(self.roleTags));
+                                   sessionStorage.setItem('risksTags',ko.toJSON(self.risksTags));
                                    console.log('successfully loaded risks and roles');
                                    console.log('here are risk tags : ' + JSON.stringify(self.risksTags));
                                    console.log('here are role tags : ' + JSON.stringify(self.roleTags));
@@ -448,7 +449,7 @@ function (oj, ko, $) {
                                }).fail(function() {
                                    console.log( "error recieving roles and risks data from web service" );
                        })
-           });     
+           }); 
             console.log("handleActivated ended");
           };
 

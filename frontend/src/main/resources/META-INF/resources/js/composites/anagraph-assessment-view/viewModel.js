@@ -80,24 +80,6 @@ function(oj, ko, $) {
 				}
 			})
 		});
-		self.rolesCollection(new role());
-		self.rolesCollection().fetch({
-			type : 'GET',
-			success : function(collection, response, options) {
-				if (self.roleTags.length === 0) {
-					for (var i = 0; i < response.length; i++) {
-						var roleModel = response[i];
-                                                //commented code because it does not work on oracle jet 4.0 for add assessment
-//						self.roleTags.push({
-//							value : roleModel.id,
-//							label : oj.Translations.getTranslatedString(roleModel.roleName)
-//						});
-					}
-				}
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-			}
-		});
 		
 		//event triggers when user hovers or clicks on chart lines
 		self.chartOptionChange = function(event) {
@@ -216,7 +198,7 @@ function(oj, ko, $) {
 			$('#addAssessment').prop('selectedDataValidity', []);
 			$('#addAssessment').prop('selectedRoles', []);
 
-			if (self.props.roleTags.length > 0) {
+			if (self.props.selectedRoles.length > 0) {
                             $('#addAssessment').prop('roleTags', ko.toJS(self.props.roleTags));
                             $('#dialog1').ojDialog();
                             $('#dialog1').ojDialog('open');
@@ -280,8 +262,9 @@ function(oj, ko, $) {
 		
 
 		self.attached = function() {
-                        self.series($('#'+self.props.ojChartId)[0].getSeries());
-                        self.groups($('#'+self.props.ojChartId)[0].getSeries());
+                    //console.log("ojChartId: " + self.props.ojChartId)
+                        //self.series($('#'+self.props.ojChartId)[0].getSeries());
+                        //self.groups($('#'+self.props.ojChartId)[0].getSeries());
 			var response = loadDataSet();
 			return response;
 		};

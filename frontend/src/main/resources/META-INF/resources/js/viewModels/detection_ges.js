@@ -40,6 +40,14 @@ function (oj, ko, $) {
         self.dataPointsMarkedIds = ko.observableArray();
         
         self.queryParams = ko.observable();
+        self.dataValiditiesTags = ko.observableArray([
+            {value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
+            {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
+            {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
+                        console.log('this is risktags from add-assessment ' + JSON.parse(sessionStorage.getItem("risksTags")));
+        self.roleTags = ko.observableArray(JSON.parse(sessionStorage.getItem("roleTags")));
+        self.risksTags = ko.observableArray(JSON.parse(sessionStorage.getItem("risksTags")));
+        
 
        // self.selectGefLabel = oj.Translations.getTranslatedString("select_gef");
         

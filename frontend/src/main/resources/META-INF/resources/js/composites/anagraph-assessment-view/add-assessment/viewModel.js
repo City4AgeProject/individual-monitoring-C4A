@@ -24,11 +24,12 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                     $('#dialog1').ojDialog('close');
                 };                                   
            		context.props.then(function(properties) {
-        			self.props = properties;                               
+        			self.props = properties;
                                 self.risksTags = self.props.risksTags;
                                 self.dataValiditiesTags = self.props.dataValiditiesTags;
-                                self.roleTags = self.props.roleTags;                              
-                                self.roleTagsDP = new oj.ArrayDataProvider(self.roleTags, {idAttribute: 'value'});                               
+                                //self.roleTags = self.props.roleTags;
+                                self.roleTagsDP = new oj.ArrayDataProvider(self.props.roleTags, {idAttribute: 'value'});
+                                console.log("roleTagsDP: " + ko.toJSON(self.props.roleTags));
         		});
                 
                 $(document).ready(function(){  

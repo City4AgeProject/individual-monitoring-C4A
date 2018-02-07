@@ -7,8 +7,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -47,7 +45,7 @@ public class Pilot implements Serializable {
 
 	@Id
 	@Column(name = "pilot_code")
-	@Enumerated(EnumType.STRING)
+	@org.hibernate.annotations.Type(type = "PilotEnumUserType")
 	private Pilot.PilotCode pilotCode;
 
 	@Column(name = "population_size")
@@ -75,11 +73,10 @@ public class Pilot implements Serializable {
 	private String timeZone;
 
 	public Pilot() {
-		this.lastSubmitted = YearMonth.of(2017, 2);
+		
 	}
 
 	public Pilot(String name, Pilot.PilotCode pilotCode, Double populationSize) {
-		this.lastSubmitted = YearMonth.of(2017, 2);
 		this.name = name;
 		this.pilotCode = pilotCode;
 		this.populationSize = populationSize;

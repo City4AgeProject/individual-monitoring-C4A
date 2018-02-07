@@ -143,7 +143,7 @@ public class AssessmentServiceTest {
 
 	@Test
 	@Transactional
-	@Rollback(false)
+	@Rollback(true)
 	public void getLast5ForDiagramTest() throws Exception {
 		
 		/*
@@ -205,6 +205,7 @@ public class AssessmentServiceTest {
 		pdv1.setDetectionVariable(dv1);
 		pdv1.setDerivedDetectionVariable(ddv1);
 		pdv1 = pilotDetectionVariableRepository.save(pdv1);
+		
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
 		pdv2.setId(2L);
 		pdv2.setDerivedDetectionVariable(ddv1);
@@ -215,11 +216,13 @@ public class AssessmentServiceTest {
 		
 		UserInSystem uis = new UserInSystem ();
 		uis.setId(1L);
+		
 		UserInRole uir1 = new UserInRole();
 		uir1.setId(1L);
 		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		uir1.setUserInSystem(uis);
 		uir1 = userInRoleRepository.save(uir1);
+		
 		UserInRole uir2 = new UserInRole();
 		uir2.setId(2L);
 		uir2.setPilotCode(Pilot.PilotCode.ATH);
@@ -402,6 +405,9 @@ public class AssessmentServiceTest {
 		Mockito.when(timeIntervalRepositoryMock.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId())).thenReturn(result);
 		
 		Response response = assessmentService.getDiagramData(uir1.getId(), dv1.getId());
+		
+		logger.info("response: " + response);
+		logger.info("response class: " + response.getEntity());
 		
 		DataSet output = (DataSet) response.getEntity();
 		
