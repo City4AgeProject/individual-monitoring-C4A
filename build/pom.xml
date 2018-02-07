@@ -18,15 +18,19 @@
   <build>
 	<finalName>C4A-dashboard</finalName>
 	<sourceDirectory>../backend/src/main/java</sourceDirectory>
-	 <resources>
-     <resource>
-       <directory>../frontend/src/main/resources/</directory>
-	  </resource>
-	 <resource>
-	   <directory>../backend/src/main/resources/</directory>
-     </resource>
-   </resources>
-  </build>
+	<resources>
+		<resource>
+			<directory>../frontend/src/main/resources/</directory>	   
+			<excludes>
+				<exclude>META-INF/resources/*.json</exclude>
+				<exclude>META-INF/resources/nbproject/**</exclude>
+			</excludes>
+		</resource>
+		<resource>
+			<directory>../backend/src/main/resources/</directory>
+		</resource>	 
+	</resources>
+   </build>
 
         <dependencies>
             <dependency>
