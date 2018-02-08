@@ -19,6 +19,7 @@ function(ko, $) {
                 
                 context.props.then(function(properties) {
 			self.props = properties;
+			
 		});
                 
 		//property changed event listener for detectionVariable
@@ -37,33 +38,38 @@ function(ko, $) {
                         oj.Router.rootInstance.go("detection_mea");
 			  };
 
+		self.attached = function(context) {
+			self.clickShowPopupAddAssessment = self.clickShowPopupAddAssessment;						
+		};
+
 		self.clickShowPopupAddAssessment = function(data, event) {
 			if (self.clickShowPopupAddAssessmentCallBack !== null)
 				return self.clickShowPopupAddAssessmentCallBack(data,
 						event);
 		};
 		
-                // Show dialog for adding new assessment 
-                self.clickShowPopupAddAssessment = function (data, event) {
-		            $('#addAssessment').prop('commentText', '');
-					$('#addAssessment').prop('selectedRiskStatus', []);
-					$('#addAssessment').prop('selectedDataValidity', []);
-					$('#addAssessment').prop('selectedRoles', []);
-		           
-		        	$('#dialog1').ojDialog();
-					$('#dialog1').ojDialog('open');
-					
-					$("#dialog1").ojDialog('widget').css('top',String(document.body.scrollTop + screen.height / 8)+ 'px');
-					$("#dialog1").ojDialog('widget').css('left',String((screen.width - $("#dialog1").width()) / 2)+ 'px');
-		            
-		            //return true;
-		        };
-		        self.closePopup1 = function() {
-		            $('#popup1').ojPopup('close', '#btnClose');
-		        };
-		        self.closePopup2 = function() {
-		            $('#popup2').ojPopup('close', '#btnClose');
-		        };
+        // Show dialog for adding new assessment 
+        self.clickShowPopupAddAssessment = function (data, event) {
+
+            $('#addAssessment').prop('commentText', '');
+			$('#addAssessment').prop('selectedRiskStatus', []);
+			$('#addAssessment').prop('selectedDataValidity', []);
+			$('#addAssessment').prop('selectedRoles', []);
+           
+        	$('#dialog1').ojDialog();
+			$('#dialog1').ojDialog('open');
+			
+			$("#dialog1").ojDialog('widget').css('top',String(document.body.scrollTop + screen.height / 8)+ 'px');
+			$("#dialog1").ojDialog('widget').css('left',String((screen.width - $("#dialog1").width()) / 2)+ 'px');
+            
+            //return true;
+        };
+        self.closePopup1 = function() {
+            $('#popup1').ojPopup('close', '#btnClose');
+        };
+        self.closePopup2 = function() {
+            $('#popup2').ojPopup('close', '#btnClose');
+        };
 	}
 
 	return model;
