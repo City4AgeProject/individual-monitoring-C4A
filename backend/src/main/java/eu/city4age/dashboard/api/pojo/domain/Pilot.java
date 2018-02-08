@@ -7,12 +7,16 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
 @Table(name = "pilot")
@@ -33,19 +37,17 @@ public class Pilot implements Serializable {
 		PilotCode(String name) {
 			this.name = name;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
 	};
 	
-
-	@Column(name = "pilot_name")
 	private String name;
 
 	@Id
 	@Column(name = "pilot_code")
-	@org.hibernate.annotations.Type(type = "PilotEnumUserType")
+	@Enumerated(EnumType.STRING)
 	private Pilot.PilotCode pilotCode;
 
 	@Column(name = "population_size")
@@ -73,7 +75,6 @@ public class Pilot implements Serializable {
 	private String timeZone;
 
 	public Pilot() {
-		
 	}
 
 	public Pilot(String name, Pilot.PilotCode pilotCode, Double populationSize) {
@@ -112,15 +113,6 @@ public class Pilot implements Serializable {
 
 	public void setLastSubmitted(YearMonth lastSubmitted) {
 		this.lastSubmitted = lastSubmitted;
-	}
-
-	public YearMonth getComputedStartDate() {
-		if (this.latestVariablesComputed != null) {
-			return YearMonth
-					.from(this.latestVariablesComputed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-		} else {
-			return YearMonth.of(2015, 12);
-		}
 	}
 
 	public void setLastComputed(YearMonth lastComputed) {

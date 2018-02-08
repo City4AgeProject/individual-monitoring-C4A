@@ -7,7 +7,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -32,6 +35,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.ApplicationTest;
@@ -54,18 +59,24 @@ import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.UserInSystemRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
+import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataSet;
+import eu.city4age.dashboard.api.pojo.enu.DataValidity;
+import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
+import eu.city4age.dashboard.api.pojo.persist.Filter;
+import eu.city4age.dashboard.api.pojo.ws.C4ALoginResponse;
 import eu.city4age.dashboard.api.rest.AssessmentsService;
 import eu.city4age.dashboard.api.rest.MeasuresService;
-
+import eu.city4age.dashboard.api.rest.UserService;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -94,6 +105,9 @@ public class AssessmentServiceTest {
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
 	
+	@Mock
+	private UserInRoleRepository userInRoleRepositoryMock;
+	
 	@Autowired
 	private UserInSystemRepository userInSystemRepository;
 
@@ -105,15 +119,24 @@ public class AssessmentServiceTest {
 
 	@Autowired
 	private AssessmentRepository assessmentRepository;
+	
+	@Mock
+	private AssessmentRepository assessmentRepositoryMock;
 
 	@Autowired
 	private AssessedGefValuesRepository assessedGefValuesRepository;
+	
+	@Mock
+	private AssessedGefValuesRepository assessedGefValuesRepositoryMock;
 
 	@Autowired
 	private FrailtyStatusTimelineRepository frailtyStatusTimelineRepository;
 	
 	@Autowired
 	private PilotRepository pilotRepository;
+	
+	@Mock
+	private PilotRepository pilotRepositoryMock;
 	
 	@Mock
 	private NativeQueryRepository nativeQueryRepositoryMock;
@@ -129,6 +152,12 @@ public class AssessmentServiceTest {
 
 	@Autowired
 	private AudienceRolesRepository audienceRolesRepository;
+
+	@Mock
+	private AudienceRolesRepository audienceRolesRepositoryMock;
+	
+	@Autowired
+	private UserService userService;
 	
     @Before
     public void setUp() {
@@ -144,6 +173,260 @@ public class AssessmentServiceTest {
 	@Test
 	@Transactional
 	@Rollback(true)
+	public void addForSelectedDataSetTest() throws Exception {
+		/*
+		 * Note: For the purpose of creating this test we modified Pilot.java (and consequently MeasureService.java) such that "computedStartDate" attribute is removed from 
+		 *  the json produced by addForSelectedDataSet method in AssessmentService
+		 *  @JsonPropertyOrder is added to Assessment.java
+		 */
+		
+		Pilot p1 = new Pilot();
+		p1.setPilotCode(Pilot.PilotCode.LCC);
+		pilotRepository.save(p1);
+		
+		UserInSystem uis = new UserInSystem ();
+		uis.setUsername("user");
+		uis.setPassword("pass");
+		userInSystemRepository.save(uis);
+		
+		Role r1 = new Role();
+		roleRepository.save(r1);
+		
+		UserInRole uir = new UserInRole();
+		uir.setPilot(p1);
+		uir.setPilotCode(p1.getPilotCode());
+		uir.setUserInSystem(uis);
+		uir.setRoleId(Short.valueOf(r1.getId().toString()));
+		userInRoleRepository.save(uir);
+		
+		GeriatricFactorValue gef = new GeriatricFactorValue();
+		gef.setGefValue(new BigDecimal("5"));
+		gef.setUserInRole(uir);
+		geriatricFactorRepository.save(gef);		
+		
+		UserInRole response = userInRoleRepository.findBySystemUsernameAndPassword("user", "pass");		
+		Mockito.when(userInRoleRepositoryMock.findBySystemUsernameAndPassword("user", "pass")).thenReturn(response);
+		
+		Pilot userPilot = pilotRepository.findOne(p1.getPilotCode());		
+		Mockito.when(pilotRepositoryMock.findOne(p1.getPilotCode())).thenReturn(userPilot);
+		
+		C4ALoginResponse responseLogin = (C4ALoginResponse) userService.login("user", "pass").getEntity();
+		
+		String jwt = responseLogin.getJwToken();
+		
+		AddAssessmentDeserializer pojo = new AddAssessmentDeserializer();
+		pojo.setDataValidity(DataValidity.FAULTY_DATA);
+		pojo.setRiskStatus('A');
+		pojo.setComment("Comment");
+		pojo.setAudienceIds(Arrays.asList(r1.getId()));
+		pojo.setGeriatricFactorValueIds(Arrays.asList(gef.getId()));
+		pojo.setJwt(jwt);
+		
+		String json = objectMapper.writeValueAsString(pojo);
+		
+		UserInRole userInRole = userInRoleRepository.findBySystemUsername("user");
+		Mockito.when(userInRoleRepositoryMock.findBySystemUsername("user")).thenReturn(userInRole);
+		
+		Assessment assessment = new Assessment();
+		assessment.setAssessmentComment(pojo.getComment());
+		assessment.setRiskStatus(pojo.getRiskStatus());
+		assessment.setGeriatricFactorValue(gef);
+		assessment.setDataValidity(pojo.getDataValidity().toChar());
+		assessment.setUserInRole(uir);
+		assessmentRepository.save(assessment);
+		
+		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
+		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
+
+			for (Long audienceId : pojo.getAudienceIds())
+				assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder()
+						.assessmentId(assessment.getId().intValue()).userInRoleId(audienceId.intValue()).build());
+
+			for (Long gefId : pojo.getGeriatricFactorValueIds())
+				assessedGefValueSets.add(new AssessedGefValueSet.AssessedGefValueSetBuilder()
+						.assessmentId(assessment.getId().intValue()).gefValueId(gefId.intValue()).build());
+
+		Assessment ass;
+		
+		Mockito.when(assessmentRepositoryMock.saveAndFlush(Mockito.any(Assessment.class))).thenReturn(ass = assessmentRepository.saveAndFlush(assessment));
+		
+		Response result = assessmentService.addForSelectedDataSet(jwt, json);
+		
+		Assert.assertEquals("{\"id\":"+ass.getId()+",\"userInRole\":{\"id\":"+userInRole.getId()+",\"pilotCode\":\"LCC\",\"pilot\":{\"pilotCode\":\"LCC\"},\"userInSystem\":{\"id\":"+uis.getId()+",\"username\":\"user\",\"password\":\"pass\"},\"roleId\":"+r1.getId()+"},\"assessmentComment\":\"Comment\",\"riskStatus\":\"A\",\"dataValidity\":\"F\",\"geriatricFactorValue\":{\"id\":"+gef.getId()+",\"gefValue\":"+gef.getGefValue()+",\"userInRole\":{\"id\":"+userInRole.getId()+",\"pilotCode\":\"LCC\",\"pilot\":{\"pilotCode\":\"LCC\"},\"userInSystem\":{\"id\":"+uis.getId()+",\"username\":\"user\",\"password\":\"pass\"},\"roleId\":"+r1.getId()+"}},\"dataValidityDesc\":\"Faulty data\",\"riskStatusDesc\":\"Alert\"}", result.getEntity());
+	
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void findForSelectedDataSetTest() throws Exception {
+		
+		/*
+		 * 2 users in role
+		 * 2 geriatric factor values
+		 * 2 roles
+		 * 7 assessments
+		 */
+		
+		UserInRole uir1 = new UserInRole();
+		uir1 = userInRoleRepository.save(uir1);
+		
+		UserInRole uir2 = new UserInRole();
+		uir2 = userInRoleRepository.save(uir2);
+		
+		GeriatricFactorValue gef1 = new GeriatricFactorValue();
+		gef1.setGefValue(new BigDecimal("5"));
+		gef1.setUserInRole(uir1);
+		gef1 = geriatricFactorRepository.save(gef1);		
+		GeriatricFactorValue gef2 = new GeriatricFactorValue();
+		gef2.setGefValue(new BigDecimal("6"));
+		gef2.setUserInRole(uir2);
+		gef2 = geriatricFactorRepository.save(gef2);
+
+		Role r1 = new Role();
+		r1 = roleRepository.save(r1);
+		
+		Role r2 = new Role();
+		r2 = roleRepository.save(r2);
+
+		/*
+		 * these seem to be added automaticaly, no need for manual addition
+		 * AssessedGefValueSet ag1 = new AssessedGefValueSet();
+		ag1.setGefValueId(1);
+		ag1.setAssessmentId(1);
+		ag1 = assessedGefValuesRepository.save(ag1);		
+		AssessedGefValueSet ag2 = new AssessedGefValueSet();
+		ag2.setGefValueId(2);
+		ag2.setAssessmentId(2);
+		ag2 = assessedGefValuesRepository.save(ag2);
+		
+		AssessmentAudienceRole ar1 = new AssessmentAudienceRole();
+		ar1.setAssessmentId(1);
+		ar1.setRoleId(1);
+		ar1.setAssigned(new Timestamp(System.currentTimeMillis()));
+		ar1 = audienceRolesRepository.save(ar1);		
+		AssessmentAudienceRole ar2 = new AssessmentAudienceRole();
+		ar2.setAssessmentId(2);
+		ar2.setRoleId(2);
+		ar2.setAssigned(new Timestamp(System.currentTimeMillis()));
+		ar2 = audienceRolesRepository.save(ar2); */
+		//data for second assessment and joined tables:
+
+
+		Assessment aa1 = new Assessment();
+		aa1.setUserInRole(uir1);
+		aa1.setGeriatricFactorValue(gef1);
+		aa1.getRoles().add(r1);
+		aa1.setDataValidity('F');//F,Q
+		aa1.setRiskStatus('W');//W,A
+		aa1 = assessmentRepository.save(aa1);
+	
+		Assessment aa2 = new Assessment();
+		aa2.setUserInRole(uir2);//
+		aa2.setGeriatricFactorValue(gef1);
+		aa2.getRoles().add(r2);
+		aa2.setDataValidity('F');//F,Q
+		aa2.setRiskStatus('W');//W,A
+		aa2 = assessmentRepository.save(aa2);
+
+		Assessment aa3 = new Assessment();
+		aa3.setUserInRole(uir1);
+		aa3.setGeriatricFactorValue(gef1);
+		aa3.getRoles().add(r1);
+		aa3.setDataValidity('Q');//F,Q
+		aa3.setRiskStatus('W');//W,A
+		aa3 = assessmentRepository.save(aa3);
+		
+		Assessment aa4 = new Assessment();
+		aa4.setUserInRole(uir1);
+		aa4.setGeriatricFactorValue(gef1);
+		aa4.getRoles().add(r1);
+		aa4.setDataValidity('F');//F,Q
+		aa4.setRiskStatus('A');//W,A
+		aa4 = assessmentRepository.save(aa4);
+		
+		Assessment aa5 = new Assessment();
+		aa5.setUserInRole(uir1);
+		aa5.setGeriatricFactorValue(gef2);
+		aa5.getRoles().add(r1);
+		aa5.setDataValidity('F');//F,Q
+		aa5.setRiskStatus('W');//W,A
+		aa5 = assessmentRepository.save(aa5);
+		
+		Assessment aa6 = new Assessment();
+		aa6.setGeriatricFactorValue(gef2);
+		aa6 = assessmentRepository.save(aa6);
+		
+		Assessment aa7 = new Assessment();
+		aa7 = assessmentRepository.save(aa7);
+		
+		List<Filter> filters = new ArrayList<Filter>();
+		List<Object> inParams = new ArrayList<Object>();
+		
+		//riskStatus filter (W,A):
+		Filter riskStatus = new Filter();
+		riskStatus.setName("riskStatus");
+		
+		inParams = new ArrayList<Object>();
+		inParams.add('W');
+		
+		riskStatus.getInParams().put("riskStatus", inParams);
+		filters.add(riskStatus);
+		
+		//dataValidity filter (F,Q)
+		Filter dataValidity = new Filter();
+		dataValidity.setName("dataValidity");
+		
+		inParams = new ArrayList<Object>();
+		inParams.add('F');
+
+		dataValidity.getInParams().put("dataValidity", inParams);
+		filters.add(dataValidity);
+		
+		//userInRoleId filter (r1):
+		Filter roleId = new Filter();
+		roleId.setName("roleId");
+		
+		inParams = new ArrayList<Object>();
+		inParams.add(r1.getId());
+		
+		roleId.getInParams().put("roleId", inParams);
+		filters.add(roleId);
+				
+		List<Long> gefIds = new ArrayList<Long>();
+		gefIds.add(gef1.getId());
+		gefIds.add(gef2.getId());
+		
+
+		HashMap<String, Object> inQueryParams = new HashMap<String, Object>();
+		inQueryParams.put("geriatricFactorIds", gefIds);
+
+		List<Filter> noFilters = new ArrayList<Filter>();
+		
+		// Number of assessments in repository before filtering
+		Assert.assertEquals(7, assessmentRepository.findAll().size());
+				
+		List<Assessment> resultWithoutFilters = assessmentRepository.doQueryWithFilter(noFilters , "findForSelectedDataSet",
+				inQueryParams);
+		
+		// Number of assessments in repository with no filters
+		Assert.assertEquals(7, assessmentRepository.findAll().size());
+		Assert.assertNotNull(resultWithoutFilters);
+		Assert.assertEquals(5, resultWithoutFilters.size());
+	
+
+		List<Assessment> resultWithFilters = assessmentRepository.doQueryWithFilter(filters, "findForSelectedDataSet",
+				inQueryParams);		
+
+		Assert.assertNotNull(resultWithFilters);
+		Assert.assertEquals(3, assessmentRepository.findAll().size());
+		Assert.assertEquals(2, resultWithFilters.size());
+		
+	}
+
+	@Test
+	@Transactional
+	@Rollback(true)
 	public void getLast5ForDiagramTest() throws Exception {
 		
 		/*
@@ -153,8 +436,6 @@ public class AssessmentServiceTest {
 		 * 2 geriatric factor values
 		 * 2 assessments
 		 */
-
-		logger.info("start of testFindLastFiveAssessmentsForDiagram");
 
 		eu.city4age.dashboard.api.pojo.domain.TypicalPeriod tp = new eu.city4age.dashboard.api.pojo.domain.TypicalPeriod();
 		tp.setTypicalPeriod("MON");
@@ -190,24 +471,19 @@ public class AssessmentServiceTest {
 		ti7.setIntervalEnd(Timestamp.valueOf("2016-08-01 00:00:00"));
 
 		DetectionVariable ddv1 = new DetectionVariable();
-		ddv1.setId(4L);
 		ddv1 = detectionVariableRepository.save(ddv1);
 		
 		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(1L);
 		dv1.setDerivedDetectionVariable(ddv1);		
 		dv1 = detectionVariableRepository.save(dv1);
 		
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable ();
-		pdv1.setId(1L);
 		pdv1.setDerivedDetectionVariable(ddv1);
 		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pdv1.setDetectionVariable(dv1);
 		pdv1.setDerivedDetectionVariable(ddv1);
 		pdv1 = pilotDetectionVariableRepository.save(pdv1);
-		
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
-		pdv2.setId(2L);
 		pdv2.setDerivedDetectionVariable(ddv1);
 		pdv2.setPilotCode(Pilot.PilotCode.ATH);
 		pdv2.setDetectionVariable(dv1);
@@ -215,22 +491,18 @@ public class AssessmentServiceTest {
 		pdv2 = pilotDetectionVariableRepository.save(pdv2);
 		
 		UserInSystem uis = new UserInSystem ();
-		uis.setId(1L);
+		userInSystemRepository.save(uis);
 		
 		UserInRole uir1 = new UserInRole();
-		uir1.setId(1L);
 		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		uir1.setUserInSystem(uis);
 		uir1 = userInRoleRepository.save(uir1);
-		
 		UserInRole uir2 = new UserInRole();
-		uir2.setId(2L);
 		uir2.setPilotCode(Pilot.PilotCode.ATH);
 		uir2.setUserInSystem(uis);
 		uir2 = userInRoleRepository.save(uir2);
 
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
-		gef1.setId(1L);
 		gef1.setTimeInterval(ti1);
 		gef1.setDetectionVariable(dv1);
 		gef1.setUserInRole(uir1);
@@ -238,7 +510,6 @@ public class AssessmentServiceTest {
 		gef1 = geriatricFactorRepository.save(gef1);
 		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
-		gef2.setId(2L);
 		gef2.setTimeInterval(ti2);
 		gef2.setDetectionVariable(dv1);
 		gef2.setUserInRole(uir2);
@@ -254,7 +525,6 @@ public class AssessmentServiceTest {
 		aa1.setRiskStatus('A');
 		aa1.setAssessmentComment("my comment");
 		aa1.setUserInRole(uir1);
-		aa1.setId(1L);
 		aa1 = assessmentRepository.save(aa1);
 		
 		AssessedGefValueSet ag1 = new AssessedGefValueSet();
@@ -268,7 +538,6 @@ public class AssessmentServiceTest {
 		aa2.setRiskStatus('A');
 		aa2.setAssessmentComment("my comment2");
 		aa2.setUserInRole(uir2);
-		aa2.setId(2L);
 		aa2 = assessmentRepository.save(aa2);
 		
 		AssessedGefValueSet ag2 = new AssessedGefValueSet();
@@ -405,9 +674,6 @@ public class AssessmentServiceTest {
 		Mockito.when(timeIntervalRepositoryMock.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId())).thenReturn(result);
 		
 		Response response = assessmentService.getDiagramData(uir1.getId(), dv1.getId());
-		
-		logger.info("response: " + response);
-		logger.info("response class: " + response.getEntity());
 		
 		DataSet output = (DataSet) response.getEntity();
 		
