@@ -691,6 +691,8 @@ public class AssessmentServiceTest {
 		
 		Response response = assessmentService.getDiagramData(uir1.getId(), dv1.getId());
 		
+		logger.info("result: " + result);
+		
 		DataSet output = (DataSet) response.getEntity();
 		
 		String json = objectMapper.writeValueAsString(output);

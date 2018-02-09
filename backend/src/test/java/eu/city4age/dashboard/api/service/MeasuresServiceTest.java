@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -38,6 +39,7 @@ import eu.city4age.dashboard.api.jpa.DetectionVariableTypeRepository;
 import eu.city4age.dashboard.api.jpa.FrailtyStatusTimelineRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.NUIRepository;
+import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
@@ -121,6 +123,9 @@ public class MeasuresServiceTest {
 	@Autowired
 	private NUIRepository nuiRepository;
 	
+	@Autowired
+	private NativeQueryRepository nativeQueryRepository;
+	
     @Before
     public void setUp() {
      MockitoAnnotations.initMocks(this);
@@ -135,6 +140,12 @@ public class MeasuresServiceTest {
 	
 	@Mock
 	private NUIRepository nuiRepositoryMock;
+	
+	@Mock
+	private PilotRepository pilotRepositoryMock;
+	
+	@Mock
+	private NativeQueryRepository nativeQueryRepositoryMock;
 	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 	
@@ -406,9 +417,9 @@ public class MeasuresServiceTest {
 		timeIntervalRepository.save(ti5);
 		
 		TimeInterval ti6 = new TimeInterval();
-		ti1.setIntervalStart(Timestamp.valueOf("2016-02-01 06:00:00"));
-		ti1.setTypicalPeriod("DAY");
-		timeIntervalRepository.save(ti1);
+		ti6.setIntervalStart(Timestamp.valueOf("2016-02-01 06:00:00"));
+		ti6.setTypicalPeriod("DAY");
+		timeIntervalRepository.save(ti6);
 		
 		TimeInterval ti7 = new TimeInterval();
 		ti7.setIntervalStart(Timestamp.valueOf("2016-02-01 07:00:00"));
@@ -784,74 +795,76 @@ public class MeasuresServiceTest {
 		//VariationMeasureValue
 		VariationMeasureValue vmv1 = new VariationMeasureValue();
 		vmv1.setDetectionVariable(dv1);
-		vmv1.setTimeInterval(ti3);
+		vmv1.setTimeInterval(ti1);
 		vmv1.setUserInRole(uir1);
 		vmv1.setMeasureValue(BigDecimal.valueOf(100));
 		variationMeasureValueRepository.save(vmv1);
 		
 		VariationMeasureValue vmv2 = new VariationMeasureValue();
 		vmv2.setDetectionVariable(dv2);
-		vmv2.setTimeInterval(ti5);
+		vmv2.setTimeInterval(ti2);
 		vmv2.setUserInRole(uir1);
 		vmv2.setMeasureValue(BigDecimal.valueOf(200));
 		variationMeasureValueRepository.save(vmv2);
 		
 		VariationMeasureValue vmv3 = new VariationMeasureValue();
 		vmv3.setDetectionVariable(dv3);
-		vmv3.setTimeInterval(ti5);
+		vmv3.setTimeInterval(ti3);
 		vmv3.setUserInRole(uir1);
 		vmv3.setMeasureValue(BigDecimal.valueOf(300));
 		variationMeasureValueRepository.save(vmv3);
 		
 		VariationMeasureValue vmv4 = new VariationMeasureValue();
 		vmv4.setDetectionVariable(dv4);
-		vmv4.setTimeInterval(ti5);
+		vmv4.setTimeInterval(ti4);
 		vmv4.setUserInRole(uir1);
 		vmv4.setMeasureValue(BigDecimal.valueOf(400));
 		variationMeasureValueRepository.save(vmv4);
 		
 		VariationMeasureValue vmv5 = new VariationMeasureValue();
-		vmv5.setDetectionVariable(dv4);
+		vmv5.setDetectionVariable(dv1);
 		vmv5.setTimeInterval(ti5);
 		vmv5.setUserInRole(uir1);
 		vmv5.setMeasureValue(BigDecimal.valueOf(500));
 		variationMeasureValueRepository.save(vmv5);
 		
 		VariationMeasureValue vmv6 = new VariationMeasureValue();
-		vmv6.setDetectionVariable(dv1);
-		vmv6.setTimeInterval(ti3);
+		vmv6.setDetectionVariable(dv2);
+		vmv6.setTimeInterval(ti6);
 		vmv6.setUserInRole(uir1);
 		vmv6.setMeasureValue(BigDecimal.valueOf(100));
 		variationMeasureValueRepository.save(vmv6);
 		
 		VariationMeasureValue vmv7 = new VariationMeasureValue();
-		vmv7.setDetectionVariable(dv2);
-		vmv7.setTimeInterval(ti5);
+		vmv7.setDetectionVariable(dv3);
+		vmv7.setTimeInterval(ti7);
 		vmv7.setUserInRole(uir1);
 		vmv7.setMeasureValue(BigDecimal.valueOf(200));
 		variationMeasureValueRepository.save(vmv7);
 		
 		VariationMeasureValue vmv8 = new VariationMeasureValue();
-		vmv8.setDetectionVariable(dv3);
-		vmv8.setTimeInterval(ti5);
+		vmv8.setDetectionVariable(dv4);
+		vmv8.setTimeInterval(ti8);
 		vmv8.setUserInRole(uir1);
 		vmv8.setMeasureValue(BigDecimal.valueOf(300));
 		variationMeasureValueRepository.save(vmv8);
 		
 		VariationMeasureValue vmv9 = new VariationMeasureValue();
-		vmv9.setDetectionVariable(dv4);
-		vmv9.setTimeInterval(ti5);
+		vmv9.setDetectionVariable(dv5);
+		vmv9.setTimeInterval(ti9);
 		vmv9.setUserInRole(uir1);
 		vmv9.setMeasureValue(BigDecimal.valueOf(400));
 		variationMeasureValueRepository.save(vmv9);
 		
 		VariationMeasureValue vmv10 = new VariationMeasureValue();
-		vmv10.setDetectionVariable(dv4);
-		vmv10.setTimeInterval(ti5);
+		vmv10.setDetectionVariable(dv5);
+		vmv10.setTimeInterval(ti10);
 		vmv10.setUserInRole(uir1);
 		vmv10.setMeasureValue(BigDecimal.valueOf(500));
 		variationMeasureValueRepository.save(vmv10);
 		
+		
+		//time interval fkeys
 		ti1.getVariationMeasureValues().add(vmv1);
 		timeIntervalRepository.save(ti1);
 		
@@ -864,47 +877,111 @@ public class MeasuresServiceTest {
 		ti4.getVariationMeasureValues().add(vmv4);
 		timeIntervalRepository.save(ti4);
 		
-		ti5.getVariationMeasureValues().add(vmv1);
+		ti5.getVariationMeasureValues().add(vmv5);
 		timeIntervalRepository.save(ti5);
 		
-		ti6.getVariationMeasureValues().add(vmv2);
+		ti6.getVariationMeasureValues().add(vmv6);
 		timeIntervalRepository.save(ti6);
 		
-		ti7.getVariationMeasureValues().add(vmv3);
+		ti7.getVariationMeasureValues().add(vmv7);
 		timeIntervalRepository.save(ti7);
 		
-		ti8.getVariationMeasureValues().add(vmv4);
+		ti8.getVariationMeasureValues().add(vmv8);
 		timeIntervalRepository.save(ti8);
 		
-		ti9.getVariationMeasureValues().add(vmv5);
+		ti9.getVariationMeasureValues().add(vmv9);
 		timeIntervalRepository.save(ti9);
 		
-		ti10.getVariationMeasureValues().add(vmv5);
+		ti10.getVariationMeasureValues().add(vmv10);
 		timeIntervalRepository.save(ti10);
 		
-		dv4.getPilotDetectionVariable().add(pdv7);
-		detectionVariableRepository.save(dv4);
+		
+		// detection variables fkeys
+		/*dv1.getPilotDetectionVariable().add(pdv1);
+		detectionVariableRepository.save(dv1);
+		
+		dv2.getPilotDetectionVariable().add(pdv25);
+		detectionVariableRepository.save(dv2);
+		
+		dv3.getPilotDetectionVariable().add(pdv7);
+		detectionVariableRepository.save(dv3);
 		
 		dv4.getPilotDetectionVariable().add(pdv25);
 		detectionVariableRepository.save(dv4);
+		
+		dv5.getPilotDetectionVariable().add(pdv7);
+		detectionVariableRepository.save(dv5);
+		
+		dv6.getPilotDetectionVariable().add(pdv25);
+		detectionVariableRepository.save(dv6);
+		
+		dv7.getPilotDetectionVariable().add(pdv7);
+		detectionVariableRepository.save(dv7);
+		
+		dv8.getPilotDetectionVariable().add(pdv25);
+		detectionVariableRepository.save(dv8);
+		
+		dv9.getPilotDetectionVariable().add(pdv7);
+		detectionVariableRepository.save(dv9);
+		
+		dv10.getPilotDetectionVariable().add(pdv25);
+		detectionVariableRepository.save(dv10);
+		
+		dv11.getPilotDetectionVariable().add(pdv7);
+		detectionVariableRepository.save(dv11);
+		
+		dv12.getPilotDetectionVariable().add(pdv25);
+		detectionVariableRepository.save(dv12);
+		
+		dv13.getPilotDetectionVariable().add(pdv7);
+		detectionVariableRepository.save(dv13);
+		
+		dv14.getPilotDetectionVariable().add(pdv25);
+		detectionVariableRepository.save(dv14);
+		
+		dv15.getPilotDetectionVariable().add(pdv7);
+		detectionVariableRepository.save(dv15);
+		
+		dv16.getPilotDetectionVariable().add(pdv25);
+		detectionVariableRepository.save(dv16);
+		
+		dv17.getPilotDetectionVariable().add(pdv7);
+		detectionVariableRepository.save(dv17);
+		
+		dv18.getPilotDetectionVariable().add(pdv25);
+		detectionVariableRepository.save(dv18);*/
+		
+		List<Pilot> nevers = pilotRepository.findAllNeverComputed();
+		Mockito.when(pilotRepositoryMock.findAllNeverComputed()).thenReturn(nevers);
+		
+		List<Pilot> comps = pilotRepository.findAllComputed();
+		Mockito.when(pilotRepositoryMock.findAllComputed()).thenReturn(comps);
+		
+		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository.findAllForMonthByPilotCodeNui(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC));
+		Mockito.when(variationMeasureValueRepositoryMock.findAllForMonthByPilotCodeNui(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC))).thenReturn(vmsMonthly);
 
-		List<NumericIndicatorValue> result = nuiRepository.getNuisForSelectedGes(uir1.getId(), dv4.getId());
+		List<Object[]> nuisList = nativeQueryRepository.computeAllNuis(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC.getName()));
+		Mockito.when(nativeQueryRepositoryMock.computeAllNuis(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(nuisList);
 		
-		Mockito.when(nuiRepositoryMock.getNuisForSelectedGes(uir1.getId(), dv4.getId())).thenReturn(result);
+		List<Object[]> gess = nativeQueryRepository.computeAllGess(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC.getName()));
+		Mockito.when(nativeQueryRepositoryMock.computeAllGess(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(gess);
 		
-		Response response = measuresServiceMock.getNuiValues(uir1.getId(), dv4.getId());
+		List<Object[]> listGef = nativeQueryRepository.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GEF ,Arrays.asList(Pilot.PilotCode.LCC.getName()));
+		Mockito.when(nativeQueryRepositoryMock.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GEF ,Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(listGef);
 		
-		logger.info("result.size(): " + result.size());
+		List<Object[]> listGfg = nativeQueryRepository.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GFG ,Arrays.asList(Pilot.PilotCode.LCC.getName()));
+		Mockito.when(nativeQueryRepositoryMock.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GFG ,Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(listGfg);
+		
+		List<Object[]> listOvl = nativeQueryRepository.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.OVL ,Arrays.asList(Pilot.PilotCode.LCC.getName()));
+		Mockito.when(nativeQueryRepositoryMock.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.OVL ,Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(listOvl);
+		
+		Response response = measuresServiceMock.computeFromMeasures();
 		
 		String output = (String) response.getEntity();
 		
 		logger.info("output: " + output);
 		
-		String json = objectMapper.writeValueAsString(output);
-		
-		logger.info("json: " + json);
-		
-		//Assert.assertEquals(objectMapper.writeValueAsString("[{\"id\":" +nui1.getId() + ",\"detectionVariable\":{\"id\":" + dv4.getId() + ",\"detectionVariableName\":\"NUI1\"},\"timeInterval\":{\"id\":" + ti3.getId() + ",\"intervalStart\":1456790400000},\"userInRole\":{\"id\":" + uir1.getId() + "},\"nuiValue\":1.8},{\"id\":" + nui2.getId() + ",\"detectionVariable\":{\"id\":" + dv4.getId() + ",\"detectionVariableName\":\"NUI1\"},\"timeInterval\":{\"id\":" + ti5.getId() + ",\"intervalStart\":1462060800000},\"userInRole\":{\"id\":" + uir1.getId() + "},\"nuiValue\":2.8}]"), json);
+		Assert.assertEquals("success", output);
 		
 	}
 

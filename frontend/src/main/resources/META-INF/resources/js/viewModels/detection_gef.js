@@ -561,4 +561,3 @@ function (oj, ko, $) {
 
     return  GraphicsContentViewModel;
 });
-

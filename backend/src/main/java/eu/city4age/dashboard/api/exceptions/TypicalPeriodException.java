@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.pojo.ex;
+package eu.city4age.dashboard.api.exceptions;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.exceptions.JsonMappingExceptionUD;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.DetectionVariableTypeRepository;
 import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
@@ -42,7 +43,6 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
-import eu.city4age.dashboard.api.pojo.ex.JsonMappingExceptionUD;
 import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.domain.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;

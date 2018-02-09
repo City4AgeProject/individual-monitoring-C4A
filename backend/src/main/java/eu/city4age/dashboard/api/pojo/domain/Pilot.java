@@ -12,6 +12,7 @@ import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "pilot")
@@ -38,12 +39,12 @@ public class Pilot implements Serializable {
 		}
 	};
 	
-	@Column(name ="pilot_name")
+	@Column(name = "pilot_name")
 	private String name;
 
 	@Id
 	@Column(name = "pilot_code")
-	@org.hibernate.annotations.Type(type = "PilotEnumUserType")
+	@Type(type = "PilotEnumUserType")
 	private Pilot.PilotCode pilotCode;
 
 	@Column(name = "population_size")

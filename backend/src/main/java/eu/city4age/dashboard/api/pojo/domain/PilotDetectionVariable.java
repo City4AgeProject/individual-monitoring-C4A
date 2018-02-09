@@ -29,20 +29,16 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 	@Type(type = "PilotEnumUserType")
 	private Pilot.PilotCode pilotCode;
 	
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "derived_detection_variable_id", referencedColumnName = "id")
 	private DetectionVariable derivedDetectionVariable;
 
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "detection_variable_id", referencedColumnName = "id")
 	private DetectionVariable detectionVariable;
 	
-	
 	@Column(name = "derivation_function_formula")
 	private String formula;
-	
 	
 	@Column(name="derivation_weight")
 	private BigDecimal derivationWeight;
@@ -60,8 +56,10 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 	
 	@Column (name = "main_data_source_type", length = 3)
 	private String mainDataSourceType;
+	
 
 	public PilotDetectionVariable() {
+		
 	}
 
 	public PilotDetectionVariable(Pilot.PilotCode pilotCode, DetectionVariable derivedDetectionVariable,
@@ -83,8 +81,6 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 		this.detectionVariable = derivedDetectionVariable;
 		this.formula = formula;
 	}
-	
-	
 
 	public PilotDetectionVariable(Pilot.PilotCode pilotCode, DetectionVariable derivedDetectionVariable,
 			DetectionVariable detectionVariable, String formula, BigDecimal derivationWeight, Date validFrom,
@@ -107,6 +103,7 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 		this.validTo = validTo;
 	}
 
+	
 	public DetectionVariable getDerivedDetectionVariable() {
 		return this.derivedDetectionVariable;
 	}
