@@ -359,14 +359,14 @@ public class TimeIntervalRepositoryTest {
 		Assert.assertNotNull(result);
 
 		Assert.assertEquals(3, result.size());
-
-		Assert.assertEquals(1, result.get(0).getGeriatricFactorValue().size());
-		Assert.assertEquals(0, result.get(1).getGeriatricFactorValue().size());
-		Assert.assertEquals(1, result.get(2).getGeriatricFactorValue().size());
 		
 		Assert.assertEquals(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(0).getIntervalStart());
 		Assert.assertEquals(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(1).getIntervalStart());
 		Assert.assertEquals(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(2).getIntervalStart());
+		
+		Assert.assertEquals(1, result.get(0).getGeriatricFactorValue().size());
+		Assert.assertEquals(0, result.get(1).getGeriatricFactorValue().size());
+		Assert.assertEquals(1, result.get(2).getGeriatricFactorValue().size());
 		
 		Assert.assertEquals("GES1", result.get(0).getGeriatricFactorValue().iterator().next().getDetectionVariable().getDetectionVariableName());
 		Assert.assertEquals("GES2", result.get(2).getGeriatricFactorValue().iterator().next().getDetectionVariable().getDetectionVariableName());

@@ -730,7 +730,3 @@ CREATE VIEW vw_nui_values_persisted_source_mea_types AS
   WHERE (nui_v.user_in_role_id IN ( SELECT user_in_role.id
            FROM user_in_role
           WHERE ((user_in_role.pilot_code)::text = (vmnd.pilot_code)::text)));
-
-CREATE UNIQUE INDEX time_interval_with_end_uq ON time_interval USING btree (interval_start, interval_end) WHERE (interval_end IS NOT NULL);
-
-CREATE UNIQUE INDEX time_interval_with_typical_period_uq ON time_interval USING btree (interval_start, typical_period) WHERE (typical_period IS NOT NULL);

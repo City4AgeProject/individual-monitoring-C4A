@@ -26,6 +26,7 @@ import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import eu.city4age.dashboard.api.pojo.json.view.View;
@@ -38,6 +39,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 		@FilterDef(name = "roleId", parameters = @ParamDef(name = "roleId", type = "long")) })
 @Filters(value = { @Filter(name = "riskStatus", condition = "risk_status in (:riskStatus)"),
 		@Filter(name = "dataValidity", condition = "data_validity_status in (:dataValidity)") })
+@JsonPropertyOrder({"id", "userInRole", "assessmentComment", "riskStatus", "dataValidity", "geriatricFactorValue", "dataValidityDesc", "riskStatusDesc", "groups", "series" })
 public class Assessment extends AbstractBaseEntity<Long> {
 
 	/**

@@ -43,6 +43,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
+import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
@@ -135,7 +136,12 @@ public class MeasuresService {
 
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
 			Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
-		List<Object[]> list = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, factor, pilotCodes);
+		
+		List<String> stringPilotCodes = new ArrayList<>();
+		
+		for (PilotCode pilot : pilotCodes) stringPilotCodes.add(pilot.getName());
+		
+		List<Object[]> list = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, factor, stringPilotCodes);
 
 		if (list != null && list.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(list, startOfMonth, endOfMonth);
@@ -150,10 +156,10 @@ public class MeasuresService {
 	
 		YearMonth currentYearMonth = YearMonth.now();
 		YearMonth lastComputedYearMonth = null;
-		List<Pilot.PilotCode> pilotCodes = new ArrayList<Pilot.PilotCode>();
+		List<Pilot.PilotCode> pilotCodes = new ArrayList<>();
 		
 		if(nevers != null && nevers.size() > 0) {
-			lastComputedYearMonth = nevers.get(0).getComputedStartDate();
+			lastComputedYearMonth = getComputedStartDate(nevers.get(0));
 			for(Pilot pilot : nevers) {
 				pilotCodes.add(pilot.getPilotCode());
 			}
@@ -165,14 +171,13 @@ public class MeasuresService {
 				}
 			}
 		}
-
 		if (lastComputedYearMonth == null ) {
 			
 			logger.info("No new data submitted!");
 			
 			return;
 		}
-
+		
 		YearMonth currentComputedYearMonth = lastComputedYearMonth.plusMonths(1L);
 		
 		Timestamp startOfMonth;
@@ -194,8 +199,7 @@ public class MeasuresService {
 					if(currentComputedYearMonth.isAfter(YearMonth.from(pilot.getLatestSubmissionCompleted().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()))) {
 						pilotCodes.remove(pilot.getPilotCode());
 					}
-				}		
-				
+				} 
 				startOfMonth = Timestamp.valueOf(currentComputedYearMonth.atDay(1).atStartOfDay());
 				endOfMonth = Timestamp.valueOf(currentComputedYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
 				computeNuisFor1Month(startOfMonth, endOfMonth, pilotCodes);
@@ -211,7 +215,12 @@ public class MeasuresService {
 	}
 
 	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
-		List<Object[]> gess = nativeQueryRepository.computeAllGess(startOfMonth, endOfMonth, pilotCodes);
+		
+		List<String> stringPilotCodes = new ArrayList<>();
+		for (Pilot.PilotCode pilotCode : pilotCodes) stringPilotCodes.add(pilotCode.getName());
+		
+		List<Object[]> gess = nativeQueryRepository.computeAllGess(startOfMonth, endOfMonth, stringPilotCodes);
+		
 		if(gess != null && gess.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(gess, startOfMonth, endOfMonth);
 			nuiRepository.bulkSave(gfvs);
@@ -241,17 +250,22 @@ public class MeasuresService {
 	}
 
 	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
+		
+		List<String> stringPilotCodes = new ArrayList<>();
+		for (Pilot.PilotCode pilotCode : pilotCodes) stringPilotCodes.add(pilotCode.getName());
+		
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCodes);
 
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
-			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth, pilotCodes);
+			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth, stringPilotCodes);
 			nuiRepository.bulkSave(nuis);
 		}
 	}
 
-	private List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
+	private List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth, List<String> pilotCodes) {
 		final List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
+		
 
 		List<Object[]> nuisList = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilotCodes);
 
@@ -304,6 +318,18 @@ public class MeasuresService {
 			@ApiParam(hidden = true) @PathParam("detectionVariableId") Long detectionVariableId) throws JsonProcessingException {
 		List<NumericIndicatorValue> nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, detectionVariableId);
 		return JerseyResponse.build(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis));
+	}
+	
+	private YearMonth getComputedStartDate(Pilot pilot) {
+		if (pilot.getLatestVariablesComputed() != null) {
+			return YearMonth
+					.from(pilot.getLatestVariablesComputed().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		}
+			return YearMonth.of(2015, 12); // Everything is computed from starting date of project, jan 2016
+	}
+
+	public String mockitoTest() {
+		return "hello";
 	}
 
 }

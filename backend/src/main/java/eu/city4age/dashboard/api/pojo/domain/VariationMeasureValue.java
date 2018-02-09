@@ -42,7 +42,6 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	@JoinColumn(name = "time_interval_id", referencedColumnName = "id")
 	private TimeInterval timeInterval;
 	
-	
 	@JsonView(View.VariationMeasureValueView.class)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_in_role_id")
@@ -56,7 +55,6 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	@Column(name = "extra_information", length = 1000)
 	private String extraInformation;
 
-	
 	@Column(name = "data_source_type", length = 1000)
 	private String dataSourceType;	
 		
@@ -67,6 +65,7 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 
 
 	public VariationMeasureValue() {
+		
 	}
 
 	public VariationMeasureValue(DetectionVariable detectionVariable, TimeInterval timeInterval,
@@ -87,6 +86,7 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 		this.extraInformation = extraInformation;
 	}
 
+	
 	public ExecutedActivity getActivity() {
 		return this.activity;
 	}

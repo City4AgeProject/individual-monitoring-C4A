@@ -7,8 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -17,6 +15,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -36,7 +36,7 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 	private static final long serialVersionUID = -1957422483462322553L;
 	
 	@Column(name = "pilot_code")
-	@org.hibernate.annotations.Type(type = "PilotEnumUserType")
+	@Type(type = "PilotEnumUserType")
 	private Pilot.PilotCode pilotCode;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -71,8 +71,10 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 	@OneToMany(mappedBy = "userInRole", fetch = FetchType.LAZY)
 	@OrderBy("changed DESC")
 	private Set<FrailtyStatusTimeline> frailtyStatusTimeline = new HashSet<FrailtyStatusTimeline>();
+	
 
 	public UserInRole() {
+		
 	}
 
 	public UserInRole(Pilot.PilotCode pilotCode, Date validFrom, Date validTo, UserInSystem userInSystem, Short roleId,
@@ -86,6 +88,7 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 		this.careProfile = careProfile;
 		this.frailtyStatusTimeline = frailtyStatusTimeline;
 	}
+	
 
 	public void setValidFrom(Date validFrom) {
 		this.validFrom = validFrom;
@@ -151,8 +154,6 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 		this.pilotCode = pilotCode;
 	}
 	
-	
-
 	public Pilot getPilot() {
 		return pilot;
 	}

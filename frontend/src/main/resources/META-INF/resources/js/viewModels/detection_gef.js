@@ -432,4 +432,3 @@ function (oj, ko, $, sp, params) {
 
     return  GraphicsContentViewModel;
 });
-

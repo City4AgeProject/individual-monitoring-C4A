@@ -39,7 +39,7 @@ public class DetectionVariableType implements Serializable {
 
 	
 	@Id
-	@Column(name = "detection_variable_type", columnDefinition = "varchar")
+	@Column(name = "detection_variable_type")
 	@org.hibernate.annotations.Type(type = "DVTEnumUserType")
 	private DetectionVariableType.Type detectionVariableType;
 

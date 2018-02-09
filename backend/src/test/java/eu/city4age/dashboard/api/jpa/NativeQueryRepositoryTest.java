@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -45,6 +46,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
+import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
@@ -142,7 +144,9 @@ public class NativeQueryRepositoryTest {
 		variationMeasureValueRepository.save(vmv1);
 	
 		List<Pilot.PilotCode> pilotCodes = Arrays.asList(Pilot.PilotCode.LCC);
-		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilotCodes);
+		List<String> pilots = new ArrayList<>();
+		for (PilotCode pilot : pilotCodes) pilots.add(pilot.getName());
+		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilots);
 		
 		//Assert.assertNotNull(result);
 		

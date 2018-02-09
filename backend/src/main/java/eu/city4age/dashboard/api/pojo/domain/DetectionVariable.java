@@ -33,14 +33,11 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 	@Column(name = "detection_variable_name")
 	private String detectionVariableName;
 
-	
 	@Column(name = "valid_from")
 	private Date validFrom;
 
-	
 	@Column(name = "valid_to")
 	private Date validTo;
-	
 	
 	@Column(name = "default_derivation_weight")
 	private BigDecimal derivationWeight;
@@ -61,7 +58,7 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 	
 	@JsonView(View.VariationMeasureValueView.class)
 	@Column(name = "default_typical_period")
-	private String  defaultTypicalPeriod;
+	private String defaultTypicalPeriod;
 	
 	@OneToMany(mappedBy = "detectionVariable", fetch = FetchType.LAZY)
 	private Set<PilotDetectionVariable> pilotDetectionVariable = new HashSet<PilotDetectionVariable>();

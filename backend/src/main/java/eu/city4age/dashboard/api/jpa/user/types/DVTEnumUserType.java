@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.pojo.enu;
+package eu.city4age.dashboard.api.jpa.user.types;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
