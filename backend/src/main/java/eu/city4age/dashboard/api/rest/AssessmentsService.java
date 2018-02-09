@@ -121,7 +121,8 @@ public class AssessmentsService {
     	List<TimeInterval> tis = timeIntervalRepository.getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
     	
     	if (tis.size() > 0) {
-			String timeZone = tis.get(0).getGeriatricFactorValue().iterator().next().getUserInRole().getPilot().getTimeZone();
+    		
+    		String timeZone = tis.get(0).getGeriatricFactorValue().iterator().next().getUserInRole().getPilot().getTimeZone();
 			
 			List<String> monthLabels = createMonthLabels(tis, timeZone);
 			

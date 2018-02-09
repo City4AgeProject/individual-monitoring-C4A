@@ -2,21 +2,16 @@ package eu.city4age.dashboard.api.pojo.domain;
 
 import java.io.Serializable;
 import java.time.YearMonth;
-import java.time.ZoneId;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
 @Table(name = "pilot")
@@ -48,7 +43,7 @@ public class Pilot implements Serializable {
 
 	@Id
 	@Column(name = "pilot_code")
-	@Enumerated(EnumType.STRING)
+	@org.hibernate.annotations.Type(type = "PilotEnumUserType")
 	private Pilot.PilotCode pilotCode;
 
 	@Column(name = "population_size")
@@ -153,14 +148,11 @@ public class Pilot implements Serializable {
 	}
 
 	public String getTimeZone() {
-		logger.info("pilot timeZone getter: " + timeZone);
 		return timeZone;
 	}
 
 	public void setTimeZone(String timeZone) {
-		logger.info("pilot timeZone setter: " + timeZone);
 		this.timeZone = timeZone;
 	}
-
 
 }

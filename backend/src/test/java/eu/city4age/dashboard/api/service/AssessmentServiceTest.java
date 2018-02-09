@@ -592,6 +592,8 @@ public class AssessmentServiceTest {
 		p1.setTimeZone(zone);
 		pilotRepository.save(p1);
 		
+		String timeZone = timeIntervalRepository.testHql(ti3.getIntervalStart());
+		logger.info("zone: " + timeZone);
 
 		SimpleDateFormat isoFormat = new SimpleDateFormat("MM/yyyy");
 		isoFormat.setTimeZone(TimeZone.getTimeZone(p1.getTimeZone()));
@@ -670,6 +672,20 @@ public class AssessmentServiceTest {
 		detectionVariableRepository.save(dv3);
 
 		List<TimeInterval> result = timeIntervalRepository.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId());
+		
+		Assert.assertNotNull(result);
+		
+		logger.info("result: " + result);
+		
+		Assert.assertEquals(3, result.size());
+		
+		Assert.assertEquals(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(0).getIntervalStart());
+		Assert.assertEquals(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(1).getIntervalStart());
+		Assert.assertEquals(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(2).getIntervalStart());
+		
+		Assert.assertEquals(1, result.get(0).getGeriatricFactorValue().size());
+		Assert.assertEquals(0, result.get(1).getGeriatricFactorValue().size());
+		Assert.assertEquals(1, result.get(2).getGeriatricFactorValue().size());
 		
 		Mockito.when(timeIntervalRepositoryMock.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId())).thenReturn(result);
 		
