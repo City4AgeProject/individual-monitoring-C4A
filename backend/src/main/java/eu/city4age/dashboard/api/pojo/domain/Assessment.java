@@ -33,7 +33,7 @@ import eu.city4age.dashboard.api.pojo.json.view.View;
 
 @Entity
 @Table(name = "assessment")
-@SequenceGenerator(name = "default_gen", sequenceName = "assessment_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "assessment_seq", allocationSize = 1)
 @FilterDefs(value = { @FilterDef(name = "riskStatus", parameters = @ParamDef(name = "riskStatus", type = "char")),
 		@FilterDef(name = "dataValidity", parameters = @ParamDef(name = "dataValidity", type = "char")),
 		@FilterDef(name = "roleId", parameters = @ParamDef(name = "roleId", type = "long")) })

@@ -43,6 +43,7 @@ public class Pilot implements Serializable {
 		}
 	};
 	
+	@Column(name ="pilot_name")
 	private String name;
 
 	@Id
