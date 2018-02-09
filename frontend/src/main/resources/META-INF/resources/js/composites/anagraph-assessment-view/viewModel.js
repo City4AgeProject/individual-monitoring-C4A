@@ -1,5 +1,5 @@
 define(
-		[ 'ojs/ojcore', 'knockout', 'jquery', 'urls', 'ojs/ojtabs',
+		[ 'ojs/ojcore', 'knockout', 'jquery', 'urls',
 				'entities', 'add-assessment', 'assessments-list', 'assessments-preview' ],
 
 function(oj, ko, $) {
@@ -26,28 +26,54 @@ function(oj, ko, $) {
 		self.dataPointsMarkedIds = ko.observableArray();
 
 		self.selectedAnotations = ko.observableArray([]);
-                
-                self.risksTags = ko.observableArray([]);
-                self.risksTags.push({"value":"A","label":"Risk alert","imagePath":"images/risk_alert.png"});
-                self.risksTags.push({"value":"N","label":"No Risk","imagePath":"images/comment.png"});
-                self.risksTags.push({"value":"W","label":"Risk warning","imagePath":"images/risk_warning.png"});
-                
+
 		self.nowrap = ko.observable(false);
-		self.checkedFilterRiskStatus = ko.observableArray([]);
-		self.checkedFilterValidityData = ko.observableArray([]);
+
+
+                self.risksTags = ko.observableArray([
+                    {value: 'A', label: oj.Translations.getTranslatedString('alert_data'), imagePath: 'images/risk_alert.png'},
+                    {value: 'W', label: oj.Translations.getTranslatedString('warning_data'), imagePath: 'images/risk_warning.png'},
+                    {value: 'N', label: oj.Translations.getTranslatedString('no_risk_data'), imagePath: 'images/comment.png'}
+                ]);
+
+
+                self.checkedFilterRiskStatus = ko.observableArray();
+                /* Data validities */
+                self.dataValiditiesTags = ko.observableArray([
+                    {value: 'QUESTIONABLE_DATA',label: oj.Translations.getTranslatedString( 'questionable_data' ), imagePath: 'images/questionable_data.png'},
+                    {value: 'FAULTY_DATA',label: oj.Translations.getTranslatedString( 'faulty_data' ), imagePath: 'images/faulty_data.png'},
+                    {value: 'VALID_DATA',label: oj.Translations.getTranslatedString( 'valid_data' ), imagePath: 'images/valid_data.png'}
+                ]);
+                
+                self.checkedFilterValidityData = ko.observableArray();
+
+
+                self.roleTags = ko.observableArray([
+                    {value : 2, label : oj.Translations.getTranslatedString("role_ifc")},
+                    {value : 3, label : oj.Translations.getTranslatedString("role_cg")},
+                    {value : 4, label : oj.Translations.getTranslatedString("role_ece")},
+                    {value : 5, label : oj.Translations.getTranslatedString("role_sam")},
+                    {value : 6, label : oj.Translations.getTranslatedString("role_gp")},
+                    {value : 7, label : oj.Translations.getTranslatedString("role_lge")},
+                    {value : 8, label : oj.Translations.getTranslatedString("role_pge")}
+                ]);
+                
+        
 		self.isChecked = ko.observable();
+		self.selectedRoles = ko.observableArray([]);
+		self.rolesCollection = ko.observable();
+		
 		self.val = ko.observableArray([ "Month" ]);
 		self.typeValue = ko.observable('line');
 		self.stackValue = ko.observable('off');
 		self.polarGridShapeValue = ko.observable('polygon');
 		self.polarChartSeriesValue = ko.observableArray();
 		self.polarChartGroupsValue = ko.observableArray();
-		self.series = ko.observableArray();
-		self.groups = ko.observableArray();
+		
 		self.commentText = ko.observable('');
-		self.selectedRiskStatus = ko.observableArray([]);
-		self.selectedDataValidity = ko.observableArray([]);
-		self.selectedRoles = ko.observableArray([]);
+                self.selectedRiskStatus = ko.observableArray([]);
+                self.selectedDataValidity = ko.observableArray([]);
+                
 		var selected = [];
 
 		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase() + oj.Translations.getTranslatedString("annotations_assessments").substring(1);
@@ -70,6 +96,7 @@ function(oj, ko, $) {
                 self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc");
                 self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
                 self.typeLabel = oj.Translations.getTranslatedString("type");
+                
                     var role = new oj.Collection.extend({
 			url : CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/grs",
 			fetchSize : -1,
@@ -127,6 +154,8 @@ function(oj, ko, $) {
                     } else {
                             self.showSelectionOnDiagram(false);
                     }
+			
+                    
 		};
 		
 		var loadDiagramDataCallback = function (data) {
@@ -193,13 +222,15 @@ function(oj, ko, $) {
 		/* Show popup dialog for adding new assessment */
 		self.clickShowPopupAddAssessment = function(data, event) {
 			
-                        $('#addAssessment').prop('commentText', '');
+            $('#addAssessment').prop('commentText', '');
 			$('#addAssessment').prop('selectedRiskStatus', []);
 			$('#addAssessment').prop('selectedDataValidity', []);
 			$('#addAssessment').prop('selectedRoles', []);
+                        
+			if (self.roleTags().length > 0) {
+                            console.log("ROLE TAGS FULL");
+                            $('#addAssessment').prop('roleTags', ko.toJS(self.roleTags));
 
-			if (self.props.selectedRoles.length > 0) {
-                            $('#addAssessment').prop('roleTags', ko.toJS(self.props.roleTags));
                             $('#dialog1').ojDialog();
                             $('#dialog1').ojDialog('open');
 
@@ -208,9 +239,11 @@ function(oj, ko, $) {
 
                             return true;
 			} else {
+                            console.log("ROLE TAGS EMPTY");
                             $('#dialog2').ojDialog();
                             $('#dialog2').ojDialog('open');
 
+                            // position dialog and screen
                             $("#dialog2").ojDialog('widget').css('top',String(document.body.scrollTop + screen.height/ 8)+ 'px');
                             $("#dialog2").ojDialog('widget').css('left',String((screen.width - $("#dialog2").width()) / 2)+ 'px');
 
@@ -253,7 +286,8 @@ function(oj, ko, $) {
 		};
 		
 		self.filterList = function() {
-			filterAssessments(self.queryParams);
+			filterAssessments(self.queryParams,
+					self.checkedFilterValidityData);
 		};
 
 		context.props.then(function(properties) {
@@ -262,9 +296,6 @@ function(oj, ko, $) {
 		
 
 		self.attached = function() {
-                    //console.log("ojChartId: " + self.props.ojChartId)
-                        //self.series($('#'+self.props.ojChartId)[0].getSeries());
-                        //self.groups($('#'+self.props.ojChartId)[0].getSeries());
 			var response = loadDataSet();
 			return response;
 		};
@@ -324,7 +355,7 @@ function(oj, ko, $) {
                         }
                     }
 
-		};
+		}
                 
 		/*
 		 * Mouse handles .. should be deleted when we find better way to
@@ -376,7 +407,8 @@ function(oj, ko, $) {
 									+ self.props.parentFactorId
 									+ '/intervalStart/2001-1-1/intervalEnd/2040-1-1',
 							function(dataSet) {
-								var assesmentsDataSet = DataSet.produceFromOther(dataSet);
+								var assesmentsDataSet = DataSet
+										.produceFromOther(dataSet);
 								for (var i = 0; i < assesmentsDataSet.series.length; i++) {
 									var serie = assesmentsDataSet.series[i];
 									if (serie.items !== undefined) {
@@ -490,7 +522,7 @@ function(oj, ko, $) {
 			self.selectedAnotations([]);
 			$('.popup').ojPopup('close');
 			// Popup1 or popup2 if there are any assessments
-			if ($('#' + $('.popup').attr('id')).ojPopup("isOpen") === false) {
+			if ($('#' + $('.popup').attr('id')).ojPopup("isOpen") == false) {
 				if (aLength > 0) {
 					
 					$('#popup1').ojPopup("option", "position", {
@@ -513,7 +545,7 @@ function(oj, ko, $) {
 					$('#popup1').draggable({
 						containment : "#detectionGEFGroup1FactorsChart"
 					});
-				} else if (aLength === 0) {
+				} else if (aLength == 0) {
 					
 					$('#popup2').ojPopup("option", "position", {
 						"my" : {
@@ -564,7 +596,7 @@ function(oj, ko, $) {
 
 						});*/
 
-		var filterAssessments = function(pointIds) {
+		var filterAssessments = function(pointIds, checkedFilterValidityData) {
 			var pointIdsString = pointIds.join('/');
 			return $.getJSON(ASSESSMENT_FOR_DATA_SET + "/geriatricFactorValueIds/" + pointIdsString + filtering(), function(assessments) {
 				var assessmentsResult = [];
@@ -580,62 +612,60 @@ function(oj, ko, $) {
 		};
 
 		var filtering = function() {
-                        console.log("filtering");
-                        console.log("risks: " + JSON.stringify(self.checkedFilterRiskStatus()));
 			var string = "";
-			if (self.checkedFilterRiskStatus() !== undefined
-					|| self.checkedFilterValidityData() !== undefined
-					|| ko.toJS(self.props.selectedRoles) !== null
-					|| ko.toJS(self.val) !== null) {
+			if (self.checkedFilterRiskStatus() != undefined
+					|| self.checkedFilterValidityData() != undefined
+					|| ko.toJS(self.selectedRoles) != null
+					|| ko.toJS(self.val) != null) {
 				string += "?";
-				if (self.checkedFilterRiskStatus() !== undefined
+				if (self.checkedFilterRiskStatus() != undefined
 						&& self.checkedFilterRiskStatus().contains('A')) {
 					string += "riskStatusAlert=true";
 				}
-				if (self.checkedFilterRiskStatus() !== undefined
+				if (self.checkedFilterRiskStatus() != undefined
 						&& self.checkedFilterRiskStatus().contains('W')) {
 					if (string.length > 1)
 						string += "&";
 					string += "riskStatusWarning=true";
 				}
-				if (self.checkedFilterRiskStatus() !== undefined
+				if (self.checkedFilterRiskStatus() != undefined
 						&& self.checkedFilterRiskStatus().contains('N')) {
 					if (string.length > 1)
 						string += "&";
 					string += "riskStatusNoRisk=true";
 				}
-				if (self.checkedFilterValidityData() !== undefined
+				if (self.checkedFilterValidityData() != undefined
 						&& self.checkedFilterValidityData().contains(
 								'QUESTIONABLE_DATA')) {
 					if (string.length > 1)
 						string += "&";
 					string += "dataValidityQuestionable=true";
 				}
-				if (self.checkedFilterValidityData() !== undefined
+				if (self.checkedFilterValidityData() != undefined
 						&& self.checkedFilterValidityData().contains(
 								'FAULTY_DATA')) {
 					if (string.length > 1)
 						string += "&";
 					string += "dataValidityFaulty=true";
 				}
-				if (self.checkedFilterValidityData() !== undefined
+				if (self.checkedFilterValidityData() != undefined
 						&& self.checkedFilterValidityData().contains(
 								'VALID_DATA')) {
 					if (string.length > 1)
 						string += "&";
 					string += "dataValidityValid=true";
 				}
-				if ((ko.toJS(self.props.selectedRoles) === null || ko
-						.toJS(self.props.selectedRoles).length === 0)) {
+				if ((ko.toJS(self.selectedRoles) == null || ko
+						.toJS(self.selectedRoles).length === 0)) {
 					;
 				} else {
 					if (string.length > 1)
 						string += "&";
 						string += "roleId="
-								+ ko.toJS(self.props.selectedRoles);
+								+ ko.toJS(self.selectedRoles);
 
 				}
-				if ((ko.toJS(self.val) === null || ko.toJS(self.val).length === 0)) {
+				if ((ko.toJS(self.val) == null || ko.toJS(self.val).length === 0)) {
 					;
 				} else {
 					if (string.length > 1)
@@ -644,20 +674,18 @@ function(oj, ko, $) {
 				}
 			}
 			return string;
-		};
+		}
 
 		// Reset Selected Risk and data type ojButtonset-s
 		self.resetClick = function() {
 			$( ".selector" ).ojSelect( "getNodeBySubId", {'subId': 'oj-select-chosen'} ).textContent="";
-
-			self.props.selectedRiskStatus = [];
-			self.props.selectedDataValidity = [];
-			self.props.selectedRoles = [];
+			self.selectedRoles = null;
 			self.checkedFilterRiskStatus([]);
 			self.checkedFilterValidityData([]);
-			filterAssessments(self.queryParams);
+			filterAssessments(self.queryParams,
+					self.checkedFilterValidityData);
 	
-		};
+		}
 
 		self.toggleMorphologyLabel = function(){
 			
@@ -709,8 +737,8 @@ function(oj, ko, $) {
 				}
 			}
 			self.props.selectedItemsValue = selected;
-		};
-		//this method makes annotation list with filters visible and sets dataPointsMarked to assessment-preview component 
+		}
+                //this method makes annotation list with filters visible and sets dataPointsMarked to assessment-preview component 
 		function refreshDataPointsMarked(assessmentsResultLength) {
 			document.getElementById('tabs-container').style.display = 'block';
 			$('#tabAnnotations').css({

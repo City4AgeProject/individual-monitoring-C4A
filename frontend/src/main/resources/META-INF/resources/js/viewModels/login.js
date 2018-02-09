@@ -26,7 +26,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         
                     }
                     
-                };
+                }
                 // Create handler
                 self.loginUser = function (viewModel, event) {
                 	console.log('login user');
@@ -62,7 +62,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 //login on ENTER button
                 	  $(document).keypress(function(e) {
                 		  if($(".login").is(":visible")){
-                			  if(e.which === 13){
+                			  if(e.which == 13){
                 				  $("#password").blur();
                 				  self.loginUser();
                 			  }

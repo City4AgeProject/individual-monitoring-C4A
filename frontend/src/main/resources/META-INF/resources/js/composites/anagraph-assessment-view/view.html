@@ -34,8 +34,8 @@
 	</div>
 	<!-- end main graph panel -->
 
-	<div id="dialogWrapper1">
-		<add-assessment id="addAssessment" class="oj-flex-item" data-points-marked-ids="{{dataPointsMarkedIds}}" comment-text="{{commentText}}" selected-risk-status="{{selectedRiskStatus}}" selected-data-validity="{{selectedDataValidity}}" risks-tags="{{$props.risksTags}}" data-validities-tags="{{$props.dataValiditiesTags}}" role-tags="{{$props.roleTags}}"> </add-assessment>
+        <div id="dialogWrapper1">
+		<add-assessment id="addAssessment" class="oj-flex-item" data-points-marked-ids="{{dataPointsMarkedIds}}" comment-text="{{commentText}}" selected-risk-status="{{selectedRiskStatus}}" selected-data-validity="{{selectedDataValidity}}" role-tags="{{roleTags}}" risks-tags="{{risksTags}}" data-validities-tags="{{dataValiditiesTags}}"> </add-assessment>
 	</div>
 
 	<div class="oj-flex-item">
@@ -97,7 +97,7 @@
                                                                                             <oj-buttonset-many class="oj-flex-item" id="checkFilterRisk" style="margin-top: 3px;"
                                                                                                               value="{{checkedFilterRiskStatus}}"
                                                                                                               chroming="outlined">
-                                                                                                     <!--ko foreach: $props.risksTags -->
+                                                                                                     <!--ko foreach: risksTags -->
                                                                                                     <oj-option value="[[value]]">
                                                                                                          <img style="vertical-align: bottom; width: 20px; height: 20px;"
                                                                                                               data-bind="attr: {src: imagePath, title: label}"/>
@@ -107,7 +107,7 @@
                                                                                             <oj-buttonset-many class="oj-flex-item" id="checkFilterValidityData" style="margin-top: 3px;"
                                                                                                               value="{{checkedFilterValidityData}}"
                                                                                                               chroming="outlined">
-                                                                                                     <!--ko foreach: $props.dataValiditiesTags -->
+                                                                                                     <!--ko foreach: dataValiditiesTags -->
                                                                                                     <oj-option value="[[value]]">
                                                                                                          <img style="vertical-align: bottom; width: 20px; height: 20px;"
                                                                                                               data-bind="attr: {src: imagePath, title: label}"/>
@@ -129,7 +129,7 @@
 
 									<div class="oj-flex-item" style="width: 180px; max-width: 334px;" id="selectRoleData">
 										<label for="selectRole" data-bind="text: fromLabel"></label>
-                                                                                <oj-select-one id="selectRole" options="[[$props.roleTags]]" 
+                                                                                <oj-select-one id="selectRole" options="[[roleTags]]" 
                                                                                     value="{{selectedRoles}}" style="width: 180px; max-width: 334px;">
                                                                                   </oj-select-one>
 									</div>

@@ -11,8 +11,8 @@
                                             <div class="oj-flex-item">
                                                 <label id="selectgrouplabel" data-bind="text: choseTypeLabel+'*'"></label>
                                                 <div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
-                                                    <oj-select-one id="riskSelect" style="width:165px;" value="{{$props.selectedRiskStatus}}"  placeholder="[[choseTypePlcHoldLabel]]">
-                                                        <!-- ko foreach: $props.risksTags -->
+                                                    <oj-select-one id="riskSelect" style="width:165px;" value="{{selectedRiskStatus}}"  placeholder="[[choseTypePlcHoldLabel]]">
+                                                        <!-- ko foreach: risksTags -->
 
                                                                          <oj-option value="[[value]]">
                                                                              <img data-bind="attr: {src: imagePath}" role="presentation" style="vertical-align: middle; width: 16px; height: 16px; margin-right: 5px;" />
@@ -22,8 +22,8 @@
                                                             <!-- /ko -->
                                                     </oj-select-one>
 
-                                                    <oj-select-one id="dataValiditySelection" style="width:175px;" value="{{$props.selectedDataValidity}}" placeholder="[[dataValidityPlcHoldLabel]]">
-                                                        <!-- ko foreach: $props.dataValiditiesTags -->
+                                                    <oj-select-one id="dataValiditySelection" style="width:175px;" value="{{selectedDataValidity}}" placeholder="[[dataValidityPlcHoldLabel]]">
+                                                        <!-- ko foreach: dataValiditiesTags -->
 
                                                                      <oj-option value="[[value]]">
                                                                          <img data-bind="attr: {src: imagePath}" role="presentation" style="vertical-align: middle; width: 16px; height: 16px; margin-right: 5px;" />

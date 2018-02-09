@@ -107,20 +107,10 @@
 			</div>
 		</div>	-->
 </div>
-<oj-chart id="detectionGEFGroup1FactorsLineChart2"
-    type="line"
-    series="{{lineSeriesValue}}"
-    groups="{{lineGroupsValue}}"
-    animation-on-display="auto"
-    animation-on-data-change="auto"
-    orientation="vertical"
-    hover-behavior="dim"
-    style="max-width:500px;width:100%;height:350px;">
-</oj-chart>
+
 <anagraph-assessment-view id="detectionGEFGroup1FactorsLineChart"
 	care-recipient-id="{{careRecipientId}}" parent-factor-id="{{parentFactorId}}"
 	selected-id="{{selectedId}}" title-value="{{titleValue}}" view-pilot-detection-variables="{{viewPilotDetectionVariables}}"
 	series="{{lineSeriesValue}}" groups="{{lineGroupsValue}}"
-        oj-chart-id="detectionGEFGroup1FactorsLineChart2"
-        risks-tags="{{risksTags}}" data-validities-tags="{{dataValiditiesTags}}" role-tags="{{roleTags}}"
-	legend='{"position":"bottom"}' drilling='on' style="display: none" />
+	legend='{"position":"bottom"}'
+	drilling='on' style="display: none" />
