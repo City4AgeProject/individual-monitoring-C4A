@@ -244,7 +244,8 @@ public class CareRecipientService {
         }
         Map<String, Claim> claims = token.getClaims();
         Integer role = claims.get("rol").asInt();
-        String pilotCode = claims.get("plt").asString();
+        String stirngPilotCode = claims.get("plt").asString();
+        Pilot.PilotCode pilotCode = Pilot.PilotCode.valueOf(stirngPilotCode);
 
         // 
         if (SamePilotRoles.getEnumAsSet().contains(role)) {

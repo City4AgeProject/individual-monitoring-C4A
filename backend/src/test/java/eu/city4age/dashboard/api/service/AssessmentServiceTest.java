@@ -78,6 +78,10 @@ import eu.city4age.dashboard.api.rest.AssessmentsService;
 import eu.city4age.dashboard.api.rest.MeasuresService;
 import eu.city4age.dashboard.api.rest.UserService;
 
+/*
+ * authors: marina.andric
+ * 		    milos.holclajtner
+ */
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -690,8 +694,6 @@ public class AssessmentServiceTest {
 		Mockito.when(timeIntervalRepositoryMock.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId())).thenReturn(result);
 		
 		Response response = assessmentService.getDiagramData(uir1.getId(), dv1.getId());
-		
-		logger.info("result: " + result);
 		
 		DataSet output = (DataSet) response.getEntity();
 		
