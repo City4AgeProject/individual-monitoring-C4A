@@ -138,20 +138,14 @@ public class CareRecipientService {
 		List<TimeInterval> tis = timeIntervalRepository.getGroups(Long.valueOf(careRecipientId), parentFactors);
 		logger.info("tis.size(): " + tis.size());
 
-		if(tis != null && tis.size() > 0) {
-			for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
-	
-				if (gef.getDetectionVariable() != null) {
-	
-					logger.info("gef: " + gef.getDetectionVariable().getDetectionVariableType().getDetectionVariableType().getName());
+		
+		for (TimeInterval ti : tis)
+			for (GeriatricFactorValue gef : ti.getGeriatricFactorValue())
+				if (!detectionvarsparamsList.contains(gef.getDetectionVariable())) {
 					detectionvarsparamsList.add(gef.getDetectionVariable());
 					fMap.put(gef.getDetectionVariableId(), new ArrayList<Float>());
 					idMap.put(gef.getDetectionVariableId(), new ArrayList<Long>());
-	
 				}
-	
-			}
-		}
 
 		for (TimeInterval ti : tis) {
 			String date = sdf.format(ti.getIntervalStart());

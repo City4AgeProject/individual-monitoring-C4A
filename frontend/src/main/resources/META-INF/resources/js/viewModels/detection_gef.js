@@ -131,7 +131,7 @@ function (oj, ko, $, sp, params) {
         /* End: Group 1 and Group 2 Line Chart configuration with dynamic data */
         
         /*  Detection GEF Groups Line Chart configuration*/	
-        self.lineSeries2Value = ko.observableArray([]);   	
+        self.lineSeries2Value = ko.observableArray([]);
         
         
         self.titleValue = ko.observable("");
