@@ -13,7 +13,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -114,6 +113,8 @@ public class CareRecipientService {
 	public Response getGroups(@PathParam("careRecipientId") String careRecipientId,
 			@PathParam("parentFactors") List<PathSegment> parentFactorsPathSegment) throws IOException {
 
+		logger.info("getGroups call");
+		
 		/**
 		 * ****************Variables*************
 		 */
@@ -132,25 +133,32 @@ public class CareRecipientService {
 		 * ****************Action*************
 		 */
 
-		for (PathSegment parentFactor : parentFactorsPathSegment) {
+		for (PathSegment parentFactor : parentFactorsPathSegment)
 			parentFactors.add(DetectionVariableType.Type.valueOf(parentFactor.toString()));
-		}
 
 		List<TimeInterval> tis = timeIntervalRepository.getGroups(Long.valueOf(careRecipientId), parentFactors);
-
-		if(tis != null && tis.size() > 0) {
-			for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
-	
-				if (gef.getDetectionVariable() != null) {
-
+		
+		for (TimeInterval ti : tis)
+			for (GeriatricFactorValue gef : ti.getGeriatricFactorValue())
+				if (!detectionvarsparamsList.contains(gef.getDetectionVariable())) {
 					detectionvarsparamsList.add(gef.getDetectionVariable());
 					fMap.put(gef.getDetectionVariableId(), new ArrayList<Float>());
 					idMap.put(gef.getDetectionVariableId(), new ArrayList<Long>());
-	
 				}
+		
+//		if(tis != null && tis.size() > 0) {
+//			for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
 	
-			}
-		}
+//				if (gef.getDetectionVariable() != null) {
+//
+//					detectionvarsparamsList.add(gef.getDetectionVariable());
+//					fMap.put(gef.getDetectionVariableId(), new ArrayList<Float>());
+//					idMap.put(gef.getDetectionVariableId(), new ArrayList<Long>());
+//	
+//				}
+	
+//			}
+//		}
 
 		for (TimeInterval ti : tis) {
 			String date = sdf.format(ti.getIntervalStart());
@@ -199,8 +207,8 @@ public class CareRecipientService {
 					OJDiagramFrailtyStatus frailtyStatus = transformToDto(fs, months);
 
 					response.setFrailtyStatus(frailtyStatus);
-
-					Pilot.PilotCode pilotCode = gereatricfactparamsList.get(0).getUserInRole().getPilotCode();						
+					
+					Pilot.PilotCode pilotCode = gereatricfactparamsList.get(0).getUserInRole().getPilotCode();			
 					PilotDetectionVariable pdv = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(type.getId(), pilotCode);
 
 					itemList.add(new C4ServiceGetOverallScoreListResponse(tis, fMap.get(type.getId()),

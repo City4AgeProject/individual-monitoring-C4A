@@ -121,90 +121,81 @@ public class TimeIntervalRepositoryTest {
 		ti5.setIntervalEnd(Timestamp.valueOf("2016-06-01 00:00:00"));
 				
 		UserInSystem uis1 = new UserInSystem ();
-		uis1.setId(1L);
+		userInSystemRepository.save(uis1);
 		
 		UserInSystem uis2 = new UserInSystem ();
-		uis2.setId(2L);
+		userInSystemRepository.save(uis2);
 		
 		UserInRole uir1 = new UserInRole();
-		uir1.setId(1L);
 		uir1.setUserInSystem(uis1);
-		uir1 = userInRoleRepository.save(uir1);
+		userInRoleRepository.save(uir1);
 		
 		UserInRole uir2 = new UserInRole();
-		uir2.setId(2L);
 		uir2.setUserInSystem(uis2);
-		uir2 = userInRoleRepository.save(uir2);
+		userInRoleRepository.save(uir2);
+		
+		DetectionVariableType dvt1 = DetectionVariableType.OVL;
+		detectionVariableTypeRepository.save(dvt1);
 
-		FrailtyStatusTimeline fst1 = new FrailtyStatusTimeline();
-		fst1.setTimeIntervalId(ti1.getId());
-		fst1.setUserInRoleId(uir1.getId());
-		fst1.setFrailtyStatus("test1");
-		fst1.setChanged(new Date());
-		fst1.setChangedBy(uir1);
-		fst1 = frailtyStatusTimelineRepository.save(fst1);
-		
-		FrailtyStatusTimeline fst2 = new FrailtyStatusTimeline();
-		fst2.setTimeIntervalId(ti2.getId());
-		fst2.setUserInRoleId(uir2.getId());
-		fst2.setFrailtyStatus("test2");
-		fst2.setChanged(new Date());
-		fst2.setChangedBy(uir2);
-		fst2 = frailtyStatusTimelineRepository.save(fst2);
-		
-		//
-		
-		DetectionVariableType dvt1 = DetectionVariableType.GEF;
-		dvt1 = detectionVariableTypeRepository.save(dvt1);
-
-		DetectionVariableType dvt2 = DetectionVariableType.GES;
-		dvt2 = detectionVariableTypeRepository.save(dvt2);
+		DetectionVariableType dvt2 = DetectionVariableType.GFG;
+		detectionVariableTypeRepository.save(dvt2);
 
 		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setId(1L);
 		dv1.setDetectionVariableName("DV1");
 		dv1.setDetectionVariableType(dvt1);
-		dv1 = detectionVariableRepository.save(dv1);
+		detectionVariableRepository.save(dv1);
 
 		DetectionVariable dv2 = new DetectionVariable();
-		dv2.setId(2L);
 		dv2.setDetectionVariableName("DV2");
 		dv2.setDetectionVariableType(dvt2);
-		dv2 = detectionVariableRepository.save(dv2);
+		detectionVariableRepository.save(dv2);
 
 		GeriatricFactorValue gef1 = new GeriatricFactorValue();
-		gef1.setId(1L);
 		gef1.setGefValue(new BigDecimal(3));
 		gef1.setTimeInterval(ti1);
+		gef1.setUserInRoleId(uir1.getId());
 		gef1.setUserInRole(uir1);
+		gef1.setDetectionVariableId(dv1.getId());
 		gef1.setDetectionVariable(dv1);
-		gef1 = geriatricFactorRepository.save(gef1);
+		geriatricFactorRepository.save(gef1);
 		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
-		gef2.setId(2L);
 		gef2.setGefValue(new BigDecimal(4));
 		gef2.setTimeInterval(ti2);
+		gef2.setUserInRoleId(uir1.getId());
 		gef2.setUserInRole(uir1);
+		gef2.setDetectionVariableId(dv1.getId());
 		gef2.setDetectionVariable(dv1);
-		gef2 = geriatricFactorRepository.save(gef2);
+		geriatricFactorRepository.save(gef2);
 		
 		GeriatricFactorValue gef3 = new GeriatricFactorValue();
-		gef3.setId(3L);
 		gef3.setGefValue(new BigDecimal(5));
 		gef3.setTimeInterval(ti3);
+		gef3.setUserInRoleId(uir1.getId());
 		gef3.setUserInRole(uir1);
+		gef3.setDetectionVariableId(dv2.getId());
 		gef3.setDetectionVariable(dv2);
-		gef3 = geriatricFactorRepository.save(gef3);
+		geriatricFactorRepository.save(gef3);
 		
 		GeriatricFactorValue gef4 = new GeriatricFactorValue();
-		gef4.setId(4L);
 		gef4.setGefValue(new BigDecimal(6));
 		gef4.setTimeInterval(ti4);
+		gef4.setUserInRoleId(uir2.getId());
 		gef4.setUserInRole(uir2);
+		gef4.setDetectionVariableId(dv1.getId());
 		gef4.setDetectionVariable(dv1);
-		gef4 = geriatricFactorRepository.save(gef4);
+		geriatricFactorRepository.save(gef4);
+		
+		ti1.getGeriatricFactorValue().add(gef1);
+		timeIntervalRepository.save(ti1);
+		ti2.getGeriatricFactorValue().add(gef2);
+		timeIntervalRepository.save(ti2);
+		ti3.getGeriatricFactorValue().add(gef3);
+		timeIntervalRepository.save(ti3);
+		ti4.getGeriatricFactorValue().add(gef4);
+		timeIntervalRepository.save(ti4);
 
-		List<DetectionVariableType.Type> parentFactors = Arrays.asList(DetectionVariableType.Type.valueOf("GEF"), DetectionVariableType.Type.valueOf("GES"));
+		List<DetectionVariableType.Type> parentFactors = Arrays.asList(DetectionVariableType.Type.valueOf("OVL"), DetectionVariableType.Type.valueOf("GFG"));
 		
 		logger.info("parentFactorsSize: " + parentFactors.size());
 		for (Iterator<DetectionVariableType.Type> i = parentFactors.iterator(); i.hasNext();) {

@@ -485,13 +485,11 @@ public class AssessmentServiceTest {
 		pdv1.setDerivedDetectionVariable(ddv1);
 		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pdv1.setDetectionVariable(dv1);
-		pdv1.setDerivedDetectionVariable(ddv1);
 		pdv1 = pilotDetectionVariableRepository.save(pdv1);
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
 		pdv2.setDerivedDetectionVariable(ddv1);
 		pdv2.setPilotCode(Pilot.PilotCode.ATH);
 		pdv2.setDetectionVariable(dv1);
-		pdv2.setDerivedDetectionVariable(ddv1);
 		pdv2 = pilotDetectionVariableRepository.save(pdv2);
 		
 		UserInSystem uis = new UserInSystem ();
