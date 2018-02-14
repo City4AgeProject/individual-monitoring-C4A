@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.jpa.CrProfileRepository;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.DetectionVariableTypeRepository;
 import eu.city4age.dashboard.api.jpa.FrailtyStatusRepository;
@@ -34,6 +35,7 @@ import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.TypicalPeriodRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.UserInSystemRepository;
+import eu.city4age.dashboard.api.pojo.domain.CrProfile;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatus;
@@ -57,6 +59,8 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import java.math.BigDecimal;
@@ -134,6 +138,12 @@ public class CareReciepentServiceTest {
 	
 	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
+	
+	@Autowired
+	private CrProfileRepository crProfileRepository;
+	
+	@Mock
+	private CrProfileRepository crProfileRepositoryMock;
 	
 	@Mock
 	private PilotDetectionVariableRepository pilotDetectionVariableRepositoryMock;
@@ -414,7 +424,29 @@ public class CareReciepentServiceTest {
 	@Rollback(true)
 	public void findOneTest() throws Exception {
 		
+		UserInRole uir = new UserInRole();
+		userInRoleRepository.save(uir);
 		
+		CrProfile crProfile = new CrProfile();
+		crProfile.setBirthDate(new GregorianCalendar(1986, 2, 11).getTime());
+		crProfile.setGender(true);
+		crProfile.setRefHeight(174F);
+		crProfile.setRefWeight(53F);
+		crProfile.setUserInRole(uir);
+		crProfileRepository.save(crProfile);
+		
+		CrProfile crP = crProfileRepository.findOne(crProfile.getId());
+		Mockito.when(crProfileRepositoryMock.findOne(crProfile.getId())).thenReturn(crP);
+		
+		Response response = careRecipentService.findOne(crProfile.getId());
+		
+		CrProfile result = objectMapper.readerFor(CrProfile.class).readValue(response.getEntity().toString());
+		Assert.assertEquals(result.getId(), crProfile.getId());
+		Assert.assertEquals(result.getRefHeight(), crProfile.getRefHeight());
+		Assert.assertEquals(result.getRefWeight(), crProfile.getRefWeight());
+		Assert.assertEquals(result.getBirthDate(), crProfile.getBirthDate());
+		Assert.assertEquals(result.isGender(), crProfile.isGender());
+
 	}	
 	
 }
