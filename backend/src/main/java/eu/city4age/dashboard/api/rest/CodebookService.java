@@ -90,19 +90,5 @@ public class CodebookService {
 		return JerseyResponse.build(objectMapper.writeValueAsString(roles));
 	}
 
-	@GET
-	@ApiOperation("Get all data from specified table.")
-	@Path("selectTable/{tableName}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "tableName", value = "table name", required = false, dataType = "string", paramType = "path", defaultValue = "assessment")})
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = AbstractBaseEntity.class),
-			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
-	public Response selectTable(@ApiParam(hidden = true) @PathParam(value = "tableName") String tableName) throws JsonProcessingException {
-		Session session = sessionFactory.openSession();
-		Query q = session.createSQLQuery("SELECT * from " + tableName);
-		return JerseyResponse.build(objectMapper.writeValueAsString(q.list()));
-	}
-
 
 }

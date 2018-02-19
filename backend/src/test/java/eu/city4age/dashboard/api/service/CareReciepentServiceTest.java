@@ -210,8 +210,8 @@ public class CareReciepentServiceTest {
 
 		Response response = careRecipentService.getCareRecipients(token);
 
-		Assert.assertEquals("{\"message\":\"success\",\"responseCode\":10,\"status\":{},\"itemList\":[{\"userId\":" + uir1.getId() + ",\"age\":0,\"frailtyStatus\":\"N/A\",\"frailtyNotice\":\"N/A\",\"attention\":\"\\u0000\",\"textline\":\"N/A\",\"interventionstatus\":\"\\u0000\",\"interventionDate\":\"N/A\",\"detectionStatus\":\"N/A\",\"detectionDate\":\"N/A\",\"pilotCode\":\"LCC\"}]}", response.getEntity().toString());
-
+		Assert.assertTrue(response.getEntity().toString().contains("\"message\":\"success\",\"responseCode\":10,\"status\":{}"));
+		Assert.assertTrue(response.getEntity().toString().contains("\"itemList\":[{\"userId\":" + uir1.getId() + ",\"age\":0,\"frailtyStatus\":\"N/A\",\"frailtyNotice\":\"N/A\",\"attention\":\"\\u0000\",\"textline\":\"N/A\",\"interventionstatus\":\"\\u0000\",\"interventionDate\":\"N/A\",\"detectionStatus\":\"N/A\",\"detectionDate\":\"N/A\",\"pilotCode\":\"LCC\""));
 
 	}
 
