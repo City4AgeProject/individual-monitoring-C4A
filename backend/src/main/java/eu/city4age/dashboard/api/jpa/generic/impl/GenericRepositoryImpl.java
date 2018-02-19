@@ -178,6 +178,8 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 				entityManager.clear();
 			}
 		}
+		entityManager.flush();
+		entityManager.clear();
 		return savedEntities;
 	}
 
