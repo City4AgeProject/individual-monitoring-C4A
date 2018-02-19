@@ -17,7 +17,7 @@
 		<main.basedir>${project.basedir}</main.basedir>
 		<start-class>eu.city4age.dashboard.api.Application</start-class>
 		<maven.test.skip>true</maven.test.skip>
-		<glassfish.home>C:\glassfish5</glassfish.home>
+		<glassfish.home>C:\java_ee_sdk-8\glassfish5</glassfish.home>
 		<glassfish.domain>domain1</glassfish.domain>
 		<glassfish.domain.username>admin</glassfish.domain.username>
 		<glassfish.passwordFile>${glassfish.home}\glassfish\domains\domain1\config\domain-passwords</glassfish.passwordFile>
