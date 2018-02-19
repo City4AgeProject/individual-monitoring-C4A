@@ -17,7 +17,7 @@
 		<main.basedir>${project.basedir}</main.basedir>
 		<start-class>eu.city4age.dashboard.api.Application</start-class>
 		<maven.test.skip>true</maven.test.skip>
-		<glassfish.home>C:\java_ee_sdk-8\glassfish5</glassfish.home>
+		<glassfish.home>C:\glassfish5</glassfish.home>
 		<glassfish.domain>domain1</glassfish.domain>
 		<glassfish.domain.username>admin</glassfish.domain.username>
 		<glassfish.passwordFile>${glassfish.home}\glassfish\domains\domain1\config\domain-passwords</glassfish.passwordFile>
@@ -190,11 +190,17 @@
 		    <artifactId>mockito-core</artifactId>
 		    <scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.auth0</groupId>
-		    <artifactId>java-jwt</artifactId>
-		    <version>3.2.0</version>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.4</version>
 		</dependency>
 
 	</dependencies>
