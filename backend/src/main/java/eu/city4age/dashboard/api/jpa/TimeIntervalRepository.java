@@ -1,5 +1,6 @@
 package eu.city4age.dashboard.api.jpa;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -30,5 +31,21 @@ public interface TimeIntervalRepository extends GenericRepository<TimeInterval, 
 	
 	@Query("SELECT pi.timeZone FROM Pilot pi WHERE DATE_TRUNC('month', TIMEZONE(pi.timeZone, :date) ) = TIMEZONE(pi.timeZone, :date)")
 	String testHql(@Param("date") final Date date);
+	
+	/*
+	 * 
+	 * metod koji treba da dohhvati truncate timestampa (start) zadatim parametrom
+	 */
+	
+	@Query ("SELECT DATE_TRUNC (:truncParam, TIMEZONE ('UTC', ti.intervalStart)) FROM TimeInterval ti WHERE ti.id = :timeIntervalID")
+	Timestamp getTruncatedTimeIntervalStart (@Param ("timeIntervalID") Long timeIntervalID, @Param ("truncParam") String truncParam);
+	
+	/*
+	 * 
+	 * metod koji treba da dohhvati truncate timestampa (end) zadatim parametrom
+	 */
+	
+	@Query ("SELECT DATE_TRUNC (:truncParam, TIMEZONE ('UTC', ti.intervalEnd)) FROM TimeInterval ti WHERE ti.id = :timeIntervalID")
+	Timestamp getTruncatedTimeIntervalEnd (@Param ("timeIntervalID") Long timeIntervalID, @Param ("truncParam") String truncParam);
 	
 }

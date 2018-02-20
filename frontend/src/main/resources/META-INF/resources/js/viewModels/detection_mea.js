@@ -251,7 +251,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                               }
                                             ls.items.forEach(function(item){
                                               var date = new Date(item.intervalStart);
-                                              var dateInMonth = date.getDate();
+                                              var dateInMonth = date.getDate() - 1;
                                               var month = date.getMonth();
                                               var bigMonths = [0,2,4,6,7,9,11];
                                               var smallMonths = [3,5,8,10];

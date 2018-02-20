@@ -19,5 +19,32 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 
 	@Query("SELECT vm FROM VariationMeasureValue vm LEFT JOIN FETCH vm.userInRole uir LEFT JOIN FETCH vm.timeInterval ti WHERE uir.pilotCode IN :pilotCodes AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.intervalStart <= :intervalEnd OR (ti.intervalEnd IS NULL OR ti.intervalEnd <= :intervalEnd)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'day' OR ti.typicalPeriod = '1wk')")
 	List<VariationMeasureValue> findAllForMonthByPilotCodeNui(@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd, @Param("pilotCodes") final List<Pilot.PilotCode> pilotCodes);
+	
+	/*
+	 * 
+	 *  query koji vraca sve VariationMeasureValue objekte koji su vezani na measure koji imaju veze sa SLEEP zbog fixa, kojima su intervalStart i intervalEnd u istom danu
+	 * 
+	 */
+	
+	@Query ("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.timeInterval ti INNER JOIN vm.detectionVariable dv WHERE dv.detectionVariableName like '%sleep%' AND DATE_TRUNC ('day', TIMEZONE ('UTC', ti.intervalStart)) = DATE_TRUNC ('day', TIMEZONE ('UTC', ti.intervalEnd))")
+	List<VariationMeasureValue> findAllSleepMeasuresInSameDay ();
+	
+	/*
+	 * 
+	 *  query koji vraca sve VariationMeasureValue objekte koji su vezani na measure koji imaju veze sa SLEEP zbog fixa, kojima su intervalStart i intervalEnd u razlicitim danima
+	 * 
+	 */
+	
+	@Query ("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.timeInterval ti INNER JOIN vm.detectionVariable dv WHERE dv.detectionVariableName like '%sleep%' AND DATE_TRUNC ('day', TIMEZONE ('UTC', ti.intervalStart)) != DATE_TRUNC ('day', TIMEZONE ('UTC', ti.intervalEnd))")
+	List<VariationMeasureValue> findAllSleepMeasuresInDifferentDays ();
+	
+	/*
+	 * 
+	 * query koji vraca vmv za zadatog usera, measure i timeInterval
+	 * 
+	 */
+	
+	@Query ("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.timeInterval ti INNER JOIN vm.detectionVariable dv INNER JOIN vm.userInRole uir WHERE uir.id = :userInRoleID AND dv.id = :measureTypeID AND ti.id = :timeIntervalID")
+	VariationMeasureValue findByUserInRoleIdAndMeasureTypeIdAndTimeIntervalId (@Param ("userInRoleID") Long userInRoleID, @Param ("measureTypeID") Long measureTypeID, @Param ("timeIntervalID") Long timeIntervalID);
 
 }
