@@ -241,7 +241,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                       }
                                   });
                               }else if(mea.defaultTypicalPeriod === '1wk'){
-                                        mea.lineType = "stepped";                                                                   
+                                        mea.lineType = "straight";                                                                   
                                         mea.lineSeries.forEach(function(ls){
                                           var arr = [];
                                               for(var i = 0; i<= 30; i++){
@@ -259,13 +259,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                               if(month === 1) {
                                                   j = 28;
                                               } else if(bigMonths.includes(month)){
-                                                  j = 30;
+                                                  j = 31;
                                               }else {
-                                                  j = 29;
+                                                  j = 30;
                                               }
                                              
                                               for(var i = 0; i<j; i++){
-                                                    if(i >= dateInMonth && i < (dateInMonth + 7)){
+                                                    if(i >= (dateInMonth - 1) && i < (dateInMonth + 6)){
                                                         arr[i].value = item.value;
                                                   }
                                               }
