@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -324,78 +325,81 @@ public class MeasuresService {
 	@ApiOperation("Method for fixing time intervals to have interval start and typical period, not interval start and interval end")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("fixTimeIntervals")
-	public Response fixTimeIntervals () {
+	public Response fixTimeIntervals () {				
+		
+		List<VariationMeasureValue> retList = new ArrayList <VariationMeasureValue> ();
+		List<VariationMeasureValue> delList = new ArrayList <VariationMeasureValue> ();
+		
 		List<VariationMeasureValue> sameDaySleepMeasures = variationMeasureValueRepository.findAllSleepMeasuresInSameDay();
 		
-		//logger.info("sameDaySleepMeasures.size: " + sameDaySleepMeasures.size());
-		
 		for (VariationMeasureValue vm : sameDaySleepMeasures) {
-			//logger.info("vm.measureTypeId: " + vm.getDetectionVariable().getId() + " vm.userInRoleId: " + vm.getUserInRole().getId() + " vm.timeInterval.start: " + vm.getTimeInterval().getStart() + " vm.timeInterval.end: " + vm.getTimeInterval().getEnd());
 			
-			Timestamp intervalStart = timeIntervalRepository.getTruncatedTimeIntervalStart(vm.getTimeInterval().getId(), "day");
-			//logger.info("truncatedIntervalStart: " + intervalStart);
-			
+			Timestamp intervalStart = timeIntervalRepository.getTruncatedTimeIntervalStart(vm.getTimeInterval().getId(), "day");			
 			TimeInterval newTimeInterval = getOrCreateTimeInterval(intervalStart, TypicalPeriod.DAY);
-			//logger.info("newTimeInterval.id: " + newTimeInterval.getId() + " newTimeInterval.start: " + newTimeInterval.getStart());
 			
 			vm.setTimeInterval(newTimeInterval);
+						
+			List<VariationMeasureValue> filteredSameDaySleepMeasures = retList.stream().filter(p -> p.getUserInRole().getId().equals(vm.getUserInRole().getId()) && p.getDetectionVariable().getId().equals(vm.getDetectionVariable().getId()) && p.getTimeInterval().getId().equals(vm.getTimeInterval().getId())).collect(Collectors.toList());
 			
-			VariationMeasureValue vmv1 = variationMeasureValueRepository.findByUserInRoleIdAndMeasureTypeIdAndTimeIntervalId(vm.getUserInRole().getId(), vm.getDetectionVariable().getId(), vm.getTimeInterval().getId());
-			if (vmv1 != null) {
-				//logger.info("DUPLIKAT POSTOJI");
-				vmv1.setMeasureValue(vmv1.getMeasureValue().add(vm.getMeasureValue()));				
-				variationMeasureValueRepository.delete(vm);
-				variationMeasureValueRepository.save(vmv1);
+			if (filteredSameDaySleepMeasures.isEmpty())
+				retList.add(vm);
+			
+			else if (filteredSameDaySleepMeasures.size() == 1) {
+				
+				VariationMeasureValue vmv = filteredSameDaySleepMeasures.get(0);				
+				int pos = retList.indexOf(vmv);
+				vmv.setMeasureValue(vmv.getMeasureValue().add(vm.getMeasureValue()));
+				
+				retList.set(pos, vmv);	
+				delList.add(vm);
 			}
-			else variationMeasureValueRepository.save(vm);
 		}
 		
 		List<VariationMeasureValue> differentDaysSleepMeasures = variationMeasureValueRepository.findAllSleepMeasuresInDifferentDays();
 		
-		//logger.info("differentDaysSleepMeasures.size: " + differentDaysSleepMeasures.size());
-		
 		for (VariationMeasureValue vm : differentDaysSleepMeasures) {
-			//logger.info("vm.measureTypeId: " + vm.getDetectionVariable().getId() + " vm.userInRoleId: " + vm.getUserInRole().getId() + " vm.timeInterval.start: " + vm.getTimeInterval().getStart() + " vm.timeInterval.end: " + vm.getTimeInterval().getEnd());
 			
 			// ovde dohvata end, jer je to razlika izmedju start i end
 			Timestamp intervalDiff = timeIntervalRepository.getTruncatedTimeIntervalEnd(vm.getTimeInterval().getId(), "day");
-			//logger.info("intervalDiff: " + intervalDiff);
 			TimeInterval newTimeInterval = null;
-			if (determineTimeInterval(vm.getTimeInterval().getIntervalStart().getTime(), vm.getTimeInterval().getIntervalEnd().getTime(), intervalDiff.getTime()) == 0) {
-				
+			
+			if (determineTimeInterval(vm.getTimeInterval().getIntervalStart().getTime(), vm.getTimeInterval().getIntervalEnd().getTime(), intervalDiff.getTime()) == 0)
 				newTimeInterval = getOrCreateTimeInterval(timeIntervalRepository.getTruncatedTimeIntervalStart(vm.getTimeInterval().getId(), "day"), TypicalPeriod.DAY);
-				//logger.info("newTimeInterval.id: " + newTimeInterval.getId() + " newTimeInterval.start: " + newTimeInterval.getStart());
-			}
-			else {
 				
+			else 
 				newTimeInterval = getOrCreateTimeInterval(intervalDiff, TypicalPeriod.DAY);
-				//logger.info("newTimeInterval.id: " + newTimeInterval.getId() + " newTimeInterval.start: " + newTimeInterval.getStart());
-			}
 			
 			vm.setTimeInterval(newTimeInterval);
 			
-			VariationMeasureValue vmv1 = variationMeasureValueRepository.findByUserInRoleIdAndMeasureTypeIdAndTimeIntervalId(vm.getUserInRole().getId(), vm.getDetectionVariable().getId(), vm.getTimeInterval().getId());
-			if (vmv1 != null) {
-				//logger.info("DUPLIKAT POSTOJI");
-				vmv1.setMeasureValue(vmv1.getMeasureValue().add(vm.getMeasureValue()));
-				variationMeasureValueRepository.delete(vm);
-				variationMeasureValueRepository.save(vmv1);				
+			List<VariationMeasureValue> filtereddifferentDaysSleepMeasures = retList.stream().filter(p -> p.getUserInRole().getId().equals(vm.getUserInRole().getId()) && p.getDetectionVariable().getId().equals(vm.getDetectionVariable().getId()) && p.getTimeInterval().getId().equals(vm.getTimeInterval().getId())).collect(Collectors.toList());
+			
+			if (filtereddifferentDaysSleepMeasures.isEmpty()) 
+				retList.add(vm);			
+			
+			else if (filtereddifferentDaysSleepMeasures.size() == 1) {
+				
+				VariationMeasureValue vmv = filtereddifferentDaysSleepMeasures.get(0);
+				int pos = retList.indexOf(vmv);
+				vmv.setMeasureValue(vmv.getMeasureValue().add(vm.getMeasureValue()));
+				
+				retList.set(pos, vmv);		
+				delList.add(vm);
 			}
-			else variationMeasureValueRepository.save(vm);
 		}
 		
+		variationMeasureValueRepository.delete(delList);
 		variationMeasureValueRepository.flush();
+		variationMeasureValueRepository.bulkSave (retList);		
 		
 		return JerseyResponse.buildTextPlain("success", 200);
 		
 	}
 	
 	public int determineTimeInterval (long start, long end, long differentiator) {
-		//logger.info("differentiator - start: " + (differentiator - start));
-		//logger.info("end - differentiator: " + (end - differentiator));
 		
 		if ((differentiator - start) >= (end - differentiator)) return 0;
 		else return 1;
+		
 	}
 	
 	private YearMonth getComputedStartDate(Pilot pilot) {
