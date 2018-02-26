@@ -64,7 +64,6 @@ public class Item {
 
 	public void setTimeIntervalId(Long timeIntervalId) {
 		this.timeIntervalId = timeIntervalId;
-	}
-    
+	}    
     
 }

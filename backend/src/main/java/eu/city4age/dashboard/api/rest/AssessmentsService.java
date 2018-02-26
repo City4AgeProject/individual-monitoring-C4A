@@ -1,7 +1,6 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -427,7 +426,7 @@ public class AssessmentsService {
 		OJDiagramLast5Assessment ojLfa = new OJDiagramLast5Assessment();
 
 		for (Object[] lfa : lfas) {
-			ojLfa.getGroups().add(new DataIdValue(((BigInteger) lfa[0]).longValue(), lfa[1].toString()));//(time_interval_id, interval_start)
+			ojLfa.getGroups().add(new DataIdValue(((Integer) lfa[0]).longValue(), lfa[1].toString()));//(time_interval_id, interval_start)
 		}
 		
 		ojLfa.getSeries().add(new Serie("Only", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
@@ -437,18 +436,18 @@ public class AssessmentsService {
 
 			for (int i = 0; i < lfas.size(); i++) {
 
-				if (group.getId().equals(new Long(((BigInteger)lfas.get(i)[0]).longValue()))) {//time_interval_id
+				if (group.getId().equals(new Long(((Integer)lfas.get(i)[0]).longValue()))) {//time_interval_id
 
 					Serie serie = ojLfa.getSeries().iterator().next();
 
 					if (lfas.get(i)[4] != null) {//assessment_id
 						DataIdValueLastFiveAssessment item = new DataIdValueLastFiveAssessment();
-						item.setId(((BigInteger)lfas.get(i)[2]).longValue());//gef_id
+						item.setId(((Integer)lfas.get(i)[2]).longValue());//gef_id
 						item.setValue(lfas.get(i)[3].toString());//gef_value
 						item.getAssessmentObjects().add(lfas.get(i));
 
 						for (Object[] lfa : lfas) {
-							if (lfa[4] != null && group.getId().equals(new Long(((BigInteger)lfa[0]).longValue()))//assessment_id, time_interval_id
+							if (lfa[4] != null && group.getId().equals(new Long(((Integer)lfa[0]).longValue()))//assessment_id, time_interval_id
 									&& lfas.get(i)[3].equals(lfa[3])//gef_value
 									&& !lfas.get(i)[4].equals(lfa[4])) {//assessment_id
 

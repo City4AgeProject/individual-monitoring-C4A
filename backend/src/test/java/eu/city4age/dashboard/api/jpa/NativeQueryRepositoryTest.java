@@ -147,6 +147,7 @@ public class NativeQueryRepositoryTest {
 		List<String> pilots = new ArrayList<>();
 		for (PilotCode pilot : pilotCodes) pilots.add(pilot.getName());
 		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilots);
+
 		
 		//Assert.assertNotNull(result);
 		

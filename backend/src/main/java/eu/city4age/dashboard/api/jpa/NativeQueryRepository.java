@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.NativeQuery;
-import eu.city4age.dashboard.api.pojo.domain.Pilot;
 
 public interface NativeQueryRepository extends GenericRepository<NativeQuery, Long> {
 	

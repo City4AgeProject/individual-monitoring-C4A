@@ -145,20 +145,7 @@ public class CareRecipientService {
 					fMap.put(gef.getDetectionVariableId(), new ArrayList<Float>());
 					idMap.put(gef.getDetectionVariableId(), new ArrayList<Long>());
 				}
-		
-//		if(tis != null && tis.size() > 0) {
-//			for (GeriatricFactorValue gef : tis.get(0).getGeriatricFactorValue()) {
-	
-//				if (gef.getDetectionVariable() != null) {
-//
-//					detectionvarsparamsList.add(gef.getDetectionVariable());
-//					fMap.put(gef.getDetectionVariableId(), new ArrayList<Float>());
-//					idMap.put(gef.getDetectionVariableId(), new ArrayList<Long>());
-//	
-//				}
-	
-//			}
-//		}
+
 
 		for (TimeInterval ti : tis) {
 			String date = sdf.format(ti.getIntervalStart());
@@ -208,7 +195,7 @@ public class CareRecipientService {
 
 					response.setFrailtyStatus(frailtyStatus);
 					
-					Pilot.PilotCode pilotCode = gereatricfactparamsList.get(0).getUserInRole().getPilotCode();			
+					Pilot.PilotCode pilotCode = gereatricfactparamsList.get(0).getUserInRole().getPilotCode();
 					PilotDetectionVariable pdv = pilotDetectionVariableRepository.findByDetectionVariableAndPilotCode(type.getId(), pilotCode);
 
 					itemList.add(new C4ServiceGetOverallScoreListResponse(tis, fMap.get(type.getId()),

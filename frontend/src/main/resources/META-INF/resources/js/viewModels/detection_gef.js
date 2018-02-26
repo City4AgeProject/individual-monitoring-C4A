@@ -219,6 +219,7 @@ function (oj, ko, $, sp, params) {
                     });
 
                     formatDate(data.groups);
+                    self.lineGroupsValue = data.groups;
 
                     $('#detectionGEFGroup1FactorsLineChart').prop('groups', self.lineGroupsValue);
                     $('#detectionGEFGroup1FactorsLineChart').prop('series', self.lineSeriesValue);
@@ -432,3 +433,4 @@ function (oj, ko, $, sp, params) {
 
     return  GraphicsContentViewModel;
 });
+

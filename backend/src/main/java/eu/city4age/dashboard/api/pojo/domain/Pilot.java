@@ -37,8 +37,8 @@ public class Pilot implements Serializable {
 		public String getName() {
 			return name;
 		}
-	};
-	
+	};	
+
 	@Column(name = "pilot_name")
 	private String name;
 

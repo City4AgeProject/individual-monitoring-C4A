@@ -1,6 +1,6 @@
 define(
 		[ 'ojs/ojcore', 'knockout', 'jquery', 'urls',
-				'entities', 'add-assessment', 'assessments-list', 'assessments-preview' ],
+				'entities', 'add-assessment', 'assessments-list', 'assessments-preview','ojs/ojcheckboxset' ],
 
 function(oj, ko, $) {
 
@@ -28,13 +28,20 @@ function(oj, ko, $) {
 		self.selectedAnotations = ko.observableArray([]);
 
 		self.nowrap = ko.observable(false);
-
-
+                self.multipleSelectionsArray = ko.observableArray();
+                self.checkedMultipleSelections = ko.observableArray([]);                 
+                self.storedEvent = null;
+                self.solvedMultipleSelection = ko.observable(false);
+                self.temporarySelectionData = [];
+                self.rejectedIds = [];
+                self.selectedItemsValue = ko.observableArray([]);
+  
                 self.risksTags = ko.observableArray([
                     {value: 'A', label: oj.Translations.getTranslatedString('alert_data'), imagePath: 'images/risk_alert.png'},
                     {value: 'W', label: oj.Translations.getTranslatedString('warning_data'), imagePath: 'images/risk_warning.png'},
                     {value: 'N', label: oj.Translations.getTranslatedString('no_risk_data'), imagePath: 'images/comment.png'}
                 ]);
+                
 
 
                 self.checkedFilterRiskStatus = ko.observableArray();
@@ -107,54 +114,96 @@ function(oj, ko, $) {
 				}
 			})
 		});
+		self.rolesCollection(new role());
+		self.rolesCollection().fetch({
+			type : 'GET',
+			success : function(collection, response, options) {
+				if (self.roleTags.length === 0) {
+					for (var i = 0; i < response.length; i++) {
+						var roleModel = response[i];
+                                                //commented code because it does not work on oracle jet 4.0 for add assessment
+//						self.roleTags.push({
+//							value : roleModel.id,
+//							label : oj.Translations.getTranslatedString(roleModel.roleName)
+//						});
+					}
+				}
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+			}
+		});
 		
-		//event triggers when user hovers or clicks on chart lines
+		//event triggers when selection changed
 		self.chartOptionChange = function(event) {
                     if (!self.showSelectionOnDiagram()) {
-                        if(event){                            
-                            if(event.detail.selectionData){                                                                                                    
-                                if (event.detail.selectionData.length > 0) {							
+                        if(event){     
+                            $('#multipleSelection').ojPopup('close');
+                            if(event.detail.selectionData){ 
+                                self.multipleSelectionsArray(returnMultipleSelectionsOnSameValue(event.detail));
+                                    // if there is multiple selections on same value
+                                    if(self.multipleSelectionsArray().length > 0 && !self.solvedMultipleSelection()) {
+                                        
+                                        //creating checkbox with multiple selections
+                                        self.multipleSelectionsArray().forEach(function(el){
+                                            self.checkedMultipleSelections.push(el.data.id.toString());
+                                        });
+                                        $('#checkboxSetId').ojCheckboxset("refresh");                                         
+                                        self.storedEvent = event;
+                                        self.drawMultipleSelectionCheckBoxSet();
+                                        return;
+                                    }
+                                if (event.detail.selectionData.length > 0) {                                    
                                     var onlyDataPoints = [];						
-                                    onlyDataPoints = getDataPoints(event.detail.selectionData);
+                                    var allDataPoints = getDataPoints(event.detail.selectionData);
+                                    allDataPoints.forEach(function(el){
+                                        if(self.rejectedIds.indexOf(el) === -1){
+                                            console.log('pushiram ovaj : ' + el);
+                                            onlyDataPoints.push(el);                                           
+                                        }
+                                    });
+                                    var stringArray = [];
+                                    onlyDataPoints.forEach(function(el){
+                                        stringArray.push(el.toString());
+                                    });
+                                    self.selectedItemsValue(stringArray);
+                                    if(onlyDataPoints.length === 0){
+                                                return;
+                                    }
+                                    
+                                    // Compose selections in get query parameters
+                                    if(event.detail.selectionData.length == 1){
+                                        //if there is only 1 selection
+                                        var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
+                                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
 
-                                    if (onlyDataPoints.length === 1 && onlyDataPoints[0][0] && onlyDataPoints[0][0].id) {
-                                        refreshDataPointsMarked(1);
-                                    } else {								
-                                            // Compose selections in get query parameters
-                                            if(event.detail.selectionData.length == 1){
-                                                //if there is only 1 selection
-                                                var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
-                                                var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
-
-                                                if(selectedDetectionVariable.detectionVariableType == 'ges'){
-                                                    sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
-                                                    $('#popupWrapper1').prop('seeMeasures', true);
-                                                    console.log('setting seeMeasures to true');
-                                                }else {
-                                                $('#popupWrapper1').prop('seeMeasures', false);
-                                                }
-                                            }else {				
-                                                    $('#popupWrapper1').prop('seeMeasures', false);
-                                            }
-
-                                            self.queryParams = calculateSelectedIds(onlyDataPoints);
-                                            loadAssessments(self.queryParams);
+                                        if(selectedDetectionVariable.detectionVariableType == 'ges'){
+                                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
+                                            $('#assessmentsPreview').prop('seeMeasures', true);
+                                        }else {
+                                            $('#assessmentsPreview').prop('seeMeasures', false);
+                                        }
+                                    }else {				
+                                        $('#assessmentsPreview').prop('seeMeasures', false);
                                     }
 
-                                    //showAssessmentsPopup();
-
-                                        $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
-
+                                    self.queryParams = onlyDataPoints;
+                                    loadAssessments(self.queryParams);
+                                    self.dataPointsMarkedIds = onlyDataPoints;
+                                    $('#assessmentsPreview').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));                                           
+                                    $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
+                                    
 
                                 } else {
                                         self.dataPointsMarkedIds = [];
                                 }
+                                self.solvedMultipleSelection(false);
+                                self.rejectedIds = [];
                             }
                         }
                     } else {
                             self.showSelectionOnDiagram(false);
                     }
-			
+			console.log('selecteditemsval ' + ko.toJSON(self.selectedItemsValue));
                     
 		};
 		
@@ -304,7 +353,7 @@ function(oj, ko, $) {
 		// This works only for GES!
 		self.bindingsApplied = function() {
 			selected = [];
-			self.props.selectedItemsValue = selected;
+			
 
 			self.props.subFactorName = "testtest";
 
@@ -328,7 +377,7 @@ function(oj, ko, $) {
 						}
 					}
 				}
-				self.props.selectedItemsValue = selected;
+				self.selectedItemsValue(selected);
 			}
 		};
 		
@@ -482,18 +531,7 @@ function(oj, ko, $) {
 			return filteredSelection;
 		}
 
-		function calculateSelectedIds(selectedPoints) {
-			var i = 0;
-			var idsArray = [];
-			for (var i = 0; i < selectedPoints.length; i++) {
-				idsArray.push(selectedPoints[i]);
-			}
-			self.dataPointsMarkedIds = idsArray;
-			
-			$('#popupWrapper1').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));
-
-			return idsArray;
-		}
+		
 
 		var loadAssessments = function(pointIds) {
 			var pointIdsString = pointIds.join('/');
@@ -523,7 +561,7 @@ function(oj, ko, $) {
 			$('.popup').ojPopup('close');
 			// Popup1 or popup2 if there are any assessments
 			if ($('#' + $('.popup').attr('id')).ojPopup("isOpen") == false) {
-				if (aLength > 0) {
+                                if (aLength > 0) {
 					
 					$('#popup1').ojPopup("option", "position", {
 						"my" : {
@@ -567,8 +605,8 @@ function(oj, ko, $) {
 						containment : "#detectionGEFGroup1FactorsChart"
 					});
 				}
+                            }
 			}
-		}
 
 		// Popup relative position
 		//Temporary disabled - DO NOT DELETE THIS!
@@ -716,7 +754,7 @@ function(oj, ko, $) {
                 self.selectDatapointsDiagram = function() {
 			self.showSelectionOnDiagram(true);
 
-			self.props.selectedItemsValue = selected;
+			
 			self.props.subFactorName = "testtest";
                         
 			self.chartOptionChange();
@@ -736,7 +774,7 @@ function(oj, ko, $) {
 					}
 				}
 			}
-			self.props.selectedItemsValue = selected;
+			self.selectedItemsValue(selected);
 		}
                 //this method makes annotation list with filters visible and sets dataPointsMarked to assessment-preview component 
 		function refreshDataPointsMarked(assessmentsResultLength) {
@@ -744,13 +782,81 @@ function(oj, ko, $) {
 			$('#tabAnnotations').css({
 				display : 'block'
 			});
-
+                        //this is a string on assessment-preview that tells how many data points and assessments are selected
 			self.dataPointsMarked = self.dataPointsMarkedIds.length
 					+ oj.Translations.getTranslatedString("dpmw")
 					+ assessmentsResultLength + oj.Translations.getTranslatedString("assessments");
-			$('#popupWrapper1').prop('dataPointsMarked', self.dataPointsMarked);
+			$('#assessmentsPreview').prop('dataPointsMarked', self.dataPointsMarked);
 			
 		}
+                function returnMultipleSelectionsOnSameValue(detail) {                           
+                            var selectedDots = detail.selectionData;
+                            var multipleSelectionsInOneVal = [];
+                            for(var i = 0; i < selectedDots.length; i++){
+                                for(var j = 0; j < selectedDots.length; j++){
+                                    if(selectedDots[i].data.value === selectedDots[j].data.value && 
+                                        selectedDots[i].data.timeIntervalId === selectedDots[j].data.timeIntervalId &&
+                                            selectedDots[i].data.id !== selectedDots[j].data.id){
+                                             if(!multipleSelectionsInOneVal.filter(function(selection){ return selection.data.id === selectedDots[i].data.id; }).length > 0){
+                                                 multipleSelectionsInOneVal.push(selectedDots[i]);
+                                             }
+                                             if(!multipleSelectionsInOneVal.filter(function(selection){ return selection.data.id === selectedDots[j].data.id; }).length > 0){
+                                                 multipleSelectionsInOneVal.push(selectedDots[j]);
+                                             }
+                                    }
+                                }
+                            }
+                            return(multipleSelectionsInOneVal); 
+                            
+                }
+                self.applyMultipleSelections = function(){
+                    console.log('this is checked multiple after apply : ' + ko.toJSON(self.checkedMultipleSelections));                     
+                    var multipleSelectionsIds = [];
+                    self.multipleSelectionsArray().forEach(function(el){
+                       multipleSelectionsIds.push(el.data.id); 
+                    });
+                    console.log('this is  multiple selection array ids: ' + multipleSelectionsIds);
+                    
+                    
+                    multipleSelectionsIds.forEach(function(el){
+                       if(self.checkedMultipleSelections().indexOf(el.toString()) === -1){
+                           console.log('pushiram ovaj : ' + el);
+                           self.rejectedIds.push(el);
+                       } 
+                    });
+                            console.log('rejected ids ' + ko.toJSON(self.rejectedIds));
+                    //console.log('this is  multiple selection array : ' + ko.toJSON(self.multipleSelectionsArray));
+                    
+                    //console.log('selection data : ' + JSON.stringify(self.storedEvent.detail.selectionData));
+                    
+                    //self.checkedMultipleSelections([]);
+                    $('#multipleSelection').ojPopup('close');
+                    self.solvedMultipleSelection(true);
+                    //console.log('stored event ' + JSON.stringify(self.storedEvent.detail.value));
+                    //self.storedEvent.detail.value = self.checkedMultipleSelections();
+                    self.chartOptionChange(self.storedEvent);
+                };
+                self.returnName = function(){
+                    return 'name name';
+                };
+                self.drawMultipleSelectionCheckBoxSet = function(){
+                    $('#multipleSelection').ojPopup("option", "position", {
+						"my" : {
+							"horizontal" : "center",
+							"vertical" : "center"
+						},
+						"at" : {
+							"horizontal" : "center",
+							"vertical" : "center"
+						},
+						"offset" : {
+							"x" : 0,
+							"y" : 0
+						}
+					}
+					);
+                    $('#multipleSelection').ojPopup('open');            
+                }
 
 	}
 

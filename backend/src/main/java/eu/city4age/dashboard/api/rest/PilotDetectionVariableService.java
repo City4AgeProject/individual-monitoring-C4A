@@ -351,6 +351,7 @@ public class PilotDetectionVariableService {
 		
 		//if (!dv.getDetectionVariableType().toString().equals("mea") || !ddv.getDetectionVariableType().toString().equals("nui")) {
 		if (!dv.getDetectionVariableType().equals(DetectionVariableType.MEA) || !ddv.getDetectionVariableType().equals(DetectionVariableType.NUI)) {
+
 			pilotDetectionVariableRepository.save(new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 			cfc.incrementInserted();
 			//logger.info("uradjen insert na: " + dv.getDetectionVariableName());

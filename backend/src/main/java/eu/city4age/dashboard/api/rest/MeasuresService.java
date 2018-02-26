@@ -137,11 +137,8 @@ public class MeasuresService {
 
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
 			Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
-		
 		List<String> stringPilotCodes = new ArrayList<>();
-		
-		for (PilotCode pilot : pilotCodes) stringPilotCodes.add(pilot.getName());
-		
+		for (Pilot.PilotCode pilotCode : pilotCodes) stringPilotCodes.add(pilotCode.getName());
 		List<Object[]> list = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, factor, stringPilotCodes);
 
 		if (list != null && list.size() > 0) {

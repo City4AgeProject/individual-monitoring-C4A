@@ -12,7 +12,7 @@
                     series="[[$props.series]]"
                     groups="[[$props.groups]]"
                     selection-mode="multiple"
-                    selection="[[$props.selectedItemsValue]]" 
+                    selection="{{selectedItemsValue}}" 
                     animation-on-display="auto"
                     animation-on-data-change="auto"
                     hide-and-show-behavior="withoutRescale"
@@ -29,7 +29,30 @@
                 </oj-chart>      
 		<!-- end line chart GES drilling: 'on',
 					<!-- select point/s popup -->
-	 	<assessments-preview id="popupWrapper1" class="oj-flex-item" selected-assessments="{{selectedAnotations}}" data-points-marked="{{dataPointsMarked}}"  see-measures="{{seeMeasures}}"></assessments-preview>
+                
+                <oj-popup  id="multipleSelection" style="text-align: center;"> 
+                    <oj-label id="agreeId1">You have multiple selections on one value</oj-label>
+                    <br>
+                    <!--Checkboxset in OJ4 has a bug with knockout binding and refreshing options as stated here: 
+                    https://community.oracle.com/message/14644499#14644499, using OJ3 code for now 6.2.2018-->
+                    <div id="checkboxSetId" aria-labelledby="agreeId1"   
+                        data-bind=  
+                        "ojComponent: {  
+                             component: 'ojCheckboxset',   
+                             value: checkedMultipleSelections
+                        }" >  
+                     <!-- ko foreach: multipleSelectionsArray -->  
+                     <span class="oj-choice-item">  
+                       <input data-bind="attr:{id:data.id}, value:data.id" type="checkbox">  
+                       <label data-bind="attr:{for:data.id}"><span data-bind="text:seriesData.name +' for ' + groupData[0] +', Value: '+ data.value"></span></label>  
+                     </span>  
+                     <!-- /ko -->  
+                    </div> 
+                     <br> <br>
+                    <oj-button on-click='[[applyMultipleSelections]]' style="display:block; margin-left: auto; margin-right: auto;">Apply</oj-button>
+                    
+                </oj-popup>
+	 	<assessments-preview id="assessmentsPreview" class="oj-flex-item" selected-assessments="{{selectedAnotations}}" data-points-marked="{{dataPointsMarked}}"  see-measures="{{seeMeasures}}"></assessments-preview>
 		<!-- end select point/s popup -->
 	</div>
 	<!-- end main graph panel -->
