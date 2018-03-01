@@ -29,7 +29,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                     resolve();
                                 }).fail(function() {
                                     console.log( "error recieving json data from web service" );
-                                })
+                                });           	    	  
                         });           	    	  
             	              	                	        
             	};
@@ -55,7 +55,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		    	    		   	    		  
   	    		  //getting list of measures (detection variables) from json
   	    		  data.forEach(function(element) {
-  	    			  if(measureIds.indexOf(element.detectionVariable.id) == -1){          	    				  
+  	    			  if(measureIds.indexOf(element.detectionVariable.id) === -1){          	    				  
   	    				  measureIds.push(element.detectionVariable.id);
   	    				  var meaObj = new Object();
   	    				  meaObj.detectionVariableId = element.detectionVariable.id;
@@ -71,7 +71,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  measures.forEach(function(mea) {
   	    			  mea.measureValues = [];
   	    			  for(var i = 0; i<data.length; i++){
-  	    				  if(data[i].detectionVariable.id == mea.detectionVariableId){
+  	    				  if(data[i].detectionVariable.id === mea.detectionVariableId){
   	    					  var mv = new Object();
   	    					  mv.id = data[i].id;
   	    					  mv.value = data[i].measureValue;
@@ -94,7 +94,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    			var differentMonthsForMeasure = [];
   	    			for(var i = 0; i< mea.measureValues.length; i++){
   	    				var date = new Date(mea.measureValues[i].intervalStart);
-        	    			if(differentMonthsForMeasure.indexOf((months[date.getMonth()] + " " + date.getFullYear())) == -1){
+        	    			if(differentMonthsForMeasure.indexOf((months[date.getMonth()] + " " + date.getFullYear())) === -1){
         	    				differentMonthsForMeasure.push(months[date.getMonth()] + " " + date.getFullYear());
         	    			}
         	    			mea.months = differentMonthsForMeasure;                 	    			
@@ -136,7 +136,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                                                                
     	    				//getting nuis from nuiData with timeinterval 
     	    				var nuisInMonth = getNuiForMeaAndMonth(mea, mon , nuiData);
-    	    				if(nuisInMonth.length == 0) {   	    					
+    	    				if(nuisInMonth.length === 0) {   	    					
     	    					//nuis += "Nui1 0\n Nui2 0\n Nui3 0\n Nui4 0";
     	    				}
     	    				else {
@@ -161,7 +161,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    					    	break;
     	    						}
     	    						
-    	    						  if(nuiObjects[nuiKey+"Object"]==null) {
+    	    						  if(!nuiObjects[nuiKey+"Object"]) {
     	    							nuiObjects[nuiKey+"Object"]= new Object();
     	    							nuiObjects[nuiKey+"Object"]["ID"] = nuiName;
     	    						  }
@@ -181,7 +181,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    				mea.measureValues.forEach(function(mv) {
     	    					var date = new Date(mv.intervalStart);
     	    					var testMon = months[date.getMonth()] + " " + date.getFullYear();              	    					
-    	    					if(testMon == mon){               	    						
+    	    					if(testMon === mon){               	    						
     	    						lineSerie.items.push(mv);
     	    					}             						
     	    				});
@@ -201,11 +201,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    			  nuiData.forEach(function(nui){
   	    				  
   	    				  var sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_") + 1;
-  	    				  if(nui.detectionVariable.detectionVariableName.slice(sliceIndex) == mea.measureName){
+  	    				  if(nui.detectionVariable.detectionVariableName.slice(sliceIndex) === mea.measureName){
   	    					    	    					  
   	    					  var date = new Date(nui.timeInterval.intervalStart);
   	    					  
-  	    					  if(date.getMonth() == 11) {
+  	    					  if(date.getMonth() === 11) {
   	    						  nuiMonth = "January";
   	    					  }
   	    					  else {
@@ -215,7 +215,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    					  nuiYear = date.getFullYear();
   	    					  
   	    					  
-  	    					  if(mon == nuiMonth + " " + nuiYear) {
+  	    					  if(mon === nuiMonth + " " + nuiYear) {
   	    						  finalNuis.push(nui);
   	    					  }
   	    				  }
@@ -241,7 +241,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                       }
                                   });
                               }else if(mea.defaultTypicalPeriod === '1wk'){
-                                        mea.lineType = "stepped";                                                                   
+                                        mea.lineType = "straight";                                                                   
                                         mea.lineSeries.forEach(function(ls){
                                           var arr = [];
                                               for(var i = 0; i<= 30; i++){
@@ -259,13 +259,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                               if(month === 1) {
                                                   j = 28;
                                               } else if(bigMonths.includes(month)){
-                                                  j = 30;
+                                                  j = 31;
                                               }else {
-                                                  j = 29;
+                                                  j = 30;
                                               }
                                              
                                               for(var i = 0; i<j; i++){
-                                                    if(i >= dateInMonth && i < (dateInMonth + 7)){
+                                                    if(i >= (dateInMonth - 1) && i < (dateInMonth + 6)){
                                                         arr[i].value = item.value;
                                                   }
                                               }
@@ -280,7 +280,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                         mea.lineSeries.forEach(function(ls) {
                                                 //inserting empty dates
                                                 for(var i = 0; i< 30; i++){           	    					  
-                                                        if(ls.items[i] == null || ls.items[i] == undefined){            	    						  
+                                                        if(ls.items[i] === null || ls.items[i] === undefined){            	    						  
                                                               var item = new Object();
                                                               item.value = null;                    	    				                     	    				                     	    				  
                                                               ls.items.splice(i, 0, item);
@@ -289,7 +289,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                                         var dateStart = new Date(ls.items[i].intervalStart);
 
                                                         if(dateStart.getDate() !== i+1){          	    						  
-                                                                if(dateStart.getDate() == i){
+                                                                if(dateStart.getDate() === i){
                                                                         //if start date is the same as previous one
                                                                         //do nothing because this time interval ends on the i+1 date           	    							 
                                                                 }

@@ -1,12 +1,10 @@
-define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties', 'promise',
+define(['ojs/ojcore', 'knockout', 'jquery',
     'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
     'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view','anagraph-measure-view'],
 
-function (oj, ko, $, sp, params) {
-	
-	var aas = document.getElementById('detectionGEFGroup1FactorsLineChart');
+function (oj, ko, $) {
 
     function GraphicsContentViewModel() {
 
@@ -16,7 +14,7 @@ function (oj, ko, $, sp, params) {
         self.highlightValue = ko.observable();
 
         self.selectedId = ko.observable();
-        var chartClicked = false;
+
         var lineColors = ['#b4b2b2','#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
 
         var PRE_FRAIL_SERIES_NAME = oj.Translations.getTranslatedString('pre-frail');
@@ -66,15 +64,19 @@ function (oj, ko, $, sp, params) {
         self.lineSeriesValue = ko.observableArray([]);
         
         self.selectedAnotations = ko.observableArray([]);
-        
-        /* Risks select */
+                       
         self.risksTags = ko.observableArray([]);
-        
+       
         self.isChecked = ko.observable();
-        
-        self.checkedFilterRiskStatus = ko.observableArray([]);
-        self.checkedFilterValidityData = ko.observableArray([]);
-        
+                       
+        self.risksCollection = ko.observable();
+                
+        self.dataValiditiesTags = ko.observableArray([
+            {value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
+            {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
+            {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
+
+        self.rolesCollection = ko.observable();
         self.roleTags = ko.observableArray([]);  
         self.selectedRoles = ko.observableArray([]);
         
@@ -89,9 +91,9 @@ function (oj, ko, $, sp, params) {
         self.polarChartSeriesValue = ko.observableArray([]);
         self.polarChartGroupsValue = ko.observableArray([]);
         
-		self.filterList = function() {
-            filterAssessments(self.queryParams, self.checkedFilterValidityData);
-	    };
+	self.filterList = function() {
+            filterAssessments(self.queryParams);
+	};
 
         function createItems(id, value, gefTypeId) {
             return {id: id, value: value, gefTypeId: gefTypeId};
@@ -137,8 +139,8 @@ function (oj, ko, $, sp, params) {
         self.titleValue = ko.observable("");
         self.titlePart = ko.observable("");
         self.titleObj = ko.observable();
-
- 
+        
+               
         self.chartDrill = function (event) {
             var ui = event.detail;
             if(ui['series']){
@@ -146,7 +148,6 @@ function (oj, ko, $, sp, params) {
 //            document.getElementById('polarChart1').style.display = 'none';
 //            document.getElementById('polarChart2').style.display = 'none';
             chartClicked = true;
-            
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
             document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
 
@@ -177,9 +178,6 @@ function (oj, ko, $, sp, params) {
 
                     self.lineGroupsValue = data.groups;
                     self.lineSeriesValue = data.series;
-
-                    //printing diagram data from json: 
-                    //console.log('Diagram data from json :' + JSON.stringify(data,null,2));
 
                     for (var ig = 0; ig < Object.keys(data.series).length; ig++) {
                         data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
@@ -219,8 +217,7 @@ function (oj, ko, $, sp, params) {
                     });
 
                     formatDate(data.groups);
-                    self.lineGroupsValue = data.groups;
-
+                    self.lineGroupsValue = data.groups;    
                     $('#detectionGEFGroup1FactorsLineChart').prop('groups', self.lineGroupsValue);
                     $('#detectionGEFGroup1FactorsLineChart').prop('series', self.lineSeriesValue);
 
@@ -286,7 +283,7 @@ function (oj, ko, $, sp, params) {
 
                 document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
                 
-                if(document.getElementById('polarChart1').style.display == 'block' &&  document.getElementById('polarChart2').style.display == 'block'){
+                if(document.getElementById('polarChart1').style.display === 'block' &&  document.getElementById('polarChart2').style.display === 'block'){
                 	document.getElementById('polarChart1').style.display = 'none';
                     document.getElementById('polarChart2').style.display = 'none';
                 } else {
@@ -296,9 +293,9 @@ function (oj, ko, $, sp, params) {
                 
                 document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
 
-            } else  if (launcherId.indexOf("Line chart") !== -1 && document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility == 'visible'){
+            } else  if (launcherId.indexOf("Line chart") !== -1 && document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility === 'visible'){
                 //document.getElementById('detectionGEFGroupsLineChart').style.display = 'block';
-            	if(document.getElementById('detectionGEFGroup1FactorsLineChart').style.display == 'block'){
+            	if(document.getElementById('detectionGEFGroup1FactorsLineChart').style.display === 'block'){
             		document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'none';
             	}else{                   
             		document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';                        
@@ -311,7 +308,7 @@ function (oj, ko, $, sp, params) {
 
         self.nowrap = ko.observable(false);
 
-        self.handleActivated = function(info) {
+        self.handleActivated = function(info) {                        
             self.careRecipientId = parseInt(sessionStorage.getItem("crId"));
            
             
@@ -323,6 +320,44 @@ function (oj, ko, $, sp, params) {
             loadViewPilotDetectionVariables();
             loadCRData();
             loadGefData();
+            
+            self.roleTags = [];
+            self.risksTags = [];
+            
+              return new Promise(function(resolve, reject) {
+
+                       $.when(
+                                 $.get(CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/grs", function(rolesData) {
+                                           rolesData.forEach(function(role){
+                                               self.roleTags.push({
+                                                    value : role.id,
+                                                    label : oj.Translations.getTranslatedString(role.roleName)
+                                               }); 
+                                           });
+                                       }),
+                                 
+                                 $.get(CODEBOOK_SELECT_ALL_RISKS, function(risksData) {
+                                   risksData.forEach(function(risk){
+                                       self.risksTags.push(
+                                        {
+                                            value: risk.riskStatus, 
+                                            label: oj.Translations.getTranslatedString("risk_status_" + risk.riskStatus.toLowerCase()) , 
+                                            imagePath: risk.iconImagePath
+                                        }
+                                               );
+                                   });
+                                 })
+
+                               ).then(function() {                                   
+                                   sessionStorage.setItem('roleTags',ko.toJSON(self.roleTags));
+                                   sessionStorage.setItem('risksTags',ko.toJSON(self.risksTags));
+                                   sessionStorage.setItem('dataValiditiesTags',ko.toJSON(self.dataValiditiesTags));
+                                   console.log('successfully loaded risks and roles');
+                                   resolve();
+                               }).fail(function() {
+                                   console.log( "error recieving roles and risks data from web service" );
+                       })
+           }); 
           };
 
         self.viewPilotDetectionVariables = [];
@@ -403,10 +438,10 @@ function (oj, ko, $, sp, params) {
                     
                     //mock up frailty status method START 
                     var monthsNum = data.frailtyStatus.months.length;
-                    //console.log("monthsNum: " + monthsNum)
+                    
                     var counter = 0;
                     self.seriesVal().forEach(function(el) {
-                        if(el.items == undefined){
+                        if(el.items === undefined){
                         	el.items = [];
                         	counter++;
                         	for (i = 1; i <= monthsNum; i++) {
@@ -427,10 +462,9 @@ function (oj, ko, $, sp, params) {
             $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/GEF")
                     .then(function (behavData) {
                         gefData = behavData;   
-                    })
+                    });
         }
     }
 
     return  GraphicsContentViewModel;
 });
-

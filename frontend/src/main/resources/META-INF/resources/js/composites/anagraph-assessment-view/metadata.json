@@ -55,6 +55,22 @@
 		"viewPilotDetectionVariables": {
 			"description": "Array of subfactors/factors.",
 			"type": "Array<object>"
+		},
+                "risksTags": {
+			"description" : "Values of all risk statuses showed in combobox.",
+			"type": "Array<object>"           
+                },
+                "dataValiditiesTags": {
+			"description" : "Values of all data validity statuses showed in combobox.",
+			"type": "Array<object>"           
+                },
+                "roleTags": {
+			"description" : "Values of all auditience roles showed in combobox.",
+			"type": "Array<object>"           
+                },
+		"ojChartId": {
+			"description": "Id of dependent ojChart Oracle JET component.",
+			"type": "string"
 		}
 	},
 	"methods": {

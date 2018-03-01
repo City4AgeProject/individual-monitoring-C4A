@@ -17,22 +17,20 @@
 			"type": "Array<object>"
 		},
 		"selectedDataValidity": {
-			"description" : "Value of data validity selected in combobox.",
+			"description" : "Value of data validity status selected in combobox.",
 			"type": "Array<object>"
 		},
-		
-                "roleTags": {
+		"risksTags": {
+			"description" : "Values of all risk statuses showed in combobox.",
+			"type": "Array<object>"           
+		},
+		"dataValiditiesTags": {
+			"description" : "Values of all data validity statuses showed in combobox.",
+			"type": "Array<object>"           
+		},
+		"roleTags": {
 			"description" : "Values of all auditience roles showed in combobox.",
 			"type": "Array<object>"           
-                },
-                "risksTags": {
-			"description" : "Values of all risk tags showed in combobox.",
-			"type": "Array<object>" 
-                },
-                "dataValiditiesTags": {
-			"description" : "Values of all data validity tags showed in combobox.",
-			"type": "Array<object>" 
-                }
-                
+		}
 	}
 }
