@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.city4age.dashboard.api.pojo.json.desobj.Bluetooth;
+import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
 import eu.city4age.dashboard.api.pojo.json.desobj.Recognition;
 import eu.city4age.dashboard.api.pojo.json.desobj.Wifi;
 import io.swagger.annotations.ApiModel;
@@ -65,11 +66,11 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 	
 	@Column(name="gps_longitude")
 	@ApiModelProperty (value = "geographic longitude of location of recording", hidden = false)
-	private Float gpsLongitude;
+	private String gpsLongitude;
 	
 	@Column(name="gps_latitude")
 	@ApiModelProperty (value = "geographic latitude of location of recording", hidden = false)
-	private Float gpsLatitude;
+	private String gpsLatitude;
 	
 	@Column(name="bluetooth_devices")
 	@ApiModelProperty (hidden = false)
@@ -139,20 +140,20 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 		this.actionName = actionName;
 	}
 
-	public Float getGpsLongitude() {
+	public String getGpsLongitude() {
 		return gpsLongitude;
 	}
 
-	public void setGpsLongitude(Float gpsLongitude) {
+	public void setGpsLongitude(String gpsLongitude) {
 		this.gpsLongitude = gpsLongitude;
 	}
 
 	@ApiModelProperty (hidden = true)
-	public Float getGpsLatitude() {
+	public String getGpsLatitude() {
 		return gpsLatitude;
 	}
 
-	public void setGpsLatitude(Float gpsLatitude) {
+	public void setGpsLatitude(String gpsLatitude) {
 		this.gpsLatitude = gpsLatitude;
 	}
 
@@ -180,11 +181,24 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 		this.recognitions = recognitions;
 	}
 	
+	public void addGpss (List<Gps> gpss) {
+		if (gpss != null && gpss.size() > 0) {
+			StringBuilder sbLongitude = new StringBuilder ();
+			StringBuilder sbLatitude = new StringBuilder ();
+			for (Gps gps : gpss) {
+				sbLongitude.append(gps.getLongitude()).append(";");
+				sbLatitude.append(gps.getLatitude()).append(";");
+			}
+			this.setGpsLatitude(sbLatitude.toString());
+			this.setGpsLongitude(sbLongitude.toString());
+		}
+	}
+	
 	public void addBluetooth(List<Bluetooth> bluetooth) {
 		if(bluetooth != null && bluetooth.size() > 0) {
 			StringBuffer bts = new StringBuffer();
 			for(Bluetooth bt : bluetooth){
-				logger.info("bt device: " + bt.getDevice());
+				//logger.info("bt device: " + bt.getDevice());
 				bts.append(bt.getDevice()).append(";");
 			}
 			this.setBluetoothDevices(bts.toString());
@@ -195,7 +209,7 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 		if(wifi != null && wifi.size() > 0) {
 			StringBuffer bts = new StringBuffer();
 			for(Wifi wf : wifi) {
-				logger.info("wf device: " + wf.getDevices());
+				//logger.info("wf device: " + wf.getDevices());
 				bts.append(wf.getDevices()).append(";");
 			}
 			this.setWifiDevices(bts.toString());
@@ -206,7 +220,7 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 		if(recognitions != null && recognitions.size() > 0) {
 			StringBuffer sb = new StringBuffer();
 			for(Recognition recognition : recognitions) {
-				logger.info("recog: " + recognition.getType());
+				//logger.info("recog: " + recognition.getType());
 				sb.append(recognition.getType()).append(";");
 			}
 			this.setRecognitions(sb.toString());
