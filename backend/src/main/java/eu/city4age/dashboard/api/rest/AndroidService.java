@@ -35,7 +35,6 @@ import eu.city4age.dashboard.api.pojo.domain.Activity;
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
-import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
 import eu.city4age.dashboard.api.pojo.json.desobj.JSONActivity;
 import eu.city4age.dashboard.api.pojo.ws.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
@@ -128,38 +127,22 @@ public class AndroidService {
 
 				MTestingReadings mts;
 				
-				if (jsonActivity.getGpss() != null && jsonActivity.getGpss().size() > 0) {
-				
-					for (Gps gps : jsonActivity.getGpss()) {
-						
-						mts = createMTR(jsonActivity, uir);
-						mts.setGpsLatitude(gps.getLatitude());
-						mts.setGpsLongitude(gps.getLongitude());
-						mts.addBluetooth(jsonActivity.getBluetooths());
-						mts.addWifi(jsonActivity.getWifis());
-						mts.addRecognition(jsonActivity.getRecognitions());
-						mtss.add(mts);
-					
-					}
-				
+				mts = createMTR(jsonActivity, uir);
+				if (mts != null) {
+					mts.addGpss(jsonActivity.getGpss());
+					mts.addBluetooth(jsonActivity.getBluetooths());
+					mts.addWifi(jsonActivity.getWifis());
+					mts.addRecognition(jsonActivity.getRecognitions());
+					mtss.add(mts);
 				} else {
-					
-					mts = createMTR(jsonActivity, uir);
-					if (mts != null) {
-						mts.addBluetooth(jsonActivity.getBluetooths());
-						mts.addWifi(jsonActivity.getWifis());
-						mtss.add(mts);
-					} else {
-						response.getStatus().setResponseCode("402 - ACTIVITY TYPE DOESN'T EXIST.");
-						String status = "Activity type isn't recognized: " + jsonActivity.getType();
-						response.getStatus().setConsole(status);
-						logger.info(status);
-						return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response), 402);
-					}
-				
+					response.getStatus().setResponseCode("402 - ACTIVITY TYPE DOESN'T EXIST.");
+					String status = "Activity type isn't recognized: " + jsonActivity.getType();
+					response.getStatus().setConsole(status);
+					//logger.info(status);
+					return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response), 402);
 				}
-
-			}
+				
+			}			
 			
 			mTestingReadingsRepository.save(mtss);
 			response.setResult(1L);
@@ -173,7 +156,7 @@ public class AndroidService {
 			response.getStatus().setResponseCode("500 - INTERNAL_SERVER_ERROR");
 			String status = "The server encountered an unexpected condition that prevented it from fulfilling the request.";
 			response.getStatus().setConsole(status);
-			logger.info(status);
+			//logger.info(status);
 
 			return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response), 500);
 
@@ -183,11 +166,11 @@ public class AndroidService {
 	}
 	
 	private MTestingReadings createMTR(JSONActivity jsonActivity, UserInRole uir) throws ParseException {
-		logger.info("activity.getType() " + jsonActivity.getType());
-		logger.info("activity.getStart() " + jsonActivity.getStart());
-		logger.info("activity.getEnd() " + jsonActivity.getEnd());
+		//logger.info("activity.getType() " + jsonActivity.getType());
+		//logger.info("activity.getStart() " + jsonActivity.getStart());
+		//logger.info("activity.getEnd() " + jsonActivity.getEnd());
 		
-		Activity activity = activityRepository.findOneByName(jsonActivity.getType());
+		Activity activity = activityRepository.findOneByName(jsonActivity.getType().toLowerCase());
 		
 		MTestingReadings mts = null;
 		
