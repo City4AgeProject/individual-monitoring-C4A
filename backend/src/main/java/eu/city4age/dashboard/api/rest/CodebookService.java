@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -53,9 +52,6 @@ public class CodebookService {
 
 	@Autowired
 	private RoleRepository roleRepository;
-
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 

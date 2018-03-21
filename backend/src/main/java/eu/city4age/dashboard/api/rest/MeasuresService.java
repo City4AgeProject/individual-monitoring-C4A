@@ -138,9 +138,13 @@ public class MeasuresService {
 			Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
 		List<String> stringPilotCodes = new ArrayList<>();
 		for (Pilot.PilotCode pilotCode : pilotCodes) stringPilotCodes.add(pilotCode.getName());
-		List<Object[]> list = nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, factor, stringPilotCodes);
 
-		if (list != null && list.size() > 0) {
+		List<Object[]> list = new ArrayList<Object[]>();
+		list.addAll(nativeQueryRepository.computeAllGfvs(startOfMonth, endOfMonth, factor, stringPilotCodes));
+		if(factor.equals(DetectionVariableType.GEF))
+			list.addAll(variationMeasureValueRepository.computeAllDirect(startOfMonth, endOfMonth, pilotCodes, DetectionVariableType.GEF));
+
+		if (list.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(list, startOfMonth, endOfMonth);
 			nuiRepository.bulkSave(gfvs);
 		}
@@ -216,9 +220,11 @@ public class MeasuresService {
 		List<String> stringPilotCodes = new ArrayList<>();
 		for (Pilot.PilotCode pilotCode : pilotCodes) stringPilotCodes.add(pilotCode.getName());
 		
-		List<Object[]> gess = nativeQueryRepository.computeAllGess(startOfMonth, endOfMonth, stringPilotCodes);
+		List<Object[]> gess = new ArrayList<Object[]>();
+		gess.addAll(nativeQueryRepository.computeAllGess(startOfMonth, endOfMonth, stringPilotCodes));
+		gess.addAll(variationMeasureValueRepository.computeAllDirect(startOfMonth, endOfMonth, pilotCodes, DetectionVariableType.GES));
 		
-		if(gess != null && gess.size() > 0) {
+		if(gess.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(gess, startOfMonth, endOfMonth);
 			nuiRepository.bulkSave(gfvs);
 		}
