@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
-import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 
 @Repository(value = "variationMeasureValueRepository")
@@ -49,7 +48,7 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 	@Query ("SELECT vm FROM VariationMeasureValue vm INNER JOIN vm.timeInterval ti INNER JOIN vm.detectionVariable dv INNER JOIN vm.userInRole uir WHERE uir.id = :userInRoleID AND dv.id = :measureTypeID AND ti.id = :timeIntervalID")
 	VariationMeasureValue findByUserInRoleIdAndMeasureTypeIdAndTimeIntervalId (@Param ("userInRoleID") Long userInRoleID, @Param ("measureTypeID") Long measureTypeID, @Param ("timeIntervalID") Long timeIntervalID);
 
-	@Query("SELECT vm.userInRole.id, vm.detectionVariable.id, vm.measureValue, pdv.derivationWeight FROM VariationMeasureValue vm, PilotDetectionVariable pdv LEFT JOIN FETCH vm.detectionVariable dv LEFT JOIN FETCH vm.userInRole uir LEFT JOIN FETCH vm.timeInterval ti WHERE dv.derivedDetectionVariable IS NOT NULL AND dv.derivedDetectionVariable = :dvType AND uir.pilotCode IN :pilotCodes AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.intervalStart <= :intervalEnd OR (ti.intervalEnd IS NULL OR ti.intervalEnd <= :intervalEnd)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'mon') AND pdv.detectionVaribale = :dvType AND pdv.pilotCode = uir.pilotCode")
+	@Query("SELECT uir.id, dv.id, vm.measureValue, pdv.derivationWeight FROM VariationMeasureValue vm, PilotDetectionVariable pdv LEFT JOIN vm.detectionVariable dv LEFT JOIN vm.userInRole uir LEFT JOIN vm.timeInterval ti WHERE dv.derivedDetectionVariable IS NOT NULL AND dv.derivedDetectionVariable.detectionVariableType = :dvType AND uir.pilotCode IN :pilotCodes AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.intervalStart <= :intervalEnd OR (ti.intervalEnd IS NULL OR ti.intervalEnd <= :intervalEnd)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'mon') AND pdv.detectionVariable.detectionVariableType = :dvType AND pdv.pilotCode = uir.pilotCode AND pdv.detectionVariable = dv.derivedDetectionVariable")
 	List<Object[]> computeAllDirect(@Param("intervalStart") Timestamp startOfMonth, @Param("intervalEnd") Timestamp endOfMonth, @Param("pilotCodes") List<Pilot.PilotCode> pilotCodes, @Param("dvType") DetectionVariableType detectionVariableType);
 
 }
