@@ -365,10 +365,10 @@ public class VariationMeasureValueRepositoryTest {
 		pdvMea3.setDetectionVariable(mea3);
 		pdvMea3.setDerivedDetectionVariable(ges);
 		pdvMea3 = pilotDetectionVariableRepository.save(pdvMea3);*/
-				
 		
-		List<Object[]> result = variationMeasureValueRepository.computeAllDirect(Timestamp.valueOf("2017-04-01 00:00:00"), Timestamp.valueOf("2017-04-30 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.ATH), DetectionVariableType.GES);
+		List<Object[]> result = variationMeasureValueRepository.computeAllDirect(Timestamp.valueOf("2018-03-01 00:00:00"), Timestamp.valueOf("2018-03-28 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.MPL), DetectionVariableType.GES);
 		Assert.assertNotNull(result);
+		logger.info("result.size(): " + result.size());
 		for (Object[] res : result) {
 			logger.info("uir: " + res[0].toString());
 			logger.info("dvId: " + res[1].toString());

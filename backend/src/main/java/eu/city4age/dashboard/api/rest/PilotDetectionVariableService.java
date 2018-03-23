@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.exceptions.DirectGESException;
 import eu.city4age.dashboard.api.exceptions.JsonEmptyException;
 import eu.city4age.dashboard.api.exceptions.JsonMappingExceptionUD;
 import eu.city4age.dashboard.api.exceptions.MissingKeyException;
@@ -163,7 +164,7 @@ public class PilotDetectionVariableService {
 
 	}
 
-	private void setConfiguration(Pilot.PilotCode pilotCode,Configuration configuration, Timestamp validFrom, StringBuilder response) throws TypicalPeriodException, MissingKeyException {
+	private void setConfiguration(Pilot.PilotCode pilotCode,Configuration configuration, Timestamp validFrom, StringBuilder response) throws TypicalPeriodException, MissingKeyException, DirectGESException {
 
 		ConfigurationCounter confCounter = new ConfigurationCounter();
 		
@@ -204,12 +205,26 @@ public class PilotDetectionVariableService {
 					
 					createOrUpdatePilotDetectionVariable(gesDetectionVariable, gefDetectionVariable, validFrom,
 							pilotCode, subFactor.getFormula(), subFactor.getWeight(), confCounter, currPilotRepository);
+					
+					int numOfMeasures = subFactor.getMeasures().size();
 
 					for (Mea measure : subFactor.getMeasures()) {
 						
 						DetectionVariable meaDetectionVariable = findDetectionVariableOfType(measure.getName(),
 								DetectionVariableType.MEA);
 						
+						if (meaDetectionVariable.getDerivedDetectionVariable() != null) {
+							if (numOfMeasures > 1) {
+								StringBuilder sb = new StringBuilder ();
+								sb.append ("Not allowed to have more than one measure per geriatric subfactor in configuration")
+								.append(" if that subfactor is configured to be directly derived.").append('\n')
+								.append("Please check declaration of : ").append (ovlDetectionVariable.getDetectionVariableName())
+								.append(" -> ").append (gfgDetectionVariable.getDetectionVariableName())
+								.append(" -> ").append(gefDetectionVariable.getDetectionVariableName())
+								.append(" -> ").append(gesDetectionVariable.getDetectionVariableName());
+								throw new DirectGESException(sb.toString());
+							}
+						}
 						createOrUpdatePilotDetectionVariable(meaDetectionVariable, gesDetectionVariable,
 								validFrom, pilotCode, emptyString, measure.getWeight(), confCounter, currPilotRepository);
 						
@@ -297,7 +312,7 @@ public class PilotDetectionVariableService {
 			pdv.setValidTo(validFrom);
 			pilotDetectionVariableRepository.save(pdv);
 		}
-
+		
 		response.append("\n\tNumber of rows in DB after update for this pilot is: ");
 		response.append(pilotDetectionVariableRepository.findByPilotCodeOrderByDetectionVariableId(pilotCode).size());
 		
@@ -348,9 +363,9 @@ public class PilotDetectionVariableService {
 				else index++ ;
 			}
 		}
-		
 		//if (!dv.getDetectionVariableType().toString().equals("mea") || !ddv.getDetectionVariableType().toString().equals("nui")) {
-		if (!dv.getDetectionVariableType().equals(DetectionVariableType.MEA) || !ddv.getDetectionVariableType().equals(DetectionVariableType.NUI)) {
+		if (!dv.getDetectionVariableType().toString().equals(DetectionVariableType.MEA.toString()) || !ddv.getDetectionVariableType().toString().equals(DetectionVariableType.NUI.toString())) {
+		//if (!dv.getDetectionVariableType().equals(DetectionVariableType.MEA) || !ddv.getDetectionVariableType().equals(DetectionVariableType.NUI)) {
 
 			pilotDetectionVariableRepository.save(new PilotDetectionVariable(pilotCode, ddv, dv, formula, weight,  validFrom, null));
 			cfc.incrementInserted();
@@ -364,7 +379,7 @@ public class PilotDetectionVariableService {
 				//logger.info("uradjen insert na: " + dv.getDetectionVariableName());
 			}
 		}
-	}
+	}	
 	
 	@GET
 	@ApiOperation("Get all Geriatric Subfactors for specific user.")
