@@ -1,0 +1,573 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffce485337c, pid=8760, tid=0x0000000000000494
+#
+# JRE version: Java(TM) SE Runtime Environment (8.0_144-b01) (build 1.8.0_144-b01)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.144-b01 mixed mode windows-amd64 compressed oops)
+# Problematic frame:
+# C  [multiarray.cp36-win_amd64.pyd+0xe337c]
+#
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00000000044ea000):  JavaThread "main" [_thread_in_native, id=1172, stack(0x00000000043e0000,0x00000000044e0000)]
+
+siginfo: ExceptionCode=0xc0000005, writing address 0x000000000000000a
+
+Registers:
+RAX=0x000000000000000a, RBX=0x00007ffce48b7bd0, RCX=0x000000003c4c2500, RDX=0x00007ffce48b7bd0
+RSP=0x00000000044d63b0, RBP=0x000000003c4c24f0, RSI=0x000000003b212b70, RDI=0x000000003c4c2500
+R8 =0x0000000000000008, R9 =0x00007ffd125e0000, R10=0x000000003c4c2500, R11=0x00000000312d3a10
+R12=0x00000000311d8420, R13=0x0000000000000072, R14=0x000000003c4c2500, R15=0x00000000311d8268
+RIP=0x00007ffce485337c, EFLAGS=0x0000000000010206
+
+Top of Stack: (sp=0x00000000044d63b0)
+0x00000000044d63b0:   000000006135c5c0 000000003c4c24f0
+0x00000000044d63c0:   00007ffce48d3120 000000003e46a248
+0x00000000044d63d0:   0000fc5d6356af32 00007ffce4856535
+0x00000000044d63e0:   0000000000000002 0000000000000000
+0x00000000044d63f0:   000000003c4c24f0 000000003c4c24f0
+0x00000000044d6400:   0000000000000000 00007ffce48563de
+0x00000000044d6410:   00007ffce48b7bd0 000000003b212b70
+0x00000000044d6420:   0000000000000000 0000000022b9a7f0
+0x00000000044d6430:   0000000000000000 0000000000000000
+0x00000000044d6440:   0000000000000000 0000000000000000
+0x00000000044d6450:   0000000000000000 0000000000000000
+0x00000000044d6460:   000000003b858d20 00007ffce485fbcd
+0x00000000044d6470:   000000003c4c24f0 000000003cf91d50
+0x00000000044d6480:   00000000000000d8 00000000044d65a0
+0x00000000044d6490:   00000000000000d8 000000006108ac88
+0x00000000044d64a0:   000000003cd87a48 030f374807dba757 
+
+Instructions: (pc=0x00007ffce485337c)
+0x00007ffce485335c:   1b 01 48 8b da 48 8b f9 0f 84 c1 00 00 00 83 7a
+0x00007ffce485336c:   1c 11 75 1a 48 8b 01 48 85 c0 0f 84 af 00 00 00
+0x00007ffce485337c:   48 ff 00 48 8b 5c 24 60 48 83 c4 50 5f c3 48 83
+0x00007ffce485338c:   7a 38 00 0f 84 96 00 00 00 48 8b 4b 30 4c 8d 4c 
+
+
+Register to memory mapping:
+
+RAX=0x000000000000000a is an unknown value
+RBX=0x00007ffce48b7bd0 is an unknown value
+RCX=0x000000003c4c2500 is an unknown value
+RDX=0x00007ffce48b7bd0 is an unknown value
+RSP=0x00000000044d63b0 is pointing into the stack for thread: 0x00000000044ea000
+RBP=0x000000003c4c24f0 is an unknown value
+RSI=0x000000003b212b70 is an unknown value
+RDI=0x000000003c4c2500 is an unknown value
+R8 =0x0000000000000008 is an unknown value
+R9 =0x00007ffd125e0000 is an unknown value
+R10=0x000000003c4c2500 is an unknown value
+R11=0x00000000312d3a10 is an unknown value
+R12=0x00000000311d8420 is an unknown value
+R13=0x0000000000000072 is an unknown value
+R14=0x000000003c4c2500 is an unknown value
+R15=0x00000000311d8268 is an unknown value
+
+
+Stack: [0x00000000043e0000,0x00000000044e0000],  sp=0x00000000044d63b0,  free space=984k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [multiarray.cp36-win_amd64.pyd+0xe337c]
+C  [multiarray.cp36-win_amd64.pyd+0xe63de]
+C  [multiarray.cp36-win_amd64.pyd+0xefbcd]
+C  [python36.dll+0x1ac88]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x39eea]
+C  [python36.dll+0xbf79]
+C  [python36.dll+0xbaac]
+C  [python36.dll+0xf9f9]
+C  [python36.dll+0x54c0d]
+C  [python36.dll+0x1a7a0]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x3a95f]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x39fb0]
+C  [python36.dll+0xbf79]
+C  [python36.dll+0xbaac]
+C  [python36.dll+0xf955]
+C  [python36.dll+0x1b74c]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x6da5]
+C  [python36.dll+0x6c87]
+C  [python36.dll+0x1bb62]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x3a95f]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x39eea]
+C  [python36.dll+0xbf79]
+C  [python36.dll+0xbaac]
+C  [python36.dll+0xf9f9]
+C  [python36.dll+0x54c0d]
+C  [python36.dll+0x1a7a0]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x3a95f]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x39eea]
+C  [python36.dll+0xbf79]
+C  [python36.dll+0xbaac]
+C  [python36.dll+0xf9f9]
+C  [python36.dll+0x1b74c]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x6da5]
+C  [python36.dll+0x6c87]
+C  [python36.dll+0x1bb62]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x3a95f]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x39eea]
+C  [python36.dll+0xbf79]
+C  [python36.dll+0xbaac]
+C  [python36.dll+0xf9f9]
+C  [python36.dll+0x1b74c]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x6da5]
+C  [python36.dll+0x6c87]
+C  [python36.dll+0x1bb62]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x3a95f]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x39eea]
+C  [python36.dll+0xbf79]
+C  [python36.dll+0xbaac]
+C  [python36.dll+0xf9f9]
+C  [python36.dll+0x1b74c]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x6da5]
+C  [python36.dll+0x6c87]
+C  [python36.dll+0x1bb62]
+C  [python36.dll+0x3b35b]
+C  [python36.dll+0x3a95f]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+C  [python36.dll+0x3a6ce]
+C  [python36.dll+0x18979]
+...<more frames>...
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  jep.Jep.run(JLjava/lang/String;)V+0
+j  jep.Jep.runScript(Ljava/lang/String;Ljava/lang/ClassLoader;)V+82
+j  jep.Jep.runScript(Ljava/lang/String;)V+3
+j  eu.city4age.dashboard.api.service.JythonServiceTest.testJepMonotonicityNui()V+6
+v  ~StubRoutines::call_stub
+J 1563  sun.reflect.NativeMethodAccessorImpl.invoke0(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object; (0 bytes) @ 0x0000000004b56ebf [0x0000000004b56e40+0x7f]
+J 1562 C1 sun.reflect.NativeMethodAccessorImpl.invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object; (104 bytes) @ 0x0000000004b593fc [0x0000000004b58200+0x11fc]
+J 4410 C2 java.lang.reflect.Method.invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object; (62 bytes) @ 0x00000000055366c8 [0x0000000005536620+0xa8]
+j  org.junit.runners.model.FrameworkMethod$1.runReflectiveCall()Ljava/lang/Object;+15
+j  org.junit.internal.runners.model.ReflectiveCallable.run()Ljava/lang/Object;+1
+j  org.junit.runners.model.FrameworkMethod.invokeExplosively(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;+10
+j  org.junit.internal.runners.statements.InvokeMethod.evaluate()V+12
+j  org.junit.internal.runners.statements.RunBefores.evaluate()V+49
+j  org.junit.internal.runners.statements.RunAfters.evaluate()V+12
+j  org.junit.runners.ParentRunner.runLeaf(Lorg/junit/runners/model/Statement;Lorg/junit/runner/Description;Lorg/junit/runner/notification/RunNotifier;)V+17
+j  org.junit.runners.BlockJUnit4ClassRunner.runChild(Lorg/junit/runners/model/FrameworkMethod;Lorg/junit/runner/notification/RunNotifier;)V+30
+j  org.junit.runners.BlockJUnit4ClassRunner.runChild(Ljava/lang/Object;Lorg/junit/runner/notification/RunNotifier;)V+6
+j  org.junit.runners.ParentRunner$3.run()V+12
+j  org.junit.runners.ParentRunner$1.schedule(Ljava/lang/Runnable;)V+1
+j  org.junit.runners.ParentRunner.runChildren(Lorg/junit/runner/notification/RunNotifier;)V+44
+j  org.junit.runners.ParentRunner.access$000(Lorg/junit/runners/ParentRunner;Lorg/junit/runner/notification/RunNotifier;)V+2
+j  org.junit.runners.ParentRunner$2.evaluate()V+8
+j  org.junit.runners.ParentRunner.run(Lorg/junit/runner/notification/RunNotifier;)V+20
+j  org.mockito.internal.runners.JUnit45AndHigherRunnerImpl.run(Lorg/junit/runner/notification/RunNotifier;)V+17
+j  org.mockito.runners.MockitoJUnitRunner.run(Lorg/junit/runner/notification/RunNotifier;)V+5
+j  org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(Lorg/eclipse/jdt/internal/junit/runner/TestExecution;)V+72
+j  org.eclipse.jdt.internal.junit.runner.TestExecution.run([Lorg/eclipse/jdt/internal/junit/runner/ITestReference;)V+17
+j  org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests([Ljava/lang/String;Ljava/lang/String;Lorg/eclipse/jdt/internal/junit/runner/TestExecution;)V+62
+j  org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(Lorg/eclipse/jdt/internal/junit/runner/TestExecution;)V+10
+j  org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run()V+70
+j  org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main([Ljava/lang/String;)V+10
+v  ~StubRoutines::call_stub
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x0000000021cc1800 JavaThread "Thread-3" daemon [_thread_blocked, id=11140, stack(0x0000000026aa0000,0x0000000026ba0000)]
+  0x000000001ff82800 JavaThread "ReaderThread" [_thread_in_native, id=15980, stack(0x0000000020300000,0x0000000020400000)]
+  0x000000001f538800 JavaThread "Service Thread" daemon [_thread_blocked, id=4200, stack(0x000000001f900000,0x000000001fa00000)]
+  0x000000001dbcd000 JavaThread "C1 CompilerThread2" daemon [_thread_blocked, id=13100, stack(0x000000001f400000,0x000000001f500000)]
+  0x000000001dbca000 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=11004, stack(0x000000001f300000,0x000000001f400000)]
+  0x000000001dbc3800 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=15740, stack(0x000000001f200000,0x000000001f300000)]
+  0x000000001dbc2000 JavaThread "Attach Listener" daemon [_thread_blocked, id=1748, stack(0x000000001f100000,0x000000001f200000)]
+  0x000000001dbc1000 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=7044, stack(0x000000001f000000,0x000000001f100000)]
+  0x00000000045de000 JavaThread "Finalizer" daemon [_thread_blocked, id=9748, stack(0x000000001ee00000,0x000000001ef00000)]
+  0x000000001db78800 JavaThread "Reference Handler" daemon [_thread_blocked, id=4280, stack(0x000000001ed00000,0x000000001ee00000)]
+=>0x00000000044ea000 JavaThread "main" [_thread_in_native, id=1172, stack(0x00000000043e0000,0x00000000044e0000)]
+
+Other Threads:
+  0x000000001db77000 VMThread [stack: 0x000000001ec00000,0x000000001ed00000] [id=7664]
+  0x000000001f5d2000 WatcherThread [stack: 0x000000001fa00000,0x000000001fb00000] [id=464]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap:
+ PSYoungGen      total 257024K, used 10765K [0x000000076b400000, 0x0000000780300000, 0x00000007c0000000)
+  eden space 236544K, 4% used [0x000000076b400000,0x000000076be834b8,0x0000000779b00000)
+  from space 20480K, 0% used [0x0000000779b00000,0x0000000779b00000,0x000000077af00000)
+  to   space 23552K, 0% used [0x000000077ec00000,0x000000077ec00000,0x0000000780300000)
+ ParOldGen       total 237056K, used 47203K [0x00000006c1c00000, 0x00000006d0380000, 0x000000076b400000)
+  object space 237056K, 19% used [0x00000006c1c00000,0x00000006c4a18f70,0x00000006d0380000)
+ Metaspace       used 58358K, capacity 59298K, committed 59480K, reserved 1101824K
+  class space    used 7359K, capacity 7527K, committed 7552K, reserved 1048576K
+
+Card table byte_map: [0x00000000139a0000,0x00000000141a0000] byte_map_base: 0x0000000010392000
+
+Marking Bits: (ParMarkBitMap*) 0x0000000061f8d850
+ Begin Bits: [0x0000000014af0000, 0x0000000018a80000)
+ End Bits:   [0x0000000018a80000, 0x000000001ca10000)
+
+Polling page: 0x0000000002590000
+
+CodeCache: size=245760Kb used=23177Kb max_used=23499Kb free=222582Kb
+ bounds [0x00000000045e0000, 0x0000000005cf0000, 0x00000000135e0000]
+ total_blobs=7783 nmethods=7248 adapters=446
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 27.513 Thread 0x000000001dbca000 nmethod 8109 0x0000000004874d50 code [0x0000000004874ea0, 0x00000000048751b8]
+Event: 28.145 Thread 0x000000001dbcd000 8112       3       jep.ClassList::isJavaPackage (32 bytes)
+Event: 28.145 Thread 0x000000001dbcd000 nmethod 8112 0x0000000004aca010 code [0x0000000004aca1a0, 0x0000000004aca538]
+Event: 29.198 Thread 0x000000001dbc3800 nmethod 8111 0x0000000005293950 code [0x0000000005294140, 0x000000000529cca0]
+Event: 62.917 Thread 0x000000001dbcd000 8113       3       java.lang.Throwable$WrappedPrintWriter::println (9 bytes)
+Event: 62.918 Thread 0x000000001dbcd000 nmethod 8113 0x0000000005516c90 code [0x0000000005516e60, 0x00000000055178c8]
+Event: 62.918 Thread 0x000000001dbcd000 8114   !   3       java.io.PrintWriter::println (34 bytes)
+Event: 62.919 Thread 0x000000001dbcd000 nmethod 8114 0x00000000055f6790 code [0x00000000055f6960, 0x00000000055f72c8]
+Event: 62.919 Thread 0x000000001dbcd000 8115       3       java.util.concurrent.CopyOnWriteArrayList::size (6 bytes)
+Event: 62.919 Thread 0x000000001dbcd000 nmethod 8115 0x00000000055d8dd0 code [0x00000000055d8f20, 0x00000000055d9110]
+
+GC Heap History (10 events):
+Event: 19.098 GC heap before
+{Heap before GC invocations=12 (full 2):
+ PSYoungGen      total 169984K, used 169967K [0x000000076b400000, 0x0000000779080000, 0x00000007c0000000)
+  eden space 157696K, 100% used [0x000000076b400000,0x0000000774e00000,0x0000000774e00000)
+  from space 12288K, 99% used [0x0000000774e00000,0x00000007759fbf20,0x0000000775a00000)
+  to   space 14336K, 0% used [0x0000000778280000,0x0000000778280000,0x0000000779080000)
+ ParOldGen       total 155136K, used 17201K [0x00000006c1c00000, 0x00000006cb380000, 0x000000076b400000)
+  object space 155136K, 11% used [0x00000006c1c00000,0x00000006c2ccc448,0x00000006cb380000)
+ Metaspace       used 46964K, capacity 47666K, committed 48000K, reserved 1091584K
+  class space    used 6036K, capacity 6177K, committed 6272K, reserved 1048576K
+Event: 19.135 GC heap after
+Heap after GC invocations=12 (full 2):
+ PSYoungGen      total 206848K, used 14331K [0x000000076b400000, 0x0000000779400000, 0x00000007c0000000)
+  eden space 192512K, 0% used [0x000000076b400000,0x000000076b400000,0x0000000777000000)
+  from space 14336K, 99% used [0x0000000778280000,0x000000077907ec60,0x0000000779080000)
+  to   space 18432K, 0% used [0x0000000777000000,0x0000000777000000,0x0000000778200000)
+ ParOldGen       total 155136K, used 24186K [0x00000006c1c00000, 0x00000006cb380000, 0x000000076b400000)
+  object space 155136K, 15% used [0x00000006c1c00000,0x00000006c339e930,0x00000006cb380000)
+ Metaspace       used 46964K, capacity 47666K, committed 48000K, reserved 1091584K
+  class space    used 6036K, capacity 6177K, committed 6272K, reserved 1048576K
+}
+Event: 20.554 GC heap before
+{Heap before GC invocations=13 (full 2):
+ PSYoungGen      total 206848K, used 206843K [0x000000076b400000, 0x0000000779400000, 0x00000007c0000000)
+  eden space 192512K, 100% used [0x000000076b400000,0x0000000777000000,0x0000000777000000)
+  from space 14336K, 99% used [0x0000000778280000,0x000000077907ec60,0x0000000779080000)
+  to   space 18432K, 0% used [0x0000000777000000,0x0000000777000000,0x0000000778200000)
+ ParOldGen       total 155136K, used 24186K [0x00000006c1c00000, 0x00000006cb380000, 0x000000076b400000)
+  object space 155136K, 15% used [0x00000006c1c00000,0x00000006c339e930,0x00000006cb380000)
+ Metaspace       used 49111K, capacity 49916K, committed 50048K, reserved 1093632K
+  class space    used 6329K, capacity 6472K, committed 6528K, reserved 1048576K
+Event: 20.593 GC heap after
+Heap after GC invocations=13 (full 2):
+ PSYoungGen      total 210944K, used 6081K [0x000000076b400000, 0x000000077c300000, 0x00000007c0000000)
+  eden space 192512K, 0% used [0x000000076b400000,0x000000076b400000,0x0000000777000000)
+  from space 18432K, 32% used [0x0000000777000000,0x00000007775f0470,0x0000000778200000)
+  to   space 17920K, 0% used [0x000000077b180000,0x000000077b180000,0x000000077c300000)
+ ParOldGen       total 155136K, used 38465K [0x00000006c1c00000, 0x00000006cb380000, 0x000000076b400000)
+  object space 155136K, 24% used [0x00000006c1c00000,0x00000006c41906e8,0x00000006cb380000)
+ Metaspace       used 49111K, capacity 49916K, committed 50048K, reserved 1093632K
+  class space    used 6329K, capacity 6472K, committed 6528K, reserved 1048576K
+}
+Event: 26.254 GC heap before
+{Heap before GC invocations=14 (full 2):
+ PSYoungGen      total 210944K, used 198593K [0x000000076b400000, 0x000000077c300000, 0x00000007c0000000)
+  eden space 192512K, 100% used [0x000000076b400000,0x0000000777000000,0x0000000777000000)
+  from space 18432K, 32% used [0x0000000777000000,0x00000007775f0470,0x0000000778200000)
+  to   space 17920K, 0% used [0x000000077b180000,0x000000077b180000,0x000000077c300000)
+ ParOldGen       total 155136K, used 38465K [0x00000006c1c00000, 0x00000006cb380000, 0x000000076b400000)
+  object space 155136K, 24% used [0x00000006c1c00000,0x00000006c41906e8,0x00000006cb380000)
+ Metaspace       used 57591K, capacity 58530K, committed 58624K, reserved 1099776K
+  class space    used 7211K, capacity 7399K, committed 7424K, reserved 1048576K
+Event: 26.286 GC heap after
+Heap after GC invocations=14 (full 2):
+ PSYoungGen      total 254464K, used 17390K [0x000000076b400000, 0x000000077c300000, 0x00000007c0000000)
+  eden space 236544K, 0% used [0x000000076b400000,0x000000076b400000,0x0000000779b00000)
+  from space 17920K, 97% used [0x000000077b180000,0x000000077c27b898,0x000000077c300000)
+  to   space 20480K, 0% used [0x0000000779b00000,0x0000000779b00000,0x000000077af00000)
+ ParOldGen       total 155136K, used 38473K [0x00000006c1c00000, 0x00000006cb380000, 0x000000076b400000)
+  object space 155136K, 24% used [0x00000006c1c00000,0x00000006c41926e8,0x00000006cb380000)
+ Metaspace       used 57591K, capacity 58530K, committed 58624K, reserved 1099776K
+  class space    used 7211K, capacity 7399K, committed 7424K, reserved 1048576K
+}
+Event: 27.161 GC heap before
+{Heap before GC invocations=15 (full 2):
+ PSYoungGen      total 254464K, used 173706K [0x000000076b400000, 0x000000077c300000, 0x00000007c0000000)
+  eden space 236544K, 66% used [0x000000076b400000,0x0000000774ca6fb8,0x0000000779b00000)
+  from space 17920K, 97% used [0x000000077b180000,0x000000077c27b898,0x000000077c300000)
+  to   space 20480K, 0% used [0x0000000779b00000,0x0000000779b00000,0x000000077af00000)
+ ParOldGen       total 155136K, used 38473K [0x00000006c1c00000, 0x00000006cb380000, 0x000000076b400000)
+  object space 155136K, 24% used [0x00000006c1c00000,0x00000006c41926e8,0x00000006cb380000)
+ Metaspace       used 57952K, capacity 58850K, committed 59096K, reserved 1101824K
+  class space    used 7240K, capacity 7399K, committed 7424K, reserved 1048576K
+Event: 27.182 GC heap after
+Heap after GC invocations=15 (full 2):
+ PSYoungGen      total 257024K, used 20454K [0x000000076b400000, 0x0000000780300000, 0x00000007c0000000)
+  eden space 236544K, 0% used [0x000000076b400000,0x000000076b400000,0x0000000779b00000)
+  from space 20480K, 99% used [0x0000000779b00000,0x000000077aef9b68,0x000000077af00000)
+  to   space 23552K, 0% used [0x000000077ec00000,0x000000077ec00000,0x0000000780300000)
+ ParOldGen       total 155136K, used 38976K [0x00000006c1c00000, 0x00000006cb380000, 0x000000076b400000)
+  object space 155136K, 25% used [0x00000006c1c00000,0x00000006c4210300,0x00000006cb380000)
+ Metaspace       used 57952K, capacity 58850K, committed 59096K, reserved 1101824K
+  class space    used 7240K, capacity 7399K, committed 7424K, reserved 1048576K
+}
+Event: 27.182 GC heap before
+{Heap before GC invocations=16 (full 3):
+ PSYoungGen      total 257024K, used 20454K [0x000000076b400000, 0x0000000780300000, 0x00000007c0000000)
+  eden space 236544K, 0% used [0x000000076b400000,0x000000076b400000,0x0000000779b00000)
+  from space 20480K, 99% used [0x0000000779b00000,0x000000077aef9b68,0x000000077af00000)
+  to   space 23552K, 0% used [0x000000077ec00000,0x000000077ec00000,0x0000000780300000)
+ ParOldGen       total 155136K, used 38976K [0x00000006c1c00000, 0x00000006cb380000, 0x000000076b400000)
+  object space 155136K, 25% used [0x00000006c1c00000,0x00000006c4210300,0x00000006cb380000)
+ Metaspace       used 57952K, capacity 58850K, committed 59096K, reserved 1101824K
+  class space    used 7240K, capacity 7399K, committed 7424K, reserved 1048576K
+Event: 27.427 GC heap after
+Heap after GC invocations=16 (full 3):
+ PSYoungGen      total 257024K, used 0K [0x000000076b400000, 0x0000000780300000, 0x00000007c0000000)
+  eden space 236544K, 0% used [0x000000076b400000,0x000000076b400000,0x0000000779b00000)
+  from space 20480K, 0% used [0x0000000779b00000,0x0000000779b00000,0x000000077af00000)
+  to   space 23552K, 0% used [0x000000077ec00000,0x000000077ec00000,0x0000000780300000)
+ ParOldGen       total 237056K, used 47203K [0x00000006c1c00000, 0x00000006d0380000, 0x000000076b400000)
+  object space 237056K, 19% used [0x00000006c1c00000,0x00000006c4a18f70,0x00000006d0380000)
+ Metaspace       used 57952K, capacity 58850K, committed 59096K, reserved 1101824K
+  class space    used 7240K, capacity 7399K, committed 7424K, reserved 1048576K
+}
+
+Deoptimization events (10 events):
+Event: 24.867 Thread 0x00000000044ea000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x0000000005b613ec method=org.hibernate.engine.internal.Cascade.cascade(Lorg/hibernate/engine/spi/CascadingAction;Lorg/hibernate/engine/internal/CascadePoint;Lorg/hibernate/event/spi/EventSource;
+Event: 24.867 Thread 0x00000000044ea000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x0000000005b613ec method=org.hibernate.engine.internal.Cascade.cascade(Lorg/hibernate/engine/spi/CascadingAction;Lorg/hibernate/engine/internal/CascadePoint;Lorg/hibernate/event/spi/EventSource;
+Event: 25.038 Thread 0x00000000044ea000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x0000000005b613ec method=org.hibernate.engine.internal.Cascade.cascade(Lorg/hibernate/engine/spi/CascadingAction;Lorg/hibernate/engine/internal/CascadePoint;Lorg/hibernate/event/spi/EventSource;
+Event: 25.039 Thread 0x00000000044ea000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x0000000005b613ec method=org.hibernate.engine.internal.Cascade.cascade(Lorg/hibernate/engine/spi/CascadingAction;Lorg/hibernate/engine/internal/CascadePoint;Lorg/hibernate/event/spi/EventSource;
+Event: 25.394 Thread 0x00000000044ea000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x0000000004dd05d8 method=java.util.AbstractList$Itr.hasNext()Z @ 8
+Event: 25.394 Thread 0x00000000044ea000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x000000000508e498 method=java.util.AbstractList$Itr.next()Ljava/lang/Object; @ 14
+Event: 25.505 Thread 0x00000000044ea000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000005c792d4 method=java.math.BigInteger.primitiveLeftShift([III)V @ 5
+Event: 25.540 Thread 0x00000000044ea000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000005c699d0 method=java.math.BigInteger.multiplyToLen([II[II[I)[I @ 12
+Event: 26.341 Thread 0x00000000044ea000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000004fd0a50 method=jep.ClassList.addClass(Ljava/lang/String;Ljava/lang/String;)V @ 71
+Event: 26.627 Thread 0x00000000044ea000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000005cdb550 method=sun.net.www.protocol.jar.Handler.parseURL(Ljava/net/URL;Ljava/lang/String;II)V @ 68
+
+Internal exceptions (10 events):
+Event: 24.909 Thread 0x00000000044ea000 Exception <a 'java/lang/ClassNotFoundException': java/io/SerializableCustomizer> (0x00000007736e47a8) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u144\9417\hotspot\src\share\vm\classfile\systemDictionary.cpp, line 210]
+Event: 25.177 Thread 0x00000000044ea000 Exception <a 'java/lang/ClassNotFoundException': eu/city4age/dashboard/api/service/UserServiceTestBeanInfo> (0x0000000773a5b870) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u144\9417\hotspot\src\share\vm\classfile\systemDictionary.cpp, l
+Event: 25.178 Thread 0x00000000044ea000 Exception <a 'java/lang/ClassNotFoundException': eu/city4age/dashboard/api/service/UserServiceTestCustomizer> (0x0000000773a85958) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u144\9417\hotspot\src\share\vm\classfile\systemDictionary.cpp,
+Event: 25.540 Thread 0x00000000044ea000 Implicit null exception at 0x0000000005c6944c to 0x0000000005c69997
+Event: 25.546 Thread 0x00000000044ea000 Exception <a 'java/lang/reflect/InvocationTargetException'> (0x000000077418c470) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u144\9417\hotspot\src\share\vm\runtime\reflection.cpp, line 1092]
+Event: 25.553 Thread 0x00000000044ea000 Exception <a 'java/lang/ClassNotFoundException': eu/city4age/dashboard/api/service/CodebookServiceTestBeanInfo> (0x000000077424e7b8) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u144\9417\hotspot\src\share\vm\classfile\systemDictionary.cp
+Event: 25.554 Thread 0x00000000044ea000 Exception <a 'java/lang/ClassNotFoundException': eu/city4age/dashboard/api/service/CodebookServiceTestCustomizer> (0x0000000774279db0) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u144\9417\hotspot\src\share\vm\classfile\systemDictionary.
+Event: 25.639 Thread 0x00000000044ea000 Exception <a 'java/lang/ClassNotFoundException': java/io/SerializableCustomizer> (0x00000007746ad238) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u144\9417\hotspot\src\share\vm\classfile\systemDictionary.cpp, line 210]
+Event: 62.848 Thread 0x00000000044ea000 Exception <a 'jep/JepException'> (0x000000076bad0da0) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u144\9417\hotspot\src\share\vm\prims\jni.cpp, line 709]
+Event: 62.848 Thread 0x00000000044ea000 Exception <a 'java/lang/reflect/InvocationTargetException'> (0x000000076bad2f58) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u144\9417\hotspot\src\share\vm\runtime\reflection.cpp, line 1092]
+
+Events (10 events):
+Event: 27.506 Thread 0x00000000044ea000 DEOPT PACKING pc=0x0000000004fcd3d1 sp=0x00000000044d2000
+Event: 27.506 Thread 0x00000000044ea000 DEOPT UNPACKING pc=0x000000000462787f sp=0x00000000044d1d20 mode 0
+Event: 27.507 Thread 0x00000000044ea000 DEOPT PACKING pc=0x0000000004fcd3d1 sp=0x00000000044d2000
+Event: 27.507 Thread 0x00000000044ea000 DEOPT UNPACKING pc=0x000000000462787f sp=0x00000000044d1d20 mode 0
+Event: 27.507 Thread 0x00000000044ea000 DEOPT PACKING pc=0x0000000004fcd3d1 sp=0x00000000044d2000
+Event: 27.507 Thread 0x00000000044ea000 DEOPT UNPACKING pc=0x000000000462787f sp=0x00000000044d1d20 mode 0
+Event: 27.507 Thread 0x00000000044ea000 DEOPT PACKING pc=0x0000000004fcd3d1 sp=0x00000000044d2000
+Event: 27.507 Thread 0x00000000044ea000 DEOPT UNPACKING pc=0x000000000462787f sp=0x00000000044d1d20 mode 0
+Event: 27.517 loading class org/python/core/PyDataDescr
+Event: 27.517 loading class org/python/core/PyDataDescr done
+
+
+Dynamic libraries:
+0x00007ff683b10000 - 0x00007ff683b47000 	C:\Program Files\Java\jdk1.8.0_144\bin\javaw.exe
+0x00007ffd1abe0000 - 0x00007ffd1adc0000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffd196c0000 - 0x00007ffd1976e000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffd17100000 - 0x00007ffd17366000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffd19300000 - 0x00007ffd193a1000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffd18100000 - 0x00007ffd1819d000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffd18e40000 - 0x00007ffd18e9b000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffd18870000 - 0x00007ffd1898f000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffd18220000 - 0x00007ffd183af000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffd17080000 - 0x00007ffd170a0000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffd180d0000 - 0x00007ffd180f8000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffd17e10000 - 0x00007ffd17fa3000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffd16fe0000 - 0x00007ffd1707b000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffd17fb0000 - 0x00007ffd180a6000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffd05200000 - 0x00007ffd05469000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.16299.98_none_cc930a042215c348\COMCTL32.dll
+0x00007ffd193b0000 - 0x00007ffd196b8000 	C:\WINDOWS\System32\combase.dll
+0x00007ffd17d90000 - 0x00007ffd17e02000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffd183b0000 - 0x00007ffd183dd000 	C:\WINDOWS\System32\IMM32.DLL
+0x0000000062010000 - 0x00000000620e2000 	C:\Program Files\Java\jdk1.8.0_144\jre\bin\msvcr100.dll
+0x0000000061770000 - 0x000000006200d000 	C:\Program Files\Java\jdk1.8.0_144\jre\bin\server\jvm.dll
+0x00007ffd190f0000 - 0x00007ffd190f8000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffd07c80000 - 0x00007ffd07c89000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffd18f70000 - 0x00007ffd18fdc000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffd0d870000 - 0x00007ffd0d893000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffd0b740000 - 0x00007ffd0b74a000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffd0d810000 - 0x00007ffd0d83a000 	C:\WINDOWS\SYSTEM32\WINMMBASE.dll
+0x00007ffd17420000 - 0x00007ffd1746a000 	C:\WINDOWS\System32\cfgmgr32.dll
+0x0000000061760000 - 0x000000006176f000 	C:\Program Files\Java\jdk1.8.0_144\jre\bin\verify.dll
+0x0000000061730000 - 0x0000000061759000 	C:\Program Files\Java\jdk1.8.0_144\jre\bin\java.dll
+0x00000000616e0000 - 0x00000000616f6000 	C:\Program Files\Java\jdk1.8.0_144\jre\bin\zip.dll
+0x00007ffd19770000 - 0x00007ffd1aba6000 	C:\WINDOWS\System32\SHELL32.dll
+0x00007ffd19100000 - 0x00007ffd191a6000 	C:\WINDOWS\System32\shcore.dll
+0x00007ffd17470000 - 0x00007ffd17bb7000 	C:\WINDOWS\System32\windows.storage.dll
+0x00007ffd186a0000 - 0x00007ffd186f1000 	C:\WINDOWS\System32\shlwapi.dll
+0x00007ffd16f80000 - 0x00007ffd16f91000 	C:\WINDOWS\System32\kernel.appcore.dll
+0x00007ffd16f30000 - 0x00007ffd16f7c000 	C:\WINDOWS\System32\powrprof.dll
+0x00007ffd16fc0000 - 0x00007ffd16fdb000 	C:\WINDOWS\System32\profapi.dll
+0x00000000616c0000 - 0x00000000616da000 	C:\Program Files\Java\jdk1.8.0_144\jre\bin\net.dll
+0x00007ffd16760000 - 0x00007ffd167c6000 	C:\WINDOWS\system32\mswsock.dll
+0x0000000061690000 - 0x000000006169d000 	C:\Program Files\Java\jdk1.8.0_144\jre\bin\management.dll
+0x00007ffd16920000 - 0x00007ffd16937000 	C:\WINDOWS\SYSTEM32\CRYPTSP.dll
+0x00007ffd16370000 - 0x00007ffd163a3000 	C:\WINDOWS\system32\rsaenh.dll
+0x00007ffd16a20000 - 0x00007ffd16a45000 	C:\WINDOWS\SYSTEM32\bcrypt.dll
+0x00007ffd16e30000 - 0x00007ffd16e59000 	C:\WINDOWS\SYSTEM32\USERENV.dll
+0x00007ffd16e20000 - 0x00007ffd16e2b000 	C:\WINDOWS\SYSTEM32\CRYPTBASE.dll
+0x00007ffd164f0000 - 0x00007ffd16529000 	C:\WINDOWS\SYSTEM32\IPHLPAPI.DLL
+0x00007ffd18690000 - 0x00007ffd18698000 	C:\WINDOWS\System32\NSI.dll
+0x00007ffd14540000 - 0x00007ffd14556000 	C:\WINDOWS\SYSTEM32\dhcpcsvc6.DLL
+0x00007ffd13ff0000 - 0x00007ffd1400a000 	C:\WINDOWS\SYSTEM32\dhcpcsvc.DLL
+0x00000000616a0000 - 0x00000000616b1000 	C:\Program Files\Java\jdk1.8.0_144\jre\bin\nio.dll
+0x00007ffd15b10000 - 0x00007ffd15b1a000 	C:\Users\milos.holclajtner\AppData\Local\Temp\jansi-64-7512930580986301884.dll
+0x00007ffcf42f0000 - 0x00007ffcf4306000 	C:\WINDOWS\system32\napinsp.dll
+0x00007ffcf42d0000 - 0x00007ffcf42ea000 	C:\WINDOWS\system32\pnrpnsp.dll
+0x00007ffd128f0000 - 0x00007ffd12908000 	C:\WINDOWS\system32\NLAapi.dll
+0x00007ffd16530000 - 0x00007ffd165e6000 	C:\WINDOWS\SYSTEM32\DNSAPI.dll
+0x00007ffcf42c0000 - 0x00007ffcf42ce000 	C:\WINDOWS\System32\winrnr.dll
+0x0000000064660000 - 0x0000000064686000 	C:\Program Files\Bonjour\mdnsNSP.dll
+0x00007ffcf42a0000 - 0x00007ffcf42b5000 	C:\WINDOWS\System32\wshbth.dll
+0x00007ffd0fdd0000 - 0x00007ffd0fdda000 	C:\Windows\System32\rasadhlp.dll
+0x00007ffd147a0000 - 0x00007ffd14810000 	C:\WINDOWS\System32\fwpuclnt.dll
+0x00007ffd0da50000 - 0x00007ffd0da75000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\Lib\site-packages\jep\jep.dll
+0x0000000061070000 - 0x0000000061410000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\python36.dll
+0x00007ffd191b0000 - 0x00007ffd192f9000 	C:\WINDOWS\System32\ole32.dll
+0x00007ffd18ea0000 - 0x00007ffd18f65000 	C:\WINDOWS\System32\OLEAUT32.dll
+0x00007ffd125e0000 - 0x00007ffd125f6000 	C:\WINDOWS\SYSTEM32\VCRUNTIME140.dll
+0x00007ffd146e0000 - 0x00007ffd146ef000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\python3.dll
+0x00007ffce4770000 - 0x00007ffce4901000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\numpy\core\multiarray.cp36-win_amd64.pyd
+0x000000006d380000 - 0x000000006f7fa000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\numpy\core\libopenblas_v0.2.20_mingwpy.dll
+0x00007ffceb0f0000 - 0x00007ffceb1bb000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\numpy\core\umath.cp36-win_amd64.pyd
+0x0000000063000000 - 0x0000000063023000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\DLLs\_ctypes.pyd
+0x0000000062fe0000 - 0x0000000062ffa000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\DLLs\_bz2.pyd
+0x00007ffcfd9f0000 - 0x00007ffcfda32000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\DLLs\_lzma.pyd
+0x00007ffce3450000 - 0x00007ffce35ec000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\DLLs\_hashlib.pyd
+0x00007ffd146d0000 - 0x00007ffd146db000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\numpy\linalg\lapack_lite.cp36-win_amd64.pyd
+0x00007ffd11a80000 - 0x00007ffd11a9a000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\numpy\linalg\_umath_linalg.cp36-win_amd64.pyd
+0x00007ffd10750000 - 0x00007ffd10768000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\numpy\fft\fftpack_lite.cp36-win_amd64.pyd
+0x00007ffcecca0000 - 0x00007ffcecd50000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\numpy\random\mtrand.cp36-win_amd64.pyd
+0x0000000062f00000 - 0x0000000062fe0000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\DLLs\unicodedata.pyd
+0x0000000062ee0000 - 0x0000000062ef5000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\DLLs\_socket.pyd
+0x0000000062ed0000 - 0x0000000062eda000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\DLLs\select.pyd
+0x00007ffce07a0000 - 0x00007ffce099d000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\DLLs\_ssl.pyd
+0x00007ffd17bc0000 - 0x00007ffd17d8e000 	C:\WINDOWS\System32\CRYPT32.dll
+0x00007ffd16fa0000 - 0x00007ffd16fb2000 	C:\WINDOWS\System32\MSASN1.dll
+0x00007ffce4c30000 - 0x00007ffce4d0a000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\tslib.cp36-win_amd64.pyd
+0x00007ffd0da30000 - 0x00007ffd0da44000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\tslibs\timedeltas.cp36-win_amd64.pyd
+0x00007ffd0d780000 - 0x00007ffd0d79b000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\tslibs\timezones.cp36-win_amd64.pyd
+0x00007ffd06c90000 - 0x00007ffd06cc8000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\tslibs\parsing.cp36-win_amd64.pyd
+0x00007ffd0d2f0000 - 0x00007ffd0d30f000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\tslibs\fields.cp36-win_amd64.pyd
+0x00007ffceca90000 - 0x00007ffcecb0f000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\hashtable.cp36-win_amd64.pyd
+0x00007ffce4690000 - 0x00007ffce476a000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\lib.cp36-win_amd64.pyd
+0x00007ffce18a0000 - 0x00007ffce1a06000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\interval.cp36-win_amd64.pyd
+0x0000000062e80000 - 0x0000000062ec4000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\DLLs\_decimal.pyd
+0x00007ffce0660000 - 0x00007ffce0799000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\algos.cp36-win_amd64.pyd
+0x00007ffd0b8d0000 - 0x00007ffd0b8e4000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\properties.cp36-win_amd64.pyd
+0x00007ffd089b0000 - 0x00007ffd089c3000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\hashing.cp36-win_amd64.pyd
+0x00007ffce5610000 - 0x00007ffce566f000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\index.cp36-win_amd64.pyd
+0x00007ffcdf1f0000 - 0x00007ffcdf397000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\join.cp36-win_amd64.pyd
+0x00007ffcf02d0000 - 0x00007ffcf0304000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\tslibs\strptime.cp36-win_amd64.pyd
+0x00007ffd06d20000 - 0x00007ffd06d34000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\tslibs\frequencies.cp36-win_amd64.pyd
+0x00007ffce5190000 - 0x00007ffce51dd000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\period.cp36-win_amd64.pyd
+0x00007ffce05b0000 - 0x00007ffce0660000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\sparse.cp36-win_amd64.pyd
+0x00007ffcfd9c0000 - 0x00007ffcfd9ed000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\matplotlib\_path.cp36-win_amd64.pyd
+0x00007ffce3220000 - 0x00007ffce32bd000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\matplotlib\MSVCP140.dll
+0x00007ffcd8840000 - 0x00007ffcd88c6000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\window.cp36-win_amd64.pyd
+0x00007ffcd8420000 - 0x00007ffcd84a9000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\groupby.cp36-win_amd64.pyd
+0x00007ffd06bc0000 - 0x00007ffd06bdc000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\reshape.cp36-win_amd64.pyd
+0x00007ffce4bc0000 - 0x00007ffce4c29000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\parsers.cp36-win_amd64.pyd
+0x00007ffd06b40000 - 0x00007ffd06b57000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\json.cp36-win_amd64.pyd
+0x00007ffd042f0000 - 0x00007ffd04306000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\io\msgpack\_packer.cp36-win_amd64.pyd
+0x00007ffd03e90000 - 0x00007ffd03eaa000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\io\msgpack\_unpacker.cp36-win_amd64.pyd
+0x00007ffd14600000 - 0x00007ffd14609000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\util\_move.cp36-win_amd64.pyd
+0x00007ffd038b0000 - 0x00007ffd038c6000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\pandas\_libs\testing.cp36-win_amd64.pyd
+0x00007ffd13ea0000 - 0x00007ffd13eaa000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\sklearn\__check_build\_check_build.cp36-win_amd64.pyd
+0x00007ffd02a60000 - 0x00007ffd02a76000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\_lib\_ccallback_c.cp36-win_amd64.pyd
+0x00007ffcd80a0000 - 0x00007ffcd82f5000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\sparse\_sparsetools.cp36-win_amd64.pyd
+0x00007ffce0540000 - 0x00007ffce05ab000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\sparse\_csparsetools.cp36-win_amd64.pyd
+0x00007ffd000c0000 - 0x00007ffd000d6000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\sklearn\utils\murmurhash.cp36-win_amd64.pyd
+0x00007ffcfd6b0000 - 0x00007ffcfd6d3000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\sparse\linalg\isolve\_iterative.cp36-win_amd64.pyd
+0x0000000067ec0000 - 0x0000000067f26000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\extra-dll\libSTOPTEST.B2ZVH7DO5DVZYDS75ZSCHXD5G43HCYD4.gfortran-win_amd64.dll
+0x0000000032990000 - 0x0000000034de7000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\extra-dll\libopenblas.BNVRK7633HSX7YVO2TADGR4A5KEKXJAW.gfortran-win_amd64.dll
+0x00007ffcd7eb0000 - 0x00007ffcd7f42000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\linalg\_fblas.cp36-win_amd64.pyd
+0x0000000070f80000 - 0x0000000070f9d000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\extra-dll\libwrap_dum.JPPGMGH3MZCSHXFMQQGFOSCGZ7ZEQKKE.gfortran-win_amd64.dll
+0x00007ffcd6f80000 - 0x00007ffcd709e000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\linalg\_flapack.cp36-win_amd64.pyd
+0x0000000032590000 - 0x00000000325c6000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\extra-dll\libwrap_dum.26QQ3L55FU6KXMGPYDA53KYMCT2TU35H.gfortran-win_amd64.dll
+0x00007ffcf3ed0000 - 0x00007ffcf3ee2000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\linalg\_flinalg.cp36-win_amd64.pyd
+0x0000000065a80000 - 0x0000000065a9e000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\extra-dll\libdet.CF6EYFUDEYPH43I3Z6PMABQVSHN33WMB.gfortran-win_amd64.dll
+0x00007ffce55d0000 - 0x00007ffce5605000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\linalg\_solve_toeplitz.cp36-win_amd64.pyd
+0x00007ffce4640000 - 0x00007ffce4683000 	C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\linalg\_decomp_update.cp36-win_amd64.pyd
+
+VM Arguments:
+jvm_args: -ea -Dfile.encoding=UTF-8 
+java_command: org.eclipse.jdt.internal.junit.runner.RemoteTestRunner -version 3 -port 59265 -testLoaderClass org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader -loaderpluginname org.eclipse.jdt.junit4.runtime -testNameFile C:\Users\MILOS~1.HOL\AppData\Local\Temp\testNames3224122984857968952.txt
+java_class_path (initial): C:\Program Files\Java\jdk1.8.0_144\jre\lib\resources.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\rt.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\jce.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\jfr.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\access-bridge-64.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\cldrdata.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\dnsns.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\jaccess.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\jfxrt.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\localedata.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\nashorn.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\sunec.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\sunjce_provider.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\sunmscapi.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\sunpkcs11.jar;C:\Program Files\Java\jdk1.8.0_144\jre\lib\ext\zipfs.jar;C:\Users\milos.holclajtner\Documents\GitHub\anagraph\backend\target\test-classes;C:\Users\milos.holclajtner\Documents\GitHub\anagraph\backend\target\classes;C:\Users\milos.holclajtner\.m2\repository\javax\validation\validation-api\1.1.0.Final\validation-api-1.1.0.Final.jar;C:\Users\milos.holclajtner\.m2\repository\javax\annotation\javax.annotation-api\1.2\javax.annotation-api-1.2.jar;C:\Users\milos.holclajtner\.m2\repository\javax\transaction\javax.transaction-api\1.2\javax.transaction-api-1.2.jar;C:\Users\milos.holclajtner\.m2\repository\org\hibernate\javax\persistence\hibernate-jpa-2.1-api\1.0.0.Final\hibernate-jpa-2.1-api-1.0.0.Final.jar;C:\Users\milos.holclajtner\.m2\repository\antlr\antlr\2.7.7\antlr-2.7.7.jar;C:\Users\milos.holclajtner\.m2\repository\dom4j\dom4j\1.6.1\dom4j-1.6.1.jar;C:\Users\milos.holclajtner\.m2\repository\junit\junit\4.12\junit-4.12.jar;C:\Users\milos.holclajtner\.m2\repository\org\hamcrest
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk1.8.0_144
+PATH=C:/Program Files/Java/jre1.8.0_152/bin/server;C:/Program Files/Java/jre1.8.0_152/bin;C:/Program Files/Java/jre1.8.0_152/lib/amd64;C:\ProgramData\Oracle\Java\javapath;C:\Program Files\Java\jdk1.8.0_144\bin;C:\apache-maven-3.3.9\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\OpenVPN\bin;C:\gradle-4.6\bin;C:\Program Files (x86)\Skype\Phone\;C:\Program Files\OpenSSH\bin;C:\PostgreSQL\pg10\bin;C:\Program Files\Cloud Foundry;C:\Program Files\nodejs\;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\Lib\site-packages\jep;C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\Scripts\;C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\;C:\Users\milos.holclajtner\AppData\Local\Microsoft\WindowsApps;C:\Users\milos.holclajtner\AppData\Roaming\npm;C:\eclipse-jee-oxygen-1-win32-x86_64\eclipse;;C:\Users\milos.holclajtner\AppData\Local\Programs\Python\Python36\lib\site-packages\scipy\extra-dll
+USERNAME=milos.holclajtner
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 78 Stepping 3, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 10.0 , 64 bit Build 16299 (10.0.16299.15)
+
+CPU:total 4 (initial active 4) (2 cores per cpu, 2 threads per core) family 6 model 78 stepping 3, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, 3dnowpref, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2, adx
+
+Memory: 4k page, physical 16654948k(10073652k free), swap 19145316k(10808168k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (25.144-b01) for windows-amd64 JRE (1.8.0_144-b01), built on Jul 21 2017 21:57:33 by "java_re" with MS VC++ 10.0 (VS2010)
+
+time: Tue Mar 27 12:22:45 2018
+elapsed time: 63 seconds (0d 0h 1m 3s)
+

@@ -85,8 +85,6 @@ import eu.city4age.dashboard.api.rest.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class AssessmentServiceTest {
 
 	static protected Logger logger = LogManager.getLogger(TimeIntervalRepositoryTest.class);

@@ -39,8 +39,6 @@ import eu.city4age.dashboard.api.pojo.domain.ViewGefValuesPersistedSourceGesType
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class ViewGefValuesPersistedSourceGesTypesRepositoryTest {
 	
 	static protected Logger logger = LogManager.getLogger(ViewGefValuesPersistedSourceGesTypesRepositoryTest.class);

@@ -31,8 +31,6 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class ValueEvidenceNoticeRepositoryTest {
 	
 	private static Logger logger = LogManager.getLogger(ValueEvidenceNoticeRepositoryTest.class);

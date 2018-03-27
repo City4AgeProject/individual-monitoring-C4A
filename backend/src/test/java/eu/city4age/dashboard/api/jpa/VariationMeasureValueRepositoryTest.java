@@ -42,8 +42,6 @@ import eu.city4age.dashboard.api.rest.MeasuresService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class VariationMeasureValueRepositoryTest {
 		
 	static protected Logger logger = LogManager.getLogger(VariationMeasureValueRepositoryTest.class);

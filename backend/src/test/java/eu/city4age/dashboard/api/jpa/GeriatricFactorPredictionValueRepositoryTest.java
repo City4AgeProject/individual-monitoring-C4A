@@ -30,8 +30,6 @@ import eu.city4age.dashboard.api.rest.MeasuresService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class GeriatricFactorPredictionValueRepositoryTest {
 	
 	static protected Logger logger = LogManager.getLogger(GeriatricFactorPredictionValueRepositoryTest.class);

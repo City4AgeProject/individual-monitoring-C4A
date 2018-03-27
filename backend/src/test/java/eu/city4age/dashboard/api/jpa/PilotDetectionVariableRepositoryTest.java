@@ -29,8 +29,6 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class PilotDetectionVariableRepositoryTest {
 	
 	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableRepositoryTest.class);

@@ -26,8 +26,6 @@ import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class UserInRoleRepositoryTest {
 	
 	private static Logger logger = LogManager.getLogger(UserInRoleRepositoryTest.class);

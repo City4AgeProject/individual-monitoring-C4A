@@ -45,8 +45,6 @@ import eu.city4age.dashboard.api.security.JwtIssuer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class UserServiceTest {
 
 	@Spy

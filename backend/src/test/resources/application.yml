@@ -1,0 +1,28 @@
+logging:
+  level:
+    org:
+      hibernate: INFO
+      springframework:
+        web: INFO
+  config: classpath:log4j2-test.yml
+spring:
+  main:
+    banner-mode: 'off'
+  data:
+    jpa:
+      repositories:
+        enabled: true
+      properties:
+        hibernate:
+          show_sql: true
+  jpa:
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testtest?characterEncoding=utf8&useUnicode=true&currentSchema=testtest
+    driver-class-name: org.postgresql.Driver
+    username: testtest
+    password: testtest

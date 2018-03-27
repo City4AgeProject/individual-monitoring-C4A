@@ -77,8 +77,6 @@ import org.junit.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class CareReciepentServiceTest {
 	
 	static protected Logger logger = LogManager.getLogger(CareRecipientServiceTest.class);

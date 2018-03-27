@@ -36,8 +36,6 @@ import eu.city4age.dashboard.api.rest.AndroidService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class AndroidServiceTest {
 	
 	static protected Logger logger = LogManager.getLogger(AndroidServiceTest.class);

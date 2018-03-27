@@ -51,8 +51,6 @@ import eu.city4age.dashboard.api.rest.PilotDetectionVariableService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class PilotDetectionVariableServiceTest {
 	
 	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableServiceTest.class);

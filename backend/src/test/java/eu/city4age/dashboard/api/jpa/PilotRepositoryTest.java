@@ -19,8 +19,6 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class PilotRepositoryTest {
 
 	static protected Logger logger = LogManager.getLogger(PilotRepositoryTest.class);
