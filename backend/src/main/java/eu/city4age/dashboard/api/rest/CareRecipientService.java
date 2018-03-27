@@ -296,9 +296,10 @@ public class CareRecipientService {
                         user.getFrailtyStatusTimeline());
 
                 if (frailtyparamsList != null && frailtyparamsList.size() > 0) {
-                    frailtyStatus = frailtyparamsList.get(0).getCdFrailtyStatus().getFrailtyStatus();
-                    frailtyNotice = frailtyparamsList.get(0).getFrailtyNotice();
-                }
+					FrailtyStatusTimeline max = frailtyparamsList.stream().max(Comparator.comparing(p-> p.getTimeInterval().getIntervalStart(), Comparator.naturalOrder())).get();
+					frailtyStatus = max.getCdFrailtyStatus().getFrailtyStatus();
+					frailtyNotice = max.getFrailtyNotice();
+				}
 
 				Pilot userPilot = pilotRepository.findOne(user.getPilotCode());
 
@@ -399,32 +400,94 @@ public class CareRecipientService {
 		Serie frail = new Serie("Frail", new ArrayList<BigDecimal>());
 		Serie fit = new Serie("Fit", new ArrayList<BigDecimal>());
 
-		for (FrailtyStatusTimeline frailty : fs) {
+		String previous = "";
+		for (DataIdValue month : months) {
 
-			if (frailty != null && frailty.getCdFrailtyStatus() != null) {
-				switch (frailty.getCdFrailtyStatus().getFrailtyStatus()) {
+			boolean found = false;
+			
+			for (FrailtyStatusTimeline frailty : fs) {
 
-				case "Pre-frail":
-					preFrail.getItems().add(new BigDecimal(0.1));
+
+				if (frailty != null && frailty.getCdFrailtyStatus() != null && month.getId().equals(frailty.getTimeIntervalId())) {
+
+					found = true;
+
+					switch (frailty.getCdFrailtyStatus().getFrailtyStatus()) {
+
+					case "pre_frail":
+						previous = "pre_frail";
+						preFrail.getItems().add(BigDecimal.valueOf(0.2));
+						frail.getItems().add(null);
+						fit.getItems().add(null);
+						break;
+					case "frail":
+						previous = "frail";
+						frail.getItems().add(BigDecimal.valueOf(0.2));
+						preFrail.getItems().add(null);
+						fit.getItems().add(null);
+						break;
+					case "fit":
+						previous = "fit";
+						fit.getItems().add(BigDecimal.valueOf(0.2));
+						preFrail.getItems().add(null);
+						frail.getItems().add(null);
+						break;
+					default:
+						switch (previous) {
+						case "pre_frail":
+							previous = "pre_frail";
+							preFrail.getItems().add(BigDecimal.valueOf(0.2));
+							frail.getItems().add(null);
+							fit.getItems().add(null);
+							break;
+						case "frail":
+							previous = "frail";
+							frail.getItems().add(BigDecimal.valueOf(0.2));
+							preFrail.getItems().add(null);
+							fit.getItems().add(null);
+							break;
+						case "fit":
+							previous = "fit";
+							fit.getItems().add(BigDecimal.valueOf(0.2));
+							preFrail.getItems().add(null);
+							frail.getItems().add(null);
+							break;
+						case "":
+							previous = "fit";
+							fit.getItems().add(BigDecimal.valueOf(0.2));
+							preFrail.getItems().add(null);
+							frail.getItems().add(null);
+							break;
+						}
+					}					
+				}
+			}
+			if (!found) {
+				switch (previous) {
+				case "pre_frail":
+					previous = "pre_frail";
+					preFrail.getItems().add(BigDecimal.valueOf(0.2));
 					frail.getItems().add(null);
 					fit.getItems().add(null);
 					break;
-				case "Frail":
-					frail.getItems().add(new BigDecimal(0.1));
+				case "frail":
+					previous = "frail";
+					frail.getItems().add(BigDecimal.valueOf(0.2));
 					preFrail.getItems().add(null);
 					fit.getItems().add(null);
 					break;
-				case "Fit":
-					fit.getItems().add(new BigDecimal(0.1));
+				case "fit":
+					previous = "fit";
+					fit.getItems().add(BigDecimal.valueOf(0.2));
 					preFrail.getItems().add(null);
 					frail.getItems().add(null);
 					break;
-				default:
+				case "":
+					previous = "fit";
+					fit.getItems().add(BigDecimal.valueOf(0.2));
 					preFrail.getItems().add(null);
 					frail.getItems().add(null);
-					fit.getItems().add(null);
 					break;
-
 				}
 			}
 		}

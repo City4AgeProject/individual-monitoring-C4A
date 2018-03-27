@@ -390,13 +390,13 @@ function (oj, ko, $) {
                     $.each(data.frailtyStatus.series, function (i, obj) {
                     	switch(i) {
                         case 0:
-                        	self.seriesVal.push({name: PRE_FRAIL_SERIES_NAME, items: obj.items, color: '#ffe066', lineWidth: 10, selectionMode: 'none'});
+                        	self.seriesVal.push({name: PRE_FRAIL_SERIES_NAME, drilling:"off",items: obj.items, color: '#ffe066', lineType:'none',markerShape:'human',markerSize:25, selectionMode: 'none'});
                             break;
                         case 1:
-                        	self.seriesVal.push({name: FRAIL_SERIES_NAME, items: obj.items, color: '#ff5c33', lineWidth: 10, selectionMode: 'none'});
+                        	self.seriesVal.push({name: FRAIL_SERIES_NAME, drilling:"off",items: obj.items, color: '#ff5c33', lineType:'none',markerShape:'human',markerSize:25, selectionMode: 'none'});
                             break;
                         case 2:
-                        	self.seriesVal.push({name: FIT_SERIES_NAME, items: obj.items, color: '#008c34', lineWidth: 10, selectionMode: 'none'});
+                        	self.seriesVal.push({name: FIT_SERIES_NAME, drilling:"off",items: obj.items, color: '#008c34', lineType:'none',markerShape:'human',markerSize:25, selectionMode: 'none'});
                             break;
                         default:
                     	}
