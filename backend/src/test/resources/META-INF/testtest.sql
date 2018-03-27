@@ -25,6 +25,7 @@ DROP SEQUENCE IF EXISTS "testtest"."user_in_system_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."value_evidence_notice_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."variation_measure_value_seq" CASCADE;
 
+
 DROP TABLE IF EXISTS "testtest"."assessed_gef_value_set" CASCADE;
 DROP TABLE IF EXISTS "testtest"."assessment" CASCADE;
 DROP TABLE IF EXISTS "testtest"."assessment_audience_role" CASCADE;
@@ -46,8 +47,6 @@ DROP TABLE IF EXISTS "testtest"."executed_action" CASCADE;
 DROP TABLE IF EXISTS "testtest"."executed_activity" CASCADE;
 DROP TABLE IF EXISTS "testtest"."executed_activity_executed_action_rel" CASCADE;
 DROP TABLE IF EXISTS "testtest"."frailty_status_timeline" CASCADE;
-DROP TABLE IF EXISTS "testtest"."gef_interpolation" CASCADE;
-DROP TABLE IF EXISTS "testtest"."gef_prediction" CASCADE;
 DROP TABLE IF EXISTS "testtest"."geriatric_factor_value" CASCADE;
 DROP TABLE IF EXISTS "testtest"."inter_activity_behaviour_variation" CASCADE;
 DROP TABLE IF EXISTS "testtest"."location" CASCADE;
@@ -67,6 +66,8 @@ DROP TABLE IF EXISTS "testtest"."user_in_role" CASCADE;
 DROP TABLE IF EXISTS "testtest"."user_in_system" CASCADE;
 DROP TABLE IF EXISTS "testtest"."value_evidence_notice" CASCADE;
 DROP TABLE IF EXISTS "testtest"."variation_measure_value" CASCADE;
+DROP TABLE IF EXISTS "testtest"."gef_prediction" CASCADE;
+DROP TABLE IF EXISTS "testtest"."gef_interpolation" CASCADE;
 
 DROP VIEW IF EXISTS "testtest"."vw_detection_variable_derivation_per_user_in_role" CASCADE;
 DROP VIEW IF EXISTS "testtest"."vw_gef_values_persisted_source_ges_types" CASCADE;
@@ -679,6 +680,7 @@ CREATE TABLE variation_measure_value (
 	CONSTRAINT variation_measure_value_pkey PRIMARY KEY (id),
 	CONSTRAINT variation_measure_value_uq UNIQUE (user_in_role_id, measure_type_id, time_interval_id)
 );
+
 
 CREATE VIEW vw_detection_variable_derivation_per_user_in_role AS
  SELECT uir.id AS user_in_role_id,
