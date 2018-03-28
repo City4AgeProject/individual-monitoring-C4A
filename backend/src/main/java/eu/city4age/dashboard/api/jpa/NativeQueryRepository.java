@@ -25,4 +25,7 @@ public interface NativeQueryRepository extends GenericRepository<NativeQuery, Lo
 	List<Object[]> getLast5AssessmentsForDiagramTimeline(@Param("userInRoleId") final Long userInRoleId, @Param("parentDetectionVariableId") final Long parentDetectionVariableId,
 			@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd);
 
+	@Query(nativeQuery = true)
+	List<Object[]> getJointGefValues(@Param("factorId") final Long factorId, @Param("userInRoleId") final Long userInRoleId);
+	
 }

@@ -147,25 +147,25 @@ public class GeriatricFactorRepositoryTest {
 		gef5.setGefValue(new BigDecimal (5));
 		gef5 = geriatricFactorRepository.save(gef5);
 		
-		List<GeriatricFactorValue> result = geriatricFactorRepository.findByDetectionVariableId(2L, 1L);
+		List<GeriatricFactorValue> result = geriatricFactorRepository.findByDerivedDetectionVariableId(2L, 1L);
 		
 		logger.info("result.size(): " + result.size());
 		Assert.assertNotNull(result);
 		Assert.assertEquals(3, result.size());
 		
-		result = geriatricFactorRepository.findByDetectionVariableId(1L, 1L);
+		result = geriatricFactorRepository.findByDerivedDetectionVariableId(1L, 1L);
 		
 		logger.info("result.size(): " + result.size());
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		
-		result = geriatricFactorRepository.findByDetectionVariableId(2L, 2L);
+		result = geriatricFactorRepository.findByDerivedDetectionVariableId(2L, 2L);
 		
 		logger.info("result.size(): " + result.size());
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		
-		result = geriatricFactorRepository.findByDetectionVariableId(1L, 2L);
+		result = geriatricFactorRepository.findByDerivedDetectionVariableId(1L, 2L);
 		
 		logger.info("result.size(): " + result.size());
 		Assert.assertNotNull(result);

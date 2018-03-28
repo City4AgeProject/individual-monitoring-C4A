@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +34,7 @@ import eu.city4age.dashboard.api.jpa.DetectionVariableTypeRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorInterpolationValueRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
+import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
@@ -44,6 +46,10 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.rest.MeasuresService;
+
+/*
+ * author: Vladimir Aleksic
+ */
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -87,6 +93,15 @@ public class InterpolateMissingValuesSplineTest {
 	@Autowired
 	private DetectionVariableTypeRepository detectionVariableTypeRepository;
 	
+	@Mock
+	private UserInRoleRepository userInRoleRepositoryMock;
+	
+	@Autowired
+	private PilotRepository pilotRepository;
+	
+	@Mock
+	private PilotRepository pilotRepositoryMock;
+	
 	/*@Autowired
 	private GeriatricFactorInterpolationValue geriatricFactorInterpolationValue;*/
 	
@@ -99,6 +114,11 @@ public class InterpolateMissingValuesSplineTest {
 	@Rollback(true)
 	public void interpolateMissingValuesSplineTest() throws Exception {
 		
+		Pilot pilot=new Pilot();
+		pilot.setLatestVariablesComputed(new Date(Timestamp.valueOf("2017-04-30 00:00:00").getTime()));
+		pilot.setPilotCode(Pilot.PilotCode.LCC);
+		pilot=pilotRepository.save(pilot);
+		
 		UserInRole userInRole = new UserInRole();
 		userInRole.setPilotCode(Pilot.PilotCode.LCC);
 		userInRole = userInRoleRepository.save(userInRole);
@@ -110,22 +130,7 @@ public class InterpolateMissingValuesSplineTest {
 		dv1.setDetectionVariableName("DV1");
 		dv1 = detectionVariableRepository.save(dv1);
 		
-		DetectionVariable dv2 = new DetectionVariable();
-		dv2.setDetectionVariableName("DV2");
-		dv2 = detectionVariableRepository.save(dv2);
-		
-		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
-		pdv1.setPilotCode(Pilot.PilotCode.LCC);
-		pdv1.setDetectionVariable(dv1);
-		pdv1.setDerivedDetectionVariable(dv2);
-		pdv1 = pilotDetectionVariableRepository.save(pdv1);
-		
-		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
-		pdv2.setPilotCode(Pilot.PilotCode.LCC);
-		pdv2.setDetectionVariable(dv2);
-		pdv2.setDerivedDetectionVariable(dv1);
-		pdv2 = pilotDetectionVariableRepository.save(pdv2);
-		
+
 		String[] timeIntervals= {	"2016-01-01 00:00:00",
 									"2016-03-01 00:00:00",
 									"2016-04-01 00:00:00",
@@ -186,7 +191,7 @@ public class InterpolateMissingValuesSplineTest {
 		
 		}
 		
-		Long dvId=dv2.getId();
+		Long dvId=dv1.getId();
 		Long uId=userInRole.getId();
 		Calendar calendar=Calendar.getInstance();
 
@@ -212,8 +217,11 @@ public class InterpolateMissingValuesSplineTest {
 											eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH));
 		}
 		
+		Mockito.when(userInRoleRepositoryMock.findByUirId(uId)).thenReturn(userInRole);
+		Mockito.when(pilotRepositoryMock.findByPilotCode(userInRole.getPilotCode())).thenReturn(pilot);
+		
 		int imputiranih=imv.getData(dvId, uId);
-		Assert.assertEquals(imputiranih, 5);
+		Assert.assertEquals(5, imputiranih);
 	}
 }
 

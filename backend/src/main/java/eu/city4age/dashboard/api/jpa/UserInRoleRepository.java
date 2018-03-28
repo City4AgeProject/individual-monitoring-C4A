@@ -23,5 +23,8 @@ public interface UserInRoleRepository extends GenericRepository<UserInRole, Long
 	UserInRole findBySystemUsername(@Param("username") final String username);
 
 	List<UserInRole> findByRoleId(Short roleId);
+
+	@Query("SELECT u FROM UserInRole u LEFT JOIN FETCH u.pilot p WHERE u.id = :uirId")
+	UserInRole findByUirId(@Param("uirId") final long uirId);
 	
 }

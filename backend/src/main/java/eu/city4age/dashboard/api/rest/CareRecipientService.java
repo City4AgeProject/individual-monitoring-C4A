@@ -338,7 +338,7 @@ public class CareRecipientService {
 		ArrayList<C4ServiceGetOverallScoreListResponse> itemList = new ArrayList<C4ServiceGetOverallScoreListResponse>();
 
 		// we use list to avoid "not found" exception
-		gfvList = geriatricFactorRepository.findByDetectionVariableId(parentFactorId, careRecipientId);
+		gfvList = geriatricFactorRepository.findByDerivedDetectionVariableId(parentFactorId, careRecipientId);
 
 		//
 		if (gfvList.isEmpty()) {
