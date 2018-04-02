@@ -67,6 +67,64 @@ public class ViewGefCalculatedInterpolatedPredictedValuesRepositoryTest {
 	@Autowired
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
 
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFindNoPredicted() throws Exception {
+		
+		UserInRole uir1 = new UserInRole();
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
+		uir1 = userInRoleRepository.save(uir1);
+		
+		DetectionVariableType dvt = DetectionVariableType.GEF;
+		dvt = detectionVariableTypeRepository.save(dvt);
+		
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setDetectionVariableName("DV1");
+		dv1.setDetectionVariableType(dvt);
+		dv1 = detectionVariableRepository.save(dv1);
+		
+		TimeInterval ti1 = measuresService
+				.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		
+		TimeInterval ti2 = measuresService
+				.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		
+		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
+		pdv1.setPilotCode(Pilot.PilotCode.LCC);
+		pdv1.setDetectionVariable(dv1);
+		pdv1.setDerivedDetectionVariable(dv1);
+		pdv1 = pilotDetectionVariableRepository.save(pdv1);
+		
+		
+		GeriatricFactorValue gef1 = new GeriatricFactorValue();
+		gef1.setUserInRole(uir1);
+		gef1.setUserInRoleId(uir1.getId());
+		gef1.setDetectionVariable(dv1);
+		gef1.setDetectionVariableId(dv1.getId());
+		gef1.setTimeInterval(ti1);
+		gef1.setGefValue(new BigDecimal (1));
+		gef1 = geriatricFactorRepository.save(gef1);
+		
+		
+		GeriatricFactorInterpolationValue gef3 = new GeriatricFactorInterpolationValue();
+		gef3.setUserInRole(uir1);
+		gef3.setUserInRoleId(uir1.getId());
+		gef3.setDetectionVariable(dv1);
+		gef3.setDetectionVariableId(dv1.getId());
+		gef3.setTimeInterval(ti2);
+		gef3.setGefValue(new BigDecimal (3));
+		gef3 = geriatricFactorInterpolationValueRepository.save(gef3);
+		
+		List<ViewGefCalculatedInterpolatedPredictedValues> result = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dv1.getId(), uir1.getId());
+		
+		logger.info("result.size(): " + result.size());
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
+	
+	}
+	
 	@Test
 	@Transactional
 	@Rollback(true)

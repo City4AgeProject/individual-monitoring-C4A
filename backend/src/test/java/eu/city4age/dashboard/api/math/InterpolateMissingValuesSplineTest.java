@@ -37,6 +37,7 @@ import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorInterpolationValue;
@@ -45,6 +46,7 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.rest.MeasuresService;
 
 /*
@@ -62,10 +64,17 @@ public class InterpolateMissingValuesSplineTest {
 	@InjectMocks
 	InterpolateMissingValuesSpline imv=new InterpolateMissingValuesSpline();
 
+
 	@Autowired
-	GeriatricFactorRepository geriatricFactorRepository;
+	private GeriatricFactorRepository geriatricFactorRepository;
+
 	@Mock
-	GeriatricFactorRepository geriatricFactorRepositoryMock;
+	private GeriatricFactorRepository geriatricFactorRepositoryMock;
+
+	@Autowired
+	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
+	@Mock
+	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepositoryMock;
 
 	@Autowired
 	private GeriatricFactorInterpolationValueRepository geriatricFactorInterpolationValueRepository;
@@ -111,7 +120,7 @@ public class InterpolateMissingValuesSplineTest {
 	
 	@Test
 	@Transactional
-	@Rollback(true)
+	@Rollback(false)
 	public void interpolateMissingValuesSplineTest() throws Exception {
 		
 		Pilot pilot=new Pilot();
@@ -126,10 +135,34 @@ public class InterpolateMissingValuesSplineTest {
 		DetectionVariableType dvt = DetectionVariableType.GEF;
 		dvt = detectionVariableTypeRepository.save(dvt);
 		
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setDetectionVariableName("DV1");
-		dv1 = detectionVariableRepository.save(dv1);
+		DetectionVariableType dvt1 = DetectionVariableType.GES;
+		dvt1 = detectionVariableTypeRepository.save(dvt1);
 		
+		DetectionVariable dv1 = new DetectionVariable();
+		//dv1.setId(1L);
+		dv1.setDetectionVariableName("DV1");
+		dv1.setDetectionVariableType(dvt);
+		dv1 = detectionVariableRepository.save(dv1);
+			
+		DetectionVariable dv2 = new DetectionVariable();
+		//dv2.setId(2L);
+		dv2.setDetectionVariableType(dvt1);
+		dv2.setDetectionVariableName("DV2");
+		dv2 = detectionVariableRepository.save(dv2);
+		
+		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
+		pdv1.setId(dv1.getId());
+		pdv1.setPilotCode(Pilot.PilotCode.LCC);
+		pdv1.setDetectionVariable(dv1);
+		pdv1.setDerivedDetectionVariable(dv1);
+		pdv1 = pilotDetectionVariableRepository.save(pdv1);
+		
+		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
+		//pdv2.setId(dv2.getId());
+		pdv2.setPilotCode(Pilot.PilotCode.LCC);
+		pdv2.setDetectionVariable(dv2);
+		pdv2.setDerivedDetectionVariable(dv2);
+		pdv2 = pilotDetectionVariableRepository.save(pdv2);
 
 		String[] timeIntervals= {	"2016-01-01 00:00:00",
 									"2016-03-01 00:00:00",
@@ -160,7 +193,9 @@ public class InterpolateMissingValuesSplineTest {
 									"2017-03-01 00:00:00",
 									"2017-04-01 00:00:00",
 									"2017-05-01 00:00:00",
-									"2017-06-01 00:00:00"};
+									"2017-06-01 00:00:00",
+									"2017-07-01 00:00:00",
+									"2017-08-01 00:00:00"};
 		double [] gfValues = {		3.00,
 									2.50,
 									3.15,
@@ -188,12 +223,14 @@ public class InterpolateMissingValuesSplineTest {
 			gef.setTimeInterval(ti);
 			gef.setGefValue(new BigDecimal (gfValues[i]));
 			gf0 = geriatricFactorRepository.save(gef);
-		
+			//logger.info("gf0: "+gf0);
 		}
-		
+		geriatricFactorRepository.flush();
 		Long dvId=dv1.getId();
 		Long uId=userInRole.getId();
 		Calendar calendar=Calendar.getInstance();
+		//logger.info("dvId: "+dvId);
+		//logger.info("uId: "+uId);
 
 		GeriatricFactorInterpolationValue gefi = new GeriatricFactorInterpolationValue();
 		gefi.setUserInRole(gf0.getUserInRole());
@@ -202,11 +239,13 @@ public class InterpolateMissingValuesSplineTest {
 		gefi.setDetectionVariableId(gf0.getDetectionVariableId());
 		gefi.setTimeInterval(gf0.getTimeInterval());
 		gefi.setGefValue(gf0.getGefValue());
-		//Mockito.when(geriatricFactorInterpolationValueRepositoryMock
-		//		.save(gefi)).thenReturn(gefi);
 		
-		List<GeriatricFactorValue> geriatricFactorValue=geriatricFactorRepository.findByDetectionVariableId(dvId, uId);
-		Mockito.when(geriatricFactorRepositoryMock.findByDetectionVariableId(dvId, uId)).thenReturn(geriatricFactorValue);
+		List<GeriatricFactorValue> gfr = geriatricFactorRepository.findByDetectionVariableId(dvId, uId);
+		//logger.info("gfrLen: "+gfr.size());
+		Mockito.when(geriatricFactorRepositoryMock.findByDetectionVariableId(dvId, uId)).thenReturn(gfr);
+		List<ViewGefCalculatedInterpolatedPredictedValues> geriatricFactorValue=viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
+		logger.info("wgfrLen: "+geriatricFactorValue.size());
+		Mockito.when(viewGefCalculatedInterpolatedPredictedValuesRepositoryMock.findByDetectionVariableIdNoPredicted(dvId, uId)).thenReturn(geriatricFactorValue);
 		for(String t: allIntervals) {
 			Mockito.when(
 					measuresServiceMock.getOrCreateTimeInterval(
@@ -220,7 +259,9 @@ public class InterpolateMissingValuesSplineTest {
 		Mockito.when(userInRoleRepositoryMock.findByUirId(uId)).thenReturn(userInRole);
 		Mockito.when(pilotRepositoryMock.findByPilotCode(userInRole.getPilotCode())).thenReturn(pilot);
 		
-		int imputiranih=imv.getData(dvId, uId);
+		Date endDatePilot=Timestamp.valueOf("2017-07-01 00:00:00");
+		
+		int imputiranih=imv.getData(dvId, uId, endDatePilot);
 		Assert.assertEquals(5, imputiranih);
 	}
 }
