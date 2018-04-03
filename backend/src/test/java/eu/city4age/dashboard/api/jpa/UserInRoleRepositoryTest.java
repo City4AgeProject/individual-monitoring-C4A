@@ -42,6 +42,38 @@ public class UserInRoleRepositoryTest {
 	@Autowired
 	private UserInSystemRepository userInSystemRepository;
 	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void findByPilotCodeTest( ) {
+		
+
+		Pilot.PilotCode pilotCode1 = Pilot.PilotCode.LCC;
+		Pilot.PilotCode pilotCode2 = Pilot.PilotCode.ATH;
+		
+		UserInRole uir1 = new UserInRole();
+		uir1.setPilotCode(pilotCode1);
+		userInRoleRepository.save(uir1);
+		
+		UserInRole uir2 = new UserInRole();
+		uir2.setPilotCode(pilotCode1);
+		userInRoleRepository.save(uir2);
+		
+		UserInRole uir3 = new UserInRole();
+		uir3.setPilotCode(pilotCode2);
+		userInRoleRepository.save(uir3);
+		
+		List<UserInRole> results = userInRoleRepository.findCRsByPilotCode(pilotCode1);
+		
+//		for (int i = 0; i < results.size(); i++) {
+//			logger.info("result i " + results.get(i).getId());
+//		}
+		
+		Assert.assertEquals(2, results.size());
+	
+		
+	}
+	
 		
 	@Test
 	@Transactional

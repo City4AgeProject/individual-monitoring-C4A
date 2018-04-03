@@ -76,12 +76,12 @@ import eu.city4age.dashboard.api.security.JwtIssuer;
  */
 @Component(value = "wsService")
 @Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
-@Path(CareRecipientService.PATH)
-public class CareRecipientService {
+@Path(CareRecipientEndpoint.PATH)
+public class CareRecipientEndpoint {
 
 	public static final String PATH = "careRecipient";
 
-	static protected Logger logger = LogManager.getLogger(CareRecipientService.class);
+	static protected Logger logger = LogManager.getLogger(CareRecipientEndpoint.class);
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;

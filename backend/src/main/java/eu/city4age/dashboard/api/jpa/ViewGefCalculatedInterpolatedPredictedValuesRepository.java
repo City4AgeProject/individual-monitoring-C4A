@@ -18,6 +18,8 @@ public interface ViewGefCalculatedInterpolatedPredictedValuesRepository extends 
 
 	//For calculating interpolated values, previous interpolation is used
 	//Vladimir Aleksic
+
 	 @Query("SELECT gef FROM ViewGefCalculatedInterpolatedPredictedValues gef WHERE gef.id.detectionVariableId = :varId AND gef.id.userInRoleId = :userInRoleId ORDER BY gef.intervalStart ASC")
 	 List<ViewGefCalculatedInterpolatedPredictedValues> findByDetectionVariableIdNoPredicted(@Param("varId") final Long dvId, @Param("userInRoleId") final Long uId); //AND gef.id.dataType<>'p' 
+
 }

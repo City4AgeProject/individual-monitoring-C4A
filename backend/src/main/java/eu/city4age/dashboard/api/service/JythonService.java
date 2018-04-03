@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.rest;
+package eu.city4age.dashboard.api.service;
 
 import org.python.core.PyFunction;
 import org.python.core.PyInteger;

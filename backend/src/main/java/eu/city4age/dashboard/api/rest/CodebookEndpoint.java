@@ -39,13 +39,13 @@ import io.swagger.annotations.ApiResponses;
  */
 @Component
 @Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
-@Path(CodebookService.PATH)
+@Path(CodebookEndpoint.PATH)
 @Api(value = "codebook", produces = "application/json")
-public class CodebookService {
+public class CodebookEndpoint {
 
 	public static final String PATH = "codebook";
 
-	static protected Logger logger = LogManager.getLogger(CodebookService.class);
+	static protected Logger logger = LogManager.getLogger(CodebookEndpoint.class);
 
 	@Autowired
 	private RiskStatusRepository riskStatusRepository;

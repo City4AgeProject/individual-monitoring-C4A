@@ -29,7 +29,8 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
-import eu.city4age.dashboard.api.rest.MeasuresService;
+import eu.city4age.dashboard.api.pojo.domain.ViewPilotDetectionVariable;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -59,13 +60,16 @@ public class ViewGefCalculatedInterpolatedPredictedValuesRepositoryTest {
 	private TimeIntervalRepository timeIntervalRepository;
 	
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresService;
 
 	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
 	@Autowired
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
+	
+	@Autowired
+	private ViewPilotDetectionVariableRepository viewPilotDetectionVariableRepository;
 
 
 	@Test
@@ -327,6 +331,14 @@ public class ViewGefCalculatedInterpolatedPredictedValuesRepositoryTest {
 		Assert.assertNotNull(resultPredicted);
 		Assert.assertEquals(2, resultPredicted.size());
 
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFindByDataType1() {
+		List<ViewPilotDetectionVariable> list = viewPilotDetectionVariableRepository.findAll();
+		
 	}
 
 }

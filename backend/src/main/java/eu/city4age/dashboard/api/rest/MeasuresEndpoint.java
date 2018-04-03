@@ -49,6 +49,7 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
+import eu.city4age.dashboard.api.service.PredictionService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -62,12 +63,12 @@ import io.swagger.annotations.ApiResponses;
  */
 @Component
 @Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
-@Path(MeasuresService.PATH)
-public class MeasuresService {
+@Path(MeasuresEndpoint.PATH)
+public class MeasuresEndpoint {
 
 	public static final String PATH = "measures";
 	
-	static protected Logger logger = LogManager.getLogger(MeasuresService.class);
+	static protected Logger logger = LogManager.getLogger(MeasuresEndpoint.class);
 	
 	static protected SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
 
@@ -87,6 +88,9 @@ public class MeasuresService {
 	
 	@Autowired
 	private NativeQueryRepository nativeQueryRepository;
+	
+	@Autowired 
+	private PredictionService predictionService;
 	
 	@Autowired
 	Environment environment;
@@ -129,11 +133,12 @@ public class MeasuresService {
 		logger.info("computation started: " + new Date());
 
 		computeForAllPilots();
+		predictionService.interpolateAndPredict();
 
 		logger.info("computation completed: " + new Date());
 		return JerseyResponse.buildTextPlain("success", 200);
 	}
-
+		
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
 			Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {
 		

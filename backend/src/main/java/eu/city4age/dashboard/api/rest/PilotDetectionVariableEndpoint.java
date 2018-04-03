@@ -71,12 +71,12 @@ import io.swagger.annotations.ExampleProperty;
 @Component
 @Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 @Api(value = "configuration", produces = "application/json")
-@Path(PilotDetectionVariableService.PATH)
-public class PilotDetectionVariableService {
+@Path(PilotDetectionVariableEndpoint.PATH)
+public class PilotDetectionVariableEndpoint {
 
 	public static final String PATH = "configuration";
 	
-	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableService.class);
+	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableEndpoint.class);
 
 
 	@Autowired

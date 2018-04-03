@@ -33,7 +33,7 @@ import eu.city4age.dashboard.api.jpa.generic.GenericRepositoryFactoryBean;
 
 
 @EnableAutoConfiguration
-@ComponentScan(basePackages = { "eu.city4age.dashboard.api.persist", "eu.city4age.dashboard.api.rest" })
+@ComponentScan(basePackages = { "eu.city4age.dashboard.api.persist", "eu.city4age.dashboard.api.rest", "eu.city4age.dashboard.api.service" })
 @EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.jpa", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
 public class ApplicationTest {
 

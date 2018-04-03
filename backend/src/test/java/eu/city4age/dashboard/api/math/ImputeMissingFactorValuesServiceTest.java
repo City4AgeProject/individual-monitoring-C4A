@@ -2,7 +2,6 @@ package eu.city4age.dashboard.api.math;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.interpolation.InterpolateMissingValuesSpline;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.DetectionVariableTypeRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorInterpolationValueRepository;
@@ -47,7 +45,8 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
-import eu.city4age.dashboard.api.rest.MeasuresService;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
+import eu.city4age.dashboard.api.service.ImputeFactorService;
 
 /*
  * author: Vladimir Aleksic
@@ -57,12 +56,11 @@ import eu.city4age.dashboard.api.rest.MeasuresService;
 @SpringBootTest(classes = ApplicationTest.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class InterpolateMissingValuesSplineTest {
-
+public class ImputeMissingFactorValuesServiceTest {
 
 	@Spy
 	@InjectMocks
-	InterpolateMissingValuesSpline imv=new InterpolateMissingValuesSpline();
+	private ImputeFactorService imputeMissingFactorValuesService;
 
 
 	@Autowired
@@ -73,6 +71,7 @@ public class InterpolateMissingValuesSplineTest {
 
 	@Autowired
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
+	
 	@Mock
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepositoryMock;
 
@@ -91,10 +90,10 @@ public class InterpolateMissingValuesSplineTest {
 	private TimeIntervalRepository timeIntervalRepository;
 	
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresService;
 	
 	@Mock
-	private MeasuresService measuresServiceMock;
+	private MeasuresEndpoint measuresServiceMock;
 
 	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
@@ -114,13 +113,15 @@ public class InterpolateMissingValuesSplineTest {
 	/*@Autowired
 	private GeriatricFactorInterpolationValue geriatricFactorInterpolationValue;*/
 	
-	static protected Logger logger = LogManager.getLogger(InterpolateMissingValuesSplineTest.class);
+	static protected Logger logger = LogManager.getLogger(ImputeMissingFactorValuesServiceTest.class);
 	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 	
+//	private TimeInterval ti;
+	
 	@Test
 	@Transactional
-	@Rollback(false)
+	@Rollback(true)
 	public void interpolateMissingValuesSplineTest() throws Exception {
 		
 		Pilot pilot=new Pilot();
@@ -132,37 +133,33 @@ public class InterpolateMissingValuesSplineTest {
 		userInRole.setPilotCode(Pilot.PilotCode.LCC);
 		userInRole = userInRoleRepository.save(userInRole);
 		
-		DetectionVariableType dvt = DetectionVariableType.GEF;
-		dvt = detectionVariableTypeRepository.save(dvt);
-		
 		DetectionVariableType dvt1 = DetectionVariableType.GES;
-		dvt1 = detectionVariableTypeRepository.save(dvt1);
+		detectionVariableTypeRepository.save(dvt1);
+
+		DetectionVariableType dvt2 = DetectionVariableType.GEF;
+		detectionVariableTypeRepository.save(dvt2);
 		
 		DetectionVariable dv1 = new DetectionVariable();
-		//dv1.setId(1L);
 		dv1.setDetectionVariableName("DV1");
-		dv1.setDetectionVariableType(dvt);
-		dv1 = detectionVariableRepository.save(dv1);
+		dv1.setDetectionVariableType(dvt2);
+		detectionVariableRepository.save(dv1);
 			
 		DetectionVariable dv2 = new DetectionVariable();
-		//dv2.setId(2L);
 		dv2.setDetectionVariableType(dvt1);
 		dv2.setDetectionVariableName("DV2");
-		dv2 = detectionVariableRepository.save(dv2);
+		detectionVariableRepository.save(dv2);
 		
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
-		pdv1.setId(dv1.getId());
 		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pdv1.setDetectionVariable(dv1);
 		pdv1.setDerivedDetectionVariable(dv1);
-		pdv1 = pilotDetectionVariableRepository.save(pdv1);
+		pilotDetectionVariableRepository.save(pdv1);
 		
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
-		//pdv2.setId(dv2.getId());
 		pdv2.setPilotCode(Pilot.PilotCode.LCC);
 		pdv2.setDetectionVariable(dv2);
 		pdv2.setDerivedDetectionVariable(dv2);
-		pdv2 = pilotDetectionVariableRepository.save(pdv2);
+		pilotDetectionVariableRepository.save(pdv2);
 
 		String[] timeIntervals= {	"2016-01-01 00:00:00",
 									"2016-03-01 00:00:00",
@@ -196,6 +193,7 @@ public class InterpolateMissingValuesSplineTest {
 									"2017-06-01 00:00:00",
 									"2017-07-01 00:00:00",
 									"2017-08-01 00:00:00"};
+		
 		double [] gfValues = {		3.00,
 									2.50,
 									3.15,
@@ -209,22 +207,24 @@ public class InterpolateMissingValuesSplineTest {
 									3.65,
 									3.25};
 
-		GeriatricFactorValue gf0 = null;
+		GeriatricFactorValue gef;
+		TimeInterval ti;
 		for(int i=0; i<timeIntervals.length; i++) {
-			TimeInterval ti = measuresService
+			ti = measuresService
 					.getOrCreateTimeInterval(Timestamp.valueOf(timeIntervals[i]),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 			
 
-			GeriatricFactorValue gef = new GeriatricFactorValue();
+			gef = new GeriatricFactorValue();
 			gef.setUserInRole(userInRole);
 			gef.setUserInRoleId(userInRole.getId());
 			gef.setDetectionVariable(dv1);
 			gef.setDetectionVariableId(dv1.getId());
 			gef.setTimeInterval(ti);
 			gef.setGefValue(new BigDecimal (gfValues[i]));
-			gf0 = geriatricFactorRepository.save(gef);
-			//logger.info("gf0: "+gf0);
+			geriatricFactorRepository.save(gef);
+
 		}
+		
 		geriatricFactorRepository.flush();
 		Long dvId=dv1.getId();
 		Long uId=userInRole.getId();
@@ -232,20 +232,28 @@ public class InterpolateMissingValuesSplineTest {
 		//logger.info("dvId: "+dvId);
 		//logger.info("uId: "+uId);
 
+		ti=measuresService
+				.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+
 		GeriatricFactorInterpolationValue gefi = new GeriatricFactorInterpolationValue();
-		gefi.setUserInRole(gf0.getUserInRole());
-		gefi.setUserInRoleId(gf0.getUserInRoleId());
-		gefi.setDetectionVariable(gf0.getDetectionVariable());
-		gefi.setDetectionVariableId(gf0.getDetectionVariableId());
-		gefi.setTimeInterval(gf0.getTimeInterval());
-		gefi.setGefValue(gf0.getGefValue());
+		gefi.setUserInRole(userInRole);
+		gefi.setUserInRoleId(userInRole.getId());
+		gefi.setDetectionVariable(dv1);
+		gefi.setDetectionVariableId(dv1.getId());
+		gefi.setTimeInterval(ti);
+		gefi.setGefValue(new BigDecimal(0.5));
+		geriatricFactorInterpolationValueRepository.save(gefi);
 		
 		List<GeriatricFactorValue> gfr = geriatricFactorRepository.findByDetectionVariableId(dvId, uId);
 		//logger.info("gfrLen: "+gfr.size());
+		
 		Mockito.when(geriatricFactorRepositoryMock.findByDetectionVariableId(dvId, uId)).thenReturn(gfr);
-		List<ViewGefCalculatedInterpolatedPredictedValues> geriatricFactorValue=viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
-		logger.info("wgfrLen: "+geriatricFactorValue.size());
+		
+		List<ViewGefCalculatedInterpolatedPredictedValues> geriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
+		
+//		logger.info("wgfrLen: "+geriatricFactorValue.size());
 		Mockito.when(viewGefCalculatedInterpolatedPredictedValuesRepositoryMock.findByDetectionVariableIdNoPredicted(dvId, uId)).thenReturn(geriatricFactorValue);
+		
 		for(String t: allIntervals) {
 			Mockito.when(
 					measuresServiceMock.getOrCreateTimeInterval(
@@ -259,10 +267,11 @@ public class InterpolateMissingValuesSplineTest {
 		Mockito.when(userInRoleRepositoryMock.findByUirId(uId)).thenReturn(userInRole);
 		Mockito.when(pilotRepositoryMock.findByPilotCode(userInRole.getPilotCode())).thenReturn(pilot);
 		
-		Date endDatePilot=Timestamp.valueOf("2017-07-01 00:00:00");
+		Date endDatePilot = Timestamp.valueOf("2017-07-01 00:00:00");
 		
-		int imputiranih=imv.getData(dvId, uId, endDatePilot);
-		Assert.assertEquals(5, imputiranih);
+		int imputiranih = imputeMissingFactorValuesService.imputeMissingValues(dvId, uId, endDatePilot);
+		Assert.assertEquals(4, imputiranih);
+		
 	}
 }
 

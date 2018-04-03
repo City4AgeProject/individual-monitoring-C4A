@@ -38,7 +38,7 @@ import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
-import eu.city4age.dashboard.api.rest.MeasuresService;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -83,7 +83,7 @@ public class TimeIntervalRepositoryTest {
 	private PilotRepository pilotRepository;
 
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresService;
 
 
 	@Test

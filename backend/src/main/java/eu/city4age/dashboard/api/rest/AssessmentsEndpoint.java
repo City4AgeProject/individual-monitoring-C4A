@@ -78,13 +78,13 @@ import io.swagger.annotations.ApiResponses;
  */
 @Component
 @Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
-@Path(AssessmentsService.PATH)
+@Path(AssessmentsEndpoint.PATH)
 @Api(value = "assessment", produces = "application/json")
-public class AssessmentsService {
+public class AssessmentsEndpoint {
 
 	public static final String PATH = "assessment";
 
-	static protected Logger logger = LogManager.getLogger(AssessmentsService.class);
+	static protected Logger logger = LogManager.getLogger(AssessmentsEndpoint.class);
 
 	@Autowired
 	private AssessmentRepository assessmentRepository;

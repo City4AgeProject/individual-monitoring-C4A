@@ -6,13 +6,13 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class ViewGefCalculatedInterpolatedPredictedValuesKey implements Serializable{
-
+public class ViewGefCalculatedInterpolatedPredictedValuesKey implements Serializable {
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7202639888035678614L;
-	
+	private static final long serialVersionUID = 8142020035973363403L;
+
 	@Column(name = "id")
 	private Long id;
 	
@@ -31,6 +31,14 @@ public class ViewGefCalculatedInterpolatedPredictedValuesKey implements Serializ
 
 	public ViewGefCalculatedInterpolatedPredictedValuesKey() {
 		
+	}
+	
+	public ViewGefCalculatedInterpolatedPredictedValuesKey(Long id, Long userInRoleId, Long timeIntervalId, Long detectionVariableId, String dataType) {
+		this.id = id;
+		this.userInRoleId = userInRoleId;
+		this.timeIntervalId = timeIntervalId;
+		this.detectionVariableId = detectionVariableId;
+		this.dataType = dataType;
 	}
 	
 

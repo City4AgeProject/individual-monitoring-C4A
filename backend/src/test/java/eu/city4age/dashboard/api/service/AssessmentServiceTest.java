@@ -74,9 +74,9 @@ import eu.city4age.dashboard.api.pojo.enu.DataValidity;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.pojo.ws.C4ALoginResponse;
-import eu.city4age.dashboard.api.rest.AssessmentsService;
-import eu.city4age.dashboard.api.rest.MeasuresService;
-import eu.city4age.dashboard.api.rest.UserService;
+import eu.city4age.dashboard.api.rest.AssessmentsEndpoint;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
+import eu.city4age.dashboard.api.rest.UserEndpoint;
 
 /*
  * authors: marina.andric
@@ -147,7 +147,7 @@ public class AssessmentServiceTest {
 	private NativeQueryRepository nativeQueryRepository;
 
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresService;
 
 	@Autowired
 	private RoleRepository roleRepository;
@@ -159,7 +159,7 @@ public class AssessmentServiceTest {
 	private AudienceRolesRepository audienceRolesRepositoryMock;
 	
 	@Autowired
-	private UserService userService;
+	private UserEndpoint userService;
 	
     @Before
     public void setUp() {
@@ -168,7 +168,7 @@ public class AssessmentServiceTest {
     
 	@Spy
 	@InjectMocks
-	AssessmentsService assessmentService;
+	AssessmentsEndpoint assessmentService;
 	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 

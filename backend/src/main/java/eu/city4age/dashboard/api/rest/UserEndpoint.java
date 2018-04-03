@@ -32,12 +32,12 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 @Component
 @Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
-@Path(UserService.PATH)
-public class UserService {
+@Path(UserEndpoint.PATH)
+public class UserEndpoint {
     
     public static final String PATH = "users";
     
-    static protected Logger logger = LogManager.getLogger(UserService.class);
+    static protected Logger logger = LogManager.getLogger(UserEndpoint.class);
     
     @Autowired
     private UserInRoleRepository userInRoleRepository;

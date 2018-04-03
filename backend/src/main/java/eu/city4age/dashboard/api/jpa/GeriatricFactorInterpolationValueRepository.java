@@ -7,5 +7,8 @@ import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorInterpolationValue;
 
 @Repository(value = "geriatricFactorInterpolationValueRepository")
 public interface GeriatricFactorInterpolationValueRepository extends GenericRepository<GeriatricFactorInterpolationValue, Long> {
-
+	
+	
+	
+	
 }

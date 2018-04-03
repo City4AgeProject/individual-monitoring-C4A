@@ -1,7 +1,9 @@
 package eu.city4age.dashboard.api.jpa;
 
+import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorPredictionValue;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
+import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 
 @Repository(value = "geriatricFactorPredictionValueRepository")
 public interface GeriatricFactorPredictionValueRepository extends GenericRepository<GeriatricFactorPredictionValue, Long> {
@@ -17,5 +20,12 @@ public interface GeriatricFactorPredictionValueRepository extends GenericReposit
 	List<GeriatricFactorValue> findByDetectionVariableId(@Param("varId") final Long dvId,
 			@Param("userId") final Long uId);
 
+	
+	@Query("SELECT g FROM GeriatricFactorPredictionValue g WHERE g.timeInterval.intervalStart > :timeInterval AND g.userInRoleId = :userInRoleId")
+	List<GeriatricFactorPredictionValue> deleteObsoletePredictions(@Param("timeInterval") final Date timeInterval, @Param("userInRoleId") final Long userInRoleId);
+	
+
+	@Query("SELECT g from GeriatricFactorPredictionValue g")
+	List<GeriatricFactorPredictionValue> getAllPredictions();
 	
 }

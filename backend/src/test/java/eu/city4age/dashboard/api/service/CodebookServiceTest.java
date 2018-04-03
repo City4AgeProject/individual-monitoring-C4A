@@ -37,8 +37,8 @@ import eu.city4age.dashboard.api.jpa.RoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.CrProfile;
 import eu.city4age.dashboard.api.pojo.domain.RiskStatus;
 import eu.city4age.dashboard.api.pojo.domain.Role;
-import eu.city4age.dashboard.api.rest.CodebookService;
-import eu.city4age.dashboard.api.rest.UserService;
+import eu.city4age.dashboard.api.rest.CodebookEndpoint;
+import eu.city4age.dashboard.api.rest.UserEndpoint;
 
 /*
  * author: marina.andric
@@ -48,7 +48,7 @@ import eu.city4age.dashboard.api.rest.UserService;
 @SpringBootTest(classes = ApplicationTest.class)
 public class CodebookServiceTest {
 
-	static protected Logger logger = LogManager.getLogger(CodebookService.class);
+	static protected Logger logger = LogManager.getLogger(CodebookEndpoint.class);
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 	
@@ -72,7 +72,7 @@ public class CodebookServiceTest {
 	
 	@Spy
 	@InjectMocks
-	CodebookService codebookService = new CodebookService();
+	CodebookEndpoint codebookService = new CodebookEndpoint();
 
     @Before
     public void setUp() {

@@ -2,6 +2,7 @@ package eu.city4age.dashboard.api.jpa;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
@@ -26,7 +28,8 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.rest.MeasuresService;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType.Type;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -50,11 +53,71 @@ public class GeriatricFactorPredictionValueRepositoryTest {
 	private TimeIntervalRepository timeIntervalRepository;
 	
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresService;
 
 	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void deleteObsoletePredictionsTest() {
+		
+		UserInRole uir = new UserInRole();
+		uir.setPilotCode(Pilot.PilotCode.LCC);
+		userInRoleRepository.save(uir);
+			
+		DetectionVariableType dvt = new DetectionVariableType(Type.GEF, "DVType");
+		detectionVariableTypeRepository.save(dvt);
+		
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setDetectionVariableName("DVName");
+		dv1.setDetectionVariableType(dvt);
+		detectionVariableRepository.save(dv1);
+		
+		TimeInterval timePred1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-04-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
+
+		TimeInterval timePred2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-05-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
+
+		TimeInterval timePred3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-06-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
+
+		
+		GeriatricFactorPredictionValue prediction1 = new GeriatricFactorPredictionValue();
+		prediction1.setUserInRoleId(uir.getId());
+		prediction1.setGefValue(new BigDecimal(3.5223592680743034));
+		prediction1.setTimeInterval(timePred1);
+		prediction1.setDetectionVariableId(dv1.getId());		
+		geriatricFactorPredictionValueRepository.save(prediction1);
+		
+		GeriatricFactorPredictionValue prediction2 = new GeriatricFactorPredictionValue();
+		prediction2.setUserInRoleId(uir.getId());
+		prediction2.setGefValue(new BigDecimal(3.3369103408093777));
+		prediction2.setTimeInterval(timePred2);
+		prediction2.setDetectionVariableId(dv1.getId());
+		geriatricFactorPredictionValueRepository.save(prediction2);
+		
+		GeriatricFactorPredictionValue prediction3 = new GeriatricFactorPredictionValue();
+		prediction3.setUserInRoleId(uir.getId());
+		prediction3.setGefValue(new BigDecimal(3.4631821760469776));
+		prediction3.setTimeInterval(timePred3);
+		prediction3.setDetectionVariableId(dv1.getId());
+		geriatricFactorPredictionValueRepository.save(prediction3);
+
+		String format = "yyyy-MM-01 00:00:00";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+		String formattedDate = simpleDateFormat.format(timePred1.getIntervalStart());
+
+		TimeInterval timeInterval = measuresService.getOrCreateTimeInterval(Timestamp.valueOf(formattedDate), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		
+		List<GeriatricFactorPredictionValue> predictionsToDelete = geriatricFactorPredictionValueRepository.deleteObsoletePredictions(timeInterval.getIntervalStart(), uir.getId());
+		geriatricFactorPredictionValueRepository.delete(predictionsToDelete);
+		List<GeriatricFactorPredictionValue> predictions = geriatricFactorPredictionValueRepository.getAllPredictions();
+		
+		Assert.assertEquals(1, predictions.size());
+		
+		
+	}
+	
 	@Test
 	@Transactional
 	@Rollback(true)

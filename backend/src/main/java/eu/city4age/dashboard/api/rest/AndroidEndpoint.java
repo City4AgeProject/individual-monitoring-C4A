@@ -52,13 +52,13 @@ import io.swagger.annotations.ExampleProperty;
  */
 @Component
 @Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
-@Path(AndroidService.PATH)
+@Path(AndroidEndpoint.PATH)
 @Api(value = "android", consumes = "application/json" ,produces = "application/json")
-public class AndroidService {
+public class AndroidEndpoint {
 
 	public static final String PATH = "android";
 
-	static protected Logger logger = LogManager.getLogger(MeasuresService.class);
+	static protected Logger logger = LogManager.getLogger(MeasuresEndpoint.class);
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 	
 	private final SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);

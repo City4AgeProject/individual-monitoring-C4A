@@ -19,4 +19,7 @@ public interface PilotRepository extends GenericRepository<Pilot, Pilot.PilotCod
 	@Query("SELECT p FROM Pilot p WHERE p.latestSubmissionCompleted IS NOT NULL AND p.latestVariablesComputed IS NOT NULL AND p.latestSubmissionCompleted > p.latestVariablesComputed AND p.latestConfigurationUpdate IS NOT NULL")
 	List<Pilot> findAllComputed();
 
+	@Query("SELECT p FROM Pilot p WHERE p.latestVariablesComputed IS NOT NULL")
+	List<Pilot> findPilotsComputed();
+	
 }

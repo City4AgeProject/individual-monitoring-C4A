@@ -32,7 +32,7 @@ import eu.city4age.dashboard.api.pojo.domain.Activity;
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.ws.C4AAndroidResponse;
-import eu.city4age.dashboard.api.rest.AndroidService;
+import eu.city4age.dashboard.api.rest.AndroidEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -64,7 +64,7 @@ public class AndroidServiceTest {
     }
 	@Spy
 	@InjectMocks
-	AndroidService androidService;
+	AndroidEndpoint androidService;
 	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 	

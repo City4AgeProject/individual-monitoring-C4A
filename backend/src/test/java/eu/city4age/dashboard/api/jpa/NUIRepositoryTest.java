@@ -41,7 +41,7 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
-import eu.city4age.dashboard.api.rest.MeasuresService;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -68,7 +68,7 @@ public class NUIRepositoryTest {
 	PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresService;
 	
 	@Test
 	@Transactional

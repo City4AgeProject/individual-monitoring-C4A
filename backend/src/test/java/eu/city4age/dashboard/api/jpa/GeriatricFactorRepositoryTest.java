@@ -32,7 +32,7 @@ import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
-import eu.city4age.dashboard.api.rest.MeasuresService;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -56,10 +56,54 @@ public class GeriatricFactorRepositoryTest {
 	private TimeIntervalRepository timeIntervalRepository;
 	
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresService;
 
 	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void findMaxIntervalStartByUserInRoleTest() {
+		
+		UserInRole userInRole = new UserInRole();
+		userInRole.setPilotCode(Pilot.PilotCode.LCC);
+		userInRole = userInRoleRepository.save(userInRole);
+		
+		DetectionVariableType dvt = DetectionVariableType.GEF;
+		dvt = detectionVariableTypeRepository.save(dvt);
+		
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setDetectionVariableName("DV1");
+		dv1 = detectionVariableRepository.save(dv1);
+		
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		
+		GeriatricFactorValue gef1 = new GeriatricFactorValue();
+		gef1.setUserInRole(userInRole);
+		gef1.setUserInRoleId(userInRole.getId());
+		gef1.setDetectionVariable(dv1);
+		gef1.setTimeInterval(ti1);
+		gef1.setGefValue(new BigDecimal (1));
+		geriatricFactorRepository.save(gef1);
+		
+		ti1.getGeriatricFactorValue().add(gef1);
+		
+		GeriatricFactorValue gef2 = new GeriatricFactorValue();
+		gef2.setUserInRoleId(userInRole.getId());
+		gef2.setUserInRole(userInRole);
+		gef2.setDetectionVariable(dv1);
+		gef2.setTimeInterval(ti2);
+		gef2.setGefValue(new BigDecimal (1.5));
+		geriatricFactorRepository.save(gef2);		
+		
+		ti2.getGeriatricFactorValue().add(gef2);
+		
+		TimeInterval result = geriatricFactorRepository.findMaxIntervalStartByUserInRole(userInRole.getId());
+		Assert.assertEquals(new String("2016-02-01 00:00:00.0"), result.getIntervalStart().toString());
+		
+	}
 	
 	@Test
 	@Transactional

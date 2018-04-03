@@ -2,13 +2,9 @@ package eu.city4age.dashboard.api.math;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Assert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -45,24 +41,22 @@ import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.RoleRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
-import eu.city4age.dashboard.api.jpa.TimeIntervalRepositoryTest;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.UserInSystemRepository;
-import eu.city4age.dashboard.api.pojo.domain.Assessment;
+import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
-import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorPredictionValue;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType.Type;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorInterpolationValue;
+import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorPredictionValue;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
-import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
-import eu.city4age.dashboard.api.prediction.CreatePrediction;
-import eu.city4age.dashboard.api.rest.MeasuresService;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
+import eu.city4age.dashboard.api.service.ImputeFactorService;
+import eu.city4age.dashboard.api.service.PredictionService;
 
 /*
  * author: Marina-Andric
@@ -72,9 +66,9 @@ import eu.city4age.dashboard.api.rest.MeasuresService;
 @SpringBootTest(classes = ApplicationTest.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class CreatePredictionTest {
+public class PredictionServiceTest {
 
-	static protected Logger logger = LogManager.getLogger(CreatePredictionTest.class);
+	static protected Logger logger = LogManager.getLogger(PredictionServiceTest.class);
 	
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
@@ -89,10 +83,7 @@ public class CreatePredictionTest {
 	private UserInSystemRepository userInSystemRepository;
 	
 	@Autowired
-	private MeasuresService measuresService;
-	
-	@Mock
-	private MeasuresService measuresServiceMock;
+	private MeasuresEndpoint measuresEndpoint;
 	
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
@@ -131,18 +122,35 @@ public class CreatePredictionTest {
     public void setUp() {
      MockitoAnnotations.initMocks(this);
     }
+
+	@Mock
+	private PilotRepository pilotRepositoryMock;
+
+
+	@Mock
+	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepositoryMock;
+
+	@Mock
+	private UserInRoleRepository userInRoleRepositoryMock;
+
+	@Mock
+	private PilotDetectionVariableRepository pilotDetectionVariableRepositoryMock;
+	
+	@Mock
+	private TimeIntervalRepository timeIntervalRepositoryMock;
+	
+	@Mock
+	private ImputeFactorService imputeFactorServiceMock;
+    
+	@Mock
+	private MeasuresEndpoint measuresEndpointMock;
 	
 	@Spy
 	@InjectMocks
-	CreatePrediction createPrediction = new CreatePrediction();
+	private PredictionService predictionService;
 
 	private int predictionSize = 3;
 	
-
-	@Test
-	public void testTest() {
-		
-	}
 	
 	@Test
 	@Transactional
@@ -152,27 +160,27 @@ public class CreatePredictionTest {
 		
 //		double[] dataArray  = new double[]{3.0, 2.5, 3.15,  2.75,  2.75,  3.4,   2.75,  4.4,   3.5,   3.65,  3.65,  3.25};
 
-		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"), 
+		TimeInterval ti1 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);	
 //		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
 //				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-06-01 00:00:00"), 
+		TimeInterval ti3 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-06-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-07-01 00:00:00"), 
+		TimeInterval ti4 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-07-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-08-01 00:00:00"), 
+		TimeInterval ti5 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-08-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti6 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-09-01 00:00:00"), 
+		TimeInterval ti6 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-09-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);	
-		TimeInterval ti7 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-10-01 00:00:00"), 
+		TimeInterval ti7 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-10-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti8 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-11-01 00:00:00"), 
+		TimeInterval ti8 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-11-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti9 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-12-01 00:00:00"), 
+		TimeInterval ti9 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-12-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti11 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-02-01 00:00:00"), 
+		TimeInterval ti11 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2017-02-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti12 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-03-01 00:00:00"), 
+		TimeInterval ti12 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2017-03-01 00:00:00"), 
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		
 		
@@ -323,7 +331,7 @@ public class CreatePredictionTest {
 		ti12.getGeriatricFactorValue().add(gef12);
 		timeIntervalRepository.save(ti12);
 
-		TimeInterval tiInterp2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
+		TimeInterval tiInterp2 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);	
 
 		
@@ -337,7 +345,7 @@ public class CreatePredictionTest {
 		gfiv2.setDetectionVariableId(dv1.getId());
 		geriatricFactorInterpolationValueRepository.save(gfiv2);
 		
-		TimeInterval tiInterp10 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-01-01 00:00:00"),
+		TimeInterval tiInterp10 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2017-01-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
 		
@@ -353,24 +361,24 @@ public class CreatePredictionTest {
 		List<Object[]> data2 = nativeQueryRepository.getJointGefValues(dv1.getId(), uir.getId());		
 		Mockito.when(nativeQueryRepositoryMock.getJointGefValues(dv1.getId(), uir.getId())).thenReturn(data2);
 		
-		TimeInterval endDate = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-03-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
+		TimeInterval endDate = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2017-03-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
 		Mockito.when(
-				measuresServiceMock.getOrCreateTimeInterval(Timestamp.valueOf("2017-03-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).
+				measuresEndpointMock.getOrCreateTimeInterval(Timestamp.valueOf("2017-03-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).
 				thenReturn(endDate);
 	
-		TimeInterval timePred1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-04-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
+		TimeInterval timePred1 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2017-04-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
 		Mockito.when(
-				measuresServiceMock.getOrCreateTimeInterval(Timestamp.valueOf("2017-04-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).
+				measuresEndpointMock.getOrCreateTimeInterval(Timestamp.valueOf("2017-04-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).
 				thenReturn(timePred1);
 
-		TimeInterval timePred2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-05-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
+		TimeInterval timePred2 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2017-05-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
 		Mockito.when(
-				measuresServiceMock.getOrCreateTimeInterval(Timestamp.valueOf("2017-05-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).
+				measuresEndpointMock.getOrCreateTimeInterval(Timestamp.valueOf("2017-05-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).
 				thenReturn(timePred2);
 
-		TimeInterval timePred3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2017-06-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
+		TimeInterval timePred3 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2017-06-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
 		Mockito.when(
-				measuresServiceMock.getOrCreateTimeInterval(Timestamp.valueOf("2017-06-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).
+				measuresEndpointMock.getOrCreateTimeInterval(Timestamp.valueOf("2017-06-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).
 				thenReturn(timePred3);
 
 		
@@ -402,7 +410,7 @@ public class CreatePredictionTest {
 		Arima optimalModelFit = Arima.model(timeSeries, optimalModelOrder);
 		Forecast forecast = optimalModelFit.forecast(predictionSize);
 
-		createPrediction.makePrediction(dv1.getId(), uir.getId());
+		predictionService.makePredictions(dv1.getId(), uir.getId(), endDate.getIntervalStart());
 		
 		Assert.assertEquals(prediction1.getGefValue(), new BigDecimal(forecast.pointEstimates().at(0)));
 		Assert.assertEquals(prediction2.getGefValue(), new BigDecimal(forecast.pointEstimates().at(1)));

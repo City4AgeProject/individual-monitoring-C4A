@@ -36,7 +36,7 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.ws.C4ALoginResponse;
-import eu.city4age.dashboard.api.rest.UserService;
+import eu.city4age.dashboard.api.rest.UserEndpoint;
 import eu.city4age.dashboard.api.security.JwtIssuer;
 
 /*
@@ -49,7 +49,7 @@ public class UserServiceTest {
 
 	@Spy
 	@InjectMocks
-	UserService userService = new UserService();
+	UserEndpoint userService = new UserEndpoint();
 	
 	static protected Logger logger = LogManager.getLogger(UserServiceTest.class);
 

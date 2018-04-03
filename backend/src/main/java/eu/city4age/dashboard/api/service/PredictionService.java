@@ -1,15 +1,19 @@
-package eu.city4age.dashboard.api.prediction;
+package eu.city4age.dashboard.api.service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.signaflo.timeseries.TimeSeries;
 import com.github.signaflo.timeseries.Ts;
@@ -18,16 +22,25 @@ import com.github.signaflo.timeseries.model.arima.Arima;
 import com.github.signaflo.timeseries.model.arima.ArimaOrder;
 
 import eu.city4age.dashboard.api.jpa.GeriatricFactorPredictionValueRepository;
+import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
+import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
+import eu.city4age.dashboard.api.jpa.PilotRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorPredictionValue;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
-import eu.city4age.dashboard.api.rest.MeasuresService;
+import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
 
 /*
  * author: Marina-Andric
  */
 
-public class CreatePrediction {
+@Component
+@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+public class PredictionService {
 
 	private int predictionSize;
 	private int trasholdPoint;
@@ -39,20 +52,86 @@ public class CreatePrediction {
 	private NativeQueryRepository nativeQueryRepository;
 
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresService;
 
-	private Timestamp endDate;
+	@Autowired
+	private PilotRepository pilotRepository;
+	
+	@Autowired
+	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
+	
+	@Autowired
+	private UserInRoleRepository userInRoleRepository;
+	
+	@Autowired
+	private GeriatricFactorRepository geriatricFactorRepository;
+	
+	@Autowired
+	private ImputeFactorService imputeFactorService;
+	
+	@Autowired
+	private MeasuresEndpoint measuresEndpoint;
+	
+	private Date endDate;
 
-	static protected Logger logger = LogManager.getLogger(CreatePrediction.class);
+	static protected Logger logger = LogManager.getLogger(PredictionService.class);
 
-	public CreatePrediction() {
+	public PredictionService() {
 		predictionSize = 3;
 		trasholdPoint = 3;
 	}
 
 
-	public void makePrediction(Long dvId, Long uId) {
+	public void interpolateAndPredict() {
+		
+		List<Pilot> pilots = pilotRepository.findPilotsComputed();
+		
+//		logger.info("pilots size: " + pilots.size());
+		
+		for (Pilot pilot : pilots) {
+			
+			List<DetectionVariable> detectionVariables = pilotDetectionVariableRepository.findDetectionVariablesForPrediction(pilot.getPilotCode());
+			
+			for (DetectionVariable dv : detectionVariables) {
+				
+				List<UserInRole> userInRoles = userInRoleRepository.findCRsByPilotCode(pilot.getPilotCode()); 
+				
+				for (UserInRole userInRole : userInRoles) {
+				
+					// Last date for which there is at least one data item in the DB for the userInRole
+					TimeInterval endDate = geriatricFactorRepository.findMaxIntervalStartByUserInRole(userInRole.getId());
+//					logger.info("endDate: " + endDate.getIntervalStart());
+					
+					// Format to the start of the month
+					TimeInterval formattedDate = formattedDate(endDate);
 
+					// Delete obsolete predictions -  FOR USER!
+					geriatricFactorPredictionValueRepository.deleteObsoletePredictions(formattedDate.getIntervalStart(), userInRole.getId());
+					
+					imputeFactorService.imputeMissingValues(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
+					makePredictions(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
+	
+				}				
+			}			
+		}
+	}
+
+	private TimeInterval formattedDate(TimeInterval date) {
+		
+		String format = "yyyy-MM-01 00:00:00";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+		String formattedDate = simpleDateFormat.format(date.getIntervalStart());
+		logger.info("formatted date: " + formattedDate);
+		TimeInterval timeInterval = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf(formattedDate), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+
+		return timeInterval;
+		
+	}
+
+	public void makePredictions(Long dvId, Long uId, Date endDate) {
+
+		this.endDate = endDate;
+		
 		double[] dataArray = getJointFactorValues(dvId, uId);
 
 		if (dataArray.length > trasholdPoint) { 
@@ -88,6 +167,7 @@ public class CreatePrediction {
 				prediction.setUserInRoleId(uId);
 				prediction.setGefValue(new BigDecimal(forecast.pointEstimates().at(i)));
 				prediction.setTimeInterval(computeMonthWithOffset(i+1));
+				prediction.setDetectionVariableId(dvId);
 				geriatricFactorPredictionValueRepository.save(prediction);
 			}
 		}
@@ -106,7 +186,6 @@ public class CreatePrediction {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 		String formatted = simpleDateFormat.format(date.getTime());
 
-
 		TimeInterval timeInterval = measuresService.getOrCreateTimeInterval(Timestamp.valueOf(formatted), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
 		return timeInterval;
@@ -118,9 +197,6 @@ public class CreatePrediction {
 
 		List<Object[]> jointGefList = new ArrayList<Object[]>();
 		jointGefList.addAll(nativeQueryRepository.getJointGefValues(dvId, uId));
-
-		int lastIndex = jointGefList.size()-1;
-		endDate = ((Timestamp) jointGefList.get(lastIndex)[1]);
 
 		double[] gefValues = new double[jointGefList.size()];
 

@@ -44,7 +44,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 		DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class })
 @EnableSwagger2
 @ComponentScan(basePackages = { "eu.city4age.dashboard.api.jpa", "eu.city4age.dashboard.api.rest",
-		"eu.city4age.dashboard.api.config" })
+		"eu.city4age.dashboard.api.config", "eu.city4age.dashboard.api.service" })
 @EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.jpa", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
 @EnableScheduling
 /**

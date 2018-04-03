@@ -49,10 +49,10 @@ import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.ws.C4ALoginResponse;
-import eu.city4age.dashboard.api.rest.CareRecipientService;
+import eu.city4age.dashboard.api.rest.CareRecipientEndpoint;
 import eu.city4age.dashboard.api.rest.CareRecipientServiceTest;
-import eu.city4age.dashboard.api.rest.MeasuresService;
-import eu.city4age.dashboard.api.rest.UserService;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
+import eu.city4age.dashboard.api.rest.UserEndpoint;
 import eu.city4age.dashboard.api.security.JwtIssuer;
 
 import java.math.RoundingMode;
@@ -87,7 +87,7 @@ public class CareReciepentServiceTest {
 	private RoleRepository roleRepository;
 	
 	@Autowired
-	private CareRecipientService careRecipentService;
+	private CareRecipientEndpoint careRecipentService;
 	
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
@@ -105,13 +105,13 @@ public class CareReciepentServiceTest {
 	private UserInSystemRepository userInSystemRepository;
 	
 	@Autowired
-	private UserService userService;
+	private UserEndpoint userService;
 	
 	@Autowired
 	private TypicalPeriodRepository typicalPeriodRepository;
 	
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresService;
 	
 	@Autowired
 	private DetectionVariableRepository detectionVariableRepository;

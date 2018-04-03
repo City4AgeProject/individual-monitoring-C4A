@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.jpa;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +48,74 @@ public class PilotDetectionVariableRepositoryTest {
 
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;	
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void findDerivedDetectionVariablesForPilotTest() {
+		
+		Pilot.PilotCode pilotCode1 = Pilot.PilotCode.LCC;
+		
+		List<DetectionVariableType> detectionVariableTypes = new ArrayList<DetectionVariableType>();
+		List<DetectionVariable> detectionVariables = new ArrayList<DetectionVariable>();
+		List<PilotDetectionVariable> pilotDetectionVariables = new ArrayList<PilotDetectionVariable>();
+
+
+		DetectionVariableType dvt2 = DetectionVariableType.GES;
+		detectionVariableTypes.add(dvt2);
+		detectionVariableTypeRepository.save(dvt2);
+
+		DetectionVariableType dvt1 = DetectionVariableType.MEA;
+		detectionVariableTypes.add(dvt1);
+		detectionVariableTypeRepository.save(dvt1);
+		
+		DetectionVariableType dvt3 = DetectionVariableType.GEF;
+		detectionVariableTypes.add(dvt3);
+		detectionVariableTypeRepository.save(dvt3);
+
+		DetectionVariableType dvt4 = DetectionVariableType.GFG;
+		detectionVariableTypes.add(dvt4);
+		detectionVariableTypeRepository.save(dvt4);
+	
+		DetectionVariableType dvt5 = DetectionVariableType.NUI;
+		detectionVariableTypes.add(dvt5);
+		detectionVariableTypeRepository.save(dvt5);
+
+		DetectionVariableType dvt6 = DetectionVariableType.OVL;
+		detectionVariableTypes.add(dvt6);
+		detectionVariableTypeRepository.save(dvt6);
+		
+		for (int i = 0; i < 6; i++) {
+			
+			DetectionVariable dv = new DetectionVariable();
+			detectionVariables.add(dv);
+			
+			detectionVariables.get(i).setDetectionVariableType(detectionVariableTypes.get(i));
+			detectionVariableRepository.save(detectionVariables.get(i));
+			
+		}
+		
+		for (int i = 0; i < 6; i++) {
+
+			PilotDetectionVariable pdv = new PilotDetectionVariable();
+			pilotDetectionVariables.add(pdv);
+			
+			pilotDetectionVariables.get(i).setPilotCode(pilotCode1);
+			pilotDetectionVariables.get(i).setDetectionVariable(detectionVariables.get(i));
+			pilotDetectionVariables.get(i).setDerivedDetectionVariable(detectionVariables.get(i));
+			pilotDetectionVariableRepository.save(pilotDetectionVariables.get(i));
+			
+		}
+		
+		
+		List<DetectionVariable> result =  pilotDetectionVariableRepository.findDetectionVariablesForPrediction(pilotCode1);
+		
+		
+		List<PilotDetectionVariable> results =  pilotDetectionVariableRepository.findAll();
+		
+		Assert.assertEquals(4, result.size());
+
+	}
 	
 	@Test
 	@Transactional
