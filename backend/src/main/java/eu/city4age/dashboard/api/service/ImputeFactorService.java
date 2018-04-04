@@ -13,6 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 //import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.github.signaflo.timeseries.TimeSeries;
+import com.github.signaflo.timeseries.Ts;
+import com.github.signaflo.timeseries.forecast.Forecast;
+import com.github.signaflo.timeseries.model.arima.Arima;
+import com.github.signaflo.timeseries.model.arima.ArimaOrder;
+
 import org.springframework.transaction.annotation.Propagation;
 
 //import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,11 +110,16 @@ public class ImputeFactorService {
 		detectionVariable = gefList.get(0).getDetectionVariable();
 		
 		viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
-
+		logger.info("viewGeriatricFactorValue 1: "+viewGeriatricFactorValue.size());
 		if(viewGeriatricFactorValue.size() > trashholdPoint) {
 
-			return interpolateMissingValuesSpline() + extrapolateMissingValues(endDatePilot);
-
+			//return interpolateMissingValuesSpline() + extrapolateMissingValuesMean(endDatePilot);
+			int r=interpolateMissingValuesSpline();
+			logger.info("Spline for: "+r);
+			viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
+			logger.info("viewGeriatricFactorValue 2: "+viewGeriatricFactorValue.size());
+			r+=extrapolateMissingValuesArima(endDatePilot);
+			return r;
 		} else {
 			return -1;
 		}
@@ -117,21 +129,20 @@ public class ImputeFactorService {
 
 		prevDate.setTime(viewGeriatricFactorValue.get(0).getIntervalStart());
 		endDate.setTime(viewGeriatricFactorValue.get(viewGeriatricFactorValue.size()-1).getIntervalStart());
-		//		logger.info("viewGeriatricFactorValue: " + viewGeriatricFactorValue.size());
 
 		while(prevDate.getTimeInMillis() <= endDate.getTimeInMillis()) {
 
 			currentDate.setTime(viewGeriatricFactorValue.get(gfIndex).getIntervalStart());
 
 			while(prevDate.getTimeInMillis() < currentDate.getTimeInMillis()) {
-
-				ti = getFollowingTimeInterval(prevDate);
-				prevDate.setTime(ti.getIntervalStart());
-				
+				//ti=next time interval
 				missingTimeIntervals.add(ti);
 				intIntervalsMissing.add(monthCounter);
 				monthCounter++;
 
+				ti = getFollowingTimeInterval(prevDate);
+				prevDate.setTime(ti.getIntervalStart());
+				
 			}
 
 			intIntervalsExisting.add(monthCounter);
@@ -179,22 +190,73 @@ public class ImputeFactorService {
 		return intIntervalsMissing.size();
 	}
 
-	private int extrapolateMissingValues(Date endDatePilot) {
+	private int extrapolateMissingValuesMean(Date endDatePilot) {
 
 		extrapolatedMeanValue = sumOfValues/monthCounter;
 		endDate.setTime(endDatePilot);
+		int counter=0;
 		
 		while(prevDate.getTimeInMillis() <= endDate.getTimeInMillis()) {	
-
+			//ti=next time interval
 			saveImputedValues(ti, BigDecimal.valueOf(extrapolatedMeanValue));
-			monthCounter++;
+			//monthCounter++;
+			counter++;
 
 			ti = getFollowingTimeInterval(prevDate);
 			prevDate.setTime(ti.getIntervalStart());			
 		}
 
-		return 0;
+		return counter;
+	}
+	
+	private int extrapolateMissingValuesArima(Date endDatePilot) {
+		//Re-load viewGeriatricFactorValue with interpolated values
+		int vs=viewGeriatricFactorValue.size();
+		double[] dataArray=new double[vs];
+		for(int i=0;i<vs;i++) {
+			dataArray[i]=viewGeriatricFactorValue.get(i).getGefValue().doubleValue();
+		}
 
+		ArrayList<TimeInterval> tis = new ArrayList<TimeInterval>();
+		prevDate.setTime(viewGeriatricFactorValue.get(viewGeriatricFactorValue.size()-1).getIntervalStart());
+		endDate.setTime(endDatePilot);
+		while(prevDate.getTimeInMillis() < endDate.getTimeInMillis()) {
+			//ti = current time interval
+			ti = getFollowingTimeInterval(prevDate);
+			tis.add(ti);
+			prevDate.setTime(ti.getIntervalStart());
+		}
+
+		TimeSeries timeSeries = Ts.newMonthlySeries(dataArray);
+
+		ArrayList<ArimaOrder> models = new ArrayList<ArimaOrder>();
+		models.add(ArimaOrder.order(0, 1, 1, 0, 0, 0, Arima.Drift.EXCLUDE));	// simple exponential smoothing 
+		models.add(ArimaOrder.order(0, 1, 1, Arima.Drift.INCLUDE));				// simple exponential smoothing with growth
+		models.add(ArimaOrder.order(1, 1, 0, 0, 0, 0)); 						// differenced first-order autoregressive model
+		models.add(ArimaOrder.order(1, 1, 2, 0, 0, 0)); 						// damped-trend linear exponential smoothing
+
+		ArrayList<Arima> fmodels = new ArrayList<Arima>();
+		for (int i = 0; i < models.size(); i++) {
+			fmodels.add(Arima.model(timeSeries, models.get(i)));
+		}
+
+		// Finds optimal ARIMA model (with minimal AIC criteria)
+		Arima optimalModel = fmodels.get(0);
+		double aic = fmodels.get(0).aic();
+		double aic_curr;
+		for (int i = 1; i < models.size(); i++) {
+			if ((aic_curr = fmodels.get(i).aic()) < aic) {
+				aic = aic_curr;
+				optimalModel = fmodels.get(i);
+			}
+		}
+		Forecast forecast = optimalModel.forecast(tis.size());
+		//logger.info("FC: "+forecast);
+		for (i = 0; i < tis.size(); i++) {
+			saveImputedValues(tis.get(i), (new BigDecimal(forecast.pointEstimates().at(i))));
+		}
+
+		return tis.size();
 	}
 
 	private void saveImputedValues(TimeInterval ti, BigDecimal value) {
@@ -206,7 +268,7 @@ public class ImputeFactorService {
 		gef.setDetectionVariableId(detectionVariableId);
 		gef.setTimeInterval(ti);
 		gef.setGefValue(value);
-		logger.info("TIE: " + gef.getTimeInterval().getStart());
+		logger.info("TIE: " + gef.getTimeInterval().getStart() + "GFV: " + value.toString());
 		gef = geriatricFactorInterpolationValueRepository.save(gef);
 		
 	}
