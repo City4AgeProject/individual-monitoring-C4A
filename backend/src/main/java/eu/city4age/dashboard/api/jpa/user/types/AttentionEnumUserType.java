@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.UserType;
@@ -19,6 +21,8 @@ public class AttentionEnumUserType implements UserType, Serializable  {
 	 * Author: Vladimir Aleksic
 	 */
 	private static final long serialVersionUID = 7968115676082680181L;
+
+	static protected Logger logger = LogManager.getLogger(AttentionEnumUserType.class);
 	
 	private static final int[] SQL_TYPES = {Types.VARCHAR};
 

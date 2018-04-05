@@ -9,7 +9,9 @@
 	
 	@org.hibernate.annotations.TypeDef(name = "DVTEnumUserType", typeClass = eu.city4age.dashboard.api.jpa.user.types.DVTEnumUserType.class),
 	
-	@org.hibernate.annotations.TypeDef(name = "PilotEnumUserType", typeClass = eu.city4age.dashboard.api.jpa.user.types.PilotEnumUserType.class)
+	@org.hibernate.annotations.TypeDef(name = "PilotEnumUserType", typeClass = eu.city4age.dashboard.api.jpa.user.types.PilotEnumUserType.class),
+
+	@org.hibernate.annotations.TypeDef(name = "AttentionEnumUserType", typeClass = eu.city4age.dashboard.api.jpa.user.types.AttentionEnumUserType.class)
 
 })
 package eu.city4age.dashboard.api.pojo.domain;
