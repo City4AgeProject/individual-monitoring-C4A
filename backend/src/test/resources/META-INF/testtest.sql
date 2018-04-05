@@ -24,6 +24,7 @@ DROP SEQUENCE IF EXISTS "testtest"."user_in_role_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."user_in_system_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."value_evidence_notice_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."variation_measure_value_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."cd_attention_status_seq" CASCADE;
 
 
 DROP TABLE IF EXISTS "testtest"."assessed_gef_value_set" CASCADE;
@@ -68,6 +69,7 @@ DROP TABLE IF EXISTS "testtest"."value_evidence_notice" CASCADE;
 DROP TABLE IF EXISTS "testtest"."variation_measure_value" CASCADE;
 DROP TABLE IF EXISTS "testtest"."gef_prediction" CASCADE;
 DROP TABLE IF EXISTS "testtest"."gef_interpolation" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_attention_status" CASCADE;
 
 DROP VIEW IF EXISTS "testtest"."vw_detection_variable_derivation_per_user_in_role" CASCADE;
 DROP VIEW IF EXISTS "testtest"."vw_gef_values_persisted_source_ges_types" CASCADE;
@@ -265,6 +267,13 @@ CREATE TABLE assessed_gef_value_set (
     assessment_id integer,
 	CONSTRAINT assessed_gef_value_set_pkey PRIMARY KEY (gef_value_id, assessment_id)
 );
+
+CREATE SEQUENCE cd_attention_status_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 CREATE TABLE assessment (
     id integer DEFAULT nextval('assessment_seq'::regclass) NOT NULL,
@@ -681,6 +690,11 @@ CREATE TABLE variation_measure_value (
 	CONSTRAINT variation_measure_value_uq UNIQUE (user_in_role_id, measure_type_id, time_interval_id)
 );
 
+CREATE TABLE cd_attention_status (
+	attention_status varchar(9) NOT NULL,
+	attention_status_description varchar(255),
+	CONSTRAINT cd_attention_status_pkey PRIMARY KEY (attention_status)
+);
 
 CREATE VIEW vw_detection_variable_derivation_per_user_in_role AS
  SELECT uir.id AS user_in_role_id,

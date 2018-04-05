@@ -1,5 +1,7 @@
 package eu.city4age.dashboard.api.math;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -31,6 +33,7 @@ import com.github.signaflo.timeseries.model.arima.Arima;
 import com.github.signaflo.timeseries.model.arima.ArimaOrder;
 
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.jpa.CareProfileRepository;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.DetectionVariableTypeRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorInterpolationValueRepository;
@@ -44,6 +47,7 @@ import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.UserInSystemRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
+import eu.city4age.dashboard.api.pojo.domain.CareProfile;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType.Type;
@@ -54,6 +58,8 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
+import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
 import eu.city4age.dashboard.api.service.ImputeFactorService;
 import eu.city4age.dashboard.api.service.PredictionService;
@@ -106,6 +112,9 @@ public class PredictionServiceTest {
 	@Autowired
 	private GeriatricFactorPredictionValueRepository geriatricFactorPredictionValueRepository;
 	
+	@Autowired
+	private CareProfileRepository careProfileRepository;
+	
 	@Mock
 	private GeriatricFactorPredictionValueRepository geriatricFactorPredictionValueRepositoryMock;
 	
@@ -118,6 +127,9 @@ public class PredictionServiceTest {
 	@Autowired 
 	private GeriatricFactorInterpolationValueRepository geriatricFactorInterpolationValueRepository;
 
+	@Autowired
+	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
+	
     @Before
     public void setUp() {
      MockitoAnnotations.initMocks(this);
@@ -125,7 +137,6 @@ public class PredictionServiceTest {
 
 	@Mock
 	private PilotRepository pilotRepositoryMock;
-
 
 	@Mock
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepositoryMock;
@@ -145,17 +156,128 @@ public class PredictionServiceTest {
 	@Mock
 	private MeasuresEndpoint measuresEndpointMock;
 	
+	@Mock
+	private CareProfileRepository careProfileRepositoryMock;
+	
 	@Spy
 	@InjectMocks
-	private PredictionService predictionService;
+	private PredictionService predictionService = new PredictionService();
 
-	private int predictionSize = 3;
+	private PredictionService predictionServiceReflection = new PredictionService();
 	
+	private int predictionSize = 3;
+	private String systemUserName = "system";
 	
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void makePredictionTest() {
+	public void createAttentionStatusTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		
+		TimeInterval ti1 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"), 
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);	
+		TimeInterval ti2 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"), //UTC+2
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		TimeInterval ti3 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-06-01 00:00:00"), 
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		
+		UserInRole uir = new UserInRole();
+		uir.setPilotCode(Pilot.PilotCode.LCC);
+		userInRoleRepository.save(uir);
+		
+		UserInRole systemUir = new UserInRole();
+		userInRoleRepository.save(systemUir);
+		
+		UserInSystem systemUis = new UserInSystem();
+		systemUis.setUsername("system");
+//		systemUis.setDisplayName("system");
+		systemUis.setPassword("password");
+		userInSystemRepository.save(systemUis);
+			
+		DetectionVariableType dvt = new DetectionVariableType(Type.OVL, "DVType");
+		detectionVariableTypeRepository.save(dvt);
+		
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setDetectionVariableName("DVName");
+		dv1.setDetectionVariableType(dvt);
+		detectionVariableRepository.save(dv1);
+
+		GeriatricFactorValue gef1 = new GeriatricFactorValue();
+		gef1.setGefValue(new BigDecimal("3.0"));
+		gef1.setUserInRole(uir);
+		gef1.setTimeInterval(ti1);
+		gef1.setUserInRoleId(uir.getId());
+		gef1.setDetectionVariable(dv1);
+		gef1.setDetectionVariableId(dv1.getId());
+		geriatricFactorRepository.save(gef1);
+		
+		GeriatricFactorValue gef2 = new GeriatricFactorValue();
+		gef2.setGefValue(new BigDecimal("2.5"));
+		gef2.setUserInRole(uir);
+		gef2.setTimeInterval(ti2);
+		gef2.setUserInRoleId(uir.getId());
+		gef2.setDetectionVariable(dv1);
+		gef2.setDetectionVariableId(dv1.getId());
+		geriatricFactorRepository.save(gef2);
+
+		GeriatricFactorValue gef3 = new GeriatricFactorValue();
+		gef3.setGefValue(new BigDecimal("3.15"));
+		gef3.setUserInRole(uir);
+		gef3.setTimeInterval(ti3);
+		gef3.setUserInRoleId(uir.getId());
+		gef3.setDetectionVariable(dv1);
+		gef3.setDetectionVariableId(dv1.getId());
+		geriatricFactorRepository.save(gef3);
+		
+		TimeInterval tiInterp2 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
+				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);	
+
+		GeriatricFactorInterpolationValue gfiv2 = new GeriatricFactorInterpolationValue();
+		gfiv2.setGefValue(new BigDecimal("2.5"));
+		gfiv2.setId(1L);
+		gfiv2.setUserInRole(uir);
+		gfiv2.setTimeInterval(tiInterp2);
+		gfiv2.setUserInRoleId(uir.getId());
+		gfiv2.setDetectionVariable(dv1);
+		gfiv2.setDetectionVariableId(dv1.getId());
+		geriatricFactorInterpolationValueRepository.save(gfiv2);
+
+		TimeInterval timePred1 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-07-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH); 
+//		Mockito.when(measuresEndpointMock.getOrCreateTimeInterval(Timestamp.valueOf("2017-07-01 00:00:00.0"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).
+//				thenReturn(timePred1);
+
+		GeriatricFactorPredictionValue prediction1 = new GeriatricFactorPredictionValue();
+		prediction1.setUserInRoleId(uir.getId());
+		prediction1.setGefValue(new BigDecimal(3.5223592680743034));
+		prediction1.setTimeInterval(timePred1);
+		prediction1.setDetectionVariableId(dv1.getId());
+		geriatricFactorPredictionValueRepository.save(prediction1);
+		
+		List<ViewGefCalculatedInterpolatedPredictedValues> viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableId(dv1.getId(), uir.getId());
+		Mockito.when(viewGefCalculatedInterpolatedPredictedValuesRepositoryMock.findByDetectionVariableId(501L, uir.getId())).thenReturn(viewGeriatricFactorValue);
+		
+		UserInRole system = userInRoleRepository.findBySystemUsername(systemUserName);
+		Mockito.when(userInRoleRepositoryMock.findBySystemUsername(systemUserName)).thenReturn(system);
+		
+		CareProfile careProfile = new CareProfile();
+		careProfile.setAttentionStatus('A');
+		careProfile.setUserInRoleId(uir.getId());
+		careProfile.setUserInRoleByCreatedBy(system);
+		careProfileRepository.save(careProfile);
+		Mockito.when(careProfileRepositoryMock.save(careProfile)).thenReturn(careProfile);
+		
+		Method method = predictionServiceReflection.getClass().getDeclaredMethod("createAttentionStatus", Long.class);
+		method.setAccessible(true);
+		int result = (int) method.invoke(predictionService, uir.getId());
+		
+		Assert.assertEquals(5, result);
+		
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void makePredictionTest() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			
 		
 		
 //		double[] dataArray  = new double[]{3.0, 2.5, 3.15,  2.75,  2.75,  3.4,   2.75,  4.4,   3.5,   3.65,  3.65,  3.25};
@@ -410,7 +532,10 @@ public class PredictionServiceTest {
 		Arima optimalModelFit = Arima.model(timeSeries, optimalModelOrder);
 		Forecast forecast = optimalModelFit.forecast(predictionSize);
 
-		predictionService.makePredictions(dv1.getId(), uir.getId(), endDate.getIntervalStart());
+		
+		Method method = predictionServiceReflection.getClass().getDeclaredMethod("makePredictions",Long.class, Long.class, Date.class);
+		method.setAccessible(true);
+		method.invoke(predictionService, dv1.getId(), uir.getId(), endDate.getIntervalStart());
 		
 		Assert.assertEquals(prediction1.getGefValue(), new BigDecimal(forecast.pointEstimates().at(0)));
 		Assert.assertEquals(prediction2.getGefValue(), new BigDecimal(forecast.pointEstimates().at(1)));

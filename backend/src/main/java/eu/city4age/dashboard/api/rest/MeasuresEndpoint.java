@@ -90,7 +90,7 @@ public class MeasuresEndpoint {
 	private NativeQueryRepository nativeQueryRepository;
 	
 	@Autowired 
-	private PredictionService predictionService;
+	private PredictionService predictionService = new PredictionService();
 	
 	@Autowired
 	Environment environment;
@@ -132,8 +132,8 @@ public class MeasuresEndpoint {
 		
 		logger.info("computation started: " + new Date());
 
-		computeForAllPilots();
-		predictionService.interpolateAndPredict();
+		List<Pilot> pilots = computeForAllPilots();
+		predictionService.interpolateAndPredict(pilots);
 
 		logger.info("computation completed: " + new Date());
 		return JerseyResponse.buildTextPlain("success", 200);
@@ -162,7 +162,7 @@ public class MeasuresEndpoint {
 		}
 	}
 
-	private void computeForAllPilots() {
+	private List<Pilot> computeForAllPilots() {
 		
 		logger.info("computeForAllPilots");
 		
@@ -190,7 +190,7 @@ public class MeasuresEndpoint {
 			
 			logger.info("No new data submitted!");
 			
-			return;
+			return comps;
 		}
 		
 		if (comps != null) logger.info("comps.size(): " + comps.size());
@@ -247,6 +247,8 @@ public class MeasuresEndpoint {
 		
 		logger.info("comps.size(): " + comps.size());
 		setVariablesComputedForAllPilots(comps);
+		
+		return comps;
 	}
 
 	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, List<Pilot.PilotCode> pilotCodes) {

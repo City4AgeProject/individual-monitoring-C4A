@@ -62,7 +62,6 @@ public class ImputeFactorServiceTest {
 	@InjectMocks
 	private ImputeFactorService imputeFactorService;
 
-
 	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
 
@@ -122,7 +121,7 @@ public class ImputeFactorServiceTest {
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void interpolateMissingValuesSplineTest() throws Exception {
+	public void imputeMissingValuesTest() throws Exception {
 		
 		Pilot pilot=new Pilot();
 		pilot.setLatestVariablesComputed(new Date(Timestamp.valueOf("2017-04-30 00:00:00").getTime()));

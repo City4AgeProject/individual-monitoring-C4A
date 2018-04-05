@@ -2,6 +2,7 @@ package eu.city4age.dashboard.api.service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,17 +22,22 @@ import com.github.signaflo.timeseries.forecast.Forecast;
 import com.github.signaflo.timeseries.model.arima.Arima;
 import com.github.signaflo.timeseries.model.arima.ArimaOrder;
 
+import eu.city4age.dashboard.api.jpa.CareProfileRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorPredictionValueRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
+import eu.city4age.dashboard.api.pojo.domain.CareProfile;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorPredictionValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
 
 /*
@@ -44,6 +50,7 @@ public class PredictionService {
 
 	private int predictionSize;
 	private int trasholdPoint;
+	private Long overallId;
 
 	@Autowired
 	private GeriatricFactorPredictionValueRepository geriatricFactorPredictionValueRepository;
@@ -55,69 +62,137 @@ public class PredictionService {
 	private MeasuresEndpoint measuresService;
 
 	@Autowired
-	private PilotRepository pilotRepository;
-	
-	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
-	
+
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
-	
+
 	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
-	
+
 	@Autowired
 	private ImputeFactorService imputeFactorService;
-	
+
 	@Autowired
 	private MeasuresEndpoint measuresEndpoint;
-	
+
+	@Autowired
+	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
+
+	@Autowired
+	private CareProfileRepository careProfileRepository;
 	private Date endDate;
+	private String systemUserName;
 
 	static protected Logger logger = LogManager.getLogger(PredictionService.class);
 
 	public PredictionService() {
 		predictionSize = 3;
 		trasholdPoint = 3;
+		overallId = 501L;
+		systemUserName = "system";
 	}
 
+	public void interpolateAndPredict(List<Pilot> pilotsList) {
 
-	public void interpolateAndPredict() {
-		
-		List<Pilot> pilots = pilotRepository.findPilotsComputed();
-		
-//		logger.info("pilots size: " + pilots.size());
-		
+		//		List<Pilot> pilots = pilotRepository.findPilotsComputed();
+
+		List<Pilot> pilots = pilotsList;
+
+		//		logger.info("pilots size: " + pilots.size());
+
 		for (Pilot pilot : pilots) {
-			
+
 			List<DetectionVariable> detectionVariables = pilotDetectionVariableRepository.findDetectionVariablesForPrediction(pilot.getPilotCode());
-			
+
 			for (DetectionVariable dv : detectionVariables) {
-				
+
 				List<UserInRole> userInRoles = userInRoleRepository.findCRsByPilotCode(pilot.getPilotCode()); 
-				
+
 				for (UserInRole userInRole : userInRoles) {
-				
+
 					// Last date for which there is at least one data item in the DB for the userInRole
 					TimeInterval endDate = geriatricFactorRepository.findMaxIntervalStartByUserInRole(userInRole.getId());
-//					logger.info("endDate: " + endDate.getIntervalStart());
-					
+					//					logger.info("endDate: " + endDate.getIntervalStart());
+
 					// Format to the start of the month
 					TimeInterval formattedDate = formattedDate(endDate);
 
 					// Delete obsolete predictions -  FOR USER!
 					geriatricFactorPredictionValueRepository.deleteObsoletePredictions(formattedDate.getIntervalStart(), userInRole.getId());
-					
+
 					imputeFactorService.imputeMissingValues(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
-					makePredictions(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
-	
+					this.makePredictions(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
+
+					if (dv.getDetectionVariableType().equals(DetectionVariableType.OVL))
+						createAttentionStatus(userInRole.getId());
 				}				
 			}			
 		}
 	}
 
-	private TimeInterval formattedDate(TimeInterval date) {
+	private int createAttentionStatus(Long uId) {
+
+		char attentionStatus;
+
+		UserInRole system = userInRoleRepository.findBySystemUsername(systemUserName);
+
+		List<ViewGefCalculatedInterpolatedPredictedValues> viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableId(overallId, uId);
+
+		if (viewGeriatricFactorValue.size() > trasholdPoint) {
+
+			int lastIndex = viewGeriatricFactorValue.size();		
+			BigDecimal lastComputedValue = viewGeriatricFactorValue.get(lastIndex-4).getGefValue();
+			BigDecimal lastPredictedValue = viewGeriatricFactorValue.get(lastIndex-1).getGefValue();
+			BigDecimal difference = new BigDecimal(lastPredictedValue.doubleValue() - lastComputedValue.doubleValue());
+
+			
+			if (difference.doubleValue() < 0 && Math.abs(difference.doubleValue()) >= 0.2 * lastComputedValue.doubleValue()) {
+				//			logger.info("difference: " + (difference.doubleValue() - 0.2 * lastComputedValue.doubleValue()));
+				
+				attentionStatus = 'A';				
+				CareProfile careProfile = this.getOrCreateCareProfile(uId, system);				
+				careProfile.setAttentionStatus(attentionStatus);
+				careProfileRepository.save(careProfile);
+				
+			} else {
+				
+				CareProfile careProfile = careProfileRepository.findByUserId(uId);
+				if (careProfile != null && !careProfile.getAttentionStatus().equals('M')) {
+					careProfile.setAttentionStatus(null);
+					careProfileRepository.save(careProfile);
+				}				
+			}
+		}
 		
+		return viewGeriatricFactorValue.size();
+
+	}
+	
+	private CareProfile getOrCreateCareProfile(Long userInRoleId, UserInRole userInRoleCreatedBy) {
+		
+		CareProfile careProfile = careProfileRepository.findByUserId(userInRoleId);
+		
+		if(careProfile == null) {
+			careProfile = new CareProfile();
+			careProfile.setUserInRoleId(userInRoleId);	
+			careProfile.setUserInRoleByCreatedBy(userInRoleCreatedBy);	
+		} else {
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = new Date();
+			String formattedDate = dateFormat.format(date);
+			
+			logger.info("formattedDate: " + formattedDate);
+			careProfile.setLastUpdated(Timestamp.valueOf(formattedDate));
+			careProfile.setUserInRoleByLastUpdatedBy(userInRoleCreatedBy);
+		}
+	
+		return careProfile;
+		
+	}
+
+	private TimeInterval formattedDate(TimeInterval date) {
+
 		String format = "yyyy-MM-01 00:00:00";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 		String formattedDate = simpleDateFormat.format(date.getIntervalStart());
@@ -125,13 +200,13 @@ public class PredictionService {
 		TimeInterval timeInterval = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf(formattedDate), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
 		return timeInterval;
-		
+
 	}
 
-	public void makePredictions(Long dvId, Long uId, Date endDate) {
+	private void makePredictions(Long dvId, Long uId, Date endDate) {
 
 		this.endDate = endDate;
-		
+
 		double[] dataArray = getJointFactorValues(dvId, uId);
 
 		if (dataArray.length > trasholdPoint) { 
