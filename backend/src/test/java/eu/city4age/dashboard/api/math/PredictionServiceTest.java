@@ -47,6 +47,7 @@ import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.UserInSystemRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
+import eu.city4age.dashboard.api.pojo.domain.AttentionStatus;
 import eu.city4age.dashboard.api.pojo.domain.CareProfile;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
@@ -211,7 +212,7 @@ public class PredictionServiceTest {
 		geriatricFactorRepository.save(gef1);
 		
 		GeriatricFactorValue gef2 = new GeriatricFactorValue();
-		gef2.setGefValue(new BigDecimal("2.5"));
+		gef2.setGefValue(new BigDecimal("3.5223592680743034"));
 		gef2.setUserInRole(uir);
 		gef2.setTimeInterval(ti2);
 		gef2.setUserInRoleId(uir.getId());
@@ -247,7 +248,7 @@ public class PredictionServiceTest {
 
 		GeriatricFactorPredictionValue prediction1 = new GeriatricFactorPredictionValue();
 		prediction1.setUserInRoleId(uir.getId());
-		prediction1.setGefValue(new BigDecimal(3.5223592680743034));
+		prediction1.setGefValue(new BigDecimal("2.0"));
 		prediction1.setTimeInterval(timePred1);
 		prediction1.setDetectionVariableId(dv1.getId());
 		geriatricFactorPredictionValueRepository.save(prediction1);
@@ -257,14 +258,16 @@ public class PredictionServiceTest {
 		
 		UserInRole system = userInRoleRepository.findBySystemUsername(systemUserName);
 		Mockito.when(userInRoleRepositoryMock.findBySystemUsername(systemUserName)).thenReturn(system);
-		
+	
 		CareProfile careProfile = new CareProfile();
-		careProfile.setAttentionStatus('A');
 		careProfile.setUserInRoleId(uir.getId());
 		careProfile.setUserInRoleByCreatedBy(system);
+		careProfile.setAttentionStatus(AttentionStatus.Status.A);
 		careProfileRepository.save(careProfile);
-		Mockito.when(careProfileRepositoryMock.save(careProfile)).thenReturn(careProfile);
 		
+		Mockito.when(careProfileRepositoryMock.findByUserId(uir.getId())).thenReturn(null);
+		Mockito.when(careProfileRepositoryMock.save(careProfile)).thenReturn(careProfile);
+	
 		Method method = predictionServiceReflection.getClass().getDeclaredMethod("createAttentionStatus", Long.class);
 		method.setAccessible(true);
 		int result = (int) method.invoke(predictionService, uir.getId());

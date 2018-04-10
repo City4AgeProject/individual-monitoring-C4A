@@ -14,7 +14,7 @@ import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.pojo.domain.CareProfile;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -53,7 +53,6 @@ public class CareProfileRepositoryTest {
 		
 		logger.info("UID1: "+uid1+" UID2: "+uid2);
 		Assert.assertEquals(uid2, uid1);
-		
 		
 	}
 

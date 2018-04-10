@@ -43,7 +43,7 @@ public class CareProfile implements Serializable {
 	private String individualSummary;
 
 	@Column(name = "attention_status")
-	private Character attentionStatus;
+	private AttentionStatus.Status attentionStatus;
 
 	@Column(name = "intervention_status")
 	private Character interventionStatus;
@@ -69,7 +69,7 @@ public class CareProfile implements Serializable {
 	}
 
 	public CareProfile(UserInRole userInRoleByLastUpdatedBy, UserInRole userInRoleByCreatedBy, String individualSummary,
-			Character attentionStatus, Character interventionStatus, Date lastInterventionDate, Date created,
+			AttentionStatus.Status attentionStatus, Character interventionStatus, Date lastInterventionDate, Date created,
 			Date lastUpdated, UserInRole userInRole) {
 		this.userInRoleByLastUpdatedBy = userInRoleByLastUpdatedBy;
 		this.userInRoleByCreatedBy = userInRoleByCreatedBy;
@@ -122,11 +122,11 @@ public class CareProfile implements Serializable {
 		this.individualSummary = individualSummary;
 	}
 
-	public Character getAttentionStatus() {
+	public AttentionStatus.Status getAttentionStatus() {
 		return this.attentionStatus;
 	}
 
-	public void setAttentionStatus(Character attentionStatus) {
+	public void setAttentionStatus(AttentionStatus.Status attentionStatus) {
 		this.attentionStatus = attentionStatus;
 	}
 

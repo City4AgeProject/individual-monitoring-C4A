@@ -19,7 +19,10 @@ public class AttentionEnumUserType implements UserType, Serializable  {
 
     /**
 	 * Author: Vladimir Aleksic
+	 * Note: This class is not needed for now
 	 */
+	
+	
 	private static final long serialVersionUID = 7968115676082680181L;
 
 	static protected Logger logger = LogManager.getLogger(AttentionEnumUserType.class);
@@ -88,7 +91,7 @@ public class AttentionEnumUserType implements UserType, Serializable  {
 		if (null == value) {
             preparedStatement.setNull(index, Types.VARCHAR);
         } else {
-            preparedStatement.setString(index, ((AttentionStatus.Status)value).getName().toLowerCase());
+            preparedStatement.setString(index, String.valueOf(((AttentionStatus.Status)value).getName()));
         }
 		
 	}

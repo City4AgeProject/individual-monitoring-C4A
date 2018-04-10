@@ -27,9 +27,9 @@ import eu.city4age.dashboard.api.jpa.GeriatricFactorPredictionValueRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
-import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
+import eu.city4age.dashboard.api.pojo.domain.AttentionStatus;
 import eu.city4age.dashboard.api.pojo.domain.CareProfile;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
@@ -93,7 +93,7 @@ public class PredictionService {
 		systemUserName = "system";
 	}
 
-	public void interpolateAndPredict(List<Pilot> pilotsList) {
+	public void imputeAndPredict(List<Pilot> pilotsList) {
 
 		//		List<Pilot> pilots = pilotRepository.findPilotsComputed();
 
@@ -133,7 +133,7 @@ public class PredictionService {
 
 	private int createAttentionStatus(Long uId) {
 
-		char attentionStatus;
+		AttentionStatus.Status attentionStatus;
 
 		UserInRole system = userInRoleRepository.findBySystemUsername(systemUserName);
 
@@ -146,19 +146,17 @@ public class PredictionService {
 			BigDecimal lastPredictedValue = viewGeriatricFactorValue.get(lastIndex-1).getGefValue();
 			BigDecimal difference = new BigDecimal(lastPredictedValue.doubleValue() - lastComputedValue.doubleValue());
 
-			
 			if (difference.doubleValue() < 0 && Math.abs(difference.doubleValue()) >= 0.2 * lastComputedValue.doubleValue()) {
-				//			logger.info("difference: " + (difference.doubleValue() - 0.2 * lastComputedValue.doubleValue()));
+//				logger.info("difference: " + (difference.doubleValue() - 0.2 * lastComputedValue.doubleValue()));
 				
-				attentionStatus = 'A';				
+				attentionStatus = AttentionStatus.Status.A;
 				CareProfile careProfile = this.getOrCreateCareProfile(uId, system);				
 				careProfile.setAttentionStatus(attentionStatus);
 				careProfileRepository.save(careProfile);
 				
 			} else {
-				
 				CareProfile careProfile = careProfileRepository.findByUserId(uId);
-				if (careProfile != null && !careProfile.getAttentionStatus().equals('M')) {
+				if (careProfile != null && !careProfile.getAttentionStatus().equals(AttentionStatus.Status.M)) {
 					careProfile.setAttentionStatus(null);
 					careProfileRepository.save(careProfile);
 				}				
@@ -173,6 +171,8 @@ public class PredictionService {
 		
 		CareProfile careProfile = careProfileRepository.findByUserId(userInRoleId);
 		
+//		logger.info("getOrCreateCareProfile");
+		
 		if(careProfile == null) {
 			careProfile = new CareProfile();
 			careProfile.setUserInRoleId(userInRoleId);	
@@ -181,8 +181,7 @@ public class PredictionService {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date date = new Date();
 			String formattedDate = dateFormat.format(date);
-			
-			logger.info("formattedDate: " + formattedDate);
+	//			logger.info("formattedDate: " + formattedDate);
 			careProfile.setLastUpdated(Timestamp.valueOf(formattedDate));
 			careProfile.setUserInRoleByLastUpdatedBy(userInRoleCreatedBy);
 		}

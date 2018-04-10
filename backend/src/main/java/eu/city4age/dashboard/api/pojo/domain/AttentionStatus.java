@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,28 +18,28 @@ public class AttentionStatus implements Serializable {
 	 */
 	private static final long serialVersionUID = 1057210618025594058L;
 	
-	public static final AttentionStatus A = new AttentionStatus(AttentionStatus.Status.A, "Attention needed automatically assigned by the system user.");
-	public static final AttentionStatus M = new AttentionStatus(AttentionStatus.Status.M, "Attention needed manually assigned by human user.");
-	public static final AttentionStatus S = new AttentionStatus(AttentionStatus.Status.S, "Suspended by human user.");
+//	public static final AttentionStatus A = new AttentionStatus(AttentionStatus.Status.A, "Attention needed automatically assigned by the system user.");
+//	public static final AttentionStatus M = new AttentionStatus(AttentionStatus.Status.M, "Attention needed manually assigned by human user.");
+//	public static final AttentionStatus S = new AttentionStatus(AttentionStatus.Status.S, "Suspended by human user.");
 	
 	public enum Status {
-		A("a"), M("m"), S("s");
+		A('A'), M('M'), S('S');
 		
-		private final String name;
+		private final Character name;
 		
-		Status(String name) {
+		Status(Character name) {
 			this.name = name;
 		}
 
-		public String getName() {
+		public Character getName() {
 			return name;
 		}
 	};
 	
-	
 	@Id
 	@Column(name = "attention_status")
-	@org.hibernate.annotations.Type(type = "AttentionEnumUserType")
+//	@org.hibernate.annotations.Type(type = "AttentionEnumUserType")
+	@Enumerated(EnumType.STRING)
 	private Status status;
 
 	@Column(name = "attention_status_description", length = 255)
@@ -52,14 +54,14 @@ public class AttentionStatus implements Serializable {
 	}
 	
 	public String toString() {
-		return status.getName();
+		return status.toString();
 	}
 
-	public AttentionStatus.Status getAttentionStatus() {
+	public AttentionStatus.Status getStatus() {
 		return status;
 	}
 
-	public void setAttentionStatus(AttentionStatus.Status attentionStatus) {
+	public void setStatus(AttentionStatus.Status attentionStatus) {
 		this.status = attentionStatus;
 	}
 

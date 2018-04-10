@@ -133,7 +133,7 @@ public class MeasuresEndpoint {
 		logger.info("computation started: " + new Date());
 
 		List<Pilot> pilots = computeForAllPilots();
-		predictionService.interpolateAndPredict(pilots);
+		predictionService.imputeAndPredict(pilots);
 
 		logger.info("computation completed: " + new Date());
 		return JerseyResponse.buildTextPlain("success", 200);
