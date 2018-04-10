@@ -21,8 +21,8 @@ public interface GeriatricFactorPredictionValueRepository extends GenericReposit
 			@Param("userId") final Long uId);
 
 	
-	@Query("SELECT g FROM GeriatricFactorPredictionValue g WHERE g.timeInterval.intervalStart > :timeInterval AND g.userInRoleId = :userInRoleId")
-	List<GeriatricFactorPredictionValue> deleteObsoletePredictions(@Param("timeInterval") final Date timeInterval, @Param("userInRoleId") final Long userInRoleId);
+	@Query("SELECT g FROM GeriatricFactorPredictionValue g WHERE g.timeInterval.intervalStart > :timeInterval AND g.userInRoleId = :userInRoleId AND g.detectionVariableId = :factorId")
+	List<GeriatricFactorPredictionValue> deleteObsoletePredictions(@Param("timeInterval") final Date timeInterval, @Param("userInRoleId") final Long userInRoleId, @Param("factorId") final Long factorId);
 	
 
 	@Query("SELECT g from GeriatricFactorPredictionValue g")

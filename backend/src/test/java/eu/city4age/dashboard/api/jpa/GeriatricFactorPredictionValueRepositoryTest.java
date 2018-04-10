@@ -109,7 +109,7 @@ public class GeriatricFactorPredictionValueRepositoryTest {
 
 		TimeInterval timeInterval = measuresService.getOrCreateTimeInterval(Timestamp.valueOf(formattedDate), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 		
-		List<GeriatricFactorPredictionValue> predictionsToDelete = geriatricFactorPredictionValueRepository.deleteObsoletePredictions(timeInterval.getIntervalStart(), uir.getId());
+		List<GeriatricFactorPredictionValue> predictionsToDelete = geriatricFactorPredictionValueRepository.deleteObsoletePredictions(timeInterval.getIntervalStart(), uir.getId(), dv1.getId());
 		geriatricFactorPredictionValueRepository.delete(predictionsToDelete);
 		List<GeriatricFactorPredictionValue> predictions = geriatricFactorPredictionValueRepository.getAllPredictions();
 		

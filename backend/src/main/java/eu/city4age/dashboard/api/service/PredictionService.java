@@ -96,35 +96,40 @@ public class PredictionService {
 	public void imputeAndPredict(List<Pilot> pilotsList) {
 
 		//		List<Pilot> pilots = pilotRepository.findPilotsComputed();
-
+		
 		List<Pilot> pilots = pilotsList;
 
 		//		logger.info("pilots size: " + pilots.size());
 
 		for (Pilot pilot : pilots) {
 
+			logger.info("pilotName: " + pilot.getName());
 			List<DetectionVariable> detectionVariables = pilotDetectionVariableRepository.findDetectionVariablesForPrediction(pilot.getPilotCode());
 
 			for (DetectionVariable dv : detectionVariables) {
 
 				List<UserInRole> userInRoles = userInRoleRepository.findCRsByPilotCode(pilot.getPilotCode()); 
+				logger.info("detectionVariableId: " + dv.getId());
 
 				for (UserInRole userInRole : userInRoles) {
 
+					logger.info("UserInRoleId: " + userInRole.getId());
+					
 					// Last date for which there is at least one data item in the DB for the userInRole
 					TimeInterval endDate = geriatricFactorRepository.findMaxIntervalStartByUserInRole(userInRole.getId());
-					//					logger.info("endDate: " + endDate.getIntervalStart());
+					logger.info("endDate: " + endDate.getIntervalStart());
 
 					// Format to the start of the month
 					TimeInterval formattedDate = formattedDate(endDate);
 
 					// Delete obsolete predictions -  FOR USER!
-					geriatricFactorPredictionValueRepository.deleteObsoletePredictions(formattedDate.getIntervalStart(), userInRole.getId());
-
+					List<GeriatricFactorPredictionValue> predictionsToDelete = geriatricFactorPredictionValueRepository.deleteObsoletePredictions(formattedDate.getIntervalStart(), userInRole.getId(), dv.getId());
+					geriatricFactorPredictionValueRepository.delete(predictionsToDelete);
+										
 					imputeFactorService.imputeMissingValues(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
 					this.makePredictions(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
 
-					if (dv.getDetectionVariableType().equals(DetectionVariableType.OVL))
+					if (dv.getDetectionVariableType().toString().equals(DetectionVariableType.OVL.toString()))
 						createAttentionStatus(userInRole.getId());
 				}				
 			}			
@@ -133,6 +138,8 @@ public class PredictionService {
 
 	private int createAttentionStatus(Long uId) {
 
+		logger.info("AttentionStatus: " + "uId: " + uId);
+		
 		AttentionStatus.Status attentionStatus;
 
 		UserInRole system = userInRoleRepository.findBySystemUsername(systemUserName);
@@ -143,11 +150,13 @@ public class PredictionService {
 
 			int lastIndex = viewGeriatricFactorValue.size();		
 			BigDecimal lastComputedValue = viewGeriatricFactorValue.get(lastIndex-4).getGefValue();
+			logger.info("lastComputedValue: " + lastComputedValue);
 			BigDecimal lastPredictedValue = viewGeriatricFactorValue.get(lastIndex-1).getGefValue();
+			logger.info("lastPredictedValue: " + lastPredictedValue);
 			BigDecimal difference = new BigDecimal(lastPredictedValue.doubleValue() - lastComputedValue.doubleValue());
 
 			if (difference.doubleValue() < 0 && Math.abs(difference.doubleValue()) >= 0.2 * lastComputedValue.doubleValue()) {
-//				logger.info("difference: " + (difference.doubleValue() - 0.2 * lastComputedValue.doubleValue()));
+				logger.info("difference: " + (difference.doubleValue() - 0.2 * lastComputedValue.doubleValue()));
 				
 				attentionStatus = AttentionStatus.Status.A;
 				CareProfile careProfile = this.getOrCreateCareProfile(uId, system);				
@@ -156,7 +165,7 @@ public class PredictionService {
 				
 			} else {
 				CareProfile careProfile = careProfileRepository.findByUserId(uId);
-				if (careProfile != null && !careProfile.getAttentionStatus().equals(AttentionStatus.Status.M)) {
+				if (careProfile != null && !careProfile.getAttentionStatus().toString().equals(AttentionStatus.Status.M.toString())) {
 					careProfile.setAttentionStatus(null);
 					careProfileRepository.save(careProfile);
 				}				
@@ -195,7 +204,7 @@ public class PredictionService {
 		String format = "yyyy-MM-01 00:00:00";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 		String formattedDate = simpleDateFormat.format(date.getIntervalStart());
-		logger.info("formatted date: " + formattedDate);
+//		logger.info("formatted date: " + formattedDate);
 		TimeInterval timeInterval = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf(formattedDate), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
 		return timeInterval;

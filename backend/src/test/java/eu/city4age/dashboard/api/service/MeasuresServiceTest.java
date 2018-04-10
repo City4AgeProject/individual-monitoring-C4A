@@ -180,8 +180,6 @@ public class MeasuresServiceTest {
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
-
-
 	@Test
 	@Transactional
 	@Rollback(true)

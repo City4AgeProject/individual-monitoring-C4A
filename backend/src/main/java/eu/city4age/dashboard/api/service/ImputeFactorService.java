@@ -83,16 +83,9 @@ public class ImputeFactorService {
 	private int trashholdPoint;
 
 	public ImputeFactorService() {
-		
+
 		this.trashholdPoint = 3;
-		this.intIntervalsExisting = new ArrayList<Integer>();
-		this.intIntervalsMissing = new ArrayList<Integer>();
-		this.missingTimeIntervals = new ArrayList<TimeInterval>();
-		this.gfValues = new ArrayList<BigDecimal>();
 		this.prevDate = Calendar.getInstance();
-		this.monthCounter = 0;
-		this.gfIndex = 0;
-		this.sumOfValues = 0.0;
 		this.splineInterpolator = new SplineInterpolator();
 		this.prevDate = Calendar.getInstance();
 		this.endDate = Calendar.getInstance();
@@ -101,24 +94,40 @@ public class ImputeFactorService {
 
 	public int imputeMissingValues(Long dvId, Long uId, Date endDatePilot) {
 
-		uirId = uId;
-		detectionVariableId = dvId;
+		this.uirId = uId;
+		this.detectionVariableId = dvId;
+		
+		this.intIntervalsExisting = new ArrayList<Integer>();
+		this.intIntervalsMissing = new ArrayList<Integer>();
+		this.missingTimeIntervals = new ArrayList<TimeInterval>();
+		this.gfValues = new ArrayList<BigDecimal>();
+		
+		this.monthCounter = 0;
+		this.gfIndex = 0;
+//		this.sumOfValues = 0.0;
+
+
+		viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
+		logger.info("viewGeriatricFactorValue 1: " + viewGeriatricFactorValue.size());
 
 		gefList = geriatricFactorRepository.findByDetectionVariableId(dvId, uId);		
 		
-		uir = gefList.get(0).getUserInRole();
-		detectionVariable = gefList.get(0).getDetectionVariable();
+		if (gefList.size() > trashholdPoint) {
 		
-		viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
-		logger.info("viewGeriatricFactorValue 1: "+viewGeriatricFactorValue.size());
-		if(viewGeriatricFactorValue.size() > trashholdPoint) {
-
+			uir = gefList.get(0).getUserInRole();
+			detectionVariable = gefList.get(0).getDetectionVariable();
+		
 			//return interpolateMissingValuesSpline() + extrapolateMissingValuesMean(endDatePilot);
-			int r=interpolateMissingValuesSpline();
-			logger.info("Spline for: "+r);
-			viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
-			logger.info("viewGeriatricFactorValue 2: "+viewGeriatricFactorValue.size());
-			r+=extrapolateMissingValuesArima(endDatePilot);
+			int r = interpolateMissingValuesSpline();
+			logger.info("Spline for: " + r);
+
+			if (r > 0) {
+				viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
+				logger.info("viewGeriatricFactorValue 2: "+viewGeriatricFactorValue.size());
+			}
+
+			r += extrapolateMissingValuesArima(endDatePilot);
+			
 			return r;
 		} else {
 			return -1;
@@ -142,7 +151,7 @@ public class ImputeFactorService {
 
 				ti = getFollowingTimeInterval(prevDate);
 				prevDate.setTime(ti.getIntervalStart());
-				
+
 			}
 
 			intIntervalsExisting.add(monthCounter);
@@ -164,12 +173,12 @@ public class ImputeFactorService {
 
 		x = new double[gfIndex];
 		y = new double[gfIndex];
-		
+
 		for(int i = 0; i < gfIndex; i++) {
-			
+
 			x[i] = intIntervalsExisting.get(i).doubleValue();
 			y[i] = gfValues.get(i).doubleValue();
-			sumOfValues += y[i];
+//			sumOfValues += y[i];
 		}
 
 		polynomialSplineFunction = splineInterpolator.interpolate(x, y);
@@ -180,40 +189,41 @@ public class ImputeFactorService {
 			logger.info("X: " + rawX);
 			interpolatedY = polynomialSplineFunction.value(rawX);
 
-			sumOfValues += interpolatedY;
+//			sumOfValues += interpolatedY;
 			monthCounter++;
 
 			saveImputedValues(missingTimeIntervals.get(i), BigDecimal.valueOf(interpolatedY));
 
 		}
-		
+
 		return intIntervalsMissing.size();
 	}
 
-	private int extrapolateMissingValuesMean(Date endDatePilot) {
+//	private int extrapolateMissingValuesMean(Date endDatePilot) {
+//
+//		extrapolatedMeanValue = sumOfValues/monthCounter;
+//		endDate.setTime(endDatePilot);
+//		int counter=0;
+//
+//		while(prevDate.getTimeInMillis() <= endDate.getTimeInMillis()) {	
+//			//ti=next time interval
+//			saveImputedValues(ti, BigDecimal.valueOf(extrapolatedMeanValue));
+//			//monthCounter++;
+//			counter++;
+//
+//			ti = getFollowingTimeInterval(prevDate);
+//			prevDate.setTime(ti.getIntervalStart());			
+//		}
+//
+//		return counter;
+//	}
 
-		extrapolatedMeanValue = sumOfValues/monthCounter;
-		endDate.setTime(endDatePilot);
-		int counter=0;
-		
-		while(prevDate.getTimeInMillis() <= endDate.getTimeInMillis()) {	
-			//ti=next time interval
-			saveImputedValues(ti, BigDecimal.valueOf(extrapolatedMeanValue));
-			//monthCounter++;
-			counter++;
-
-			ti = getFollowingTimeInterval(prevDate);
-			prevDate.setTime(ti.getIntervalStart());			
-		}
-
-		return counter;
-	}
-	
 	private int extrapolateMissingValuesArima(Date endDatePilot) {
 		//Re-load viewGeriatricFactorValue with interpolated values
-		int vs=viewGeriatricFactorValue.size();
-		double[] dataArray=new double[vs];
-		for(int i=0;i<vs;i++) {
+
+		int vs = viewGeriatricFactorValue.size();
+		double[] dataArray = new double[vs];
+		for(int i = 0; i < vs; i++) {
 			dataArray[i]=viewGeriatricFactorValue.get(i).getGefValue().doubleValue();
 		}
 
@@ -226,6 +236,9 @@ public class ImputeFactorService {
 			tis.add(ti);
 			prevDate.setTime(ti.getIntervalStart());
 		}
+		
+		if (tis.size() == 0) 
+			return 0;
 
 		TimeSeries timeSeries = Ts.newMonthlySeries(dataArray);
 
@@ -270,7 +283,7 @@ public class ImputeFactorService {
 		gef.setGefValue(value);
 		logger.info("TIE: " + gef.getTimeInterval().getStart() + "GFV: " + value.toString());
 		gef = geriatricFactorInterpolationValueRepository.save(gef);
-		
+
 	}
 
 	private TimeInterval getFollowingTimeInterval(Calendar date) {
