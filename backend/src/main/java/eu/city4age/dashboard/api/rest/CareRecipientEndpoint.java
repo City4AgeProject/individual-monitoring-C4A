@@ -271,7 +271,6 @@ public class CareRecipientEndpoint {
                             .toLocalDate();
                     age = (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
                     gender = user.getCrProfile().isGender()?"male":"female";
-                    
 
                 }
 
@@ -286,7 +285,7 @@ public class CareRecipientEndpoint {
                 String detectionDate = "N/A";
 
                 if (user.getCareProfile() != null) {
-                    attention = user.getCareProfile().getAttentionStatus().getName().charValue();
+                    attention = user.getCareProfile().getAttentionStatus();
                     textline = user.getCareProfile().getIndividualSummary();
                     interventionstatus = user.getCareProfile().getInterventionStatus();
                     interventionDate = sdf.format(user.getCareProfile().getLastInterventionDate());

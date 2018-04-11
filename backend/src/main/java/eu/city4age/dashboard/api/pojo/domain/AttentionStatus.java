@@ -53,10 +53,6 @@ public class AttentionStatus implements Serializable {
 		this.attentionStatusDescription = attentionStatusDescription;
 	}
 	
-	public String toString() {
-		return status.toString();
-	}
-
 	public AttentionStatus.Status getStatus() {
 		return status;
 	}

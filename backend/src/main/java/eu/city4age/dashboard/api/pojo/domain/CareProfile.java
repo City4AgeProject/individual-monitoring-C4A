@@ -43,7 +43,7 @@ public class CareProfile implements Serializable {
 	private String individualSummary;
 
 	@Column(name = "attention_status")
-	private AttentionStatus.Status attentionStatus;
+	private Character attentionStatus;
 
 	@Column(name = "intervention_status")
 	private Character interventionStatus;
@@ -53,6 +53,7 @@ public class CareProfile implements Serializable {
 	private Date lastInterventionDate;
 
 	@JsonIgnore
+	@Column(name = "created")
 	private Date created;
 
 	@JsonIgnore
@@ -65,11 +66,11 @@ public class CareProfile implements Serializable {
 	public CareProfile(UserInRole userInRoleByCreatedBy, String individualSummary, Date created) {
 		this.userInRoleByCreatedBy = userInRoleByCreatedBy;
 		this.individualSummary = individualSummary;
-		this.created = created;
+		//this.created = created;
 	}
 
 	public CareProfile(UserInRole userInRoleByLastUpdatedBy, UserInRole userInRoleByCreatedBy, String individualSummary,
-			AttentionStatus.Status attentionStatus, Character interventionStatus, Date lastInterventionDate, Date created,
+			Character attentionStatus, Character interventionStatus, Date lastInterventionDate, Date created,
 			Date lastUpdated, UserInRole userInRole) {
 		this.userInRoleByLastUpdatedBy = userInRoleByLastUpdatedBy;
 		this.userInRoleByCreatedBy = userInRoleByCreatedBy;
@@ -77,7 +78,7 @@ public class CareProfile implements Serializable {
 		this.attentionStatus = attentionStatus;
 		this.interventionStatus = interventionStatus;
 		this.lastInterventionDate = lastInterventionDate;
-		this.created = created;
+		//this.created = created;
 		this.lastUpdated = lastUpdated;
 		this.userInRole = userInRole;
 	}
@@ -122,11 +123,11 @@ public class CareProfile implements Serializable {
 		this.individualSummary = individualSummary;
 	}
 
-	public AttentionStatus.Status getAttentionStatus() {
+	public Character getAttentionStatus() {
 		return this.attentionStatus;
 	}
 
-	public void setAttentionStatus(AttentionStatus.Status attentionStatus) {
+	public void setAttentionStatus(Character attentionStatus) {
 		this.attentionStatus = attentionStatus;
 	}
 

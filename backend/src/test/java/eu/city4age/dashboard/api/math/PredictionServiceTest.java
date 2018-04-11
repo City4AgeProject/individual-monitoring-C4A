@@ -248,7 +248,7 @@ public class PredictionServiceTest {
 
 		GeriatricFactorPredictionValue prediction1 = new GeriatricFactorPredictionValue();
 		prediction1.setUserInRoleId(uir.getId());
-		prediction1.setGefValue(new BigDecimal("2.0"));
+		prediction1.setGefValue(new BigDecimal("2.5"));
 		prediction1.setTimeInterval(timePred1);
 		prediction1.setDetectionVariableId(dv1.getId());
 		geriatricFactorPredictionValueRepository.save(prediction1);
@@ -262,19 +262,20 @@ public class PredictionServiceTest {
 		CareProfile careProfile = new CareProfile();
 		careProfile.setUserInRoleId(uir.getId());
 		careProfile.setUserInRoleByCreatedBy(system);
-		careProfile.setAttentionStatus(AttentionStatus.Status.A);
+		careProfile.setAttentionStatus(null);
 		careProfileRepository.save(careProfile);
 		
-		Mockito.when(careProfileRepositoryMock.findByUserId(uir.getId())).thenReturn(null);
+		Mockito.when(careProfileRepositoryMock.findByUserId(uir.getId())).thenReturn(careProfile);
 		Mockito.when(careProfileRepositoryMock.save(careProfile)).thenReturn(careProfile);
 	
 		Method method = predictionServiceReflection.getClass().getDeclaredMethod("createAttentionStatus", Long.class);
 		method.setAccessible(true);
 		int result = (int) method.invoke(predictionService, uir.getId());
 		
-		Assert.assertEquals(5, result);
+		Assert.assertEquals(5, result);	
 		
 	}
+	
 	
 	@Test
 	@Transactional

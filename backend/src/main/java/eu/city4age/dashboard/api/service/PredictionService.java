@@ -159,14 +159,16 @@ public class PredictionService {
 				logger.info("difference: " + (difference.doubleValue() - 0.2 * lastComputedValue.doubleValue()));
 				
 				attentionStatus = AttentionStatus.Status.A;
-				CareProfile careProfile = this.getOrCreateCareProfile(uId, system);				
-				careProfile.setAttentionStatus(attentionStatus);
+				CareProfile careProfile = this.getOrCreateCareProfile(uId, system);			
+				careProfile.setAttentionStatus(attentionStatus.getName());
 				careProfileRepository.save(careProfile);
 				
 			} else {
 				CareProfile careProfile = careProfileRepository.findByUserId(uId);
-				if (careProfile != null && !careProfile.getAttentionStatus().toString().equals(AttentionStatus.Status.M.toString())) {
+				if (careProfile != null && !String.valueOf(careProfile.getAttentionStatus()).equals(AttentionStatus.Status.M.toString()) && careProfile.getAttentionStatus() != null) {
 					careProfile.setAttentionStatus(null);
+					careProfile.setUserInRoleByLastUpdatedBy(system);
+					careProfile.setLastUpdated(new Date());
 					careProfileRepository.save(careProfile);
 				}				
 			}
@@ -186,12 +188,9 @@ public class PredictionService {
 			careProfile = new CareProfile();
 			careProfile.setUserInRoleId(userInRoleId);	
 			careProfile.setUserInRoleByCreatedBy(userInRoleCreatedBy);	
+			careProfile.setCreated(new Date());
 		} else {
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date date = new Date();
-			String formattedDate = dateFormat.format(date);
-	//			logger.info("formattedDate: " + formattedDate);
-			careProfile.setLastUpdated(Timestamp.valueOf(formattedDate));
+			careProfile.setLastUpdated(new Date());
 			careProfile.setUserInRoleByLastUpdatedBy(userInRoleCreatedBy);
 		}
 	
