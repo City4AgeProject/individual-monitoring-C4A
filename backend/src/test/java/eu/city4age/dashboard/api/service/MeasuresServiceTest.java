@@ -988,23 +988,23 @@ public class MeasuresServiceTest {
 		List<Pilot> comps = pilotRepository.findAllComputed();
 		Mockito.when(pilotRepositoryMock.findAllComputed()).thenReturn(comps);
 
-		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository.findAllForMonthByPilotCodeNui(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC));
-		Mockito.when(variationMeasureValueRepositoryMock.findAllForMonthByPilotCodeNui(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC))).thenReturn(vmsMonthly);
+		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository.findAllForMonthByPilotCodeNui(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Pilot.PilotCode.LCC);
+		Mockito.when(variationMeasureValueRepositoryMock.findAllForMonthByPilotCodeNui(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Pilot.PilotCode.LCC)).thenReturn(vmsMonthly);
 
-		List<Object[]> nuisList = nativeQueryRepository.computeAllNuis(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC.getName()));
-		Mockito.when(nativeQueryRepositoryMock.computeAllNuis(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(nuisList);
+		List<Object[]> nuisList = nativeQueryRepository.computeAllNuis(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Pilot.PilotCode.LCC.getName());
+		Mockito.when(nativeQueryRepositoryMock.computeAllNuis(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Pilot.PilotCode.LCC.getName())).thenReturn(nuisList);
 
-		List<Object[]> gess = nativeQueryRepository.computeAllGess(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC.getName()));
-		Mockito.when(nativeQueryRepositoryMock.computeAllGess(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(gess);
+		List<Object[]> gess = nativeQueryRepository.computeAllGess(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Pilot.PilotCode.LCC.getName());
+		Mockito.when(nativeQueryRepositoryMock.computeAllGess(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), Pilot.PilotCode.LCC.getName())).thenReturn(gess);
 
-		List<Object[]> listGef = nativeQueryRepository.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GEF ,Arrays.asList(Pilot.PilotCode.LCC.getName()));
-		Mockito.when(nativeQueryRepositoryMock.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GEF ,Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(listGef);
+		List<Object[]> listGef = nativeQueryRepository.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GEF ,Pilot.PilotCode.LCC.getName());
+		Mockito.when(nativeQueryRepositoryMock.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GEF ,Pilot.PilotCode.LCC.getName())).thenReturn(listGef);
 
-		List<Object[]> listGfg = nativeQueryRepository.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GFG ,Arrays.asList(Pilot.PilotCode.LCC.getName()));
-		Mockito.when(nativeQueryRepositoryMock.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GFG ,Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(listGfg);
+		List<Object[]> listGfg = nativeQueryRepository.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GFG ,Pilot.PilotCode.LCC.getName());
+		Mockito.when(nativeQueryRepositoryMock.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.GFG ,Pilot.PilotCode.LCC.getName())).thenReturn(listGfg);
 
-		List<Object[]> listOvl = nativeQueryRepository.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.OVL ,Arrays.asList(Pilot.PilotCode.LCC.getName()));
-		Mockito.when(nativeQueryRepositoryMock.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.OVL ,Arrays.asList(Pilot.PilotCode.LCC.getName()))).thenReturn(listOvl);
+		List<Object[]> listOvl = nativeQueryRepository.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.OVL ,Pilot.PilotCode.LCC.getName());
+		Mockito.when(nativeQueryRepositoryMock.computeAllGfvs(Timestamp.valueOf("2016-01-01 00:00:00"), Timestamp.valueOf("2016-01-31 23:59:59.99999"), DetectionVariableType.OVL ,Pilot.PilotCode.LCC.getName())).thenReturn(listOvl);
 
 		Response response = measuresServiceMock.computeFromMeasures();
 

@@ -263,7 +263,7 @@ public class VariationMeasureValueRepositoryTest {
 		Timestamp intervalEnd = Timestamp.valueOf("2017-05-03 00:00:00");
 		List<Pilot.PilotCode> pilots = Arrays.asList(Pilot.PilotCode.LCC);
 		
-		List result = variationMeasureValueRepository.findAllForMonthByPilotCodeNui(intervalStart, intervalEnd, pilots);
+		List result = variationMeasureValueRepository.findAllForMonthByPilotCodeNui(intervalStart, intervalEnd, Pilot.PilotCode.LCC);
 		Assert.assertNotNull(result);
 		
 		Assert.assertEquals(3, result.size());

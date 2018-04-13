@@ -52,6 +52,20 @@ public class PilotRepositoryTest {
 		Assert.assertEquals(0, pilotList.size());
 		
 		}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFindAllPilotsForComputation () {
+		
+		List<Pilot> pilots = pilotRepository.findAllPilotsForComputation();
+		
+		if (pilots != null) System.out.println("pilots.size(): " + pilots.size());
+		
+		if (pilots != null && !pilots.isEmpty()) {
+			for (Pilot pilot : pilots) System.out.println("pilotCode: " + pilot.getPilotCode().getName());
+		}
+	}
 		
 		
 }
