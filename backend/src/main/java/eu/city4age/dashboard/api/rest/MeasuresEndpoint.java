@@ -63,7 +63,7 @@ import io.swagger.annotations.ApiResponses;
  *
  */
 @Component
-@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+//@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 @Path(MeasuresEndpoint.PATH)
 public class MeasuresEndpoint {
 
@@ -142,6 +142,7 @@ public class MeasuresEndpoint {
 		return JerseyResponse.buildTextPlain("success", 200);
 	}
 
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
 			Timestamp endOfMonth, PilotCode pilotCode) {
 		
@@ -214,6 +215,7 @@ public class MeasuresEndpoint {
 		return pilots;
 	}
 
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
 		
 		String stringPilotCode = pilotCode.name().toLowerCase();
@@ -228,6 +230,7 @@ public class MeasuresEndpoint {
 
 	}
 
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	private void setVariablesComputedForAllPilots(Pilot pilot, Timestamp endOfComputation) {
 		
 		pilot.setLatestVariablesComputed(endOfComputation);
@@ -235,6 +238,7 @@ public class MeasuresEndpoint {
 		pilotRepository.save(pilot);
 	}
 
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	private void setNewestSubmittedDataForAllPilots() {
 		
 		List<Pilot> pilots = pilotRepository.findAll();
@@ -274,6 +278,7 @@ public class MeasuresEndpoint {
 		return gfvs;
 	}
 
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCode);
@@ -322,6 +327,7 @@ public class MeasuresEndpoint {
 		return nui;
 	}
 
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	public TimeInterval getOrCreateTimeInterval(Date intervalStart, TypicalPeriod typicalPeriod) {
 		TimeInterval ti = timeIntervalRepository.findByIntervalStartAndTypicalPeriod(intervalStart,
 				typicalPeriod.getDbName());
@@ -335,6 +341,7 @@ public class MeasuresEndpoint {
 		return ti;
 	}
 
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	public TimeInterval getOrCreateTimeIntervalPilotTimeZone(Date intervalStart, TypicalPeriod typicalPeriod, PilotCode pilotCode) {
 		
 		String pilotZone = pilotRepository.findByPilotCode(pilotCode).getTimeZone();
