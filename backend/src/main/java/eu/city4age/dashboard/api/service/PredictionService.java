@@ -92,6 +92,7 @@ public class PredictionService {
 		systemUserName = "system";
 	}
 
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void imputeAndPredict(List<Pilot> pilotsList) {
 
 		//		List<Pilot> pilots = pilotRepository.findPilotsComputed();

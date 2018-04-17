@@ -82,6 +82,9 @@ public class Pilot implements Serializable {
 
 	@Column(name = "time_zone")
 	private String timeZone;
+	
+	@Column(name = "comp_zone")
+	private String compZone;
 
 	public Pilot() {
 	}
@@ -198,6 +201,14 @@ public class Pilot implements Serializable {
 
 	public void setEndOfComputation(YearMonth endOfComputation) {
 		this.endOfComputation = endOfComputation;
+	}
+
+	public String getCompZone() {
+		return compZone;
+	}
+
+	public void setCompZone(String compZone) {
+		this.compZone = compZone;
 	}
 
 }

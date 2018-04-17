@@ -43,10 +43,10 @@ public class ApplicationTest {
 		new SpringApplication(ApplicationTest.class).run(args);
 	}
 	
-	@PostConstruct
+	/*@PostConstruct
 	private void defaultTimeZone() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-	}
+	}*/
 	
 	@Value("${spring.datasource.url}")
 	private String url;

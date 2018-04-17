@@ -28,6 +28,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -69,10 +70,10 @@ public class Application extends SpringBootServletInitializer {
 		new SpringApplication(Application.class).run(args);
 	}
 
-	@PostConstruct
+	/*@PostConstruct
 	private void defaultTimeZone() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC+2"));
-	}
+	}*/
 
 	/**
 	 * Jersey rest services spring boot integration (registering jersey

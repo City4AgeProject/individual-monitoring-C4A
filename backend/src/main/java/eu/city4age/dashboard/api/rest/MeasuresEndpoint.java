@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -63,7 +64,7 @@ import io.swagger.annotations.ApiResponses;
  *
  */
 @Component
-//@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 @Path(MeasuresEndpoint.PATH)
 public class MeasuresEndpoint {
 
@@ -142,7 +143,6 @@ public class MeasuresEndpoint {
 		return JerseyResponse.buildTextPlain("success", 200);
 	}
 
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
 			Timestamp endOfMonth, PilotCode pilotCode) {
 		
@@ -156,57 +156,20 @@ public class MeasuresEndpoint {
 		if (list != null && list.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(list, startOfMonth, endOfMonth, pilotCode);
 			nuiRepository.bulkSave(gfvs);
+			//nuiRepository.flush();
 		}
 	}
 
 	private List<Pilot> computeForAllPilots() {
+		
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
 		List<Pilot> pilots = pilotRepository.findAllPilotsForComputation();
 
 		if (pilots != null && !pilots.isEmpty()) {
 
 			for (Pilot pilot : pilots) {
-
-				PilotCode pilotCode = pilot.getPilotCode();
-
-				Date latestDerivedMeasuresComputed = pilot.getLatestVariablesComputed();
-				Date newestSubmittedData = pilot.getNewestSubmittedData();
-				
-				YearMonth startOfComputationYearMonth;
-
-				if (latestDerivedMeasuresComputed == null) {
-					startOfComputationYearMonth = 
-							YearMonth.from(variationMeasureValueRepository.findFirstMonthForPilot(pilot.getPilotCode()).toInstant().atZone(ZoneOffset.UTC).toLocalDate());
-				} else {
-					startOfComputationYearMonth = 
-							YearMonth.from(pilotRepository.findNextMonthForPilot(pilot.getPilotCode()).toInstant().atZone(ZoneOffset.UTC).toLocalDate());
-				}
-
-				YearMonth endOfComputationYearMonth = YearMonth.from(YearMonth.from(newestSubmittedData.toInstant().atZone(ZoneOffset.UTC).toLocalDate()));
-
-				Timestamp startOfMonth;
-				Timestamp endOfMonth;
-				
-				if (endOfComputationYearMonth.isBefore(YearMonth.now())) {
-					endOfComputationYearMonth = endOfComputationYearMonth.plusMonths(1L);
-					if (pilot.getLatestVariablesComputed() != null) startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
-				}
-				
-				while(!startOfComputationYearMonth.equals(endOfComputationYearMonth)) {
-
-					startOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atDay(1).atStartOfDay());
-					endOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
-
-					computeNuisFor1Month(startOfMonth, endOfMonth, pilotCode);
-					computeGESsFor1Month(startOfMonth, endOfMonth, pilotCode);
-					computeFor1Month(DetectionVariableType.GEF, startOfMonth, endOfMonth, pilotCode);
-					computeFor1Month(DetectionVariableType.GFG, startOfMonth, endOfMonth, pilotCode);
-					computeFor1Month(DetectionVariableType.OVL, startOfMonth, endOfMonth, pilotCode);
-					startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
-				}
-
-				Timestamp endOfComputation = Timestamp.valueOf(endOfComputationYearMonth.minusMonths(1L).atDay(1).atStartOfDay());
-				setVariablesComputedForAllPilots(pilot, endOfComputation);
+				computeFor1Pilot(pilot);
 			}
 		} else {
 			logger.info("No new data submitted!");
@@ -215,7 +178,53 @@ public class MeasuresEndpoint {
 		return pilots;
 	}
 
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+	private void computeFor1Pilot(Pilot pilot) {
+		PilotCode pilotCode = pilot.getPilotCode();
+		
+		logger.info("pilotCode: " + pilotCode.name());
+
+		Date latestDerivedMeasuresComputed = pilot.getLatestVariablesComputed();
+		Date newestSubmittedData = pilot.getNewestSubmittedData();
+		
+		YearMonth startOfComputationYearMonth;
+
+		if (latestDerivedMeasuresComputed == null) {
+			startOfComputationYearMonth = 
+					YearMonth.from(variationMeasureValueRepository.findFirstMonthForPilot(pilot.getPilotCode()).toInstant().atZone(ZoneOffset.UTC).toLocalDate());
+		} else {
+			startOfComputationYearMonth = 
+					YearMonth.from(pilotRepository.findNextMonthForPilot(pilot.getPilotCode()).toInstant().atZone(ZoneOffset.UTC).toLocalDate());
+		}
+
+		YearMonth endOfComputationYearMonth = YearMonth.from(YearMonth.from(newestSubmittedData.toInstant().atZone(ZoneOffset.UTC).toLocalDate()));
+
+		Timestamp startOfMonth;
+		Timestamp endOfMonth;
+		
+		if (endOfComputationYearMonth.isBefore(YearMonth.now())) {
+			endOfComputationYearMonth = endOfComputationYearMonth.plusMonths(1L);
+			if (pilot.getLatestVariablesComputed() != null) startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
+		}
+		
+		while(!startOfComputationYearMonth.equals(endOfComputationYearMonth)) {
+
+			startOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atDay(1).atStartOfDay());
+			endOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
+			
+			logger.info(startOfMonth);
+			
+			computeNuisFor1Month(startOfMonth, endOfMonth, pilotCode);
+			computeGESsFor1Month(startOfMonth, endOfMonth, pilotCode);
+			computeFor1Month(DetectionVariableType.GEF, startOfMonth, endOfMonth, pilotCode);
+			computeFor1Month(DetectionVariableType.GFG, startOfMonth, endOfMonth, pilotCode);
+			computeFor1Month(DetectionVariableType.OVL, startOfMonth, endOfMonth, pilotCode);
+			startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
+		}
+
+		Timestamp endOfComputation = Timestamp.valueOf(endOfComputationYearMonth.minusMonths(1L).atDay(1).atStartOfDay());
+		setVariablesComputedForAllPilots(pilot, endOfComputation);
+	}
+
 	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
 		
 		String stringPilotCode = pilotCode.name().toLowerCase();
@@ -226,19 +235,19 @@ public class MeasuresEndpoint {
 		if(gess != null && gess.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(gess, startOfMonth, endOfMonth, pilotCode);
 			nuiRepository.bulkSave(gfvs);
+			//nuiRepository.flush();
 		}
 
 	}
 
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	private void setVariablesComputedForAllPilots(Pilot pilot, Timestamp endOfComputation) {
 		
 		pilot.setLatestVariablesComputed(endOfComputation);
 		pilot.setTimeOfComputation(new Date());
 		pilotRepository.save(pilot);
+		//pilotRepository.flush();
 	}
 
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	private void setNewestSubmittedDataForAllPilots() {
 		
 		List<Pilot> pilots = pilotRepository.findAll();
@@ -249,6 +258,7 @@ public class MeasuresEndpoint {
 					Timestamp newestSubmittedData = variationMeasureValueRepository.findMaxTimeIntervalStartByPilotCode(pilot.getPilotCode());
 					pilot.setNewestSubmittedData(newestSubmittedData);
 					pilotRepository.save(pilot);
+					//pilotRepository.flush();
 				}
 			}
 		}
@@ -278,7 +288,6 @@ public class MeasuresEndpoint {
 		return gfvs;
 	}
 
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCode);
@@ -286,6 +295,7 @@ public class MeasuresEndpoint {
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
 			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth, pilotCode);
 			nuiRepository.bulkSave(nuis);
+			//nuiRepository.flush();
 		}
 	}
 
@@ -327,7 +337,6 @@ public class MeasuresEndpoint {
 		return nui;
 	}
 
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	public TimeInterval getOrCreateTimeInterval(Date intervalStart, TypicalPeriod typicalPeriod) {
 		TimeInterval ti = timeIntervalRepository.findByIntervalStartAndTypicalPeriod(intervalStart,
 				typicalPeriod.getDbName());
@@ -337,15 +346,15 @@ public class MeasuresEndpoint {
 			ti.setTypicalPeriod(typicalPeriod.getDbName());
 			ti.setCreated(new Timestamp((new Date().getTime())));
 			timeIntervalRepository.save(ti);
+			//timeIntervalRepository.flush();
 		}
 		return ti;
 	}
 
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	public TimeInterval getOrCreateTimeIntervalPilotTimeZone(Date intervalStart, TypicalPeriod typicalPeriod, PilotCode pilotCode) {
 		
-		String pilotZone = pilotRepository.findByPilotCode(pilotCode).getTimeZone();
-		TimeZone.setDefault(TimeZone.getTimeZone(pilotZone));
+		//String computationTimeZone = pilotRepository.findByPilotCode(pilotCode).getCompZone();
+		//TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		TimeInterval ti = timeIntervalRepository.findByIntervalStartAndTypicalPeriod(intervalStart,
 				typicalPeriod.getDbName());
 		if (ti == null) {
@@ -354,8 +363,9 @@ public class MeasuresEndpoint {
 			ti.setTypicalPeriod(typicalPeriod.getDbName());
 			ti.setCreated(new Timestamp((new Date().getTime())));
 			timeIntervalRepository.save(ti);
+			//timeIntervalRepository.flush();
 		}
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		//TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		return ti;
 	}
 	
@@ -367,9 +377,92 @@ public class MeasuresEndpoint {
 		List<NumericIndicatorValue> nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, detectionVariableId);
 		return JerseyResponse.build(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis));
 	}
+	
+	@GET
+	@ApiOperation("Method for fixing time intervals to have interval start and typical period, not interval start and interval end")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("fixTimeIntervals")
+	public Response fixTimeIntervals () {
+		
+		List<VariationMeasureValue> retList = new ArrayList <VariationMeasureValue> ();
+		List<VariationMeasureValue> delList = new ArrayList <VariationMeasureValue> ();
+		
+		List<VariationMeasureValue> sameDaySleepMeasures = variationMeasureValueRepository.findAllSleepMeasuresInSameDay();
+		
+		for (VariationMeasureValue vm : sameDaySleepMeasures) {
+			
+			Timestamp intervalStart = timeIntervalRepository.getTruncatedTimeIntervalStart(vm.getTimeInterval().getId(), "day");
+			TimeInterval newTimeInterval = getOrCreateTimeInterval(intervalStart, TypicalPeriod.DAY);
+			
+			vm.setTimeInterval(newTimeInterval);
+						
+			List<VariationMeasureValue> filteredSameDaySleepMeasures = retList.stream().filter(p -> p.getUserInRole().getId().equals(vm.getUserInRole().getId()) && p.getDetectionVariable().getId().equals(vm.getDetectionVariable().getId()) && p.getTimeInterval().getId().equals(vm.getTimeInterval().getId())).collect(Collectors.toList());
+			
+			if (filteredSameDaySleepMeasures.isEmpty())
+				retList.add(vm);
+			
+			else if (filteredSameDaySleepMeasures.size() == 1) {
+				
+				VariationMeasureValue vmv = filteredSameDaySleepMeasures.get(0);
+				int pos = retList.indexOf(vmv);
+				vmv.setMeasureValue(vmv.getMeasureValue().add(vm.getMeasureValue()));
+				
+				retList.set(pos, vmv);
+				delList.add(vm);
+			}
+		}
+		
+		List<VariationMeasureValue> differentDaysSleepMeasures = variationMeasureValueRepository.findAllSleepMeasuresInDifferentDays();
+		
+		for (VariationMeasureValue vm : differentDaysSleepMeasures) {
+			
+			// ovde dohvata end, jer je to razlika izmedju start i end
+			Timestamp intervalDiff = timeIntervalRepository.getTruncatedTimeIntervalEnd(vm.getTimeInterval().getId(), "day");
+			TimeInterval newTimeInterval = null;
+			
+			if (determineTimeInterval(vm.getTimeInterval().getIntervalStart().getTime(), vm.getTimeInterval().getIntervalEnd().getTime(), intervalDiff.getTime()) == 0)
+				newTimeInterval = getOrCreateTimeInterval(timeIntervalRepository.getTruncatedTimeIntervalStart(vm.getTimeInterval().getId(), "day"), TypicalPeriod.DAY);
+				
+			else
+				newTimeInterval = getOrCreateTimeInterval(intervalDiff, TypicalPeriod.DAY);
+			
+			vm.setTimeInterval(newTimeInterval);
+			
+			List<VariationMeasureValue> filtereddifferentDaysSleepMeasures = retList.stream().filter(p -> p.getUserInRole().getId().equals(vm.getUserInRole().getId()) && p.getDetectionVariable().getId().equals(vm.getDetectionVariable().getId()) && p.getTimeInterval().getId().equals(vm.getTimeInterval().getId())).collect(Collectors.toList());
+			
+			if (filtereddifferentDaysSleepMeasures.isEmpty())
+				retList.add(vm);
+			
+			else if (filtereddifferentDaysSleepMeasures.size() == 1) {
+				
+				VariationMeasureValue vmv = filtereddifferentDaysSleepMeasures.get(0);
+				int pos = retList.indexOf(vmv);
+				vmv.setMeasureValue(vmv.getMeasureValue().add(vm.getMeasureValue()));
+				
+				retList.set(pos, vmv);
+				delList.add(vm);
+			}
+		}
+		
+		variationMeasureValueRepository.delete(delList);
+		variationMeasureValueRepository.flush();
+		variationMeasureValueRepository.bulkSave (retList);
+		
+		return JerseyResponse.buildTextPlain("success", 200);
+		
+	}
+	
+	public int determineTimeInterval (long start, long end, long differentiator) {
+		
+		if ((differentiator - start) >= (end - differentiator)) return 0;
+		else return 1;
+		
+	}
 
 	public String mockitoTest() {
 		return "hello";
 	}
+	
+	
 
 }
