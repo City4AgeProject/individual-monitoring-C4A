@@ -99,8 +99,6 @@ public class PredictionService {
 		
 		List<Pilot> pilots = pilotsList;
 
-		//		logger.info("pilots size: " + pilots.size());
-
 		for (Pilot pilot : pilots) {
 
 			logger.info("pilotName: " + pilot.getName());
@@ -247,7 +245,7 @@ public class PredictionService {
 			for (int i = 0; i < predictionSize; i++) {
 				GeriatricFactorPredictionValue prediction = new GeriatricFactorPredictionValue();
 				prediction.setUserInRoleId(uId);
-				prediction.setGefValue(new BigDecimal(forecast.pointEstimates().at(i)));
+				prediction.setGefValue(makeValid(new BigDecimal(forecast.pointEstimates().at(i))));
 				prediction.setTimeInterval(computeMonthWithOffset(i+1));
 				prediction.setDetectionVariableId(dvId);
 				geriatricFactorPredictionValueRepository.save(prediction);
@@ -255,6 +253,17 @@ public class PredictionService {
 		}
 	}
 
+	private BigDecimal makeValid(BigDecimal value) {
+		
+		if (value.doubleValue() < 0)
+			return new BigDecimal(0);
+		else if (value.doubleValue() > 5)
+			return new BigDecimal(5);
+		else
+			return value;
+		
+	}
+	
 	// Finds date with monthOffset from the endDate
 	private TimeInterval computeMonthWithOffset(int offset) {
 
