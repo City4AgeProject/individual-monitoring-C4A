@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -64,7 +65,6 @@ import io.swagger.annotations.ApiResponses;
  *
  */
 @Component
-@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 @Path(MeasuresEndpoint.PATH)
 public class MeasuresEndpoint {
 
@@ -130,20 +130,21 @@ public class MeasuresEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("computeFromMeasures")
 	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
-	public Response computeFromMeasures() throws JsonProcessingException, IOException {
+	public Response computeFromMeasures() throws JsonProcessingException, IOException, Exception {
 
 		logger.info("computation started: " + new Date());
 
 		setNewestSubmittedDataForAllPilots();
 		List<Pilot> pilots = computeForAllPilots();
 
-		predictionService.imputeAndPredict(pilots);
+		//predictionService.imputeAndPredict(pilots);
 		
 		logger.info("computation completed: " + new Date());
 		return JerseyResponse.buildTextPlain("success", 200);
 	}
 
-	private void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
+	//@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.SUPPORTS, readOnly = false, isolation = Isolation.SERIALIZABLE)
+	public List<GeriatricFactorValue> computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
 			Timestamp endOfMonth, PilotCode pilotCode) {
 		
 		String stringPilotCode = pilotCode.name().toLowerCase();
@@ -155,12 +156,14 @@ public class MeasuresEndpoint {
 
 		if (list != null && list.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(list, startOfMonth, endOfMonth, pilotCode);
-			nuiRepository.bulkSave(gfvs);
+			//nuiRepository.bulkSave(gfvs);
 			//nuiRepository.flush();
-		}
+			return gfvs;
+		} else return null;
 	}
 
-	private List<Pilot> computeForAllPilots() {
+	//@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false, isolation = Isolation.SERIALIZABLE)
+	public List<Pilot> computeForAllPilots() throws Exception {
 		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
@@ -178,7 +181,8 @@ public class MeasuresEndpoint {
 		return pilots;
 	}
 
-	private void computeFor1Pilot(Pilot pilot) {
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false, isolation = Isolation.SERIALIZABLE)
+	public void computeFor1Pilot(Pilot pilot) throws Exception {
 		PilotCode pilotCode = pilot.getPilotCode();
 		
 		logger.info("pilotCode: " + pilotCode.name());
@@ -198,13 +202,50 @@ public class MeasuresEndpoint {
 
 		YearMonth endOfComputationYearMonth = YearMonth.from(YearMonth.from(newestSubmittedData.toInstant().atZone(ZoneOffset.UTC).toLocalDate()));
 
-		Timestamp startOfMonth;
-		Timestamp endOfMonth;
+		//Timestamp startOfMonth;
+		//Timestamp endOfMonth;
 		
 		if (endOfComputationYearMonth.isBefore(YearMonth.now())) {
 			endOfComputationYearMonth = endOfComputationYearMonth.plusMonths(1L);
 			if (pilot.getLatestVariablesComputed() != null) startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
 		}
+		
+		computeAllNuis(startOfComputationYearMonth, endOfComputationYearMonth, pilotCode);
+		computeAllGess(startOfComputationYearMonth, endOfComputationYearMonth, pilotCode);
+		computeAll(DetectionVariableType.GEF, startOfComputationYearMonth, endOfComputationYearMonth, pilotCode);
+		computeAll(DetectionVariableType.GFG, startOfComputationYearMonth, endOfComputationYearMonth, pilotCode);
+		computeAll(DetectionVariableType.OVL, startOfComputationYearMonth, endOfComputationYearMonth, pilotCode);
+		
+		/*while(!startOfComputationYearMonth.equals(endOfComputationYearMonth)) {
+
+			startOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atDay(1).atStartOfDay());
+			endOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
+			
+			logger.info(startOfMonth);
+			
+			// ROLLBACK SCENARIO!!!!!!!!!!
+			if (startOfMonth.equals(Timestamp.valueOf("2017-06-01 00:00:00.0")) && pilot.getPilotCode() == Pilot.PilotCode.ATH) throw new RuntimeException("RUNTIME EXCEPTION JE BACEN!!!");
+			
+			computeNuisFor1Month(startOfMonth, endOfMonth, pilotCode);
+			computeGESsFor1Month(startOfMonth, endOfMonth, pilotCode);
+			computeFor1Month(DetectionVariableType.GEF, startOfMonth, endOfMonth, pilotCode);
+			computeFor1Month(DetectionVariableType.GFG, startOfMonth, endOfMonth, pilotCode);
+			computeFor1Month(DetectionVariableType.OVL, startOfMonth, endOfMonth, pilotCode);
+			startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
+		}*/
+
+		Timestamp endOfComputation = Timestamp.valueOf(endOfComputationYearMonth.minusMonths(1L).atDay(1).atStartOfDay());
+		setVariablesComputedForAllPilots(pilot, endOfComputation);
+	}
+
+	private void computeAll(DetectionVariableType detectionVariableType, YearMonth startOfComputationYearMonth,
+			YearMonth endOfComputationYearMonth, PilotCode pilotCode) {
+		
+		logger.info("computeAll: ");
+		
+		Timestamp startOfMonth;
+		Timestamp endOfMonth;
+		List<GeriatricFactorValue> gfvs = new ArrayList<>();
 		
 		while(!startOfComputationYearMonth.equals(endOfComputationYearMonth)) {
 
@@ -213,19 +254,71 @@ public class MeasuresEndpoint {
 			
 			logger.info(startOfMonth);
 			
-			computeNuisFor1Month(startOfMonth, endOfMonth, pilotCode);
-			computeGESsFor1Month(startOfMonth, endOfMonth, pilotCode);
-			computeFor1Month(DetectionVariableType.GEF, startOfMonth, endOfMonth, pilotCode);
-			computeFor1Month(DetectionVariableType.GFG, startOfMonth, endOfMonth, pilotCode);
-			computeFor1Month(DetectionVariableType.OVL, startOfMonth, endOfMonth, pilotCode);
+			// ROLLBACK SCENARIO!!!!!!!!!!
+			//if (startOfMonth.equals(Timestamp.valueOf("2017-06-01 00:00:00.0")) && pilotCode == Pilot.PilotCode.ATH) throw new RuntimeException("RUNTIME EXCEPTION JE BACEN!!!");
+
+			gfvs.addAll(computeFor1Month(detectionVariableType, startOfMonth, endOfMonth, pilotCode));
 			startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
 		}
-
-		Timestamp endOfComputation = Timestamp.valueOf(endOfComputationYearMonth.minusMonths(1L).atDay(1).atStartOfDay());
-		setVariablesComputedForAllPilots(pilot, endOfComputation);
+		nuiRepository.bulkSave(gfvs);
 	}
 
-	private void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
+	private void computeAllGess(YearMonth startOfComputationYearMonth, YearMonth endOfComputationYearMonth,
+			PilotCode pilotCode) throws Exception {
+		
+		logger.info("computeAllGess: ");
+		
+		Timestamp startOfMonth;
+		Timestamp endOfMonth;
+		List<GeriatricFactorValue> gess = new ArrayList<>();
+		
+		while(!startOfComputationYearMonth.equals(endOfComputationYearMonth)) {
+
+			startOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atDay(1).atStartOfDay());
+			endOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
+			
+			logger.info(startOfMonth);
+			
+			// ROLLBACK SCENARIO!!!!!!!!!!
+			//if (startOfMonth.equals(Timestamp.valueOf("2017-06-01 00:00:00.0")) && pilotCode == Pilot.PilotCode.ATH) throw new Exception("EXCEPTION JE BACEN!!!");
+			
+			gess.addAll(computeGESsFor1Month(startOfMonth, endOfMonth, pilotCode));
+			startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
+		}
+		
+		nuiRepository.bulkSave(gess);
+		
+	}
+
+	private void computeAllNuis(YearMonth startOfComputationYearMonth, YearMonth endOfComputationYearMonth,
+			PilotCode pilotCode) {
+		
+		logger.info("computeAllNuis: ");
+		
+		Timestamp startOfMonth;
+		Timestamp endOfMonth;
+		List<NumericIndicatorValue> nuis = new ArrayList<>();
+		
+		while(!startOfComputationYearMonth.equals(endOfComputationYearMonth)) {
+
+			startOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atDay(1).atStartOfDay());
+			endOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
+			
+			logger.info(startOfMonth);
+			
+			// ROLLBACK SCENARIO!!!!!!!!!!
+			//if (startOfMonth.equals(Timestamp.valueOf("2017-06-01 00:00:00.0")) && pilotCode == Pilot.PilotCode.ATH) throw new RuntimeException("RUNTIME EXCEPTION JE BACEN!!!");
+			
+			nuis.addAll(computeNuisFor1Month(startOfMonth, endOfMonth, pilotCode));
+			startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
+		}
+		
+		nuiRepository.bulkSave(nuis);
+		
+	}
+
+	//@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.SUPPORTS, readOnly = false, isolation = Isolation.SERIALIZABLE)
+	public List<GeriatricFactorValue> computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
 		
 		String stringPilotCode = pilotCode.name().toLowerCase();
 		
@@ -234,13 +327,15 @@ public class MeasuresEndpoint {
 
 		if(gess != null && gess.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(gess, startOfMonth, endOfMonth, pilotCode);
-			nuiRepository.bulkSave(gfvs);
+			//nuiRepository.bulkSave(gfvs);
 			//nuiRepository.flush();
-		}
+			return gfvs;
+		} else return null;
 
 	}
 
-	private void setVariablesComputedForAllPilots(Pilot pilot, Timestamp endOfComputation) {
+	//@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.SUPPORTS, readOnly = false, isolation = Isolation.SERIALIZABLE)
+	public void setVariablesComputedForAllPilots(Pilot pilot, Timestamp endOfComputation) {
 		
 		pilot.setLatestVariablesComputed(endOfComputation);
 		pilot.setTimeOfComputation(new Date());
@@ -248,7 +343,7 @@ public class MeasuresEndpoint {
 		//pilotRepository.flush();
 	}
 
-	private void setNewestSubmittedDataForAllPilots() {
+	public void setNewestSubmittedDataForAllPilots() {
 		
 		List<Pilot> pilots = pilotRepository.findAll();
 
@@ -264,7 +359,7 @@ public class MeasuresEndpoint {
 		}
 	}
 
-	private List<GeriatricFactorValue> createAllGFVs(List<Object[]> list, Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
+	public List<GeriatricFactorValue> createAllGFVs(List<Object[]> list, Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
 		
 		final List<GeriatricFactorValue> gfvs = new ArrayList<GeriatricFactorValue>();
 		final TimeInterval ti = getOrCreateTimeIntervalPilotTimeZone(startOfMonth, TypicalPeriod.MONTH, pilotCode);
@@ -288,18 +383,22 @@ public class MeasuresEndpoint {
 		return gfvs;
 	}
 
-	private void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
+	//@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.SUPPORTS, readOnly = false, isolation = Isolation.SERIALIZABLE)
+	public List<NumericIndicatorValue> computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCode);
 
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
 			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth, pilotCode);
-			nuiRepository.bulkSave(nuis);
+			return nuis;
+			//nuiRepository.bulkSave(nuis);
 			//nuiRepository.flush();
+		} else {
+			return null;
 		}
 	}
 
-	private List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
+	public List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
 		
 		final List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
 
@@ -322,7 +421,7 @@ public class MeasuresEndpoint {
 
 	}
 
-	private NumericIndicatorValue create1Nui(Integer userId, Integer nuiDvId, Double nuiValue, Timestamp startOfMonth, PilotCode pilotCode) {
+	public NumericIndicatorValue create1Nui(Integer userId, Integer nuiDvId, Double nuiValue, Timestamp startOfMonth, PilotCode pilotCode) {
 		
 		NumericIndicatorValue nui = new NumericIndicatorValue();
 		if (nuiValue != null) {

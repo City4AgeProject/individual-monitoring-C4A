@@ -134,7 +134,11 @@ public class Application extends SpringBootServletInitializer {
 	 */
 	@Bean
 	public PlatformTransactionManager transactionManager() {
-		return new JtaTransactionManager();
+		
+		JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
+	    jtaTransactionManager.setAllowCustomIsolationLevels(true);
+
+	    return jtaTransactionManager;
 	}
 
 	/**
