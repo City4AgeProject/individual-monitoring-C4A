@@ -93,46 +93,44 @@ public class PredictionService {
 	}
 
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public void imputeAndPredict(List<Pilot> pilotsList) {
+	public void imputeAndPredict(Pilot pilot) {
 
 		//		List<Pilot> pilots = pilotRepository.findPilotsComputed();
-		
-		List<Pilot> pilots = pilotsList;
 
-		for (Pilot pilot : pilots) {
 
-			logger.info("pilotName: " + pilot.getName());
-			List<DetectionVariable> detectionVariables = pilotDetectionVariableRepository.findDetectionVariablesForPrediction(pilot.getPilotCode());
 
-			for (DetectionVariable dv : detectionVariables) {
+		logger.info("pilotName: " + pilot.getName());
+		List<DetectionVariable> detectionVariables = pilotDetectionVariableRepository.findDetectionVariablesForPrediction(pilot.getPilotCode());
 
-				List<UserInRole> userInRoles = userInRoleRepository.findCRsByPilotCode(pilot.getPilotCode()); 
-				logger.info("detectionVariableId: " + dv.getId());
+		for (DetectionVariable dv : detectionVariables) {
 
-				for (UserInRole userInRole : userInRoles) {
+			List<UserInRole> userInRoles = userInRoleRepository.findCRsByPilotCode(pilot.getPilotCode()); 
+			logger.info("detectionVariableId: " + dv.getId());
 
-					logger.info("UserInRoleId: " + userInRole.getId());
-					
-					// Last date for which there is at least one data item in the DB for the userInRole
-					TimeInterval endDate = geriatricFactorRepository.findMaxIntervalStartByUserInRole(userInRole.getId());
-					logger.info("endDate: " + endDate.getIntervalStart());
+			for (UserInRole userInRole : userInRoles) {
 
-					// Format to the start of the month
-					TimeInterval formattedDate = formattedDate(endDate);
+				logger.info("UserInRoleId: " + userInRole.getId());
 
-					// Delete obsolete predictions -  FOR USER!
-					List<GeriatricFactorPredictionValue> predictionsToDelete = geriatricFactorPredictionValueRepository.deleteObsoletePredictions(formattedDate.getIntervalStart(), userInRole.getId(), dv.getId());
-					geriatricFactorPredictionValueRepository.delete(predictionsToDelete);
-										
-					imputeFactorService.imputeMissingValues(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
-					this.makePredictions(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
+				// Last date for which there is at least one data item in the DB for the userInRole
+				TimeInterval endDate = geriatricFactorRepository.findMaxIntervalStartByUserInRole(userInRole.getId());
+				logger.info("endDate: " + endDate.getIntervalStart());
 
-					if (dv.getDetectionVariableType().toString().equals(DetectionVariableType.OVL.toString()))
-						createAttentionStatus(userInRole.getId());
-				}				
-			}			
-		}
+				// Format to the start of the month
+				TimeInterval formattedDate = formattedDate(endDate);
+
+				// Delete obsolete predictions -  FOR USER!
+				List<GeriatricFactorPredictionValue> predictionsToDelete = geriatricFactorPredictionValueRepository.deleteObsoletePredictions(formattedDate.getIntervalStart(), userInRole.getId(), dv.getId());
+				geriatricFactorPredictionValueRepository.delete(predictionsToDelete);
+
+				imputeFactorService.imputeMissingValues(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
+				this.makePredictions(dv.getId(), userInRole.getId(), formattedDate.getIntervalStart());
+
+				if (dv.getDetectionVariableType().toString().equals(DetectionVariableType.OVL.toString()))
+					createAttentionStatus(userInRole.getId());
+			}				
+		}			
 	}
+	
 
 	private int createAttentionStatus(Long uId) {
 

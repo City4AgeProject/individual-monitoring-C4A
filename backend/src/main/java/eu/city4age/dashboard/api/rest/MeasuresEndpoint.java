@@ -144,7 +144,7 @@ public class MeasuresEndpoint {
 		
 		List<Pilot> pilots = computeForAllPilots(pilotsForComputation);
 
-		predictionService.imputeAndPredict(pilots);
+		pilots = imputeAndPredict(pilots);
 		
 		logger.info("computation completed: " + new Date());
 		return JerseyResponse.buildTextPlain("success", 200);
@@ -166,6 +166,46 @@ public class MeasuresEndpoint {
 			//nuiRepository.flush();
 		}
 	}
+	
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+	public List<Pilot> imputeAndPredict(List<Pilot> pilots) {
+		
+		if (pilots != null && !pilots.isEmpty()) {
+			Iterator<Pilot> pilotsIterator = pilots.iterator();
+			while (pilotsIterator.hasNext()) {
+				Pilot pilot = pilotsIterator.next();
+				String request = "http://localhost:8080/C4A-dashboard/rest/measures/imputeAndPredictFor1Pilot/" + pilot.getPilotCode().name();
+				ResponseEntity<String> response = restTemplate.getForEntity(request, String.class);
+				
+				if (response.getBody().contains("failed")) {
+					logger.info("");
+					logger.info("IMPUTE_AND_PREDICT FAILED FOR PILOT: " + pilot.getPilotCode().name() + ".");
+					logger.info("");
+					pilotsIterator.remove();
+				}
+			}
+		} 
+		else {
+			logger.info("No new data submitted!");
+		}
+		return pilots;
+	}
+	
+	@GET
+	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path ("imputeAndPredictFor1Pilot/{pilotCode}")
+	public Response imputeAndPredictFor1Pilot (@PathParam("pilotCode") String pilotCodeString) {
+		
+		Pilot pilot = pilotRepository.findByPilotCode(Pilot.PilotCode.valueOf(pilotCodeString.toUpperCase()));
+		try {
+			predictionService.imputeAndPredict(pilot);
+			return JerseyResponse.buildTextPlain("success");
+		} catch (Exception e) {
+			return JerseyResponse.buildTextPlain("failed");
+		}
+		
+	}
 
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	public List<Pilot> computeForAllPilots(List<Pilot> pilotsForComputation) {
@@ -185,6 +225,7 @@ public class MeasuresEndpoint {
 					logger.info("");
 					logger.info("COMPUTATION FAILED FOR PILOT: " + pilot.getPilotCode().name() + ".");
 					logger.info("");
+					pilotsIterator.remove();
 				}
 			}
 		} else {
