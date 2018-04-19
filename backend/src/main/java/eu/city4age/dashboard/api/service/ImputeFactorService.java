@@ -62,15 +62,15 @@ public class ImputeFactorService {
 	static protected Logger logger = LogManager.getLogger(ImputeFactorService.class);
 
 	//private Long dvId, uId;
-	private ArrayList<BigDecimal> gfValues;
-	private ArrayList<Integer> intIntervalsExisting;
-	private ArrayList<Integer> intIntervalsMissing;
-	private ArrayList<TimeInterval> missingTimeIntervals;
+	private List<BigDecimal> gfValues;
+	private List<Integer> intIntervalsExisting;
+	private List<Integer> intIntervalsMissing;
+	private List<TimeInterval> missingTimeIntervals;
 	private List<ViewGefCalculatedInterpolatedPredictedValues> viewGeriatricFactorValue;
 	private List<GeriatricFactorValue> gefList;
 	private int monthCounter, gfIndex, i;
 	private TimeInterval ti;
-	private Calendar prevDate, endDate, currentDate;
+	private Calendar leftDate, endDate, rightDate;
 	private SplineInterpolator splineInterpolator;
 	private PolynomialSplineFunction polynomialSplineFunction;
 	private double[] x, y;
@@ -86,11 +86,13 @@ public class ImputeFactorService {
 	public ImputeFactorService() {
 
 		this.trashholdPoint = 3;
-		this.prevDate = Calendar.getInstance();
+		this.leftDate = Calendar.getInstance();
 		this.splineInterpolator = new SplineInterpolator();
 		this.endDate = Calendar.getInstance();
-		this.currentDate = Calendar.getInstance();
+		this.rightDate = Calendar.getInstance();
 	}
+
+
 
 	public int imputeMissingValues(Long dvId, Long uId, Date endDatePilot) {
 
@@ -119,7 +121,7 @@ public class ImputeFactorService {
 			detectionVariable = gefList.get(0).getDetectionVariable();
 
 			//return interpolateMissingValuesSpline() + extrapolateMissingValuesMean(endDatePilot);
-			int numImputedValues = interpolateMissingValuesSpline();
+			int numImputedValues = interpolateMissingValuesMAVG();
 			logger.info("Spline for: " + numImputedValues);
 
 			if (numImputedValues > 0) {
@@ -132,31 +134,77 @@ public class ImputeFactorService {
 			geriatricFactorInterpolationValueRepository.bulkSave(imputedValues);
 
 			return numImputedValues;
+
 		} else {
 			return -1;
 		}
 	}
 
+	private int interpolateMissingValuesMAVG() {
+
+		logger.info("start of MAVG interp");
+		
+		int imputed = 0;
+		int startIndex = 0;
+		int rightIndex = 0;
+		
+		leftDate.setTime(viewGeriatricFactorValue.get(startIndex).getIntervalStart());
+		rightDate.setTime(viewGeriatricFactorValue.get(rightIndex).getIntervalStart());
+		endDate.setTime(viewGeriatricFactorValue.get(viewGeriatricFactorValue.size()-1).getIntervalStart());
+
+		BigDecimal leftGefValue = viewGeriatricFactorValue.get(startIndex).getGefValue();
+		BigDecimal rightGefValue = viewGeriatricFactorValue.get(rightIndex).getGefValue();
+		
+		while(rightDate.getTimeInMillis() < endDate.getTimeInMillis()) {
+			
+			ti = getFollowingTimeInterval(leftDate);
+			leftDate.setTime(ti.getIntervalStart());
+
+			rightIndex++;
+			rightDate.setTime(viewGeriatricFactorValue.get(rightIndex).getIntervalStart());
+			rightGefValue = viewGeriatricFactorValue.get(rightIndex).getGefValue();
+			
+			while(leftDate.getTimeInMillis() < rightDate.getTimeInMillis()) {
+				
+				logger.info("Missing date date: "+ti.getIntervalStart());
+				BigDecimal weightedValue = new BigDecimal(leftGefValue.doubleValue()*2/3 + rightGefValue.doubleValue()*1/3);
+				leftGefValue = weightedValue;
+				
+				saveImputedValues(ti, weightedValue);
+				imputed++;
+				
+				ti = getFollowingTimeInterval(leftDate);
+				leftDate.setTime(ti.getIntervalStart());
+				
+			}
+
+			leftGefValue = rightGefValue;
+			
+		}
+		
+		return imputed;
+	}
+
 	private int interpolateMissingValuesSpline() {
 
 		//		if (viewGeriatricFactorValue != null && !viewGeriatricFactorValue.isEmpty()) {
-		prevDate.setTime(viewGeriatricFactorValue.get(0).getIntervalStart());
+		leftDate.setTime(viewGeriatricFactorValue.get(0).getIntervalStart());
 		endDate.setTime(viewGeriatricFactorValue.get(viewGeriatricFactorValue.size()-1).getIntervalStart());
 		//		}
 
-		while(prevDate.getTimeInMillis() <= endDate.getTimeInMillis()) {
+		while(leftDate.getTimeInMillis() <= endDate.getTimeInMillis()) {
 
-			currentDate.setTime(viewGeriatricFactorValue.get(gfIndex).getIntervalStart());
+			rightDate.setTime(viewGeriatricFactorValue.get(gfIndex).getIntervalStart());
 
-			while(prevDate.getTimeInMillis() < currentDate.getTimeInMillis()) {
+			while(leftDate.getTimeInMillis() < rightDate.getTimeInMillis()) {
 				//ti=next time interval
 				missingTimeIntervals.add(ti);
 				intIntervalsMissing.add(monthCounter);
 				monthCounter++;
 
-				ti = getFollowingTimeInterval(prevDate);
-				prevDate.setTime(ti.getIntervalStart());
-
+				ti = getFollowingTimeInterval(leftDate);
+				leftDate.setTime(ti.getIntervalStart());
+				
 			}
 
 			intIntervalsExisting.add(monthCounter);
@@ -165,9 +213,9 @@ public class ImputeFactorService {
 			gfIndex++;
 			monthCounter++;
 
-			ti = getFollowingTimeInterval(prevDate);
+			ti = getFollowingTimeInterval(leftDate);
 			logger.info("TI "+ti.getIntervalStart());
-			prevDate.setTime(ti.getIntervalStart());
+			leftDate.setTime(ti.getIntervalStart());
 		}
 
 		logger.info("intIntervalsMissing: " + intIntervalsMissing);
@@ -233,13 +281,14 @@ public class ImputeFactorService {
 		}
 
 		ArrayList<TimeInterval> tis = new ArrayList<TimeInterval>();
-		prevDate.setTime(viewGeriatricFactorValue.get(viewGeriatricFactorValue.size()-1).getIntervalStart());
+		leftDate.setTime(viewGeriatricFactorValue.get(viewGeriatricFactorValue.size()-1).getIntervalStart());
 		endDate.setTime(endDatePilot);
-		while(prevDate.getTimeInMillis() < endDate.getTimeInMillis()) {
+
+		while(leftDate.getTimeInMillis() < endDate.getTimeInMillis()) {
 			//ti = current time interval
-			ti = getFollowingTimeInterval(prevDate);
+			ti = getFollowingTimeInterval(leftDate);
 			tis.add(ti);
-			prevDate.setTime(ti.getIntervalStart());
+			leftDate.setTime(ti.getIntervalStart());
 		}
 
 		if (tis.size() == 0) 
@@ -291,16 +340,16 @@ public class ImputeFactorService {
 		//		geriatricFactorInterpolationValueRepository.save(gef);
 
 	}
-	
+
 	private BigDecimal makeValid(BigDecimal value) {
-		
+
 		if (value.doubleValue() < 0)
 			return new BigDecimal(0);
 		else if (value.doubleValue() > 5)
 			return new BigDecimal(5);
 		else
 			return value;
-		
+
 	}
 
 	private TimeInterval getFollowingTimeInterval(Calendar date) {

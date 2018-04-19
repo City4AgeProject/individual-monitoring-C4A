@@ -163,7 +163,7 @@ public class PredictionService {
 				
 			} else {
 				CareProfile careProfile = careProfileRepository.findByUserId(uId);
-				if (careProfile != null && !String.valueOf(careProfile.getAttentionStatus()).equals(AttentionStatus.Status.M.toString()) && careProfile.getAttentionStatus() != null) {
+				if (careProfile != null && careProfile.getAttentionStatus() != null && !String.valueOf(careProfile.getAttentionStatus()).equals(AttentionStatus.Status.M.toString())) {
 					careProfile.setAttentionStatus(null);
 					careProfile.setUserInRoleByLastUpdatedBy(system);
 					careProfile.setLastUpdated(new Date());

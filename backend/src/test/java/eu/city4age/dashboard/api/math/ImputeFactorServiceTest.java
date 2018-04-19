@@ -60,7 +60,7 @@ public class ImputeFactorServiceTest {
 
 	@Spy
 	@InjectMocks
-	private ImputeFactorService imputeFactorService;
+	private ImputeFactorService imputeFactorService=new ImputeFactorService();
 
 	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
@@ -123,6 +123,9 @@ public class ImputeFactorServiceTest {
 	@Rollback(true)
 	public void imputeMissingValuesTest() throws Exception {
 		
+		GeriatricFactorValue gef;
+		TimeInterval ti;
+
 		Pilot pilot=new Pilot();
 		pilot.setLatestVariablesComputed(new Date(Timestamp.valueOf("2017-04-30 00:00:00").getTime()));
 		pilot.setPilotCode(Pilot.PilotCode.LCC);
@@ -167,17 +170,7 @@ public class ImputeFactorServiceTest {
 									"2016-06-01 00:00:00",
 									"2016-10-01 00:00:00",
 									"2016-11-01 00:00:00",
-									"2016-12-01 00:00:00",
-									"2017-01-01 00:00:00",
-									"2017-03-01 00:00:00",
-									"2017-04-01 00:00:00",
-									"2017-05-01 00:00:00"};
-		
-		String[] predIntervals=	{	"2016-02-01 00:00:00",
-									"2016-07-01 00:00:00",
-									"2016-08-01 00:00:00",
-									"2016-09-01 00:00:00",
-									"2017-02-01 00:00:00"};
+									"2016-12-01 00:00:00"};
 		
 		String[] allIntervals=	{	"2016-01-01 00:00:00",
 									"2016-02-01 00:00:00",
@@ -192,14 +185,7 @@ public class ImputeFactorServiceTest {
 									"2016-11-01 00:00:00",
 									"2016-12-01 00:00:00",
 									"2017-01-01 00:00:00",
-									"2017-02-01 00:00:00",
-									"2017-03-01 00:00:00",
-									"2017-04-01 00:00:00",
-									"2017-05-01 00:00:00",
-									"2017-06-01 00:00:00",
-									"2017-07-01 00:00:00",
-									"2017-08-01 00:00:00"};
-
+									"2017-02-01 00:00:00"};
 
 		double [] gfValues = {		3.00,
 									2.50,
@@ -208,23 +194,11 @@ public class ImputeFactorServiceTest {
 									2.75,
 									3.40,
 									2.75,
-									4.40,
-									3.50,
-									3.65,
-									3.65,
-									3.25};
+									4.40};
 		
-		double [] predValues = {	3.21879,
-									3.77070,
-									3.97476,
-									3.21639,
-									3.25};
-
-		GeriatricFactorValue gef;
-		TimeInterval ti;
-		for(int i=0; i<predIntervals.length; i++) {
+		for(int i=0; i<timeIntervals.length; i++) {
 			ti = measuresService
-					.getOrCreateTimeInterval(Timestamp.valueOf(predIntervals[i]),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+					.getOrCreateTimeInterval(Timestamp.valueOf(timeIntervals[i]),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 			
 
 			gef = new GeriatricFactorValue();
@@ -233,61 +207,35 @@ public class ImputeFactorServiceTest {
 			gef.setDetectionVariable(dv1);
 			gef.setDetectionVariableId(dv1.getId());
 			gef.setTimeInterval(ti);
-			gef.setGefValue(new BigDecimal (predValues[i]));
+			gef.setGefValue(new BigDecimal (gfValues[i]));
 			geriatricFactorRepository.save(gef);
 
 		}
-		
 		geriatricFactorRepository.flush();
-		Long dvId=dv1.getId();
-		Long uId=userInRole.getId();
-		Calendar calendar=Calendar.getInstance();
-		//logger.info("dvId: "+dvId);
-		//logger.info("uId: "+uId);
-
-		for(int i=0; i<timeIntervals.length; i++) {
-			ti = measuresService
-					.getOrCreateTimeInterval(Timestamp.valueOf(timeIntervals[i]),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		//ti=measuresService
-		//		.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-
-			GeriatricFactorInterpolationValue gefi = new GeriatricFactorInterpolationValue();
-			gefi.setUserInRole(userInRole);
-			gefi.setUserInRoleId(userInRole.getId());
-			gefi.setDetectionVariable(dv1);
-			gefi.setDetectionVariableId(dv1.getId());
-			gefi.setTimeInterval(ti);
-			gefi.setGefValue(new BigDecimal(0.5));
-			geriatricFactorInterpolationValueRepository.save(gefi);
-		}
-		
-		List<GeriatricFactorValue> gfr = geriatricFactorRepository.findByDetectionVariableId(dvId, uId);
-		//logger.info("gfrLen: "+gfr.size());
-		
-		Mockito.when(geriatricFactorRepositoryMock.findByDetectionVariableId(dvId, uId)).thenReturn(gfr);
-		
-		List<ViewGefCalculatedInterpolatedPredictedValues> geriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
-		
-		logger.info("wgfrLen: "+geriatricFactorValue.size());
-		Mockito.when(viewGefCalculatedInterpolatedPredictedValuesRepositoryMock.findByDetectionVariableIdNoPredicted(dvId, uId)).thenReturn(geriatricFactorValue);
 		
 		for(String t: allIntervals) {
+			TimeInterval ts1=measuresService.getOrCreateTimeInterval(
+									Timestamp.valueOf(t),
+									eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 			Mockito.when(
 					measuresServiceMock.getOrCreateTimeInterval(
 							Timestamp.valueOf(t),
-							eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).thenReturn(
-									measuresService.getOrCreateTimeInterval(
-											Timestamp.valueOf(t),
-											eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH));
+							eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).thenReturn(ts1);
 		}
+
 		
-		Mockito.when(userInRoleRepositoryMock.findByUirId(uId)).thenReturn(userInRole);
-		Mockito.when(pilotRepositoryMock.findByPilotCode(userInRole.getPilotCode())).thenReturn(pilot);
+		Long dvId=dv1.getId();
+		Long uId=userInRole.getId();	
+		Date endDatePilot = Timestamp.valueOf("2017-02-01 00:00:00");
 		
-		Date endDatePilot = Timestamp.valueOf("2017-07-01 00:00:00");
+		List<GeriatricFactorValue> gfr = geriatricFactorRepository.findByDetectionVariableId(dvId, uId);
+		Mockito.when(geriatricFactorRepositoryMock.findByDetectionVariableId(dvId, uId)).thenReturn(gfr);
 		
-		int imputiranih = imputeFactorService.imputeMissingValues(dvId, uId, endDatePilot);
-		Assert.assertEquals(2, imputiranih);
+		List<ViewGefCalculatedInterpolatedPredictedValues> geriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
+		Mockito.when(viewGefCalculatedInterpolatedPredictedValuesRepositoryMock.findByDetectionVariableIdNoPredicted(dvId, uId)).thenReturn(geriatricFactorValue);
+		
+		int imputiranih=imputeFactorService.imputeMissingValues(dvId, uId, endDatePilot);
+		Assert.assertEquals(1+3+2, imputiranih);
 		
 	}
 }

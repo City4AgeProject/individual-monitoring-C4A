@@ -601,6 +601,9 @@ CREATE TABLE pilot (
     latest_derived_detection_variables_computed timestamp with time zone,
     latest_configuration_update timestamp with time zone,
     time_zone character varying(50),
+    comp_zone character varying(255),
+    newest_submitted_data timestamp with time zone,
+	time_of_computation	timestamp with time zone,
 	CONSTRAINT pilot_pilot_name_key UNIQUE (pilot_name),
 	CONSTRAINT pilot_pkey PRIMARY KEY (pilot_code)
 );
