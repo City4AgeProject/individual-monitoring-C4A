@@ -47,17 +47,26 @@ public class ViewGefCalculatedInterpolatedPredictedValues {
 	@Column(name = "comp_zone")
 	private String compZone;
 	
+	@Column(name = "detection_variable_name")
+	private String detectionVariableName;
+	
+	@Column(name = "detection_variable_type")
+	private String detectionVariableType;
+	
 	@Column(name = "derived_detection_variable_id")
 	private Long derivedDetectionVariableId;
+	
+	@Column(name = "derived_detection_variable_name")
+	private String derivedDetectionVariableName;
+	
+	@Column(name = "derived_detection_variable_type")
+	private String derivedDetectionVariableType;
 	
 	@Column(name = "frailty_status")
 	private String frailtyStatus;
 	
 	@Column(name = "pilot_code")
 	private String pilotCode;
-	
-	@Column(name = "detection_variable_type")
-	private String detectionVariableType;
 	
 
 	public ViewGefCalculatedInterpolatedPredictedValues() {
@@ -301,6 +310,48 @@ public class ViewGefCalculatedInterpolatedPredictedValues {
 	 */
 	public void setDetectionVariableType(String detectionVariableType) {
 		this.detectionVariableType = detectionVariableType;
+	}
+
+	/**
+	 * @return the detectionVariableName
+	 */
+	public String getDetectionVariableName() {
+		return detectionVariableName;
+	}
+
+	/**
+	 * @param detectionVariableName the detectionVariableName to set
+	 */
+	public void setDetectionVariableName(String detectionVariableName) {
+		this.detectionVariableName = detectionVariableName;
+	}
+
+	/**
+	 * @return the derivedDetectionVariableType
+	 */
+	public String getDerivedDetectionVariableType() {
+		return derivedDetectionVariableType;
+	}
+
+	/**
+	 * @param derivedDetectionVariableType the derivedDetectionVariableType to set
+	 */
+	public void setDerivedDetectionVariableType(String derivedDetectionVariableType) {
+		this.derivedDetectionVariableType = derivedDetectionVariableType;
+	}
+
+	/**
+	 * @return the derivedDetectionVariableName
+	 */
+	public String getDerivedDetectionVariableName() {
+		return derivedDetectionVariableName;
+	}
+
+	/**
+	 * @param derivedDetectionVariableName the derivedDetectionVariableName to set
+	 */
+	public void setDerivedDetectionVariableName(String derivedDetectionVariableName) {
+		this.derivedDetectionVariableName = derivedDetectionVariableName;
 	}
 
 }
