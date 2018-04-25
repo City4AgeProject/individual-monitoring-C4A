@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -148,26 +149,34 @@ public class ImputeFactorServiceTest {
 		DetectionVariableType dvt2 = DetectionVariableType.GEF;
 		detectionVariableTypeRepository.save(dvt2);
 		
+		DetectionVariableType dvt3 = DetectionVariableType.GFG;
+		detectionVariableTypeRepository.save(dvt3);
+		
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setDetectionVariableName("DV1");
-		dv1.setDetectionVariableType(dvt2);
+		dv1.setDetectionVariableType(dvt1);
 		detectionVariableRepository.save(dv1);
 			
 		DetectionVariable dv2 = new DetectionVariable();
-		dv2.setDetectionVariableType(dvt1);
+		dv2.setDetectionVariableType(dvt2);
 		dv2.setDetectionVariableName("DV2");
 		detectionVariableRepository.save(dv2);
+		
+		DetectionVariable dv3 = new DetectionVariable();
+		dv3.setDetectionVariableType(dvt3);
+		dv3.setDetectionVariableName("DV3");
+		detectionVariableRepository.save(dv3);
 		
 		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
 		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pdv1.setDetectionVariable(dv1);
-		pdv1.setDerivedDetectionVariable(dv1);
+		pdv1.setDerivedDetectionVariable(dv2);
 		pilotDetectionVariableRepository.save(pdv1);
 		
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
 		pdv2.setPilotCode(Pilot.PilotCode.LCC);
 		pdv2.setDetectionVariable(dv2);
-		pdv2.setDerivedDetectionVariable(dv2);
+		pdv2.setDerivedDetectionVariable(dv3);
 		pilotDetectionVariableRepository.save(pdv2);
 
 		String[] timeIntervals= {	"2016-01-01 00:00:00",
@@ -203,16 +212,17 @@ public class ImputeFactorServiceTest {
 									2.75,
 									4.40};
 		
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		
 		for(int i=0; i<timeIntervals.length; i++) {
-			ti = measuresService
-					.getOrCreateTimeInterval(Timestamp.valueOf(timeIntervals[i]),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+			ti = measuresService.getOrCreateTimeInterval(Timestamp.valueOf(timeIntervals[i]),eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 			
-
 			gef = new GeriatricFactorValue();
+			gef.setDerivationWeight(new BigDecimal(1));
 			gef.setUserInRole(userInRole);
 			gef.setUserInRoleId(userInRole.getId());
-			gef.setDetectionVariable(dv1);
-			gef.setDetectionVariableId(dv1.getId());
+			gef.setDetectionVariable(dv3);
+			gef.setDetectionVariableId(dv3.getId());
 			gef.setTimeInterval(ti);
 			gef.setGefValue(new BigDecimal (gfValues[i]));
 			geriatricFactorRepository.save(gef);
@@ -221,17 +231,12 @@ public class ImputeFactorServiceTest {
 		geriatricFactorRepository.flush();
 		
 		for(String t: allIntervals) {
-			TimeInterval ts1=measuresService.getOrCreateTimeInterval(
-									Timestamp.valueOf(t),
-									eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-			Mockito.when(
-					measuresServiceMock.getOrCreateTimeInterval(
-							Timestamp.valueOf(t),
-							eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).thenReturn(ts1);
+			TimeInterval ts1=measuresService.getOrCreateTimeInterval(Timestamp.valueOf(t), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+			Mockito.when(measuresServiceMock.getOrCreateTimeInterval(Timestamp.valueOf(t), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH)).thenReturn(ts1);
 		}
 
 		
-		Long dvId=dv1.getId();
+		Long dvId=dv3.getId();
 		Long uId=userInRole.getId();	
 		Date endDatePilot = Timestamp.valueOf("2017-02-01 00:00:00");
 		
@@ -241,7 +246,7 @@ public class ImputeFactorServiceTest {
 		List<ViewGefCalculatedInterpolatedPredictedValues> geriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uId);
 		Mockito.when(viewGefCalculatedInterpolatedPredictedValuesRepositoryMock.findByDetectionVariableIdNoPredicted(dvId, uId)).thenReturn(geriatricFactorValue);
 		
-		int imputiranih=imputeFactorService.imputeMissingValues(dvId, uId, endDatePilot);
+		int imputiranih=imputeFactorService.imputeMissingValues(dv3, userInRole, endDatePilot);
 		Assert.assertEquals(1+3+2, imputiranih);
 		
 	}
