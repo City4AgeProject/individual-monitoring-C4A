@@ -30,6 +30,7 @@ import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType.Type;
 import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
+import eu.city4age.dashboard.api.service.MeasuresService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -53,7 +54,10 @@ public class GeriatricFactorPredictionValueRepositoryTest {
 	private TimeIntervalRepository timeIntervalRepository;
 	
 	@Autowired
-	private MeasuresEndpoint measuresService;
+	private MeasuresEndpoint measuresEndpoint;
+	
+	@Autowired
+	private MeasuresService measuresService;
 
 	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;

@@ -55,6 +55,7 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
+import eu.city4age.dashboard.api.service.MeasuresService;
 
 public class NativeQueryRepositoryTest {
 	
@@ -97,7 +98,10 @@ public class NativeQueryRepositoryTest {
 	PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
 	@Autowired
-	private MeasuresEndpoint measuresService;
+	private MeasuresEndpoint measuresEndpoint;
+	
+	@Autowired
+	private MeasuresService measuresService;
 	
 	@Autowired
 	private NativeQueryRepository nativeQueryRepository;

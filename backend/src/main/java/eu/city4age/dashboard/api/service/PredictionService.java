@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,6 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
-import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
 
 /*
  * author: Marina-Andric
@@ -58,9 +56,6 @@ public class PredictionService {
 	private NativeQueryRepository nativeQueryRepository;
 
 	@Autowired
-	private MeasuresEndpoint measuresService;
-
-	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
 	@Autowired
@@ -73,8 +68,8 @@ public class PredictionService {
 	private ImputeFactorService imputeFactorService;
 
 	@Autowired
-	private MeasuresEndpoint measuresEndpoint;
-
+	private MeasuresService measuresService;
+	
 	@Autowired
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
 
@@ -94,10 +89,6 @@ public class PredictionService {
 
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void imputeAndPredict(Pilot pilot) {
-
-		//		List<Pilot> pilots = pilotRepository.findPilotsComputed();
-
-
 
 		logger.info("pilotName: " + pilot.getName());
 		List<DetectionVariable> detectionVariables = pilotDetectionVariableRepository.findDetectionVariablesForPrediction(pilot.getPilotCode());
@@ -200,7 +191,7 @@ public class PredictionService {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 		String formattedDate = simpleDateFormat.format(date.getIntervalStart());
 //		logger.info("formatted date: " + formattedDate);
-		TimeInterval timeInterval = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf(formattedDate), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		TimeInterval timeInterval = measuresService.getOrCreateTimeInterval(Timestamp.valueOf(formattedDate), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
 		return timeInterval;
 

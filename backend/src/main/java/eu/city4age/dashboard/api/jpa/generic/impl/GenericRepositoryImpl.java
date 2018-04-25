@@ -68,24 +68,6 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	}
 
 	@Override
-	public T saveWithoutFlush(T entity) {
-		return super.save(entity);
-	}
-
-	@Override
-	public List<? extends T> saveWithoutFlush(Iterable<? extends T> entities) {
-		List<T> result = new ArrayList<T>();
-		if (entities == null) {
-			return result;
-		}
-
-		for (T entity : entities) {
-			result.add(saveWithoutFlush(entity));
-		}
-		return result;
-	}
-
-	@Override
 	@SuppressWarnings("unchecked")
 	public List<T> doQueryWithFilter(List<eu.city4age.dashboard.api.pojo.persist.Filter> filters,
 			String filterQueryName, Map<String, Object> inQueryParams) {
@@ -159,11 +141,6 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	
 	public <S extends T> S merge(S entity) {
 		return this.entityManager.merge(entity);
-	}
-
-	@Override
-	public void clear() {
-		this.entityManager.clear();
 	}
 	
 	public <S extends AbstractBaseEntity<?>> Collection<S> bulkSave(Collection<S> entities) {

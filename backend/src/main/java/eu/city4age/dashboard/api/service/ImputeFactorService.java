@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-//import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.signaflo.timeseries.TimeSeries;
@@ -22,8 +21,6 @@ import com.github.signaflo.timeseries.model.arima.ArimaOrder;
 
 import org.springframework.transaction.annotation.Propagation;
 
-//import com.fasterxml.jackson.databind.ObjectMapper;
-
 import eu.city4age.dashboard.api.jpa.GeriatricFactorInterpolationValueRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
@@ -33,8 +30,6 @@ import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
-import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
-
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
@@ -45,9 +40,9 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 @Component
 @Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 public class ImputeFactorService {
-
+	
 	@Autowired
-	private MeasuresEndpoint measuresEndpoint;
+	private MeasuresService measuresService;
 
 	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
@@ -362,7 +357,7 @@ public class ImputeFactorService {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 		String formatted = simpleDateFormat.format(date.getTime());
 
-		TimeInterval timeInterval = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf(formatted), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
+		TimeInterval timeInterval = measuresService.getOrCreateTimeInterval(Timestamp.valueOf(formatted), eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
 		return timeInterval;
 

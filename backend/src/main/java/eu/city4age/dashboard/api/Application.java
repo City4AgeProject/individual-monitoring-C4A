@@ -1,9 +1,6 @@
 package eu.city4age.dashboard.api;
 
 import java.util.Properties;
-import java.util.TimeZone;
-
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +25,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 

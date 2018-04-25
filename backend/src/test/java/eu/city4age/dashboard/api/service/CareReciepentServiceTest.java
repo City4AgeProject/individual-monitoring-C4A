@@ -111,7 +111,10 @@ public class CareReciepentServiceTest {
 	private TypicalPeriodRepository typicalPeriodRepository;
 	
 	@Autowired
-	private MeasuresEndpoint measuresService;
+	private MeasuresEndpoint measuresEndpoint;
+	
+	@Autowired
+	private MeasuresService measuresService;
 	
 	@Autowired
 	private DetectionVariableRepository detectionVariableRepository;

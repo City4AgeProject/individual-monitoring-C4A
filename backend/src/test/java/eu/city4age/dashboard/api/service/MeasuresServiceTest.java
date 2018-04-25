@@ -105,8 +105,8 @@ public class MeasuresServiceTest {
 	@Autowired
 	private VariationMeasureValueRepository variationMeasureValueRepository;
 
-//	@Autowired
-//	private MeasuresService measuresService;
+	@Autowired
+	private MeasuresService measuresService;
 
 	@Autowired
 	private ValueEvidenceNoticeRepository valueEvidenceNoticeRepository;
@@ -192,19 +192,19 @@ public class MeasuresServiceTest {
 		 * 1 value for each detection variable
 		 */
 
-		TimeInterval ti1 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
-		TimeInterval ti2 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
-		TimeInterval ti3 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"),
+		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.DAY);
 
-		TimeInterval ti4 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
+		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
-		TimeInterval ti5 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
+		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.DAY);
 
 		Pilot p1 = new Pilot();
@@ -305,19 +305,19 @@ public class MeasuresServiceTest {
 		 * 1 value for each detection variable
 		 */
 
-		TimeInterval ti1 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-01-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
-		TimeInterval ti2 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-02-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
-		TimeInterval ti3 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"),
+		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-03-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.DAY);
 
-		TimeInterval ti4 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
+		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-04-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
-		TimeInterval ti5 = measuresEndpoint.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
+		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Timestamp.valueOf("2016-05-01 00:00:00"),
 				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.DAY);
 
 		Pilot p1 = new Pilot();

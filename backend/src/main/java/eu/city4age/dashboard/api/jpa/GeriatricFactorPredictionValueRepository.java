@@ -3,7 +3,6 @@ package eu.city4age.dashboard.api.jpa;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorPredictionValue;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
-import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 
 @Repository(value = "geriatricFactorPredictionValueRepository")
 public interface GeriatricFactorPredictionValueRepository extends GenericRepository<GeriatricFactorPredictionValue, Long> {

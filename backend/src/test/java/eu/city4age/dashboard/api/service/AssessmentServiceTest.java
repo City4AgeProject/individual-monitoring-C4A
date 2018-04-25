@@ -147,7 +147,7 @@ public class AssessmentServiceTest {
 	private NativeQueryRepository nativeQueryRepository;
 
 	@Autowired
-	private MeasuresEndpoint measuresService;
+	private MeasuresEndpoint measuresEndpoint;
 
 	@Autowired
 	private RoleRepository roleRepository;
@@ -160,6 +160,9 @@ public class AssessmentServiceTest {
 	
 	@Autowired
 	private UserEndpoint userService;
+	
+	@Autowired
+	private MeasuresService measuresService;
 	
     @Before
     public void setUp() {
