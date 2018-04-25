@@ -109,14 +109,15 @@ public class ImputeFactorService {
 
 			//return interpolateMissingValuesSpline() + extrapolateMissingValuesMean(endDatePilot);
 			int numImputedValues = interpolateMissingValuesMAVG();
-			logger.info("- Number of imputed values: " + numImputedValues);
+			logger.info("- Number of interpolated values: " + numImputedValues);
 
 			if (numImputedValues > 0) {
 				viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uirId);
-				logger.info("- viewGeriatricFactorValue size after imputing: " + viewGeriatricFactorValue.size());
+				logger.info("- viewGeriatricFactorValue size after interpolation: " + viewGeriatricFactorValue.size());
 			}
 
 			numImputedValues += extrapolateMissingValuesArima(endDate);
+			logger.info("- Total number of imputed values: " + numImputedValues);
 
 			return numImputedValues;
 
@@ -253,7 +254,7 @@ public class ImputeFactorService {
 	//		return counter;
 	//	}
 
-	private int extrapolateMissingValuesArima(Date endDatePilot) {
+	private int extrapolateMissingValuesArima(Date endDateUser) {
 		//Re-load viewGeriatricFactorValue with interpolated values
 
 		int vs = viewGeriatricFactorValue.size();
@@ -264,11 +265,12 @@ public class ImputeFactorService {
 
 		ArrayList<TimeInterval> tis = new ArrayList<TimeInterval>();
 		leftDate.setTime(viewGeriatricFactorValue.get(viewGeriatricFactorValue.size()-1).getIntervalStart());
-		endDate.setTime(endDatePilot);
+		endDate.setTime(endDateUser);
 
 		while(leftDate.getTimeInMillis() < endDate.getTimeInMillis()) {
 			//ti = current time interval
 			ti = getFollowingTimeInterval(leftDate);
+			logger.info("- Missing date: "+ ti.getIntervalStart());
 			tis.add(ti);
 			leftDate.setTime(ti.getIntervalStart());
 		}
