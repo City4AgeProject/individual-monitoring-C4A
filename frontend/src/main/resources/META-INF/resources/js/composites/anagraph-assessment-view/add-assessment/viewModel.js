@@ -88,6 +88,9 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                     var comment = ko.toJS(self.props.commentText);
                     var riskStatus = (self.selectedRiskStatus()) ? self.selectedRiskStatus() : 'XXX'; // N-none
                     var dataValidity = (self.selectedDataValidity()) ? self.selectedDataValidity() : 'VALID_DATA';
+                    if (dataValidity !== 'FAULTY_DATA' && dataValidity !== 'VALID_DATA' && dataValidity !== 'QUESTIONABLE_DATA') {
+                        dataValidity = 'VALID_DATA';
+                    }
                     var geriatricFactorValueIds = self.props.dataPointsMarkedIds;
                     
                     var audienceIds = ko.toJS(self.selectedRoles);                 
