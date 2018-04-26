@@ -68,6 +68,9 @@ public class ViewGefCalculatedInterpolatedPredictedValues {
 	@Column(name = "pilot_code")
 	private String pilotCode;
 	
+	@Column(name = "username")
+	private String username;
+	
 
 	public ViewGefCalculatedInterpolatedPredictedValues() {
 		
@@ -352,6 +355,20 @@ public class ViewGefCalculatedInterpolatedPredictedValues {
 	 */
 	public void setDerivedDetectionVariableName(String derivedDetectionVariableName) {
 		this.derivedDetectionVariableName = derivedDetectionVariableName;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 }
