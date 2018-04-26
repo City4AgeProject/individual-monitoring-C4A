@@ -108,7 +108,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  
   	    		  measures.forEach(function(mea) {
                                 /*SETTING UP COLORS FOR SERIES*/
-                                var colors = ["#d1ff1a","#afff1a","#93ff51","#5bff70","#42ff97","#59ffde","#59daff","#48b1ff","#4a6aff","#7c51ff","#a746ff","#7700e6"];                                
+                                var colors = ["#ffe119","#0082c8","#f58231","#911eb4","#46f0f0","#f032e6","#d2f53c","#008080","#aa6e28","#800000","#e6194b","#3cb44b"];                                
                                 var i = 0;
                                 var j = 0;
                                 if(mea.months.length < 3) {                                    
@@ -121,6 +121,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                 /*END COLORS*/
                                 
                                 var nuiName;
+                                var nuiShortName;
+                                var nuiKey;
   	    			mea.nuisForMeasure = [];
     	    			mea.lineSeries = [];
                                 mea.hasComments = false;
@@ -147,19 +149,23 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    						nuiName = nuiKey;
     	    						
     	    						switch(nuiName) {
-    	    					    case 'avg': 
-    	    					    	nuiName = "Nui1";
-    	    					    	break;
-    	    					    case 'std': 
-    	    					    	nuiName = "Nui2";
-    	    					    	break;
-    	    					    case 'delta': 
-    	    					    	nuiName = "Nui3";
-    	    					    	break;
-    	    					    case 'best': 
-    	    					    	nuiName = "Nui4";
-    	    					    	break;
-    	    						}
+                                    case 'avg': 
+                                         nuiName = "Average";
+                                         nuiShortName = "Average: ";
+                                         break;
+                                    case 'std': 
+                                         nuiName = "Weighted Standard Deviation (standard deviation/average)";
+                                         nuiShortName = "Weighted Standard Deviation: ";
+                                         break;
+                                    case 'delta': 
+                                         nuiName = "Weigthed Delta Between Best 25% Percentile and Average (best 25% percentile/average)";
+                                         nuiShortName = "Weigthed Delta: ";
+                                         break;
+                                    case 'best': 
+                                         nuiName = "Weighted Best 25% Percentile ((best 25% percentile - average)/average)";
+                                         nuiShortName = "Weighted Best: ";
+                                         break;
+                                }
     	    						
     	    						  if(!nuiObjects[nuiKey+"Object"]) {
     	    							nuiObjects[nuiKey+"Object"]= new Object();

@@ -57,7 +57,7 @@ import io.swagger.annotations.ApiResponses;
  *
  */
 @Component
-//@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 @Path(MeasuresEndpoint.PATH)
 public class MeasuresEndpoint {
 
@@ -123,7 +123,6 @@ public class MeasuresEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("computeFromMeasures")
 	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	public Response computeFromMeasures() throws Exception {
 		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -139,8 +138,7 @@ public class MeasuresEndpoint {
 		logger.info("computation completed: " + new Date());
 		return JerseyResponse.buildTextPlain("success", 200);
 	}
-	
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+
 	public List<Pilot> imputeAndPredict(List<Pilot> pilots) {
 		
 		if (pilots != null && !pilots.isEmpty()) {
@@ -156,7 +154,6 @@ public class MeasuresEndpoint {
 		return pilots;
 	}
 
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	public List<Pilot> computeForAllPilots(List<Pilot> pilotsForComputation) {
 		
 
@@ -177,14 +174,6 @@ public class MeasuresEndpoint {
 		}
 		
 		return pilotsForComputation;
-	}
-
-	public void setVariablesComputedForAllPilots(Pilot pilot, Timestamp endOfComputation, Date newestSubmittedData) {
-		
-		pilot.setLatestVariablesComputed(endOfComputation);
-		pilot.setTimeOfComputation(new Date());
-		pilot.setNewestSubmittedData(newestSubmittedData);
-		pilotRepository.save(pilot);
 	}
 
 	public List<Pilot> setNewestSubmittedDataForAllPilots() {
@@ -296,12 +285,6 @@ public class MeasuresEndpoint {
 		if ((differentiator - start) >= (end - differentiator)) return 0;
 		else return 1;
 		
-	}
-
-	public String mockitoTest() {
-		return "hello";
-	}
-	
-	
+	}	
 
 }

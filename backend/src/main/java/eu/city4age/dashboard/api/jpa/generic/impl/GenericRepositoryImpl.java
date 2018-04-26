@@ -160,7 +160,7 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 		return savedEntities;
 	}
 
-	public <S extends AbstractBaseEntity<?>> S persistOrMerge(S entity) {
+	private <S extends AbstractBaseEntity<?>> S persistOrMerge(S entity) {
 		if (entity.getId() == null) {
 			entityManager.persist(entity);
 			return entity;

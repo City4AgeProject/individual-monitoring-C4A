@@ -287,8 +287,8 @@ public class CareRecipientEndpoint {
                 if (user.getCareProfile() != null) {
                     attention = user.getCareProfile().getAttentionStatus();
                     textline = user.getCareProfile().getIndividualSummary();
-                    interventionstatus = user.getCareProfile().getInterventionStatus();
-                    interventionDate = sdf.format(user.getCareProfile().getLastInterventionDate());
+                    if (user.getCareProfile().getInterventionStatus() != null) interventionstatus = user.getCareProfile().getInterventionStatus();
+                    if (user.getCareProfile().getLastInterventionDate() != null) interventionDate = sdf.format(user.getCareProfile().getLastInterventionDate());
                 }
 
                 List<FrailtyStatusTimeline> frailtyparamsList = new ArrayList<FrailtyStatusTimeline>(

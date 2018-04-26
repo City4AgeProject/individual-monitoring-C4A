@@ -27,7 +27,5 @@ public interface GenericRepository<T, ID extends Serializable>
 	void disableFilter(String name);
 	
 	<S extends AbstractBaseEntity<?>> Collection<S> bulkSave(Collection<S> entities);
-	
-	<S extends AbstractBaseEntity<?>> S persistOrMerge(S s);
 
 }

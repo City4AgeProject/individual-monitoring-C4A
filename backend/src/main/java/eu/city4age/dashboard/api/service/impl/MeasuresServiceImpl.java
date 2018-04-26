@@ -54,6 +54,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void computeFor1Pilot(@PathParam("pilotCode") String pilotCodeString, @PathParam("newestSubmittedDate") String newestSubmittedDataString) throws Exception {
+		
 		Pilot pilot = pilotRepository.findByPilotCode(Pilot.PilotCode.valueOf(pilotCodeString.toUpperCase()));
 		PilotCode pilotCode = pilot.getPilotCode();
 
@@ -101,8 +102,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		Timestamp endOfComputation = Timestamp.valueOf(endOfComputationYearMonth.minusMonths(1L).atDay(1).atStartOfDay());
 		setVariablesComputedForAllPilots(pilot, endOfComputation, newestSubmittedData);
 	}
-	
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+
 	public void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCode);
@@ -113,8 +113,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 			//nuiRepository.flush();
 		}
 	}
-	
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+
 	public void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) throws Exception {
 		
 		String stringPilotCode = pilotCode.name().toLowerCase();
@@ -132,8 +131,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		}
 
 	}
-	
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+
 	public void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
 			Timestamp endOfMonth, PilotCode pilotCode) throws Exception {
 		
