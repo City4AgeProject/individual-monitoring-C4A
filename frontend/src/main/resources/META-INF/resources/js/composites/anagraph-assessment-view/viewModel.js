@@ -182,12 +182,14 @@ function(oj, ko, $) {
                     }
                 };
 
-		var loadDataSet = function(data) {                  
-			var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA
-					+ "/careRecipientId/" + self.props.careRecipientId
-					+ "/parentFactorId/" + self.props.parentFactorId,
-					loadDiagramDataCallback);
-			jqXHR.fail(serverErrorCallback);			
+		var loadDataSet = function(data) {  
+			if (self.props.parentFactorId > 0) {
+				var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA
+						+ "/careRecipientId/" + self.props.careRecipientId
+						+ "/parentFactorId/" + self.props.parentFactorId,
+						loadDiagramDataCallback);
+				jqXHR.fail(serverErrorCallback);
+			}
 			return jqXHR;
 		};
 
