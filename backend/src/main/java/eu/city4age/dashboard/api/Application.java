@@ -19,11 +19,14 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate5.SpringSessionContext;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -44,6 +47,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 		"eu.city4age.dashboard.api.config", "eu.city4age.dashboard.api.service" })
 @EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.jpa", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
 @EnableScheduling
+@EnableAsync
 /**
  * Main configuration of spring-boot.
  * http://docs.spring.io/spring-boot/docs/1.3.8.RELEASE/reference/htmlsingle/#using-boot-configuration-classes
@@ -153,5 +157,17 @@ public class Application extends SpringBootServletInitializer {
 		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
 				.paths(PathSelectors.any()).build();
 	}
+	
+	@Bean(name="processExecutor")
+    public TaskExecutor workExecutor() {
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setThreadNamePrefix("Async-");
+        threadPoolTaskExecutor.setCorePoolSize(3);
+        threadPoolTaskExecutor.setMaxPoolSize(3);
+        threadPoolTaskExecutor.setQueueCapacity(600);
+        threadPoolTaskExecutor.afterPropertiesSet();
+        logger.info("ThreadPoolTaskExecutor set");
+        return threadPoolTaskExecutor;
+    }
 
 }
