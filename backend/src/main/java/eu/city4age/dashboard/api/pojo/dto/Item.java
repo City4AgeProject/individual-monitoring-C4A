@@ -27,6 +27,12 @@ public class Item {
 		this.gefTypeId = gefTypeId.intValue();
 		this.timeIntervalId = timeIntervalId;
 	}
+    
+    public Item(BigDecimal value, Long gefTypeId, Long timeIntervalId) {
+		this.value = value.floatValue();
+		this.gefTypeId = gefTypeId.intValue();
+		this.timeIntervalId = timeIntervalId;
+	}
 
 	public Item() {
 	}

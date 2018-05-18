@@ -219,7 +219,7 @@ function(oj, ko, $) {
 
 		var loadDataSet = function(data) { 
                     //loading data for ges diagram (if anagraph-assessment-view is on gef page, it triggers but does not load data)
-                        var jqXHR = $.getJSON(ASSESSMENT_DIAGRAM_DATA
+                        var jqXHR = $.getJSON(VIEW_DIAGRAM_DATA
 					+ "/careRecipientId/" + self.props.careRecipientId
 					+ "?parentFactorId=" + self.props.parentFactorId,
 					loadDiagramDataCallback2);

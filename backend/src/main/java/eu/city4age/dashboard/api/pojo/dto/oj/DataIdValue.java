@@ -72,7 +72,7 @@ public class DataIdValue implements Serializable, Comparable<DataIdValue> {
 
 	@Override
 	public int compareTo(DataIdValue o) {
-		return this.getId().compareTo(o.getId());
+		return this.getName().compareTo(o.getName());
 	}
 
 }

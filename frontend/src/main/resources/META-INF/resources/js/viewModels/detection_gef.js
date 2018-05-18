@@ -124,12 +124,12 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                         $('#detectionGEFGroup1FactorsLineChart').prop('parentFactorId', ui['seriesData'].items[0].gefTypeId);
                         if (self.parentFactorId !== 1) {
                 //loading data for gef diagram
-                console.log("ASSESSMENT_DIAGRAM_DATA");
+                console.log("VIEW_DIAGRAM_DATA");
                         console.log("self.parentFactorId: " + self.parentFactorId);
-                        var jqXHR = $.getJSON(ASSESSMENT_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId + "?parentFactorId=" + self.parentFactorId,
+                        var jqXHR = $.getJSON(VIEW_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId + "?parentFactorId=" + self.parentFactorId,
                                 loadDiagramDataCallback1);
                         jqXHR.fail(function (xhr, message, error) {
-                        console.log('ASSESSMENT_DIAGRAM_DATA web service error');
+                        console.log('VIEW_DIAGRAM_DATA web service error');
                         });
                 }
                 }
@@ -347,7 +347,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
                 //Loading Data for detectionGEFGroupsLineChart chart 
     function loadCRData() {
-        $.getJSON(ASSESSMENT_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId).then(function (data) {
+        $.getJSON(VIEW_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId).then(function (data) {
                             
             var car = 'M -53.582954,-415.35856 c -13.726061,-0.48561 -25.554278,3.95581 -32.848561,19.90697 l -26.336555,65.94442 c -19.18907,  '+
                       '5.29042 -27.54259,19.22853 -27.98516,30.66415 l 0,86.34597 25.30617,0 0,29.05676 c -1.22633,27.69243 44.157018,28.76272  '+

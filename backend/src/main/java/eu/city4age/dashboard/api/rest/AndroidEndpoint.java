@@ -3,13 +3,6 @@ package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -22,7 +15,6 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,15 +28,7 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.ActivityRepository;
 import eu.city4age.dashboard.api.jpa.MTestingReadingsRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
-import eu.city4age.dashboard.api.pojo.domain.Activity;
-import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
-import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
-import eu.city4age.dashboard.api.pojo.json.desobj.Bluetooth;
-import eu.city4age.dashboard.api.pojo.json.desobj.Gps;
-import eu.city4age.dashboard.api.pojo.json.desobj.JSONActivity;
-import eu.city4age.dashboard.api.pojo.json.desobj.Recognition;
-import eu.city4age.dashboard.api.pojo.json.desobj.Wifi;
 import eu.city4age.dashboard.api.pojo.ws.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.service.AndroidService;
@@ -70,8 +54,6 @@ public class AndroidEndpoint {
 
 	static protected Logger logger = LogManager.getLogger(AndroidEndpoint.class);
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
-	
-	private final SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);
 
 	@Autowired
 	UserInRoleRepository userInRoleRepository;

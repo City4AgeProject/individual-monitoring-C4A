@@ -1,19 +1,13 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -49,19 +43,13 @@ import eu.city4age.dashboard.api.jpa.AssessmentRepository;
 import eu.city4age.dashboard.api.jpa.AudienceRolesRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
-import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
-import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
-import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
-import eu.city4age.dashboard.api.pojo.dto.Item;
-import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValueLastFiveAssessment;
-import eu.city4age.dashboard.api.pojo.dto.oj.DataSet;
 import eu.city4age.dashboard.api.pojo.dto.oj.Serie;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
@@ -103,88 +91,11 @@ public class AssessmentsEndpoint {
 
 	@Autowired
 	private AssessedGefValuesRepository assessedGefValuesRepository;
-	
-	@Autowired
-	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
 
 	@Context
 	private ContextResolver<ObjectMapper> mapperResolver;
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
-	
-	@GET
-	@Path("getDiagramData/careRecipientId/{careRecipientId}")
-	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
-	public Response getDiagramData(@PathParam("careRecipientId") Long careRecipientId,
-			@QueryParam("parentFactorId") Long parentFactorId) throws JsonProcessingException {
-		
-		DataSet response = new DataSet();
-
-		List<ViewGefCalculatedInterpolatedPredictedValues> list;
-		if(parentFactorId != null) {
-			list = viewGefCalculatedInterpolatedPredictedValuesRepository.findByCareRecipientIdAndParentFactorIds(careRecipientId, Arrays.asList(parentFactorId));
-		} else {
-			list = viewGefCalculatedInterpolatedPredictedValuesRepository.findByCareRecipientId(careRecipientId);
-		}
-
-    	if (list != null && !list.isEmpty()) {
-
-			Set<DataIdValue> monthLabels = createMonthLabels(list);
-			
-			if(parentFactorId == null) {
-				OJDiagramFrailtyStatus frailtyStatus = transformToDto(list, monthLabels);
-				response.setFrailtyStatus(frailtyStatus);
-			}
-			
-			response.getGroups().addAll(monthLabels);
-
-			Set<DetectionVariable> dvs = new HashSet<DetectionVariable>();
-			
-			for (ViewGefCalculatedInterpolatedPredictedValues gef : list) {
-				DetectionVariable dv = new DetectionVariable();
-				dv.setId(gef.getId().getDetectionVariableId());
-				dv.setDetectionVariableName(gef.getDetectionVariableName());
-				dvs.add(dv);
-			}
-			
-			for (DetectionVariable dv : dvs) {
-
-				String detectionVariableName = dv.getDetectionVariableName();
-
-				eu.city4age.dashboard.api.pojo.dto.oj.variant.next.Serie series = new eu.city4age.dashboard.api.pojo.dto.oj.variant.next.Serie(
-						detectionVariableName);
-
-				for (ViewGefCalculatedInterpolatedPredictedValues gef : list) {
-					Boolean gefAdded = false;
-					
-					if (gefAdded != true && dv.getId().equals(gef.getId().getDetectionVariableId())) {
-						series.getItems().add(new Item(gef.getId().getId(), gef.getGefValue(), gef.getId().getDataType(), gef.getId().getDetectionVariableId(), gef.getId().getTimeIntervalId()));
-						gefAdded = true;
-					}
-				}
-				((DataSet)response).getSeries().add(series);
-			} 
-			
-		}
-
-		return JerseyResponse.build(objectMapper.writeValueAsString(response));
-
-	}
-	
-	private Set<DataIdValue> createMonthLabels(List<ViewGefCalculatedInterpolatedPredictedValues> gefs) {
-		
-		Set<DataIdValue> monthLabels = new HashSet<DataIdValue>();
-    	
-		SimpleDateFormat formatWithTz = new SimpleDateFormat("yyyy/MM");
-		
-		formatWithTz.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-    	for (ViewGefCalculatedInterpolatedPredictedValues gef: gefs) {
-    		monthLabels.add(new DataIdValue(gef.getId().getTimeIntervalId(), gef.getIntervalStartLabel()));
-    	}
-
-		return monthLabels;
-	}
 
 	@GET
 	@ApiOperation("Get last five assessments for data sets in specific time interval.")
@@ -477,118 +388,6 @@ public class AssessmentsEndpoint {
 
 		return ojLfa;
 
-	}
-	
-	private OJDiagramFrailtyStatus transformToDto(List<ViewGefCalculatedInterpolatedPredictedValues> gefs, Set<DataIdValue> months) {
-		OJDiagramFrailtyStatus dto = new OJDiagramFrailtyStatus();
-		dto.setMonths(months);
-
-		gefs.sort(null);
-
-		eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie preFrail = new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie("Pre-Frail", new ArrayList<BigDecimal>());
-		eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie frail = new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie("Frail", new ArrayList<BigDecimal>());
-		eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie fit = new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie("Fit", new ArrayList<BigDecimal>());
-
-		String previous = "";
-		for (ViewGefCalculatedInterpolatedPredictedValues gef : gefs) {
-		
-			boolean found = false;
-			
-			for (DataIdValue month : months) {
-
-				if (gef.getFrailtyStatus() != null && !gef.getId().getDataType().equals("p") && month.getId().equals(gef.getId().getTimeIntervalId())) {
-
-					found = true;
-
-					switch (gef.getFrailtyStatus()) {
-
-					case "pre_frail":
-						previous = "pre_frail";
-						preFrail.getItems().add(BigDecimal.valueOf(0.2));
-						frail.getItems().add(null);
-						fit.getItems().add(null);
-						break;
-					case "frail":
-						previous = "frail";
-						frail.getItems().add(BigDecimal.valueOf(0.2));
-						preFrail.getItems().add(null);
-						fit.getItems().add(null);
-						break;
-					case "fit":
-						previous = "fit";
-						fit.getItems().add(BigDecimal.valueOf(0.2));
-						preFrail.getItems().add(null);
-						frail.getItems().add(null);
-						break;
-					default:
-						switch (previous) {
-						case "pre_frail":
-							previous = "pre_frail";
-							preFrail.getItems().add(BigDecimal.valueOf(0.2));
-							frail.getItems().add(null);
-							fit.getItems().add(null);
-							break;
-						case "frail":
-							previous = "frail";
-							frail.getItems().add(BigDecimal.valueOf(0.2));
-							preFrail.getItems().add(null);
-							fit.getItems().add(null);
-							break;
-						case "fit":
-							previous = "fit";
-							fit.getItems().add(BigDecimal.valueOf(0.2));
-							preFrail.getItems().add(null);
-							frail.getItems().add(null);
-							break;
-						case "":
-							previous = "fit";
-							fit.getItems().add(BigDecimal.valueOf(0.2));
-							preFrail.getItems().add(null);
-							frail.getItems().add(null);
-							break;
-						}
-					}					
-				}
-				
-				if (!found && gef.getId().getDetectionVariableId().equals(501L) && !gef.getId().getDataType().equals("p") && month.getId().equals(gef.getId().getTimeIntervalId())) {
-
-					switch (previous) {
-					case "pre_frail":
-						previous = "pre_frail";
-						preFrail.getItems().add(BigDecimal.valueOf(0.2));
-						frail.getItems().add(null);
-						fit.getItems().add(null);
-						break;
-					case "frail":
-						previous = "frail";
-						frail.getItems().add(BigDecimal.valueOf(0.2));
-						preFrail.getItems().add(null);
-						fit.getItems().add(null);
-						break;
-					case "fit":
-						previous = "fit";
-						fit.getItems().add(BigDecimal.valueOf(0.2));
-						preFrail.getItems().add(null);
-						frail.getItems().add(null);
-						break;
-					case "":
-						previous = "fit";
-						fit.getItems().add(BigDecimal.valueOf(0.2));
-						preFrail.getItems().add(null);
-						frail.getItems().add(null);
-						break;
-					}
-				}
-				
-			}
-
-		}
-
-		dto.getSeries().add(preFrail);
-		dto.getSeries().add(frail);
-		dto.getSeries().add(fit);
-
-		return dto;		
 	}
 
 }
