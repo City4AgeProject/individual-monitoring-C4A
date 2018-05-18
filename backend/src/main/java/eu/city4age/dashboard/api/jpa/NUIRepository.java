@@ -14,5 +14,8 @@ public interface NUIRepository extends GenericRepository<NumericIndicatorValue, 
 	
 	@Query("SELECT nui FROM NumericIndicatorValue nui INNER JOIN FETCH nui.detectionVariable dv INNER JOIN FETCH nui.userInRole uir LEFT JOIN FETCH nui.timeInterval ti WHERE nui.detectionVariable.id IN (SELECT pdv.detectionVariable.id FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE pdv.derivedDetectionVariable.id = :dvId AND dv.detectionVariableType = 'nui') AND nui.userInRole.id = :uirId")
 	List<NumericIndicatorValue> getNuisForSelectedGes(@Param("uirId") Long uirId, @Param("dvId") Long dvId);
+	
+	@Query("SELECT nui FROM NumericIndicatorValue nui INNER JOIN FETCH nui.detectionVariable dv INNER JOIN FETCH nui.userInRole uir LEFT JOIN FETCH nui.timeInterval ti WHERE nui.detectionVariable.id = :meaId AND nui.userInRole.id = :uirId")
+	List<NumericIndicatorValue> getNuisForSelectedMea(@Param("uirId") Long uirId, @Param("meaId") Long meaId);
 
 }

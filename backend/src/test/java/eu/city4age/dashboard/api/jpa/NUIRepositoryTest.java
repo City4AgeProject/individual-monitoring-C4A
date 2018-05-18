@@ -186,5 +186,58 @@ public class NUIRepositoryTest {
 		Assert.assertNotNull(result);
 		Assert.assertEquals(0, result.size());
 	}
+	
+	@Test
+	@Transactional
+	@Rollback(false)
+	public void testGetNuisForSelectedMea() {
+		
+		Long uirId;
+		Long meaId;
+
+		Timestamp intervalStart1 = Timestamp.valueOf(YearMonth.of(2017, 1).atDay(1).atStartOfDay());
+
+		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(intervalStart1, TypicalPeriod.MONTH);
+
+		Timestamp intervalStart2 = Timestamp.valueOf(YearMonth.of(2017, 2).atDay(1).atStartOfDay());
+
+		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(intervalStart2, TypicalPeriod.MONTH);
+
+		UserInRole uir1 = new UserInRole();
+		uir1.setPilotCode(Pilot.PilotCode.LCC);
+		uir1 = userInRoleRepository.save(uir1);
+		uirId=uir1.getId();
+
+		DetectionVariableType dvt1 = DetectionVariableType.MEA;
+		dvt1 = detectionVariableTypeRepository.save(dvt1);
+
+		DetectionVariable dv1 = new DetectionVariable();
+		dv1.setDetectionVariableName("MEA1");
+		dv1.setDetectionVariableType(dvt1);
+		dv1 = detectionVariableRepository.save(dv1);
+		meaId=dv1.getId();
+
+		NumericIndicatorValue nui1 = new NumericIndicatorValue();
+		nui1.setNuiValue(new Double(0));
+		nui1.setDetectionVariable(dv1);
+		nui1.setDetectionVariableId(meaId.intValue());
+		nui1.setUserInRole(uir1);
+		nui1.setUserInRoleId(uirId.intValue());
+		nui1.setTimeInterval(ti1);
+		nui1 = nuiRepository.save(nui1);
+
+		NumericIndicatorValue nui2 = new NumericIndicatorValue();
+		nui2.setNuiValue(new Double(1));
+		nui2.setDetectionVariable(dv1);
+		nui2.setDetectionVariableId(meaId.intValue());
+		nui2.setUserInRole(uir1);
+		nui2.setUserInRoleId(uirId.intValue());
+		nui2.setTimeInterval(ti2);
+		nui2 = nuiRepository.save(nui2);
+
+		List<NumericIndicatorValue> result = nuiRepository.getNuisForSelectedMea(uirId, meaId);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
+	}
 
 }
