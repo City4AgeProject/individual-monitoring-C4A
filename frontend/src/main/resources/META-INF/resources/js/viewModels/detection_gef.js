@@ -461,17 +461,17 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 switch(i){ //Maybe by obj.name????
                    case 0:
                        self.seriesVal.push({name: PRE_FRAIL_SERIES_NAME, drilling:"off",items: items,
-                       source:"/resources/images/chartIcon_ffe066.png",
+                       source:"./images/chartIcon_ffe066.png",
                        color: '#ffe066', lineType:'none',markerSize:25, selectionMode: 'none'});
                        break;
                    case 1:
                        self.seriesVal.push({name: FRAIL_SERIES_NAME, drilling:"off",items: items,
-                       source:"/resources/images/chartIcon_ff5c33.png",
+                       source:"./images/chartIcon_ff5c33.png",
                        color: '#ff5c33', lineType:'none',markerSize:25, selectionMode: 'none'});
                        break;
                    case 2:
                        self.seriesVal.push({name: FIT_SERIES_NAME, drilling:"off",items: items,
-                       source:"/resources/images/chartIcon_008c34.png",
+                       source:"./images/chartIcon_008c34.png",
                        color: '#008c34', lineType:'none',markerSize:25, selectionMode: 'none'});
                        break;
                    default:
