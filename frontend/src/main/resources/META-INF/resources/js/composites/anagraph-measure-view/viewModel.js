@@ -50,7 +50,9 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                      if(self.showNuis){
                         self.legendValue.title = "Hover to see NUI values";                                                            
                     }else {
-                        self.legendValue.title = "Click to see evidence notice";                        
+                        if(self.hasComments){
+                            self.legendValue.title = "Click to see evidence notice";
+                        }                                                
                     }
                      self.legendValue.titleStyle = "font-size:10px";
                     

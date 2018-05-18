@@ -7,6 +7,10 @@ package eu.city4age.dashboard.api.pojo.ws;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import eu.city4age.dashboard.api.pojo.dto.oj.ItemValueType;
 
 /**
  *
@@ -16,11 +20,11 @@ public class C4AServiceGetGereatricFactorsResponse {
 
 	private String groupName;
 	private List<Long> idList = new ArrayList<Long>();
-	private List<Float> ItemList = new ArrayList<Float>();
-	private List<String> dateList = new ArrayList<String>();
+	private List<ItemValueType> ItemList = new ArrayList<ItemValueType>();
+	private Set<String> dateList = new TreeSet<String>();
 
-	public C4AServiceGetGereatricFactorsResponse(String groupName, List<Long> idList, List<Float> itemList,
-			List<String> dateList) {
+	public C4AServiceGetGereatricFactorsResponse(String groupName, List<Long> idList, List<ItemValueType> itemList,
+			Set<String> dateList) {
 		this.groupName = groupName;
 		this.idList = idList;
 		this.ItemList = itemList;
@@ -43,19 +47,19 @@ public class C4AServiceGetGereatricFactorsResponse {
 		this.idList = idList;
 	}
 
-	public List<Float> getItemList() {
+	public List<ItemValueType> getItemList() {
 		return ItemList;
 	}
 
-	public void setItemList(List<Float> ItemList) {
+	public void setItemList(List<ItemValueType> ItemList) {
 		this.ItemList = ItemList;
 	}
 
-	public List<String> getDateList() {
+	public Set<String> getDateList() {
 		return dateList;
 	}
 
-	public void setDateList(List<String> dateList) {
+	public void setDateList(Set<String> dateList) {
 		this.dateList = dateList;
 	}
 

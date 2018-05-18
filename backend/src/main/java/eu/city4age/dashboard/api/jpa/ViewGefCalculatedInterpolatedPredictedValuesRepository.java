@@ -25,4 +25,10 @@ public interface ViewGefCalculatedInterpolatedPredictedValuesRepository extends 
 	@Query("SELECT gef FROM ViewGefCalculatedInterpolatedPredictedValues gef WHERE gef.id.detectionVariableId = :varId AND gef.id.userInRoleId = :userInRoleId ORDER BY gef.intervalStart ASC")
 	List<ViewGefCalculatedInterpolatedPredictedValues> findByDetectionVariableId(@Param("varId") final Long dvId, @Param("userInRoleId") final Long uId); //AND gef.id.dataType<>'p' 
 
+	@Query("SELECT gef FROM ViewGefCalculatedInterpolatedPredictedValues gef WHERE gef.id.userInRoleId = :careRecipientId AND gef.derivedDetectionVariableId IN :parentFactorIds ORDER BY gef.intervalStart")
+	List<ViewGefCalculatedInterpolatedPredictedValues> findByCareRecipientIdAndParentFactorIds(@Param("careRecipientId") final Long careRecipientId, @Param("parentFactorIds") final List<Long> parentFactorIds);
+	
+	@Query("SELECT DISTINCT gef FROM ViewGefCalculatedInterpolatedPredictedValues gef WHERE gef.id.userInRoleId = :careRecipientId AND (gef.derivedDetectionVariableId = 501 OR gef.derivedDetectionVariableId IS NULL) ORDER BY gef.intervalStart")
+	List<ViewGefCalculatedInterpolatedPredictedValues> findByCareRecipientId(@Param("careRecipientId") final Long careRecipientId);
+
 }

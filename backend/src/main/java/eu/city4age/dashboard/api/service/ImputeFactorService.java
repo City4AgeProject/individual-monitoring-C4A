@@ -7,10 +7,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.signaflo.timeseries.TimeSeries;
@@ -19,19 +23,14 @@ import com.github.signaflo.timeseries.forecast.Forecast;
 import com.github.signaflo.timeseries.model.arima.Arima;
 import com.github.signaflo.timeseries.model.arima.ArimaOrder;
 
-import org.springframework.transaction.annotation.Propagation;
-
 import eu.city4age.dashboard.api.jpa.GeriatricFactorInterpolationValueRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorInterpolationValue;
-import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
-import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 /*
  * author: Vladimir Aleksic

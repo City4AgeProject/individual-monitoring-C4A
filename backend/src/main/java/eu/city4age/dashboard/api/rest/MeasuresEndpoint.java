@@ -169,6 +169,7 @@ public class MeasuresEndpoint {
 					e.printStackTrace();
 				}
 			}
+			pilotsIterator.remove();
 		} else {
 			logger.info("No new data submitted!");
 		}

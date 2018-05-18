@@ -8,11 +8,13 @@ package eu.city4age.dashboard.api.pojo.ws;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import eu.city4age.dashboard.api.pojo.domain.FrailtyStatusTimeline;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
-import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
+import eu.city4age.dashboard.api.pojo.dto.oj.ItemValueType;
 
 /**
  *
@@ -22,8 +24,8 @@ public class C4ServiceGetOverallScoreListResponse {
 
 	private final List<C4AServiceGetGereatricFactorsResponse> items = new ArrayList<C4AServiceGetGereatricFactorsResponse>(); // 1
 	private final List<Long> idList = new ArrayList<Long>();
-	private final List<Float> ItemList = new ArrayList<Float>();
-	private final List<String> dateList = new ArrayList<String>();
+	private final List<ItemValueType> ItemList = new ArrayList<ItemValueType>();
+	private final Set<String> dateList = new TreeSet<String>();
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
 
 	private String groupName;
@@ -54,12 +56,12 @@ public class C4ServiceGetOverallScoreListResponse {
 
 	}
 
-	public C4ServiceGetOverallScoreListResponse(List<TimeInterval> tis) {
+	public C4ServiceGetOverallScoreListResponse() {
 
 	}
 
-	public C4ServiceGetOverallScoreListResponse(List<TimeInterval> tis, List<Float> itemList, List<Long> idList,
-			List<String> dateList, String groupName, String parentGroupName, Long gefTypeId) {
+	public C4ServiceGetOverallScoreListResponse(List<ItemValueType> itemList, List<Long> idList,
+			Set<String> dateList, String groupName, String parentGroupName, Long gefTypeId) {
 		this.groupName = groupName;
 		this.parentGroupName = parentGroupName;
 		this.gefTypeId = gefTypeId;

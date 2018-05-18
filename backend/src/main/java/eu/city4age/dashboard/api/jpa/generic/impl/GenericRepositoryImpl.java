@@ -149,14 +149,14 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 		for (S s : entities) {
 			savedEntities.add(persistOrMerge(s));
 			i++;
-			if (i % batchSize == 0) {
+			/*if (i % batchSize == 0) {
 				// Flush a batch of inserts and release memory
 				entityManager.flush();
 				entityManager.clear();
-			}
+			}*/
 		}
-		entityManager.flush();
-		entityManager.clear();
+		/*entityManager.flush();
+		entityManager.clear();*/
 		return savedEntities;
 	}
 

@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api;
 
 import java.util.Properties;
+
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.logging.log4j.LogManager;

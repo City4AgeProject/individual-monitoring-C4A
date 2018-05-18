@@ -173,7 +173,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    						  }
     	    						  
     	    						nuiObjects[nuiKey+"Object"][mon] = nui.nuiValue;
-    	    						nuis += nuiName+" "+nui.nuiValue+"\n";
+    	    						nuis += nuiShortName +" "+nui.nuiValue+"\n";
     	    						
     	    						if( ! mea.nuisForMeasure.includes(nuiObjects[nuiKey+"Object"]) ){
     	    							mea.nuisForMeasure.push(nuiObjects[nuiKey+"Object"]);

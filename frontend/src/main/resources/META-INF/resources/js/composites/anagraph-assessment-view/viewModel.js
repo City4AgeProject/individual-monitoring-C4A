@@ -7,13 +7,20 @@ function(oj, ko, $) {
 	function model(context) {
 		var self = this;
 
+                var lineColors = ['#b4b2b2', '#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
 		self.crId = ko.observable();
 		self.detectionVariable  = ko.observable(); 
                 self.gefName = ko.observable();
 		self.parentFactorId = ko.observable();
-		self.series = ko.observableArray();
-		self.groups = ko.observableArray();
-		self.drilling = ko.observable();
+		self.seriesVal = ko.observableArray([]);
+		self.groupsVal = ko.observableArray([]);
+		self.seriesPredictionVal = ko.observableArray([]);
+		self.groupsPredictionVal = ko.observableArray([]);
+                //self.lineGroupsValue = ko.observableArray([]);
+                //self.lineSeriesValue = ko.observableArray([]);
+                self.lineGroupsPredictionValue = ko.observableArray([]);
+                self.lineSeriesPredictionValue = ko.observableArray([]);
+                self.drilling = ko.observable();
 		self.seeMeasures = ko.observable(false);
 		self.highlightValue = ko.observable();
 		self.dataPointsMarked = ko.observable('No data points marked.');
@@ -60,14 +67,25 @@ function(oj, ko, $) {
                 self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc");
                 self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
                 self.typeLabel = oj.Translations.getTranslatedString("type");
-                
-                
+                self.showPrediction = ko.observable(false);
+                self.selectionMode = ko.observable("multiple");
+                self.predictionButtonText1 = ko.observable("Show prediction");
 		//event triggers when selection changed
 		self.chartOptionChange = function(event) {
+                    
                     if (!self.showSelectionOnDiagram()) {
                         if(event){     
                             $('#multipleSelection').ojPopup('close');
-                            if(event.detail.selectionData){ 
+                            if(event.detail.selectionData){
+                                event.detail.selectionData.forEach(function(obj,i,array){
+                                    if(obj.data.type === "i"){
+                                                console.log('found interpolated val!');
+                                                array.splice(i,1);
+                                                
+                                                
+                                    }
+                                });
+                                        
                                 self.multipleSelectionsArray(returnMultipleSelectionsOnSameValue(event.detail));
                                     // if there is multiple selections on same value
                                     if(self.multipleSelectionsArray().length > 0 && !self.solvedMultipleSelection()) {
@@ -131,65 +149,81 @@ function(oj, ko, $) {
                     }
 		};
 		
-		var loadDiagramDataCallback = function (data) {
-
-                    var grupe = ko.observableArray(data.groups);
-
+		var loadDiagramDataCallback2 = function (data) {
+      
                     if (data !== undefined && data.groups !== undefined && data.series !== undefined) {
 
+                        var groupsCopy = data.groups.slice();
+                    
                         data.groups = data.groups.map(function (obj) {
                             return obj.name;
                         });
 
                         formatDate(data.groups);
-
-                        self.props.groups = data.groups;
-                        self.props.series = data.series;
-
-                    }
-
-                    if (self.props !== undefined
-                            && self.props.series !== undefined) {
-                        for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
-                            self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
-                        }
-
-
-                        for (var jg = 0; jg < self.props.series.length; jg++) {
-                            var pomocni = [];
-                            var timeIntervals = [];
-                            for (var m = 0; m < self.props.series[jg].items.length; m++) {
-                                timeIntervals.push(self.props.series[jg].items[m].timeIntervalId);
-                            }
-                            for (var ig = 0; ig < grupe().length; ig++) {
-                                for (var kg = 0; kg < self.props.series[jg].items.length; kg++) {
-                                    if (grupe()[ig].id === self.props.series[jg].items[kg].timeIntervalId) {
-                                        pomocni.push(self.props.series[jg].items[kg]);
-                                    } else if (!timeIntervals.includes(grupe()[ig].id)) {
-                                        var item = new Object();
-                                        item.id = null;
-                                        item.value = null;
-                                        item.gefTypeId = self.props.series[jg].items[kg].gefTypeId;
-                                        item.timeIntervalId = grupe()[ig].id;
-
-                                        pomocni.push(item);
-                                        timeIntervals.push(item.timeIntervalId);
-                                    }
+                        
+                        $.each(data.series, function(i, serie){
+                            var nodes=[];
+                            var predictedNodes=[0];
+                            $.each(serie.items, function(j, item){
+                                var newItem = {
+                                    value: item.value,
+                                    name: oj.Translations.getTranslatedString(serie.name),
+                                    gefTypeId: item.gefTypeId,
+                                    type: item.type,
+                                    markerDisplayed: "off" //Don`t change for 'c' type
                                 }
+                                switch (item.type) {
+                                    case 'i':
+                                        newItem.markerDisplayed = "on";
+                                        newItem.markerShape = "diamond";
+                                        newItem.markerSize = 15;
+                                        newItem.shortDesc = "Interpolated value (" + item.value + ")";
+                                    case 'c': //Fall-thru with markerDisplayed=off only
+                                        nodes.push(newItem);
+                                        predictedNodes[0]=newItem;
+                                        break;
+                                    case 'p':
+                                        newItem.shortDesc = "Predicted value (" + item.value + ")";
+                                        newItem.drilling="off";
+                                        predictedNodes.push(newItem);
+                                        break;
+                                    default:
+                                        console.log('uknown t: ' + newItem.type)
+                                }
+                            });
+                            if (i == 0) {
+                                self.groupsVal(data.groups.slice(0, nodes.length));
+                                self.groupsPredictionVal(data.groups.slice(nodes.length));
                             }
-                            self.props.series[jg].items = pomocni;
-                        }
+                            var leftPartOfArray = []; //Right align for predicted
+                            for (var ii = 1; ii < nodes.length; ii++) {
+                                leftPartOfArray.push(null);
+                            }
+                            var s={
+                                name: oj.Translations.getTranslatedString(serie.name),
+                                items: nodes,
+                                color: lineColors[i]
+                            }
+                            self.seriesVal.push(s);
+                            var s={
+                                name: oj.Translations.getTranslatedString(serie.name) + ' prediction',
+                                items: leftPartOfArray.concat(predictedNodes),
+                                lineStyle: "dashed",
+                                color: lineColors[i],
+                                drilling:"off"
+                            }
+                            self.seriesPredictionVal.push(s);
+                        });
                     }
                 };
 
-		var loadDataSet = function(data) {  
-			if (self.props.parentFactorId > 0) {
-				var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA
-						+ "/careRecipientId/" + self.props.careRecipientId
-						+ "/parentFactorId/" + self.props.parentFactorId,
-						loadDiagramDataCallback);
-				jqXHR.fail(serverErrorCallback);
-			}
+		var loadDataSet = function(data) { 
+                    //loading data for ges diagram (if anagraph-assessment-view is on gef page, it triggers but does not load data)
+                        var jqXHR = $.getJSON(ASSESSMENT_DIAGRAM_DATA
+					+ "/careRecipientId/" + self.props.careRecipientId
+					+ "?parentFactorId=" + self.props.parentFactorId,
+					loadDiagramDataCallback2);
+			jqXHR.fail(serverErrorCallback);			
 			return jqXHR;
 		};
 
@@ -224,9 +258,8 @@ function(oj, ko, $) {
 		});
 		
 
-		self.attached = function() {
-			var response = loadDataSet();
-			return response;
+		self.attached = function() {                   
+                        loadDataSet();                                        			
 		};
 
 
@@ -235,6 +268,7 @@ function(oj, ko, $) {
 			selected = [];
 			self.props.subFactorName = "testtest";			
 			self.loadAssessmentsCached();
+                        //debugger;
 			if (self.showSelectionOnDiagram()) {				
 				selected = [];
 				for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
@@ -295,7 +329,7 @@ function(oj, ko, $) {
 		function matchSeriesIndexByItemId(item) {
 			var series = null;
 			if (self.props.series !== undefined) {
-				series = self.props.series;
+				series = self.seriesVal();
 			} else {
 				series = self.series;
 			}
@@ -321,67 +355,63 @@ function(oj, ko, $) {
 		}
 
 		self.loadAssessmentsCached = function() {
-			return $.getJSON(ASSESSMENT_LAST_FIVE_FOR_DIAGRAM
-									+ '/userInRoleId/'
-									+ self.props.careRecipientId
-									+ '/parentDetectionVariableId/'
-									+ self.props.parentFactorId
-									+ '/intervalStart/2001-1-1/intervalEnd/2040-1-1',
-							function(dataSet) {
-								var assesmentsDataSet = DataSet.produceFromOther(dataSet);
-								for (var i = 0; i < assesmentsDataSet.series.length; i++) {
-									var serie = assesmentsDataSet.series[i];
-									if (serie.items !== undefined) {
-										for (var j = 0; j < serie.items.length; j++) {
-											var item = serie.items[j];
-											var matchedIndex = matchSeriesIndexByItemId(item);
-										}
-									}
-								}
-								var series = null;
-								if (self.props.series !== undefined) {
-									series = self.props.series;
-								} else {
-									series = self.series;
-								}
-								if (series !== undefined) {
-                                                                    //risk status icon priority settings 
-									for (var i = 0; i < series.length; i++) {
-										for (var j = 0; j < series[i].items.length; j++) {
-											if (series[i].items[j] !== undefined
-													&& series[i].items[j].assessmentObjects
-													&& series[i].items[j].assessmentObjects[0].length > 0) {
-												var hasWarning = false;
-												var hasAlert = false;
-												for (var k = 0; k < series[i].items[j].assessmentObjects[0].length; k++) {
-                                                                                                    if (series[i].items[j].assessmentObjects[k] !== undefined) {
-													if ('W' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
-                                                                                                                series[i].items[j].source = 'images/risk_warning_unsel.png';
-														series[i].items[j].sourceSelected = 'images/risk_warning_sel.png';
-														hasWarning = true;
-													}
-													if ('A' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
-														series[i].items[j].source = 'images/risk_alert_unsel.png';
-														series[i].items[j].sourceSelected = 'images/risk_alert_sel.png';
-														hasAlert = true;
-														break;
-													}
-                                                                                                    }
+                    return $.getJSON(ASSESSMENT_LAST_FIVE_FOR_DIAGRAM
+                                                                    + '/userInRoleId/'
+                                                                    + self.props.careRecipientId
+                                                                    + '/parentDetectionVariableId/'
+                                                                    + self.props.parentFactorId
+                                                                    + '/intervalStart/2001-1-1/intervalEnd/2040-1-1',
+                    function(dataSet) {
+                            var assesmentsDataSet = DataSet.produceFromOther(dataSet);
+                            for (var i = 0; i < assesmentsDataSet.series.length; i++) {
+                                    var serie = assesmentsDataSet.series[i];
+                                    if (serie.items !== undefined) {
+                                            for (var j = 0; j < serie.items.length; j++) {
+                                                    var item = serie.items[j];
+                                                    var matchedIndex = matchSeriesIndexByItemId(item);
+                                            }
+                                    }
+                            }
+                            var series = self.seriesVal();
 
-												}
-											}
-										}
-									}
-								}
-								if (self.props.series !== undefined) {
-									self.props.series = self.props.series
-											.slice();
-								}
-								if (self.props.groups !== undefined) {
-									self.props.groups = self.props.groups
-											.slice();
-								}
-							});
+                            if (series !== undefined) {
+                                //risk status icon priority settings 
+                                    for (var i = 0; i < series.length; i++) {
+                                            for (var j = 0; j < series[i].items.length; j++) {
+                                                    if (series[i].items[j] !== undefined
+                                                                    && series[i].items[j].assessmentObjects
+                                                                    && series[i].items[j].assessmentObjects[0].length > 0) {
+                                                            var hasWarning = false;
+                                                            var hasAlert = false;
+                                                            for (var k = 0; k < series[i].items[j].assessmentObjects[0].length; k++) {
+                                                                if (series[i].items[j].assessmentObjects[k] !== undefined) {
+                                                                    if ('W' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
+                                                                            series[i].items[j].source = 'images/risk_warning_unsel.png';
+                                                                            series[i].items[j].sourceSelected = 'images/risk_warning_sel.png';
+                                                                            hasWarning = true;
+                                                                    }
+                                                                    if ('A' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
+                                                                            series[i].items[j].source = 'images/risk_alert_unsel.png';
+                                                                            series[i].items[j].sourceSelected = 'images/risk_alert_sel.png';
+                                                                            hasAlert = true;
+                                                                            break;
+                                                                    }
+                                                                }
+
+                                                            }
+                                                    }
+                                            }
+                                    }
+                            }
+                            if (self.props.series !== undefined) {
+                                    self.props.series = self.props.series
+                                                    .slice();
+                            }
+                            if (self.props.groups !== undefined) {
+                                    self.props.groups = self.props.groups
+                                                    .slice();
+                            }
+                    });
 		};
 
 		function getDataPoints(selectionData) {
@@ -628,14 +658,15 @@ function(oj, ko, $) {
 			self.props.subFactorName = "testtest";
 			self.loadAssessmentsCached();
 			selected = [];
-			for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
-				for (var jg = 0; jg < Object.keys(self.props.series[ig].items).length; jg++) {
-					if (self.props.series[ig].items[jg].assessmentObjects
-							&& self.props.series[ig].items[jg].assessmentObjects[0].length > 0) {
-                                                    for (var kg = 0; kg < self.props.series[ig].items[jg].assessmentObjects[0].length; kg++) {
-                                                        if (self.props.series[ig].items[jg].assessmentObjects[kg] !== undefined) {
-                                                            if (self.props.series[ig].items[jg].assessmentObjects[kg][4] === self.props.assessmentId) {//self.props.series[ig].items[jg].assessmentObjects[0][4] - assessment_id (index 4)
-                                                                    selected.push(self.props.series[ig].items[jg].assessmentObjects[0][2].toString());//self.props.series[ig].items[jg].assessmentObjects[0][2] - gef_id (index 2)
+                        console.log('this is assessmentId ' + self.props.assessmentId);
+			for (var ig = 0; ig < Object.keys(self.seriesVal()).length; ig++) {
+				for (var jg = 0; jg < Object.keys(self.seriesVal()[ig].items).length; jg++) {
+					if (self.seriesVal()[ig].items[jg].assessmentObjects
+							&& self.seriesVal()[ig].items[jg].assessmentObjects[0].length > 0) {
+                                                    for (var kg = 0; kg < self.seriesVal()[ig].items[jg].assessmentObjects[0].length; kg++) {
+                                                        if (self.seriesVal()[ig].items[jg].assessmentObjects[kg] !== undefined) {
+                                                            if (self.seriesVal()[ig].items[jg].assessmentObjects[kg][4] === self.props.assessmentId) {//self.props.series[ig].items[jg].assessmentObjects[0][4] - assessment_id (index 4)
+                                                                    selected.push(self.seriesVal()[ig].items[jg].assessmentObjects[0][2].toString());//self.props.series[ig].items[jg].assessmentObjects[0][2] - gef_id (index 2)
                                                             }
                                                         }
                                                     }
@@ -691,7 +722,6 @@ function(oj, ko, $) {
                        } 
                     });
                     
-                    console.log('rejected ids ' + ko.toJSON(self.rejectedIds));
                     $('#multipleSelection').ojPopup('close');
                     self.solvedMultipleSelection(true);
                     self.chartOptionChange(self.storedEvent);
@@ -714,9 +744,60 @@ function(oj, ko, $) {
 					}
 					);
                     $('#multipleSelection').ojPopup('open');            
-                }
+                };
+                self.composite = context.element;
+                
+                $(self.composite).on('series-changed',function(event){
+                         if (event.detail.updatedFrom === 'external'){                             
+                                    self.seriesVal(self.props.series);
+                                    self.groupsVal(self.props.groups);
+                                    self.seriesPredictionVal(self.props.seriesPrediction);
+                                    self.groupsPredictionVal(self.props.groupsPrediction);
+                                    self.showPrediction(false);
+                                    self.predictionButtonText1("Show prediction");
+                            }
+                });
+/*  Everything is updated in same f call
+                $(self.composite).on('groups-changed',function(event){                           
+                         if (event.detail.updatedFrom === 'external'){ 
+                                     self.groupsVal(self.props.groups);
+                                                         
+                            }
 
-	}
+                });
+                $(self.composite).on('seriesPrediction-changed',function(event){
+                         if (event.detail.updatedFrom === 'external'){                             
+                                       self.seriesPredictionVal(self.props.seriesPrediction);
+                            }
+
+                });
+                $(self.composite).on('groupsPrediction-changed',function(event){                           
+                         if (event.detail.updatedFrom === 'external'){ 
+                                     self.groupsPredictionVal(self.props.groupsPrediction);
+                                                         
+                            }
+
+                });
+*/
+                self.showHidePredictions1 = function(event) {
+                    var series = self.seriesVal();
+                    var groups = self.groupsVal();
+                    if (!self.showPrediction()) {
+                        groups = groups.concat(self.groupsPredictionVal());
+                        series = series.concat(self.seriesPredictionVal());
+                        self.showPrediction(true);
+                        self.predictionButtonText1("Hide prediction");
+                    } else {
+                        groups.splice(groups.length - self.groupsPredictionVal().length);
+                        series.splice(series.length - self.seriesPredictionVal().length);
+                        self.showPrediction(false);
+                        self.predictionButtonText1("Show prediction");
+                    }
+
+                    self.seriesVal(series);
+                    self.groupsVal(groups);
+                };
+            }
 
 	return model;
 });

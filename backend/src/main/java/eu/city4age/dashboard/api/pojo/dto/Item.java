@@ -4,6 +4,8 @@
  */
 package eu.city4age.dashboard.api.pojo.dto;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author mnou2
@@ -12,11 +14,24 @@ public class Item {
     
     private Long id;
     private Float value;
+    private String type;
     private Integer gefTypeId;
     private Long timeIntervalId;
     
+    
 
-    /**
+    public Item(Long id, BigDecimal value, String type, Long gefTypeId, Long timeIntervalId) {
+		this.id = id;
+		this.value = value.floatValue();
+		this.type = type;
+		this.gefTypeId = gefTypeId.intValue();
+		this.timeIntervalId = timeIntervalId;
+	}
+
+	public Item() {
+	}
+
+	/**
      * @return the id
      */
     public Long getId() {
@@ -44,7 +59,15 @@ public class Item {
         this.value = value;
     }
 
-    /**
+    public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	/**
      * @return the gefTypeId
      */
     public Integer getGefTypeId() {

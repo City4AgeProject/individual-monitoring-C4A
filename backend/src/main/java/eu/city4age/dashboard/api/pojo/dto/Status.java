@@ -1,6 +1,14 @@
 package eu.city4age.dashboard.api.pojo.dto;
 
-public class Status {
+import java.io.Serializable;
+
+public class Status implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5098805329397047578L;
+	
 
 	private String responseCode;
 	

@@ -12,19 +12,20 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot;
  * @author EMantziou
  */
 public class C4ACareRecipientListResponse {
-	private long userId;
+	
+	private Long userId;
 
-	private int age;
+	private Integer age;
 
 	private String frailtyStatus;
 
 	private String frailtyNotice;
 
-	private char attention;
+	private Character attention;
 
 	private String textline;
 
-	private char interventionstatus;
+	private Character interventionstatus;
 
 	private String interventionDate;
 
@@ -36,8 +37,8 @@ public class C4ACareRecipientListResponse {
 	
 	private String gender;
 
-	public C4ACareRecipientListResponse(long userId, int age, String frailtyStatus, String frailtyNotice, char attention,
-			String textline, char interventionstatus, String interventionDate, String detectionStatus,
+	public C4ACareRecipientListResponse(Long userId, Integer age, String frailtyStatus, String frailtyNotice, Character attention,
+			String textline, Character interventionstatus, String interventionDate, String detectionStatus,
 			String detectionDate, Pilot.PilotCode pilotCode,String gender) {
 		this.userId = userId;
 		this.age = age;
@@ -53,19 +54,19 @@ public class C4ACareRecipientListResponse {
 		this.gender = gender;
 	}
 
-	public long getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(long userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 
-	public int getAge() {
+	public Integer getAge() {
 		return age;
 	}
 
-	public void setAge(int age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 
@@ -85,11 +86,11 @@ public class C4ACareRecipientListResponse {
 		this.frailtyNotice = frailtyNotice;
 	}
 
-	public char getAttention() {
+	public Character getAttention() {
 		return attention;
 	}
 
-	public void setAttention(char attention) {
+	public void setAttention(Character attention) {
 		this.attention = attention;
 	}
 
@@ -101,11 +102,11 @@ public class C4ACareRecipientListResponse {
 		this.textline = textline;
 	}
 
-	public char getInterventionstatus() {
+	public Character getInterventionstatus() {
 		return interventionstatus;
 	}
 
-	public void setInterventionstatus(char interventionstatus) {
+	public void setInterventionstatus(Character interventionstatus) {
 		this.interventionstatus = interventionstatus;
 	}
 

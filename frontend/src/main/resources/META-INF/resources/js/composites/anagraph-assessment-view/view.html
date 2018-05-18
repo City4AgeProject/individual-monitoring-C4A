@@ -1,17 +1,21 @@
 <div class="oj-panel oj-panel-shadow-sm"
 	style="border: none; background-color: #fcfcfc">
-	<div class="oj-flex-item" style="width: 100%; height: 400pxf; display: block; background-color: #F1F1F1; padding-top: 15px;">
+	<div class="oj-flex-item" style="width: 100%; height: 400pxf; display: block; border:1px solid lightgray;background-color: #F1F1F1; padding-top: 10px;padding-bottom: 10px;position:relative;">
 		<!-- line chart GES -->
 		<!-- title = /'{/"text/": ."Geriatric Sub factor - /" + subFactorName(), /"halign/": /"center/"}/' -->
 <!-- title: {text: detectionGEFGroupsLineChartLabel , halign: 'center'}, -->
 <!-- title: {text: $props.titleValue, halign: 'center'}, -->
-        
+                <div style="padding-right:16px; position:absolute; top:10px;right:0;">
+                                <oj-button id= "btnPrediction2" aria-controls="lineChart" on-click="[[showHidePredictions1]]">
+                                  <span data-bind='text: predictionButtonText1'></span>
+                                </oj-button>
+                </div>
                 <h3 id="measureName" data-bind="text: $props.titleValue" align="center" style="font-weight: 400;"></h3>
-                <oj-chart id="detectionGEFGroup1FactorsChart" style="width: 100%; height: 400px; display: block"                                   
+                <oj-chart id="detectionGEFGroup1FactorsChart" style="width: 100%; height: 350px; display: block"                                   
                     type="line"
-                    series="[[$props.series]]"
-                    groups="[[$props.groups]]"
-                    selection-mode="multiple"
+                    series="[[seriesVal]]"
+                    groups="[[groupsVal]]"
+                    selection-mode=[[selectionMode]]
                     selection="{{selectedItemsValue}}" 
                     animation-on-display="auto"
                     animation-on-data-change="auto"

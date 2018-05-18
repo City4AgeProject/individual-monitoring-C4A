@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "vw_gef_calculated_interpolated_predicted_values")
 @Immutable
-public class ViewGefCalculatedInterpolatedPredictedValues {
+public class ViewGefCalculatedInterpolatedPredictedValues implements Comparable<ViewGefCalculatedInterpolatedPredictedValues> {
 	
 	@EmbeddedId
 	private ViewGefCalculatedInterpolatedPredictedValuesKey id;
@@ -70,7 +70,6 @@ public class ViewGefCalculatedInterpolatedPredictedValues {
 	
 	@Column(name = "username")
 	private String username;
-	
 
 	public ViewGefCalculatedInterpolatedPredictedValues() {
 		
@@ -369,6 +368,11 @@ public class ViewGefCalculatedInterpolatedPredictedValues {
 	 */
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	@Override
+	public int compareTo(ViewGefCalculatedInterpolatedPredictedValues o) {
+		return this.getId().getTimeIntervalId().compareTo(o.getId().getTimeIntervalId());
 	}
 
 }

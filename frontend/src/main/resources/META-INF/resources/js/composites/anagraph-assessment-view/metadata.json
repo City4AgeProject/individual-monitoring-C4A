@@ -48,6 +48,14 @@
 			"description": "ojDiagram groups.",
 			"type": "Array<object>"
 		},
+		"seriesPrediction": {
+			"description": "ojDiagram series4Prediction.",
+			"type": "Array<object>"
+		},
+		"groupsPrediction": {
+			"description": "ojDiagram groups4Prediction.",
+			"type": "Array<object>"
+		},
 		"selectedItemsValue": {
 			"description": "Array of objects selected on diagram.",
 			"type": "Array<object>"

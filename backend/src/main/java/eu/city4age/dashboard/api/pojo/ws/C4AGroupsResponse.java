@@ -8,12 +8,13 @@ package eu.city4age.dashboard.api.pojo.ws;
 import java.util.List;
 
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
+import eu.city4age.dashboard.api.pojo.dto.Response;
 
 /**
  *
  * @author EMantziou
  */
-public class C4AGroupsResponse {
+public class C4AGroupsResponse implements Response {
 
 	private String message;
 
@@ -21,7 +22,7 @@ public class C4AGroupsResponse {
 
 	private String careRecipientName;
 
-	private OJDiagramFrailtyStatus frailtyStatus;
+	private OJDiagramFrailtyStatus frailtyStatus =  new OJDiagramFrailtyStatus();
 
 	private List<C4ServiceGetOverallScoreListResponse> ItemList;
 

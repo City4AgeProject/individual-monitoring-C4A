@@ -1,9 +1,11 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,15 +48,16 @@ import eu.city4age.dashboard.api.jpa.AssessedGefValuesRepository;
 import eu.city4age.dashboard.api.jpa.AssessmentRepository;
 import eu.city4age.dashboard.api.jpa.AudienceRolesRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
-import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
-import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
-import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
+import eu.city4age.dashboard.api.pojo.dto.Item;
+import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValueLastFiveAssessment;
@@ -102,7 +105,7 @@ public class AssessmentsEndpoint {
 	private AssessedGefValuesRepository assessedGefValuesRepository;
 	
 	@Autowired
-	private TimeIntervalRepository timeIntervalRepository;
+	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
 
 	@Context
 	private ContextResolver<ObjectMapper> mapperResolver;
@@ -110,66 +113,74 @@ public class AssessmentsEndpoint {
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 	
 	@GET
-	@Path("getDiagramData/careRecipientId/{careRecipientId}/parentFactorId/{parentFactorId}")
+	@Path("getDiagramData/careRecipientId/{careRecipientId}")
 	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
 	public Response getDiagramData(@PathParam("careRecipientId") Long careRecipientId,
-			@PathParam("parentFactorId") Long parentFactorId) throws IOException {
-
-		DataSet response = new DataSet();
+			@QueryParam("parentFactorId") Long parentFactorId) throws JsonProcessingException {
 		
-    	List<TimeInterval> tis = timeIntervalRepository.getDiagramDataForUserInRoleId(careRecipientId, parentFactorId);
-    	
-    	if (tis.size() > 0) {
-    		
-    		String timeZone = tis.get(0).getGeriatricFactorValue().iterator().next().getUserInRole().getPilot().getTimeZone();
+		DataSet response = new DataSet();
+
+		List<ViewGefCalculatedInterpolatedPredictedValues> list;
+		if(parentFactorId != null) {
+			list = viewGefCalculatedInterpolatedPredictedValuesRepository.findByCareRecipientIdAndParentFactorIds(careRecipientId, Arrays.asList(parentFactorId));
+		} else {
+			list = viewGefCalculatedInterpolatedPredictedValuesRepository.findByCareRecipientId(careRecipientId);
+		}
+
+    	if (list != null && !list.isEmpty()) {
+
+			Set<DataIdValue> monthLabels = createMonthLabels(list);
 			
-			List<String> monthLabels = createMonthLabels(tis, timeZone);
+			if(parentFactorId == null) {
+				OJDiagramFrailtyStatus frailtyStatus = transformToDto(list, monthLabels);
+				response.setFrailtyStatus(frailtyStatus);
+			}
 			
-			response.setGroups(monthLabels);
-			
+			response.getGroups().addAll(monthLabels);
+
 			Set<DetectionVariable> dvs = new HashSet<DetectionVariable>();
 			
-			for (TimeInterval ti : tis) {
-				for (GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
-					dvs.add(gef.getDetectionVariable());
-				}
+			for (ViewGefCalculatedInterpolatedPredictedValues gef : list) {
+				DetectionVariable dv = new DetectionVariable();
+				dv.setId(gef.getId().getDetectionVariableId());
+				dv.setDetectionVariableName(gef.getDetectionVariableName());
+				dvs.add(dv);
 			}
 			
 			for (DetectionVariable dv : dvs) {
 
 				String detectionVariableName = dv.getDetectionVariableName();
 
-				eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie series = new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie(
+				eu.city4age.dashboard.api.pojo.dto.oj.variant.next.Serie series = new eu.city4age.dashboard.api.pojo.dto.oj.variant.next.Serie(
 						detectionVariableName);
 
-				for (TimeInterval ti : tis) {
+				for (ViewGefCalculatedInterpolatedPredictedValues gef : list) {
 					Boolean gefAdded = false;
-					for (GeriatricFactorValue gef : ti.getGeriatricFactorValue()) {
-						if (gefAdded != true && dv.getId().equals(gef.getDetectionVariable().getId())) {
-							series.getItems().add(gef.getGefValue());
-							gefAdded = true;
-						}
+					
+					if (gefAdded != true && dv.getId().equals(gef.getId().getDetectionVariableId())) {
+						series.getItems().add(new Item(gef.getId().getId(), gef.getGefValue(), gef.getId().getDataType(), gef.getId().getDetectionVariableId(), gef.getId().getTimeIntervalId()));
+						gefAdded = true;
 					}
-					if (gefAdded != true)
-						series.getItems().add(null);
 				}
-				response.getSeries().add(series);
+				((DataSet)response).getSeries().add(series);
 			} 
 			
 		}
-  
-		return JerseyResponse.build(response);	
+
+		return JerseyResponse.build(objectMapper.writeValueAsString(response));
 
 	}
 	
-	private List<String> createMonthLabels(List<TimeInterval> months, String timeZone) {
-		List<String> monthLabels = new ArrayList<String>();
+	private Set<DataIdValue> createMonthLabels(List<ViewGefCalculatedInterpolatedPredictedValues> gefs) {
+		
+		Set<DataIdValue> monthLabels = new HashSet<DataIdValue>();
     	
-		SimpleDateFormat formatWithTz = new SimpleDateFormat("MM/yyyy");
-		formatWithTz.setTimeZone(TimeZone.getTimeZone(timeZone));
+		SimpleDateFormat formatWithTz = new SimpleDateFormat("yyyy/MM");
+		
+		formatWithTz.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-    	for (int i = 0; i < months.size() ; i++) {
-    		monthLabels.add(formatWithTz.format(months.get(i).getIntervalStart()));
+    	for (ViewGefCalculatedInterpolatedPredictedValues gef: gefs) {
+    		monthLabels.add(new DataIdValue(gef.getId().getTimeIntervalId(), gef.getIntervalStartLabel()));
     	}
 
 		return monthLabels;
@@ -287,8 +298,7 @@ public class AssessmentsEndpoint {
 			filters.add(byRoleId);
 		}
 
-		aaList = assessmentRepository.doQueryWithFilter(filters, "findForSelectedDataSet", inQueryParams);
-
+		aaList = new ArrayList<Assessment>();
 		List<Assessment> aa = new ArrayList<Assessment>();
 
 		if (orderById != null) {
@@ -329,12 +339,12 @@ public class AssessmentsEndpoint {
 		return list;
 	}
 
-	private List<Long> convertToListLong(List<PathSegment> geriatricFactorValueIds) {
-		List<Long> gefIds = new ArrayList<Long>(geriatricFactorValueIds.size());
-		for (PathSegment segment : geriatricFactorValueIds) {
-			gefIds.add(Long.valueOf(segment.toString()));
+	private List<Long> convertToListLong(List<PathSegment> ids) {
+		List<Long> idsList = new ArrayList<Long>(ids.size());
+		for (PathSegment segment : ids) {
+			idsList.add(Long.valueOf(segment.toString()));
 		}
-		return gefIds;
+		return idsList;
 	}
 
 	/**
@@ -362,7 +372,6 @@ public class AssessmentsEndpoint {
 		AddAssessmentDeserializer data = objectMapper.readerFor(AddAssessmentDeserializer.class)
 		.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
-		//String token = data.getJwt();
 		DecodedJWT token;
 		try {
 			token = JWT.decode(jwt);
@@ -469,6 +478,117 @@ public class AssessmentsEndpoint {
 		return ojLfa;
 
 	}
+	
+	private OJDiagramFrailtyStatus transformToDto(List<ViewGefCalculatedInterpolatedPredictedValues> gefs, Set<DataIdValue> months) {
+		OJDiagramFrailtyStatus dto = new OJDiagramFrailtyStatus();
+		dto.setMonths(months);
 
+		gefs.sort(null);
+
+		eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie preFrail = new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie("Pre-Frail", new ArrayList<BigDecimal>());
+		eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie frail = new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie("Frail", new ArrayList<BigDecimal>());
+		eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie fit = new eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie("Fit", new ArrayList<BigDecimal>());
+
+		String previous = "";
+		for (ViewGefCalculatedInterpolatedPredictedValues gef : gefs) {
+		
+			boolean found = false;
+			
+			for (DataIdValue month : months) {
+
+				if (gef.getFrailtyStatus() != null && !gef.getId().getDataType().equals("p") && month.getId().equals(gef.getId().getTimeIntervalId())) {
+
+					found = true;
+
+					switch (gef.getFrailtyStatus()) {
+
+					case "pre_frail":
+						previous = "pre_frail";
+						preFrail.getItems().add(BigDecimal.valueOf(0.2));
+						frail.getItems().add(null);
+						fit.getItems().add(null);
+						break;
+					case "frail":
+						previous = "frail";
+						frail.getItems().add(BigDecimal.valueOf(0.2));
+						preFrail.getItems().add(null);
+						fit.getItems().add(null);
+						break;
+					case "fit":
+						previous = "fit";
+						fit.getItems().add(BigDecimal.valueOf(0.2));
+						preFrail.getItems().add(null);
+						frail.getItems().add(null);
+						break;
+					default:
+						switch (previous) {
+						case "pre_frail":
+							previous = "pre_frail";
+							preFrail.getItems().add(BigDecimal.valueOf(0.2));
+							frail.getItems().add(null);
+							fit.getItems().add(null);
+							break;
+						case "frail":
+							previous = "frail";
+							frail.getItems().add(BigDecimal.valueOf(0.2));
+							preFrail.getItems().add(null);
+							fit.getItems().add(null);
+							break;
+						case "fit":
+							previous = "fit";
+							fit.getItems().add(BigDecimal.valueOf(0.2));
+							preFrail.getItems().add(null);
+							frail.getItems().add(null);
+							break;
+						case "":
+							previous = "fit";
+							fit.getItems().add(BigDecimal.valueOf(0.2));
+							preFrail.getItems().add(null);
+							frail.getItems().add(null);
+							break;
+						}
+					}					
+				}
+				
+				if (!found && gef.getId().getDetectionVariableId().equals(501L) && !gef.getId().getDataType().equals("p") && month.getId().equals(gef.getId().getTimeIntervalId())) {
+
+					switch (previous) {
+					case "pre_frail":
+						previous = "pre_frail";
+						preFrail.getItems().add(BigDecimal.valueOf(0.2));
+						frail.getItems().add(null);
+						fit.getItems().add(null);
+						break;
+					case "frail":
+						previous = "frail";
+						frail.getItems().add(BigDecimal.valueOf(0.2));
+						preFrail.getItems().add(null);
+						fit.getItems().add(null);
+						break;
+					case "fit":
+						previous = "fit";
+						fit.getItems().add(BigDecimal.valueOf(0.2));
+						preFrail.getItems().add(null);
+						frail.getItems().add(null);
+						break;
+					case "":
+						previous = "fit";
+						fit.getItems().add(BigDecimal.valueOf(0.2));
+						preFrail.getItems().add(null);
+						frail.getItems().add(null);
+						break;
+					}
+				}
+				
+			}
+
+		}
+
+		dto.getSeries().add(preFrail);
+		dto.getSeries().add(frail);
+		dto.getSeries().add(fit);
+
+		return dto;		
+	}
 
 }

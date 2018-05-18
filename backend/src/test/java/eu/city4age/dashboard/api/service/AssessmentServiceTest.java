@@ -9,11 +9,16 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,13 +35,9 @@ import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.ApplicationTest;
@@ -697,7 +698,7 @@ public class AssessmentServiceTest {
 		Assert.assertEquals(1, result.get(2).getGeriatricFactorValue().size());
 		
 		Mockito.when(timeIntervalRepositoryMock.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId())).thenReturn(result);
-		
+
 		Response response = assessmentService.getDiagramData(uir1.getId(), dv1.getId());
 		
 		DataSet output = (DataSet) response.getEntity();
