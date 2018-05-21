@@ -8,8 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
-import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,6 @@ import com.github.signaflo.timeseries.model.arima.Arima;
 import com.github.signaflo.timeseries.model.arima.ArimaOrder;
 
 import eu.city4age.dashboard.api.jpa.GeriatricFactorInterpolationValueRepository;
-import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorInterpolationValue;
@@ -44,9 +41,6 @@ public class ImputeFactorService {
 	private MeasuresService measuresService;
 
 	@Autowired
-	private GeriatricFactorRepository geriatricFactorRepository;
-
-	@Autowired
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
 
 	@Autowired
@@ -56,18 +50,19 @@ public class ImputeFactorService {
 	static protected Logger logger = LogManager.getLogger(ImputeFactorService.class);
 
 	//private Long dvId, uId;
-	private List<BigDecimal> gfValues;
+	/*private List<BigDecimal> gfValues;
 	private List<Integer> intIntervalsExisting;
 	private List<Integer> intIntervalsMissing;
-	private List<TimeInterval> missingTimeIntervals;
+	private List<TimeInterval> missingTimeIntervals;*/
 	private List<ViewGefCalculatedInterpolatedPredictedValues> viewGeriatricFactorValue;
-	private int monthCounter, gfIndex, i;
+	//private int monthCounter, gfIndex;
+	private int i;
 	private TimeInterval ti;
 	private Calendar leftDate, endDate, rightDate;
-	private SplineInterpolator splineInterpolator;
+	/*private SplineInterpolator splineInterpolator;
 	private PolynomialSplineFunction polynomialSplineFunction;
 	private double[] x, y;
-	private double rawX, interpolatedY, extrapolatedMeanValue, sumOfValues;
+	private double rawX, interpolatedY;*/
 	private UserInRole userInRole;
 	private DetectionVariable detectionVariable;
 
@@ -77,7 +72,7 @@ public class ImputeFactorService {
 
 		this.trashholdPoint = 3;
 		this.leftDate = Calendar.getInstance();
-		this.splineInterpolator = new SplineInterpolator();
+		//this.splineInterpolator = new SplineInterpolator();
 		this.endDate = Calendar.getInstance();
 		this.rightDate = Calendar.getInstance();
 	}
@@ -92,13 +87,13 @@ public class ImputeFactorService {
 		
 		logger.info("- Imputing missing values for userId: " + uirId + " and factorId: " + dvId);
 		
-		this.intIntervalsExisting = new ArrayList<Integer>();
+		/*this.intIntervalsExisting = new ArrayList<Integer>();
 		this.intIntervalsMissing = new ArrayList<Integer>();
 		this.missingTimeIntervals = new ArrayList<TimeInterval>();
-		this.gfValues = new ArrayList<BigDecimal>();
+		this.gfValues = new ArrayList<BigDecimal>();*/
 
-		this.monthCounter = 0;
-		this.gfIndex = 0;
+		/*this.monthCounter = 0;
+		this.gfIndex = 0;*/
 		//		this.sumOfValues = 0.0;
 
 		viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uirId);
@@ -167,7 +162,7 @@ public class ImputeFactorService {
 		return imputed;
 	}
 
-	private int interpolateMissingValuesSpline() {
+	/*private int interpolateMissingValuesSpline() {
 
 		//		if (viewGeriatricFactorValue != null && !viewGeriatricFactorValue.isEmpty()) {
 		leftDate.setTime(viewGeriatricFactorValue.get(0).getIntervalStart());
@@ -232,7 +227,7 @@ public class ImputeFactorService {
 		}
 
 		return intIntervalsMissing.size();
-	}
+	}*/
 
 	//	private int extrapolateMissingValuesMean(Date endDatePilot) {
 	//

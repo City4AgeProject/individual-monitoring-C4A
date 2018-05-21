@@ -108,7 +108,7 @@ public class MeasuresEndpoint {
 	public Response getDailyMeasures(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
 			@ApiParam(hidden = true) @PathParam("gesId") Long gesId) throws JsonProcessingException {
 
-		List<VariationMeasureValue> measures = new ArrayList<VariationMeasureValue>();
+		List<VariationMeasureValue> measures = null;
 		try {
 			measures = variationMeasureValueRepository.findByUserAndGes(userInRoleId, gesId);
 		} catch (Exception e) {

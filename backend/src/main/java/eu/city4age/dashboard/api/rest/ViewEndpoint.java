@@ -96,8 +96,7 @@ public class ViewEndpoint {
 	public Response getDailyMeasuresMea(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
 			@ApiParam(hidden = true) @PathParam("meaId") Long meaId) throws JsonProcessingException {
 
-		List<VariationMeasureValue> measures = new ArrayList<VariationMeasureValue>();
-			measures = variationMeasureValueRepository.findByUserAndMea(userInRoleId, meaId);
+		List<VariationMeasureValue> measures = variationMeasureValueRepository.findByUserAndMea(userInRoleId, meaId);
 		return JerseyResponse.build(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures));
 
 	}

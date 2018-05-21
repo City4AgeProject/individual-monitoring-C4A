@@ -56,9 +56,7 @@ public class AndroidService {
 			
 			for (JSONActivity jsonActivity : data.getActivities()) {
 
-				MTestingReadings mts;
-				
-				mts = createMTR(jsonActivity, uir);
+				MTestingReadings mts = createMTR(jsonActivity, uir);
 				if (mts != null) {
 					mtss.add(mts);
 					/*mts.addGpss(jsonActivity.getGpss());

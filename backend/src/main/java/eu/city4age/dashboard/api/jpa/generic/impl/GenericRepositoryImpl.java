@@ -2,7 +2,6 @@ package eu.city4age.dashboard.api.jpa.generic.impl;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +33,6 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	private final JpaEntityInformation<T, ID> entityInformation;
 
 	private final EntityManager entityManager;
-	
-	private final int batchSize = 50;
 
 	private Class<?> springDataRepositoryInterface;
 
@@ -144,11 +141,10 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	}
 	
 	public <S extends AbstractBaseEntity<?>> Collection<S> bulkSave(Collection<S> entities) {
-		final List<S> savedEntities = new ArrayList<>(entities.size());
-		int i = 0;
+		//int i = 0;
 		for (S s : entities) {
-			savedEntities.add(persistOrMerge(s));
-			i++;
+			persistOrMerge(s);
+			//i++;
 			/*if (i % batchSize == 0) {
 				// Flush a batch of inserts and release memory
 				entityManager.flush();
@@ -157,7 +153,7 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 		}
 		/*entityManager.flush();
 		entityManager.clear();*/
-		return savedEntities;
+		return entities;
 	}
 
 	private <S extends AbstractBaseEntity<?>> S persistOrMerge(S entity) {

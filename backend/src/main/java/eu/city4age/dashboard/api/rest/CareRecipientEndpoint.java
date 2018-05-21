@@ -74,7 +74,7 @@ public class CareRecipientEndpoint {
     public Response getCareRecipients(@HeaderParam("Authorization") String jwt) throws IOException {
         C4ACareRecipientsResponse response = new C4ACareRecipientsResponse();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        List<UserInRole> userinroleparamsList = new ArrayList<>();
+        List<UserInRole> userinroleparamsList = null;
         Short defaultRoleId = Short.valueOf("1");
 
         // Verify and decode JWT token
@@ -97,19 +97,19 @@ public class CareRecipientEndpoint {
 
         // 
         if (SamePilotRoles.getEnumAsSet().contains(role)) {
-
             userinroleparamsList = userInRoleRepository.findByRoleIdAndPilotCode(defaultRoleId, pilotCode);
         } else if (AllPilotRoles.getEnumAsSet().contains(role)) {
 
             userinroleparamsList = userInRoleRepository.findByRoleId(defaultRoleId);
         }
-		userinroleparamsList.sort(Comparator.comparing(UserInRole::getId));
+		
 
         if (userinroleparamsList.isEmpty()) {
             response.setMessage("No users found");
             response.setResponseCode(0);
             return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response));
         } else {
+        	userinroleparamsList.sort(Comparator.comparing(UserInRole::getId));
             List<C4ACareRecipientListResponse> itemList = new ArrayList<C4ACareRecipientListResponse>();
             for (UserInRole user : userinroleparamsList) {
                 response.setMessage("success");
@@ -145,8 +145,7 @@ public class CareRecipientEndpoint {
                     	interventionDate = sdf.format(user.getCareProfile().getLastInterventionDate());
                 }
 
-                List<FrailtyStatusTimeline> frailtyparamsList = new ArrayList<FrailtyStatusTimeline>(
-                        user.getFrailtyStatusTimeline());
+                List<FrailtyStatusTimeline> frailtyparamsList = new ArrayList<FrailtyStatusTimeline>(user.getFrailtyStatusTimeline());
 
                 if (frailtyparamsList != null && frailtyparamsList.size() > 0) {
 					FrailtyStatusTimeline max = frailtyparamsList.stream().max(Comparator.comparing(p-> p.getTimeInterval().getIntervalStart(), Comparator.naturalOrder())).get();

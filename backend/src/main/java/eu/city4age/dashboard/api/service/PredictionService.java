@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import eu.city4age.dashboard.api.jpa.GeriatricFactorPredictionValueRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.PilotDetectionVariableRepository;
-import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.AttentionStatus;
@@ -73,9 +73,6 @@ public class PredictionService {
 	
 	@Autowired
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
-
-	@Autowired
-	private PilotRepository pilotRepository;
 
 	@Autowired
 	private CareProfileRepository careProfileRepository;

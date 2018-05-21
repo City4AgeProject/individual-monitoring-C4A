@@ -118,7 +118,7 @@ public class AssessmentsEndpoint {
 		Timestamp intervalStartTimestamp = Timestamp.valueOf(intervalStart.concat(" 00:00:00"));
 		Timestamp intervalEndTimestamp = Timestamp.valueOf(intervalEnd.concat(" 00:00:00"));
 
-		List<Object[]> l5a = new ArrayList<Object[]>();
+		List<Object[]> l5a = null;
 
 		try {
 			l5a = nativeQueryRepository.getLast5AssessmentsForDiagramTimeline(userInRoleId, parentDetectionVariableId, intervalStartTimestamp, intervalEndTimestamp);
@@ -210,7 +210,7 @@ public class AssessmentsEndpoint {
 		}
 
 		aaList = new ArrayList<Assessment>();
-		List<Assessment> aa = new ArrayList<Assessment>();
+		List<Assessment> aa;
 
 		if (orderById != null) {
 			aa = orderByForFiltering(aaList, orderById);
