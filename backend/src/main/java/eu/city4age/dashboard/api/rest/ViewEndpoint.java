@@ -147,7 +147,9 @@ public class ViewEndpoint {
 					}
 				}
 				((DataSet)response).getSeries().add(series);
-			} 
+			}
+			
+			dvs.clear();
 
 		}
 
@@ -199,6 +201,8 @@ public class ViewEndpoint {
 				}
 				((DataSet)response).getSeries().add(series);
 			}
+			
+			dvs.clear();
 
 		}
 		return JerseyResponse.build(objectMapper.writeValueAsString(response));

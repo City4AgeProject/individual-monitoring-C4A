@@ -113,52 +113,49 @@ public class PilotDetectionVariableEndpoint {
 		//boolean doneSomething = false;
 		Timestamp validFrom = new Timestamp (System.currentTimeMillis());
 		
-		ConfigureDailyMeasuresDeserializer data=null;
+		ConfigureDailyMeasuresDeserializer data = null;
 		try {
 			data = objectMapper.readerFor(ConfigureDailyMeasuresDeserializer.class)
 					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
 					.readValue(json);
-		} 
-		catch (JsonMappingException e) {
+		} catch (JsonMappingException e) {
 			logger.info(e.getClass().getName());
 				if(e instanceof UnrecognizedPropertyException) throw e;
 				else if (json.equals("")) throw new JsonEmptyException ("Configuration JSON is empty");				
 				else throw new JsonMappingExceptionUD(e);
 		}
 		
-		for (Configuration configuration: data.getConfigurations()) {
-			Pilot.PilotCode pilotCode = configuration.getPilotCode();
-			String password = configuration.getPassword();
-			String username = configuration.getUsername();
-			
-			UserInRole uir;
-			try {
-				uir = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
-				StringBuilder sb;
-				if(uir!=null) {
-					if(uir.getPilotCode().equals(pilotCode)) {
-						setConfiguration(pilotCode,configuration, validFrom, response);
-					}
-					else {
+		if (data != null) {
+			for (Configuration configuration : data.getConfigurations()) {
+				Pilot.PilotCode pilotCode = configuration.getPilotCode();
+				String password = configuration.getPassword();
+				String username = configuration.getUsername();
+
+				UserInRole uir;
+				try {
+					uir = userInRoleRepository.findBySystemUsernameAndPassword(username, password);
+					StringBuilder sb;
+					if (uir != null) {
+						if (uir.getPilotCode().equals(pilotCode)) {
+							setConfiguration(pilotCode, configuration, validFrom, response);
+						} else {
+							sb = new StringBuilder();
+							sb.append("You are not authorized to make changes for pilot: ");
+							sb.append(pilotRepository.findByPilotCode(pilotCode).getName());
+							throw new NotAuthorizedException(sb.toString());
+						}
+					} else {
 						sb = new StringBuilder();
-						sb.append("You are not authorized to make changes for pilot: ");
-						sb.append(pilotRepository.findByPilotCode(pilotCode).getName());
-						throw new NotAuthorizedException(sb.toString());
-					}						
+						sb.append("Invalid login! ");
+						sb.append("You must provide valid username and password ");
+						sb.append("in the coresponding fields of configuration file.");
+						throw new NotLoggedInException(sb.toString());
+					}
+				} catch (NullPointerException e) {
+					logger.info("NULLPINTEREX::" + e.getMessage());
 				}
-				else {
-					sb = new StringBuilder();
-					sb.append("Invalid login! ");
-					sb.append("You must provide valid username and password ");
-					sb.append("in the coresponding fields of configuration file.");					
-					throw new NotLoggedInException(sb.toString());
-				}					
-			}
-			catch (NullPointerException e) {
-					logger.info("NULLPINTEREX::"+e.getMessage());
-			}
+			} 
 		}
-		
 		response.append("\n\tNumber of rows in db after configuration update is: ").append(pilotDetectionVariableRepository.count());
 		return JerseyResponse.buildTextPlain(response.toString());
 

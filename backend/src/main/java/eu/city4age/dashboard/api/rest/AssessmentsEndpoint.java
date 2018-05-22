@@ -125,10 +125,8 @@ public class AssessmentsEndpoint {
 		} catch (Exception e) {
 			logger.info("getLastFiveForDiagram REST service - query exception: ", e);
 		}
-
-		OJDiagramLast5Assessment ojLfa = transformToOJ(l5a);
-
-		return JerseyResponse.build(objectMapper.writeValueAsString(ojLfa));
+	
+		return JerseyResponse.build(objectMapper.writeValueAsString(l5a != null ? transformToOJ(l5a) : ""));
 	}
 
 	@GET
