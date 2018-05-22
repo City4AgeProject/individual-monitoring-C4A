@@ -110,6 +110,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
 			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth, pilotCode);
 			nuiRepository.bulkSave(nuis);
+			nuis.clear();
 			//nuiRepository.flush();
 		}
 	}
@@ -127,6 +128,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		if(gess != null && gess.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(gess, startOfMonth, endOfMonth, pilotCode);
 			nuiRepository.bulkSave(gfvs);
+			gfvs.clear();
 			//nuiRepository.flush();
 		}
 
@@ -150,6 +152,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		if (list != null && list.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(list, startOfMonth, endOfMonth, pilotCode);
 			nuiRepository.bulkSave(gfvs);
+			gfvs.clear();
 			//nuiRepository.flush();
 		}
 	}
