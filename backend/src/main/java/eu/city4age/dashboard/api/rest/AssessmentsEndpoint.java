@@ -207,7 +207,7 @@ public class AssessmentsEndpoint {
 			filters.add(byRoleId);
 		}
 
-		aaList = new ArrayList<Assessment>();
+		aaList = assessmentRepository.doQueryWithFilter(filters, "findForSelectedDataSet", inQueryParams);
 		List<Assessment> aa;
 
 		if (orderById != null) {
