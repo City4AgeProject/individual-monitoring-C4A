@@ -86,6 +86,42 @@ a:hover {
 				</div>
 				-->
 </div>
+<!--            <oj-tab-bar id="hnavlist" 
+                      edge="top"
+                      role="tablist"
+                      selection="{{selectedTab}}">
+            <ul data-bind="foreach: tabValues">
+              <li data-bind="attr:{id:label}">
+                <a href="#" data-bind="attr:{'aria-controls':label}" >
+                  
+                </a>
+              </li>
+                       
+            </ul>
+        </oj-tab-bar>
+        
+            <oj-switcher value="[[selectedTab]]" data-bind="foreach: tabValues">
+            <div data-bind="attr:{slot:label,id:label+'-tab-panel','aria-labelledby':label+'-tab'}"
+                 role="tabpanel" 
+                 >
+              <div class="demo-tab-content" style="height: 100px;">
+                  <oj-collapsible id="collapsible" expanded="true">
+                <h5 slot="header">NUI values</h5>
+                <oj-data-grid id="datagrid" 
+                    style="width:100%;height:200px;display: grid; background-color:transparent;"                   
+                    data= "[[dataSource]]"  
+                    header.column.style = "height:45px; width:125px; text-align:center;"
+                    header.column.sortable = "disable"
+                    header.row.style ="width:100px;"
+                    on-oj-before-current-cell='[[beforeCurrentCellListener]]'                  
+                 ></oj-data-grid>               
+    </oj-collapsible>	
+                  </div>
+            </div>
+                      
+          </oj-switcher>  -->
+    
+    
 		<anagraph-assessment-view id="detectionGEFGroup1FactorsLineChart"
 				care-recipient-id="{{careRecipient}}" parent-factor-id="{{parentFactor}}" 
 				series="{{seriesVal}}" groups="{{groupsVal}}" title-value="{{titleValue}}"
@@ -93,6 +129,27 @@ a:hover {
                                 risks-tags="{{risksTags}}" data-validities-tags="{{dataValiditiesTags}}" role-tags="{{roleTags}}"
 				legend='{"position":"bottom"}' 
 				drilling='on' style="display: block" />
-		</div>
+                
+                    <div id="monthly-mea-container" class="oj-panel oj-panel-shadow-sm" style="border: none; background-color: white;  border:1px solid lightgray; padding-top: 10px; padding-bottom: 10px; display:none;">
+                        <div class="oj-flex-item" style="width: 100%; height: 400pxf; display: block; border:1px solid lightgray;background-color: #F1F1F1; padding-top: 10px;padding-bottom: 10px;position:relative;">
+                             <h3 id="measureName" data-bind="text: derivedMonthlyMeaTitle" align="center" style="margin-top: 10px;"></h3>
+                             <oj-chart id="derivedMonthlyMea"
+                                 type="line"
+                                 series="[[lineSeriesValue]]"
+                                 groups="[[lineGroupsValue]]"
+                                 animation-on-display="auto"
+                                 animation-on-data-change="auto"
+                                 hover-behavior="dim"
+                                 legend.position="bottom"
+                                 on-oj-drill="[[derivedMonthlyMeaDrill]]"
+                                 drilling="on"
+                                 style="width:100%;height:350px;">
+                             </oj-chart>
+
+                         </div>
+                    </div>
+                
+                
+            </div>
 	</div>
-        </div>
+    </div>

@@ -24,8 +24,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                   })
 
                                 ).then(function() {
-
-                                    self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
+                                    self.data.dailyMeasures = [];    
+                                    var arr = setDataForDiagrams(self.data, self.nuiData);
+                                    arr.forEach(function(el){
+                                        if(el.detectionVariableId === parseInt(sessionStorage.getItem('meaId'))){
+                                            self.data.dailyMeasures.push(el);
+                                        }
+                                    });
+                                    
+                                    //self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
                                     resolve();
                                 }).fail(function() {
                                     console.log( "error recieving json data from web service" );
@@ -41,6 +48,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         var crId = parseInt(sessionStorage.getItem("crId"));
                         var gesObj = JSON.parse(sessionStorage.getItem("gesObj"));
                         var gesId = gesObj.detectionVariableId;
+                        self.meaId = parseInt(sessionStorage.getItem("meaId"));
           	      	
           	      	//data
       	        	self.careRecipientId = ko.observable(crId);

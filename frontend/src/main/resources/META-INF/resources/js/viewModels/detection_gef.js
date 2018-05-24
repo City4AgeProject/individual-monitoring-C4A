@@ -119,13 +119,10 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                         self.titleValue(oj.Translations.getTranslatedString('gfg') + " - " + ui['series'].charAt(0).toUpperCase() + ui['series'].slice(1));
                         self.titlePart(ko.toJS(self.titleValue));
                         self.titleObj({"text": self.titlePart(), "halign": "center"});
-                        console.log("items: " + JSON.stringify(ui['seriesData'].items));
                         self.parentFactorId = ui['seriesData'].items[0].gefTypeId;
                         $('#detectionGEFGroup1FactorsLineChart').prop('parentFactorId', ui['seriesData'].items[0].gefTypeId);
                         if (self.parentFactorId !== 1) {
                 //loading data for gef diagram
-                console.log("VIEW_DIAGRAM_DATA");
-                        console.log("self.parentFactorId: " + self.parentFactorId);
                         var jqXHR = $.getJSON(VIEW_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId + "?parentFactorId=" + self.parentFactorId,
                                 loadDiagramDataCallback1);
                         jqXHR.fail(function (xhr, message, error) {
@@ -138,7 +135,6 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 //Diagram on GEF page
                 var loadDiagramDataCallback1 = function (data) {
 
-                    console.log("data: " + JSON.stringify(data));
                     for (var ig = 0; ig < Object.keys(data.series).length; ig++) {
                         data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
                     }
@@ -223,8 +219,6 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
                     self.lineSeriesValue(series);
                     self.lineSeriesPredictionValue(seriesPrediction);
-                    console.log('this is data.groups ' + JSON.stringify(data.groups));
-                    console.log('this is data.series ' + JSON.stringify(data.series));
                     //var param = [self.careRecipientId, self.parentFactorId];
                     $('#detectionGEFGroup1FactorsLineChart').prop('selectedItemsValue', []);
                     $('#detectionGEFGroup1FactorsLineChart')[0].chartOptionChange();
@@ -411,10 +405,10 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                     s.items.forEach(function (el) {
                     el.drilling = "off";
                     });
-                } else if (s.name === 'Behavioural') {
+                } else if (s.name === 'geriatric_factors_first_group') {
                 s.color = '#ea97f1';
                     s.lineWidth = 5;
-                } else if (s.name === 'Contextual') {
+                } else if (s.name === 'geriatric_factors_second_group') {
                 s.color = '#5dd6c9';
                     s.lineWidth = 5;
                 } else if (s.name === 'Fit') {

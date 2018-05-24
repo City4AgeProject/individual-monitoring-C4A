@@ -68,89 +68,92 @@ function(oj, ko, $) {
                 self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
                 self.typeLabel = oj.Translations.getTranslatedString("type");
                 self.showPrediction = ko.observable(false);
-                self.selectionMode = ko.observable("multiple");
+                
                 self.predictionButtonText1 = ko.observable("Show prediction");
 		//event triggers when selection changed
 		self.chartOptionChange = function(event) {
-                    
-                    if (!self.showSelectionOnDiagram()) {
-                        if(event){     
-                            $('#multipleSelection').ojPopup('close');
-                            if(event.detail.selectionData){
-                                event.detail.selectionData.forEach(function(obj,i,array){
-                                    if(obj.data.type === "i"){
-                                                console.log('found interpolated val!');
-                                                array.splice(i,1);
-                                                
-                                                
-                                    }
-                                });
-                                        
-                                self.multipleSelectionsArray(returnMultipleSelectionsOnSameValue(event.detail));
-                                    // if there is multiple selections on same value
-                                    if(self.multipleSelectionsArray().length > 0 && !self.solvedMultipleSelection()) {
-                                        
-                                        //creating checkbox with multiple selections
-                                        self.multipleSelectionsArray().forEach(function(el){
-                                            self.checkedMultipleSelections.push(el.data.id.toString());
-                                        });
-                                        $('#checkboxSetId').ojCheckboxset("refresh");                                         
-                                        self.storedEvent = event;
-                                        self.drawMultipleSelectionCheckBoxSet();
-                                        return;
-                                    }
-                                if (event.detail.selectionData.length > 0) {                                    
-                                    var onlyDataPoints = [];						
-                                    var allDataPoints = getDataPoints(event.detail.selectionData);
-                                    allDataPoints.forEach(function(el){
-                                        if(self.rejectedIds.indexOf(el) === -1){
-                                            onlyDataPoints.push(el);                                           
+                    if(!self.showPrediction()){        
+                        if (!self.showSelectionOnDiagram()) {
+                            if(event){     
+                                $('#multipleSelection').ojPopup('close');
+                                        console.log('THIS IS EVENT DETAIL selection data ' + JSON.stringify(event.detail.selectionData));
+                                if(event.detail.selectionData){
+                                    event.detail.selectionData.forEach(function(obj,i,array){
+                                        if(obj.data.type === "i"){
+                                                    console.log('found interpolated val!');
+                                                    array.splice(i,1);
+
+
                                         }
                                     });
-                                    var stringArray = [];
-                                    onlyDataPoints.forEach(function(el){
-                                        stringArray.push(el.toString());
-                                    });
-                                    self.selectedItemsValue(stringArray);
-                                    if(onlyDataPoints.length === 0){
-                                                return;
-                                    }
-                                    
-                                    // Compose selections in get query parameters
-                                    if(event.detail.selectionData.length == 1){
-                                        //if there is only 1 selection
-                                        var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
-                                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
 
-                                        if(selectedDetectionVariable.detectionVariableType == 'ges'){
-                                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
-                                            $('#assessmentsPreview').prop('seeMeasures', true);
-                                        }else {
+                                    self.multipleSelectionsArray(returnMultipleSelectionsOnSameValue(event.detail));
+                                        // if there is multiple selections on same value
+                                        if(self.multipleSelectionsArray().length > 0 && !self.solvedMultipleSelection()) {
+
+                                            //creating checkbox with multiple selections
+                                            self.multipleSelectionsArray().forEach(function(el){
+                                                self.checkedMultipleSelections.push(el.data.id.toString());
+                                            });
+                                            $('#checkboxSetId').ojCheckboxset("refresh");                                         
+                                            self.storedEvent = event;
+                                            self.drawMultipleSelectionCheckBoxSet();
+                                            return;
+                                        }
+                                    if (event.detail.selectionData.length > 0) {
+                                                console.log('THIS IS SELECTION DATA : ' + JSON.stringify(event.detail.selectionData));
+                                        var onlyDataPoints = [];						
+                                        var allDataPoints = getDataPoints(event.detail.selectionData);
+                                        allDataPoints.forEach(function(el){
+                                            if(self.rejectedIds.indexOf(el) === -1){
+                                                onlyDataPoints.push(el);                                           
+                                            }
+                                        });
+                                        var stringArray = [];
+                                        onlyDataPoints.forEach(function(el){
+                                            stringArray.push(el.toString());
+                                        });
+                                        self.selectedItemsValue(stringArray);
+                                        if(onlyDataPoints.length === 0){
+                                                    return;
+                                        }
+
+                                        // Compose selections in get query parameters
+                                        if(event.detail.selectionData.length == 1){
+                                            //if there is only 1 selection
+                                            var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
+                                            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
+
+                                            if(selectedDetectionVariable.detectionVariableType == 'ges'){
+                                                sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
+                                                $('#assessmentsPreview').prop('seeMeasures', true);
+                                            }else {
+                                                $('#assessmentsPreview').prop('seeMeasures', false);
+                                            }
+                                        }else {				
                                             $('#assessmentsPreview').prop('seeMeasures', false);
                                         }
-                                    }else {				
-                                        $('#assessmentsPreview').prop('seeMeasures', false);
-                                    }
 
-                                    self.queryParams = onlyDataPoints;
-                                    loadAssessments(self.queryParams);
-                                    self.dataPointsMarkedIds = onlyDataPoints;
-                                    $('#assessmentsPreview').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));                                           
-                                    $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
-                                } else {
-                                        self.dataPointsMarkedIds = [];
+                                        self.queryParams = onlyDataPoints;
+                                        loadAssessments(self.queryParams);
+                                        self.dataPointsMarkedIds = onlyDataPoints;
+                                        $('#assessmentsPreview').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));                                           
+                                        $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
+                                    } else {
+                                            self.dataPointsMarkedIds = [];
+                                    }
+                                    self.solvedMultipleSelection(false);
+                                    self.rejectedIds = [];
                                 }
-                                self.solvedMultipleSelection(false);
-                                self.rejectedIds = [];
                             }
+                        } else {
+                                self.showSelectionOnDiagram(false);
                         }
-                    } else {
-                            self.showSelectionOnDiagram(false);
                     }
 		};
 		
 		var loadDiagramDataCallback2 = function (data) {
-      
+    
                     if (data !== undefined && data.groups !== undefined && data.series !== undefined) {
 
                         var groupsCopy = data.groups.slice();
@@ -160,13 +163,20 @@ function(oj, ko, $) {
                         });
 
                         formatDate(data.groups);
-                        
+                        var gesList = [];
                         $.each(data.series, function(i, serie){
+                            /*For ges selector on ges page*/
+                            let obj = new Object();
+                            obj.name = serie.name;
+                            obj.id = serie.items[0].gefTypeId;
+                            gesList.push(obj);
+                            /*END For ges selector on ges page*/
                             var nodes=[];
                             var predictedNodes=[0];
                             $.each(serie.items, function(j, item){
                                 var newItem = {
                                     value: item.value,
+                                    id: item.id,
                                     name: oj.Translations.getTranslatedString(serie.name),
                                     gefTypeId: item.gefTypeId,
                                     type: item.type,
@@ -214,6 +224,7 @@ function(oj, ko, $) {
                             }
                             self.seriesPredictionVal.push(s);
                         });
+                        sessionStorage.setItem('gesList', JSON.stringify(gesList));
                     }
                 };
 
@@ -306,11 +317,37 @@ function(oj, ko, $) {
                             
                         }else if(selectedDetectionVariable.detectionVariableType === 'ges'){
                             console.log('selected GES');                           
-                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
-                            oj.Router.rootInstance.go("detection_mea");
+                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable)); 
+                            drawDerivedMonthlyMeasuresChart(selectedDetectionVariable.detectionVariableId);
+                            //oj.Router.rootInstance.go("detection_mea");
                         }
                     }
 		};
+                var drawDerivedMonthlyMeasuresChart = function(gesId) {
+                    $.getJSON("http://localhost:8080/C4A-dashboard/rest/view/getDerivedMeasures/userInRoleId/" + parseInt(sessionStorage.getItem("crId")) + "/parentFactorId/" + gesId, function(data) {
+                                data.series.forEach(function(serie){
+                                   serie.name =  oj.Translations.getTranslatedString(serie.name);
+                                });
+                                data.groups = data.groups.map(function (obj) {
+                                    return obj.name;
+                                });
+                                formatDate(data.groups);
+                                self.lineGroups = data.groups;
+                                self.lineSeries = data.series;
+                                document.getElementById('monthly-mea-container').style.display = "block";
+                                $('#derivedMonthlyMea').prop('series', self.lineSeries);
+                                $('#derivedMonthlyMea').prop('groups', self.lineGroups);
+                                
+                    });
+                           
+                    
+                };
+                self.lineSeries = [{name : "Series 1", items : [74, 62, 70, 76, 66]},
+                          {name : "Series 2", items : [50, 38, 46, 54, 42]}
+                          ];
+                     
+    
+                self.lineGroups = ["Jan", "Feb", "Mar", "Apr", "May"];
                 
 		/*
 		 * Mouse handles .. should be deleted when we find better way to
