@@ -372,7 +372,7 @@ public class ViewGefCalculatedInterpolatedPredictedValues implements Comparable<
 
 	@Override
 	public int compareTo(ViewGefCalculatedInterpolatedPredictedValues o) {
-		return this.getId().getTimeIntervalId().compareTo(o.getId().getTimeIntervalId());
+		return this.getIntervalStart().compareTo(o.getIntervalStart());
 	}
 
 }

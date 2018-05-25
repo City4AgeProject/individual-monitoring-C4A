@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -113,7 +115,7 @@ public class ViewEndpoint {
 
 		if (list != null && !list.isEmpty()) {
 
-			Set<DataIdValue> monthLabels = viewService.createMonthLabels(list);
+			TreeSet<DataIdValue> monthLabels = viewService.createMonthLabels(list);
 
 			if(parentFactorId == null) {
 				OJDiagramFrailtyStatus frailtyStatus = viewService.transformToDto(list, monthLabels);

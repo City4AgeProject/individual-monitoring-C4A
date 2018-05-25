@@ -3,10 +3,9 @@ package eu.city4age.dashboard.api.service.impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TimeZone;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,9 +37,9 @@ public class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	public Set<DataIdValue> createMonthLabels(List<ViewGefCalculatedInterpolatedPredictedValues> gefs) {
+	public TreeSet<DataIdValue> createMonthLabels(List<ViewGefCalculatedInterpolatedPredictedValues> gefs) {
 
-		Set<DataIdValue> monthLabels = new HashSet<DataIdValue>();
+		TreeSet<DataIdValue> monthLabels = new TreeSet<DataIdValue>();
 
 		SimpleDateFormat formatWithTz = new SimpleDateFormat("yyyy/MM");
 
@@ -54,8 +53,9 @@ public class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	public OJDiagramFrailtyStatus transformToDto(List<ViewGefCalculatedInterpolatedPredictedValues> gefs, Set<DataIdValue> months) {
-		OJDiagramFrailtyStatus dto = new OJDiagramFrailtyStatus();
+	public OJDiagramFrailtyStatus transformToDto(List<ViewGefCalculatedInterpolatedPredictedValues> gefs, TreeSet<DataIdValue> months) {
+		OJDiagramFrailtyStatus dto = new OJDiagramFrailtyStatus();		
+				
 		dto.setMonths(months);
 
 		gefs.sort(null);
