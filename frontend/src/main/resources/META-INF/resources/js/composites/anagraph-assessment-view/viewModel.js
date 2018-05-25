@@ -68,92 +68,103 @@ function(oj, ko, $) {
                 self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
                 self.typeLabel = oj.Translations.getTranslatedString("type");
                 self.showPrediction = ko.observable(false);
+                self.selectionMode = ko.observable("multiple");
                 
                 self.predictionButtonText1 = ko.observable("Show prediction");
 		//event triggers when selection changed
 		self.chartOptionChange = function(event) {
-                    if(!self.showPrediction()){        
+                          
                         if (!self.showSelectionOnDiagram()) {
-                            if(event){     
-                                $('#multipleSelection').ojPopup('close');
-                                        console.log('THIS IS EVENT DETAIL selection data ' + JSON.stringify(event.detail.selectionData));
-                                if(event.detail.selectionData){
-                                    event.detail.selectionData.forEach(function(obj,i,array){
-                                        if(obj.data.type === "i"){
-                                                    console.log('found interpolated val!');
-                                                    array.splice(i,1);
-
-
-                                        }
-                                    });
-
-                                    self.multipleSelectionsArray(returnMultipleSelectionsOnSameValue(event.detail));
-                                        // if there is multiple selections on same value
-                                        if(self.multipleSelectionsArray().length > 0 && !self.solvedMultipleSelection()) {
-
-                                            //creating checkbox with multiple selections
-                                            self.multipleSelectionsArray().forEach(function(el){
-                                                self.checkedMultipleSelections.push(el.data.id.toString());
-                                            });
-                                            $('#checkboxSetId').ojCheckboxset("refresh");                                         
-                                            self.storedEvent = event;
-                                            self.drawMultipleSelectionCheckBoxSet();
-                                            return;
-                                        }
-                                    if (event.detail.selectionData.length > 0) {
-                                                console.log('THIS IS SELECTION DATA : ' + JSON.stringify(event.detail.selectionData));
-                                        var onlyDataPoints = [];						
-                                        var allDataPoints = getDataPoints(event.detail.selectionData);
-                                        allDataPoints.forEach(function(el){
-                                            if(self.rejectedIds.indexOf(el) === -1){
-                                                onlyDataPoints.push(el);                                           
+                            
+                                if(event){     
+                                    
+                                    if(event.detail.selectionData){
+                                        $('#multipleSelection').ojPopup('close');    
+                                        var onlyCalculated = [];
+                                        event.detail.selectionData.forEach(function(obj,i,array){
+    //                                        if(obj.data.type === "i"){
+    //                                                    console.log('found interpolated val!');
+    //                                                    array.splice(i,1);
+    //
+    //
+    //                                        }
+                                            if(obj.data.type === "c"){
+                                                 onlyCalculated.push(obj);
+                                                 
                                             }
+                                            
                                         });
-                                        var stringArray = [];
-                                        onlyDataPoints.forEach(function(el){
-                                            stringArray.push(el.toString());
-                                        });
-                                        self.selectedItemsValue(stringArray);
-                                        if(onlyDataPoints.length === 0){
-                                                    return;
-                                        }
+                                        
+                                        event.detail.selectionData = onlyCalculated;
+                                        self.selectedItemsValue(onlyCalculated);
 
-                                        // Compose selections in get query parameters
-                                        if(event.detail.selectionData.length == 1){
-                                            //if there is only 1 selection
-                                            var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
-                                            var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
+                                        self.multipleSelectionsArray(returnMultipleSelectionsOnSameValue(event.detail));
+                                            // if there is multiple selections on same value
+                                            if(self.multipleSelectionsArray().length > 0 && !self.solvedMultipleSelection()) {
 
-                                            if(selectedDetectionVariable.detectionVariableType == 'ges'){
-                                                sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
-                                                $('#assessmentsPreview').prop('seeMeasures', true);
-                                            }else {
+                                                //creating checkbox with multiple selections
+                                                self.multipleSelectionsArray().forEach(function(el){
+                                                    self.checkedMultipleSelections.push(el.data.id.toString());
+                                                });
+                                                $('#checkboxSetId').ojCheckboxset("refresh");                                         
+                                                self.storedEvent = event;
+                                                self.drawMultipleSelectionCheckBoxSet();
+                                                return;
+                                            }
+                                        if (event.detail.selectionData.length > 0) {
+                                            var onlyDataPoints = [];						
+                                            var allDataPoints = getDataPoints(event.detail.selectionData);
+                                            allDataPoints.forEach(function(el){
+                                                if(self.rejectedIds.indexOf(el) === -1){
+                                                    onlyDataPoints.push(el);                                           
+                                                }
+                                            });
+                                            var stringArray = [];
+                                            onlyDataPoints.forEach(function(el){
+                                                stringArray.push(el.toString());
+                                            });
+                                            self.selectedItemsValue(stringArray);
+                                            if(onlyDataPoints.length === 0){
+                                                        return;
+                                            }
+
+                                            // Compose selections in get query parameters
+                                            if(event.detail.selectionData.length == 1){
+                                                //if there is only 1 selection
+                                                var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
+                                                var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
+
+                                                if(selectedDetectionVariable.detectionVariableType == 'ges'){
+                                                    sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
+                                                    $('#assessmentsPreview').prop('seeMeasures', true);
+                                                }else {
+                                                    $('#assessmentsPreview').prop('seeMeasures', false);
+                                                }
+                                            }else {				
                                                 $('#assessmentsPreview').prop('seeMeasures', false);
                                             }
-                                        }else {				
-                                            $('#assessmentsPreview').prop('seeMeasures', false);
-                                        }
 
-                                        self.queryParams = onlyDataPoints;
-                                        loadAssessments(self.queryParams);
-                                        self.dataPointsMarkedIds = onlyDataPoints;
-                                        $('#assessmentsPreview').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));                                           
-                                        $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
-                                    } else {
-                                            self.dataPointsMarkedIds = [];
+                                            self.queryParams = onlyDataPoints;
+                                            loadAssessments(self.queryParams);
+                                            self.dataPointsMarkedIds = onlyDataPoints;
+                                            $('#assessmentsPreview').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));                                           
+                                            $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
+                                        } else {
+                                                self.dataPointsMarkedIds = [];
+                                        }
+                                        self.solvedMultipleSelection(false);
+                                        self.rejectedIds = [];
                                     }
-                                    self.solvedMultipleSelection(false);
-                                    self.rejectedIds = [];
                                 }
-                            }
+                        
                         } else {
                                 self.showSelectionOnDiagram(false);
                         }
-                    }
+                    
 		};
 		
 		var loadDiagramDataCallback2 = function (data) {
-    
+                    //this is loading diagram data
                     if (data !== undefined && data.groups !== undefined && data.series !== undefined) {
 
                         var groupsCopy = data.groups.slice();
@@ -225,6 +236,7 @@ function(oj, ko, $) {
                             self.seriesPredictionVal.push(s);
                         });
                         sessionStorage.setItem('gesList', JSON.stringify(gesList));
+                        self.loadAssessmentsCached();
                     }
                 };
 
@@ -270,7 +282,10 @@ function(oj, ko, $) {
 		
 
 		self.attached = function() {                   
-                        loadDataSet();                                        			
+                        loadDataSet();
+                            console.log('bla');
+                        //self.loadAssessmentsCached();
+                            console.log('bla');
 		};
 
 
@@ -278,7 +293,7 @@ function(oj, ko, $) {
 		self.bindingsApplied = function() {
 			selected = [];
 			self.props.subFactorName = "testtest";			
-			self.loadAssessmentsCached();
+			//self.loadAssessmentsCached();
                         //debugger;
 			if (self.showSelectionOnDiagram()) {				
 				selected = [];
@@ -410,7 +425,7 @@ function(oj, ko, $) {
                                     }
                             }
                             var series = self.seriesVal();
-
+                             //this is loading assessments  
                             if (series !== undefined) {
                                 //risk status icon priority settings 
                                     for (var i = 0; i < series.length; i++) {
@@ -441,8 +456,12 @@ function(oj, ko, $) {
                                     }
                             }
                             if (self.props.series !== undefined) {
-                                    self.props.series = self.props.series
-                                                    .slice();
+//                                    self.props.series = self.props.series
+//                                                    .slice();
+                                    self.props.series = series;
+                                            var test = self.props.series;
+                                            self.seriesVal(test);
+                                            console.log('bla');
                             }
                             if (self.props.groups !== undefined) {
                                     self.props.groups = self.props.groups
@@ -693,7 +712,7 @@ function(oj, ko, $) {
                 self.selectDatapointsDiagram = function() {
 			self.showSelectionOnDiagram(true);
 			self.props.subFactorName = "testtest";
-			self.loadAssessmentsCached();
+			//self.loadAssessmentsCached();
 			selected = [];
                         console.log('this is assessmentId ' + self.props.assessmentId);
 			for (var ig = 0; ig < Object.keys(self.seriesVal()).length; ig++) {
@@ -823,11 +842,13 @@ function(oj, ko, $) {
                         groups = groups.concat(self.groupsPredictionVal());
                         series = series.concat(self.seriesPredictionVal());
                         self.showPrediction(true);
+                        self.selectionMode("none");
                         self.predictionButtonText1("Hide prediction");
                     } else {
                         groups.splice(groups.length - self.groupsPredictionVal().length);
                         series.splice(series.length - self.seriesPredictionVal().length);
                         self.showPrediction(false);
+                        self.selectionMode("multiple");
                         self.predictionButtonText1("Show prediction");
                     }
 

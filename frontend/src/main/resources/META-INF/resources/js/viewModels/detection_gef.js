@@ -175,7 +175,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                             name:serie.name,
                             items:[],
                             color: lineColors[i]
-                        }
+                        }                      
                         var pSerie = {
                             name:serie.name + ' prediction',
                             items:[0],
@@ -355,6 +355,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
             formatDate(data.groups);
             $.each(data.series, function(i, serie){
+                
                 var nodes=[];
                 var predictedNodes=[0];
                 $.each(serie.items, function(j, item){
@@ -397,18 +398,20 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                     items: nodes,
                     color: lineColors[i],
                     lineWidth: 3.5
+                    
                 }
-                if (s.name === 'Overall'){
-                s.drilling = "off";
-                    s.color = '#999999';
-                    s.lineWidth = 2;
+                            console.log('SERIES NAME IS : ' + s.name);            
+                if (s.name == 'Overall'){
+                    s.drilling = "off";
+                    //s.color = '#999999';
+                    //s.lineWidth = 2;
                     s.items.forEach(function (el) {
                     el.drilling = "off";
                     });
-                } else if (s.name === 'geriatric_factors_first_group') {
+                } else if (s.name === '') {
                 s.color = '#ea97f1';
                     s.lineWidth = 5;
-                } else if (s.name === 'geriatric_factors_second_group') {
+                } else if (s.name === '') {
                 s.color = '#5dd6c9';
                     s.lineWidth = 5;
                 } else if (s.name === 'Fit') {
@@ -426,8 +429,8 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 }
                 if (s.name === 'Overall'){
                     s.drilling = "off";
-                    s.color = '#999999';
-                    s.lineWidth = 2;
+                    //s.color = '#999999';
+                    //s.lineWidth = 2;
                 } else if (s.name === 'Behavioural') {
                 s.color = '#ea97f1';
                     s.lineWidth = 5;
