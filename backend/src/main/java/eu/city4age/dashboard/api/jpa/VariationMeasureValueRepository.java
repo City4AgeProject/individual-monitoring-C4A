@@ -21,6 +21,9 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 	@Query("SELECT DISTINCT vm FROM VariationMeasureValue vm LEFT JOIN FETCH vm.detectionVariable dv LEFT JOIN FETCH vm.timeInterval ti WHERE vm.detectionVariable.id = :meaId AND vm.userInRole.id = :uId ORDER BY ti.intervalStart")
 	List<VariationMeasureValue> findByUserAndMea(@Param("uId") final Long uId, @Param("meaId") final Long meaId);
 
+	@Query("SELECT DISTINCT vm FROM VariationMeasureValue vm LEFT JOIN FETCH vm.detectionVariable dv LEFT JOIN FETCH vm.timeInterval ti WHERE vm.userInRole.id = :uId ORDER BY ti.intervalStart")
+	List<VariationMeasureValue> findByUser(@Param("uId") final Long uId);
+
 	@Query("SELECT vm FROM VariationMeasureValue vm LEFT JOIN FETCH vm.userInRole uir LEFT JOIN FETCH vm.timeInterval ti WHERE uir.pilotCode = :pilotCode AND (ti.intervalStart >= :intervalStart OR (ti.intervalEnd IS NULL OR ti.intervalEnd >= :intervalStart)) AND (ti.intervalStart <= :intervalEnd OR (ti.intervalEnd IS NULL OR ti.intervalEnd <= :intervalEnd)) AND (ti.typicalPeriod IS NULL OR ti.typicalPeriod = 'day' OR ti.typicalPeriod = '1wk')")
 	List<VariationMeasureValue> findAllForMonthByPilotCodeNui(@Param("intervalStart") final Timestamp intervalStart, @Param("intervalEnd") final Timestamp intervalEnd, @Param("pilotCode") final Pilot.PilotCode pilotCode);
 	

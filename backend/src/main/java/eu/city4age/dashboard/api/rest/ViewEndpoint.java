@@ -27,6 +27,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.exceptions.JsonEmptyException;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.NUIRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
@@ -79,21 +80,46 @@ public class ViewEndpoint {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("getNuiValues/userInRoleId/{userInRoleId}/meaId/{meaId}")
+	@Path("getNuiValues/userInRoleId/{userInRoleId}")
 	public Response getNuiValuesMea(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
-			@ApiParam(hidden = true) @PathParam("meaId") Long meaId) throws JsonProcessingException {
+			@ApiParam(hidden = true) @QueryParam("varName") String varName,
+			@ApiParam(hidden = true) @QueryParam("varId") Long varId) throws JsonProcessingException, JsonEmptyException {
 
-		List<NumericIndicatorValue> nuis = nuiRepository.getNuisForSelectedMea(userInRoleId, meaId);
+		List<NumericIndicatorValue> nuis;
+		if(varName==null) {
+			nuis = nuiRepository.getNuisForAllMea(userInRoleId);
+		}else {
+			if(varName.compareTo("ges")==0) {
+				nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, varId);
+			}else if(varName.compareTo("mea")==0) {
+				nuis = nuiRepository.getNuisForSelectedMea(userInRoleId, varId);
+			}else {
+				throw new JsonEmptyException ("Variable name must be ges or mea");	
+			}
+		}
 		return JerseyResponse.build(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis));
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("getDailyMeasures/userInRoleId/{userInRoleId}/meaId/{meaId}")
+	@Path("getDailyMeasures/userInRoleId/{userInRoleId}")
 	public Response getDailyMeasuresMea(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
-			@ApiParam(hidden = true) @PathParam("meaId") Long meaId) throws JsonProcessingException {
+			@ApiParam(hidden = true) @QueryParam("varName") String varName,
+			@ApiParam(hidden = true) @QueryParam("varId") Long varId) throws JsonProcessingException, JsonEmptyException {
 
-		List<VariationMeasureValue> measures = variationMeasureValueRepository.findByUserAndMea(userInRoleId, meaId);
+		List<VariationMeasureValue> measures;
+
+		if(varName==null) {
+			measures = variationMeasureValueRepository.findByUser(userInRoleId);
+		}else {
+			if(varName.compareTo("ges")==0) {
+				measures = variationMeasureValueRepository.findByUserAndGes(userInRoleId, varId);
+			}else if(varName.compareTo("mea")==0) {
+				measures = variationMeasureValueRepository.findByUserAndMea(userInRoleId, varId);
+			}else {
+				throw new JsonEmptyException ("Variable name must be ges or mea");	
+			}
+		}
 		return JerseyResponse.build(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures));
 
 	}

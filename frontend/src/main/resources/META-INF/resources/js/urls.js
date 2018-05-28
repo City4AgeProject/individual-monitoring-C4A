@@ -20,8 +20,8 @@ var CARE_RECIPIENT_FOR_ID = root + 'careRecipient/findOne';
 var CARE_RECIPIENT_ALL = root + "careRecipient/getCareRecipients";
 var CARE_RECIPIENT_PILOT_LOCAL_DATA = root + "careRecipient/getCareRecipientPilotLocalData";
 
-var DAILY_MEASURES_DATA = root + "measures/getDailyMeasures";
-var NUI_VALUES_DATA = root + "measures/getNuiValues";
+var DAILY_MEASURES_DATA = root + "view/getDailyMeasures";
+var NUI_VALUES_DATA = root + "view/getNuiValues";
 
 var USER_LOGIN = root + "users/login";
 
