@@ -94,31 +94,7 @@ public class MeasuresEndpoint {
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
-
-	@GET
-	@ApiOperation("Get daily measures for care recipient within given geriatric subfactor.")
-	@Produces(MediaType.APPLICATION_JSON)
-	@JsonView(View.VariationMeasureValueView.class)
-	@Path("getDailyMeasures/userInRoleId/{userInRoleId}/gesId/{gesId}")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "userInRoleId", value = "id of care recipient", required = false, dataType = "long", paramType = "path", defaultValue = "1"),
-		@ApiImplicitParam(name = "gesId", value = "id of geriatric subfactor", required = false, dataType = "long", paramType = "path", defaultValue = "2") })
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = VariationMeasureValue.class),
-			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
-	public Response getDailyMeasures(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
-			@ApiParam(hidden = true) @PathParam("gesId") Long gesId) throws JsonProcessingException {
-
-		List<VariationMeasureValue> measures = null;
-		try {
-			measures = variationMeasureValueRepository.findByUserAndGes(userInRoleId, gesId);
-		} catch (Exception e) {
-			logger.info("getDailyMeasures REST service - query exception: ", e);
-		}
-
-		return JerseyResponse.build(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures != null ? measures : ""));
-
-	}
-
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("computeFromMeasures")
@@ -197,16 +173,7 @@ public class MeasuresEndpoint {
 		}
 		return result;
 	}
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("getNuiValues/userInRoleId/{userInRoleId}/detectionVariableId/{detectionVariableId}")
-	public Response getNuiValues(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
-			@ApiParam(hidden = true) @PathParam("detectionVariableId") Long detectionVariableId) throws JsonProcessingException {
-		List<NumericIndicatorValue> nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, detectionVariableId);
-		return JerseyResponse.build(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis));
-	}
-	
+
 	@GET
 	@ApiOperation("Method for fixing time intervals to have interval start and typical period, not interval start and interval end")
 	@Produces(MediaType.APPLICATION_JSON)
