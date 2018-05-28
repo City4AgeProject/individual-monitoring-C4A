@@ -329,7 +329,7 @@ function(oj, ko, $) {
                     }
 		};
                 var drawDerivedMonthlyMeasuresChart = function(gesId) {
-                    $.getJSON("http://localhost:8080/C4A-dashboard/rest/view/getDerivedMeasures/userInRoleId/" + parseInt(sessionStorage.getItem("crId")) + "/parentFactorId/" + gesId, function(data) {
+                    $.getJSON(VIEW_DERIVED_MEASURES + "/userInRoleId/" + parseInt(sessionStorage.getItem("crId")) + "/parentFactorId/" + gesId, function(data) {
                                 data.series.forEach(function(serie){
                                    serie.name =  oj.Translations.getTranslatedString(serie.name);
                                 });
