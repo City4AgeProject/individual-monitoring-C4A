@@ -15,9 +15,7 @@ function(oj, ko, $) {
 		self.seriesVal = ko.observableArray([]);
 		self.groupsVal = ko.observableArray([]);
 		self.seriesPredictionVal = ko.observableArray([]);
-		self.groupsPredictionVal = ko.observableArray([]);
-                //self.lineGroupsValue = ko.observableArray([]);
-                //self.lineSeriesValue = ko.observableArray([]);
+		self.groupsPredictionVal = ko.observableArray([]);               
                 self.lineGroupsPredictionValue = ko.observableArray([]);
                 self.lineSeriesPredictionValue = ko.observableArray([]);
                 self.drilling = ko.observable();
@@ -81,13 +79,7 @@ function(oj, ko, $) {
                                     if(event.detail.selectionData){
                                         $('#multipleSelection').ojPopup('close');    
                                         var onlyCalculated = [];
-                                        event.detail.selectionData.forEach(function(obj,i,array){
-    //                                        if(obj.data.type === "i"){
-    //                                                    console.log('found interpolated val!');
-    //                                                    array.splice(i,1);
-    //
-    //
-    //                                        }
+                                        event.detail.selectionData.forEach(function(obj,i,array){   
                                             if(obj.data.type === "c"){
                                                  onlyCalculated.push(obj);
                                                  
@@ -278,14 +270,12 @@ function(oj, ko, $) {
 
 		context.props.then(function(properties) {
 			self.props = properties;
+                        self.props.selectedRoles = [];
 		});
 		
 
 		self.attached = function() {                   
-                        loadDataSet();
-                            console.log('bla');
-                        //self.loadAssessmentsCached();
-                            console.log('bla');
+                        loadDataSet();                            
 		};
 
 
@@ -456,12 +446,9 @@ function(oj, ko, $) {
                                     }
                             }
                             if (self.props.series !== undefined) {
-//                                    self.props.series = self.props.series
-//                                                    .slice();
                                     self.props.series = series;
                                             var test = self.props.series;
                                             self.seriesVal(test);
-                                            console.log('bla');
                             }
                             if (self.props.groups !== undefined) {
                                     self.props.groups = self.props.groups
@@ -714,7 +701,6 @@ function(oj, ko, $) {
 			self.props.subFactorName = "testtest";
 			//self.loadAssessmentsCached();
 			selected = [];
-                        console.log('this is assessmentId ' + self.props.assessmentId);
 			for (var ig = 0; ig < Object.keys(self.seriesVal()).length; ig++) {
 				for (var jg = 0; jg < Object.keys(self.seriesVal()[ig].items).length; jg++) {
 					if (self.seriesVal()[ig].items[jg].assessmentObjects
