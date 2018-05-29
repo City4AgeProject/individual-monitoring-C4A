@@ -1,18 +1,25 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery',
     'ojs/ojknockout', 'ojs/ojinputtext', 'ojs/ojbutton', 'urls'],
         function (oj, ko, sp, app, $) {
-            function LoginViewModel() {
+	 		function LoginViewModel() {
                 $(".loader-hover").hide();
                 
                 var self = this;
-
-                this.usernameLabel = oj.Translations.getTranslatedString('username');
-                this.passwordLabel = oj.Translations.getTranslatedString('password');
-                this.welcome1Label = oj.Translations.getTranslatedString('welcome_message_1');
-                this.welcome2Label = oj.Translations.getTranslatedString('welcome_message_2');
-                this.welcome3Label = oj.Translations.getTranslatedString('welcome_message_3');
-                this.welcome4Label = oj.Translations.getTranslatedString('welcome_message_4');
-                this.loginLabel = oj.Translations.getTranslatedString('login');
+                self.usernameLabel = ko.observable();
+                self.passwordLabel = ko.observable();
+                self.welcome1Label = ko.observable();
+                self.welcome2Label = ko.observable();
+                self.welcome3Label = ko.observable();
+                self.welcome4Label = ko.observable();
+                self.loginLabel = ko.observable();
+                
+                self.usernameLabel(oj.Translations.getTranslatedString('username'));
+             	self.passwordLabel(oj.Translations.getTranslatedString('password'));
+             	self.welcome1Label(oj.Translations.getTranslatedString('welcome_message_1'));
+             	self.welcome2Label(oj.Translations.getTranslatedString('welcome_message_2'));
+             	self.welcome3Label(oj.Translations.getTranslatedString('welcome_message_3'));
+             	self.welcome4Label(oj.Translations.getTranslatedString('welcome_message_4'));
+             	self.loginLabel(oj.Translations.getTranslatedString('login'));
 
                 var url = sp.baseUrl + sp.loginMethod;
 
@@ -75,9 +82,45 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     self.loginValue('');
                     self.passwordValue('');
                 };
+                
+                function changeLanguage(){
+                	
+                	console.log("tranlate in login...");
+                	
+                	 var newLang = '';
+                     var lang = $('#languageBox').val();
+                     newLang = lang;
+
+                     oj.Config.setLocale(newLang,
+                    		 function () {
+                                 
+                    	 		$('html').attr('lang', newLang);                         
+                                 
+                             	self.usernameLabel(oj.Translations.getTranslatedString('username'));
+                             	self.passwordLabel(oj.Translations.getTranslatedString('password'));
+                             	self.welcome1Label(oj.Translations.getTranslatedString('welcome_message_1'));
+                             	self.welcome2Label(oj.Translations.getTranslatedString('welcome_message_2'));
+                             	self.welcome3Label(oj.Translations.getTranslatedString('welcome_message_3'));
+                             	self.welcome4Label(oj.Translations.getTranslatedString('welcome_message_4'));
+                             	self.loginLabel(oj.Translations.getTranslatedString('login'));
+                             	appViewModel.loggedinasLabel(oj.Translations.getTranslatedString('loggedinas'));
+                             	appViewModel.signoutLabel(oj.Translations.getTranslatedString('signout'));
+                             }
+                     );
+
+                }
+                
                     $('#mainContent').css({'background-color': '#f1f1f1'});
                     $('#mainContent').css({'border-color': '#f1f1f1'});
+                    
+                    var languageBox = document.getElementById("languageBox");
+                    languageBox.addEventListener("valueChanged", function(event) {
+                    	changeLanguage();
+                    });
+                    
             }
+            
             var loginViewModel = new LoginViewModel();
             return  loginViewModel;
         });
+

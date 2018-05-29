@@ -269,22 +269,34 @@ define({
                 show_on_diagram :"Εμφάνιση σε διάγραμμα",
                 
                 //login page translations
-                username :"Username:",
-                password :"Password:",
-                welcome_message_1 :"Welcome to the City4Age Dashboard Login page. Access is restricted to authorised members only. ",
-                welcome_message_2 :"Use our ",
-                welcome_message_3 :"Contact Form",
-                welcome_message_4 :" to request access.",
-                login :"Login:",
-                loggedinas : "Logged in as",
+                username :"Όνομα χρήστη:",
+                password :"Κωδικός:",
+                welcome_message_1 :"Καλώς ήρθατε στη σλίδα εισόδου της σελίδας City4Age Dashboard. Η πρόσβαση είναι περιορισμένη μόνο για εξουσιοδοτημένα μέλη.",
+                welcome_message_2 :"Χρησιμοποιήστε τη ",
+                welcome_message_3 :"Φόρμα επικοινωνίας",
+                welcome_message_4 :" για να αιτηθείτε πρόσβαση.",
+                login :"Είσοδος:",
+                loggedinas : "Εχετε εισέλθει ως",
+                signout: "Έξοδος",
                      
                 //cr_list_full page translation
-                show_more :"Show more:",
-                view_more_details :"View more details",
-                view_intervention_summary : "View Intervention Summary",
-                view_detection_summary : "View Detection Summary",
-                open_detection_session : "Open Detection Session",
-                open_detection_intervention : "Open Detection Intervention"
+                show_more :"Περισσότερα:",
+                view_more_details :"Περισσότερες λεπτομέρειες",
+                view_intervention_summary : "Δειτε την περίληψη των παρεμβασεων",
+                view_detection_summary : "Δειτε την περίληψη των ανιχνευσεων",
+                open_detection_session : "Ανοίξτε Συνεδρία Ανίχνευσης",
+                open_detection_intervention : "Ανοιξτε Ανίχνευση Παρέμβασης",
+                pilot:"Πιλότος",
+                frailty_status: "Κατάσταση αδυναμίας",
+                frailty_notice: "Ειδοποίηση αδυναμίας",
+                cr_id: "CR ID",
+                profile: "Προφιλ",
+                intervention_status: "Κατασταση παρέμβασης",
+                intervention_date: "Ημερομηνία παρέμβασης",
+                actions:"Ενέργειες",
+                		
+                	//cr_info page translations
+                local_pilot_data: "Τοπικά δεδομένα πιλότου:"
 
 			});
 

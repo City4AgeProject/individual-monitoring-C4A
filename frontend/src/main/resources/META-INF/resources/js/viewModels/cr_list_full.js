@@ -3,19 +3,56 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
         {
 			var m=0;		
 
-            function ListViewModel() {
+			function ListViewModel() {
                 var self = this;
                 self.data = ko.observableArray();
                 self.usersOuter = ko.observableArray();
+                
                 //Labels on cr_list_full page with translate option
-                self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
-                self.ageLabel = oj.Translations.getTranslatedString("age");
-                self.showMoreLabel = oj.Translations.getTranslatedString("show_more");
-                self.viewMoreDetailsLabel = oj.Translations.getTranslatedString("view_more_details");
-                self.interventionLabel = oj.Translations.getTranslatedString("view_intervention_summary");
-                self.detectionSummaryLabel = oj.Translations.getTranslatedString("view_detection_summary");
-                self.detectionSessionLabel = oj.Translations.getTranslatedString("open_detection_session");
-                self.detectionInterventionLabel = oj.Translations.getTranslatedString("open_detection_intervention");
+                self.careRecipientLabel = ko.observable();
+                self.careRecipientLabel(oj.Translations.getTranslatedString("care_recipient"));
+                
+                self.ageLabel = ko.observable();
+                self.ageLabel(oj.Translations.getTranslatedString("age"));
+                
+                self.showMoreLabel = ko.observable();
+                self.showMoreLabel(oj.Translations.getTranslatedString("show_more"));
+                
+                self.viewMoreDetailsLabel = ko.observable();
+                self.viewMoreDetailsLabel(oj.Translations.getTranslatedString("view_more_details"));
+                
+                self.interventionLabel = ko.observable();
+                self.interventionLabel(oj.Translations.getTranslatedString("view_intervention_summary"));
+                
+                self.detectionSummaryLabel = ko.observable();
+                self.detectionSummaryLabel(oj.Translations.getTranslatedString("view_detection_summary"));
+                
+                self.detectionSessionLabel = ko.observable();
+                self.detectionSessionLabel(oj.Translations.getTranslatedString("open_detection_session"));
+                
+                self.detectionInterventionLabel = ko.observable();
+                self.detectionInterventionLabel(oj.Translations.getTranslatedString("open_detection_intervention"));
+                
+                self.pilotLabel = ko.observable();
+                self.pilotLabel(oj.Translations.getTranslatedString("pilot"));
+                                
+              	$("#table\\:_hdrCol0 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("pilot"));
+             	$("#table\\:_hdrCol1 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("frailty_status"));
+             	$("#table\\:_hdrCol2 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("frailty_notice"));
+             	$("#table\\:_hdrCol3 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("cr_id"));
+             	$("#table\\:_hdrCol4 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("profile"));
+             	$("#table\\:_hdrCol5 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("attention"));
+             	$("#table\\:_hdrCol6 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("intervention_status"));
+             	$("#table\\:_hdrCol7 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("intervention_date"));
+             	$("#table\\:_hdrCol8 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("actions"));
+             	
+             	$("#view_more_det a").text(oj.Translations.getTranslatedString("view_more_details"));
+             	$("#view_inter_sum a").text(oj.Translations.getTranslatedString("view_intervention_summary"));
+             	$("#view_det_sum a").text(oj.Translations.getTranslatedString("view_detection_summary"));
+             	$("#open_det_ses a").text(oj.Translations.getTranslatedString("open_detection_session"));
+             	$("#open_det_int a").text(oj.Translations.getTranslatedString("open_detection_intervention"));
+             	$("#menuButton .oj-button-label .oj-button-text").text(oj.Translations.getTranslatedString("actions"));
+
                 var jwt = sessionStorage.getItem("jwt");
 
                 $.ajaxSetup({
@@ -143,8 +180,62 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     console.log("event ", event.type);
                 };
                 
-            }
+                var languageBox = document.getElementById("languageBox");
+                languageBox.removeEventListener("valueChanged", function(event) {
+                	changeLanguage();
+                });
+                languageBox.addEventListener("valueChanged", function(event) {
+                	changeLanguage();
+                });
+                
+                function changeLanguage(){
+                	              
+                	console.log("change language in list full...");
+                	
+                	 var newLang = '';
+                     var lang = $('#languageBox').val();
+                     newLang = lang;
 
+                     oj.Config.setLocale(newLang,
+                    		 function () {
+                                 
+                    	 		$('html').attr('lang', newLang);                         
+                                 
+                    	 		self.careRecipientLabel(oj.Translations.getTranslatedString("care_recipient"));
+                    	 		self.ageLabel(oj.Translations.getTranslatedString("age"));
+                    	 		self.viewMoreDetailsLabel(oj.Translations.getTranslatedString("view_more_details"));
+                    	 		self.interventionLabel(oj.Translations.getTranslatedString("view_intervention_summary"));
+                    	 		self.detectionSummaryLabel(oj.Translations.getTranslatedString("view_detection_summary"));
+                    	 		self.detectionSessionLabel(oj.Translations.getTranslatedString("open_detection_session"));
+                    	 		self.detectionInterventionLabel(oj.Translations.getTranslatedString("open_detection_intervention"));
+                    	 		self.pilotLabel(oj.Translations.getTranslatedString("pilot"));
+
+                             	$("#table\\:_hdrCol0 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("pilot"));
+                             	$("#table\\:_hdrCol1 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("frailty_status"));
+                             	$("#table\\:_hdrCol2 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("frailty_notice"));
+                             	$("#table\\:_hdrCol3 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("cr_id"));
+                             	$("#table\\:_hdrCol4 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("profile"));
+                             	$("#table\\:_hdrCol5 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("attention"));
+                             	$("#table\\:_hdrCol6 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("intervention_status"));
+                             	$("#table\\:_hdrCol7 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("intervention_date"));
+                             	$("#table\\:_hdrCol8 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("actions"));
+                             	
+                             	$("#view_more_det a").text(oj.Translations.getTranslatedString("view_more_details"));
+                             	$("#view_inter_sum a").text(oj.Translations.getTranslatedString("view_intervention_summary"));
+                             	$("#view_det_sum a").text(oj.Translations.getTranslatedString("view_detection_summary"));
+                             	$("#open_det_ses a").text(oj.Translations.getTranslatedString("open_detection_session"));
+                             	$("#open_det_int a").text(oj.Translations.getTranslatedString("open_detection_intervention"));
+                             	$("#menuButton .oj-button-label .oj-button-text").text(oj.Translations.getTranslatedString("actions"));
+                             	      
+                     		}
+                     );
+
+                }
+                
+            }
+ 
             return new ListViewModel();
 
         });
+
+

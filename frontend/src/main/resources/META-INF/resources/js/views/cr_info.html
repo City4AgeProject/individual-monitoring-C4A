@@ -30,7 +30,7 @@
 		 -->
 		
 		<div id="personal_data" class="pdata_title">	
-		  <div class="pdata_inner">Local Pilot Data: </div>
+		  <div class="pdata_inner" data-bind="text: local_pilot_data"></div>
 		  <div class="pdata_inner">
 			<table data-bind="foreach: {data: pilotLocalData, as: '_data'}">
  			 	<tbody data-bind="foreach: {data: Object.keys(personal_data), as: '_propkey'}">

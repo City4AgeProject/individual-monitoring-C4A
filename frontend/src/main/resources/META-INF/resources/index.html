@@ -95,13 +95,20 @@ chroming: 'half', display: 'icons', icons: {start: 'oj-web-applayout-offcanvas-i
                         </a>
                         <!--<h1 class="oj-web-applayout-header-title" title="Application Name" data-bind="text: appName"></h1>-->
                     </div>
+                    <div id="languageDiv" style="margin-right:25px;">
+				          <oj-select-one id="languageBox" value="en" 
+				          	options="[[languages]]"
+				            style="max-width:10em">
+				            
+				         </oj-select-one>
+          			</div>
                     <div class="user-menu oj-flex-bar-end">
                         <!-- Responsive Toolbar -->
                         <div class="toolbar-hover" data-bind="ojComponent: {component:'ojToolbar'}">
 
                             <!--<span class="oj-toolbar-separator" role="separator"></span>-->
                             <div>
-                                <span class="logged-label">Logged in as:</span>
+                                <span class="logged-label" data-bind="text: loggedinasLabel"></span>
                             </div>
                             <div class="headdiv">(<span data-bind="text: userPilotName"></span>)</div>
                             <button id="userMenu" data-bind="ojComponent: {component: 'ojButton', label: userLogin,
@@ -113,7 +120,7 @@ chroming: 'half', display: 'icons', icons: {start: 'oj-web-applayout-offcanvas-i
                             <ul id="menu1"
                                 data-bind="ojComponent: {component: 'ojMenu', select: menuItemSelect}"
                                 style="display: none">
-                                <li id="out"><a href="#">Sign Out</a></li>
+                                <li id="out"><a href="#" data-bind="text: signoutLabel"></a></li>
                             </ul>
                             <div style="display: none" id="aboutDialog"
                                  title="About JET QuickStart Basic"

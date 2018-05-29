@@ -277,6 +277,7 @@ define({
                 welcome_message_4 :" to request access.",
                 login :"Login:",
                 loggedinas : "Logged in as",
+                signout: "Sign Out",
                 
                 //cr_list_full page translation
                 show_more :"Show more:",
@@ -284,7 +285,18 @@ define({
                 view_intervention_summary : "View Intervention Summary",
                 view_detection_summary : "View Detection Summary",
                 open_detection_session : "Open Detection Session",
-                open_detection_intervention : "Open Detection Intervention"
+                open_detection_intervention : "Open Detection Intervention",
+                pilot:"Pilot",
+                frailty_status: "Frailty status",
+                frailty_notice: "Frailty notice",
+                cr_id: "CR ID",
+                profile: "Profile",
+                intervention_status: "Intervention Status",
+                intervention_date: "Intervention date",
+                	actions:"Actions",
+                	
+                	//cr_info page translations
+                	local_pilot_data: "Local Pilot Data:"
 	},
 	
 		    "zh-Hant" : true,

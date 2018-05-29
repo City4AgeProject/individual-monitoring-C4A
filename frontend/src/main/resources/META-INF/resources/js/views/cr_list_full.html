@@ -1,35 +1,37 @@
 <!--<div class="oj-helper-clearfix oj-dialog-header">-->
 
-<div class="oj-panel oj-flex-item page-padding">
+<div class="oj-panel oj-flex-item page-padding" style="width: 1px; min-width: 100%;">
 
     <!--<div class="page-padding">-->
-        <table id="table" summary="Care Recipient List" 
-               aria-label="Departments Table"
-               data-bind="ojComponent: {component: 'ojTable', 
+	<table id="table" summary="Care Recipient List"
+		aria-label="Departments Table"
+		data-bind="ojComponent: {component: 'ojTable', 
                                 data: dataSource, 
                                 emptyText: 'No data',
                                 columnsDefault: {headerStyle: 'background:transparent;font-weight:bold;',sortable:'enabled'}, 
                                 columns: [
                                     {headerText: 'Pilot', 
+                               
                                         field: 'pilotcode'},
                                     {headerText: 'Frailty status', 
                                         field: 'fr_status',
-                                        template: 'frailty_status'},
+                                        template: 'frailty_status',
+                                         style:'background:lightblue!important;height:60px;white-space:initial'},
                                     {headerText: 'Frailty notice', 
                                         field: 'fr_notice',
                                         template: 'fr_notice_tpl',
-                                        style: 'min-width: 8em; max-width: 8em; width: 8em'},
+                                        style: 'background:lightblue!important;height:60px;white-space:initial'},
                                     {headerText: 'CR ID', 
                                         field: 'cr_id',
                                          sortable: 'enabled'},
-                                    {headerText: 'Textline', 
-                                        style: 'min-width: 8em; max-width: 8em; width: 8em',
+                                    {headerText: 'Profile', 
                                         field: 'textline'},
                                     {headerText: 'Attention', 
                                         template: 'attention_tpl',
                                         sortable: 'enabled',
                                         sortProperty: 'attention'},
                                     {headerText: 'Intervention status', 
+                                   	 	style:'white-space:initial;height:60px;',                                    
                                         field: 'interv_status'},
                                     {headerText: 'Intervention date', 
                                         field: 'interv_date'},
@@ -38,15 +40,15 @@
                                 scrollPolicy: 'loadMoreOnScroll',
                                 scrollPolicyOptions: {'fetchSize': 10 },
                                 rootAttributes: {'style':'width: 100%;height:750px;'}}">
-        </table>
+	</table>
 
-    <!--</div>-->
+	<!--</div>-->
 
 </div>
 
 
 <script type="text/html" id="frailty_status">
-	<td data-bind="attr:{title:fr_status}">
+	<td data-bind="attr:{title:fr_status}" style="background:lightblue;">
     	<div >
         	<img data-bind="attr: {src: 'images/listview/' + fr_status + '.png', alt: fr_status}"></img>
     	</div>

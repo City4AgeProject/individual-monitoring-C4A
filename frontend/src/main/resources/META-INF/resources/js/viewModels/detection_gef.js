@@ -464,7 +464,37 @@ function (oj, ko, $) {
                         gefData = behavData;   
                     });
         }
+        
+        var languageBox = document.getElementById("languageBox");
+        languageBox.removeEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        languageBox.addEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        
+        function changeLanguage(){
+        	              
+        	console.log("change language in gef...");
+        	
+        	 var newLang = '';
+             var lang = $('#languageBox').val();
+             newLang = lang;
+
+             oj.Config.setLocale(newLang,
+            		 function () {
+                         
+            	 		$('html').attr('lang', newLang);                         
+                         
+            	 		
+                     	
+                     }
+             );
+
+        }
     }
 
+    
     return  GraphicsContentViewModel;
 });
+
