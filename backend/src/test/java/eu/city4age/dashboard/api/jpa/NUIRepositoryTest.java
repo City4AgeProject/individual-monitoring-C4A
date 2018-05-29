@@ -189,7 +189,7 @@ public class NUIRepositoryTest {
 	
 	@Test
 	@Transactional
-	@Rollback(false)
+	@Rollback(true)
 	public void testGetNuisForSelectedMea() {
 		
 		Long uirId;
@@ -211,16 +211,30 @@ public class NUIRepositoryTest {
 		DetectionVariableType dvt1 = DetectionVariableType.MEA;
 		dvt1 = detectionVariableTypeRepository.save(dvt1);
 
+		DetectionVariableType dvt2 = DetectionVariableType.NUI;
+		dvt2 = detectionVariableTypeRepository.save(dvt1);
+
 		DetectionVariable dv1 = new DetectionVariable();
 		dv1.setDetectionVariableName("MEA1");
 		dv1.setDetectionVariableType(dvt1);
 		dv1 = detectionVariableRepository.save(dv1);
 		meaId=dv1.getId();
 
+		DetectionVariable dv2 = new DetectionVariable();
+		dv2.setDetectionVariableName("NUI1");
+		dv2.setDetectionVariableType(dvt2);
+		dv2 = detectionVariableRepository.save(dv2);
+		
+		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
+		pdv1.setDetectionVariable(dv1);
+		pdv1.setDerivedDetectionVariable(dv2);
+		pdv1.setPilotCode(uir1.getPilotCode());
+		pdv1 = pilotDetectionVariableRepository.save(pdv1);
+
 		NumericIndicatorValue nui1 = new NumericIndicatorValue();
 		nui1.setNuiValue(new Double(0));
-		nui1.setDetectionVariable(dv1);
-		nui1.setDetectionVariableId(meaId.intValue());
+		nui1.setDetectionVariable(dv2);
+		nui1.setDetectionVariableId(dv2.getId().intValue());
 		nui1.setUserInRole(uir1);
 		nui1.setUserInRoleId(uirId.intValue());
 		nui1.setTimeInterval(ti1);
@@ -228,8 +242,8 @@ public class NUIRepositoryTest {
 
 		NumericIndicatorValue nui2 = new NumericIndicatorValue();
 		nui2.setNuiValue(new Double(1));
-		nui2.setDetectionVariable(dv1);
-		nui2.setDetectionVariableId(meaId.intValue());
+		nui2.setDetectionVariable(dv2);
+		nui2.setDetectionVariableId(dv2.getId().intValue());
 		nui2.setUserInRole(uir1);
 		nui2.setUserInRoleId(uirId.intValue());
 		nui2.setTimeInterval(ti2);
