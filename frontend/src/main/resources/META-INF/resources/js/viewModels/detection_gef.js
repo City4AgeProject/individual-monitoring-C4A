@@ -184,28 +184,32 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                             drilling:"off"
                         }
                         $.each(serie.items, function(j, item){
-                        switch (item.type){
-                            case 'i':
-                                item.markerDisplayed = "on";
-                                item.markerShape = "diamond";
-                                item.markerSize = 15;
-                                item.shortDesc = "Interpolated value (" + item.value + ")";
-                            case 'c': //Fall-thru with markerDisplayed=off only
-                                nSerie.items.push(item);
-                                pSerie.items[0] = item;
-                                break;
-                            case 'p':
-                                item.shortDesc = "Predicted value (" + item.value + ")";
-                                item.drilling = "off";
-                                pSerie.items.push(item);
-                                break;
-                            default:
-                                console.log('uknown t: ' + newItem.type)
+                            switch (item.type){
+                                case 'i':
+                                    item.markerDisplayed = "on";
+                                    item.markerShape = "diamond";
+                                    item.markerSize = 15;
+                                    item.shortDesc = "Interpolated value (" + item.value + ")";
+                                case 'c': //Fall-thru with markerDisplayed=off only
+                                    nSerie.items.push(item);
+                                    pSerie.items[0] = item;
+                                    break;
+                                case 'p':
+                                    item.shortDesc = "Predicted value (" + item.value + ")";
+                                    item.drilling = "off";
+                                    pSerie.items.push(item);
+                                    break;
+                                default:
+                                    console.log('uknown t: ' + newItem.type)
                             };
                         });
-                                if (i == 0){
-                                self.lineGroupsValue(data.groups.slice(0, nSerie.items.length));
-                                self.lineGroupsPredictionValue(data.groups.slice(nSerie.items.length));
+                        if (i == 0){
+                            self.lineGroupsValue(data.groups.slice(0, nSerie.items.length));
+                            self.lineGroupsPredictionValue(data.groups.slice(nSerie.items.length));
+                        }
+                        var iii=self.lineGroupsValue().length-nSerie.items.length;
+                        for (var ii=0; ii<iii; ii++){
+                            nSerie.items.unshift(null);
                         }
                         for (var ii = 1; ii < nSerie.items.length; ii++) {
                             pSerie.items.unshift(null);
@@ -392,6 +396,10 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                     self.groupsVal(data.groups.slice(0, nodes.length));
                     self.groupsPredictionVal(data.groups.slice(nodes.length));
                 }
+                var iii=self.groupsVal().length-nodes.length;
+                for (var ii=0; ii<iii; ii++){
+                    nodes.unshift(null);
+                }
                 var leftPartOfArray = []; //Right align for predicted
                 for (var ii = 1; ii < nodes.length; ii++) {
                     leftPartOfArray.push(null);
@@ -420,7 +428,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 } else if (s.name === 'Fit') {
                     s.drilling = "off";
                 }
-                self.seriesVal.push(s);
+                 self.seriesVal.push(s);
                 
                 var s={
                     name: oj.Translations.getTranslatedString(serie.name),

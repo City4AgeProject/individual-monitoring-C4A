@@ -208,6 +208,10 @@ function(oj, ko, $) {
                                 self.groupsVal(data.groups.slice(0, nodes.length));
                                 self.groupsPredictionVal(data.groups.slice(nodes.length));
                             }
+                            var iii=self.groupsVal().length-nodes.length;
+                            for (var ii=0; ii<iii; ii++){
+                                nodes.unshift(null);
+                            }
                             var leftPartOfArray = []; //Right align for predicted
                             for (var ii = 1; ii < nodes.length; ii++) {
                                 leftPartOfArray.push(null);
@@ -311,8 +315,14 @@ function(oj, ko, $) {
 
 		self.chartDrill = function(event) {
                     if(event.detail['series']){
-			console.log('drill on anagraph-assessment-view');                      
-                        self.props.selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);
+			console.log('drill on anagraph-assessment-view');   
+                        var tmpGefTypeId;
+                        event.detail['seriesData']['items'].forEach(function(item){
+                            if(item)
+                                tmpGefTypeId = JSON.stringify(item['gefTypeId'])
+                        })
+                        self.props.selectedId = tmpGefTypeId;
+                        //self.props.selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);
                                                    
                         var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);
                         if(selectedDetectionVariable.detectionVariableType === 'gef'){ 
