@@ -99,7 +99,7 @@ function (oj, ko, $) {
         self.derivedMonthlyMeaDrill = function(event){
             var selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);  
             var meaName = event.detail['seriesData'].name;
-            
+            sessionStorage.setItem('seeAllMeasures', 0);
             sessionStorage.setItem('meaId', selectedId);
             sessionStorage.setItem('meaName', selectedId);
             oj.Router.rootInstance.go("detection_mea");
@@ -108,6 +108,11 @@ function (oj, ko, $) {
         self.lineSeriesValue = ko.observableArray();
         self.lineGroupsValue = ko.observableArray();
         self.derivedMonthlyMeaTitle = ko.observable("Measures’ monthly values");
+        
+        self.seeAllMeasuresForGes = function(event){
+               sessionStorage.setItem('seeAllMeasures', 1);
+               oj.Router.rootInstance.go("detection_mea");
+        };
         
     }
 

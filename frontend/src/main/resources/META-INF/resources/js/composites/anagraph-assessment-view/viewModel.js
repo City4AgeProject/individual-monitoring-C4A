@@ -342,6 +342,9 @@ function(oj, ko, $) {
                                 document.getElementById('monthly-mea-container').style.display = "block";
                                 $('#derivedMonthlyMea').prop('series', self.lineSeries);
                                 $('#derivedMonthlyMea').prop('groups', self.lineGroups);
+                                $('html, body').animate({
+                                    scrollTop: $("#monthly-mea-container").offset().top
+                                }, 2000);
                                 
                     });
                            
@@ -589,7 +592,7 @@ function(oj, ko, $) {
 						assessmentsResult.push(newAssessment);
 				}
 				self.selectedAnotations(assessmentsResult);
-				refreshDataPointsMarked(assessmentsResult.length);
+				//refreshDataPointsMarked(assessmentsResult.length);
 			});
 		};
 
@@ -719,10 +722,26 @@ function(oj, ko, $) {
 		}
                 //makes annotation list with filters visible and sets dataPointsMarked to assessment-preview component 
 		function refreshDataPointsMarked(assessmentsResultLength) {
-			document.getElementById('tabs-container').style.display = 'block';
-			$('#tabAnnotations').css({
-				display : 'block'
-			});
+                    if(assessmentsResultLength > 0){
+                        $( "#tabs-container" ).fadeIn( "slow", function() {
+                            // Animation complete
+                          });
+//                        document.getElementById('tabs-container').style.display = 'block';
+//			$('#tabAnnotations').css({
+//				display : 'block'
+//			});
+                         $( "#tabAnnotations" ).fadeIn( "slow", function() {
+                            // Animation complete
+                          });
+                    }else {
+                        $( "#tabAnnotations" ).fadeOut( "fast", function() {
+                            // Animation complete
+                          });
+
+                          
+			
+                    }
+			
                         //this is a string on assessment-preview that tells how many data points and assessments are selected
 			self.dataPointsMarked = self.dataPointsMarkedIds.length
 					+ oj.Translations.getTranslatedString("dpmw")
@@ -736,7 +755,7 @@ function(oj, ko, $) {
                             for(var i = 0; i < selectedDots.length; i++){
                                 for(var j = 0; j < selectedDots.length; j++){
                                     if(selectedDots[i].data.value === selectedDots[j].data.value && 
-                                        selectedDots[i].data.timeIntervalId === selectedDots[j].data.timeIntervalId &&
+                                        selectedDots[i].groupData[0] === selectedDots[j].groupData[0] &&
                                             selectedDots[i].data.id !== selectedDots[j].data.id){
                                              if(!multipleSelectionsInOneVal.filter(function(selection){ return selection.data.id === selectedDots[i].data.id; }).length > 0){
                                                  multipleSelectionsInOneVal.push(selectedDots[i]);

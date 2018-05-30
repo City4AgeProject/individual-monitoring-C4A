@@ -11,26 +11,37 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         initData();
             		
                         return new Promise(function(resolve, reject) {
+                            
+                            var queryParams;
+                            
+                            if(parseInt(sessionStorage.getItem('seeAllMeasures'))){
+                                    queryParams = "?varName=ges&varId=" + self.gesId();
+                                    
+                                }else{
+                                    queryParams = "?varName=mea&varId=" + self.meaId();
+                                }
+                                console.log('query params is : ' + queryParams);
 
                         $.when(
-
-                                  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + self.careRecipientId() + "/gesId/" + self.gesId(), function(data) {
+                                
+                                  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + self.careRecipientId() + queryParams, function(data) {
                                     self.data = data;
                                   }),
 
 
-                                  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ self.careRecipientId() +"/detectionVariableId/" + self.gesId(), function(nuiData) {
+                                  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ self.careRecipientId() + queryParams, function(nuiData) {
                                     self.nuiData = nuiData;
                                   })
 
                                 ).then(function() {
                                     self.data.dailyMeasures = [];    
                                     var arr = setDataForDiagrams(self.data, self.nuiData);
-                                    arr.forEach(function(el){
-                                        if(el.detectionVariableId === parseInt(sessionStorage.getItem('meaId'))){
-                                            self.data.dailyMeasures.push(el);
-                                        }
-                                    });
+                                    self.data.dailyMeasures = arr;
+//                                    arr.forEach(function(el){
+//                                        if(el.detectionVariableId === parseInt(sessionStorage.getItem('meaId'))){
+//                                            self.data.dailyMeasures.push(el);
+//                                        }
+//                                    });
                                     
                                     //self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
                                     resolve();
@@ -48,7 +59,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         var crId = parseInt(sessionStorage.getItem("crId"));
                         var gesObj = JSON.parse(sessionStorage.getItem("gesObj"));
                         var gesId = gesObj.detectionVariableId;
-                        self.meaId = parseInt(sessionStorage.getItem("meaId"));
+                        self.meaId = ko.observable(parseInt(sessionStorage.getItem("meaId")));
           	      	
           	      	//data
       	        	self.careRecipientId = ko.observable(crId);

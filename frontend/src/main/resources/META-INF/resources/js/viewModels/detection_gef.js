@@ -223,6 +223,9 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                     $('#detectionGEFGroup1FactorsLineChart').prop('selectedItemsValue', []);
                     $('#detectionGEFGroup1FactorsLineChart')[0].chartOptionChange();
                     $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
+                    $('html, body').animate({
+                                    scrollTop: $("#detectionGEFGroup1FactorsLineChart").offset().top
+                                }, 2000);
                 };
                 /* End Detection GEF Groups Line Chart configuration*/
 
@@ -365,7 +368,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                         gefTypeId: item.gefTypeId,
                         type: item.type,
                         markerDisplayed: "off" //Don`t change for 'c' type
-                    }
+                    };
                     switch (newItem.type) {
                         case 'i':
                             newItem.markerDisplayed = "on";
@@ -382,7 +385,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                             predictedNodes.push(newItem);
                             break;
                         default:
-                            console.log('uknown t: ' + newItem.type)
+                            console.log('uknown t: ' + newItem.type);
                     }
                 });
                 if (i == 0) {
@@ -399,7 +402,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                     color: lineColors[i],
                     lineWidth: 3.5
                     
-                }
+                };
                             console.log('SERIES NAME IS : ' + s.name);            
                 if (s.name == 'Overall'){
                     s.drilling = "off";
@@ -426,7 +429,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                     lineStyle: "dashed",
                     color: lineColors[i],
                     drilling:"off"
-                }
+                };
                 if (s.name === 'Overall'){
                     s.drilling = "off";
                     //s.color = '#999999';
@@ -451,7 +454,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                         value:item,
                         drilling:"off",
                         shortDesc:obj.name
-                    }
+                    };
                     items.push(o);
                 });
                 /* End creating non-drillable items*/    
