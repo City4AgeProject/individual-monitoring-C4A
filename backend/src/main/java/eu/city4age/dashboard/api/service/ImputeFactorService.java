@@ -77,7 +77,6 @@ public class ImputeFactorService {
 		this.rightDate = Calendar.getInstance();
 	}
 
-
 	public int imputeMissingValues(DetectionVariable dv, UserInRole uir, Date endDate) {
 
 		this.userInRole = uir;
@@ -102,7 +101,7 @@ public class ImputeFactorService {
 		if (viewGeriatricFactorValue.size() > trashholdPoint) {
 
 			//return interpolateMissingValuesSpline() + extrapolateMissingValuesMean(endDatePilot);
-			int numImputedValues = interpolateMissingValuesMAVG();
+			int numImputedValues = interpolateMissingValuesMAVG2();
 			logger.info("- Number of interpolated values: " + numImputedValues);
 
 			if (numImputedValues > 0) {
@@ -122,6 +121,9 @@ public class ImputeFactorService {
 
 	private int interpolateMissingValuesMAVG() {
 
+		/*
+		 * average of previous and following value weighted by 2/3 and 1/3 respectively
+		 */
 		int imputed = 0;
 		int startIndex = 0;
 		int rightIndex = 0;
@@ -160,6 +162,79 @@ public class ImputeFactorService {
 		}
 		
 		return imputed;
+	}
+	
+	private int interpolateMissingValuesMAVG2() {
+		
+		/*
+		 * average of N (currently 2) previous and follofing values, weighted by 1/(2^distance) (1/2, 1/4, 1/8)
+		 */
+		
+		int countImputedValues=0;
+		int leftIndex=0;
+		int rightIndex=0;
+		int weightPosition;
+		int countGefValues=viewGeriatricFactorValue.size();
+		double[] weights= {0.5, 0.25};
+		double sumOfWeights;
+		double weightedValue;
+		
+		leftDate.setTime(viewGeriatricFactorValue.get(leftIndex).getIntervalStart());
+		rightDate.setTime(viewGeriatricFactorValue.get(rightIndex).getIntervalStart());
+		endDate.setTime(viewGeriatricFactorValue.get(countGefValues-1).getIntervalStart());
+		
+		List<Double> leftValues=new ArrayList<Double>();
+
+//		BigDecimal rightGefValue = viewGeriatricFactorValue.get(rightIndex).getGefValue();
+		
+		while(rightDate.getTimeInMillis() < endDate.getTimeInMillis()) {
+					
+			ti = getFollowingTimeInterval(leftDate);
+			leftDate.setTime(ti.getIntervalStart());
+
+			leftValues.add(viewGeriatricFactorValue.get(rightIndex).getGefValue().doubleValue());
+			rightIndex++;
+			rightDate.setTime(viewGeriatricFactorValue.get(rightIndex).getIntervalStart());
+			
+			while(leftDate.getTimeInMillis() < rightDate.getTimeInMillis()) {
+				
+				logger.info("leftValues: "+leftValues);
+				weightPosition=1;
+				weightedValue=0;
+				sumOfWeights=0;
+				for(double weight : weights) {
+					//logger.info("WTI: "+weightPosition); //, weightedValue, sumOfWeights, leftValues.size(), rightIndex, countGefValues);
+					//logger.info("weight: "+weight);
+					if(leftValues.size()-weightPosition>=0) {
+						weightedValue=weightedValue+(leftValues.get(leftValues.size()-weightPosition))*weight;
+						sumOfWeights=sumOfWeights+weight;
+//						logger.info("WTI: -"+weightPosition);
+//						logger.info(leftValues.get(leftValues.size()-weightPosition));
+					}
+					if(rightIndex+weightPosition<=countGefValues) {
+						weightedValue=weightedValue+(viewGeriatricFactorValue.get(rightIndex+weightPosition-1).getGefValue().doubleValue())*weight;
+						sumOfWeights=sumOfWeights+weight;
+//						logger.info("WTI: +"+weightPosition);
+//						logger.info(viewGeriatricFactorValue.get(rightIndex+weightPosition-1).getGefValue().doubleValue());
+					}
+					weightPosition++;
+				}
+//				logger.info("weightedValue "+weightedValue);
+//				logger.info("sumOfWeights "+sumOfWeights);
+				weightedValue/=sumOfWeights;
+				leftValues.add(weightedValue);
+				logger.info("- Missing date: "+ ti.getIntervalStart()+" Imputed: "+weightedValue);
+				
+				saveImputedValues(ti, new BigDecimal(weightedValue));
+				countImputedValues++;
+				
+				ti = getFollowingTimeInterval(leftDate);
+				leftDate.setTime(ti.getIntervalStart());
+				
+			}
+		}
+		
+		return countImputedValues;
 	}
 
 	/*private int interpolateMissingValuesSpline() {

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Loggers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -70,14 +71,13 @@ public class PredictionService {
 
 	@Autowired
 	private MeasuresService measuresService;
-	
+
 	@Autowired
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
 
 	@Autowired
 	private CareProfileRepository careProfileRepository;
 
-	private Date endDate;
 	private String systemUserName;
 
 	static protected Logger logger = LogManager.getLogger(PredictionService.class);
@@ -108,7 +108,7 @@ public class PredictionService {
 				logger.info("UserInRoleId: " + userInRole.getId());
 
 				// Last date for which there is at least one data item in the DB for the user
-				this.endDate = geriatricFactorRepository.findMaxIntervalStartByUserInRole(userInRole.getId()).getIntervalStart();
+				Date endDate = geriatricFactorRepository.findMaxIntervalStartByUserInRole(userInRole.getId()).getIntervalStart();
 				logger.info("- EndDate: " + endDate);
 
 				imputeFactorService.imputeMissingValues(dv, userInRole, endDate);
@@ -118,7 +118,9 @@ public class PredictionService {
 				geriatricFactorPredictionValueRepository.delete(predictionsToDelete);
 				logger.info("- Deleted " + predictionsToDelete.size() + " obsolete predictions");
 
+
 				this.makePredictions(dv, userInRole, endDate);
+
 
 			}				
 		}			
@@ -149,43 +151,63 @@ public class PredictionService {
 		Long dvId = dv.getId();
 		Long uId = uir.getId();
 
-		logger.info("- Making predictions for " + "uId: " + uId + " and factorId " + dvId);
-
 		double[] dataArray = getJointFactorValues(dvId, uId);
 
 		if (dataArray.length > trasholdPoint) { 
 
+			logger.info("- Making predictions for " + "uId: " + uId + " and factorId " + dvId);
+
 			TimeSeries timeSeries = Ts.newMonthlySeries(dataArray);
 
 			ArrayList<ArimaOrder> models = new ArrayList<ArimaOrder>();
-			models.add(ArimaOrder.order(0, 1, 1, 0, 0, 0, Arima.Drift.EXCLUDE));	// simple exponential smoothing 
-			models.add(ArimaOrder.order(0, 1, 1, Arima.Drift.INCLUDE));				// simple exponential smoothing with growth
-			models.add(ArimaOrder.order(1, 1, 0, 0, 0, 0)); 						// differenced first-order autoregressive model
-			models.add(ArimaOrder.order(1, 1, 2, 0, 0, 0)); 						// damped-trend linear exponential smoothing
+
+			/* Autoregressive models */
+
+			for (int p = 0; p < 3; p++)
+				for (int d = 0; d < 2; d++)
+					for (int q = 0; q < 3; q++) {
+						//						if (!(p==0 && p==0 && d==1))
+						models.add(ArimaOrder.order(p, d, q));
+						models.add(ArimaOrder.order(p, d, q, Arima.Drift.INCLUDE));
+						models.add(ArimaOrder.order(p, d, q, Arima.Constant.INCLUDE));
+						//						logger.info("p, d, q: " + "( " +  p + " " + d + " " + q + " )");
+					}
 
 			ArrayList<Arima> fmodels = new ArrayList<Arima>();
+
+			Arima tmp;
 			for (int i = 0; i < models.size(); i++) {
-				fmodels.add(Arima.model(timeSeries, models.get(i)));
+				try {
+					tmp = Arima.model(timeSeries, models.get(i));
+				} catch (Exception e) {
+					continue;	
+				}
+				if (!Double.isNaN(tmp.aic()))
+					fmodels.add(tmp);
 			}
 
 			// Finds optimal ARIMA model (with minimal AIC criteria)
 			Arima optimalModel = fmodels.get(0);
 			double aic = fmodels.get(0).aic();
 			double aic_curr;
-			for (int i = 1; i < models.size(); i++)
+			for (int i = 1; i < fmodels.size(); i++) {
+				//				logger.info("model params\n" + models);
 				if ((aic_curr = fmodels.get(i).aic()) < aic) {
 					aic = aic_curr;
 					optimalModel = fmodels.get(i);
 				}
+			}
 
 			Forecast forecast = optimalModel.forecast(predictionSize);
+
+			logger.info("Optimal model: " + optimalModel);
 
 			// Saves predictions to the database
 			for (int i = 0; i < predictionSize; i++) {
 				GeriatricFactorPredictionValue prediction = new GeriatricFactorPredictionValue();
 				prediction.setUserInRoleId(uId);
 				prediction.setGefValue(makeValid(new BigDecimal(forecast.pointEstimates().at(i))));
-				prediction.setTimeInterval(computeMonthWithOffset(i+1));
+				prediction.setTimeInterval(computeMonthWithOffset(i+1, endDate));
 				prediction.setDetectionVariableId(dvId);
 				geriatricFactorPredictionValueRepository.save(prediction);
 			}
@@ -246,7 +268,7 @@ public class PredictionService {
 	}
 
 	// Finds date with monthOffset from the endDate
-	private TimeInterval computeMonthWithOffset(int offset) {
+	private TimeInterval computeMonthWithOffset(int offset, Date endDate) {
 
 		TimeInterval timeIntervalEnd = measuresService.getOrCreateTimeInterval(endDate, eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
 
@@ -255,7 +277,6 @@ public class PredictionService {
 
 		date.add(Calendar.DAY_OF_MONTH, 6); // correction for daylight savings
 		date.add(Calendar.MONTH, offset);
-
 
 		String format = "yyyy-MM-01 00:00:00";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
@@ -266,7 +287,6 @@ public class PredictionService {
 		return timeInterval;
 
 	}
-
 
 	private double[] getJointFactorValues(Long dvId, Long uId) {
 
