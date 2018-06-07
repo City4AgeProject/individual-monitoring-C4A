@@ -8,8 +8,8 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.ws.rs.PathParam;
 
+import javax.ws.rs.PathParam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,8 @@ public class MeasuresServiceImpl implements MeasuresService {
 	
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
-
+	
+	
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void computeFor1Pilot(@PathParam("pilotCode") String pilotCodeString, @PathParam("newestSubmittedDate") String newestSubmittedDataString) throws Exception {
 		
@@ -104,6 +105,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 	}
 
 	public void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
+
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCode);
 
@@ -113,10 +115,11 @@ public class MeasuresServiceImpl implements MeasuresService {
 			nuis.clear();
 			//nuiRepository.flush();
 		}
+		vmsMonthly.clear();
 	}
 
 	public void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) throws Exception {
-		
+
 		String stringPilotCode = pilotCode.name().toLowerCase();
 		
 		//ROLLBACK SCENARIO!!!
@@ -124,13 +127,14 @@ public class MeasuresServiceImpl implements MeasuresService {
 		
 		List<Object[]> gess = nativeQueryRepository.computeAllGess(startOfMonth, endOfMonth, stringPilotCode);
 		//gess.addAll(variationMeasureValueRepository.computeAllDirect(startOfMonth, endOfMonth, pilotCodes, DetectionVariableType.GES));
-
+		
 		if(gess != null && gess.size() > 0) {
 			List<GeriatricFactorValue> gfvs = createAllGFVs(gess, startOfMonth, endOfMonth, pilotCode);
 			nuiRepository.bulkSave(gfvs);
 			gfvs.clear();
 			//nuiRepository.flush();
 		}
+		gess.clear();
 
 	}
 
@@ -155,6 +159,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 			gfvs.clear();
 			//nuiRepository.flush();
 		}
+		list.clear();
 	}
 	
 	public void setVariablesComputedForAllPilots(Pilot pilot, Timestamp endOfComputation, Date newestSubmittedData) {
