@@ -293,6 +293,7 @@ define({
                 profile: "Προφιλ",
                 intervention_status: "Κατασταση παρέμβασης",
                 intervention_date: "Ημερομηνία παρέμβασης",
+                intervention_total: "Παρεμβάσεις",
                 actions:"Ενέργειες",
                 		
                 	//cr_info page translations

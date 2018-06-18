@@ -1,4 +1,6 @@
-define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojtable', 'ojs/ojgauge', 'ojs/ojarraytabledatasource', 'urls'],
+define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockout', 'ojs/ojtable', 
+	'ojs/ojgauge', 'ojs/ojpagingcontrol', 'ojs/ojpagingtabledatasource','ojs/ojarraytabledatasource', 
+	'ojs/ojbutton', 'urls'],
         function (oj, ko, sp, $)
         {
 			var m=0;		
@@ -18,6 +20,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.showMoreLabel = ko.observable();
                 self.showMoreLabel(oj.Translations.getTranslatedString("show_more"));
                 
+                self.actionsLabel = ko.observable();
+                self.actionsLabel(oj.Translations.getTranslatedString("actions"));
+                
                 self.viewMoreDetailsLabel = ko.observable();
                 self.viewMoreDetailsLabel(oj.Translations.getTranslatedString("view_more_details"));
                 
@@ -36,23 +41,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.pilotLabel = ko.observable();
                 self.pilotLabel(oj.Translations.getTranslatedString("pilot"));
                                 
-              	$("#table\\:_hdrCol0 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("pilot"));
-             	$("#table\\:_hdrCol1 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("frailty_status"));
-             	$("#table\\:_hdrCol2 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("frailty_notice"));
-             	$("#table\\:_hdrCol3 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("cr_id"));
-             	$("#table\\:_hdrCol4 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("profile"));
-             	$("#table\\:_hdrCol5 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("attention"));
-             	$("#table\\:_hdrCol6 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("intervention_status"));
-             	$("#table\\:_hdrCol7 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("intervention_date"));
-             	$("#table\\:_hdrCol8 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("actions"));
+             	self.colummnArray = ko.observableArray();
+             	setColumnArray();
              	
-             	$("#view_more_det a").text(oj.Translations.getTranslatedString("view_more_details"));
-             	$("#view_inter_sum a").text(oj.Translations.getTranslatedString("view_intervention_summary"));
-             	$("#view_det_sum a").text(oj.Translations.getTranslatedString("view_detection_summary"));
-             	$("#open_det_ses a").text(oj.Translations.getTranslatedString("open_detection_session"));
-             	$("#open_det_int a").text(oj.Translations.getTranslatedString("open_detection_intervention"));
-             	$("#menuButton .oj-button-label .oj-button-text").text(oj.Translations.getTranslatedString("actions"));
-
                 var jwt = sessionStorage.getItem("jwt");
 
                 $.ajaxSetup({
@@ -87,8 +78,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                     attention: this.attention,
                                     det_status: this.detectionStatus,
                                     det_date: this.detectionDate,
-                                    interv_status: this.interventionstatus,
-                                    interv_date: this.interventionDate,
+                                    interv_total: 0,
+//                                    interv_date: this.interventionDate,
                                     age: this.age,
                                     pilotcode: this.pilotCode,
                                     gender: this.gender
@@ -108,9 +99,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                         self.data, {
                             idAttribute: "cr_id"
                         });
+                
+                self.pagingDataSource = new oj.PagingTableDataSource(self.dataSource);
 
-                self.menuItemSelect = function (event, ui) {
-                    var currentRow = $('#table').ojTable('option', 'currentRow');
+                self.menuItemSelect = function (event) {
+                	
+                    var currentRow = document.getElementById('table').currentRow;//$('#table').ojTable('option', 'currentRow');
                     var selectData;
                     
                   //finding cr with cr_id = selectedRow.keyId
@@ -121,8 +115,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 			               }
 
                     console.log(" selected care recipient with: id " + selectData['cr_id'] + " age " + selectData['age']);
-
-                    switch (ui.item.attr("id")) {
+                    
+                    switch (event.target.value) {
                         case "view_more_det":
                             oj.Router.rootInstance.store(selectData['cr_id']);
                             oj.Router.sync();
@@ -148,8 +142,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 };
 
                 self.navigateToGef = function() {
-                    var currentTableRow = $( "#table" ).ojTable("option", "currentRow");
-                    var crData;
+  
+                     var currentTableRow = document.getElementById('table').currentRow;//$( "#table" ).ojTable("option", "currentRow");
+                    
+                     var crData;
 	                  //finding cr with cr_id = selectedRow.keyId
 	                  for(var i = 0; i< self.data().length; i++){                    	                    	
 	                        if(self.data()[i].cr_id === currentTableRow.rowKey){                   		
@@ -158,6 +154,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
 	                                      }
 	
 	                    self.viewGef(crData.cr_id,crData.textline,crData.age,crData.gender);
+
                 };
 
                 self.viewGef = function (userId, textline, age, gender) {
@@ -179,6 +176,50 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 self.changeButtonIcon = function (isPaused, data, event) {
                     console.log("event ", event.type);
                 };
+                
+                function setColumnArray(){
+                	               	
+                	var columns = [
+                 		{
+                 			headerText: oj.Translations.getTranslatedString("pilot"), 
+                 			field: 'pilotcode'},
+                       {		
+                 			headerText: oj.Translations.getTranslatedString("frailty_status"), 
+                 			field: 'fr_status',
+                 			renderer: oj.KnockoutTemplateUtils.getRenderer("frailty_status", true),
+                            style:'background:lightblue!important;height:60px;white-space:initial'},
+                       {
+                            headerText: oj.Translations.getTranslatedString("frailty_notice"), 
+                            field: 'fr_notice',
+                            renderer: oj.KnockoutTemplateUtils.getRenderer("fr_notice_tpl", true),
+                            style: 'background:lightblue!important;height:60px;white-space:initial'
+                       },
+                       {
+                    	   headerText: oj.Translations.getTranslatedString("cr_id"), 
+                    	   field: 'cr_id',
+                           sortable: 'enabled'
+                        },
+                       {
+                          headerText: oj.Translations.getTranslatedString("profile"), 
+                          field: 'textline'
+                       },
+                       {
+                    	   headerText: oj.Translations.getTranslatedString("attention"),
+                    	   renderer: oj.KnockoutTemplateUtils.getRenderer("attention_tpl", true),
+                           sortable: 'enabled',
+                           sortProperty: 'attention'
+                       },
+                       {
+                    	   headerText: oj.Translations.getTranslatedString("intervention_total"), 
+                    	   style:'white-space:initial;height:60px;',                                    
+                           field: 'interv_total'},
+                       { 
+                           headerText: oj.Translations.getTranslatedString("actions"),
+                           renderer: oj.KnockoutTemplateUtils.getRenderer("action_btn_tpl", true),
+                       } 
+                        ];
+                	self.columnArray = columns;
+                }
                 
                 var languageBox = document.getElementById("languageBox");
                 languageBox.removeEventListener("valueChanged", function(event) {
@@ -209,32 +250,26 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                     	 		self.detectionSessionLabel(oj.Translations.getTranslatedString("open_detection_session"));
                     	 		self.detectionInterventionLabel(oj.Translations.getTranslatedString("open_detection_intervention"));
                     	 		self.pilotLabel(oj.Translations.getTranslatedString("pilot"));
-
-                             	$("#table\\:_hdrCol0 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("pilot"));
-                             	$("#table\\:_hdrCol1 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("frailty_status"));
-                             	$("#table\\:_hdrCol2 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("frailty_notice"));
-                             	$("#table\\:_hdrCol3 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("cr_id"));
-                             	$("#table\\:_hdrCol4 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("profile"));
-                             	$("#table\\:_hdrCol5 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("attention"));
-                             	$("#table\\:_hdrCol6 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("intervention_status"));
-                             	$("#table\\:_hdrCol7 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("intervention_date"));
-                             	$("#table\\:_hdrCol8 .oj-table-column-header-text").text(oj.Translations.getTranslatedString("actions"));
-                             	
-                             	$("#view_more_det a").text(oj.Translations.getTranslatedString("view_more_details"));
-                             	$("#view_inter_sum a").text(oj.Translations.getTranslatedString("view_intervention_summary"));
-                             	$("#view_det_sum a").text(oj.Translations.getTranslatedString("view_detection_summary"));
-                             	$("#open_det_ses a").text(oj.Translations.getTranslatedString("open_detection_session"));
-                             	$("#open_det_int a").text(oj.Translations.getTranslatedString("open_detection_intervention"));
-                             	$("#menuButton .oj-button-label .oj-button-text").text(oj.Translations.getTranslatedString("actions"));
-                             	      
+                    	 		
+                    	 		setColumnArray();
+                    	 		
+                    	 		document.getElementById('table').columns = self.columnArray;
+                    	 		document.getElementById('table').refresh();
+                    	 		                    
+                    	 		self.actionsLabel(oj.Translations.getTranslatedString("actions"));
+                    	 		self.viewMoreDetailsLabel(oj.Translations.getTranslatedString("view_more_details"));
+                    	 		document.getElementById('menuButton').refresh();
                      		}
+                     
                      );
 
                 }
                 
             }
  
-            return new ListViewModel();
+			var listModel = new ListViewModel();
+			
+            return listModel;
 
         });
 

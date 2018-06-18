@@ -293,6 +293,7 @@ define({
                 profile: "Profile",
                 intervention_status: "Intervention Status",
                 intervention_date: "Intervention date",
+                intervention_total: "Interventions",
                 	actions:"Actions",
                 	
                 	//cr_info page translations
