@@ -2,12 +2,6 @@ package eu.city4age.dashboard.api.py;
 
 import javax.ws.rs.core.Response;
 
-import org.python.core.PyException;
-import org.python.core.PyFunction;
-import org.python.core.PyInteger;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.util.PythonInterpreter;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +34,7 @@ public class HiddenMarkovModelService {
 	public Response clusterSingleSeries(Integer userId) throws Exception {
 
 		String fileUrlPath = "src/main/python/";
-		String scriptName = "learnOptimal_and_persistJSON.py";
+		String scriptName = "learnOptimalHMMs_and_persist.py";
 		String funcName = "start";
 		
         jep.runScript(fileUrlPath + scriptName);
