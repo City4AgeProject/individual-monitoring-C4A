@@ -1,17 +1,88 @@
-		<div class="oj-panel oj-panel-shadow-sm" style="border: none; background-color: #fcfcfc">
-	
-                    <!-- CR info -->
-                    <div data-bind="ojModule: { name: 'cr_info'}"></div>
-                    <!-- end CR info -->
+<div class="oj-panel oj-panel-shadow-sm" style="border: none; background-color: #fcfcfc">
+                        
+    <!-- CR info -->
+    <div data-bind="ojModule: { name: 'cr_info'}"></div>
+    <!-- end CR info -->
 
-                    <br><br>
-                    <div id="daily-measures-container">			
-                            <!-- ko foreach: data.dailyMeasures-->
-                                <anagraph-measure-view  nuis-for-measure="{{nuisForMeasure}}" measure-name="{{measureName}}"  line-series="{{lineSeries}}" base-unit= "{{baseUnit}}" default-typical-period="{{defaultTypicalPeriod}}" line-type="{{lineType}}" has-comments="{{hasComments}}"/>
-                                <br><br>
-                            <!-- /ko -->
+    <br><br>
+    <div id ="nui-charts-container" >
+                    <div class="oj-panel oj-panel-shadow-sm oj-flex" >
+                        <div class="oj-flex-item">
+                            <h3 id="avgTitle" align="center" style="margin-top: 20px;">Average</h3>
+                            <oj-chart id="waterfallChartAvg"
+                                type="bar" 
+                                series="[[barSeriesAvg]]" groups="[[barGroups]]"
+                                y-axis.reference-objects="[[referenceObjectsAvg]]"
+                                animation-on-display="auto"
+                                legend.sections="[[legendSections]]"
+                                style-defaults.data-item-gaps="0"
+                                style="width:100%;height:350px;">
+                            </oj-chart>
+                        </div>
+                        <div class="oj-flex-item">
+                            <h3 id="stdTitle" align="center" style="margin-top: 20px;">Standard</h3>
+                            <oj-chart id="waterfallChartStd"
+                                type="bar" 
+                                series="[[barSeriesStd]]" groups="[[barGroups]]"
+                                y-axis.reference-objects="[[referenceObjectsStd]]"
+                                animation-on-display="auto"
+                                legend.sections="[[legendSections]]"
+                                style-defaults.data-item-gaps="0"
+                                style="width:100%;height:350px;">
+                            </oj-chart>
+                        </div>
+                        
                     </div>
-		</div>
+                    
+                    <div class="oj-panel oj-panel-shadow-sm oj-flex"> 
+                        <div class="oj-flex-item">
+                            <h3 id="bestTitle" align="center" style="margin-top: 20px;">Best</h3>
+                            <oj-chart id="waterfallChartBest"
+                                type="bar" 
+                                series="[[barSeriesBest]]" groups="[[barGroups]]"
+                                y-axis.reference-objects="[[referenceObjectsBest]]"
+                                animation-on-display="auto"
+                                legend.sections="[[legendSections]]"
+                                style-defaults.data-item-gaps="0"
+                                style="width:100%;height:350px;">
+                            </oj-chart>
+                        </div>
+                        <div class="oj-flex-item">
+                            <h3 id="deltaTitle" align="center" style="margin-top: 20px;">Delta</h3>
+                            <oj-chart id="waterfallChartDelta"
+                                type="bar" 
+                                series="[[barSeriesDelta]]" groups="[[barGroups]]"
+                                y-axis.reference-objects="[[referenceObjectsDelta]]"
+                                animation-on-display="auto"
+                                legend.sections="[[legendSections]]"
+                                style-defaults.data-item-gaps="0"
+                                style="width:100%;height:350px;">
+                            </oj-chart>
+                        </div>    
+                    </div>
+    </div>
+    <div id="daily-measures-container">			
+            <!-- ko foreach: data.dailyMeasures-->
+                <anagraph-measure-view  nuis-for-measure="{{nuisForMeasure}}" measure-name="{{measureName}}"  line-series="{{lineSeries}}" base-unit= "{{baseUnit}}" default-typical-period="{{defaultTypicalPeriod}}" line-type="{{lineType}}" has-comments="{{hasComments}}"/>
+                <br><br>
+            <!-- /ko -->
+    </div>
+<!--        MEA CHART WITH NUIS AS SERIES-->
+<!--        <div  id="nuiChartContainer" class="demo-flex-display oj-flex-items-pad oj-panel oj-panel-shadow-sm" style=" height: 400pxf; background-color: #F1F1F1; padding-top: 15px;" >
+                <h3 id="meaTitle" data-bind="text: meaTitle" align="center" style="margin-top: 20px;"></h3>
+                <oj-chart id="nuiChart" class="oj-flex-item"
+                    type="line"
+                    series="[[nuiSeries]]"
+                    groups="[[nuiGroups]]"
+                    animation-on-display="auto"
+                    animation-on-data-change="auto"               
+                    hover-behavior="dim"
+                    style="width:100%;height:350px;background-color: #F1F1F1;">
+                </oj-chart>
+            </div>-->
+                
+                
+</div>
 	
 	
 

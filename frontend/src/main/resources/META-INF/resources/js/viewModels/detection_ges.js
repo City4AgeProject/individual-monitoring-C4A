@@ -102,7 +102,7 @@ function (oj, ko, $) {
             sessionStorage.setItem('seeAllMeasures', 0);
             sessionStorage.setItem('meaId', selectedId);
             sessionStorage.setItem('meaName', selectedId);
-            oj.Router.rootInstance.go("detection_mea");
+            oj.Router.rootInstance.go("detection_mea");           
         };
          /* chart data */       
         self.lineSeriesValue = ko.observableArray();

@@ -1,13 +1,39 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery',
-    'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojbutton', 'urls','anagraph-measure-view'],
+    'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojbutton', 'urls','anagraph-measure-view','ojs/ojlegend'],
         function (oj, ko, sp, app, $) {
 
             function detectionMeaViewModel() {
+                
+                var colorHandler = new oj.ColorAttributeGroupHandler();
+                colorHandler.addMatchRule(-1, '#ed6647');
+                colorHandler.addMatchRule(1, '#68c182');
+                
                 $(".loader-hover").hide();
-                var self = this;   
+                var self = this;
+                
+                self.nuiData = null;
+                self.nuiGroups = ko.observableArray();
+                self.nuiSeries = ko.observableArray();
+                self.meaTitle = ko.observable();
+                self.gesList = ko.observableArray();
+                self.meaList = ko.observableArray([]);
+                self.meaForSelector = ko.observableArray();
+                self.measureName = null;
+                self.barSeriesAvg = ko.observableArray();
+                self.barSeriesStd = ko.observableArray();
+                self.barSeriesBest = ko.observableArray();
+                self.barSeriesDelta = ko.observableArray();
+                self.barGroups = ko.observableArray();
+
+                self.referenceObjectsAvg = ko.observableArray();
+                self.referenceObjectsStd = ko.observableArray();
+                self.referenceObjectsBest = ko.observableArray();
+                self.referenceObjectsDelta = ko.observableArray();
+                self.legendSections = ko.observableArray();
             	                                                  
             	//this method loads data form ajax request before view is loaded
-            	self.handleActivated = function(info) {  
+            	self.handleActivated = function(info) {
+                    
                         initData();
             		
                         return new Promise(function(resolve, reject) {
@@ -66,8 +92,120 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         self.gesId = ko.observable(gesId);    	                 	        	                                                       
 
             	}
-            	
+            	function setBarCharts(nuiData) {
+                         self.nuiData = nuiData;
+                         let nui = nuiData[0];
+                         let sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_") + 1;
+                         self.measureName = nui.detectionVariable.detectionVariableName.slice(sliceIndex);
+                         
+                      //getting list of timeIntervals for chart groups
+                      let timeIntervals = [];
+                      nuiData.forEach(function(nui){
+                          if(!timeIntervals.includes(nui.timeInterval.intervalStart)){
+                              timeIntervals.push(nui.timeInterval.intervalStart);
+                          }
+                      });
+                      
+                    //get nui groups with month name and year
+                    var months = ["January", "February", "March", "April", "May", "June", "July", "August","September", "October", "November", "December"];
+                    let groups = [];
+                    timeIntervals.sort(function(a, b) {
+                        return a - b;
+                    });
+                    timeIntervals.forEach(function(interval){
+                        let date = new Date(interval);
+                        groups.push(months[date.getMonth()] + " " + date.getFullYear());                               
+                    });
+                    groups.push('End');
+                    self.nuiGroups(groups);
+                    drawNuiForMea(self.measureName);
+                }
+                function drawNuiForMea(meaName) {
+                    self.meaTitle(meaName);
+                    let nuiAvg = new Object();
+                    nuiAvg.name = "avg_"+meaName;
+                    nuiAvg.items = [];
+
+                    let nuiStd = new Object();
+                    nuiStd.name = "std_"+meaName;
+                    nuiStd.items = [];
+
+                    let nuiBest = new Object();
+                    nuiBest.name = "best_"+meaName;
+                    nuiBest.items = [];
+
+                    let nuiDelta = new Object();
+                    nuiDelta.name = "delta_"+meaName;
+                    nuiDelta.items = [];
+                   
+                    let nuiSeries = [];
+                    self.nuiData.forEach(function (nui){
+                        let nuiName = nui.detectionVariable.detectionVariableName;
+
+                        if(nuiName.includes('avg_' + meaName)){
+                                     nuiAvg.items.push(nui.nuiValue);
+                        }else if(nuiName.includes('std_' + meaName)){
+                                     nuiStd.items.push(nui.nuiValue);
+                        }else if(nuiName.includes('best_' + meaName)){
+                                     nuiBest.items.push(nui.nuiValue);
+                        }else if(nuiName.includes('delta_' + meaName)){
+                                     nuiDelta.items.push(nui.nuiValue);
+                        }
+                    }); 
+                    console.log('this is nui avg : ' + JSON.stringify(nuiAvg.items)); 
+                    console.log('this is nui std : ' + JSON.stringify(nuiStd.items));
+                    console.log('this is nui best : ' + JSON.stringify(nuiBest.items));
+                    console.log('this is nui delta : ' + JSON.stringify(nuiDelta.items));
+                    nuiSeries.push(nuiAvg,nuiStd,nuiBest,nuiDelta);
+                    self.nuiSeries(nuiSeries);
+                   
+                    /* waterfall chart data */
+                    var waterValuesAvg = nuiAvg.items;
+                    var waterValuesStd = nuiStd.items;
+                    var waterValuesBest = nuiBest.items;
+                    var waterValuesDelta = nuiDelta.items;
+ 
+                     var waterGroups = self.nuiGroups();
+                     //console.log('this is after create waterfall data ' + JSON.stringify(createWaterfallData(waterValuesAvg)));
+                     self.barSeriesAvg([{items: createWaterfallData(waterValuesAvg), displayInLegend: "off"}]);
+                     self.barSeriesStd([{items: createWaterfallData(waterValuesStd), displayInLegend: "off"}]);
+                     self.barSeriesBest ([{items: createWaterfallData(waterValuesBest), displayInLegend: "off"}]);
+                     self.barSeriesDelta ([{items: createWaterfallData(waterValuesDelta), displayInLegend: "off"}]);
+                     console.log('%c this is groups : ' + JSON.stringify(waterGroups), 'background: black; color: yellow');
+                     //waterGroups.push("End");
+                     self.barGroups(waterGroups);
+
+                     self.referenceObjectsAvg([{items: waterValuesAvg, type: 'line', lineType: 'segmented', lineWidth: 1, lineStyle: 'dotted', color: '#808080', shortDesc: 'Connecting Line'}]);
+                     self.referenceObjectsStd([{items: waterValuesStd, type: 'line', lineType: 'segmented', lineWidth: 1, lineStyle: 'dotted', color: '#808080', shortDesc: 'Connecting Line'}]);
+                     self.referenceObjectsBest([{items: waterValuesBest, type: 'line', lineType: 'segmented', lineWidth: 1, lineStyle: 'dotted', color: '#808080', shortDesc: 'Connecting Line'}]);
+                     self.referenceObjectsDelta([{items: waterValuesDelta, type: 'line', lineType: 'segmented', lineWidth: 1, lineStyle: 'dotted', color: '#808080', shortDesc: 'Connecting Line'}]);
+
+                     /* create legend */
+                     self.legendSections([{items: [{color: colorHandler.getValue(1), text: "Increase", id: "Increase"}, {color: colorHandler.getValue(-1), text: "Decrease", id: "Decrease"}, {color: colorHandler.getValue(0), text: "Total", id: "Total"}]}]);
+                     
+                            
+            }
+            // Function to create data for waterfall graph.
+                var createWaterfallData = function (vals) {
+                    var data = [];
+                    var values = vals.slice();
+                    console.log('this is values : ' + JSON.stringify(values));
+                    values.unshift(vals[0]);
+                    for (var i = 0; i < values.length; i++) {
+                        var items;
+                        if (i === values.length - 1 || i === 0) {
+                            items = {high: values[i], low: 0, color: colorHandler.getValue(0), shortDesc: "Value: " + values[i]};
+                        }
+                        else {
+                            var diff = values[i + 1] - values[i];
+                            items = {low: values[i], high: values[i + 1], color: colorHandler.getValue(diff / Math.abs(diff)), shortDesc: "Change: " + diff};
+                        }
+                        data.push(items);
+                    }
+                    return data;
+                };
             	function setDataForDiagrams(data, nuiData) {
+                         setBarCharts(nuiData);
             		 //building diagramData from json data
   	    		  var measureIds = [];
   	    		  var measures = [];
