@@ -15,7 +15,7 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 @Repository(value = "variationMeasureValueRepository")
 public interface VariationMeasureValueRepository extends GenericRepository<VariationMeasureValue, Long> {
 
-	@Query("SELECT DISTINCT vm FROM VariationMeasureValue vm LEFT JOIN FETCH vm.detectionVariable dv LEFT JOIN FETCH vm.timeInterval ti LEFT JOIN FETCH vm.valueEvidenceNotice ven WHERE vm.detectionVariable.id IN (SELECT pdv.detectionVariable.id FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE pdv.derivedDetectionVariable.id = :gesId AND dv.detectionVariableType = 'mea') AND vm.userInRole.id = :uId ORDER BY ti.intervalStart")				
+	@Query("SELECT DISTINCT vm FROM VariationMeasureValue vm LEFT JOIN FETCH vm.detectionVariable dv LEFT JOIN FETCH vm.timeInterval ti LEFT JOIN FETCH vm.valueEvidenceNotice ven WHERE vm.detectionVariable.id IN (SELECT pdv.id.detectionVariableId FROM ViewPilotDetectionVariable pdv WHERE pdv.id.derivedDetectionVariableId = :gesId AND pdv.detectionVariableType = 'mea' AND pdv.id.userInRoleId = :uId) AND vm.userInRole.id = :uId ORDER BY ti.intervalStart")
 	List<VariationMeasureValue> findByUserAndGes(@Param("uId") final Long uId, @Param("gesId") final Long gesId);
 
 	@Query("SELECT DISTINCT vm FROM VariationMeasureValue vm LEFT JOIN FETCH vm.detectionVariable dv LEFT JOIN FETCH vm.timeInterval ti WHERE vm.detectionVariable.id = :meaId AND vm.userInRole.id = :uId ORDER BY ti.intervalStart")
