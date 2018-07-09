@@ -152,10 +152,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                      nuiDelta.items.push(nui.nuiValue);
                         }
                     }); 
-                    console.log('this is nui avg : ' + JSON.stringify(nuiAvg.items)); 
-                    console.log('this is nui std : ' + JSON.stringify(nuiStd.items));
-                    console.log('this is nui best : ' + JSON.stringify(nuiBest.items));
-                    console.log('this is nui delta : ' + JSON.stringify(nuiDelta.items));
+                    
                     nuiSeries.push(nuiAvg,nuiStd,nuiBest,nuiDelta);
                     self.nuiSeries(nuiSeries);
                    
@@ -171,7 +168,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                      self.barSeriesStd([{items: createWaterfallData(waterValuesStd), displayInLegend: "off"}]);
                      self.barSeriesBest ([{items: createWaterfallData(waterValuesBest), displayInLegend: "off"}]);
                      self.barSeriesDelta ([{items: createWaterfallData(waterValuesDelta), displayInLegend: "off"}]);
-                     console.log('%c this is groups : ' + JSON.stringify(waterGroups), 'background: black; color: yellow');
+                     
                      //waterGroups.push("End");
                      self.barGroups(waterGroups);
 
@@ -189,7 +186,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 var createWaterfallData = function (vals) {
                     var data = [];
                     var values = vals.slice();
-                    console.log('this is values : ' + JSON.stringify(values));
+                    
                     values.unshift(vals[0]);
                     for (var i = 0; i < values.length; i++) {
                         var items;

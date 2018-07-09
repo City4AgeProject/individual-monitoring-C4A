@@ -1,6 +1,6 @@
 define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'ojs/ojtable', 'ojs/ojarraytabledatasource','ojs/ojtabs', 'ojs/ojconveyorbelt',
 	'ojs/ojdatagrid', 'ojs/ojcollectiondatagriddatasource', 'ojs/ojvalidation-datetime',
-	'ojs/ojvalidation-number','ojs/ojcollapsible','ojs/ojarraydatagriddatasource','ojs/ojinputtext'],
+	'ojs/ojvalidation-number','ojs/ojcollapsible','ojs/ojarraydatagriddatasource','ojs/ojinputtext','ojs/ojselectcombobox'],
         function (ko, $) {
 			
             function model(context) {
@@ -8,30 +8,62 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
             	var self = this;
             	                                                     
                 self.zoom = ko.observable('live');
-                self.measureName = null;
-                self.lineSeries = [];
+                self.measureName = ko.observable();
+                self.measureNameForDiagram = ko.observable();
+                self.lineSeries = ko.observable();
                 self.hiddenCategories = ko.observableArray();
                 self.visibleCategories = [];
                 self.meaComment = ko.observable();
                 self.meaCommentPreview = ko.observable();
                 self.hasComments;
+                self.baseUnit = ko.observable();
                 self.showNuis = true;
+                self.lineSeriesBaseUnit = [];
+                self.measureUnits = ko.observableArray([]);
+                self.currentUnit = ko.observable({value: 'm/s', label: 'm/s'});
                 self.shouldSeeNotice = ko.observable(false);
                 self.legendValue = new Object();
                 context.props.then(function(properties) {
                     self.props = properties; 
                     self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
 
-                    self.measureName = oj.Translations.getTranslatedString(properties.measureName);                    
+                    self.measureName(oj.Translations.getTranslatedString(properties.measureName));                    
                     if(properties.baseUnit){
-                        self.measureName += " (" + properties.baseUnit + ")";
+                        self.baseUnit(properties.baseUnit);
+                        
+                        self.measureNameForDiagram = ko.computed(function() {
+                            return self.measureName() + " (" + self.baseUnit() + ")";
+                        }, self);
+                        if(properties.baseUnit == 'm/s'){
+                            self.measureUnits([ 
+                                {value: 'm/s', label: 'm/s'},
+                                {value: 'min/km',  label: 'min/km'}]);
+                           
+                        }else if(properties.baseUnit == 's'){
+                            self.measureUnits([ 
+                                {value: 's', label: 's'},
+                                {value: 'min',  label: 'min'},
+                                {value: 'h',  label: 'h'}
+                            ]);
+                        }else if(properties.baseUnit == 'kg'){
+                            self.measureUnits([ 
+                                {value: 'kg', label: 'ks'},
+                                {value: 'pound',  label: 'pound'}
+                            ]);
+                        }else if(properties.baseUnit == 'm'){
+                            self.measureUnits([ 
+                                {value: 'm', label: 'm'},
+                                {value: 'km',  label: 'km'}
+                            ]);
+                        }
                     }    
                     self.hasComments = properties.hasComments;
                     self.defaultTypicalPeriod = properties.defaultTypicalPeriod;
-                    self.lineSeries = properties.lineSeries;                    
+                    self.lineSeries(properties.lineSeries);    
+                    self.lineSeriesBaseUnit = JSON.stringify(properties.lineSeries);
                     self.lineSeriesNames = [];
                     
-                    self.lineSeries.forEach(function(ls){
+                    self.lineSeries().forEach(function(ls){
                         self.lineSeriesNames.push(ls.name);                                              
                     });
                                                           
@@ -39,7 +71,8 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                         self.showNuis = false;
                         self.lineGroups = ko.observable(["Start of month", "End of month"]);
                         self.zoom('off');                                                                
-                    }else{                       
+                    }else{   
+                        self.showNuis = true;
                         self.lineGroups = ko.observable(["1", "2", "3", "4", "5","6","7","8","9","10",
                                 "11","12","13","14","15","16","17","18","19","20",
                 	"21","22","23","24","25","26","27","28","29","30","31"]);
@@ -54,11 +87,39 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                             self.legendValue.title = "Click to see evidence notice";
                         }                                                
                     }
-                     self.legendValue.titleStyle = "font-size:10px";
+                    self.legendValue.titleStyle = "font-size:10px";
+                    
                     
                     
                 });  
-                
+                self.currentUnit.subscribe(function(newValue){
+                    var test = JSON.parse(self.lineSeriesBaseUnit);
+                    var test2 = null;
+                    if(newValue == "min/km" || newValue == "min" || newValue == "h" || newValue == "km" || newValue == "pound"){
+                        test.forEach(function(ls){
+                            ls.items.forEach(function(item){
+                                if(newValue == "min/km"){
+                                    item.value = item.value * 16.666666666667;
+                                }else if(newValue == "min"){
+                                    item.value = item.value / 60;
+                                }else if(newValue == "h"){
+                                    item.value = item.value / 3600;
+                                }else if(newValue == "km"){
+                                    item.value = item.value / 1000;
+                                }else if(newValue == "pound"){
+                                    item.value = item.value * 2.20462;
+                                }
+                            });
+                        });
+                        
+                        self.lineSeries(test);
+                    }else{
+                        test2 = JSON.parse(self.lineSeriesBaseUnit);
+                        self.lineSeries(test2);
+                    }
+                    self.baseUnit(newValue);
+                });
+                     
                 self.beforeCurrentCellListener = function (event) {
                     var currentCell = event.detail.currentCell;
                     if(currentCell){                        
