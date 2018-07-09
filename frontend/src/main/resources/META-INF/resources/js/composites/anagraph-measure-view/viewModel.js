@@ -16,6 +16,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.meaComment = ko.observable();
                 self.meaCommentPreview = ko.observable();
                 self.hasComments;
+                self.showUnitsConversion = ko.observable('none');
                 self.baseUnit = ko.observable();
                 self.showNuis = true;
                 self.lineSeriesBaseUnit = [];
@@ -34,6 +35,9 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                         self.measureNameForDiagram = ko.computed(function() {
                             return self.measureName() + " (" + self.baseUnit() + ")";
                         }, self);
+                        if(properties.baseUnit == 'm/s' || properties.baseUnit == 's' || properties.baseUnit == 'kg' || properties.baseUnit == 'm'){
+                            self.showUnitsConversion('block');
+                        }
                         if(properties.baseUnit == 'm/s'){
                             self.measureUnits([ 
                                 {value: 'm/s', label: 'm/s'},
@@ -56,6 +60,8 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                                 {value: 'km',  label: 'km'}
                             ]);
                         }
+                    }else{
+                        self.measureNameForDiagram(self.measureName());
                     }    
                     self.hasComments = properties.hasComments;
                     self.defaultTypicalPeriod = properties.defaultTypicalPeriod;

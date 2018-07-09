@@ -5,6 +5,7 @@
     <!-- end CR info -->
 
     <br><br>
+    <!-- ko if: showBarCharts -->
     <div id ="nui-charts-container" >
                     <div class="oj-panel oj-panel-shadow-sm oj-flex" >
                         <div class="oj-flex-item oj-sm-6 oj-md-6">
@@ -61,6 +62,7 @@
                         </div>    
                     </div>
     </div>
+    <!-- /ko -->
     <div id="daily-measures-container">			
             <!-- ko foreach: data.dailyMeasures-->
                 <anagraph-measure-view  nuis-for-measure="{{nuisForMeasure}}" measure-name="{{measureName}}"  line-series="{{lineSeries}}" base-unit= "{{baseUnit}}" default-typical-period="{{defaultTypicalPeriod}}" line-type="{{lineType}}" has-comments="{{hasComments}}"/>

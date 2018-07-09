@@ -14,15 +14,15 @@
 </div>
 <!-- /ko -->
 
-<div id='measure-view-container' style="border:1px solid silver;position: relative;">
-    <div style="padding-left:16px; position:absolute; top:10px;left:0;">
-        <oj-label for="select">Select unit:</oj-label>
-        <oj-select-one id="select" style="max-width:20em" value="{{currentUnit}}">
-          <!-- ko foreach: measureUnits -->
-            <oj-option value="[[value]]"><span data-bind="text: label"></span></oj-option>
-          <!-- /ko -->
-        </oj-select-one>
-    </div>
+<div id='measure-view-container' style="border:1px solid silver;position: relative;">    
+    <div style="padding-left:16px; position:absolute; top:10px;left:0;" data-bind="style: { display: showUnitsConversion}">
+            <oj-label for="select">Select unit:</oj-label>
+            <oj-select-one id="select" style="max-width:20em" value="{{currentUnit}}">
+              <!-- ko foreach: measureUnits -->
+                <oj-option value="[[value]]"><span data-bind="text: label"></span></oj-option>
+              <!-- /ko -->
+            </oj-select-one>
+    </div>  
         
     <h3 id="measureName" data-bind="text: measureNameForDiagram" align="center" style="margin-top: 20px;"></h3>
     <oj-chart id="lineChart"                

@@ -10,7 +10,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 
                 $(".loader-hover").hide();
                 var self = this;
-                
+                self.showBarCharts = ko.observable(false);
                 self.nuiData = null;
                 self.nuiGroups = ko.observableArray();
                 self.nuiSeries = ko.observableArray();
@@ -202,11 +202,17 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     return data;
                 };
             	function setDataForDiagrams(data, nuiData) {
-                         setBarCharts(nuiData);
+                    if(data[0].detectionVariable.defaultTypicalPeriod == "day"){
+                        console.log('default typical period is day');
+                        setBarCharts(nuiData);
+                        self.showBarCharts(true);
+                    }else{
+                        self.showBarCharts(false);
+                    }
             		 //building diagramData from json data
   	    		  var measureIds = [];
   	    		  var measures = [];
-  	    		    	    		   	    		  
+                    //console.log('this is data: ' + JSON.stringify(data));  	    		   	    		  
   	    		  //getting list of measures (detection variables) from json
   	    		  data.forEach(function(element) {
   	    			  if(measureIds.indexOf(element.detectionVariable.id) === -1){          	    				  
