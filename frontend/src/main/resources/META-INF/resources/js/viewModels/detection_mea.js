@@ -318,11 +318,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                          nuiShortName = "Weighted Standard Deviation: ";
                                          break;
                                     case 'delta': 
-                                         nuiName = "Weigthed Delta Between Best 25% Percentile and Average (best 25% percentile/average)";
+                                         nuiName = "Weigthed Delta Between Best 25% Percentile and Average ((best 25% percentile - average)/average)";
                                          nuiShortName = "Weigthed Delta: ";
                                          break;
                                     case 'best': 
-                                         nuiName = "Weighted Best 25% Percentile ((best 25% percentile - average)/average)";
+                                         nuiName = "Weighted Best 25% Percentile (best 25% percentile/average)";
                                          nuiShortName = "Weighted Best: ";
                                          break;
                                 }

@@ -104,17 +104,21 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     if(newValue == "min/km" || newValue == "min" || newValue == "h" || newValue == "km" || newValue == "pound"){
                         test.forEach(function(ls){
                             ls.items.forEach(function(item){
-                                if(newValue == "min/km"){
-                                    item.value = item.value * 16.666666666667;
-                                }else if(newValue == "min"){
-                                    item.value = item.value / 60;
-                                }else if(newValue == "h"){
-                                    item.value = item.value / 3600;
-                                }else if(newValue == "km"){
-                                    item.value = item.value / 1000;
-                                }else if(newValue == "pound"){
-                                    item.value = item.value * 2.20462;
-                                }
+                                if(item.value){
+                                    if(newValue == "min/km"){
+                                        if(item.value !== 0){
+                                        item.value = 16.67 / item.value;
+                                    }
+                                    }else if(newValue == "min"){
+                                        item.value = item.value / 60;
+                                    }else if(newValue == "h"){
+                                        item.value = item.value / 3600;
+                                    }else if(newValue == "km"){
+                                        item.value = item.value / 1000;
+                                    }else if(newValue == "pound"){
+                                        item.value = item.value * 2.20462;
+                                    }
+                            }
                             });
                         });
                         
