@@ -30,6 +30,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.referenceObjectsBest = ko.observableArray();
                 self.referenceObjectsDelta = ko.observableArray();
                 self.legendSections = ko.observableArray();
+                
+                self.nuiLineSeriesValue = ko.observableArray();
+                self.nuiLineGroupsValue = ko.observableArray();
             	                                                  
             	//this method loads data form ajax request before view is loaded
             	self.handleActivated = function(info) {
@@ -77,7 +80,16 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         });           	    	  
             	              	                	        
             	};
-            	
+//            	 var nuiLineSeries = [{name : "Series 1", items : [74, 62, 70, 76, 66]},
+//                          {name : "Series 2", items : [50, 38, 46, 54, 42]},
+//                          {name : "Series 3", items : [34, 22, 30, 32, 26]},
+//                          {name : "Series 4", items : [18,  6, 14, 22, 10]},
+//                          {name : "Series 5", items : [3,  2,  3,  3,  2]}];
+//    
+//                var nuiLineGroups = ["Jan", "Feb", "Mar", "Apr", "May"];
+
+
+                
             	function initData() {
           	      	
           	      	//var crId = oj.Router.rootInstance.retrieve()[0];
@@ -116,6 +128,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         let date = new Date(interval);
                         groups.push(months[date.getMonth()] + " " + date.getFullYear());                               
                     });
+                    self.nuiLineGroupsValue(groups.slice());
                     groups.push('End');
                     self.nuiGroups(groups);
                     drawNuiForMea(self.measureName);
@@ -155,7 +168,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     
                     nuiSeries.push(nuiAvg,nuiStd,nuiBest,nuiDelta);
                     self.nuiSeries(nuiSeries);
-                   
+                    
+                    self.nuiLineSeriesValue(returnNormalizedData(nuiSeries));
                     /* waterfall chart data */
                     var waterValuesAvg = nuiAvg.items;
                     var waterValuesStd = nuiStd.items;
@@ -201,6 +215,30 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     }
                     return data;
                 };
+                function returnNormalizedData(data){
+                    data.forEach(function(el) {
+                        let first = 0;
+                        for(var i = 0;i< el.items.length; i++){
+                            if(i == 0){
+                                first = JSON.parse(JSON.stringify(el.items[i]));
+                                el.items[i] = 100;
+                                continue;
+                            }
+                            el.items[i] = el.items[i]/first * 100;
+                        }
+                        
+                    });
+                    data.forEach(function(el){
+                        let test;
+                        for(var i = 0;i< el.items.length; i++){
+                            test = JSON.parse(JSON.stringify(el.items[i]));
+                            console.log('test = ' + test);
+                            console.log('test - 100 = ' + (test -100));
+                            el.items[i] = test - 100;//JSON.parse(JSON.stringify(el.items[i])) - 100;
+                        }
+                    });
+                    return data;
+                }
             	function setDataForDiagrams(data, nuiData) {
                     if(data[0].detectionVariable.defaultTypicalPeriod == "day"){
                         console.log('default typical period is day');
@@ -314,16 +352,16 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                          nuiShortName = "Average: ";
                                          break;
                                     case 'std': 
-                                         nuiName = "Weighted Standard Deviation (standard deviation/average)";
-                                         nuiShortName = "Weighted Standard Deviation: ";
+                                         nuiName = "CV";
+                                         nuiShortName = "CV: ";
                                          break;
                                     case 'delta': 
-                                         nuiName = "Weigthed Delta Between Best 25% Percentile and Average ((best 25% percentile - average)/average)";
-                                         nuiShortName = "Weigthed Delta: ";
+                                         nuiName = "Delta";
+                                         nuiShortName = "Delta: ";
                                          break;
                                     case 'best': 
-                                         nuiName = "Weighted Best 25% Percentile (best 25% percentile/average)";
-                                         nuiShortName = "Weighted Best: ";
+                                         nuiName = "Best";
+                                         nuiShortName = "Best: ";
                                          break;
                                 }
     	    						

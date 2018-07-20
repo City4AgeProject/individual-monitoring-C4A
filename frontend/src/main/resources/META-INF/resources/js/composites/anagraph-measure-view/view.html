@@ -1,5 +1,5 @@
 <!-- ko if: showNuis -->
-<div class="oj-flex-item">		                                               										
+<div class="oj-flex-item" style="border:1px solid lightgray;">		                                               										
     <oj-collapsible id="collapsible" expanded="true">
                 <h5 slot="header">NUI values</h5>
                 <oj-data-grid id="datagrid" 
@@ -9,7 +9,28 @@
                     header.column.sortable = "disable"
                     header.row.style ="width:200px;height:70px"
                     on-oj-before-current-cell='[[beforeCurrentCellListener]]'                  
-                 ></oj-data-grid>               
+                 ></oj-data-grid> 
+                <div class="nui-grid-legend">
+                    <div>
+                        Legend:
+                    </div>
+                    <div class="wrapper">
+                        Average
+                        <div class="tooltip">Average</div>
+                    </div>
+                    <div class="wrapper">
+                        Best
+                        <div class="tooltip">Weighted Best 25% Percentile (best 25% percentile/average)</div>
+                      </div>
+                    <div class="wrapper">
+                        CV
+                        <div class="tooltip">Weighted Standard Deviation (standard deviation/average)</div>
+                      </div>
+                    <div class="wrapper">
+                        Delta
+                        <div class="tooltip">Weigthed Delta Between Best 25% Percentile and Average ((best 25% percentile - average)/average)</div>
+                      </div>
+                </div>
     </oj-collapsible>	  
 </div>
 <!-- /ko -->

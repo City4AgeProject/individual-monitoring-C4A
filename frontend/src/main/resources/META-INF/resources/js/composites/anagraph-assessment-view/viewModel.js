@@ -71,12 +71,12 @@ function(oj, ko, $) {
                 self.predictionButtonText1 = ko.observable("Show prediction");
 		//event triggers when selection changed
 		self.chartOptionChange = function(event) {
-                          
                         if (!self.showSelectionOnDiagram()) {
                             
                                 if(event){     
                                     
                                     if(event.detail.selectionData){
+                                        console.log('this is selection data : ' + JSON.stringify(event.detail.selectionData));
                                         $('#multipleSelection').ojPopup('close');    
                                         var onlyCalculated = [];
                                         event.detail.selectionData.forEach(function(obj,i,array){   
@@ -514,55 +514,16 @@ function(oj, ko, $) {
 		};
 		//shows either popup1 or popup2 on assessment preview component based on number of selected assessments
 		function showAssessmentsPopup( aLength) {
+                    
 			self.selectedAnotations([]);
-			$('.popup').ojPopup('close');
+			//$('.popup').ojPopup('close');
 			// Popup1 or popup2 if there are any assessments
-			if ($('#' + $('.popup').attr('id')).ojPopup("isOpen") === false) {
-                                if (aLength > 0) {
-					
-					$('#popup1').ojPopup("option", "position", {
-						"my" : {
-							"horizontal" : "center",
-							"vertical" : "center"
-						},
-						"at" : {
-							"horizontal" : "center",
-							"vertical" : "center"
-						},
-						"offset" : {
-							"x" : 0,
-							"y" : 0
-						}
-					}
-					);
-					
-					$('#popup1').ojPopup('open');
-					$('#popup1').draggable({
-						containment : "#detectionGEFGroup1FactorsChart"
-					});
-				} else if (aLength === 0) {
-					
-					$('#popup2').ojPopup("option", "position", {
-						"my" : {
-							"horizontal" : "center",
-							"vertical" : "center"
-						},
-						"at" : {
-							"horizontal" : "center",
-							"vertical" : "center"
-						},
-						"offset" : {
-							"x" : 0,
-							"y" : 0
-						}
-					});
-					
-					$('#popup2').ojPopup('open');
-					$('#popup2').draggable({
-						containment : "#detectionGEFGroup1FactorsChart"
-					});
-				}
-                            }
+			
+                                
+					document.getElementById('popup1').style.display = 'flex';
+                                        document.getElementById('selection-context').style.display = 'block';
+				
+                            
 			}
 
 		// Popup relative position
@@ -747,6 +708,9 @@ function(oj, ko, $) {
                         $( "#tabAnnotations" ).fadeOut( "fast", function() {
                             // Animation complete
                           });
+                          $( "#tabs-container" ).fadeOut( "slow", function() {
+                            // Animation complete
+                          });
 
                           
 			
@@ -850,6 +814,11 @@ function(oj, ko, $) {
 
                 });
 */
+                self.clearSelection = function(){
+                    self.selectedItemsValue([]);
+                    refreshDataPointsMarked(0);
+                    document.getElementById('selection-context').style.display = 'none';
+                };
                 self.showHidePredictions1 = function(event) {
                     var series = self.seriesVal();
                     var groups = self.groupsVal();
