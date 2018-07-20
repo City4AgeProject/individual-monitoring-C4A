@@ -176,7 +176,7 @@
   -webkit-font-smoothing: antialiased; /* webkit text rendering fix */
 }
 
-.wrapper .tooltip {
+.wrapper .tooltipGrid {
   background: #1496bb;
   bottom: 100%;
   color: #fff;
@@ -206,7 +206,7 @@
 }
 
 /* This bridges the gap so you can mouse into the tooltip without it disappearing */
-.wrapper .tooltip:before {
+.wrapper .tooltipGrid:before {
   bottom: -20px;
   content: " ";
   display: block;
@@ -217,7 +217,7 @@
 }  
 
 /* CSS Triangles - see Trevor's post */
-.wrapper .tooltip:after {
+.wrapper .tooltipGrid:after {
   border-left: solid transparent 10px;
   border-right: solid transparent 10px;
   border-top: solid #1496bb 10px;
@@ -230,7 +230,7 @@
   width: 0;
 }
   
-.wrapper:hover .tooltip {
+.wrapper:hover .tooltipGrid {
   opacity: 1;
   pointer-events: auto;
   -webkit-transform: translateY(0px);
@@ -241,11 +241,11 @@
 }
 
 /* IE can just show/hide with no transition */
-.lte8 .wrapper .tooltip {
+.lte8 .wrapper .tooltipGrid {
   display: none;
 }
 
-.lte8 .wrapper:hover .tooltip {
+.lte8 .wrapper:hover .tooltipGrid {
   display: block;
 }
 

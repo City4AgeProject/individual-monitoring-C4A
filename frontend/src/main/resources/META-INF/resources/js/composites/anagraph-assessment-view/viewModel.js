@@ -820,6 +820,7 @@ function(oj, ko, $) {
                     document.getElementById('selection-context').style.display = 'none';
                 };
                 self.showHidePredictions1 = function(event) {
+                    self.clearSelection();
                     var series = self.seriesVal();
                     var groups = self.groupsVal();
                     if (!self.showPrediction()) {
