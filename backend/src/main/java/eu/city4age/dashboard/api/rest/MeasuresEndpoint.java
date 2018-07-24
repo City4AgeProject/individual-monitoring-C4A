@@ -88,15 +88,7 @@ public class MeasuresEndpoint {
 
 		List<Pilot> pilotsForComputation = setNewestSubmittedDataForAllPilots();
 		
-		logger.info("1. pilotsForComputation: " + pilotsForComputation);
-		
 		computeForAllPilots(pilotsForComputation);
-		logger.info("2. pilotsForComputation: " + pilotsForComputation);
-		if (pilotsForComputation != null && !pilotsForComputation.isEmpty()) {
-			for (Pilot pilot : pilotsForComputation) logger.info("PILOT: " + pilot.getPilotCode().name());
-		} else {
-			logger.info("IMA LI PILOTA U AVIONU!?!?!?");
-		}
 
 		imputeAndPredict(pilotsForComputation);
 		
@@ -114,13 +106,11 @@ public class MeasuresEndpoint {
 			}
 		} 
 		else {
-			logger.info("2. No new data submitted!");
+			logger.info("No new data submitted (imputeAndPredict)!");
 		}
 	}
 
 	public void computeForAllPilots(List<Pilot> pilotsForComputation) {
-		
-		logger.info("1. pilotsForComputation.size(): " + pilotsForComputation.size());
 
 		if (pilotsForComputation != null && !pilotsForComputation.isEmpty()) {
 
@@ -134,11 +124,9 @@ public class MeasuresEndpoint {
 					e.printStackTrace();
 				}
 			}
-			logger.info("x. pilotsForComputation.size(): " + pilotsForComputation.size());
 		} else {
-			logger.info("1. No new data submitted!");
+			logger.info("No new data submitted (computeForAllPilots)!");
 		}
-		logger.info("2. pilotsForComputation.size(): " + pilotsForComputation.size());
 	}
 
 	public List<Pilot> setNewestSubmittedDataForAllPilots() {
