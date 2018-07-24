@@ -258,5 +258,12 @@ public class MeasuresServiceImpl implements MeasuresService {
 		}
 		return ti;
 	}
+	
+	public int determineTimeInterval (long start, long end, long differentiator) {
+		
+		if ((differentiator - start) >= (end - differentiator)) return 0;
+		else return 1;
+		
+	}
 
 }

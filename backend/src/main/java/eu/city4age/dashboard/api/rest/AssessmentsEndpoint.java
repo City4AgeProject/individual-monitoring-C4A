@@ -3,9 +3,7 @@ package eu.city4age.dashboard.api.rest;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.Consumes;
@@ -48,13 +46,11 @@ import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
-import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
-import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValueLastFiveAssessment;
-import eu.city4age.dashboard.api.pojo.dto.oj.Serie;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
+import eu.city4age.dashboard.api.service.AssessmentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -91,6 +87,9 @@ public class AssessmentsEndpoint {
 
 	@Autowired
 	private AssessedGefValuesRepository assessedGefValuesRepository;
+	
+	@Autowired
+	private AssessmentService assessmentService;
 
 	@Context
 	private ContextResolver<ObjectMapper> mapperResolver;
@@ -126,7 +125,7 @@ public class AssessmentsEndpoint {
 			logger.info("getLastFiveForDiagram REST service - query exception: ", e);
 		}
 	
-		return JerseyResponse.build(objectMapper.writeValueAsString(l5a != null ? transformToOJ(l5a) : ""));
+		return JerseyResponse.build(objectMapper.writeValueAsString(l5a != null ? assessmentService.transformToOJ(l5a) : ""));
 	}
 
 	@GET
@@ -161,7 +160,7 @@ public class AssessmentsEndpoint {
 		List<Assessment> aaList;
 
 		Map<String, Object> inQueryParams = new HashMap<String, Object>();
-		inQueryParams.put("geriatricFactorIds", convertToListLong(geriatricFactorValueIds));
+		inQueryParams.put("geriatricFactorIds", assessmentService.convertToListLong(geriatricFactorValueIds));
 
 		List<Filter> filters = new ArrayList<Filter>();
 
@@ -211,49 +210,13 @@ public class AssessmentsEndpoint {
 		List<Assessment> aa;
 
 		if (orderById != null) {
-			aa = orderByForFiltering(aaList, orderById);
+			aa = assessmentService.orderByForFiltering(aaList, orderById);
 		} else {
 			aa = aaList;
 		}
 
 		return JerseyResponse.build(objectMapper.writerWithView(View.AssessmentView.class).writeValueAsString(aa));
 
-	}
-
-	private List<Assessment> orderByForFiltering(List<Assessment> list, Long orderById) {
-
-		switch (orderById.intValue()) {
-		case 1:
-			list.sort(Comparator.comparing(Assessment::getCreated));
-			break;
-		case 2:
-			list.sort(Comparator.comparing(Assessment::getCreated).reversed());
-			break;
-		case 3:
-			list.sort(Comparator.comparing(Assessment::getUserInSystemDisplayName));
-			break;
-		case 4:
-			list.sort(Comparator.comparing(Assessment::getUserInSystemDisplayName).reversed());
-			break;
-		case 5:
-			list.sort(Comparator.comparing(Assessment::getRoleId));
-			break;
-		case 6:
-			list.sort(Comparator.comparing(Assessment::getRoleId).reversed());
-			break;
-		case 7:
-			break;
-		}
-
-		return list;
-	}
-
-	private List<Long> convertToListLong(List<PathSegment> ids) {
-		List<Long> idsList = new ArrayList<Long>(ids.size());
-		for (PathSegment segment : ids) {
-			idsList.add(Long.valueOf(segment.toString()));
-		}
-		return idsList;
 	}
 
 	/**
@@ -337,55 +300,6 @@ public class AssessmentsEndpoint {
 		assessmentRepository.delete(assessment);
 
 		return JerseyResponse.build("Deleted");
-	}
-
-	private OJDiagramLast5Assessment transformToOJ(List<Object[]> lfas) {
-
-		OJDiagramLast5Assessment ojLfa = new OJDiagramLast5Assessment();
-
-		for (Object[] lfa : lfas) {
-			ojLfa.getGroups().add(new DataIdValue(((Integer) lfa[0]).longValue(), lfa[1].toString()));//(time_interval_id, interval_start)
-		}
-		
-		ojLfa.getSeries().add(new Serie("Only", new HashSet<DataIdValueLastFiveAssessment>(), "", "20px", 32, "on", "none"));
-
-
-		for (DataIdValue group : ojLfa.getGroups()) {
-
-			for (int i = 0; i < lfas.size(); i++) {
-
-				if (group.getId().equals(new Long(((Integer)lfas.get(i)[0]).longValue()))) {//time_interval_id
-
-					Serie serie = ojLfa.getSeries().iterator().next();
-
-					if (lfas.get(i)[4] != null) {//assessment_id
-						DataIdValueLastFiveAssessment item = new DataIdValueLastFiveAssessment();
-						item.setId(((Integer)lfas.get(i)[2]).longValue());//gef_id
-						item.setValue(lfas.get(i)[3].toString());//gef_value
-						item.getAssessmentObjects().add(lfas.get(i));
-
-						for (Object[] lfa : lfas) {
-							if (lfa[4] != null && group.getId().equals(new Long(((Integer)lfa[0]).longValue()))//assessment_id, time_interval_id
-									&& lfas.get(i)[3].equals(lfa[3])//gef_value
-									&& !lfas.get(i)[4].equals(lfa[4])) {//assessment_id
-
-								item.getAssessmentObjects().add(lfa);
-							}
-						}
-
-						serie.getItems().add(item);
-					}
-				
-
-				}
-
-			}
-		}
-		
-		ojLfa.setGroups(new HashSet<DataIdValue>());
-
-		return ojLfa;
-
 	}
 
 }

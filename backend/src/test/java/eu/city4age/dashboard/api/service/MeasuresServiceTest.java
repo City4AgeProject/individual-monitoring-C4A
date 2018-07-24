@@ -59,6 +59,8 @@ import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
+import eu.city4age.dashboard.api.service.impl.ImputeFactorServiceImpl;
+import eu.city4age.dashboard.api.service.impl.PredictionServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -127,7 +129,7 @@ public class MeasuresServiceTest {
 	private GeriatricFactorPredictionValueRepository geriatricFactorPredictionValueRepository;
 
 	@Autowired
-	private ImputeFactorService imputeFactorService;
+	private ImputeFactorServiceImpl imputeFactorService;
 	
 	@Before
 	public void setUp() {
@@ -169,10 +171,10 @@ public class MeasuresServiceTest {
 	private TimeIntervalRepository timeIntervalRepositoryMock;
 	
 	@Mock
-	private ImputeFactorService imputeFactorServiceMock;
+	private ImputeFactorServiceImpl imputeFactorServiceMock;
 	
 	@Mock
-	private PredictionService predictionServiceMock;
+	private PredictionServiceImpl predictionServiceMock;
 	
 	@Spy
 	@InjectMocks

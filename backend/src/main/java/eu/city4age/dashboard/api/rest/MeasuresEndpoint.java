@@ -57,19 +57,19 @@ public class MeasuresEndpoint {
 	private VariationMeasureValueRepository variationMeasureValueRepository;
 
 	@Autowired
-	private PilotRepository pilotRepository;
-
-	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
 	
 	@Autowired
+	private PilotRepository pilotRepository;
+	
+	@Autowired
 	private MeasuresService measuresService;
+	
+	@Autowired
+	private PredictionService predictionService;
 
 	@Autowired
 	Environment environment;
-
-	@Autowired 
-	private PredictionService predictionService = new PredictionService();
 
 	@Bean
 	public RestTemplate restTemplate() {
@@ -88,15 +88,23 @@ public class MeasuresEndpoint {
 
 		List<Pilot> pilotsForComputation = setNewestSubmittedDataForAllPilots();
 		
-		List<Pilot> pilots = computeForAllPilots(pilotsForComputation);
+		logger.info("1. pilotsForComputation: " + pilotsForComputation);
+		
+		computeForAllPilots(pilotsForComputation);
+		logger.info("2. pilotsForComputation: " + pilotsForComputation);
+		if (pilotsForComputation != null && !pilotsForComputation.isEmpty()) {
+			for (Pilot pilot : pilotsForComputation) logger.info("PILOT: " + pilot.getPilotCode().name());
+		} else {
+			logger.info("IMA LI PILOTA U AVIONU!?!?!?");
+		}
 
-		pilots = imputeAndPredict(pilots);
+		imputeAndPredict(pilotsForComputation);
 		
 		logger.info("computation completed: " + new Date());
 		return JerseyResponse.buildTextPlain("success", 200);
 	}
-
-	public List<Pilot> imputeAndPredict(List<Pilot> pilots) {
+	
+	public void imputeAndPredict(List<Pilot> pilots) {
 		
 		if (pilots != null && !pilots.isEmpty()) {
 			Iterator<Pilot> pilotsIterator = pilots.iterator();
@@ -106,13 +114,13 @@ public class MeasuresEndpoint {
 			}
 		} 
 		else {
-			logger.info("No new data submitted!");
+			logger.info("2. No new data submitted!");
 		}
-		return pilots;
 	}
 
-	public List<Pilot> computeForAllPilots(List<Pilot> pilotsForComputation) {
+	public void computeForAllPilots(List<Pilot> pilotsForComputation) {
 		
+		logger.info("1. pilotsForComputation.size(): " + pilotsForComputation.size());
 
 		if (pilotsForComputation != null && !pilotsForComputation.isEmpty()) {
 
@@ -126,12 +134,11 @@ public class MeasuresEndpoint {
 					e.printStackTrace();
 				}
 			}
-			pilotsIterator.remove();
+			logger.info("x. pilotsForComputation.size(): " + pilotsForComputation.size());
 		} else {
-			logger.info("No new data submitted!");
+			logger.info("1. No new data submitted!");
 		}
-		
-		return pilotsForComputation;
+		logger.info("2. pilotsForComputation.size(): " + pilotsForComputation.size());
 	}
 
 	public List<Pilot> setNewestSubmittedDataForAllPilots() {
@@ -197,7 +204,7 @@ public class MeasuresEndpoint {
 			Timestamp intervalDiff = timeIntervalRepository.getTruncatedTimeIntervalEnd(vm.getTimeInterval().getId(), "day");
 			TimeInterval newTimeInterval = null;
 			
-			if (determineTimeInterval(vm.getTimeInterval().getIntervalStart().getTime(), vm.getTimeInterval().getIntervalEnd().getTime(), intervalDiff.getTime()) == 0) {
+			if (measuresService.determineTimeInterval(vm.getTimeInterval().getIntervalStart().getTime(), vm.getTimeInterval().getIntervalEnd().getTime(), intervalDiff.getTime()) == 0) {
 				newTimeInterval = measuresService.getOrCreateTimeInterval(timeIntervalRepository.getTruncatedTimeIntervalStart(vm.getTimeInterval().getId(), "day"), TypicalPeriod.DAY);	
 			} else {
 				newTimeInterval = measuresService.getOrCreateTimeInterval(intervalDiff, TypicalPeriod.DAY);
@@ -226,13 +233,6 @@ public class MeasuresEndpoint {
 		variationMeasureValueRepository.bulkSave(retList);
 		
 		return JerseyResponse.buildTextPlain("success", 200);
-		
-	}
-	
-	public int determineTimeInterval (long start, long end, long differentiator) {
-		
-		if ((differentiator - start) >= (end - differentiator)) return 0;
-		else return 1;
 		
 	}	
 

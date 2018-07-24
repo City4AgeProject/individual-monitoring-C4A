@@ -49,8 +49,8 @@ import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
-import eu.city4age.dashboard.api.service.ImputeFactorService;
 import eu.city4age.dashboard.api.service.MeasuresService;
+import eu.city4age.dashboard.api.service.impl.ImputeFactorServiceImpl;
 
 /*
 * author: Vladimir Aleksic
@@ -64,7 +64,7 @@ public class ImputeFactorServiceTest {
 
                @Spy
                @InjectMocks
-               private ImputeFactorService imputeFactorService=new ImputeFactorService();
+               private ImputeFactorServiceImpl imputeFactorService=new ImputeFactorServiceImpl();
 
                @Autowired
                private GeriatricFactorRepository geriatricFactorRepository;

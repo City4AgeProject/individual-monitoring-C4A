@@ -63,10 +63,9 @@ import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
-import eu.city4age.dashboard.api.service.ImputeFactorService;
 import eu.city4age.dashboard.api.service.MeasuresService;
-
-import eu.city4age.dashboard.api.service.PredictionService;
+import eu.city4age.dashboard.api.service.impl.ImputeFactorServiceImpl;
+import eu.city4age.dashboard.api.service.impl.PredictionServiceImpl;
 
 
 /*
@@ -162,7 +161,7 @@ public class PredictionServiceTest {
 	private TimeIntervalRepository timeIntervalRepositoryMock;
 	
 	@Mock
-	private ImputeFactorService imputeFactorServiceMock;
+	private ImputeFactorServiceImpl imputeFactorServiceMock;
     
 	@Mock
 	private MeasuresEndpoint measuresEndpointMock;
@@ -172,9 +171,9 @@ public class PredictionServiceTest {
 	
 	@Spy
 	@InjectMocks
-	private PredictionService predictionService = new PredictionService();
+	private PredictionServiceImpl predictionService = new PredictionServiceImpl();
 
-	private PredictionService predictionServiceReflection = new PredictionService();
+	private PredictionServiceImpl predictionServiceReflection = new PredictionServiceImpl();
 	
 	private int predictionSize = 3;
 	private String systemUserName = "system";
