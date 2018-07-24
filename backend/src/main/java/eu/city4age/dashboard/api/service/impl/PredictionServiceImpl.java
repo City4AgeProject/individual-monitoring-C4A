@@ -90,30 +90,30 @@ public class PredictionServiceImpl implements PredictionService {
 	public void imputeAndPredict(Pilot pilot) {
 		
 		//List<Pilot> pilots = pilotRepository.findPilotsComputed();
-		logger.info("*** Start of imputeAndPredict ***");
-		logger.info("PilotName: " + pilot.getName());
+		logger.debug("*** Start of imputeAndPredict ***");
+		logger.debug("PilotName: " + pilot.getName());
 
 		List<DetectionVariable> detectionVariables = pilotDetectionVariableRepository.findDetectionVariablesForPrediction(pilot.getPilotCode());
 
 		for (DetectionVariable dv : detectionVariables) {
 
-			logger.info("DetectionVariableId: " + dv.getId());
+			logger.debug("DetectionVariableId: " + dv.getId());
 			List<UserInRole> userInRoles = userInRoleRepository.findCRsByPilotCode(pilot.getPilotCode()); 
 
 			for (UserInRole userInRole : userInRoles) {
 
-				logger.info("UserInRoleId: " + userInRole.getId());
+				logger.debug("UserInRoleId: " + userInRole.getId());
 
 				// Last date for which there is at least one data item in the DB for the user
 				Date endDate = geriatricFactorRepository.findMaxIntervalStartByUserInRole(userInRole.getId()).getIntervalStart();
-				logger.info("- EndDate: " + endDate);
+				logger.debug("- EndDate: " + endDate);
 
 				imputeFactorService.imputeMissingValues(dv, userInRole, endDate);
 
 				// Delete obsolete predictions -  FOR USER!
 				List<GeriatricFactorPredictionValue> predictionsToDelete = geriatricFactorPredictionValueRepository.deleteObsoletePredictions(endDate, userInRole.getId(), dv.getId());
 				geriatricFactorPredictionValueRepository.delete(predictionsToDelete);
-				logger.info("- Deleted " + predictionsToDelete.size() + " obsolete predictions");
+				logger.debug("- Deleted " + predictionsToDelete.size() + " obsolete predictions");
 
 
 				this.makePredictions(dv, userInRole, endDate);
@@ -127,7 +127,7 @@ public class PredictionServiceImpl implements PredictionService {
 
 		CareProfile careProfile = careProfileRepository.findByUserId(userInRoleId);
 
-		//		logger.info("getOrCreateCareProfile");
+		//		logger.debug("getOrCreateCareProfile");
 
 		if(careProfile == null) {
 			careProfile = new CareProfile();
@@ -152,7 +152,7 @@ public class PredictionServiceImpl implements PredictionService {
 
 		if (dataArray.length > tresholdPoint) { 
 
-			logger.info("- Making predictions for " + "uId: " + uId + " and factorId " + dvId);
+			logger.debug("- Making predictions for " + "uId: " + uId + " and factorId " + dvId);
 
 			TimeSeries timeSeries = Ts.newMonthlySeries(dataArray);
 
@@ -167,7 +167,7 @@ public class PredictionServiceImpl implements PredictionService {
 						models.add(ArimaOrder.order(p, d, q));
 						models.add(ArimaOrder.order(p, d, q, Arima.Drift.INCLUDE));
 						models.add(ArimaOrder.order(p, d, q, Arima.Constant.INCLUDE));
-						//						logger.info("p, d, q: " + "( " +  p + " " + d + " " + q + " )");
+						//						logger.debug("p, d, q: " + "( " +  p + " " + d + " " + q + " )");
 					}
 
 			ArrayList<Arima> fmodels = new ArrayList<Arima>();
@@ -188,7 +188,7 @@ public class PredictionServiceImpl implements PredictionService {
 			double aic = fmodels.get(0).aic();
 			double aic_curr;
 			for (int i = 1; i < fmodels.size(); i++) {
-				//				logger.info("model params\n" + models);
+				//				logger.debug("model params\n" + models);
 				if ((aic_curr = fmodels.get(i).aic()) < aic) {
 					aic = aic_curr;
 					optimalModel = fmodels.get(i);
@@ -197,7 +197,7 @@ public class PredictionServiceImpl implements PredictionService {
 
 			Forecast forecast = optimalModel.forecast(predictionSize);
 
-			logger.info("Optimal model: " + optimalModel);
+			logger.debug("Optimal model: " + optimalModel);
 
 			// Saves predictions to the database
 			for (int i = 0; i < predictionSize; i++) {
@@ -216,7 +216,7 @@ public class PredictionServiceImpl implements PredictionService {
 
 	private int createAttentionStatus(Long uId) {
 
-		logger.info("- Checking AttentionStatus for uId: " + uId);
+		logger.debug("- Checking AttentionStatus for uId: " + uId);
 
 		AttentionStatus.Status attentionStatus;
 
@@ -227,13 +227,13 @@ public class PredictionServiceImpl implements PredictionService {
 		int lastIndex = viewGeriatricFactorValue.size();		
 		BigDecimal lastComputedValue = viewGeriatricFactorValue.get(lastIndex-4).getGefValue();
 
-		logger.info("-Overall lastComputedValue: " + lastComputedValue);
+		logger.debug("-Overall lastComputedValue: " + lastComputedValue);
 		BigDecimal lastPredictedValue = viewGeriatricFactorValue.get(lastIndex-1).getGefValue();
-		logger.info("- Overall lastPredictedValue: " + lastPredictedValue);
+		logger.debug("- Overall lastPredictedValue: " + lastPredictedValue);
 		BigDecimal difference = new BigDecimal(lastPredictedValue.doubleValue() - lastComputedValue.doubleValue());
 
 		if (difference.doubleValue() < 0 && Math.abs(difference.doubleValue()) >= 0.2 * lastComputedValue.doubleValue() || lastPredictedValue.equals(new BigDecimal(1))) {
-			logger.info("- Creating alert");
+			logger.debug("- Creating alert");
 
 			attentionStatus = AttentionStatus.Status.A;
 			CareProfile careProfile = this.getOrCreateCareProfile(uId, system);			

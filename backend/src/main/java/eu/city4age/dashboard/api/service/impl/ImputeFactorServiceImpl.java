@@ -86,7 +86,7 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 		Long dvId = dv.getId();
 		Long uirId = uir.getId();
 		
-		logger.info("- Imputing missing values for userId: " + uirId + " and factorId: " + dvId);
+		logger.debug("- Imputing missing values for userId: " + uirId + " and factorId: " + dvId);
 		
 		/*this.intIntervalsExisting = new ArrayList<Integer>();
 		this.intIntervalsMissing = new ArrayList<Integer>();
@@ -98,21 +98,21 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 		//		this.sumOfValues = 0.0;
 
 		viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uirId);
-		logger.info("- viewGeriatricFactorValue size before imputing: " + viewGeriatricFactorValue.size());
+		logger.debug("- viewGeriatricFactorValue size before imputing: " + viewGeriatricFactorValue.size());
 
 		if (viewGeriatricFactorValue.size() > treshholdPoint) {
 
 			//return interpolateMissingValuesSpline() + extrapolateMissingValuesMean(endDatePilot);
 			int numImputedValues = interpolateMissingValuesMAVG2();
-			logger.info("- Number of interpolated values: " + numImputedValues);
+			logger.debug("- Number of interpolated values: " + numImputedValues);
 
 			if (numImputedValues > 0) {
 				viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uirId);
-				logger.info("- viewGeriatricFactorValue size after interpolation: " + viewGeriatricFactorValue.size());
+				logger.debug("- viewGeriatricFactorValue size after interpolation: " + viewGeriatricFactorValue.size());
 			}
 
 			numImputedValues += extrapolateMissingValuesArima(endDate);
-			logger.info("- Total number of imputed values: " + numImputedValues);
+			logger.debug("- Total number of imputed values: " + numImputedValues);
 
 			return numImputedValues;
 
@@ -148,7 +148,7 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 			
 			while(leftDate.getTimeInMillis() < rightDate.getTimeInMillis()) {
 				
-				logger.info("- Missing date: "+ ti.getIntervalStart());
+				logger.debug("- Missing date: "+ ti.getIntervalStart());
 				BigDecimal weightedValue = new BigDecimal(leftGefValue.doubleValue()*2/3 + rightGefValue.doubleValue()*1/3);
 				leftGefValue = weightedValue;
 				
@@ -200,32 +200,32 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 			
 			while(leftDate.getTimeInMillis() < rightDate.getTimeInMillis()) {
 				
-				logger.info("leftValues: "+leftValues);
+				logger.debug("leftValues: "+leftValues);
 				weightPosition=1;
 				weightedValue=0;
 				sumOfWeights=0;
 				for(double weight : weights) {
-					//logger.info("WTI: "+weightPosition); //, weightedValue, sumOfWeights, leftValues.size(), rightIndex, countGefValues);
-					//logger.info("weight: "+weight);
+					//logger.debug("WTI: "+weightPosition); //, weightedValue, sumOfWeights, leftValues.size(), rightIndex, countGefValues);
+					//logger.debug("weight: "+weight);
 					if(leftValues.size()-weightPosition>=0) {
 						weightedValue=weightedValue+(leftValues.get(leftValues.size()-weightPosition))*weight;
 						sumOfWeights=sumOfWeights+weight;
-//						logger.info("WTI: -"+weightPosition);
-//						logger.info(leftValues.get(leftValues.size()-weightPosition));
+//						logger.debug("WTI: -"+weightPosition);
+//						logger.debug(leftValues.get(leftValues.size()-weightPosition));
 					}
 					if(rightIndex+weightPosition<=countGefValues) {
 						weightedValue=weightedValue+(viewGeriatricFactorValue.get(rightIndex+weightPosition-1).getGefValue().doubleValue())*weight;
 						sumOfWeights=sumOfWeights+weight;
-//						logger.info("WTI: +"+weightPosition);
-//						logger.info(viewGeriatricFactorValue.get(rightIndex+weightPosition-1).getGefValue().doubleValue());
+//						logger.debug("WTI: +"+weightPosition);
+//						logger.debug(viewGeriatricFactorValue.get(rightIndex+weightPosition-1).getGefValue().doubleValue());
 					}
 					weightPosition++;
 				}
-//				logger.info("weightedValue "+weightedValue);
-//				logger.info("sumOfWeights "+sumOfWeights);
+//				logger.debug("weightedValue "+weightedValue);
+//				logger.debug("sumOfWeights "+sumOfWeights);
 				weightedValue/=sumOfWeights;
 				leftValues.add(weightedValue);
-				logger.info("- Missing date: "+ ti.getIntervalStart()+" Imputed: "+weightedValue);
+				logger.debug("- Missing date: "+ ti.getIntervalStart()+" Imputed: "+weightedValue);
 				
 				saveImputedValues(ti, new BigDecimal(weightedValue));
 				countImputedValues++;
@@ -268,11 +268,11 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 			monthCounter++;
 
 			ti = getFollowingTimeInterval(leftDate);
-			logger.info("TI "+ti.getIntervalStart());
+			logger.debug("TI "+ti.getIntervalStart());
 			leftDate.setTime(ti.getIntervalStart());
 		}
 
-		logger.info("intIntervalsMissing: " + intIntervalsMissing);
+		logger.debug("intIntervalsMissing: " + intIntervalsMissing);
 
 		if(intIntervalsMissing.size() == 0) {
 			return 0;
@@ -293,7 +293,7 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 		for(i = 0; i < intIntervalsMissing.size(); i++) {
 
 			rawX = intIntervalsMissing.get(i).doubleValue();
-			logger.info("X: " + rawX);
+			logger.debug("X: " + rawX);
 			interpolatedY = polynomialSplineFunction.value(rawX);
 
 			//			sumOfValues += interpolatedY;
@@ -341,7 +341,7 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 		while(leftDate.getTimeInMillis() < endDate.getTimeInMillis()) {
 			//ti = current time interval
 			ti = getFollowingTimeInterval(leftDate);
-			logger.info("- Missing date: "+ ti.getIntervalStart());
+			logger.debug("- Missing date: "+ ti.getIntervalStart());
 			tis.add(ti);
 			leftDate.setTime(ti.getIntervalStart());
 		}
@@ -373,7 +373,7 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 			}
 		}
 		Forecast forecast = optimalModel.forecast(tis.size());
-		//logger.info("FC: "+forecast);
+		//logger.debug("FC: "+forecast);
 		for (i = 0; i < tis.size(); i++) {
 			saveImputedValues(tis.get(i), (new BigDecimal(forecast.pointEstimates().at(i))));
 		}
