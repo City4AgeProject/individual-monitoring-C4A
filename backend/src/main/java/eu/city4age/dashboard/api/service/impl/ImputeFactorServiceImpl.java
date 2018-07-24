@@ -68,11 +68,11 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 	private UserInRole userInRole;
 	private DetectionVariable detectionVariable;
 
-	private int trashholdPoint;
+	private int treshholdPoint;
 
 	public ImputeFactorServiceImpl() {
 
-		this.trashholdPoint = 3;
+		this.treshholdPoint = 3;
 		this.leftDate = Calendar.getInstance();
 		//this.splineInterpolator = new SplineInterpolator();
 		this.endDate = Calendar.getInstance();
@@ -100,7 +100,7 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 		viewGeriatricFactorValue = viewGefCalculatedInterpolatedPredictedValuesRepository.findByDetectionVariableIdNoPredicted(dvId, uirId);
 		logger.info("- viewGeriatricFactorValue size before imputing: " + viewGeriatricFactorValue.size());
 
-		if (viewGeriatricFactorValue.size() > trashholdPoint) {
+		if (viewGeriatricFactorValue.size() > treshholdPoint) {
 
 			//return interpolateMissingValuesSpline() + extrapolateMissingValuesMean(endDatePilot);
 			int numImputedValues = interpolateMissingValuesMAVG2();

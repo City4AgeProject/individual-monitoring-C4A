@@ -51,7 +51,7 @@ public class PredictionServiceImpl implements PredictionService {
 
 	private static final int predictionSize = 3;
 	
-	private static final int trasholdPoint = 3;
+	private static final int tresholdPoint = 3;
 	
 	private static final Long overallId = 501L;
 	
@@ -150,7 +150,7 @@ public class PredictionServiceImpl implements PredictionService {
 
 		double[] dataArray = getJointFactorValues(dvId, uId);
 
-		if (dataArray.length > trasholdPoint) { 
+		if (dataArray.length > tresholdPoint) { 
 
 			logger.info("- Making predictions for " + "uId: " + uId + " and factorId " + dvId);
 
