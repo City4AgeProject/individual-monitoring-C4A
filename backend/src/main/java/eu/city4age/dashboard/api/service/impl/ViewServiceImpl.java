@@ -3,6 +3,7 @@ package eu.city4age.dashboard.api.service.impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -10,10 +11,15 @@ import java.util.TreeSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
+import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
+import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
+import eu.city4age.dashboard.api.service.ImputeFactorService;
 import eu.city4age.dashboard.api.service.ViewService;
 
 @Component
@@ -21,7 +27,13 @@ public class ViewServiceImpl implements ViewService {
 	
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
+	
+	@Autowired
+	private ImputeFactorService imputeFactorService;
 
+	@Autowired
+	private PilotRepository pilotRepository;
+	
 	@Override
 	public DataIdValue createMonthLabel(Long timeIntervalId) {
 		DataIdValue monthLabel = new DataIdValue();
@@ -38,18 +50,51 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public TreeSet<DataIdValue> createMonthLabels(List<ViewGefCalculatedInterpolatedPredictedValues> gefs) {
+		
+		Calendar date = Calendar.getInstance();
+		
+		int index=0;
+		
+		ViewGefCalculatedInterpolatedPredictedValues gef = gefs.get(index);
 
 		TreeSet<DataIdValue> monthLabels = new TreeSet<DataIdValue>();
-
+		
+		String pilotCodeString = gefs.get(0).getPilotCode().toUpperCase();		
+		Pilot pilot = pilotRepository.findOne(PilotCode.valueOf(pilotCodeString));
+		
 		SimpleDateFormat formatWithTz = new SimpleDateFormat("yyyy/MM");
-
-		formatWithTz.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-		for (ViewGefCalculatedInterpolatedPredictedValues gef: gefs) {
-			monthLabels.add(new DataIdValue(gef.getId().getTimeIntervalId(), gef.getIntervalStartLabel()));
+		formatWithTz.setTimeZone(TimeZone.getTimeZone(pilot.getCompZone()));
+		
+		TimeInterval startDate = timeIntervalRepository.findOne(gef.getId().getTimeIntervalId());
+		
+		TimeInterval endDate = timeIntervalRepository.findOne(gefs.get(gefs.size() - 1).getId().getTimeIntervalId());
+		
+		TimeInterval midDate;
+		
+		while (startDate.getIntervalStart().before(endDate.getIntervalStart())) {
+			//push u monthLabels
+			monthLabels.add(new DataIdValue(startDate.getId(), formatWithTz.format(startDate.getIntervalStart())));
+			
+			date.setTime(startDate.getIntervalStart());
+			
+			startDate = imputeFactorService.getFollowingTimeInterval(date);
+			
+			gef = gefs.get(index + 1);
+			
+			midDate = timeIntervalRepository.findOne(gef.getId().getTimeIntervalId());
+			
+			if(!startDate.getIntervalStart().before(midDate.getIntervalStart())) {
+				startDate=midDate;
+				index++;
+			}
+			
+			
 		}
-
+		
+		monthLabels.add(new DataIdValue(startDate.getId(), formatWithTz.format(startDate.getIntervalStart())));
+		
 		return monthLabels;
+
 	}
 
 	@Override

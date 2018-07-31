@@ -173,7 +173,11 @@ function(oj, ko, $) {
                             return obj.name;
                         });
                         formatDate(data.groups);
+                        var gesList = [];
+                        
                         data.series.forEach(function(serie){
+                            gesList.push({name:serie.name,
+                                        id:serie.items[0].gefTypeId});
                             tmpSerie={
                                 items:[],
                                 name:serie.name,
@@ -390,7 +394,7 @@ function(oj, ko, $) {
 
 			for (var i = 0; i < series.length; i++) {
 				for (var j = 0; j < series[i].items.length; j++) {
-					if (series[i].items[j].id === item.id) {
+					if (series[i].items[j] && series[i].items[j].id === item.id) {
 						series[i].items[j].markerDisplayed = 'on';
 						series[i].items[j].markerSize = '32';
 						series[i].items[j].source = 'images/comment_unsel.png';
@@ -432,7 +436,7 @@ function(oj, ko, $) {
                                 //risk status icon priority settings 
                                     for (var i = 0; i < series.length; i++) {
                                             for (var j = 0; j < series[i].items.length; j++) {
-                                                    if (series[i].items[j] !== undefined
+                                                    if (series[i].items[j]
                                                                     && series[i].items[j].assessmentObjects
                                                                     && series[i].items[j].assessmentObjects[0].length > 0) {
                                                             var hasWarning = false;
@@ -676,7 +680,7 @@ function(oj, ko, $) {
 			selected = [];
 			for (var ig = 0; ig < Object.keys(self.seriesVal()).length; ig++) {
 				for (var jg = 0; jg < Object.keys(self.seriesVal()[ig].items).length; jg++) {
-					if (self.seriesVal()[ig].items[jg].assessmentObjects
+					if (self.seriesVal()[ig].items[jg] && self.seriesVal()[ig].items[jg].assessmentObjects
 							&& self.seriesVal()[ig].items[jg].assessmentObjects[0].length > 0) {
                                                     for (var kg = 0; kg < self.seriesVal()[ig].items[jg].assessmentObjects[0].length; kg++) {
                                                         if (self.seriesVal()[ig].items[jg].assessmentObjects[kg] !== undefined) {

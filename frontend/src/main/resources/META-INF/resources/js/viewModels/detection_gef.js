@@ -138,33 +138,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                     for (var ig = 0; ig < Object.keys(data.series).length; ig++) {
                         data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
                     }
-
-                     
-//                    for (var jg = 0; jg < data.series.length; jg++) {
-//                        var pomocni = [];
-//                        var timeIntervals = [];
-//                        for (var m = 0; m < data.series[jg].items.length; m++) {
-//                            timeIntervals.push(data.series[jg].items[m].timeIntervalId);
-//                        }
-//                        for (var ig = 0; ig < grupe().length; ig++) {
-//                            for (var kg = 0; kg < data.series[jg].items.length; kg++) {
-//                                if (grupe()[ig].id === data.series[jg].items[kg].timeIntervalId) {
-//                                    pomocni.push(data.series[jg].items[kg]);
-//                                } else if (!timeIntervals.includes(grupe()[ig].id)) {
-//                                    var item ={
-//                                        id:null,
-//                                        value:null,
-//                                        gefTypeId:data.series[jg].items[kg].gefTypeId,
-//                                        timeIntervalId:grupe()[ig].id
-//                                    }
-//                                    pomocni.push(item);
-//                                    timeIntervals.push(item.timeIntervalId);
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    var grupe = ko.observableArray(data.groups);
+                    
                     var timeIntervals=[];
                     var series = [];
                     var seriesPrediction = [];

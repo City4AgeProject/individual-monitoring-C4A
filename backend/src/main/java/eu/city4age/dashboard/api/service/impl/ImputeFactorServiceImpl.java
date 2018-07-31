@@ -394,7 +394,7 @@ public class ImputeFactorServiceImpl implements ImputeFactorService {
 
 	}
 
-	private TimeInterval getFollowingTimeInterval(Calendar date) {
+	public TimeInterval getFollowingTimeInterval(Calendar date) {
 
 		int monthOffset = 1;
 
