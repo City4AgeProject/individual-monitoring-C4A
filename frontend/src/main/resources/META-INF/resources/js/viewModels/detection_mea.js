@@ -232,8 +232,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         let test;
                         for(var i = 0;i< el.items.length; i++){
                             test = JSON.parse(JSON.stringify(el.items[i]));
-                            console.log('test = ' + test);
-                            console.log('test - 100 = ' + (test -100));
                             el.items[i] = test - 100;//JSON.parse(JSON.stringify(el.items[i])) - 100;
                         }
                     });
@@ -241,7 +239,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 }
             	function setDataForDiagrams(data, nuiData) {
                     if(data[0].detectionVariable.defaultTypicalPeriod == "day"){
-                        console.log('default typical period is day');
                         setBarCharts(nuiData);
                         self.showBarCharts(true);
                     }else{

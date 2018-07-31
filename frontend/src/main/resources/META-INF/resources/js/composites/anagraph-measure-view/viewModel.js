@@ -24,7 +24,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.currentUnit = ko.observable({value: 'm/s', label: 'm/s'});
                 self.shouldSeeNotice = ko.observable(false);
                 self.legendValue = new Object();
-                context.props.then(function(properties) {
+                context.props.then(function(properties) {                   
                     self.props = properties; 
                     self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
 
@@ -65,13 +65,26 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     }    
                     self.hasComments = properties.hasComments;
                     self.defaultTypicalPeriod = properties.defaultTypicalPeriod;
-                    self.lineSeries(properties.lineSeries);    
+                    self.lineSeries(properties.lineSeries);
                     self.lineSeriesBaseUnit = JSON.stringify(properties.lineSeries);
                     self.lineSeriesNames = [];
                     
-                    self.lineSeries().forEach(function(ls){
-                        self.lineSeriesNames.push(ls.name);                                              
+                    var hiddenByDefault = [];
+                    self.lineSeries().forEach(function(ls,i){
+                        self.lineSeriesNames.push(ls.name);
+                        if(self.lineSeries().length <= 4){
+                            self.visibleCategories.push(ls.name);
+                        }else{
+                            if(i < self.lineSeries().length - 4){
+                                hiddenByDefault.push(ls.name);
+                        }else{
+                            self.visibleCategories.push(ls.name);
+                        }
+                        }
+                        
                     });
+                    
+                    self.hiddenCategories(hiddenByDefault);
                                                           
                     if(self.defaultTypicalPeriod === 'mon'){
                         self.showNuis = false;
@@ -95,9 +108,24 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     }
                     self.legendValue.titleStyle = "font-size:10px";
                     
-                    
+                    /*TOOLTIPS*/
+                    function setTooltips() {
+                        var bestTitle = document.getElementById('datagrid:r0');
+                        bestTitle.setAttribute('title','Weighted Best 25% Percentile (best 25% percentile/average)');
+                        
+                        var cv = document.getElementById('datagrid:r1');
+                        cv.setAttribute('title','Weighted Standard Deviation (standard deviation/average)');
+                        
+                        var delta = document.getElementById('datagrid:r2');
+                        delta.setAttribute('title','Weigthed Delta Between Best 25% Percentile and Average ((best 25% percentile - average)/average)');
+                        
+                        var average = document.getElementById('datagrid:r3');
+                        average.setAttribute('title','Average value');
+                    }
+                    setTimeout(setTooltips, 2000);
                     
                 });  
+                
                 self.currentUnit.subscribe(function(newValue){
                     var test = JSON.parse(self.lineSeriesBaseUnit);
                     var test2 = null;
@@ -129,7 +157,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     }
                     self.baseUnit(newValue);
                 });
-                     
+                   
                 self.beforeCurrentCellListener = function (event) {
                     var currentCell = event.detail.currentCell;
                     if(currentCell){                        
