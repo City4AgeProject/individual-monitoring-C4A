@@ -160,77 +160,76 @@ function(oj, ko, $) {
                     if (data !== undefined && data.groups !== undefined && data.series !== undefined) {
 
                         var groupsCopy = data.groups.slice();
-                    
+
+                        var grupe = ko.observableArray(data.groups);
+                        var timeIntervals=[];
+                        var series = [];
+                        var seriesPrediction = [];
+                        var tmpSeries= [];
+                        var tmpSerie, i, o=0, p, P=0;
                         data.groups = data.groups.map(function (obj) {
+                            timeIntervals.push(obj.id);
+                            o++;
                             return obj.name;
                         });
-
                         formatDate(data.groups);
-                        var gesList = [];
-                        $.each(data.series, function(i, serie){
-                            /*For ges selector on ges page*/
-                            let obj = new Object();
-                            obj.name = serie.name;
-                            obj.id = serie.items[0].gefTypeId;
-                            gesList.push(obj);
-                            /*END For ges selector on ges page*/
-                            var nodes=[];
-                            var predictedNodes=[0];
+                        data.series.forEach(function(serie){
+                            tmpSerie={
+                                items:[],
+                                name:serie.name,
+                                havePrediction:0
+                            };
+                            for(i=o;i;i--) tmpSerie.items.push(null);
+                            p=0; //Count of predicted TI for this serie
                             $.each(serie.items, function(j, item){
-                                var newItem = {
-                                    value: item.value,
-                                    id: item.id,
-                                    name: oj.Translations.getTranslatedString(serie.name),
-                                    gefTypeId: item.gefTypeId,
-                                    type: item.type,
-                                    markerDisplayed: "off" //Don`t change for 'c' type
-                                }
-                                switch (item.type) {
+                                switch (item.type){
                                     case 'i':
-                                        newItem.markerDisplayed = "on";
-                                        newItem.markerShape = "diamond";
-                                        newItem.markerSize = 15;
-                                        newItem.shortDesc = "Interpolated value (" + item.value + ")";
+                                        item.markerDisplayed = "on";
+                                        item.markerShape = "diamond";
+                                        item.markerSize = 15;
+                                        item.shortDesc = "Interpolated value (" + item.value + ")";
                                     case 'c': //Fall-thru with markerDisplayed=off only
-                                        nodes.push(newItem);
-                                        predictedNodes[0]=newItem;
                                         break;
                                     case 'p':
-                                        newItem.shortDesc = "Predicted value (" + item.value + ")";
-                                        newItem.drilling="off";
-                                        predictedNodes.push(newItem);
+                                        item.shortDesc = "Predicted value (" + item.value + ")";
+                                        item.drilling = "off";
+                                        p++;
                                         break;
                                     default:
-                                        console.log('uknown t: ' + newItem.type)
-                                }
+                                        console.log('uknown t: ' + item.type)
+                                };
+                                tmpSerie.items[timeIntervals.indexOf(item.timeIntervalId)]=item;
                             });
-                            if (i == 0) {
-                                self.groupsVal(data.groups.slice(0, nodes.length));
-                                self.groupsPredictionVal(data.groups.slice(nodes.length));
-                            }
-                            var iii=self.groupsVal().length-nodes.length;
-                            for (var ii=0; ii<iii; ii++){
-                                nodes.unshift(null);
-                            }
-                            var leftPartOfArray = []; //Right align for predicted
-                            for (var ii = 1; ii < nodes.length; ii++) {
-                                leftPartOfArray.push(null);
-                            }
-                            var s={
-                                name: oj.Translations.getTranslatedString(serie.name),
-                                items: nodes,
-                                color: lineColors[i]
-                            }
-                            self.seriesVal.push(s);
-                            var s={
-                                name: oj.Translations.getTranslatedString(serie.name) + ' prediction',
-                                items: leftPartOfArray.concat(predictedNodes),
+                            tmpSerie.havePrediction=p;
+                            p=Math.max(p, P); P=p;
+                            tmpSeries.push(tmpSerie);
+                        });
+                        o-=p;
+                        self.groupsVal(data.groups.slice(0, o));
+                        self.groupsPredictionVal(data.groups.slice(o));
+                        tmpSeries.forEach(function(serie, ndx){
+                            var nSerie = {
+                                name:serie.name,
+                                items:serie.items.slice(0, o),
+                                color: lineColors[ndx]
+                            }                      
+                            var pSerie = {
+                                name:serie.name + ' prediction',
+                                items:serie.items.slice(o),
                                 lineStyle: "dashed",
-                                color: lineColors[i],
+                                color: lineColors[ndx],
                                 drilling:"off"
                             }
-                            self.seriesPredictionVal.push(s);
+                            pSerie.items.unshift(serie.havePrediction ? nSerie.items[o-1] : null);
+                            for (var i=o-1; i>0; i--){
+                                pSerie.items.unshift(null);
+                            }
+                            series.push(nSerie);
+                            seriesPrediction.push(pSerie);
+
                         });
+                        self.seriesVal(series);
+                        self.seriesPredictionVal(seriesPrediction);
                         sessionStorage.setItem('gesList', JSON.stringify(gesList));
                         self.loadAssessmentsCached();
                     }

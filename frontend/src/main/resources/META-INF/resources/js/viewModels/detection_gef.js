@@ -139,50 +139,51 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                         data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
                     }
 
-                    var grupe = ko.observableArray(data.groups);
-                    for (var jg = 0; jg < data.series.length; jg++) {
-                        var pomocni = [];
-                        var timeIntervals = [];
-                        for (var m = 0; m < data.series[jg].items.length; m++) {
-                            timeIntervals.push(data.series[jg].items[m].timeIntervalId);
-                        }
-                        for (var ig = 0; ig < grupe().length; ig++) {
-                            for (var kg = 0; kg < data.series[jg].items.length; kg++) {
-                                if (grupe()[ig].id === data.series[jg].items[kg].timeIntervalId) {
-                                    pomocni.push(data.series[jg].items[kg]);
-                                } else if (!timeIntervals.includes(grupe()[ig].id)) {
-                                    var item ={
-                                        id:null,
-                                        value:null,
-                                        gefTypeId:data.series[jg].items[kg].gefTypeId,
-                                        timeIntervalId:grupe()[ig].id
-                                    }
-                                    pomocni.push(item);
-                                    timeIntervals.push(item.timeIntervalId);
-                                }
-                            }
-                        }
-                    }
-
+                     
+//                    for (var jg = 0; jg < data.series.length; jg++) {
+//                        var pomocni = [];
+//                        var timeIntervals = [];
+//                        for (var m = 0; m < data.series[jg].items.length; m++) {
+//                            timeIntervals.push(data.series[jg].items[m].timeIntervalId);
+//                        }
+//                        for (var ig = 0; ig < grupe().length; ig++) {
+//                            for (var kg = 0; kg < data.series[jg].items.length; kg++) {
+//                                if (grupe()[ig].id === data.series[jg].items[kg].timeIntervalId) {
+//                                    pomocni.push(data.series[jg].items[kg]);
+//                                } else if (!timeIntervals.includes(grupe()[ig].id)) {
+//                                    var item ={
+//                                        id:null,
+//                                        value:null,
+//                                        gefTypeId:data.series[jg].items[kg].gefTypeId,
+//                                        timeIntervalId:grupe()[ig].id
+//                                    }
+//                                    pomocni.push(item);
+//                                    timeIntervals.push(item.timeIntervalId);
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    var grupe = ko.observableArray(data.groups);
+                    var timeIntervals=[];
+                    var series = [];
+                    var seriesPrediction = [];
+                    var tmpSeries= [];
+                    var tmpSerie, i, o=0, p, P=0;
                     data.groups = data.groups.map(function (obj) {
+                        timeIntervals.push(obj.id);
+                        o++;
                         return obj.name;
                     });
                     formatDate(data.groups);
-                    var series = [];
-                    var seriesPrediction = [];
-                    $.each(data.series, function(i, serie){
-                        var nSerie = {
-                            name:serie.name,
+                    data.series.forEach(function(serie){
+                        tmpSerie={
                             items:[],
-                            color: lineColors[i]
-                        }                      
-                        var pSerie = {
-                            name:serie.name + ' prediction',
-                            items:[0],
-                            lineStyle: "dashed",
-                            color: lineColors[i],
-                            drilling:"off"
-                        }
+                            name:serie.name,
+                            havePrediction:0
+                        };
+                        for(i=o;i;i--) tmpSerie.items.push(null);
+                        p=0; //Count of predicted TI for this serie
                         $.each(serie.items, function(j, item){
                             switch (item.type){
                                 case 'i':
@@ -191,27 +192,39 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                                     item.markerSize = 15;
                                     item.shortDesc = "Interpolated value (" + item.value + ")";
                                 case 'c': //Fall-thru with markerDisplayed=off only
-                                    nSerie.items.push(item);
-                                    pSerie.items[0] = item;
                                     break;
                                 case 'p':
                                     item.shortDesc = "Predicted value (" + item.value + ")";
                                     item.drilling = "off";
-                                    pSerie.items.push(item);
+                                    p++;
                                     break;
                                 default:
-                                    console.log('uknown t: ' + newItem.type)
+                                    console.log('uknown t: ' + item.type)
                             };
+                            tmpSerie.items[timeIntervals.indexOf(item.timeIntervalId)]=item;
                         });
-                        if (i == 0){
-                            self.lineGroupsValue(data.groups.slice(0, nSerie.items.length));
-                            self.lineGroupsPredictionValue(data.groups.slice(nSerie.items.length));
+                        tmpSerie.havePrediction=p;
+                        p=Math.max(p, P); P=p;
+                        tmpSeries.push(tmpSerie);
+                    });
+                    o-=p;
+                    self.lineGroupsPredictionValue(data.groups.slice(o));
+                    self.lineGroupsValue(data.groups.slice(0, o));
+                    tmpSeries.forEach(function(serie, ndx){
+                        var nSerie = {
+                            name:serie.name,
+                            items:serie.items.slice(0, o),
+                            color: lineColors[ndx]
+                        }                      
+                        var pSerie = {
+                            name:serie.name + ' prediction',
+                            items:serie.items.slice(o),
+                            lineStyle: "dashed",
+                            color: lineColors[ndx],
+                            drilling:"off"
                         }
-                        var iii=self.lineGroupsValue().length-nSerie.items.length;
-                        for (var ii=0; ii<iii; ii++){
-                            nSerie.items.unshift(null);
-                        }
-                        for (var ii = 1; ii < nSerie.items.length; ii++) {
+                        pSerie.items.unshift(serie.havePrediction ? nSerie.items[o-1] : null);
+                        for (var i=o-1; i>0; i--){
                             pSerie.items.unshift(null);
                         }
                         series.push(nSerie);
@@ -356,104 +369,99 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                       '0.28851 l 0,-29.05676 25.26495,0 0,-86.34597 c -0.44257,-11.43562 -8.79607,-25.37375 -27.98516,-30.66415 l -26.33655,  '+
                       '-65.94442 c -7.29428,-15.95113 -19.122506,-20.39255 -32.848559,-19.90697 l -131.847615,0 z';
 
+            var timeIntervals=[];
+            var series = [];
+            var seriesPrediction = [];
+            var tmpSeries= [];
+            var tmpSerie, i, o=0, p, P=0;
             data.groups = data.groups.map(function (obj) {
+                timeIntervals.push(obj.id);
+                o++;
                 return obj.name;
             });
-
             formatDate(data.groups);
-            $.each(data.series, function(i, serie){
-                
-                var nodes=[];
-                var predictedNodes=[0];
+            data.series.forEach(function(serie){
+                tmpSerie={
+                    items:[],
+                    name:serie.name,
+                    havePrediction:0
+                };
+                for(i=o;i;i--) tmpSerie.items.push(null);
+                p=0; //Count of predicted TI for this serie
                 $.each(serie.items, function(j, item){
-                    var newItem = {
-                        value: item.value,
-                        name: oj.Translations.getTranslatedString(serie.name),
-                        gefTypeId: item.gefTypeId,
-                        type: item.type,
-                        markerDisplayed: "off" //Don`t change for 'c' type
-                    };
-                    switch (newItem.type) {
+                    switch (item.type){
                         case 'i':
-                            newItem.markerDisplayed = "on";
-                            newItem.markerShape = "diamond";
-                            newItem.markerSize = 15;
-                            newItem.shortDesc = "Interpolated value (" + item.value + ")";
+                            item.markerDisplayed = "on";
+                            item.markerShape = "diamond";
+                            item.markerSize = 15;
+                            item.shortDesc = "Interpolated value (" + item.value + ")";
                         case 'c': //Fall-thru with markerDisplayed=off only
-                            nodes.push(newItem);
-                            predictedNodes[0]=newItem;
                             break;
                         case 'p':
-                            newItem.shortDesc = "Predicted value (" + item.value + ")";
-                            newItem.drilling="off";
-                            predictedNodes.push(newItem);
+                            item.shortDesc = "Predicted value (" + item.value + ")";
+                            item.drilling = "off";
+                            p++;
                             break;
                         default:
-                            console.log('uknown t: ' + newItem.type);
-                    }
+                            console.log('uknown t: ' + item.type)
+                    };
+                    tmpSerie.items[timeIntervals.indexOf(item.timeIntervalId)]=item;
                 });
-                if (i == 0) {
-                    self.groupsVal(data.groups.slice(0, nodes.length));
-                    self.groupsPredictionVal(data.groups.slice(nodes.length));
-                }
-                var iii=self.groupsVal().length-nodes.length;
-                for (var ii=0; ii<iii; ii++){
-                    nodes.unshift(null);
-                }
-                var leftPartOfArray = []; //Right align for predicted
-                for (var ii = 1; ii < nodes.length; ii++) {
-                    leftPartOfArray.push(null);
-                }
-                var s={
-                    name: oj.Translations.getTranslatedString(serie.name),
-                    items: nodes,
-                    color: lineColors[i],
-                    lineWidth: 3.5
-                    
-                };
-                            console.log('SERIES NAME IS : ' + s.name);            
-                if (s.name == 'Overall'){
-                    s.drilling = "off";
-                    //s.color = '#999999';
-                    //s.lineWidth = 2;
-                    s.items.forEach(function (el) {
-                    el.drilling = "off";
-                    });
-                } else if (s.name === '') {
-                s.color = '#ea97f1';
-                    s.lineWidth = 5;
-                } else if (s.name === '') {
-                s.color = '#5dd6c9';
-                    s.lineWidth = 5;
-                } else if (s.name === 'Fit') {
-                    s.drilling = "off";
-                }
-                 self.seriesVal.push(s);
-                
-                var s={
-                    name: oj.Translations.getTranslatedString(serie.name),
-                    items: leftPartOfArray.concat(predictedNodes),
-                    lineWidth: 3.5,
-                    lineStyle: "dashed",
-                    color: lineColors[i],
-                    drilling:"off"
-                };
-                if (s.name === 'Overall'){
-                    s.drilling = "off";
-                    //s.color = '#999999';
-                    //s.lineWidth = 2;
-                } else if (s.name === 'Behavioural') {
-                s.color = '#ea97f1';
-                    s.lineWidth = 5;
-                } else if (s.name === 'Contextual') {
-                s.color = '#5dd6c9';
-                    s.lineWidth = 5;
-                } else if (s.name === 'Fit') {
-                    s.drilling = "off";
-                }
-                s.name += ' prediction';
-                self.seriesPredictionVal.push(s);
+                tmpSerie.havePrediction=p;
+                p=Math.max(p, P); P=p;
+                tmpSeries.push(tmpSerie);
             });
+            o-=p;
+            self.groupsVal(data.groups.slice(0, o));
+            self.groupsPredictionVal(data.groups.slice(o));
+            tmpSeries.forEach(function(serie, ndx){
+                var nSerie = {
+                    name:oj.Translations.getTranslatedString(serie.name),
+                    items:serie.items.slice(0, o),
+                    color: lineColors[ndx],
+                    lineWidth: 3.5
+                }                      
+                if (nSerie.name == 'Overall'){
+                    nSerie.drilling = "off";
+                    nSerie.items.forEach(function (el) {
+                        if(el) el.drilling = "off";
+                    });
+                } else if (nSerie.name === '') {
+                    nSerie.color = '#5dd6c9';
+                    nSerie.lineWidth = 5;
+                } else if (nSerie.name === 'Fit') {
+                    nSerie.drilling = "off";
+                }
+                var pSerie = {
+                    name:oj.Translations.getTranslatedString(serie.name) + ' prediction',
+                    items:serie.items.slice(o),
+                    lineStyle: "dashed",
+                    color: lineColors[ndx],
+                    drilling:"off",
+                    lineWidth: 3.5,
+                }
+                if (pSerie.name === 'Overall'){
+                    pSerie.drilling = "off";
+                } else if (pSerie.name === 'Behavioural') {
+                pSerie.color = '#ea97f1';
+                    pSerie.lineWidth = 5;
+                } else if (pSerie.name === 'Contextual') {
+                pSerie.color = '#5dd6c9';
+                    pSerie.lineWidth = 5;
+                } else if (pSerie.name === 'Fit') {
+                    pSerie.drilling = "off";
+                }
+
+                pSerie.items.unshift(serie.havePrediction ? nSerie.items[o-1] : null);
+                for (var i=o-1; i>0; i--){
+                    pSerie.items.unshift(null);
+                }
+                series.push(nSerie);
+                seriesPrediction.push(pSerie);
+
+            });
+            self.seriesVal(series);
+            self.seriesPredictionVal(seriesPrediction);
             $.each(data.frailtyStatus.series, function (i, obj) {
                 /* Creating non-drillable items*/
                 var items = [];
