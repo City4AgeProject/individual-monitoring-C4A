@@ -76,7 +76,7 @@ function(oj, ko, $) {
                                 if(event){     
                                     
                                     if(event.detail.selectionData){
-                                        console.log('this is selection data : ' + JSON.stringify(event.detail.selectionData));
+                                        //console.log('this is selection data : ' + JSON.stringify(event.detail.selectionData));
                                         $('#multipleSelection').ojPopup('close');    
                                         var onlyCalculated = [];
                                         event.detail.selectionData.forEach(function(obj,i,array){   

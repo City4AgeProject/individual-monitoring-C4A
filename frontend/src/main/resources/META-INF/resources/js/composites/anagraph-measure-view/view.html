@@ -25,7 +25,16 @@
               <!-- /ko -->
             </oj-select-one>
     </div>  
-        
+    <div id='toggle-button' style="position: absolute; top:10px; right: 15px;">
+            <oj-label for="selection-mode">Selection mode:</oj-label>
+            <oj-buttonset-one id="selection-mode" value="{{mode}}">
+                <!-- ko foreach: modeValues -->
+                <oj-option value='[[id]]' >
+                    <span data-bind="text: label"></span>
+                </oj-option>
+                <!-- /ko -->
+            </oj-buttonset-one>  
+    </div>
     <h3 id="measureName" data-bind="text: measureNameForDiagram" align="center" style="margin-top: 20px;"></h3>
     <oj-chart id="lineChart"                
         style-defaults.line-type="[[$props.lineType]]"

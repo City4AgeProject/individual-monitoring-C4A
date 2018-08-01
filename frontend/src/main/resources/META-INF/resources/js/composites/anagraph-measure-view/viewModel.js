@@ -1,6 +1,6 @@
 define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'ojs/ojtable', 'ojs/ojarraytabledatasource','ojs/ojtabs', 'ojs/ojconveyorbelt',
 	'ojs/ojdatagrid', 'ojs/ojcollectiondatagriddatasource', 'ojs/ojvalidation-datetime',
-	'ojs/ojvalidation-number','ojs/ojcollapsible','ojs/ojarraydatagriddatasource','ojs/ojinputtext','ojs/ojselectcombobox'],
+	'ojs/ojvalidation-number','ojs/ojcollapsible','ojs/ojarraydatagriddatasource','ojs/ojinputtext','ojs/ojselectcombobox','ojs/ojbutton'],
         function (ko, $) {
 			
             function model(context) {
@@ -24,6 +24,12 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.currentUnit = ko.observable({value: 'm/s', label: 'm/s'});
                 self.shouldSeeNotice = ko.observable(false);
                 self.legendValue = new Object();
+                self.modeValues = [
+                    {id: 'single', label: 'Single'},
+                    {id: 'multi',    label: '4-month'}
+                ];
+                self.mode = ko.observable('single');
+                
                 context.props.then(function(properties) {                   
                     self.props = properties; 
                     self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
@@ -122,7 +128,10 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                         var average = document.getElementById('datagrid:r3');
                         average.setAttribute('title','Average value');
                     }
-                    setTimeout(setTooltips, 2000);
+                    if(self.defaultTypicalPeriod !== 'mon'){
+                        setTimeout(setTooltips, 2000);
+                    }
+                    
                     
                 });  
                 
@@ -198,31 +207,44 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
 		}; 
                 
                 function showLineSeriesFromChartDrill(lineSerie){
-                    var allSeries = self.lineSeriesNames.slice(0);
-                    if(self.defaultTypicalPeriod === 'mon'){                        
-                        self.hiddenCategories(allSeries);
-                        var index = self.hiddenCategories.indexOf(lineSerie);
-                        self.hiddenCategories.splice(index,1);
-                    }else{
-                        if(self.visibleCategories.length === 0){  
-                                self.visibleCategories.push(lineSerie);                               
+                        var allSeries = self.lineSeriesNames.slice(0);
+                        
+                            if(self.mode() == 'single'){
+                                /*SINGLE SELECTION*/
+                                if(self.visibleCategories.length === 0){  
+                                    self.visibleCategories.push(lineSerie);                               
+                                    self.hiddenCategories(allSeries);
+                                    var index = self.hiddenCategories.indexOf(lineSerie);
+                                    self.hiddenCategories.splice(index,1);
+                                }else {
+                                    if(self.visibleCategories.indexOf(lineSerie) !== -1){
+                                        var index = self.visibleCategories.indexOf(lineSerie);
+                                        self.visibleCategories.splice(index,1);
+                                        self.hiddenCategories.push(lineSerie);                            
+                                    }else {
+                                        var index = self.hiddenCategories.indexOf(lineSerie);
+                                        self.hiddenCategories.splice(index,1);
+                                        self.visibleCategories.push(lineSerie);
+                                    }     
+                                }
+                            }else{
+                                /*MULTIPLE (ALSO LAST 3 MONTHS) SELECTION*/
+                                self.visibleCategories = [];
                                 self.hiddenCategories(allSeries);
                                 var index = self.hiddenCategories.indexOf(lineSerie);
-                                self.hiddenCategories.splice(index,1);
-                        }else {
-                                if(self.visibleCategories.indexOf(lineSerie) !== -1){
-                                var index = self.visibleCategories.indexOf(lineSerie);
-                                self.visibleCategories.splice(index,1);
-                                self.hiddenCategories.push(lineSerie);                            
-                            }else {
-                                var index = self.hiddenCategories.indexOf(lineSerie);
-                                self.hiddenCategories.splice(index,1);
-                                self.visibleCategories.push(lineSerie);
-                            }     
-                        }
+                                if(index >= 3){
+                                    self.hiddenCategories.splice(index-3, 4);
+                                }else{
+                                    if(index == 2){
+                                        self.hiddenCategories.splice(index-2, 3);
+                                    }else if(index == 1){
+                                        self.hiddenCategories.splice(index-1, 2);
+                                    }else {
+                                        self.hiddenCategories.splice(index, 1);
+                                    }
+                                }
+                            }
                     }
-                       
-                }
                 self.beforeExpand = function(event, ui) {                  
                     self.meaCommentPreview(self.meaComment());
                 };
