@@ -341,11 +341,34 @@ function(oj, ko, $) {
                         }
                     }
 		};
+                // Measures’ monthly values diagram
                 var drawDerivedMonthlyMeasuresChart = function(gesId) {
                     $.getJSON(VIEW_DERIVED_MEASURES + "/userInRoleId/" + parseInt(sessionStorage.getItem("crId")) + "/parentFactorId/" + gesId, function(data) {
                                 data.series.forEach(function(serie){
                                    serie.name =  oj.Translations.getTranslatedString(serie.name);
                                 });
+                                
+                                // adding nulls for missing data
+                                var grupe = ko.observableArray(data.groups);
+                                for (var jg = 0; jg < data.series.length; jg++) {
+                                    var fullSeries = [];
+                                    var timeIntervals = [];
+                                    for (var m = 0; m < data.series[jg].items.length; m++) {
+                                        timeIntervals.push(data.series[jg].items[m].timeIntervalId);
+                                    }
+                                    for (var ig = 0; ig < grupe().length; ig++) {
+                                        for (var kg = 0; kg < data.series[jg].items.length; kg++) {
+                                            if (grupe()[ig].id === data.series[jg].items[kg].timeIntervalId) {
+                                                fullSeries.push(data.series[jg].items[kg]);
+                                            } else if (!timeIntervals.includes(grupe()[ig].id)) {
+                                                fullSeries.push(null);
+                                                timeIntervals.push(grupe()[ig].id);
+                                            }
+                                        }
+                                    }
+                                    data.series[jg].items = fullSeries.slice(0);
+                                }
+                                
                                 data.groups = data.groups.map(function (obj) {
                                     return obj.name;
                                 });

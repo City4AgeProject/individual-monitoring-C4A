@@ -196,12 +196,11 @@ public class ViewEndpoint {
 
 		if (derivedMeasures != null && !derivedMeasures.isEmpty()) {
 
-			for (Object[] derivedMeasure : derivedMeasures) {
+			List<ViewGefCalculatedInterpolatedPredictedValues> gfvsList = viewService.convertToViewGFVs(derivedMeasures);
+			
+			TreeSet<DataIdValue> monthLabels = viewService.createMonthLabels(gfvsList);
 
-				DataIdValue monthLabel = viewService.createMonthLabel(Long.valueOf((Integer) derivedMeasure[4]));
-
-				response.getGroups().add(monthLabel);
-			}
+			response.getGroups().addAll(monthLabels);
 			
 			Set<DetectionVariable> dvs = new HashSet<DetectionVariable>();
 

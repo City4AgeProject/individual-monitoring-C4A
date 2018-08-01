@@ -8,10 +8,11 @@ import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 
 public interface ViewService {
-
-	DataIdValue createMonthLabel(Long timeIntervalId);
 	
 	TreeSet<DataIdValue> createMonthLabels(List<ViewGefCalculatedInterpolatedPredictedValues> gefs);
 	
 	OJDiagramFrailtyStatus transformToDto(List<ViewGefCalculatedInterpolatedPredictedValues> gefs, TreeSet<DataIdValue> months);
+
+	List<ViewGefCalculatedInterpolatedPredictedValues> convertToViewGFVs(List<Object[]> derivedMeasures);
+	
 }
