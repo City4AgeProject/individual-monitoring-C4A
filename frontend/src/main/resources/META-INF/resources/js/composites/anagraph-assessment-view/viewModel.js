@@ -354,15 +354,15 @@ function(oj, ko, $) {
                                     var fullSeries = [];
                                     var timeIntervals = [];
                                     for (var m = 0; m < data.series[jg].items.length; m++) {
-                                        timeIntervals.push(data.series[jg].items[m].timeIntervalId);
+                                        timeIntervals.push(data.series[jg].items[m].monthLabel);
                                     }
                                     for (var ig = 0; ig < grupe().length; ig++) {
                                         for (var kg = 0; kg < data.series[jg].items.length; kg++) {
-                                            if (grupe()[ig].id === data.series[jg].items[kg].timeIntervalId) {
+                                            if (grupe()[ig].name === data.series[jg].items[kg].monthLabel) {
                                                 fullSeries.push(data.series[jg].items[kg]);
-                                            } else if (!timeIntervals.includes(grupe()[ig].id)) {
+                                            } else if (!timeIntervals.includes(grupe()[ig].name)) {
                                                 fullSeries.push(null);
-                                                timeIntervals.push(grupe()[ig].id);
+                                                timeIntervals.push(grupe()[ig].name);
                                             }
                                         }
                                     }

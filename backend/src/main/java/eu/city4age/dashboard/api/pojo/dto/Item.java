@@ -17,6 +17,7 @@ public class Item {
     private String type;
     private Integer gefTypeId;
     private Long timeIntervalId;
+    private String monthLabel;
     
     
 
@@ -32,6 +33,13 @@ public class Item {
 		this.value = value.floatValue();
 		this.gefTypeId = gefTypeId.intValue();
 		this.timeIntervalId = timeIntervalId;
+	}
+    
+    public Item(BigDecimal value, Long gefTypeId, Long timeIntervalId, String monthLabel) {
+		this.value = value.floatValue();
+		this.gefTypeId = gefTypeId.intValue();
+		this.timeIntervalId = timeIntervalId;
+		this.monthLabel = monthLabel;
 	}
 
 	public Item() {
@@ -93,6 +101,20 @@ public class Item {
 
 	public void setTimeIntervalId(Long timeIntervalId) {
 		this.timeIntervalId = timeIntervalId;
-	}    
+	}
+
+	/**
+	 * @return the monthLabel
+	 */
+	public String getMonthLabel() {
+		return monthLabel;
+	}
+
+	/**
+	 * @param monthLabel the monthLabel to set
+	 */
+	public void setMonthLabel(String monthLabel) {
+		this.monthLabel = monthLabel;
+	}
     
 }

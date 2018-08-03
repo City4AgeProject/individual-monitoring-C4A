@@ -2,6 +2,7 @@ package eu.city4age.dashboard.api.rest;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,10 +32,12 @@ import eu.city4age.dashboard.api.exceptions.JsonEmptyException;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.NUIRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
+import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
+import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.pojo.dto.Item;
@@ -74,6 +77,9 @@ public class ViewEndpoint {
 
 	@Autowired
 	private DetectionVariableRepository detectionVariableRepository;
+	
+	@Autowired
+	private TimeIntervalRepository timeIntervalRepository;
 	
 	@Autowired
 	private ViewService viewService;
@@ -185,6 +191,7 @@ public class ViewEndpoint {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("getDerivedMeasures/userInRoleId/{userInRoleId}/parentFactorId/{parentFactorId}")
@@ -222,7 +229,20 @@ public class ViewEndpoint {
 					Boolean derivedMeasureAdded = false;
 					Long derivedMeasureId = Long.valueOf((Integer) derivedMeasure[1]);
 					if (derivedMeasureAdded != true && dv.getId().equals(derivedMeasureId)) {
-						series.getItems().add(new Item((BigDecimal) derivedMeasure[5], Long.valueOf((Integer) derivedMeasure[1]), Long.valueOf((Integer) derivedMeasure[4])));
+						TimeInterval ti = timeIntervalRepository.findOne(Long.valueOf((Integer) derivedMeasure[4]));
+						Date intervalStart = ti.getIntervalStart();
+						int year = intervalStart.getYear() + 1900;
+						logger.info("year: " + year);
+						int month = intervalStart.getMonth() + 1;
+						logger.info("month: " + month);
+						StringBuilder monthLabelBuilder = new StringBuilder();
+						monthLabelBuilder.append(year).append("/");
+						if (month < 10) {
+							monthLabelBuilder.append(0).append(month);
+						} else {
+							monthLabelBuilder.append(month);
+						}
+						series.getItems().add(new Item((BigDecimal) derivedMeasure[5], Long.valueOf((Integer) derivedMeasure[1]), Long.valueOf((Integer) derivedMeasure[4]), monthLabelBuilder.toString()));
 						derivedMeasureAdded = true;
 					}
 				}
