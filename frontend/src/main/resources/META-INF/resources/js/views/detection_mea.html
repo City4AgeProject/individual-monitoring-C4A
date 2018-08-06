@@ -5,7 +5,9 @@
     <!-- end CR info -->
 
     <br><br>
-    <!-- ko if: showBarCharts -->
+    <h2 style="display: inline-block; margin-right: 5px; font-size: 20px;"><span data-bind="text: measureTitle" style="font-style: italic;font-weight: bold;"></span></h2><h2 style="margin-bottom: 25px; font-size: 20px; display: inline-block;" data-bind="text: remainingTitle"></h2>
+    
+    
 <!--    NUI LINE CHART IN PERCENTIGE-->
 <!--    <div id="nui-lineChart-container" class="oj-flex" style="position:relative" >
       <h3 align="center" style="margin-top: 20px;">Numeric indicator values</h3>
@@ -23,10 +25,12 @@
             </demo-chart-orientation-control>
         
     </div>-->
+
+<!-- ko if: showBarCharts -->
 <oj-collapsible id="nui-collapsible" expanded="false" style="background-color: #4fc5c5b8">
     <h5 slot="header" style="color:white;">NUI waterfall charts</h5>
     <div id ="nui-charts-container" style="background-color: white;border:1px solid lightgray;border-top: none;">
-                    <div class=" oj-flex" >
+                    <div class=" oj-flex" style="border-bottom: 1px solid lightgray;padding-bottom: 15px;">
                         <div class="oj-flex-item oj-sm-6 oj-md-6">
                             <h3 id="avgTitle" align="center" style="margin-top: 20px;">Average</h3>
                             <oj-chart id="waterfallChartAvg"
@@ -54,7 +58,7 @@
 
                     </div>
 
-                    <div class="oj-flex"> 
+                    <div class="oj-flex" style="padding-bottom: 15px;"> 
                         <div class="oj-flex-item oj-sm-6 oj-md-6">
                             <h3 id="bestTitle" align="center" style="margin-top: 20px;">Best</h3>
                             <oj-chart id="waterfallChartBest"

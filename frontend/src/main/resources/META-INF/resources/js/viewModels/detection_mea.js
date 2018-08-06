@@ -19,12 +19,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.meaList = ko.observableArray([]);
                 self.meaForSelector = ko.observableArray();
                 self.measureName = null;
+                self.measureTitle = ko.observable();
                 self.barSeriesAvg = ko.observableArray();
                 self.barSeriesStd = ko.observableArray();
                 self.barSeriesBest = ko.observableArray();
                 self.barSeriesDelta = ko.observableArray();
                 self.barGroups = ko.observableArray();
-
+                self.remainingTitle = ko.observable('Measure and NUI values');
                 self.referenceObjectsAvg = ko.observableArray();
                 self.referenceObjectsStd = ko.observableArray();
                 self.referenceObjectsBest = ko.observableArray();
@@ -109,6 +110,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                          let nui = nuiData[0];
                          let sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_") + 1;
                          self.measureName = nui.detectionVariable.detectionVariableName.slice(sliceIndex);
+                         self.measureTitle(oj.Translations.getTranslatedString(self.measureName));
                          
                       //getting list of timeIntervals for chart groups
                       let timeIntervals = [];
@@ -219,7 +221,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     data.forEach(function(el) {
                         let first = 0;
                         for(var i = 0;i< el.items.length; i++){
-                            if(i == 0){
+                            if(i === 0){
                                 first = JSON.parse(JSON.stringify(el.items[i]));
                                 el.items[i] = 100;
                                 continue;
@@ -238,11 +240,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     return data;
                 }
             	function setDataForDiagrams(data, nuiData) {
-                    if(data[0].detectionVariable.defaultTypicalPeriod == "day"){
+                    if(data[0].detectionVariable.defaultTypicalPeriod == "mon"){
+                         self.measureName = data[0].detectionVariable.detectionVariableName;
+                         self.measureTitle(oj.Translations.getTranslatedString(self.measureName));
+                         self.showBarCharts(false);
+                    }else{
                         setBarCharts(nuiData);
                         self.showBarCharts(true);
-                    }else{
-                        self.showBarCharts(false);
                     }
             		 //building diagramData from json data
   	    		  var measureIds = [];
@@ -434,6 +438,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  
   	    		  measures.forEach(function(mea) {
                               if(mea.defaultTypicalPeriod === 'mon'){
+                                  self.remainingTitle('Measure values');
                                   mea.lineType = "straight";
                                   mea.lineSeries.forEach(function(ls) {
                                       ls.items[1] = ls.items[0];
@@ -442,6 +447,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                       }
                                   });
                               }else if(mea.defaultTypicalPeriod === '1wk'){
+                                  self.remainingTitle = ko.observable('Measure and NUI values');
                                         mea.lineType = "straight";                                                                   
                                         mea.lineSeries.forEach(function(ls){
                                           var arr = [];
@@ -477,6 +483,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                         });                                 
                               }
                                   else {
+                                        self.remainingTitle = ko.observable('Measure and NUI values');
                                         mea.lineType = "straight";
                                         mea.lineSeries.forEach(function(ls) {
                                                 //inserting empty dates
