@@ -31,7 +31,7 @@ public class JythonServiceTest {
 	}
 	
 	@After
-	public void destroy() {
+	public void destroy() throws JepException {
 		
 		jep.close();
 		
