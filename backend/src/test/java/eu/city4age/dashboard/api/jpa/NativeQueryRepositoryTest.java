@@ -54,7 +54,8 @@ import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.json.view.View;
-import eu.city4age.dashboard.api.rest.MeasuresService;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
+import eu.city4age.dashboard.api.service.MeasuresService;
 
 public class NativeQueryRepositoryTest {
 	
@@ -96,6 +97,9 @@ public class NativeQueryRepositoryTest {
 	@Autowired
 	PilotDetectionVariableRepository pilotDetectionVariableRepository;
 
+	@Autowired
+	private MeasuresEndpoint measuresEndpoint;
+	
 	@Autowired
 	private MeasuresService measuresService;
 	
@@ -146,7 +150,8 @@ public class NativeQueryRepositoryTest {
 		List<Pilot.PilotCode> pilotCodes = Arrays.asList(Pilot.PilotCode.LCC);
 		List<String> pilots = new ArrayList<>();
 		for (PilotCode pilot : pilotCodes) pilots.add(pilot.getName());
-		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilots);
+		List<Object[]> result = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, pilots.get(0));
+
 		
 		//Assert.assertNotNull(result);
 		

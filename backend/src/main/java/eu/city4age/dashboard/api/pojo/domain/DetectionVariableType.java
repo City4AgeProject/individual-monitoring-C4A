@@ -24,7 +24,7 @@ public class DetectionVariableType implements Serializable {
 	public static final DetectionVariableType OVL = new DetectionVariableType(DetectionVariableType.Type.OVL, "Overall frailty score");
 	
 	public enum Type {
-		MEA("MEA"), NUI("NUI"), GES("GES"), GEF("GEF"), GFG("GFG"), OVL("OVL");
+		MEA("mea"), NUI("nui"), GES("ges"), GEF("gef"), GFG("gfg"), OVL("ovl");
 		
 		private final String name;
 		
@@ -41,6 +41,7 @@ public class DetectionVariableType implements Serializable {
 	@Id
 	@Column(name = "detection_variable_type")
 	@org.hibernate.annotations.Type(type = "DVTEnumUserType")
+
 	private DetectionVariableType.Type detectionVariableType;
 
 	@Column(name = "detection_variable_type_description", length = 255)

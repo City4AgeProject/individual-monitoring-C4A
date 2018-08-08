@@ -30,8 +30,6 @@ import eu.city4age.dashboard.api.rest.AssessmentServiceTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class ViewNuiValuesPersistedSourceMeaTypesRepositoryTest {
 	
 	static protected Logger logger = LogManager.getLogger(AssessmentServiceTest.class);

@@ -1,39 +1,133 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery',
-    'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojbutton', 'urls','anagraph-measure-view'],
+    'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojbutton', 'urls','anagraph-measure-view','ojs/ojlegend'],
         function (oj, ko, sp, app, $) {
 
             function detectionMeaViewModel() {
+                
+                var colorHandler = new oj.ColorAttributeGroupHandler();
+                colorHandler.addMatchRule(-1, '#ed6647');
+                colorHandler.addMatchRule(1, '#68c182');
+                
                 $(".loader-hover").hide();
-                var self = this;   
+                var self = this;
+                self.clusterSelectionData = ko.observableArray([]);
+                self.showBarCharts = ko.observable(false);
+                self.nuiData = null;
+                self.nuiGroups = ko.observableArray();
+                self.nuiSeries = ko.observableArray();
+                self.meaTitle = ko.observable();
+                self.gesList = ko.observableArray();
+                self.meaList = ko.observableArray([]);
+                self.meaForSelector = ko.observableArray();
+                self.measureName = null;
+                self.measureTitle = ko.observable();
+                self.barSeriesAvg = ko.observableArray();
+                self.barSeriesStd = ko.observableArray();
+                self.barSeriesBest = ko.observableArray();
+                self.barSeriesDelta = ko.observableArray();
+                self.barGroups = ko.observableArray();
+                self.remainingTitle = ko.observable('Measure and NUI values');
+                self.referenceObjectsAvg = ko.observableArray();
+                self.referenceObjectsStd = ko.observableArray();
+                self.referenceObjectsBest = ko.observableArray();
+                self.referenceObjectsDelta = ko.observableArray();
+                self.legendSections = ko.observableArray();
+                
+                self.nuiLineSeriesValue = ko.observableArray();
+                self.nuiLineGroupsValue = ko.observableArray();
+                
+                self.clusterGroups = ko.observableArray();
+                self.clusterSeries = ko.observableArray();
+                self.clusterData = ko.observable();
+                self.clusterDataHeader = ko.observable();
+                self.clusterLegendSections = ko.observableArray();
+                
+                
+                var lastSelected = false;
             	                                                  
             	//this method loads data form ajax request before view is loaded
-            	self.handleActivated = function(info) {  
+            	self.handleActivated = function(info) {
+                    
                         initData();
             		
                         return new Promise(function(resolve, reject) {
+                            
+                            var queryParams;
+                            
+                            if(parseInt(sessionStorage.getItem('seeAllMeasures'))){
+                                    queryParams = "?varName=ges&varId=" + self.gesId();
+                                    
+                                }else{
+                                    queryParams = "?varName=mea&varId=" + self.meaId();
+                                }
+                                console.log('query params is : ' + queryParams);
 
                         $.when(
-
-                                  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + self.careRecipientId() + "/gesId/" + self.gesId(), function(data) {
+                                
+                                  $.get(DAILY_MEASURES_DATA + "/userInRoleId/" + self.careRecipientId() + queryParams, function(data) {
                                     self.data = data;
                                   }),
 
 
-                                  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ self.careRecipientId() +"/detectionVariableId/" + self.gesId(), function(nuiData) {
+                                  $.get(NUI_VALUES_DATA + "/userInRoleId/"+ self.careRecipientId() + queryParams, function(nuiData) {
                                     self.nuiData = nuiData;
+                                  }),
+                                  $.get(CLUSTER_DATA + "/userInRoleId/"+ self.careRecipientId() + "/detectionVariableId/" + self.meaId(), function(clusterData) {
+                                    self.clusterGroups = clusterData.groups;
+                                    self.clusterSeries = clusterData.series;
+                                    self.clusterSeries[0].displayInLegend = "off";
+                                    self.clusterDataHeader = "Cluster Data for " + clusterData.series[0].name;
+                                    //console.log (JSON.stringify(clusterData.legend));
+                                    self.clusterLegendSections = clusterData.legend;
                                   })
 
                                 ).then(function() {
-
-                                    self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
+                                    self.data.dailyMeasures = [];    
+                                    var arr = setDataForDiagrams(self.data, self.nuiData);
+                                    self.data.dailyMeasures = arr;
+//                                    arr.forEach(function(el){
+//                                        if(el.detectionVariableId === parseInt(sessionStorage.getItem('meaId'))){
+//                                            self.data.dailyMeasures.push(el);
+//                                        }
+//                                    });
+                                    
+                                    //self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
                                     resolve();
                                 }).fail(function() {
                                     console.log( "error recieving json data from web service" );
-                                })
+                                });           	    	  
                         });           	    	  
             	              	                	        
             	};
-            	
+                
+                self.clusteredChartDrill = function(event) {
+                    
+                    //console.log ("self.clusteredChartDrill");
+                    var clusterId = event.detail.id;
+                    var items = self.clusterSeries[0].items;
+                    var selectedArray = [];
+                    
+                    for (i=0; i < items.length; i++) {
+                        if (items[i].categories[0] === clusterId) {
+                            //console.log ("dodao element: " + i);
+                            selectedArray.push (items[i].id);
+                        }
+                    }
+                    //console.log ("selectedArray.len: " + selectedArray.length);
+                    self.clusterSelectionData(selectedArray);
+                    //console.log (self.clusterSelectionData);
+                };
+                
+//            	 var nuiLineSeries = [{name : "Series 1", items : [74, 62, 70, 76, 66]},
+//                          {name : "Series 2", items : [50, 38, 46, 54, 42]},
+//                          {name : "Series 3", items : [34, 22, 30, 32, 26]},
+//                          {name : "Series 4", items : [18,  6, 14, 22, 10]},
+//                          {name : "Series 5", items : [3,  2,  3,  3,  2]}];
+//    
+//                var nuiLineGroups = ["Jan", "Feb", "Mar", "Apr", "May"];
+
+
+                
             	function initData() {
           	      	
           	      	//var crId = oj.Router.rootInstance.retrieve()[0];
@@ -41,21 +135,165 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         var crId = parseInt(sessionStorage.getItem("crId"));
                         var gesObj = JSON.parse(sessionStorage.getItem("gesObj"));
                         var gesId = gesObj.detectionVariableId;
+                        self.meaId = ko.observable(parseInt(sessionStorage.getItem("meaId")));
           	      	
           	      	//data
       	        	self.careRecipientId = ko.observable(crId);
                         self.gesId = ko.observable(gesId);    	                 	        	                                                       
 
             	}
-            	
+            	function setBarCharts(nuiData) {
+                         self.nuiData = nuiData;
+                         let nui = nuiData[0];
+                         let sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_") + 1;
+                         self.measureName = nui.detectionVariable.detectionVariableName.slice(sliceIndex);
+                         self.measureTitle(oj.Translations.getTranslatedString(self.measureName));
+                         
+                      //getting list of timeIntervals for chart groups
+                      let timeIntervals = [];
+                      nuiData.forEach(function(nui){
+                          if(!timeIntervals.includes(nui.timeInterval.intervalStart)){
+                              timeIntervals.push(nui.timeInterval.intervalStart);
+                          }
+                      });
+                      
+                    //get nui groups with month name and year
+                    var months = ["January", "February", "March", "April", "May", "June", "July", "August","September", "October", "November", "December"];
+                    let groups = [];
+                    timeIntervals.sort(function(a, b) {
+                        return a - b;
+                    });
+                    timeIntervals.forEach(function(interval){
+                        let date = new Date(interval);
+                        groups.push(months[date.getMonth()] + " " + date.getFullYear());                               
+                    });
+                    self.nuiLineGroupsValue(groups.slice());
+                    groups.push('End');
+                    self.nuiGroups(groups);
+                    drawNuiForMea(self.measureName);
+                }
+                function drawNuiForMea(meaName) {
+                    self.meaTitle(meaName);
+                    let nuiAvg = new Object();
+                    nuiAvg.name = "avg_"+meaName;
+                    nuiAvg.items = [];
+
+                    let nuiStd = new Object();
+                    nuiStd.name = "std_"+meaName;
+                    nuiStd.items = [];
+
+                    let nuiBest = new Object();
+                    nuiBest.name = "best_"+meaName;
+                    nuiBest.items = [];
+
+                    let nuiDelta = new Object();
+                    nuiDelta.name = "delta_"+meaName;
+                    nuiDelta.items = [];
+                   
+                    let nuiSeries = [];
+                    self.nuiData.forEach(function (nui){
+                        let nuiName = nui.detectionVariable.detectionVariableName;
+
+                        if(nuiName.includes('avg_' + meaName)){
+                                     nuiAvg.items.push(nui.nuiValue);
+                        }else if(nuiName.includes('std_' + meaName)){
+                                     nuiStd.items.push(nui.nuiValue);
+                        }else if(nuiName.includes('best_' + meaName)){
+                                     nuiBest.items.push(nui.nuiValue);
+                        }else if(nuiName.includes('delta_' + meaName)){
+                                     nuiDelta.items.push(nui.nuiValue);
+                        }
+                    }); 
+                    
+                    nuiSeries.push(nuiAvg,nuiStd,nuiBest,nuiDelta);
+                    self.nuiSeries(nuiSeries);
+                    
+                    self.nuiLineSeriesValue(returnNormalizedData(nuiSeries));
+                    /* waterfall chart data */
+                    var waterValuesAvg = nuiAvg.items;
+                    var waterValuesStd = nuiStd.items;
+                    var waterValuesBest = nuiBest.items;
+                    var waterValuesDelta = nuiDelta.items;
+ 
+                     var waterGroups = self.nuiGroups();
+                     //console.log('this is after create waterfall data ' + JSON.stringify(createWaterfallData(waterValuesAvg)));
+                     self.barSeriesAvg([{items: createWaterfallData(waterValuesAvg), displayInLegend: "off"}]);
+                     self.barSeriesStd([{items: createWaterfallData(waterValuesStd), displayInLegend: "off"}]);
+                     self.barSeriesBest ([{items: createWaterfallData(waterValuesBest), displayInLegend: "off"}]);
+                     self.barSeriesDelta ([{items: createWaterfallData(waterValuesDelta), displayInLegend: "off"}]);
+                     
+                     //waterGroups.push("End");
+                     self.barGroups(waterGroups);
+
+                     self.referenceObjectsAvg([{items: waterValuesAvg, type: 'line', lineType: 'segmented', lineWidth: 1, lineStyle: 'dotted', color: '#808080', shortDesc: 'Connecting Line'}]);
+                     self.referenceObjectsStd([{items: waterValuesStd, type: 'line', lineType: 'segmented', lineWidth: 1, lineStyle: 'dotted', color: '#808080', shortDesc: 'Connecting Line'}]);
+                     self.referenceObjectsBest([{items: waterValuesBest, type: 'line', lineType: 'segmented', lineWidth: 1, lineStyle: 'dotted', color: '#808080', shortDesc: 'Connecting Line'}]);
+                     self.referenceObjectsDelta([{items: waterValuesDelta, type: 'line', lineType: 'segmented', lineWidth: 1, lineStyle: 'dotted', color: '#808080', shortDesc: 'Connecting Line'}]);
+
+                     /* create legend */
+                     self.legendSections([{items: [{color: colorHandler.getValue(1), text: "Increase", id: "Increase"}, {color: colorHandler.getValue(-1), text: "Decrease", id: "Decrease"}, {color: colorHandler.getValue(0), text: "Total", id: "Total"}]}]);
+                     
+                            
+            }
+                    
+            
+            // Function to create data for waterfall graph.
+                var createWaterfallData = function (vals) {
+                    var data = [];
+                    var values = vals.slice();
+                    
+                    values.unshift(vals[0]);
+                    for (var i = 0; i < values.length; i++) {
+                        var items;
+                        if (i === values.length - 1 || i === 0) {
+                            items = {high: values[i], low: 0, color: colorHandler.getValue(0), shortDesc: "Value: " + values[i]};
+                        }
+                        else {
+                            var diff = values[i + 1] - values[i];
+                            items = {low: values[i], high: values[i + 1], color: colorHandler.getValue(diff / Math.abs(diff)), shortDesc: "Change: " + diff};
+                        }
+                        data.push(items);
+                    }
+                    return data;
+                };
+                function returnNormalizedData(data){
+                    data.forEach(function(el) {
+                        let first = 0;
+                        for(var i = 0;i< el.items.length; i++){
+                            if(i === 0){
+                                first = JSON.parse(JSON.stringify(el.items[i]));
+                                el.items[i] = 100;
+                                continue;
+                            }
+                            el.items[i] = el.items[i]/first * 100;
+                        }
+                        
+                    });
+                    data.forEach(function(el){
+                        let test;
+                        for(var i = 0;i< el.items.length; i++){
+                            test = JSON.parse(JSON.stringify(el.items[i]));
+                            el.items[i] = test - 100;//JSON.parse(JSON.stringify(el.items[i])) - 100;
+                        }
+                    });
+                    return data;
+                }
             	function setDataForDiagrams(data, nuiData) {
+                    if(data[0].detectionVariable.defaultTypicalPeriod == "mon"){
+                         self.measureName = data[0].detectionVariable.detectionVariableName;
+                         self.measureTitle(oj.Translations.getTranslatedString(self.measureName));
+                         self.showBarCharts(false);
+                    }else{
+                        setBarCharts(nuiData);
+                        self.showBarCharts(true);
+                    }
             		 //building diagramData from json data
   	    		  var measureIds = [];
   	    		  var measures = [];
-  	    		    	    		   	    		  
+                    //console.log('this is data: ' + JSON.stringify(data));  	    		   	    		  
   	    		  //getting list of measures (detection variables) from json
   	    		  data.forEach(function(element) {
-  	    			  if(measureIds.indexOf(element.detectionVariable.id) == -1){          	    				  
+  	    			  if(measureIds.indexOf(element.detectionVariable.id) === -1){          	    				  
   	    				  measureIds.push(element.detectionVariable.id);
   	    				  var meaObj = new Object();
   	    				  meaObj.detectionVariableId = element.detectionVariable.id;
@@ -71,7 +309,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  measures.forEach(function(mea) {
   	    			  mea.measureValues = [];
   	    			  for(var i = 0; i<data.length; i++){
-  	    				  if(data[i].detectionVariable.id == mea.detectionVariableId){
+  	    				  if(data[i].detectionVariable.id === mea.detectionVariableId){
   	    					  var mv = new Object();
   	    					  mv.id = data[i].id;
   	    					  mv.value = data[i].measureValue;
@@ -94,7 +332,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    			var differentMonthsForMeasure = [];
   	    			for(var i = 0; i< mea.measureValues.length; i++){
   	    				var date = new Date(mea.measureValues[i].intervalStart);
-        	    			if(differentMonthsForMeasure.indexOf((months[date.getMonth()] + " " + date.getFullYear())) == -1){
+        	    			if(differentMonthsForMeasure.indexOf((months[date.getMonth()] + " " + date.getFullYear())) === -1){
         	    				differentMonthsForMeasure.push(months[date.getMonth()] + " " + date.getFullYear());
         	    			}
         	    			mea.months = differentMonthsForMeasure;                 	    			
@@ -108,7 +346,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  
   	    		  measures.forEach(function(mea) {
                                 /*SETTING UP COLORS FOR SERIES*/
-                                var colors = ["#d1ff1a","#afff1a","#93ff51","#5bff70","#42ff97","#59ffde","#59daff","#48b1ff","#4a6aff","#7c51ff","#a746ff","#7700e6"];                                
+                                var colors = ["#ffe119","#0082c8","#f58231","#911eb4","#46f0f0","#f032e6","#d2f53c","#008080","#aa6e28","#800000","#e6194b","#3cb44b"];                                
                                 var i = 0;
                                 var j = 0;
                                 if(mea.months.length < 3) {                                    
@@ -121,6 +359,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                 /*END COLORS*/
                                 
                                 var nuiName;
+                                var nuiShortName;
+                                var nuiKey;
   	    			mea.nuisForMeasure = [];
     	    			mea.lineSeries = [];
                                 mea.hasComments = false;
@@ -136,7 +376,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                                                                
     	    				//getting nuis from nuiData with timeinterval 
     	    				var nuisInMonth = getNuiForMeaAndMonth(mea, mon , nuiData);
-    	    				if(nuisInMonth.length == 0) {   	    					
+    	    				if(nuisInMonth.length === 0) {   	    					
     	    					//nuis += "Nui1 0\n Nui2 0\n Nui3 0\n Nui4 0";
     	    				}
     	    				else {
@@ -147,27 +387,31 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    						nuiName = nuiKey;
     	    						
     	    						switch(nuiName) {
-    	    					    case 'avg': 
-    	    					    	nuiName = "Nui1";
-    	    					    	break;
-    	    					    case 'std': 
-    	    					    	nuiName = "Nui2";
-    	    					    	break;
-    	    					    case 'delta': 
-    	    					    	nuiName = "Nui3";
-    	    					    	break;
-    	    					    case 'best': 
-    	    					    	nuiName = "Nui4";
-    	    					    	break;
-    	    						}
+                                    case 'avg': 
+                                         nuiName = "Average";
+                                         nuiShortName = "Average: ";
+                                         break;
+                                    case 'std': 
+                                         nuiName = "CV";
+                                         nuiShortName = "CV: ";
+                                         break;
+                                    case 'delta': 
+                                         nuiName = "Delta";
+                                         nuiShortName = "Delta: ";
+                                         break;
+                                    case 'best': 
+                                         nuiName = "Best";
+                                         nuiShortName = "Best: ";
+                                         break;
+                                }
     	    						
-    	    						  if(nuiObjects[nuiKey+"Object"]==null) {
+    	    						  if(!nuiObjects[nuiKey+"Object"]) {
     	    							nuiObjects[nuiKey+"Object"]= new Object();
     	    							nuiObjects[nuiKey+"Object"]["ID"] = nuiName;
     	    						  }
     	    						  
     	    						nuiObjects[nuiKey+"Object"][mon] = nui.nuiValue;
-    	    						nuis += nuiName+" "+nui.nuiValue+"\n";
+    	    						nuis += nuiShortName +" "+nui.nuiValue+"\n";
     	    						
     	    						if( ! mea.nuisForMeasure.includes(nuiObjects[nuiKey+"Object"]) ){
     	    							mea.nuisForMeasure.push(nuiObjects[nuiKey+"Object"]);
@@ -181,7 +425,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    				mea.measureValues.forEach(function(mv) {
     	    					var date = new Date(mv.intervalStart);
     	    					var testMon = months[date.getMonth()] + " " + date.getFullYear();              	    					
-    	    					if(testMon == mon){               	    						
+    	    					if(testMon === mon){               	    						
     	    						lineSerie.items.push(mv);
     	    					}             						
     	    				});
@@ -201,11 +445,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    			  nuiData.forEach(function(nui){
   	    				  
   	    				  var sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_") + 1;
-  	    				  if(nui.detectionVariable.detectionVariableName.slice(sliceIndex) == mea.measureName){
+  	    				  if(nui.detectionVariable.detectionVariableName.slice(sliceIndex) === mea.measureName){
   	    					    	    					  
   	    					  var date = new Date(nui.timeInterval.intervalStart);
   	    					  
-  	    					  if(date.getMonth() == 11) {
+  	    					  if(date.getMonth() === 11) {
   	    						  nuiMonth = "January";
   	    					  }
   	    					  else {
@@ -215,7 +459,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    					  nuiYear = date.getFullYear();
   	    					  
   	    					  
-  	    					  if(mon == nuiMonth + " " + nuiYear) {
+  	    					  if(mon === nuiMonth + " " + nuiYear) {
   	    						  finalNuis.push(nui);
   	    					  }
   	    				  }
@@ -233,6 +477,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		  
   	    		  measures.forEach(function(mea) {
                               if(mea.defaultTypicalPeriod === 'mon'){
+                                  self.remainingTitle('Measure values');
                                   mea.lineType = "straight";
                                   mea.lineSeries.forEach(function(ls) {
                                       ls.items[1] = ls.items[0];
@@ -241,7 +486,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                       }
                                   });
                               }else if(mea.defaultTypicalPeriod === '1wk'){
-                                        mea.lineType = "stepped";                                                                   
+                                  self.remainingTitle = ko.observable('Measure and NUI values');
+                                        mea.lineType = "straight";                                                                   
                                         mea.lineSeries.forEach(function(ls){
                                           var arr = [];
                                               for(var i = 0; i<= 30; i++){
@@ -251,7 +497,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                               }
                                             ls.items.forEach(function(item){
                                               var date = new Date(item.intervalStart);
-                                              var dateInMonth = date.getDate();
+                                              var dateInMonth = date.getDate() - 1;
                                               var month = date.getMonth();
                                               var bigMonths = [0,2,4,6,7,9,11];
                                               var smallMonths = [3,5,8,10];
@@ -259,13 +505,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                               if(month === 1) {
                                                   j = 28;
                                               } else if(bigMonths.includes(month)){
-                                                  j = 30;
+                                                  j = 31;
                                               }else {
-                                                  j = 29;
+                                                  j = 30;
                                               }
                                              
                                               for(var i = 0; i<j; i++){
-                                                    if(i >= dateInMonth && i < (dateInMonth + 7)){
+                                                    if(i >= (dateInMonth - 1) && i < (dateInMonth + 6)){
                                                         arr[i].value = item.value;
                                                   }
                                               }
@@ -276,11 +522,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                         });                                 
                               }
                                   else {
+                                        self.remainingTitle = ko.observable('Measure and NUI values');
                                         mea.lineType = "straight";
                                         mea.lineSeries.forEach(function(ls) {
                                                 //inserting empty dates
                                                 for(var i = 0; i< 30; i++){           	    					  
-                                                        if(ls.items[i] == null || ls.items[i] == undefined){            	    						  
+                                                        if(ls.items[i] === null || ls.items[i] === undefined){            	    						  
                                                               var item = new Object();
                                                               item.value = null;                    	    				                     	    				                     	    				  
                                                               ls.items.splice(i, 0, item);
@@ -289,7 +536,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                                         var dateStart = new Date(ls.items[i].intervalStart);
 
                                                         if(dateStart.getDate() !== i+1){          	    						  
-                                                                if(dateStart.getDate() == i){
+                                                                if(dateStart.getDate() === i){
                                                                         //if start date is the same as previous one
                                                                         //do nothing because this time interval ends on the i+1 date           	    							 
                                                                 }

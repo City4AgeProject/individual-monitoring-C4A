@@ -26,7 +26,7 @@ public class Activity extends AbstractBaseEntity<Long> {
 	@Column(name="creation_date")
 	private Date creation;
 
-	private Integer instrumental;
+	private Boolean instrumental;
 
 	public String getName() {
 		return name;
@@ -52,11 +52,11 @@ public class Activity extends AbstractBaseEntity<Long> {
 		this.creation = creation;
 	}
 
-	public Integer getInstrumental() {
+	public Boolean getInstrumental() {
 		return instrumental;
 	}
 
-	public void setInstrumental(Integer instrumental) {
+	public void setInstrumental(Boolean instrumental) {
 		this.instrumental = instrumental;
 	}
 	

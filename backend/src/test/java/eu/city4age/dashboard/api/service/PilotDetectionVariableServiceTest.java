@@ -47,12 +47,10 @@ import eu.city4age.dashboard.api.pojo.json.ConfigureDailyMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.domain.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
-import eu.city4age.dashboard.api.rest.PilotDetectionVariableService;
+import eu.city4age.dashboard.api.rest.PilotDetectionVariableEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class PilotDetectionVariableServiceTest {
 	
 	static protected Logger logger = LogManager.getLogger(PilotDetectionVariableServiceTest.class);
@@ -102,7 +100,7 @@ public class PilotDetectionVariableServiceTest {
     }
 	@Spy
 	@InjectMocks
-	PilotDetectionVariableService pilotDetectionVariableService;
+	PilotDetectionVariableEndpoint pilotDetectionVariableService;
 	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 	

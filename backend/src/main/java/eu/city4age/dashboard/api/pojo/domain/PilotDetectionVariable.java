@@ -57,7 +57,6 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 	@Column (name = "main_data_source_type", length = 3)
 	private String mainDataSourceType;
 	
-
 	public PilotDetectionVariable() {
 		
 	}

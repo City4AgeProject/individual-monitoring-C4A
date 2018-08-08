@@ -17,8 +17,6 @@ import eu.city4age.dashboard.api.ApplicationTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class ParseDateTest {
 	
 	@Test

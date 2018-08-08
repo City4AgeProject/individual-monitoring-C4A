@@ -28,8 +28,6 @@ import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class FrailtyStatusTimelineRepositoryTest {
 
 	@Autowired

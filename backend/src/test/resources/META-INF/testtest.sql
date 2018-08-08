@@ -9,6 +9,8 @@ DROP SEQUENCE IF EXISTS "testtest"."cr_profile_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."eam_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."executed_action_id_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."executed_activity_id_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."gef_interpolation_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."gef_prediction_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."geriatric_factor_value_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."inter_activity_behaviour_variation_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."location_id_seq" CASCADE;
@@ -22,6 +24,8 @@ DROP SEQUENCE IF EXISTS "testtest"."user_in_role_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."user_in_system_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."value_evidence_notice_seq" CASCADE;
 DROP SEQUENCE IF EXISTS "testtest"."variation_measure_value_seq" CASCADE;
+DROP SEQUENCE IF EXISTS "testtest"."cd_attention_status_seq" CASCADE;
+
 
 DROP TABLE IF EXISTS "testtest"."assessed_gef_value_set" CASCADE;
 DROP TABLE IF EXISTS "testtest"."assessment" CASCADE;
@@ -63,12 +67,18 @@ DROP TABLE IF EXISTS "testtest"."user_in_role" CASCADE;
 DROP TABLE IF EXISTS "testtest"."user_in_system" CASCADE;
 DROP TABLE IF EXISTS "testtest"."value_evidence_notice" CASCADE;
 DROP TABLE IF EXISTS "testtest"."variation_measure_value" CASCADE;
+DROP TABLE IF EXISTS "testtest"."gef_prediction" CASCADE;
+DROP TABLE IF EXISTS "testtest"."gef_interpolation" CASCADE;
+DROP TABLE IF EXISTS "testtest"."cd_attention_status" CASCADE;
 
 DROP VIEW IF EXISTS "testtest"."vw_detection_variable_derivation_per_user_in_role" CASCADE;
 DROP VIEW IF EXISTS "testtest"."vw_gef_values_persisted_source_ges_types" CASCADE;
 DROP VIEW IF EXISTS "testtest"."vw_mea_ges_timeinterval" CASCADE;
 DROP VIEW IF EXISTS "testtest"."vw_mea_nui_derivation_per_pilots" CASCADE;
 DROP VIEW IF EXISTS "testtest"."vw_nui_values_persisted_source_mea_types" CASCADE;
+DROP VIEW IF EXISTS "testtest"."vw_inadequate_typical_period" CASCADE;
+DROP VIEW IF EXISTS "testtest"."vw_incompatible_time_intervals_by_measure_types" CASCADE;
+DROP VIEW IF EXISTS "testtest"."vw_gef_calculated_interpolated_predicted_values" CASCADE;
 
 CREATE SEQUENCE assessment_seq
     START WITH 1
@@ -141,6 +151,20 @@ CREATE SEQUENCE executed_action_id_seq
     CACHE 1;
 
 CREATE SEQUENCE executed_activity_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE gef_interpolation_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE gef_prediction_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -243,6 +267,13 @@ CREATE TABLE assessed_gef_value_set (
     assessment_id integer,
 	CONSTRAINT assessed_gef_value_set_pkey PRIMARY KEY (gef_value_id, assessment_id)
 );
+
+CREATE SEQUENCE cd_attention_status_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 CREATE TABLE assessment (
     id integer DEFAULT nextval('assessment_seq'::regclass) NOT NULL,
@@ -437,6 +468,30 @@ CREATE TABLE frailty_status_timeline (
 	CONSTRAINT frailty_status_timeline_pkey PRIMARY KEY (time_interval_id, user_in_role_id, changed, frailty_status)
 );
 
+CREATE TABLE gef_interpolation (
+    id integer DEFAULT nextval('gef_interpolation_seq'::regclass) NOT NULL,
+    gef_value numeric(3,2) NOT NULL,
+    derivation_weight numeric(5,2),
+    data_source_type character varying(1000),
+    time_interval_id integer NOT NULL,
+    user_in_role_id integer NOT NULL,
+    gef_type_id integer,
+	CONSTRAINT gef_interpolation_pkey PRIMARY KEY (id),
+	CONSTRAINT gef_interpolation_uq UNIQUE (user_in_role_id, gef_type_id, time_interval_id)
+);
+
+CREATE TABLE gef_prediction (
+    id integer DEFAULT nextval('gef_prediction_seq'::regclass) NOT NULL,
+    gef_value numeric(3,2) NOT NULL,
+    derivation_weight numeric(5,2),
+    data_source_type character varying(1000),
+    time_interval_id integer NOT NULL,
+    user_in_role_id integer NOT NULL,
+    gef_type_id integer,
+	CONSTRAINT gef_prediction_pkey PRIMARY KEY (id),
+	CONSTRAINT gef_prediction_uq UNIQUE (user_in_role_id, gef_type_id, time_interval_id)
+);
+
 CREATE TABLE geriatric_factor_value (
     id integer DEFAULT nextval('geriatric_factor_value_seq'::regclass) NOT NULL,
     gef_value numeric(3,2),
@@ -546,6 +601,9 @@ CREATE TABLE pilot (
     latest_derived_detection_variables_computed timestamp with time zone,
     latest_configuration_update timestamp with time zone,
     time_zone character varying(50),
+    comp_zone character varying(255),
+    newest_submitted_data timestamp with time zone,
+	time_of_computation	timestamp with time zone,
 	CONSTRAINT pilot_pilot_name_key UNIQUE (pilot_name),
 	CONSTRAINT pilot_pkey PRIMARY KEY (pilot_code)
 );
@@ -633,6 +691,12 @@ CREATE TABLE variation_measure_value (
     time_interval_id integer,
 	CONSTRAINT variation_measure_value_pkey PRIMARY KEY (id),
 	CONSTRAINT variation_measure_value_uq UNIQUE (user_in_role_id, measure_type_id, time_interval_id)
+);
+
+CREATE TABLE cd_attention_status (
+	attention_status varchar(9) NOT NULL,
+	attention_status_description varchar(255),
+	CONSTRAINT cd_attention_status_pkey PRIMARY KEY (attention_status)
 );
 
 CREATE VIEW vw_detection_variable_derivation_per_user_in_role AS
@@ -730,3 +794,193 @@ CREATE VIEW vw_nui_values_persisted_source_mea_types AS
   WHERE (nui_v.user_in_role_id IN ( SELECT user_in_role.id
            FROM user_in_role
           WHERE ((user_in_role.pilot_code)::text = (vmnd.pilot_code)::text)));
+		  
+CREATE VIEW vw_inadequate_typical_period AS 
+ SELECT vmv.id AS measure_id,
+    vmv.measure_type_id,
+    dv.detection_variable_name AS measure_name,
+    dv.default_typical_period AS dv_typical_period,
+    vmv.user_in_role_id,
+    uir.pilot_code,
+    vmv.time_interval_id,
+    ti.interval_start,
+    ti.typical_period AS ti_typical_period
+   FROM (((variation_measure_value vmv
+     JOIN cd_detection_variable dv ON ((vmv.measure_type_id = dv.id)))
+     JOIN time_interval ti ON ((vmv.time_interval_id = ti.id)))
+     JOIN user_in_role uir ON ((vmv.user_in_role_id = uir.id)))
+  WHERE ((dv.default_typical_period)::text <> (ti.typical_period)::text);
+  
+CREATE VIEW vw_incompatible_time_intervals_by_measure_types AS 
+ SELECT itp.pilot_code,
+    itp.measure_name,
+    itp.dv_typical_period AS defined_default_period,
+    itp.ti_typical_period AS time_interval_submitted_by_pilot,
+    count(itp.measure_id) AS number_of_affected_values
+   FROM vw_inadequate_typical_period itp
+  GROUP BY itp.pilot_code, itp.measure_type_id, itp.measure_name, itp.dv_typical_period, itp.ti_typical_period;
+
+  
+  
+CREATE OR REPLACE VIEW "testtest"."vw_gef_calculated_interpolated_predicted_values" AS
+SELECT DISTINCT gef.id,
+    gef.gef_value,
+    gef.derivation_weight,
+    gef.data_source_type,
+    ti.id AS time_interval_id,
+    ti.interval_start,
+    to_char(ti.interval_start, 'yyyy/MM'::text) AS interval_start_label,
+    ti.typical_period,
+    ti.interval_end,
+    to_char(ti.interval_end, 'yyyy/MM'::text) AS interval_end_label,
+    pilot.time_zone,
+    pilot.comp_zone,
+    gef.user_in_role_id,
+    uis.username,
+    gef.gef_type_id,
+        CASE
+            WHEN (gef.gef_type_id = 501) THEN NULL::character varying
+            ELSE dv.detection_variable_name
+        END AS detection_variable_name,
+    dv.detection_variable_type,
+        CASE
+            WHEN (gef.gef_type_id = 501) THEN NULL::integer
+            ELSE ( SELECT pdv.derived_detection_variable_id
+               FROM md_pilot_detection_variable pdv
+              WHERE (((uir.pilot_code)::text = (pdv.pilot_code)::text) AND (pdv.detection_variable_id = gef.gef_type_id)))
+        END AS derived_detection_variable_id,
+        CASE
+            WHEN (gef.gef_type_id = 501) THEN NULL::character varying
+            ELSE ( SELECT dv_1.detection_variable_name
+               FROM (cd_detection_variable dv_1
+                 JOIN md_pilot_detection_variable pdv ON ((dv_1.id = pdv.derived_detection_variable_id)))
+              WHERE (((uir.pilot_code)::text = (pdv.pilot_code)::text) AND (pdv.detection_variable_id = gef.gef_type_id)))
+        END AS derived_detection_variable_name,
+        CASE
+            WHEN (gef.gef_type_id = 501) THEN NULL::character varying
+            ELSE ( SELECT dv_1.detection_variable_type
+               FROM (cd_detection_variable dv_1
+                 JOIN md_pilot_detection_variable pdv ON ((dv_1.id = pdv.derived_detection_variable_id)))
+              WHERE (((uir.pilot_code)::text = (pdv.pilot_code)::text) AND (pdv.detection_variable_id = gef.gef_type_id)))
+        END AS derived_detection_variable_type,
+        CASE
+            WHEN (gef.gef_type_id = 501) THEN fst.frailty_status
+            ELSE NULL::character varying
+        END AS frailty_status,
+    uir.pilot_code,
+    'c'::text AS data_type
+   FROM ((((((geriatric_factor_value gef
+     JOIN time_interval ti ON (((ti.id = gef.time_interval_id) AND ((ti.typical_period)::text = 'mon'::text))))
+     JOIN user_in_role uir ON ((uir.id = gef.user_in_role_id)))
+     JOIN user_in_system uis ON ((uir.user_in_system_id = uis.id)))
+     JOIN cd_detection_variable dv ON ((dv.id = gef.gef_type_id)))
+     JOIN pilot ON ((((uir.pilot_code)::text = (pilot.pilot_code)::text) AND (date_trunc('month'::text, timezone('UTC'::text, ti.interval_start)) = timezone('UTC'::text, ti.interval_start)))))
+     LEFT JOIN frailty_status_timeline fst ON (((uir.id = fst.user_in_role_id) AND (ti.id = fst.time_interval_id))))
+UNION ALL
+ SELECT DISTINCT gef_i.id,
+    gef_i.gef_value,
+    gef_i.derivation_weight,
+    gef_i.data_source_type,
+    ti.id AS time_interval_id,
+    ti.interval_start,
+    to_char(ti.interval_start, 'yyyy/MM'::text) AS interval_start_label,
+    ti.typical_period,
+    ti.interval_end,
+    to_char(ti.interval_end, 'yyyy/MM'::text) AS interval_end_label,
+    pilot.time_zone,
+    pilot.comp_zone,
+    gef_i.user_in_role_id,
+    uis.username,
+    gef_i.gef_type_id,
+        CASE
+            WHEN (gef_i.gef_type_id = 501) THEN NULL::character varying
+            ELSE dv.detection_variable_name
+        END AS detection_variable_name,
+    dv.detection_variable_type,
+        CASE
+            WHEN (gef_i.gef_type_id = 501) THEN NULL::integer
+            ELSE ( SELECT pdv.derived_detection_variable_id
+               FROM md_pilot_detection_variable pdv
+              WHERE (((uir.pilot_code)::text = (pdv.pilot_code)::text) AND (pdv.detection_variable_id = gef_i.gef_type_id)))
+        END AS derived_detection_variable_id,
+        CASE
+            WHEN (gef_i.gef_type_id = 501) THEN NULL::character varying
+            ELSE ( SELECT dv_1.detection_variable_name
+               FROM (cd_detection_variable dv_1
+                 JOIN md_pilot_detection_variable pdv ON ((dv_1.id = pdv.derived_detection_variable_id)))
+              WHERE (((uir.pilot_code)::text = (pdv.pilot_code)::text) AND (pdv.detection_variable_id = gef_i.gef_type_id)))
+        END AS derived_detection_variable_name,
+        CASE
+            WHEN (gef_i.gef_type_id = 501) THEN NULL::character varying
+            ELSE ( SELECT dv_1.detection_variable_type
+               FROM (cd_detection_variable dv_1
+                 JOIN md_pilot_detection_variable pdv ON ((dv_1.id = pdv.derived_detection_variable_id)))
+              WHERE (((uir.pilot_code)::text = (pdv.pilot_code)::text) AND (pdv.detection_variable_id = gef_i.gef_type_id)))
+        END AS derived_detection_variable_type,
+        CASE
+            WHEN (gef_i.gef_type_id = 501) THEN fst.frailty_status
+            ELSE NULL::character varying
+        END AS frailty_status,
+    uir.pilot_code,
+    'i'::text AS data_type
+   FROM ((((((gef_interpolation gef_i
+     JOIN time_interval ti ON (((ti.id = gef_i.time_interval_id) AND ((ti.typical_period)::text = 'mon'::text))))
+     JOIN user_in_role uir ON ((uir.id = gef_i.user_in_role_id)))
+     JOIN user_in_system uis ON ((uir.user_in_system_id = uis.id)))
+     JOIN cd_detection_variable dv ON ((dv.id = gef_i.gef_type_id)))
+     JOIN pilot ON ((((uir.pilot_code)::text = (pilot.pilot_code)::text) AND (date_trunc('month'::text, timezone('UTC'::text, ti.interval_start)) = timezone('UTC'::text, ti.interval_start)))))
+     LEFT JOIN frailty_status_timeline fst ON (((uir.id = fst.user_in_role_id) AND (ti.id = fst.time_interval_id))))
+UNION ALL
+ SELECT DISTINCT gef_p.id,
+    gef_p.gef_value,
+    gef_p.derivation_weight,
+    gef_p.data_source_type,
+    ti.id AS time_interval_id,
+    ti.interval_start,
+    to_char(ti.interval_start, 'yyyy/MM'::text) AS interval_start_label,
+    ti.typical_period,
+    ti.interval_end,
+    to_char(ti.interval_end, 'yyyy/MM'::text) AS interval_end_label,
+    pilot.time_zone,
+    pilot.comp_zone,
+    gef_p.user_in_role_id,
+    uis.username,
+    gef_p.gef_type_id,
+        CASE
+            WHEN (gef_p.gef_type_id = 501) THEN NULL::character varying
+            ELSE dv.detection_variable_name
+        END AS detection_variable_name,
+    dv.detection_variable_type,
+        CASE
+            WHEN (gef_p.gef_type_id = 501) THEN NULL::integer
+            ELSE ( SELECT pdv.derived_detection_variable_id
+               FROM md_pilot_detection_variable pdv
+              WHERE (((uir.pilot_code)::text = (pdv.pilot_code)::text) AND (pdv.detection_variable_id = gef_p.gef_type_id)))
+        END AS derived_detection_variable_id,
+        CASE
+            WHEN (gef_p.gef_type_id = 501) THEN NULL::character varying
+            ELSE ( SELECT dv_1.detection_variable_name
+               FROM (cd_detection_variable dv_1
+                 JOIN md_pilot_detection_variable pdv ON ((dv_1.id = pdv.derived_detection_variable_id)))
+              WHERE (((uir.pilot_code)::text = (pdv.pilot_code)::text) AND (pdv.detection_variable_id = gef_p.gef_type_id)))
+        END AS derived_detection_variable_name,
+        CASE
+            WHEN (gef_p.gef_type_id = 501) THEN NULL::character varying
+            ELSE ( SELECT dv_1.detection_variable_type
+               FROM (cd_detection_variable dv_1
+                 JOIN md_pilot_detection_variable pdv ON ((dv_1.id = pdv.derived_detection_variable_id)))
+              WHERE (((uir.pilot_code)::text = (pdv.pilot_code)::text) AND (pdv.detection_variable_id = gef_p.gef_type_id)))
+        END AS derived_detection_variable_type,
+        CASE
+            WHEN (gef_p.gef_type_id = 501) THEN fst.frailty_status
+            ELSE NULL::character varying
+        END AS frailty_status,
+    uir.pilot_code,
+    'p'::text AS data_type
+   FROM ((((((gef_prediction gef_p
+     JOIN time_interval ti ON (((ti.id = gef_p.time_interval_id) AND ((ti.typical_period)::text = 'mon'::text))))
+     JOIN user_in_role uir ON ((uir.id = gef_p.user_in_role_id)))
+     JOIN user_in_system uis ON ((uir.user_in_system_id = uis.id)))
+     JOIN cd_detection_variable dv ON ((dv.id = gef_p.gef_type_id)))
+     JOIN pilot ON ((((uir.pilot_code)::text = (pilot.pilot_code)::text) AND (date_trunc('month'::text, timezone('UTC'::text, ti.interval_start)) = timezone('UTC'::text, ti.interval_start)))))
+     LEFT JOIN frailty_status_timeline fst ON (((uir.id = fst.user_in_role_id) AND (ti.id = fst.time_interval_id))));

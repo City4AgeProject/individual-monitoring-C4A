@@ -1,9 +1,7 @@
 package eu.city4age.dashboard.api;
 
 import java.util.Properties;
-import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,11 +20,14 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate5.SpringSessionContext;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -39,14 +40,16 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class,
 		DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class })
 @EnableSwagger2
 @ComponentScan(basePackages = { "eu.city4age.dashboard.api.jpa", "eu.city4age.dashboard.api.rest",
-		"eu.city4age.dashboard.api.config" })
+		"eu.city4age.dashboard.api.config", "eu.city4age.dashboard.api.service", "eu.city4age.dashboard.api.py" })
 @EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.jpa", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
 @EnableScheduling
+@EnableAsync
 /**
  * Main configuration of spring-boot.
  * http://docs.spring.io/spring-boot/docs/1.3.8.RELEASE/reference/htmlsingle/#using-boot-configuration-classes
@@ -69,10 +72,10 @@ public class Application extends SpringBootServletInitializer {
 		new SpringApplication(Application.class).run(args);
 	}
 
-	@PostConstruct
+	/*@PostConstruct
 	private void defaultTimeZone() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC+2"));
-	}
+	}*/
 
 	/**
 	 * Jersey rest services spring boot integration (registering jersey
@@ -133,7 +136,11 @@ public class Application extends SpringBootServletInitializer {
 	 */
 	@Bean
 	public PlatformTransactionManager transactionManager() {
-		return new JtaTransactionManager();
+		
+		JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
+	    jtaTransactionManager.setAllowCustomIsolationLevels(true);
+
+	    return jtaTransactionManager;
 	}
 
 	/**
@@ -152,5 +159,17 @@ public class Application extends SpringBootServletInitializer {
 		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
 				.paths(PathSelectors.any()).build();
 	}
+	
+	@Bean(name="processExecutor")
+    public TaskExecutor workExecutor() {
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setThreadNamePrefix("Async-");
+        threadPoolTaskExecutor.setCorePoolSize(3);
+        threadPoolTaskExecutor.setMaxPoolSize(3);
+        threadPoolTaskExecutor.setQueueCapacity(600);
+        threadPoolTaskExecutor.afterPropertiesSet();
+        logger.info("ThreadPoolTaskExecutor set");
+        return threadPoolTaskExecutor;
+    }
 
 }

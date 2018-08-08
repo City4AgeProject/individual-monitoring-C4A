@@ -26,8 +26,6 @@ import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class UserInRoleRepositoryTest {
 	
 	private static Logger logger = LogManager.getLogger(UserInRoleRepositoryTest.class);
@@ -40,6 +38,41 @@ public class UserInRoleRepositoryTest {
 	
 	@Autowired
 	private CrProfileRepository crProfileRepository;
+	
+	@Autowired
+	private UserInSystemRepository userInSystemRepository;
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void findByPilotCodeTest( ) {
+		
+
+		Pilot.PilotCode pilotCode1 = Pilot.PilotCode.LCC;
+		Pilot.PilotCode pilotCode2 = Pilot.PilotCode.ATH;
+		
+		UserInRole uir1 = new UserInRole();
+		uir1.setPilotCode(pilotCode1);
+		userInRoleRepository.save(uir1);
+		
+		UserInRole uir2 = new UserInRole();
+		uir2.setPilotCode(pilotCode1);
+		userInRoleRepository.save(uir2);
+		
+		UserInRole uir3 = new UserInRole();
+		uir3.setPilotCode(pilotCode2);
+		userInRoleRepository.save(uir3);
+		
+		List<UserInRole> results = userInRoleRepository.findCRsByPilotCode(pilotCode1);
+		
+//		for (int i = 0; i < results.size(); i++) {
+//			logger.info("result i " + results.get(i).getId());
+//		}
+		
+		Assert.assertEquals(2, results.size());
+	
+		
+	}
 	
 		
 	@Test
@@ -56,46 +89,42 @@ public class UserInRoleRepositoryTest {
 		roleRepository.save(r2); 
 		
 		UserInRole uir1 = new UserInRole ();
-		uir1.setId(1L);
 		uir1.setPilotCode(Pilot.PilotCode.LCC);
 		uir1.setRoleId((short)1);
 		userInRoleRepository.save(uir1);
 		
 		UserInRole uir2 = new UserInRole ();
-		uir2.setId(2L);
 		uir2.setPilotCode(Pilot.PilotCode.LCC);
 		uir2.setRoleId((short)1);
 		userInRoleRepository.save(uir2);
 		
 		UserInRole uir3 = new UserInRole ();
-		uir3.setId(3L);
 		uir3.setPilotCode(Pilot.PilotCode.ATH);
 		uir3.setRoleId((short)1);
 		userInRoleRepository.save(uir3);
 		
 		UserInRole uir4 = new UserInRole ();
-		uir4.setId(4L);
 		uir4.setPilotCode(Pilot.PilotCode.ATH);
 		uir4.setRoleId((short)2);
 		userInRoleRepository.save(uir4);
 		
 				
-		List<UserInRole> result = userInRoleRepository.findByRoleIdAndPilotCode((short)1, "LCC");
+		List<UserInRole> result = userInRoleRepository.findByRoleIdAndPilotCode((short)1, Pilot.PilotCode.valueOf("LCC"));
 		Assert.assertNotNull (result);
 		Assert.assertEquals (2, result.size());
 		Assert.assertEquals(uir1.getId(), result.get(0).getId());
 		Assert.assertEquals(uir2.getId(), result.get(1).getId());
 		
-		result = userInRoleRepository.findByRoleIdAndPilotCode((short)2, "LCC");
+		result = userInRoleRepository.findByRoleIdAndPilotCode((short)2, Pilot.PilotCode.valueOf("LCC"));
 		Assert.assertNotNull (result);
 		Assert.assertEquals (0, result.size());
 		
-		result = userInRoleRepository.findByRoleIdAndPilotCode((short)1, "ATH");
+		result = userInRoleRepository.findByRoleIdAndPilotCode((short)1, Pilot.PilotCode.valueOf("ATH"));
 		Assert.assertNotNull (result);
 		Assert.assertEquals (1, result.size());
 		Assert.assertEquals(uir3.getId(), result.get(0).getId());
 		
-		result = userInRoleRepository.findByRoleIdAndPilotCode((short)2, "ATH");
+		result = userInRoleRepository.findByRoleIdAndPilotCode((short)2, Pilot.PilotCode.valueOf("ATH"));
 		Assert.assertNotNull (result);
 		Assert.assertEquals (1, result.size());
 		Assert.assertEquals(uir4.getId(), result.get(0).getId()); 
@@ -108,22 +137,20 @@ public class UserInRoleRepositoryTest {
 	public void testFindBySystemUsernameAndPassword () {
 		
 		UserInSystem uis1 = new UserInSystem ();
-		uis1.setId(1L);
 		uis1.setUsername("aaaa");
 		uis1.setPassword("aaaa");
+		userInSystemRepository.save(uis1);
 		
 		UserInSystem uis2 = new UserInSystem ();
-		uis2.setId(2L);
-		uis1.setUsername("bbbb");
-		uis1.setPassword("bbbb");
+		uis2.setUsername("bbbb");
+		uis2.setPassword("bbbb");
+		userInSystemRepository.save(uis2);
 		
 		UserInRole uir1 = new UserInRole ();
-		uir1.setId(1L);
 		uir1.setUserInSystem(uis1);
 		userInRoleRepository.save(uir1);
 		
 		UserInRole uir2 = new UserInRole ();
-		uir2.setId(2L);
 		uir2.setUserInSystem(uis2);
 		userInRoleRepository.save(uir2);
 		

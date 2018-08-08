@@ -11,8 +11,11 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -31,7 +34,9 @@ public class TimeInterval extends AbstractBaseEntity<Long> {
 	private static final long serialVersionUID = -865550404227746101L;
 
 	@JsonView(View.VariationMeasureValueView.class)
-	@Column(name = "interval_start")
+	@Column(name = "interval_start", columnDefinition= "TIMESTAMP WITH TIME ZONE")
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date intervalStart;
 
 

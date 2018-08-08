@@ -40,8 +40,6 @@ import eu.city4age.dashboard.api.pojo.persist.Filter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class AssessmentRepositoryTest {
 	
 	static protected Logger logger = LogManager.getLogger(AssessmentRepositoryTest.class);

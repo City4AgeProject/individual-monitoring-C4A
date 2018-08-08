@@ -138,6 +138,23 @@
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
 		</dependency>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.module</groupId>
+    		<artifactId>jackson-module-parameter-names</artifactId>
+		</dependency>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.datatype</groupId>
+    		<artifactId>jackson-datatype-jdk8</artifactId>
+		</dependency>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.datatype</groupId>
+    		<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		<dependency>
+    		<groupId>com.fasterxml.jackson.jaxrs</groupId>
+    		<artifactId>jackson-jaxrs-json-provider</artifactId>
+    		<version>2.9.6</version>
+		</dependency>
 		<!-- End Jackson -->
 
 		<!-- Swagger -->
@@ -192,16 +209,55 @@
 		</dependency>
 
 		<dependency>
+		    <groupId>org.python</groupId>
+		    <artifactId>jython-standalone</artifactId>
+		    <version>2.7.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
 			<version>3.2.0</version>
 		</dependency>
 
 		<dependency>
-		    <groupId>org.python</groupId>
-		    <artifactId>jython-standalone</artifactId>
-		    <version>2.7.1</version>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.4</version>
 		</dependency>
+		
+		<dependency>
+			  <groupId>com.workday</groupId>
+			  <artifactId>timeseries-forecast</artifactId>
+			  <version>1.1.1</version>
+		</dependency>
+
+	<!-- https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/timeseriesForecasting -->
+		<dependency>
+    		<groupId>nz.ac.waikato.cms.weka</groupId>
+    		<artifactId>timeseriesForecasting</artifactId>
+    		<version>1.1.25</version>
+		</dependency>
+
+	<!-- https://mvnrepository.com/artifact/com.github.signaflo/timeseries -->
+	<dependency>
+    		<groupId>com.github.signaflo</groupId>
+    		<artifactId>timeseries</artifactId>
+    		<version>0.4</version>
+	</dependency>
+
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+	<dependency>
+    	<groupId>org.apache.commons</groupId>
+    	<artifactId>commons-math3</artifactId>
+    	<version>3.6.1</version>
+	</dependency>
+	
+	<dependency>
+    	<groupId>black.ninia</groupId>
+    	<artifactId>jep</artifactId>
+    	<version>3.7.1</version>
+	</dependency>
 
 	</dependencies>
 

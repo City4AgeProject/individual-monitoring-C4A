@@ -9,11 +9,16 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,13 +35,9 @@ import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.ApplicationTest;
@@ -74,15 +75,17 @@ import eu.city4age.dashboard.api.pojo.enu.DataValidity;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.pojo.ws.C4ALoginResponse;
-import eu.city4age.dashboard.api.rest.AssessmentsService;
-import eu.city4age.dashboard.api.rest.MeasuresService;
-import eu.city4age.dashboard.api.rest.UserService;
+import eu.city4age.dashboard.api.rest.AssessmentsEndpoint;
+import eu.city4age.dashboard.api.rest.MeasuresEndpoint;
+import eu.city4age.dashboard.api.rest.UserEndpoint;
 
+/*
+ * authors: marina.andric
+ * 		    milos.holclajtner
+ */
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class AssessmentServiceTest {
 
 	static protected Logger logger = LogManager.getLogger(TimeIntervalRepositoryTest.class);
@@ -145,7 +148,7 @@ public class AssessmentServiceTest {
 	private NativeQueryRepository nativeQueryRepository;
 
 	@Autowired
-	private MeasuresService measuresService;
+	private MeasuresEndpoint measuresEndpoint;
 
 	@Autowired
 	private RoleRepository roleRepository;
@@ -157,7 +160,10 @@ public class AssessmentServiceTest {
 	private AudienceRolesRepository audienceRolesRepositoryMock;
 	
 	@Autowired
-	private UserService userService;
+	private UserEndpoint userService;
+	
+	@Autowired
+	private MeasuresService measuresService;
 	
     @Before
     public void setUp() {
@@ -166,7 +172,7 @@ public class AssessmentServiceTest {
     
 	@Spy
 	@InjectMocks
-	AssessmentsService assessmentService;
+	AssessmentsEndpoint assessmentService;
 	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
@@ -177,7 +183,6 @@ public class AssessmentServiceTest {
 		/*
 		 * Note: For the purpose of creating this test we modified Pilot.java (and consequently MeasureService.java) such that "computedStartDate" attribute is removed from 
 		 *  the json produced by addForSelectedDataSet method in AssessmentService
-		 *  @JsonPropertyOrder is added to Assessment.java
 		 */
 		
 		Pilot p1 = new Pilot();
@@ -252,8 +257,15 @@ public class AssessmentServiceTest {
 		
 		Response result = assessmentService.addForSelectedDataSet(jwt, json);
 		
-		Assert.assertEquals("{\"id\":"+ass.getId()+",\"userInRole\":{\"id\":"+userInRole.getId()+",\"pilotCode\":\"LCC\",\"pilot\":{\"pilotCode\":\"LCC\"},\"userInSystem\":{\"id\":"+uis.getId()+",\"username\":\"user\",\"password\":\"pass\"},\"roleId\":"+r1.getId()+"},\"assessmentComment\":\"Comment\",\"riskStatus\":\"A\",\"dataValidity\":\"F\",\"geriatricFactorValue\":{\"id\":"+gef.getId()+",\"gefValue\":"+gef.getGefValue()+",\"userInRole\":{\"id\":"+userInRole.getId()+",\"pilotCode\":\"LCC\",\"pilot\":{\"pilotCode\":\"LCC\"},\"userInSystem\":{\"id\":"+uis.getId()+",\"username\":\"user\",\"password\":\"pass\"},\"roleId\":"+r1.getId()+"}},\"dataValidityDesc\":\"Faulty data\",\"riskStatusDesc\":\"Alert\"}", result.getEntity());
-	
+		Assert.assertTrue(result.getEntity().toString().contains("{\"id\":"+ass.getId()+",\"userInRole\":"));
+		Assert.assertTrue(result.getEntity().toString().contains("\"userInRole\":{\"id\":"+userInRole.getId()+""));
+		Assert.assertTrue(result.getEntity().toString().contains("\"pilotCode\":\"LCC\",\"pilot\":{\"pilotCode\":\"LCC\""));
+		Assert.assertTrue(result.getEntity().toString().contains("\"userInSystem\":{\"id\":"+uis.getId()+",\"username\":\"user\",\"password\":\"pass\"},\"roleId\":"+r1.getId()+"}"));
+		Assert.assertTrue(result.getEntity().toString().contains("\"assessmentComment\":\"Comment\",\"riskStatus\":\"A\",\"dataValidity\":\"F\""));
+		Assert.assertTrue(result.getEntity().toString().contains("\"pilotCode\":\"LCC\",\"pilot\":{\"pilotCode\":\"LCC\""));
+		Assert.assertTrue(result.getEntity().toString().contains("\"dataValidityDesc\":\"Faulty data\""));
+		Assert.assertTrue(result.getEntity().toString().contains("\"riskStatusDesc\":\"Alert\""));
+		
 	}
 	
 	@Test
@@ -481,13 +493,11 @@ public class AssessmentServiceTest {
 		pdv1.setDerivedDetectionVariable(ddv1);
 		pdv1.setPilotCode(Pilot.PilotCode.LCC);
 		pdv1.setDetectionVariable(dv1);
-		pdv1.setDerivedDetectionVariable(ddv1);
 		pdv1 = pilotDetectionVariableRepository.save(pdv1);
 		PilotDetectionVariable pdv2 = new PilotDetectionVariable ();
 		pdv2.setDerivedDetectionVariable(ddv1);
 		pdv2.setPilotCode(Pilot.PilotCode.ATH);
 		pdv2.setDetectionVariable(dv1);
-		pdv2.setDerivedDetectionVariable(ddv1);
 		pdv2 = pilotDetectionVariableRepository.save(pdv2);
 		
 		UserInSystem uis = new UserInSystem ();
@@ -561,144 +571,6 @@ public class AssessmentServiceTest {
 		Assert.assertEquals("{\"series\":[{\"name\":\"Only\",\"imgSize\":\"20px\",\"markerSize\":32,\"markerDisplayed\":\"on\",\"lineType\":\"none\"}]}", output);
 
 	}
-	
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void getDiagramDataTest() throws Exception {
-		
-		/*
-		 * Test scenario
-		 * 5 time intervals
-		 * 2 detection variables: GES1 and GES2 (parent factor GEF1)
-		 * 1 value for each detection variable
-		 */
-		
-		String zone = "Europe/Athens";
-		
-		TimeInterval ti1 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+3
-				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);	
-		TimeInterval ti2 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-01-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
-				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti3 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
-				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti4 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-02-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+2
-				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-		TimeInterval ti5 = measuresService.getOrCreateTimeInterval(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), //UTC+3
-				eu.city4age.dashboard.api.pojo.enu.TypicalPeriod.MONTH);
-	
-		Pilot p1 = new Pilot();
-		p1.setPilotCode(Pilot.PilotCode.LCC);
-		p1.setTimeZone(zone);
-		pilotRepository.save(p1);
-		
-		String timeZone = timeIntervalRepository.testHql(ti3.getIntervalStart());
-		logger.info("zone: " + timeZone);
 
-		SimpleDateFormat isoFormat = new SimpleDateFormat("MM/yyyy");
-		isoFormat.setTimeZone(TimeZone.getTimeZone(p1.getTimeZone()));
-		String dateInTZ = isoFormat.format(ti1.getIntervalStart());
-		
-		UserInSystem uis1 = new UserInSystem();
-		userInSystemRepository.save(uis1);
-
-		UserInRole uir1 = new UserInRole();
-		uir1.setUserInSystem(uis1);
-		uir1.setPilotCode(Pilot.PilotCode.LCC);
-		uir1.setPilot(p1);
-		userInRoleRepository.save(uir1);
-		
-		DetectionVariableType dvt1 = DetectionVariableType.GEF;
-		detectionVariableTypeRepository.save(dvt1);
-
-		DetectionVariableType dvt2 = DetectionVariableType.GES;
-		detectionVariableTypeRepository.save(dvt2);
-		
-		DetectionVariable dv1 = new DetectionVariable();
-		dv1.setDetectionVariableName("GEF1");
-		dv1.setDetectionVariableType(dvt1);
-		detectionVariableRepository.save(dv1);
-
-		DetectionVariable dv2 = new DetectionVariable();
-		dv2.setDetectionVariableName("GES1");
-		dv2.setDetectionVariableType(dvt2);
-		detectionVariableRepository.save(dv2);
-		
-		DetectionVariable dv3 = new DetectionVariable();
-		dv3.setDetectionVariableName("GES2");
-		dv3.setDetectionVariableType(dvt2);
-		detectionVariableRepository.save(dv3);
-		
-		PilotDetectionVariable pdv1 = new PilotDetectionVariable();
-		pdv1.setDetectionVariable(dv2);
-		pdv1.setDerivedDetectionVariable(dv1);
-		pdv1.setPilotCode(Pilot.PilotCode.LCC);
-		pilotDetectionVariableRepository.save(pdv1);
-		
-		PilotDetectionVariable pdv2 = new PilotDetectionVariable();
-		pdv2.setDetectionVariable(dv3);
-		pdv2.setDerivedDetectionVariable(dv1);
-		pdv2.setPilotCode(Pilot.PilotCode.LCC);
-		pilotDetectionVariableRepository.save(pdv2);
-		
-		GeriatricFactorValue gef1 = new GeriatricFactorValue();
-		gef1.setTimeInterval(ti3);
-		gef1.setUserInRoleId(uir1.getId());
-		gef1.setUserInRole(uir1);
-		gef1.setDetectionVariableId(dv2.getId());
-		gef1.setDetectionVariable(dv2);
-		gef1.setGefValue(new BigDecimal(4.0));
-		geriatricFactorRepository.save(gef1);
-		
-		GeriatricFactorValue gef2 = new GeriatricFactorValue();
-		gef2.setTimeInterval(ti5);
-		gef2.setUserInRoleId(uir1.getId());
-		gef2.setUserInRole(uir1);
-		gef2.setDetectionVariableId(dv3.getId());
-		gef2.setDetectionVariable(dv3);
-		gef2.setGefValue(new BigDecimal(1.8).setScale(1, RoundingMode.HALF_UP));
-		geriatricFactorRepository.save(gef2);
-		
-		ti3.getGeriatricFactorValue().add(gef1);
-		timeIntervalRepository.save(ti3);
-		
-		ti5.getGeriatricFactorValue().add(gef2);
-		timeIntervalRepository.save(ti5);
-		
-		dv2.getPilotDetectionVariable().add(pdv1);
-		detectionVariableRepository.save(dv2);
-		
-		dv3.getPilotDetectionVariable().add(pdv2);
-		detectionVariableRepository.save(dv3);
-
-		List<TimeInterval> result = timeIntervalRepository.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId());
-		
-		Assert.assertNotNull(result);
-		
-		logger.info("result: " + result);
-		
-		Assert.assertEquals(3, result.size());
-		
-		Assert.assertEquals(Date.from(LocalDate.parse("2016-03-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(0).getIntervalStart());
-		Assert.assertEquals(Date.from(LocalDate.parse("2016-04-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(1).getIntervalStart());
-		Assert.assertEquals(Date.from(LocalDate.parse("2016-05-01").atStartOfDay(ZoneId.of(zone)).toInstant()), result.get(2).getIntervalStart());
-		
-		Assert.assertEquals(1, result.get(0).getGeriatricFactorValue().size());
-		Assert.assertEquals(0, result.get(1).getGeriatricFactorValue().size());
-		Assert.assertEquals(1, result.get(2).getGeriatricFactorValue().size());
-		
-		Mockito.when(timeIntervalRepositoryMock.getDiagramDataForUserInRoleId(uir1.getId(), dv1.getId())).thenReturn(result);
-		
-		Response response = assessmentService.getDiagramData(uir1.getId(), dv1.getId());
-		
-		logger.info("result: " + result);
-		
-		DataSet output = (DataSet) response.getEntity();
-		
-		String json = objectMapper.writeValueAsString(output);
-		
-		Assert.assertEquals("{\"groups\":[\"03/2016\",\"04/2016\",\"05/2016\"],\"series\":[{\"name\":\"GES1\",\"items\":[4,null,null]},{\"name\":\"GES2\",\"items\":[null,null,1.8]}]}", json);
-		
-	}
 
 }

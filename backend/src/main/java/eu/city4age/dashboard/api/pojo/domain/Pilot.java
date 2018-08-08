@@ -37,8 +37,8 @@ public class Pilot implements Serializable {
 		public String getName() {
 			return name;
 		}
-	};
-	
+	};	
+
 	@Column(name = "pilot_name")
 	private String name;
 
@@ -58,6 +58,12 @@ public class Pilot implements Serializable {
 	
 	@Column(name = "latest_configuration_update")
 	private Date latestConfigurationUpdate;
+	
+	@Column(name = "newest_submitted_data")
+	private Date newestSubmittedData;
+	
+	@Column(name = "time_of_computation")
+	private Date timeOfComputation;
 
 	@Transient
 	private YearMonth lastSubmitted;
@@ -67,9 +73,18 @@ public class Pilot implements Serializable {
 	
 	@Transient
 	private YearMonth lastConfigured;
+	
+	@Transient
+	private YearMonth startOfComputation;
+	
+	@Transient
+	private YearMonth endOfComputation;
 
 	@Column(name = "time_zone")
 	private String timeZone;
+	
+	@Column(name = "comp_zone")
+	private String compZone;
 
 	public Pilot() {
 	}
@@ -148,12 +163,52 @@ public class Pilot implements Serializable {
 		this.latestConfigurationUpdate = latestConfigurationUpdate;
 	}
 
+	public Date getNewestSubmittedData() {
+		return newestSubmittedData;
+	}
+
+	public void setNewestSubmittedData(Date newestSubmittedData) {
+		this.newestSubmittedData = newestSubmittedData;
+	}
+
 	public String getTimeZone() {
 		return timeZone;
 	}
 
 	public void setTimeZone(String timeZone) {
 		this.timeZone = timeZone;
+	}
+
+	public Date getTimeOfComputation() {
+		return timeOfComputation;
+	}
+
+	public void setTimeOfComputation(Date timeOfComputation) {
+		this.timeOfComputation = timeOfComputation;
+	}
+
+	public YearMonth getStartOfComputation() {
+		return startOfComputation;
+	}
+
+	public void setStartOfComputation(YearMonth startOfComputation) {
+		this.startOfComputation = startOfComputation;
+	}
+
+	public YearMonth getEndOfComputation() {
+		return endOfComputation;
+	}
+
+	public void setEndOfComputation(YearMonth endOfComputation) {
+		this.endOfComputation = endOfComputation;
+	}
+
+	public String getCompZone() {
+		return compZone;
+	}
+
+	public void setCompZone(String compZone) {
+		this.compZone = compZone;
 	}
 
 }

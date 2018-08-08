@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 
@@ -24,5 +25,9 @@ public interface PilotDetectionVariableRepository extends GenericRepository<Pilo
 
 	@Query("SELECT pdv FROM PilotDetectionVariable pdv INNER JOIN FETCH pdv.detectionVariable dv INNER JOIN FETCH pdv.derivedDetectionVariable ddv WHERE dv.id = :detectionVariableId AND pdv.pilotCode = :pilotCode")
 	PilotDetectionVariable findByDetectionVariableAndPilotCode(@Param("detectionVariableId") Long detectionVariableId, @Param("pilotCode") Pilot.PilotCode pilotCode);
+
+
+	@Query ("SELECT DISTINCT ddv FROM PilotDetectionVariable pdv INNER JOIN pdv.derivedDetectionVariable ddv WHERE pdv.pilotCode = :pilotCode AND ddv.detectionVariableType IN ('ovl', 'gfg', 'gef', 'ges') ")
+	List<DetectionVariable> findDetectionVariablesForPrediction(@Param("pilotCode") Pilot.PilotCode pilotCode);
 
 }

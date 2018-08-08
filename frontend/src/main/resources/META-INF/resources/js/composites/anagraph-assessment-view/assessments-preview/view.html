@@ -36,86 +36,45 @@
     display: inline-block;
 }
 
+
+
 </style>
 
-<oj-popup style="display:none; width: 360px; height:330px" id="popup1" class="popup">
-    <div class="demo-flex-display oj-flex-items-pad">
-        <div class="oj-flex oj-sm-flex-direction-column">
-            <div class="oj-flex-item">
-                <h3><span data-bind="text: $props.dataPointsMarked">&nbsp;</span></h3>
-                <oj-button class="oj-panel-remove-button demo-button"
-                           chroming="half"
-                           display="icons"
-                           on-click="[[closePopup1]]">
-                  <span slot="startIcon" class="oj-panel-remove-icon"></span> 
-                  <span>remove</span>
-                </oj-button>
-            </div>
-            <div class="oj-flex-item oj-dialog-body" style="height:176px;">
-                <!-- ko foreach: props.selectedAssessments -->
-                <div class="oj-flex oj-sm-flex-direction-column" >
-                    <div class="oj-flex-item" id="popup-text" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
-                        <img data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
-                        <b><span data-bind="text: $data.riskStatusDesc"> </span></b>
-          
-                <span data-bind="text: $parent.fromLabel"></span>
-
-                          <b><span data-bind="text: $data.from"> </span></b>
-                          <br>
-                        <span data-bind="text: $data.shortComment"> </span>
-                    </div>
-                </div>
-                <!-- /ko -->
-            </div>
-            <div class="oj-flex-item" style="height:10px"></div>
-            <div class="oj-flex-item oj-flex-items-pad">
-                <div class="oj-flex">
-                    <div class="oj-flex-item message" >
-                        <a class="link" href="#" id="addAnnotation" data-bind="click: clickShowPopupAddAssessment">
-                            <img src="images/comment_add.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-                            <span  data-bind="text: addAnnotationLabel"></span>
-                        </a>
-                    </div>
-                    <div class="oj-flex-item message" align="right">
-                        <a class="link" href="#">
-                            <img src="images/comment_view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-                            <span data-bind="text: viewAnnotationsLabel "></span>
-                        </a>
-
-                    </div>
-                </div>
-            </div>                    
-            <div class="oj-flex-item oj-flex-items-pad" data-bind="visible: shouldSeeMea">
-                <div class="oj-flex">
-                    <div class="oj-flex-item message">
-                        <a class="link" href="#" data-bind="click: viewMea">
-                            <img src="images/view.png" style="vertical-align:middle; width: 16px; height: 16px;"/>
-                            <span data-bind="text: viewDailyMeasuresLabel "></span>
-                        </a> 
-                    </div>
-                </div>
-            </div>
+<div style=" display: none;width: 210px; height:50px;" id="popup1" class="popup">
+        <div  style="padding: 4px 6px;">
+                <p><span data-bind="text: $props.dataPointsMarked">&nbsp;</span></p>
         </div>
-	        <div class="oj-flex-item" style="height:10px"></div>
-	</div>
-</oj-popup>
+        <div>
+            
+                <a class="link" href="#" id="addAnnotation" data-bind="click: clickShowPopupAddAssessment" >
+                    <div class="tooltip" style="border:1px solid #ffcc00;border-top: none;border-bottom: none;padding-bottom: 4px;padding-top: 2px;padding-left: 10px;padding-right: 10px;">
+                        <span class="tooltiptext">Add assessment</span>
+                        <img src="images/comment_add.png" style=" margin-top: 10px;width: 32px; height: 32px;"/>
+                    </div>
+                </a>
+           
+        </div>        
+</div>
+
+
+    
 <!-- Popup2 is showing when selected data points have no assessments in them -->
-<oj-popup style="display:none;width:360px;height:330px;" id="popup2" class="popup">
+<div style="display:none;width:360px;height:330px;" id="popup2" class="popup">
     <div class="demo-flex-display oj-flex-items-pad">
         <div class="oj-flex oj-sm-flex-direction-column">
             <div class="oj-flex-item">               
                 <h3><span data-bind="text: $props.dataPointsMarked">&nbsp;</span></h3>
-                <oj-button class="oj-panel-remove-button demo-button"
+<!--                <oj-button class="oj-panel-remove-button demo-button"
                            chroming="half"
                            display="icons"
                            on-click="[[closePopup2]]">
                   <span slot="startIcon" class="oj-panel-remove-icon"></span>
                   <span>remove</span>
-                </oj-button>
+                </oj-button>-->
             </div>
             <div class="oj-flex-item oj-dialog-body" style="height:176px;">
                 <!-- ko foreach: $props.selectedAssessments -->
-                <div class="oj-flex oj-sm-flex-direction-column"  >
+                <div class="oj-flex oj-sm-flex-direction-column">
                     <div class="oj-flex-item" style="border-bottom: 1px solid #e6e6e6; padding: 5px 10px 5px 10px;">
                         <img data-bind="attr: { src: riskStatusImage, title: riskStatusDesc }" style="vertical-align:bottom; width: 20px; height: 20px;"/> 
                         <b><span data-bind="text: $data.riskStatusDesc"> </span></b> from <b><span data-bind="text: $data.from"> </span></b><br>
@@ -134,8 +93,9 @@
                         </a>
                     </div>                                 
                 </div>
-            </div>                    
-            <div class="oj-flex-item oj-flex-items-pad" data-bind="visible: shouldSeeMea">
+            </div> 
+<!--            FOR VIEW DAILY MEASURES-->
+<!--            <div class="oj-flex-item oj-flex-items-pad" data-bind="visible: shouldSeeMea">
                 <div class="oj-flex">
                     <div class="oj-flex-item message">
                         <a class="link" href="#" data-bind="click: viewMea">
@@ -144,11 +104,12 @@
                         </a> 
                     </div>
                 </div>
-            </div>
+            </div>-->
                   
         </div>
         <div class="oj-flex-item" style="height:10px"></div>
         <div class="oj-flex-item" style="height:10px"></div>
      </div>                               
-</oj-popup>
+</div>
+
         

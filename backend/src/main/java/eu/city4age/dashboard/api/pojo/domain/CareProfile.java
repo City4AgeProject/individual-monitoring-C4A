@@ -53,6 +53,7 @@ public class CareProfile implements Serializable {
 	private Date lastInterventionDate;
 
 	@JsonIgnore
+	@Column(name = "created")
 	private Date created;
 
 	@JsonIgnore
@@ -65,7 +66,7 @@ public class CareProfile implements Serializable {
 	public CareProfile(UserInRole userInRoleByCreatedBy, String individualSummary, Date created) {
 		this.userInRoleByCreatedBy = userInRoleByCreatedBy;
 		this.individualSummary = individualSummary;
-		this.created = created;
+		//this.created = created;
 	}
 
 	public CareProfile(UserInRole userInRoleByLastUpdatedBy, UserInRole userInRoleByCreatedBy, String individualSummary,
@@ -77,7 +78,7 @@ public class CareProfile implements Serializable {
 		this.attentionStatus = attentionStatus;
 		this.interventionStatus = interventionStatus;
 		this.lastInterventionDate = lastInterventionDate;
-		this.created = created;
+		//this.created = created;
 		this.lastUpdated = lastUpdated;
 		this.userInRole = userInRole;
 	}

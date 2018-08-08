@@ -48,6 +48,14 @@
 			"description": "ojDiagram groups.",
 			"type": "Array<object>"
 		},
+		"seriesPrediction": {
+			"description": "ojDiagram series4Prediction.",
+			"type": "Array<object>"
+		},
+		"groupsPrediction": {
+			"description": "ojDiagram groups4Prediction.",
+			"type": "Array<object>"
+		},
 		"selectedItemsValue": {
 			"description": "Array of objects selected on diagram.",
 			"type": "Array<object>"
@@ -55,6 +63,22 @@
 		"viewPilotDetectionVariables": {
 			"description": "Array of subfactors/factors.",
 			"type": "Array<object>"
+		},
+                "risksTags": {
+			"description" : "Values of all risk statuses showed in combobox.",
+			"type": "Array<object>"           
+                },
+                "dataValiditiesTags": {
+			"description" : "Values of all data validity statuses showed in combobox.",
+			"type": "Array<object>"           
+                },
+                "roleTags": {
+			"description" : "Values of all auditience roles showed in combobox.",
+			"type": "Array<object>"           
+                },
+		"ojChartId": {
+			"description": "Id of dependent ojChart Oracle JET component.",
+			"type": "string"
 		}
 	},
 	"methods": {

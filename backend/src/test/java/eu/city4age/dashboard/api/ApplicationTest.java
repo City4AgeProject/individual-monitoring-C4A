@@ -2,9 +2,7 @@ package eu.city4age.dashboard.api;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,9 +12,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.SpringSessionContext;
@@ -31,13 +26,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import eu.city4age.dashboard.api.jpa.generic.GenericRepositoryFactoryBean;
 
 
-@Profile("test")
 @EnableAutoConfiguration
-@Configuration
-@ComponentScan(basePackages = { "eu.city4age.dashboard.api.persist", "eu.city4age.dashboard.api.rest" })
+@ComponentScan(basePackages = { "eu.city4age.dashboard.api.persist", "eu.city4age.dashboard.api.rest", "eu.city4age.dashboard.api.service" })
 @EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.jpa", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
-@PropertySource("classpath:application-test.yml")
-
 public class ApplicationTest {
 
 	static protected Logger logger = LogManager.getLogger(ApplicationTest.class);
@@ -46,10 +37,10 @@ public class ApplicationTest {
 		new SpringApplication(ApplicationTest.class).run(args);
 	}
 	
-	@PostConstruct
+	/*@PostConstruct
 	private void defaultTimeZone() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-	}
+	}*/
 	
 	@Value("${spring.datasource.url}")
 	private String url;
@@ -111,7 +102,7 @@ public class ApplicationTest {
 	public PlatformTransactionManager transactionManager() {
 		return new JpaTransactionManager();
 	}
-
+	
 	@Bean
 	public TransactionTemplate transactionTemplate() {
 		return new TransactionTemplate(transactionManager());

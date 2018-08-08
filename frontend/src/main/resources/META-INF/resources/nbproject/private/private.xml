@@ -3,17 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/composites/anagraph-assessment-view/view.html</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/composites/anagraph-assessment-view/add-assessment/viewModel.js</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/viewModels/detection_gef.js</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/composites/anagraph-assessment-view/add-assessment/metadata.json</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/composites/anagraph-assessment-view/metadata.json</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/views/detection_gef.html</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/composites/anagraph-assessment-view/viewModel.js</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/views/detection_ges.html</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/viewModels/detection_mea.js</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/composites/anagraph-assessment-view/add-assessment/view.html</file>
-            <file>file:/C:/Users/Stefan.Spasojevic/Documents/GitHub/anagraph/frontend/src/main/resources/META-INF/resources/js/viewModels/detection_ges.js</file>
+            <file>file:/C:/workspace/anagraph/frontend/src/main/resources/META-INF/resources/js/viewModels/detection_mea.js</file>
+            <file>file:/C:/workspace/anagraph/frontend/src/main/resources/META-INF/resources/js/views/detection_mea.html</file>
         </group>
     </open-files>
 </project-private>

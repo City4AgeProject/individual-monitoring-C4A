@@ -32,12 +32,10 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                     $('#dialog1').ojDialog('close');
                 };                                   
            		context.props.then(function(properties) {
-        			self.props = properties;
+        			self.props = properties;                               
                                 self.risksTags = self.props.risksTags;
                                 self.dataValiditiesTags = self.props.dataValiditiesTags;
-                                //self.roleTags = self.props.roleTags;
                                 self.roleTagsDP = new oj.ArrayDataProvider(self.props.roleTags, {idAttribute: 'value'});
-                                console.log("roleTagsDP: " + ko.toJSON(self.props.roleTags));
         		});
                 
                 $(document).ready(function(){  
@@ -51,11 +49,11 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                           
                     $( ".oj-dialog" ).mouseover(function() {
                         $("#okButton").attr("disabled", true);
-                        if(( self.selectedRiskStatus[0]=='A' || self.selectedRiskStatus[0]=='N' || self.selectedRiskStatus[0]=='W' )
-                                          &&( self.selectedRoles[0] == 7 || self.selectedRoles[0] == 8 )
-                                          &&( 	self.selectedDataValidity[0]=='FAULTY_DATA' || 
-                                                        self.selectedDataValidity[0]=='VALID_DATA' || 
-                                                        self.selectedDataValidity[0]=='QUESTIONABLE_DATA' ||
+                        if(( self.selectedRiskStatus[0]==='A' || self.selectedRiskStatus[0]==='N' || self.selectedRiskStatus[0]==='W' )
+                                          &&( self.selectedRoles[0] === 7 || self.selectedRoles[0] === 8 )
+                                          &&( 	self.selectedDataValidity[0]==='FAULTY_DATA' || 
+                                                        self.selectedDataValidity[0]==='VALID_DATA' || 
+                                                        self.selectedDataValidity[0]==='QUESTIONABLE_DATA' ||
                                                         ((self.selectedDataValidity[0]===undefined)||(self.selectedDataValidity[0]==="undefined")||(self.selectedDataValidity[0]===null))
                                                 )
                                           ){
@@ -66,7 +64,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                      
                      $(document).keypress(function(e) {
              	  		if($(".postAssessment").is(":visible") && !$("#okButton").attr("disabled")){
-             	  			if(e.which == 13){
+             	  			if(e.which === 13){
              	  			$("#textareacontrol").blur();
              	  				self.postAssessment();
              	  			}
@@ -83,53 +81,19 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                 var postAssessmentCallback = function (data) {
                     $('#dialog1').ojDialog('close');
                     $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
-
                 };
-
-                parseRisks = function (response) {
-                        return {
-                            riskStatus: response['riskStatus'],
-                            riskStatusDesc: response['riskStatusDescription'],
-                            imagePath: response['iconImagePath']};
-                    };
-
-                var collectionRisks = new oj.Collection.extend({
-                        url: CODEBOOK_SELECT_ALL_RISKS,
-                        fetchSize: -1,
-                        model: new oj.Model.extend({
-                            idAttribute: 'riskStatus',
-                            parse: parseRisks
-                        })
-                    });
-
-                self.risksCollection(new collectionRisks());
-                
-                function loadRisks() {
-                    self.risksCollection().fetch({
-                        success: function (collection, response, options) {
-                            if (self.risksTags.length === 0) {
-                                for (var i = 0; i < collection.size(); i++) {
-                                    var riskModel = collection.at(i);
-                                    //Temporary key (risk_status_+(a||w||n))
-                                    self.risksTags.push({value: riskModel.attributes.riskStatus, label: oj.Translations.getTranslatedString("risk_status_"+riskModel.attributes.riskStatus.toLowerCase()) , imagePath: riskModel.attributes.imagePath});
-                                }
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                        }
-                    });
-                }
-               
+             
                 self.postAssessment = function (data, event) {                   
                     var jwt = sessionStorage.getItem("jwt");
                     var comment = ko.toJS(self.props.commentText);
                     var riskStatus = (self.selectedRiskStatus()) ? self.selectedRiskStatus() : 'XXX'; // N-none
                     var dataValidity = (self.selectedDataValidity()) ? self.selectedDataValidity() : 'VALID_DATA';
+                    if (dataValidity !== 'FAULTY_DATA' && dataValidity !== 'VALID_DATA' && dataValidity !== 'QUESTIONABLE_DATA') {
+                        dataValidity = 'VALID_DATA';
+                    }
                     var geriatricFactorValueIds = self.props.dataPointsMarkedIds;
                     
-                    var audienceIds = ko.toJS(self.selectedRoles);
-                    console.log("audienceIds: " + audienceIds);
-                    console.log("geriatric factor value ids: " + ko.toJSON(geriatricFactorValueIds));
+                    var audienceIds = ko.toJS(self.selectedRoles);                 
                     var assessmentToPost = new AddAssessment
                             (comment, riskStatus, dataValidity, geriatricFactorValueIds, audienceIds);
                     if ( (riskStatus !== 'W' && riskStatus !== 'N' && riskStatus !== 'A') || audienceIds.length === 0
@@ -154,16 +118,12 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojcore','ojs/ojknockout', 
                 
                 function resetAddAssessment() {
                 	self.props.commentText = '';
-                	//self.selectedRiskStatus(null);
-                	//self.selectedDataValidity(null);
+                	self.selectedRiskStatus([]);
+                	self.selectedDataValidity([]);
                 	self.selectedRoles([]);
                 }
                 
-                self.attached  = function(context) {
-                    loadRisks();
                 };
-                
-            };
             return model;            
         }
 );

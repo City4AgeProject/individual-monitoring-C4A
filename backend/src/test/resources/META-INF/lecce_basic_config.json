@@ -198,7 +198,7 @@
                                     ]
                                 },
                                 {
-                                    "name": "moving_rooms",
+                                    "name": "moving_across_rooms",
                                     "level": 3,
                                     "weight": 0.2,
                                     "formula": "",

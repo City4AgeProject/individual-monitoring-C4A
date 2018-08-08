@@ -1,5 +1,9 @@
 package eu.city4age.dashboard.api.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +19,7 @@ import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,18 +28,15 @@ import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.ActivityRepository;
 import eu.city4age.dashboard.api.jpa.MTestingReadingsRepository;
-import eu.city4age.dashboard.api.jpa.TimeIntervalRepositoryTest;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.Activity;
 import eu.city4age.dashboard.api.pojo.domain.MTestingReadings;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.ws.C4AAndroidResponse;
-import eu.city4age.dashboard.api.rest.AndroidService;
+import eu.city4age.dashboard.api.rest.AndroidEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
-@WebAppConfiguration
-@ActiveProfiles("test")
 public class AndroidServiceTest {
 	
 	static protected Logger logger = LogManager.getLogger(AndroidServiceTest.class);
@@ -66,7 +65,7 @@ public class AndroidServiceTest {
     }
 	@Spy
 	@InjectMocks
-	AndroidService androidService;
+	AndroidEndpoint androidService;
 	
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 	
@@ -105,7 +104,9 @@ public class AndroidServiceTest {
 		MTestingReadings resultMTS = mTestingReadingsRepository.save(mts);
 		Mockito.when(mTestingReadingsRepositoryMock.save(mts)).thenReturn(resultMTS);
 		
-		Response response = androidService.postFromAndroid(input.toString());
+		HttpServletRequest req = null;
+		InputStream is = new ByteArrayInputStream(input.toString().getBytes());
+		Response response = androidService.postFromAndroid(is, req);
 		
 		C4AAndroidResponse responseFormatted = (C4AAndroidResponse) response.getEntity();
 		

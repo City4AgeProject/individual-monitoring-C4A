@@ -1,20 +1,22 @@
-define(['ojs/ojcore', 'knockout', 'jquery', 'setting_properties',
+define(['ojs/ojcore', 'knockout', 'jquery',
      'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
-    'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view'],
+    'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view','ojs/ojcore',
+    'ojs/ojnavigationlist','ojs/ojswitcher','ojs/ojoption','ojs/ojcollapsible','ojs/ojlabel','ojs/ojaccordion'],
 
-function (oj, ko, $, sp) {
-
+function (oj, ko, $) {
+    
     function detectionGesContentViewModel() {
     	var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
         
         var self = this;
-
-        self.careRecipientId = ko.observable();
+        self.tabValues = [{label: "Walking"}, {label : "Still moving"}];
+        self.selectedTab = ko.observable("Walking");
+        
         self.careRecipientId = parseInt(sessionStorage.getItem("crId"));
        
-        
+      
         self.selectedId = ko.observable();
         self.titleValue = ko.observable("");
 
@@ -40,16 +42,10 @@ function (oj, ko, $, sp) {
         self.dataPointsMarkedIds = ko.observableArray();
         
         self.queryParams = ko.observable();
-        self.dataValiditiesTags = ko.observableArray([
-            {value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
-            {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
-            {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
-                        console.log('this is risktags from add-assessment ' + JSON.parse(sessionStorage.getItem("risksTags")));
+       
         self.roleTags = ko.observableArray(JSON.parse(sessionStorage.getItem("roleTags")));
         self.risksTags = ko.observableArray(JSON.parse(sessionStorage.getItem("risksTags")));
-        
-
-       // self.selectGefLabel = oj.Translations.getTranslatedString("select_gef");
+        self.dataValiditiesTags = ko.observableArray(JSON.parse(sessionStorage.getItem("dataValiditiesTags")));
         
         var serverErrorCallback = function (xhr, message, error) {
             console.log(error);
@@ -76,7 +72,7 @@ function (oj, ko, $, sp) {
            $(".loader-hover").hide(); 
         };
 
-        
+                
         /*Mouse handles .. should be deleted when we found better way to fix popup position */
         var clientX;
         var clientY;
@@ -99,7 +95,24 @@ function (oj, ko, $, sp) {
         
         self.searchInput = function () {};
         self.nowrap = ko.observable(false);
-
+        
+        self.derivedMonthlyMeaDrill = function(event){
+            var selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);  
+            var meaName = event.detail['seriesData'].name;
+            sessionStorage.setItem('seeAllMeasures', 0);
+            sessionStorage.setItem('meaId', selectedId);
+            sessionStorage.setItem('meaName', selectedId);
+            oj.Router.rootInstance.go("detection_mea");           
+        };
+         /* chart data */       
+        self.lineSeriesValue = ko.observableArray();
+        self.lineGroupsValue = ko.observableArray();
+        self.derivedMonthlyMeaTitle = ko.observable("Measures’ monthly values");
+        
+        self.seeAllMeasuresForGes = function(event){
+               sessionStorage.setItem('seeAllMeasures', 1);
+               oj.Router.rootInstance.go("detection_mea");
+        };
         
     }
 

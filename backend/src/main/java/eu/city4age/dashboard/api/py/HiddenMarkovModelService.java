@@ -1,15 +1,8 @@
 package eu.city4age.dashboard.api.py;
 
-import javax.ws.rs.core.Response;
-
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import jep.Jep;
-import jep.JepException;
 
 /**
  * @author marina-andric
@@ -18,37 +11,25 @@ import jep.JepException;
 @Component
 public class HiddenMarkovModelService {
 
-	private Jep jep;
-
-	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
-
-	public HiddenMarkovModelService() throws JepException {
-		jep = new Jep();
-	}
 	
-	public HiddenMarkovModelService(Jep jep) {
-		this.jep = jep;
-	}
+	public static String clusterSingleSeries(String path, Jep jep, Integer userId, Integer varId) throws Exception {
 
-	@SuppressWarnings("resource")
-	public Response clusterSingleSeries(Integer userId) throws Exception {
-
-		String fileUrlPath = "src/main/python/";
+		/*String fileUrlPath = /*"src/main/python/" "/WEB-INF/classes/python/";*/
 		String scriptName = "learnOptimalHMMs_and_persist.py";
 		String funcName = "start";
 		
-        jep.runScript(fileUrlPath + scriptName);
-        Object result = jep.invoke(funcName, userId);
-		Response response = JerseyResponse.build(objectMapper.writeValueAsString(result.toString()));
+        jep.runScript(path + scriptName);
+        Object result = jep.invoke(funcName, userId, varId);
+        String response = result.toString();
 		return response;
 	}
 
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
 
 		HiddenMarkovModelService js = new HiddenMarkovModelService();
 		Response response = js.clusterSingleSeries(109);
 		System.out.println("done");
 
-	}
+	}*/
 
 }
