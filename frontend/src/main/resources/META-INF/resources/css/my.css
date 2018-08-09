@@ -304,4 +304,29 @@
     }
     
 }
+/*FOR TABS ON MEA PAGE*/
+.demo-tab-content {
+    height:580px;
+    overflow:auto;
+  }
+  .demo-edge-top,
+  .demo-edge-bottom {
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
+  .demo-edge-start oj-tab-bar,
+  .demo-edge-end oj-tab-bar {
+    max-width: 300px;
+    width:25%;
+  }
+  .demo-edge-start oj-switcher,
+  .demo-edge-end oj-switcher {
+    width: 75%;
+  }
+  .demo-edge-bottom oj-tab-bar,
+  .demo-edge-end oj-tab-bar {
+    -webkit-order: 1;
+    order: 1;
+}
+/*END TABS ON MEA PAGE*/
 

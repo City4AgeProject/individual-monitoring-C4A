@@ -12,9 +12,12 @@
         "oj-buttonset-many": {},
         "anagraph-assessment-view": {},
         "assessments-list": {},
+        "anagraph-measure-view": {},
         "oj-buttonset-one": {},
         "oj-collapsible": {},
-        "oj-switch": {}
+        "oj-switcher": {},
+        "oj-switch": {},
+        "oj-tab-bar": {}
     },
     "attributes": {
         "slot": {

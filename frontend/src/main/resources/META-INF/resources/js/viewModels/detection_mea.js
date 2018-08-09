@@ -1,5 +1,5 @@
 define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery',
-    'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojbutton', 'urls','anagraph-measure-view','ojs/ojlegend'],
+    'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojbutton', 'urls','anagraph-measure-view','ojs/ojlegend','ojs/ojnavigationlist','ojs/ojswitcher','ojs/ojradioset', 'ojs/ojlabel'],
         function (oj, ko, sp, app, $) {
 
             function detectionMeaViewModel() {
@@ -42,6 +42,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.clusterDataHeader = ko.observable();
                 self.clusterLegendSections = ko.observableArray();
                 
+                self.selectedItem = ko.observable("meaNui");
+                self.currentEdge = ko.observable("top");
+                self.valueChangedHandler = function (event) {
+                    var value = event.detail.value,
+                    previousValue = event.detail.previousValue;
+                    $('#demo-container').addClass('demo-edge-'+value).removeClass('demo-edge-'+previousValue);
+                };
                 
                 var lastSelected = false;
             	                                                  
@@ -76,7 +83,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                     self.clusterGroups = clusterData.groups;
                                     self.clusterSeries = clusterData.series;
                                     self.clusterSeries[0].displayInLegend = "off";
-                                    self.clusterDataHeader = "Cluster Data for " + clusterData.series[0].name;
+                                    self.clusterDataHeader = "Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name);
                                     //console.log (JSON.stringify(clusterData.legend));
                                     self.clusterLegendSections = clusterData.legend;
                                   })
