@@ -375,17 +375,9 @@ public class ViewEndpoint {
 					List<String> categories = new ArrayList<String> ();
 					String name = data.getCluster().get(j).getName();
 					categories.add(name);
-					StringBuilder id = new StringBuilder ();
-					id.append(cms.getName()).append("; ");
 					LocalDate groupDate = LocalDate.parse(data.getGroups().get(i));
 					curr = YearMonth.from(groupDate);
-					if (detectionVariableRepository.findOne(detectionVariableId).getDefaultTypicalPeriod().equals("mon")) {
-						id.append(curr.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)));
-					}
-					else {
-						id.append(curr.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH))).append(",").append(groupDate.format(DateTimeFormatter.ofPattern("dd", Locale.ENGLISH)));
-					}
-					id.append("; ").append(name);
+					Long id = data.getVmvid().get(i);
 					items.add(new ClusteredMeasuresItems(id.toString(), data.getCluster().get(j).getItems().get(i), markerShapes[j % 5], "8", colors[j], "value: " + data.getCluster().get(j).getItems().get(i).toString() + "\ngroup: " + data.getGroups().get(i) + "\ncluster: " + data.getCluster().get(j).getName(), categories));
 					break;
 				}

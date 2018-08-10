@@ -14,6 +14,8 @@ public class ClusteredMeasuresDeserializer {
 	private List<List<BigDecimal>> trans_mat;
 	
 	private List<String> groups;
+	
+	private List<Long> vmvid;
 
 	/**
 	 * 
@@ -29,12 +31,13 @@ public class ClusteredMeasuresDeserializer {
 	 * @param groups
 	 */
 	public ClusteredMeasuresDeserializer(List<ClusterDataDeserializer> cluster, List<BigDecimal> mean,
-			List<BigDecimal> var, List<List<BigDecimal>> trans_mat, List<String> groups) {
+			List<BigDecimal> var, List<List<BigDecimal>> trans_mat, List<String> groups, List<Long> vmvid) {
 		this.cluster = cluster;
 		this.mean = mean;
 		this.var = var;
 		this.trans_mat = trans_mat;
-		this.groups = groups;		
+		this.groups = groups;
+		this.vmvid = vmvid;
 	}
 
 	/**
@@ -106,4 +109,19 @@ public class ClusteredMeasuresDeserializer {
 	public void setGroups(List<String> groups) {
 		this.groups = groups;
 	}
+
+	/**
+	 * @return the vmvid
+	 */
+	public List<Long> getVmvid() {
+		return vmvid;
+	}
+
+	/**
+	 * @param vmvid the vmvid to set
+	 */
+	public void setVmvid(List<Long> vmvid) {
+		this.vmvid = vmvid;
+	}
+	
 }

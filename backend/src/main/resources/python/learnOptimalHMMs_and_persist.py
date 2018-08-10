@@ -35,7 +35,8 @@ def hmm_to_dict_single_variate_v2(data, activity, model):
     activity_data = prepare_data(data, activity)
     time_intervals = activity_data['interval_start']
     activity_data = activity_data.values[:, 2:]
-
+    vmv_ids = data['vmvid']
+    
     mean = model.means_[:, 0]
     var = model.covars_[:, 0][:, 0]
     trans_mat = model.transmat_
@@ -58,7 +59,7 @@ def hmm_to_dict_single_variate_v2(data, activity, model):
         clusterData.append(cluster[i])
     #         cluster[i].update({'name' : name, 'items' : replaceNullValues(cluster_points)})
     dict.update({'cluster': clusterData, 'mean': mean.tolist(), 'var': var.tolist(),
-                            'trans_mat': trans_mat.tolist(), 'groups': time_intervals.tolist()})
+                            'trans_mat': trans_mat.tolist(), 'groups': time_intervals.tolist(), 'vmvid': vmv_ids.tolist()})
     return dict
 
 

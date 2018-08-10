@@ -39,119 +39,97 @@ def get_data(userId, dvId):
     curr = conn.cursor()
     # data for walk distance (MEA)
     sql = ("""
-              WITH q0 AS
-             (
-              SELECT
-               uir.pilot_code      ,
-               vmv.user_in_role_id ,
-               vmv.measure_value   ,
-               vmv.time_interval_id,
-               vmv.measure_type_id
-              FROM
-               city4age_sr.user_in_role AS uir
-               JOIN
-                city4age_sr.variation_measure_value AS vmv
-                ON
-                 (
-                  uir.user_in_system_id = vmv.user_in_role_id
-                 )
-              where
-               vmv.user_in_role_id = {0}
-             )
-             ,
-             q1 AS
-             (
-              SELECT
-               q0.pilot_code             ,
-               q0.user_in_role_id        ,
-               dv.detection_variable_type,
-               dv.detection_variable_name,
-               q0.measure_value          ,
-               q0.time_interval_id
-              FROM
-               city4age_sr.cd_detection_variable as dv
-               JOIN
-                q0
-                ON
-                 (
-                  q0.measure_type_id = dv.id
-                 )
-              where
-               dv."id" = {1}
-             )
-             ,
-             minmax AS
-             (
-              SELECT
-               q1.detection_variable_name      ,
-               MIN(q1.measure_value) as min_val,
-               MAX(q1.measure_value) as max_val
-              FROM
-               q1
-              GROUP BY
-               q1.detection_variable_name
-             )
-             ,
-             q2 AS
-             (
-              SELECT
-               q1.*             ,
-               ti.interval_start,
-               ti.interval_end
-              FROM
-               q1
-               JOIN
-                city4age_sr.time_interval AS ti
-                ON
-                 (
-                  q1.time_interval_id = ti.id
-                 )
-             )
-             ,
-             q3 AS
-             (
-              SELECT
-               q2.*          ,
-               minmax.max_val,
-               minmax.min_val
-              FROM
-               q2
-               JOIN
-                minmax
-                ON
-                 (
-                  q2.detection_variable_name = minmax.detection_variable_name
-                 )
-             )
-             ,
-             res AS
-             (
-              SELECT
-               q3.pilot_code             ,
-               q3.user_in_role_id        ,
-               q3.detection_variable_type,
-               q3.detection_variable_name,
-               q3.interval_start         ,
-               q3.interval_end           ,
-               q3.measure_value          ,
-               (
-                CASE
-                 WHEN (
-                   q3.max_val - q3.min_val
-                  )
-                  = 0
-                  THEN 0
-                  ELSE (q3.measure_value - q3.min_val)/(q3.max_val - q3.min_val)
-                END
-               )
-               as Normalised
-              FROM
-               q3
-             )
-            SELECT *
-            from
-             res
-            ORDER BY res.interval_start ASC
+            WITH q0 AS (
+				SELECT
+					uir.pilot_code,
+					vmv.id AS vmvId,
+					vmv.user_in_role_id,
+					vmv.measure_value,
+					vmv.time_interval_id,
+					vmv.measure_type_id
+				FROM
+					city4age_sr.user_in_role AS uir
+				JOIN city4age_sr.variation_measure_value AS vmv ON (
+					uir.user_in_system_id = vmv.user_in_role_id
+				)
+				WHERE
+					vmv.user_in_role_id = {0}
+			),
+			 q1 AS (
+				SELECT
+					q0.pilot_code,
+					q0.user_in_role_id,
+					dv.detection_variable_type,
+					dv.detection_variable_name,
+					q0.measure_value,
+					q0.time_interval_id,
+					q0.vmvId
+				FROM
+					city4age_sr.cd_detection_variable AS dv
+				JOIN q0 ON (q0.measure_type_id = dv. ID)
+				WHERE
+					dv."id" = {1}
+			),
+			 minmax AS (
+				SELECT
+					q1.vmvId,
+					q1.detection_variable_name,
+					MIN (q1.measure_value) AS min_val,
+					MAX (q1.measure_value) AS max_val
+				FROM
+					q1
+				GROUP BY
+					q1.detection_variable_name,
+					q1.vmvId
+			),
+			 q2 AS (
+				SELECT
+					q1.*,
+					ti.interval_start,
+					ti.interval_end
+				FROM
+					q1
+				JOIN city4age_sr.time_interval AS ti ON (q1.time_interval_id = ti. ID)
+			),
+			 q3 AS (
+				SELECT
+					q2.*,
+					minmax.max_val,
+					minmax.min_val
+				FROM
+					q2
+				JOIN minmax ON (
+					q2.detection_variable_name = minmax.detection_variable_name
+				)
+			),
+			 res AS (
+				SELECT
+					DISTINCT q3.vmvId,
+					q3.pilot_code,
+					q3.user_in_role_id,
+					q3.detection_variable_type,
+					q3.detection_variable_name,
+					q3.interval_start,
+					q3.interval_end,
+					q3.measure_value,
+					(
+						CASE
+						WHEN (q3.max_val - q3.min_val) = 0 THEN
+							0
+						ELSE
+							(
+								q3.measure_value - q3.min_val
+							) / (q3.max_val - q3.min_val)
+						END
+					) AS Normalised
+				FROM
+					q3
+			) SELECT
+				*
+			FROM
+				res
+			ORDER BY
+				res.interval_start ASC
            """.format(userId, dvId))
     curr.execute(sql)
     data = pd.DataFrame(curr.fetchall())
