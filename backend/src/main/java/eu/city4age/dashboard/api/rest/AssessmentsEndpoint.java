@@ -3,6 +3,7 @@ package eu.city4age.dashboard.api.rest;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,10 +42,13 @@ import eu.city4age.dashboard.api.jpa.AssessmentRepository;
 import eu.city4age.dashboard.api.jpa.AudienceRolesRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
+import eu.city4age.dashboard.api.jpa.VmvFilteringRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.domain.VmvFiltering;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
@@ -87,6 +91,12 @@ public class AssessmentsEndpoint {
 
 	@Autowired
 	private AssessedGefValuesRepository assessedGefValuesRepository;
+	
+	@Autowired
+	private VariationMeasureValueRepository variationMeasureValueRepository;
+	
+	@Autowired
+	private VmvFilteringRepository vmvFilteringRepository;
 	
 	@Autowired
 	private AssessmentService assessmentService;
@@ -238,11 +248,13 @@ public class AssessmentsEndpoint {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = Assessment.class),
 			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
 	public Response addForSelectedDataSet(@HeaderParam("Authorization") String jwt, String json) throws JsonProcessingException, IOException {
+		
 		List<AssessmentAudienceRole> assessmentAudienceRoles = new ArrayList<AssessmentAudienceRole>();
 		List<AssessedGefValueSet> assessedGefValueSets = new ArrayList<AssessedGefValueSet>();
-
+		List<VmvFiltering> vmvFilteringList = new ArrayList<VmvFiltering>();
+		
 		AddAssessmentDeserializer data = objectMapper.readerFor(AddAssessmentDeserializer.class)
-		.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+				.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
 
 		DecodedJWT token;
 		try {
@@ -262,16 +274,27 @@ public class AssessmentsEndpoint {
 				assessmentAudienceRoles.add(new AssessmentAudienceRole.AssessmentAudienceRoleBuilder()
 						.assessmentId(assessment.getId().intValue()).userInRoleId(audienceId.intValue()).build());
 
-			for (Long gefId : data.getGeriatricFactorValueIds())
-				assessedGefValueSets.add(new AssessedGefValueSet.AssessedGefValueSetBuilder()
-						.assessmentId(assessment.getId().intValue()).gefValueId(gefId.intValue()).build());
 
 			audienceRolesRepository.save(assessmentAudienceRoles);
-			assessedGefValuesRepository.save(assessedGefValueSets);
+			
+			if (data.getType() == null) {
+				
+				for (Long gefId : data.getGeriatricFactorValueIds())
+					assessedGefValueSets.add(new AssessedGefValueSet.AssessedGefValueSetBuilder()
+							.assessmentId(assessment.getId().intValue()).gefValueId(gefId.intValue()).build());
+				assessedGefValuesRepository.save(assessedGefValueSets);
+				
+			} else {
+				
+				for (Long vmvId : data.getGeriatricFactorValueIds())
+					vmvFilteringList.add(new VmvFiltering(variationMeasureValueRepository.findOne(vmvId), new Date(), assessment));
+				vmvFilteringRepository.save(vmvFilteringList);
+				
+			}
 			
 			return JerseyResponse.build(objectMapper.writeValueAsString(assessment));
 		} catch (JWTDecodeException exception){
-			
+			exception.printStackTrace();
 			return JerseyResponse.build("402");
 		
 		}

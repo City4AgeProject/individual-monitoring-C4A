@@ -17,6 +17,8 @@ public class AddAssessmentDeserializer {
 	List<Long> geriatricFactorValueIds;
 
 	List<Long> audienceIds;
+	
+	String type;
 
 	public String getComment() {
 		return comment;
@@ -64,6 +66,20 @@ public class AddAssessmentDeserializer {
 
 	public void setAudienceIds(List<Long> audienceIds) {
 		this.audienceIds = audienceIds;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }
