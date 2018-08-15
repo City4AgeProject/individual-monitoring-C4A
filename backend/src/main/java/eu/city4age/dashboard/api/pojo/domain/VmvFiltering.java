@@ -40,10 +40,13 @@ public class VmvFiltering extends AbstractBaseEntity<Long> {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "assessment_id", referencedColumnName = "id")
 	private Assessment assessment;
-
+	
+	
+	public VmvFiltering() {
+		
+	}
 
 	public VmvFiltering(VariationMeasureValue vmv, Date validFrom, Assessment assessment) {
-		super();
 		this.vmv = vmv;
 		this.validFrom = validFrom;
 		this.assessment = assessment;

@@ -30,6 +30,7 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
+import eu.city4age.dashboard.api.service.ExcludeService;
 import eu.city4age.dashboard.api.service.MeasuresService;
 
 @Component
@@ -51,6 +52,9 @@ public class MeasuresServiceImpl implements MeasuresService {
 	
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
+	
+	@Autowired
+	private ExcludeService excludeService;
 	
 	
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
@@ -110,6 +114,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCode);
 
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
+			excludeService.excludeMeasures(vmsMonthly);
 			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth, pilotCode);
 			nuiRepository.bulkSave(nuis);
 			nuis.clear();
