@@ -5,7 +5,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,6 +49,16 @@ public class LocalTimeTest {
 		Assert.assertEquals("2008-08-07T18:08:59.697", s);
 		Assert.assertNotEquals("2008-08-07T18:08:59.696", s);
 		Assert.assertNotEquals("2008-08-07T18:08:59.698", s);
+
+	}
+	
+	
+	@Test
+	public void timeZoneOffsetTest() throws ParseException {
+
+		List<String> zoneList = new ArrayList<>(ZoneId.getAvailableZoneIds());
+		
+		for (String zone : zoneList) System.out.println(zone);
 
 	}
 

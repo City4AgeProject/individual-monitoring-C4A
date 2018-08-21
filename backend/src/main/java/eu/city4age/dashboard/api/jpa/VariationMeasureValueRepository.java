@@ -61,8 +61,8 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 	List<Object[]> computeAllDirect(@Param("intervalStart") Timestamp startOfMonth, @Param("intervalEnd") Timestamp endOfMonth, @Param("pilotCodes") List<Pilot.PilotCode> pilotCodes, @Param("dvType") DetectionVariableType detectionVariableType);
 	
 	/* * query koji odredjuje prvi timeInterval (tacnije pocetni mesec) za podatke na odredjenom pilotu */
-	@Query("SELECT DATE_TRUNC('month', TIMEZONE('UTC', MIN (ti.intervalStart))) FROM VariationMeasureValue vm INNER JOIN vm.userInRole uir INNER JOIN vm.timeInterval ti WHERE uir.pilotCode = :pilotCode")
-	Timestamp findFirstMonthForPilot (@Param ("pilotCode") Pilot.PilotCode pilotCode);
+	@Query("SELECT DATE_TRUNC('month', TIMEZONE(:timeZone, MIN (ti.intervalStart))) FROM VariationMeasureValue vm INNER JOIN vm.userInRole uir INNER JOIN vm.timeInterval ti WHERE uir.pilotCode = :pilotCode")
+	Timestamp findFirstMonthForPilot (@Param ("pilotCode") Pilot.PilotCode pilotCode, @Param("timeZone") String timeZone);
 	
 	@Query("SELECT MAX (date_trunc('mon', TIMEZONE('UTC', ti.intervalStart)))FROM VariationMeasureValue vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.timeInterval ti WHERE uir.pilotCode = :pilotCode AND DATE_TRUNC('mon', ti.intervalStart) < DATE_TRUNC ('mon', CURRENT_TIMESTAMP) AND DATE_TRUNC('mon', ti.intervalStart) < DATE_TRUNC ('mon', (SELECT p.latestSubmissionCompleted FROM Pilot p WHERE p.pilotCode = uir.pilotCode))")
 	Timestamp findMaxTimeIntervalStartByPilotCode (@Param ("pilotCode") Pilot.PilotCode pilotCode);

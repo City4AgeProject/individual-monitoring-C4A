@@ -25,7 +25,7 @@ public interface PilotRepository extends GenericRepository<Pilot, Pilot.PilotCod
 	List<Pilot> findPilotsComputed();
 	
 	/* * query koji odredjuje timeInterval (tacnije pocetni mesec) za racunanje podataka na odredjenom pilotu */
-	@Query ("SELECT DATE_TRUNC ('month', TIMEZONE ('UTC', p.latestVariablesComputed)) FROM Pilot p WHERE p.pilotCode = :pilotCode") 
+	@Query ("SELECT DATE_TRUNC ('month', TIMEZONE (p.compZone, p.latestVariablesComputed)) FROM Pilot p WHERE p.pilotCode = :pilotCode") 
 	Timestamp findNextMonthForPilot (@Param ("pilotCode") Pilot.PilotCode pilotCode);
 	
 	//upit koji vraca sve pilote za koje se radi proracun
