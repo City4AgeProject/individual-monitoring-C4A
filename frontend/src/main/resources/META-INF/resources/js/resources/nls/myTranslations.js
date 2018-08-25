@@ -297,7 +297,22 @@ define({
                 	actions:"Actions",
                 	
                 	//cr_info page translations
-                	local_pilot_data: "Local Pilot Data:"
+                	local_pilot_data: "Local Pilot Data:",
+                	hover_nuis : "Hover to see NUI values",
+                	click_notice : "Click to see evidence notice",
+                	start_month : "Start of month",
+                	end_month : "End of month",
+                	april: "April",
+                	may: "May",
+                	june: "June",
+                	july: "July",
+                	august: "August",
+                	september: "September",
+                	october: "October",
+                	november: "November",
+                	december: "December",
+                	january: "January",
+                	march: "March"
 	},
 	
 		    "zh-Hant" : true,

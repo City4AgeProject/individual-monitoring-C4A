@@ -210,7 +210,7 @@ define({
 				assign_geriatrician: "Υπεύθυνος γιατρός/γηρίατρος",
 				summary: "Σύνοψη",
 				detection_gef_groups_chart: "Συμπεριφορικοί και συναφής γηριατρικοί παράγοντες",
-				detection_gef_groups_chart_groups: "Γηριατρικοί παράγοντας ομάδες",
+				detection_gef_groups_chart_groups: "Γηριατρικοί παράγοντες ομάδες",
 				line_chart: "Γράφημα γραμμής",
 				visualisations:"Απεικονίσεις",
 				geriatric_factors:"Γηριατρικοί παράγοντες",
@@ -297,7 +297,22 @@ define({
                 actions:"Ενέργειες",
                 		
                 	//cr_info page translations
-                local_pilot_data: "Τοπικά δεδομένα πιλότου:"
+                local_pilot_data: "Τοπικά δεδομένα πιλότου:",
+                hover_nuis : "Hover to see NUI values",
+            	click_notice : "Καντε κλικ για να δείτε τις σημειωσεις",
+            	start_month : "Αρχή του μήνα",
+            	end_month : "Τέλος του μήνα",
+            	april : "Απρίλιος",
+            	may: "Μάιος",
+            	june: "Ιούνιος",
+            	july: "Ιούλιος",
+            	august: "Αυγουστος",
+            	september: "Σεπτεμβριος",
+            	october: "Οκτώβριος",
+            	november: "Νοέμβριος",
+            	december: "Δεκεμβριος",
+            	january: "Ιανουαριος",
+            	march: "Μαρτιος"
 
 			});
 

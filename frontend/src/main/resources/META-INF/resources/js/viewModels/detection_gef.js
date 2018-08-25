@@ -91,6 +91,11 @@ function (oj, ko, $) {
         self.polarChartSeriesValue = ko.observableArray([]);
         self.polarChartGroupsValue = ko.observableArray([]);
         
+        self.detectionGEFGroupsLineChartLabel = ko.observable();
+        self.lineChartLabel = ko.observable();
+        self.morphologyLabel = ko.observable();
+        self.visualisationsLabel = ko.observable();
+        
 	self.filterList = function() {
             filterAssessments(self.queryParams);
 	};
@@ -100,11 +105,10 @@ function (oj, ko, $) {
         }
 
     	//Labels on GEF page with translate option
-        
-    	self.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detection_gef_groups_chart_groups");
-    	self.lineChartLabel = oj.Translations.getTranslatedString('line_chart');
-    	self.morphologyLabel = oj.Translations.getTranslatedString('morphology');
-    	self.visualisationsLabel = oj.Translations.getTranslatedString('visualisations');
+    	self.detectionGEFGroupsLineChartLabel(oj.Translations.getTranslatedString("detection_gef_groups_chart_groups"));
+    	self.lineChartLabel(oj.Translations.getTranslatedString('line_chart'));
+    	self.morphologyLabel(oj.Translations.getTranslatedString('morphology'));
+    	self.visualisationsLabel(oj.Translations.getTranslatedString('visualisations'));
     	
         /* End Detection FGR Groups Line Chart configuration  */
 
@@ -139,10 +143,13 @@ function (oj, ko, $) {
         self.titleValue = ko.observable("");
         self.titlePart = ko.observable("");
         self.titleObj = ko.observable();
-        
-               
+        self.uiEvent = ko.observable();
+
         self.chartDrill = function (event) {
-            var ui = event.detail;
+            
+        	var ui = event.detail;
+            self.uiEvent(event);
+            
             if(ui['series']){
                 //hiding polar charts (polar charts currently not in function)
 //            document.getElementById('polarChart1').style.display = 'none';
@@ -183,9 +190,7 @@ function (oj, ko, $) {
                         data.series[ig].name = oj.Translations.getTranslatedString(data.series[ig].name);
                     }
 
-
                     var grupe = ko.observableArray(data.groups);
-
 
                     for (var jg = 0; jg < self.lineSeriesValue.length; jg++) {
                         var pomocni = [];
@@ -372,6 +377,7 @@ function (oj, ko, $) {
 
         //Loading Data for detectionGEFGroupsLineChart chart 
         function loadCRData() {
+        	self.seriesVal([]);
             $.getJSON(CARE_RECIPIENT_GROUPS + "/careRecipientId/" + self.careRecipientId + "/parentFactors/OVL/GFG")
                 .then(function (data) {
                     $.each(data.itemList, function (i, list) {
@@ -477,17 +483,53 @@ function (oj, ko, $) {
         	              
         	console.log("change language in gef...");
         	
-        	 var newLang = '';
              var lang = $('#languageBox').val();
-             newLang = lang;
 
-             oj.Config.setLocale(newLang,
+             oj.Config.setLocale(lang,
             		 function () {
                          
-            	 		$('html').attr('lang', newLang);                         
+            	 		$('html').attr('lang', lang);                         
                          
+            	 		if(document.getElementById('detectionGEFGroupsLineChart') != null){
+            	 			
+	            	 		self.detectionGEFGroupsLineChartLabel(oj.Translations.getTranslatedString("detection_gef_groups_chart_groups"));
+	            	    	self.lineChartLabel(oj.Translations.getTranslatedString('line_chart'));
+	            	    	self.morphologyLabel(oj.Translations.getTranslatedString('morphology'));
+	            	    	self.visualisationsLabel(oj.Translations.getTranslatedString('visualisations'));
+	                     	
+	            	        self.dataValiditiesTags = ko.observableArray([
+	            	            {value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
+	            	            {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
+	            	            {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
+
+	            	        loadCRData();
+	            	        document.getElementById('detectionGEFGroupsLineChart').refresh();
+            	        
+            	 		}//end if
             	 		
-                     	
+            	 		if(document.getElementById('detectionGEFGroup1FactorsChart') != null &&
+            	 		   document.getElementById('detectionGEFGroupsLineChart') != null){
+            	 			
+//            	            var title = self.titleValue();
+//            	            
+//            	            title = title.substr(title.indexOf("-"),title.length);
+//            	            console.log("title:"+title);
+//            	            
+//            	            self.titleValue(oj.Translations.getTranslatedString('gfg') + title);
+//            	            
+//            	            if (self.parentFactorId !== 1) {
+//            	                var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA + "/careRecipientId/" + self.careRecipientId + "/parentFactorId/" + self.parentFactorId,
+//            	                		loadDiagramDataCallback);
+//            	                jqXHR.fail(function (xhr, message, error) {
+//            	                    console.log('CARE_RECIPIENT_DIAGRAM_DATA web service error');
+//            	                }); 
+//            	            }
+            	 			
+            	 			self.chartDrill(self.uiEvent());
+            	            
+            	            document.getElementById('detectionGEFGroup1FactorsChart').refresh();
+            	            
+            	 		}
                      }
              );
 

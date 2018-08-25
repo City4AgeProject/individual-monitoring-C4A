@@ -230,9 +230,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                 });
                 
                 function changeLanguage(){
-                	              
-                	console.log("change language in list full...");
-                	
+                	                              	
                 	 var newLang = '';
                      var lang = $('#languageBox').val();
                      newLang = lang;
@@ -240,26 +238,31 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                      oj.Config.setLocale(newLang,
                     		 function () {
                                  
-                    	 		$('html').attr('lang', newLang);                         
-                                 
-                    	 		self.careRecipientLabel(oj.Translations.getTranslatedString("care_recipient"));
-                    	 		self.ageLabel(oj.Translations.getTranslatedString("age"));
-                    	 		self.viewMoreDetailsLabel(oj.Translations.getTranslatedString("view_more_details"));
-                    	 		self.interventionLabel(oj.Translations.getTranslatedString("view_intervention_summary"));
-                    	 		self.detectionSummaryLabel(oj.Translations.getTranslatedString("view_detection_summary"));
-                    	 		self.detectionSessionLabel(oj.Translations.getTranslatedString("open_detection_session"));
-                    	 		self.detectionInterventionLabel(oj.Translations.getTranslatedString("open_detection_intervention"));
-                    	 		self.pilotLabel(oj.Translations.getTranslatedString("pilot"));
+                    	 		if(document.getElementById('table') != null){
+                    		 
+	                    	 		$('html').attr('lang', newLang);                         
+	                                 
+	                    	 		self.careRecipientLabel(oj.Translations.getTranslatedString("care_recipient"));
+	                    	 		self.ageLabel(oj.Translations.getTranslatedString("age"));
+	                    	 		self.viewMoreDetailsLabel(oj.Translations.getTranslatedString("view_more_details"));
+	                    	 		self.interventionLabel(oj.Translations.getTranslatedString("view_intervention_summary"));
+	                    	 		self.detectionSummaryLabel(oj.Translations.getTranslatedString("view_detection_summary"));
+	                    	 		self.detectionSessionLabel(oj.Translations.getTranslatedString("open_detection_session"));
+	                    	 		self.detectionInterventionLabel(oj.Translations.getTranslatedString("open_detection_intervention"));
+	                    	 		self.pilotLabel(oj.Translations.getTranslatedString("pilot"));
+	                    	 		
+	                    	 		setColumnArray();
+	                    	 		
+	                    	 		document.getElementById('table').columns = self.columnArray;
+	                    	 		document.getElementById('table').refresh();
+	                    	 		                    
+	                    	 		self.actionsLabel(oj.Translations.getTranslatedString("actions"));
+	                    	 		self.viewMoreDetailsLabel(oj.Translations.getTranslatedString("view_more_details"));
+	                    	 		document.getElementById('menuButton').refresh();
                     	 		
-                    	 		setColumnArray();
+                    	 		}//end if
                     	 		
-                    	 		document.getElementById('table').columns = self.columnArray;
-                    	 		document.getElementById('table').refresh();
-                    	 		                    
-                    	 		self.actionsLabel(oj.Translations.getTranslatedString("actions"));
-                    	 		self.viewMoreDetailsLabel(oj.Translations.getTranslatedString("view_more_details"));
-                    	 		document.getElementById('menuButton').refresh();
-                     		}
+                     		}//end function
                      
                      );
 

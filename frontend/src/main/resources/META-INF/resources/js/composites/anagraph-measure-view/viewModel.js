@@ -8,8 +8,9 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
             	var self = this;
             	                                                     
                 self.zoom = ko.observable('live');
-                self.measureName = null;
+                self.measureName = ko.observable();
                 self.lineSeries = [];
+                self.lineGroups = ko.observable();
                 self.hiddenCategories = ko.observableArray();
                 self.visibleCategories = [];
                 self.meaComment = ko.observable();
@@ -18,44 +19,54 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.showNuis = true;
                 self.shouldSeeNotice = ko.observable(false);
                 self.legendValue = new Object();
-                context.props.then(function(properties) {
-                    self.props = properties; 
-                    self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
+                self.contextG = context;
+                
+                self.initNuis = function(context){
+                	context.props.then(function(properties) {
+	                    self.props = properties; 
+	                    self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
+	
+	                    self.measureName(oj.Translations.getTranslatedString(properties.measureName));  
 
-                    self.measureName = oj.Translations.getTranslatedString(properties.measureName);                    
-                    if(properties.baseUnit){
-                        self.measureName += " (" + properties.baseUnit + ")";
-                    }    
-                    self.hasComments = properties.hasComments;
-                    self.defaultTypicalPeriod = properties.defaultTypicalPeriod;
-                    self.lineSeries = properties.lineSeries;                    
-                    self.lineSeriesNames = [];
-                    
-                    self.lineSeries.forEach(function(ls){
-                        self.lineSeriesNames.push(ls.name);                                              
-                    });
-                                                          
-                    if(self.defaultTypicalPeriod === 'mon'){
-                        self.showNuis = false;
-                        self.lineGroups = ko.observable(["Start of month", "End of month"]);
-                        self.zoom('off');                                                                
-                    }else{                       
-                        self.lineGroups = ko.observable(["1", "2", "3", "4", "5","6","7","8","9","10",
-                                "11","12","13","14","15","16","17","18","19","20",
-                	"21","22","23","24","25","26","27","28","29","30","31"]);
-
-                    }
-                   
-                    
-                     if(self.showNuis){
-                        self.legendValue.title = "Hover to see NUI values";                                                            
-                    }else {
-                        self.legendValue.title = "Click to see evidence notice";                        
-                    }
-                     self.legendValue.titleStyle = "font-size:10px";
-                    
-                    
-                });  
+	                    if(properties.baseUnit){
+	                        self.measureName(self.measureName() + " (" + properties.baseUnit + ")");
+	                    }    
+	                    self.hasComments = properties.hasComments;
+	                    self.defaultTypicalPeriod = properties.defaultTypicalPeriod;
+	                    self.lineSeries = properties.lineSeries;                    
+	                    self.lineSeriesNames = [];
+	                    
+	                    self.lineSeries.forEach(function(ls){
+	                    	console.log(ls.name);
+	                        self.lineSeriesNames.push(ls.name);                                              
+	                    });
+	                                                          
+	                    if(self.defaultTypicalPeriod === 'mon'){
+	                        self.showNuis = false;
+	                        self.lineGroups([oj.Translations.getTranslatedString("start_month"), 
+	                        	oj.Translations.getTranslatedString("end_month")]);
+	                        self.zoom('off');                                                                
+	                    }else{                       
+	                        self.lineGroups(["1", "2", "3", "4", "5","6","7","8","9","10",
+	                                "11","12","13","14","15","16","17","18","19","20",
+	                	"21","22","23","24","25","26","27","28","29","30","31"]);
+	
+	                    }
+	                   
+	                    
+	                     if(self.showNuis){
+	                        self.legendValue.title = oj.Translations.getTranslatedString("hover_nuis");                                                            
+	                    }else {
+	                        self.legendValue.title = oj.Translations.getTranslatedString("click_notice");                        
+	                    }
+	                     self.legendValue.titleStyle = "font-size:10px";
+	                    
+	                    
+	                });  
+                
+                }//end initNuis()
+                
+                self.initNuis(context);
                 
                 self.beforeCurrentCellListener = function (event) {
                     var currentCell = event.detail.currentCell;
@@ -132,6 +143,38 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                         self.meaCommentPreview(self.meaComment());
                             }                                      
                 };  
+                
+                var languageBox = document.getElementById("languageBox");
+                languageBox.removeEventListener("valueChanged", function(event) {
+                	changeLanguage();
+                });
+                languageBox.addEventListener("valueChanged", function(event) {
+                	changeLanguage();
+                });
+                
+                function changeLanguage(){
+                	                              	
+                     var lang = $('#languageBox').val();
+
+                     oj.Config.setLocale(lang,
+                    		 function () {
+                                 
+                    	 		$('html').attr('lang', lang);                         
+                                                     	 		
+                    	 		if(document.getElementById('lineChart') != null){
+                    	 			                  	
+                    	 			self.initNuis(self.contextG);
+                    	 			var charts = document.getElementsByClassName('oj-chart');
+                    	 			
+                    	 			for(i = 0;i < charts.length; i++){
+                    	 				charts[i].refresh();
+                    	 			}
+                    	 			                   	            
+                    	 		}
+                             }
+                     );
+
+                }
                 
 	    };
 	            

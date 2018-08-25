@@ -61,7 +61,6 @@ function(oj, ko, $) {
                 self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
                 self.typeLabel = oj.Translations.getTranslatedString("type");
                 
-                
 		//event triggers when selection changed
 		self.chartOptionChange = function(event) {
                     if (!self.showSelectionOnDiagram()) {
@@ -256,13 +255,18 @@ function(oj, ko, $) {
 		var serverErrorCallback = function(xhr, message, error) {
 			console.log(error);
 		};
-
+	        
 		self.chartDrill = function(event) {
+
+			console.log("view model event:"+event);
+			
                     if(event.detail['series']){
-			console.log('drill on anagraph-assessment-view');                      
-                        self.props.selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);
-                                                   
+     	
+			console.log('drill on anagraph-assessment-view');  
+
+                        self.props.selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);                             
                         var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);
+                      
                         if(selectedDetectionVariable.detectionVariableType === 'gef'){ 
                             console.log('selected GEF');                                                                                                                                                                
                             sessionStorage.setItem("gefObj", JSON.stringify(selectedDetectionVariable));  
@@ -713,8 +717,8 @@ function(oj, ko, $) {
 					);
                     $('#multipleSelection').ojPopup('open');            
                 }
-
+              
 	}
-
+	
 	return model;
 });

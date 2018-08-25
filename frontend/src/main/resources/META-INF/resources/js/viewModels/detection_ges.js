@@ -94,6 +94,36 @@ function (oj, ko, $) {
         self.searchInput = function () {};
         self.nowrap = ko.observable(false);
 
+        var languageBox = document.getElementById("languageBox");
+        languageBox.removeEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        languageBox.addEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        
+        function changeLanguage(){
+        	              
+        	console.log("change language in detection ges...");
+        	
+             var lang = $('#languageBox').val();
+
+             oj.Config.setLocale(lang,
+            		 function () {
+                         
+            	 		$('html').attr('lang', lang);                         
+                                             	 		
+            	 		if(document.getElementById('detectionGEFGroup1FactorsChart') != null &&
+            	 		   document.getElementById('detectionGEFGroupsLineChart') == null){
+            	 			                  	 	
+            	 			self.handleActivated();
+            	            document.getElementById('detectionGEFGroup1FactorsChart').refresh();
+            	            
+            	 		}
+                     }
+             );
+
+        }
         
     }
 

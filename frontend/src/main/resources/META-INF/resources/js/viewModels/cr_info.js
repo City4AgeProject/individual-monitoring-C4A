@@ -84,9 +84,7 @@ define([ 'ojs/ojcore','knockout', 'jquery','setting_properties', 'urls', 'entiti
                 });
                 
                 function changeLanguage(){
-                	              
-                	console.log("change language in info...");
-                	
+                	                              	
                 	 var newLang = '';
                      var lang = $('#languageBox').val();
                      newLang = lang;
@@ -104,7 +102,6 @@ define([ 'ojs/ojcore','knockout', 'jquery','setting_properties', 'urls', 'entiti
                 				self.readMoreLabel = (oj.Translations.getTranslatedString("read_more"));
                 				self.local_pilot_data(oj.Translations.getTranslatedString("local_pilot_data"));
                 				
-//                				$("#detectionGEFGroupsLineChart").oj
                              }
                      );
 
