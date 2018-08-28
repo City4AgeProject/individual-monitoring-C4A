@@ -9,7 +9,7 @@ public class ClusteredMeasuresDeserializer {
 	
 	private List<BigDecimal> mean;
 	
-	private List<BigDecimal> var;
+	private List<BigDecimal> std;
 	
 	private List<List<BigDecimal>> trans_mat;
 	
@@ -26,15 +26,15 @@ public class ClusteredMeasuresDeserializer {
 	/**
 	 * @param cluster
 	 * @param mean
-	 * @param var
+	 * @param std
 	 * @param trans_mat
 	 * @param groups
 	 */
 	public ClusteredMeasuresDeserializer(List<ClusterDataDeserializer> cluster, List<BigDecimal> mean,
-			List<BigDecimal> var, List<List<BigDecimal>> trans_mat, List<String> groups, List<Long> vmvid) {
+			List<BigDecimal> std, List<List<BigDecimal>> trans_mat, List<String> groups, List<Long> vmvid) {
 		this.cluster = cluster;
 		this.mean = mean;
-		this.var = var;
+		this.std = std;
 		this.trans_mat = trans_mat;
 		this.groups = groups;
 		this.vmvid = vmvid;
@@ -68,18 +68,14 @@ public class ClusteredMeasuresDeserializer {
 		this.mean = mean;
 	}
 
-	/**
-	 * @return the var
-	 */
-	public List<BigDecimal> getVar() {
-		return var;
+	
+	
+	public List<BigDecimal> getStd() {
+		return std;
 	}
 
-	/**
-	 * @param var the var to set
-	 */
-	public void setVar(List<BigDecimal> var) {
-		this.var = var;
+	public void setStd(List<BigDecimal> std) {
+		this.std = std;
 	}
 
 	/**

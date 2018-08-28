@@ -354,13 +354,13 @@ public class ViewEndpoint {
 		
 		//String[] markerSizes = {"10", "10"}; // dodati ostale
 		
-		String[] colors = {"#ffe119","#0082c8","#f58231","#911eb4","#46f0f0","#f032e6","#d2f53c","#008080","#aa6e28","#800000",}; // dodati ostale
+		String[] colors = {"#ff3300","#ff6600","#ff8000","#ffcc00","bfff00","#99ff33","#66ff33","#008080","#aa6e28","#800000",}; // dodati ostale
 		
 		for (int i = 0; i < numOfClusters; i++) {
 			ClusteredMeasuresLegendItems cmli = new ClusteredMeasuresLegendItems ();
 			cmli.setText(data.getCluster().get(i).getName());
-			cmli.setColor(colors[i]);
-			cmli.setMarkerShape(markerShapes[i % 5]);
+			cmli.setColor(getColorsOfClusters(numOfClusters)[i]);
+			cmli.setMarkerShape("circle");
 			cmli.setMarkerSize("10");
 			cmli.setDrilling("on");
 			List<String> legendCategories = new ArrayList<String> ();
@@ -378,7 +378,7 @@ public class ViewEndpoint {
 					LocalDate groupDate = LocalDate.parse(data.getGroups().get(i));
 					curr = YearMonth.from(groupDate);
 					Long id = data.getVmvid().get(i);
-					items.add(new ClusteredMeasuresItems(id.toString(), data.getCluster().get(j).getItems().get(i), markerShapes[j % 5], "8", colors[j], "value: " + data.getCluster().get(j).getItems().get(i).toString() + "\ngroup: " + data.getGroups().get(i) + "\ncluster: " + data.getCluster().get(j).getName(), categories));
+					items.add(new ClusteredMeasuresItems(id.toString(), data.getCluster().get(j).getItems().get(i), "circle", "8", getColorsOfClusters(numOfClusters)[j], "value: " + data.getCluster().get(j).getItems().get(i).toString() + "\ngroup: " + data.getGroups().get(i) + "\ncluster: " + data.getCluster().get(j).getName(), categories));
 					break;
 				}
 			}
@@ -433,44 +433,47 @@ public class ViewEndpoint {
 			return null;
 		}	
 	}
-
+*/
 	public String[] getColorsOfClusters (int num) {
 				
 		switch (num) {
 		case 1:
-			String [] retArray1 = {"#0000ff"};
+			String [] retArray1 = {"#7EE500"};
 			return retArray1;
 		case 2:
-			String [] retArray2 = {"#0000ff", "#ff0000"};
+			String [] retArray2 = {"#D2E000", "#7EE500"};
 			return retArray2;
 		case 3:
-			String [] retArray3 = {"#0000ff", "#ffff00", "#ff0000"};
+			String [] retArray3 = {"#D2E000", "#25EA00", "#00F7F9"};
 			return retArray3;
 		case 4:
-			String [] retArray4 = {"#0000ff", "#00d5ff", "#ffff00", "#ff0000"};
+			String [] retArray4 = {"#D2E000", "#7EE500", "#00F497", "#00F7F9"};
 			return retArray4;
 		case 5:
-			String [] retArray5 = {"#0000ff", "#00d5ff", "#ffff00", "#ff0000", "#610000"};
+			String [] retArray5 = {"#DB9200", "#D2E000", "#7EE500", "#00F497", "#00F7F9"};
 			return retArray5;
 		case 6:
-			String [] retArray6 = {"#610061", "#007bff", "#81ff00", "#ff7700", "#ff0000", "#610000"};
+			String [] retArray6 = {"#D63B00", "#DB9200", "#D2E000", "#7EE500", "#25EA00", "#00F497"};
 			return retArray6;
 		case 7:
-			String [] retArray7 = {"#610061", "#0022ff", "#00ff00", "#f3ff00", "#ff2100", "#c80000", "#610000"};
+			String [] retArray7 = {"#D63B00", "#DB9200", "#D2E000", "#7EE500", "#25EA00",  "#00F497", "#00F7F9"};
 			return retArray7;
 		case 8:
-			String [] retArray8 = {"#610061", "#1700ff", "#00ffd5", "#a6ff00", "#ffa200", "#ff0000", "#d70000", "#610000"};
+			String [] retArray8 = {"#D10017", "#D63B00", "#DB9200", "#D2E000", "#7EE500", "#25EA00", "#00F497", "#00F7F9"};
 			return retArray8;
 		case 9:
-			String [] retArray9 = {"#610061", "#3d00ff", "#00d5ff", "#5eff00", "#ffff00", "#ff4f00", "#ff0000", "#c80000", "#610000"};
+			String [] retArray9 = {"#D10017", "#D63B00", "#DB9200", "#D2E000", "#7EE500", "#25EA00", "#00EF37", "#00F497", "#00F7F9"};
 			return retArray9;
 		case 10:
-			String [] retArray10 = {"#610061", "#6a00ff", "#007bff", "#00ff92", "#81ff00", "#ffff00", "#ff7700", "#ff0000", "#c80000", "#610000"};
+			String [] retArray10 = {"#D10017", "#D63B00", "#DB9200", "#D2E000", "#7EE500", "#25EA00", "#00EF37", "#00F497", "#00F7F9", "#0099FF"};
 			return retArray10;
+		case 11:
+			String [] retArray11 = {"#cc0066", "#D10017", "#D63B00", "#DB9200", "#D2E000", "#7EE500", "#25EA00", "#00EF37", "#00F497", "#00F7F9", "#0099FF"};
+			return retArray11;
 		default:			
 			return null;
 		}	
-	}*/
+	}
 		
 	public String getClusteredSeries(String path, Long userInRoleId, Long varId) throws Exception {
 		
@@ -485,9 +488,11 @@ public class ViewEndpoint {
 		jepConfig.addSharedModules("json");
 		jepConfig.addSharedModules("psycopg2");
 		jepConfig.addSharedModules("csv");
+		jepConfig.addSharedModules("sklearn");
 		jepConfig.addSharedModules("warnings");
 		jepConfig.addSharedModules("selectionCriteria");
-		jepConfig.addSharedModules("data_preparation");
+		jepConfig.addSharedModules("data_preparation_uni");
+		jepConfig.addSharedModules("data_preparation_multi");
 		jepConfig.addSharedModules("learn_optimal_model");
 		jepConfig.addSharedModules("learnOptimalHMMs_and_persist");
 		Jep jep = new Jep (jepConfig);
