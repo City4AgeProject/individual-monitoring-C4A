@@ -46,8 +46,9 @@ public class VmvFiltering extends AbstractBaseEntity<Long> {
 		
 	}
 
-	public VmvFiltering(VariationMeasureValue vmv, Date validFrom, Assessment assessment) {
+	public VmvFiltering(VariationMeasureValue vmv, String filterType, Date validFrom, Assessment assessment) {
 		this.vmv = vmv;
+		this.filterType = filterType;
 		this.validFrom = validFrom;
 		this.assessment = assessment;
 	}

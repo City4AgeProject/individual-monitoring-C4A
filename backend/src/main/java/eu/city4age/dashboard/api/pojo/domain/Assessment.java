@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -67,6 +68,9 @@ public class Assessment extends AbstractBaseEntity<Long> {
 	@ManyToOne(targetEntity = GeriatricFactorValue.class, cascade = CascadeType.ALL)
 	@JoinTable(name = "assessed_gef_value_set", joinColumns = @JoinColumn(name = "assessment_id"), inverseJoinColumns = @JoinColumn(name = "gef_value_id"))
 	private GeriatricFactorValue geriatricFactorValue;
+	
+	@OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY)
+	private Set<VmvFiltering> vmvFiltering = new HashSet<VmvFiltering>();
 
 	/*
 	 * @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE },

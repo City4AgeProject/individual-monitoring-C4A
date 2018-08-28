@@ -5,6 +5,10 @@ public class View {
 	public interface BaseView {}
 
 	public interface AssessmentView extends BaseView {}
+	
+	public interface GefAssessmentView extends AssessmentView {}
+	
+	public interface ClusterAssessmentView extends AssessmentView {}
 
 	public interface TimeIntervalView extends BaseView {}
 

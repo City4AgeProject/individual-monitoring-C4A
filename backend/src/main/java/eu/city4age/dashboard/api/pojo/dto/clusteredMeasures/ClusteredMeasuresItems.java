@@ -16,6 +16,8 @@ public class ClusteredMeasuresItems {
 	
 	private String shortDesc;
 	
+	private String source;
+	
 	private List<String> categories;
 
 	/**
@@ -31,16 +33,18 @@ public class ClusteredMeasuresItems {
 	 * @param markerSize
 	 * @param color
 	 * @param shortDesc
+	 * @param source
 	 * @param categories
 	 */
 	public ClusteredMeasuresItems(String id, String value, String markerShape, String markerSize, String color,
-			String shortDesc, List<String> categories) {
+			String shortDesc, String source, List<String> categories) {
 		this.id = id;
 		this.value = value;
 		this.markerShape = markerShape;
 		this.markerSize = markerSize;
 		this.color = color;
 		this.shortDesc = shortDesc;
+		this.source = source;
 		this.categories = categories;
 	}
 
@@ -140,6 +144,20 @@ public class ClusteredMeasuresItems {
 	 */
 	public void setCategories(List<String> categories) {
 		this.categories = categories;
+	}
+
+	/**
+	 * @return the source
+	 */
+	public String getSource() {
+		return source;
+	}
+
+	/**
+	 * @param source the source to set
+	 */
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 }

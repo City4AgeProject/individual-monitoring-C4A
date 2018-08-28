@@ -96,7 +96,7 @@ public class ViewEndpoint {
 	private DetectionVariableRepository detectionVariableRepository;
 	
 	@Autowired
-	private TimeIntervalRepository timeIntervalRepository;
+	private TimeIntervalRepository timeIntervalRepository;	
 	
 	@Autowired
 	private ViewService viewService;
@@ -350,11 +350,11 @@ public class ViewEndpoint {
 		
 		int numOfClusters = data.getCluster().size();	
 		
-		String[] markerShapes = {"circle", "square", "plus", "diamond", "triangleDown"}; // dodati ostale
+		//String[] markerShapes = {"circle", "square", "plus", "diamond", "triangleDown"}; // dodati ostale
 		
 		//String[] markerSizes = {"10", "10"}; // dodati ostale
 		
-		String[] colors = {"#ff3300","#ff6600","#ff8000","#ffcc00","bfff00","#99ff33","#66ff33","#008080","#aa6e28","#800000",}; // dodati ostale
+		//String[] colors = {"#ff3300","#ff6600","#ff8000","#ffcc00","bfff00","#99ff33","#66ff33","#008080","#aa6e28","#800000",}; // dodati ostale
 		
 		for (int i = 0; i < numOfClusters; i++) {
 			ClusteredMeasuresLegendItems cmli = new ClusteredMeasuresLegendItems ();
@@ -369,6 +369,9 @@ public class ViewEndpoint {
 			legendItems.add(cmli);
 		}		
 		
+		List<Long> dataIDs = new ArrayList<Long> ();
+		List<String> dataIDsStrings = new ArrayList<String> ();
+		
 		for (int i = 0; i < data.getGroups().size(); i++) {
 			for (int j = 0; j < numOfClusters; j++) {
 				if (!data.getCluster().get(j).getItems().get(i).equals("null")) {
@@ -378,7 +381,9 @@ public class ViewEndpoint {
 					LocalDate groupDate = LocalDate.parse(data.getGroups().get(i));
 					curr = YearMonth.from(groupDate);
 					Long id = data.getVmvid().get(i);
-					items.add(new ClusteredMeasuresItems(id.toString(), data.getCluster().get(j).getItems().get(i), "circle", "8", getColorsOfClusters(numOfClusters)[j], "value: " + data.getCluster().get(j).getItems().get(i).toString() + "\ngroup: " + data.getGroups().get(i) + "\ncluster: " + data.getCluster().get(j).getName(), categories));
+					dataIDs.add(id);
+					dataIDsStrings.add(id.toString());
+					items.add(new ClusteredMeasuresItems(id.toString(), data.getCluster().get(j).getItems().get(i), "circle", "8", getColorsOfClusters(numOfClusters)[j], "value: " + data.getCluster().get(j).getItems().get(i).toString() + "\ngroup: " + data.getGroups().get(i) + "\ncluster: " + data.getCluster().get(j).getName(), null, categories));
 					break;
 				}
 			}
@@ -393,6 +398,25 @@ public class ViewEndpoint {
 		List<ClusteredMeasuresLegend> cmsLegendList = new ArrayList<ClusteredMeasuresLegend> ();
 		cmsLegendList.add(legend);
 		response.setLegend(cmsLegendList);
+		
+		/*List<ClusteredMeasuresAssessments> cmsAssessments = new ArrayList <ClusteredMeasuresAssessments> ();
+		Map<String, Object> inQueryParams = new HashMap<String, Object>();
+		inQueryParams.put("dataPointsIds", dataIDs);
+		
+		List<Filter> filters = new ArrayList<Filter>();
+		
+		List<Assessment> assessmentList = assessmentRepository.doQueryWithFilter(filters, "findClusterForSelectedDataSet", inQueryParams);
+		logger.info ("listSize: " + assessmentList.size());
+		for (Assessment a : assessmentList) {
+			//logger.info(a);
+			Character filterType = vmvFilteringRepository.findFilterTypeByAssessmentId(a);
+			List<Long> vmvIDs = vmvFilteringRepository.findVmvIDsByAssessment (a);
+			cmsAssessments.add(new ClusteredMeasuresAssessments (a.getId(), filterTypeRepository.findOne(filterType), a.getAssessmentComment(), 
+					a.getCreated(), a.getUpdated(), a.getUserInRole(), vmvIDs));
+		}
+		
+		response.setAssessments(cmsAssessments);*/
+		response.setDataIDs(dataIDsStrings);
 		
 		return JerseyResponse.build(objectMapper.writeValueAsString(response));
 	}

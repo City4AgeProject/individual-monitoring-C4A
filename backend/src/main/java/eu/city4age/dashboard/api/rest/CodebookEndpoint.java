@@ -20,8 +20,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.jpa.FilterTypeRepository;
 import eu.city4age.dashboard.api.jpa.RiskStatusRepository;
 import eu.city4age.dashboard.api.jpa.RoleRepository;
+import eu.city4age.dashboard.api.pojo.domain.FilterType;
 import eu.city4age.dashboard.api.pojo.domain.RiskStatus;
 import eu.city4age.dashboard.api.pojo.domain.Role;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
@@ -52,6 +54,9 @@ public class CodebookEndpoint {
 
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private FilterTypeRepository filterTypeRepository;
 
 	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
@@ -81,6 +86,16 @@ public class CodebookEndpoint {
 		List<Role> roles = roleRepository.findByStakeholderAbbreviation(stakeholderAbbr);
 
 		return JerseyResponse.build(objectMapper.writeValueAsString(roles));
+	}
+	
+	@GET	
+	@Path("filterTypes")	
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response filterTypes() throws Exception {
+		
+		List<FilterType> filterTypes = filterTypeRepository.findAll();
+
+		return JerseyResponse.build(objectMapper.writeValueAsString(filterTypes));
 	}
 
 

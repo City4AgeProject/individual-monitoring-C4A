@@ -41,6 +41,7 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "pilot_code", updatable = false, insertable = false)
+	@JsonIgnore
 	private Pilot pilot;
 
 	@JsonIgnore

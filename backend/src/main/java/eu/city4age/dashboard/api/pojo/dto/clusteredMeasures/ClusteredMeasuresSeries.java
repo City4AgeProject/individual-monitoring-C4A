@@ -15,6 +15,8 @@ public class ClusteredMeasuresSeries {
 	private String lineWidth;
 	
 	private String lineStyle;
+	
+	private String displayInLegend;
 
 	/**
 	 * 
@@ -29,15 +31,17 @@ public class ClusteredMeasuresSeries {
 	 * @param color
 	 * @param lineWidth
 	 * @param lineStyle
+	 * @param displayInLegend
 	 */
 	public ClusteredMeasuresSeries(String name, List<ClusteredMeasuresItems> items, String markerDisplayed,
-			String color, String lineWidth, String lineStyle) {
+			String color, String lineWidth, String lineStyle, String displayInLegend) {
 		this.name = name;
 		this.items = items;
 		this.markerDisplayed = markerDisplayed;
 		this.color = color;
 		this.lineWidth = lineWidth;
 		this.lineStyle = lineStyle;
+		this.displayInLegend = displayInLegend;
 	}
 
 	/**
@@ -122,5 +126,19 @@ public class ClusteredMeasuresSeries {
 	 */
 	public void setLineStyle(String lineStyle) {
 		this.lineStyle = lineStyle;
+	}
+
+	/**
+	 * @return the displayInLegend
+	 */
+	public String getDisplayInLegend() {
+		return displayInLegend;
+	}
+
+	/**
+	 * @param displayInLegend the displayInLegend to set
+	 */
+	public void setDisplayInLegend(String displayInLegend) {
+		this.displayInLegend = displayInLegend;
 	}
 }

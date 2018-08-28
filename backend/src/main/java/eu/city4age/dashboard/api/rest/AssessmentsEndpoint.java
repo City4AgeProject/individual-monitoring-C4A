@@ -1,11 +1,17 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -40,6 +46,7 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.AssessedGefValuesRepository;
 import eu.city4age.dashboard.api.jpa.AssessmentRepository;
 import eu.city4age.dashboard.api.jpa.AudienceRolesRepository;
+import eu.city4age.dashboard.api.jpa.FilterTypeRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
@@ -47,10 +54,15 @@ import eu.city4age.dashboard.api.jpa.VmvFilteringRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
+import eu.city4age.dashboard.api.pojo.domain.FilterType;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.VmvFiltering;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
+import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresAssessments;
+import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredVmv;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
+import eu.city4age.dashboard.api.pojo.json.clusteredMeasures.AddAssessmentClusterDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
@@ -97,6 +109,9 @@ public class AssessmentsEndpoint {
 	
 	@Autowired
 	private VmvFilteringRepository vmvFilteringRepository;
+	
+	@Autowired
+	private FilterTypeRepository filterTypeRepository;
 	
 	@Autowired
 	private AssessmentService assessmentService;
@@ -287,7 +302,7 @@ public class AssessmentsEndpoint {
 			} else {
 				
 				for (Long vmvId : data.getGeriatricFactorValueIds())
-					vmvFilteringList.add(new VmvFiltering(variationMeasureValueRepository.findOne(vmvId), new Date(), assessment));
+					vmvFilteringList.add(new VmvFiltering(variationMeasureValueRepository.findOne(vmvId), "", new Date(), assessment));
 				vmvFilteringRepository.save(vmvFilteringList);
 				
 			}
@@ -323,6 +338,148 @@ public class AssessmentsEndpoint {
 		assessmentRepository.delete(assessment);
 
 		return JerseyResponse.build("Deleted");
+	}
+	
+	@POST
+	@Path("addAssessmentForClusteredMeasures")	
+	public Response testAdd(@HeaderParam("Authorization") String jwt, String json) throws JsonProcessingException, IOException {
+		
+		DecodedJWT token;
+		Assessment assessment;
+		try {
+						
+			token = JWT.decode(jwt);
+			String username = token.getClaim("usr").asString();
+			UserInRole userInRole = userInRoleRepository.findBySystemUsername(username);
+			
+			AddAssessmentClusterDeserializer data = objectMapper.readerFor(AddAssessmentClusterDeserializer.class)
+					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+			
+			logger.info("data: " + objectMapper.writeValueAsString(data));
+			
+			assessment = new Assessment.AssessmentBuilder().userInRole(userInRole)
+					.assessmentComment(data.getComment())
+					.riskStatus(null)
+					.dataValidity(null).build();
+			
+			assessment = assessmentRepository.save(assessment);
+			
+			for (Long id: data.getDataIDs()) {
+				vmvFilteringRepository.save(new VmvFiltering(variationMeasureValueRepository.findOne(id), data.getFilterType().toString(), new Date (), assessment));
+			
+			}
+		} catch (JWTDecodeException exception){
+			exception.printStackTrace();
+			return JerseyResponse.build("402");
+		}
+		logger.info("body: " + json);
+		
+		return JerseyResponse.build(objectMapper.writeValueAsString(assessment));
+	}
+	
+	@GET
+	@Path("clusterAssessments/dataPointsIds/{dataPointsIds : .+}")	
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response clusterAssessments (@PathParam(value = "dataPointsIds") List<PathSegment> dataPointsIds,
+			@QueryParam(value = "roleId") Long roleId,
+			@QueryParam(value = "orderById") Long orderById,
+			@QueryParam(value = "riskStatusWarning") Boolean riskStatusWarning,
+			@QueryParam(value = "riskStatusAlert") Boolean riskStatusAlert,
+			@QueryParam(value = "riskStatusNoRisk") Boolean riskStatusNoRisk,
+			@QueryParam(value = "dataValidityQuestionable") Boolean dataValidityQuestionable,
+			@QueryParam(value = "dataValidityFaulty") Boolean dataValidityFaulty,
+			@QueryParam(value = "dataValidityValid") Boolean dataValidityValid) throws JsonProcessingException, IOException {		
+		
+		List<Assessment> assessmentList;
+		
+		for (PathSegment segment: dataPointsIds) {
+			logger.info(segment.toString());
+		}
+
+		Map<String, Object> inQueryParams = new HashMap<String, Object>();
+		inQueryParams.put("dataPointsIds", assessmentService.convertToListLong(dataPointsIds));
+		
+		List<Filter> filters = new ArrayList<Filter>();
+		
+		assessmentList = assessmentRepository.doQueryWithFilter(filters, "findClusterForSelectedDataSet", inQueryParams);
+		
+		String typicalPeriod = null;
+		ZoneId timeZone = null;
+		DateTimeFormatter dtf = null;
+		
+		List<ClusteredMeasuresAssessments> cmsAssessments = new ArrayList <ClusteredMeasuresAssessments> ();
+		for (Assessment a : assessmentList) {
+			//logger.info(a);
+			Character filterType = vmvFilteringRepository.findFilterTypeByAssessmentId(a);
+			List<Long> vmvIDs = vmvFilteringRepository.findVmvIDsByAssessment (a);
+			List<VariationMeasureValue> vmvList = variationMeasureValueRepository.findAll(vmvIDs);
+			List<ClusteredVmv> assessmentMeasures = new ArrayList<ClusteredVmv> ();
+			FilterType filter = filterTypeRepository.findOne(filterType);
+			
+			List<String> dataIDs = new ArrayList <String> ();
+			for (Long vmvID : vmvIDs)
+				dataIDs.add(vmvID.toString());
+			
+			BigDecimal minValue = null;
+			BigDecimal maxValue = null;
+			OffsetDateTime intervalStart = null;
+			OffsetDateTime intervalEnd = null;			
+			BigDecimal mean = new BigDecimal (0);
+			
+			for (VariationMeasureValue vmv : vmvList) {
+				logger.info("value: " + vmv.getMeasureValue() + " interval: " + vmv.getTimeInterval().getStart());
+				
+				if (typicalPeriod == null) {
+					typicalPeriod = vmv.getTimeInterval().getTypicalPeriod();
+					if (typicalPeriod == null) typicalPeriod = "day";
+					timeZone = ZoneId.of(a.getUserInRole().getPilot().getCompZone());
+					if (typicalPeriod.equalsIgnoreCase("mon")) 
+						dtf = DateTimeFormatter.ofPattern("yyyy MMMM", Locale.ENGLISH);
+					else 
+						dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				}
+				BigDecimal value = vmv.getMeasureValue();
+				OffsetDateTime start =  OffsetDateTime.ofInstant(vmv.getTimeInterval().getIntervalStart().toInstant(), timeZone);		
+				mean = mean.add(value);
+				
+				ClusteredVmv clusteredVmv = new ClusteredVmv (value, start.format(dtf), filter.getImagePath(), filter.getFilterDescription());
+				assessmentMeasures.add(clusteredVmv);
+				
+				if (minValue == null) {
+					minValue = value;
+					maxValue = value;
+					intervalStart = OffsetDateTime.ofInstant(vmv.getTimeInterval().getIntervalStart().toInstant(), timeZone);
+					intervalEnd = OffsetDateTime.ofInstant(vmv.getTimeInterval().getIntervalStart().toInstant(), timeZone);
+				}
+				else {
+					if (value.compareTo(minValue) < 0)
+						minValue = value;
+					if (value.compareTo(maxValue) > 0)
+						maxValue = value;
+					if (start.isBefore(intervalStart))
+						intervalStart = start;
+					if (start.isAfter(intervalEnd))
+						intervalEnd = start;
+				}
+			}
+			
+			OffsetDateTime created = OffsetDateTime.ofInstant(a.getCreated().toInstant(), ZoneId.of(a.getUserInRole().getPilot().getCompZone()));
+			OffsetDateTime updated = null;
+			if (a.getUpdated() != null) 
+				updated = OffsetDateTime.ofInstant(a.getUpdated().toInstant(), ZoneId.of(a.getUserInRole().getPilot().getCompZone()));
+			
+			String minMax = minValue.setScale(2).toString() + " - " + maxValue.setScale(2).toString();
+			mean = mean.divide(new BigDecimal (vmvList.size()), RoundingMode.HALF_UP);
+			
+			cmsAssessments.add(new ClusteredMeasuresAssessments (a.getId(), filter, a.getAssessmentComment(), 
+					updated != null ? updated.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss ZZZZ")) : 
+						created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss ZZZZ")),  a.getUserInRole().getUserInSystem().getDisplayName(), 
+						dataIDs, mean.setScale(10), minMax, intervalStart.format(dtf) + " - " +
+					intervalEnd.format(dtf), assessmentMeasures));
+		}		
+		
+		return JerseyResponse.build(objectMapper.writeValueAsString(cmsAssessments));
+		
 	}
 
 }

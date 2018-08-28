@@ -98,7 +98,7 @@ public class AssessmentServiceImpl implements AssessmentService {
 	
 	public List<Long> convertToListLong(List<PathSegment> ids) {
 		List<Long> idsList = new ArrayList<Long>(ids.size());
-		for (PathSegment segment : ids) {
+		for (PathSegment segment : ids) {			
 			idsList.add(Long.valueOf(segment.toString()));
 		}
 		return idsList;

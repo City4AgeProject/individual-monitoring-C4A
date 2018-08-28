@@ -1,5 +1,7 @@
 package eu.city4age.dashboard.api;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
@@ -31,6 +33,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 
 import eu.city4age.dashboard.api.config.JerseyInitialization;
 import eu.city4age.dashboard.api.jpa.generic.GenericRepositoryFactoryBean;
@@ -171,5 +177,26 @@ public class Application extends SpringBootServletInitializer {
         logger.info("ThreadPoolTaskExecutor set");
         return threadPoolTaskExecutor;
     }
+	
+	@Bean
+	public FirebaseApp initialize () {
+		
+		try {
+			ClassLoader classLoader = getClass().getClassLoader();
+			FileInputStream serviceAccount = new FileInputStream(new File(classLoader.getResource("m-testing-54584-firebase-adminsdk-w3n9c-6934bb91a4.json").getFile()));
+
+			FirebaseOptions options = new FirebaseOptions.Builder()
+					  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+					  .setDatabaseUrl("https://m-testing-54584.firebaseio.com")
+					  .build();
+
+			FirebaseApp app = FirebaseApp.initializeApp(options);
+			
+			logger.info("app.getName: " + app.getName());
+			return app;
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
 }
