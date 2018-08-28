@@ -41,8 +41,13 @@ def get_data_multi(userId):
                  (
                   uir.id = vmv.user_in_role_id
                  )
+                            LEFT join 
+                            city4age_sr.vmv_filtering as vmvf
+                            ON
+                            vmv."id" = vmvf.vmv_id
               WHERE
                vmv.user_in_role_id = {0}
+                            and vmvf.filter_type is null or vmvf.filter_type <> 'E'
              )
              ,
              q00 as
@@ -73,39 +78,12 @@ def get_data_multi(userId):
               GROUP BY
                q00.dvid
              )
-             ,
-             q3 AS
-             (
-              SELECT
-               q00.*         ,
-               minmax.max_val,
-               minmax.min_val
-              FROM
-               q00
-               JOIN
-                minmax
-                ON
-                 (
-                  q00.dvid = minmax.dvid
-                 )
-             )
             SELECT
-             q3.*,
-             (
-              CASE
-               WHEN (
-                 q3.max_val - q3.min_val
-                )
-                = 0
-                THEN 0
-                ELSE ( (q3.measure_value - q3.min_val) ) / (q3.max_val - q3.min_val)
-              END
-             )
-             AS Normalised
+             q00.*
             FROM
-             q3
+             q00
             ORDER BY
-             q3.interval_start ASC
+             q00.interval_start ASC
            """.format(userId))
     cur.execute(sql)
     df = pd.DataFrame(cur.fetchall())

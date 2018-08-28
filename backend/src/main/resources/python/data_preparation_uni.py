@@ -6,58 +6,33 @@ def get_data_uni(userId, dvId):
     curr = conn.cursor()
     # data for walk distance (MEA)
     sql = ("""
-            WITH q0 AS (
-                SELECT
-                    vmv.id AS vmvId,
-                    vmv.measure_type_id as mtypeId,
-                    vmv.measure_value,
-                    vmv.time_interval_id,
-                    vmv.measure_type_id,
-                    ti.interval_start
-                FROM
-                    city4age_sr.variation_measure_value as vmv
-                JOIN 
-                    city4age_sr.time_interval AS ti ON (vmv.time_interval_id = ti.id)
-                WHERE
-                    vmv.user_in_role_id = {0} and vmv.measure_type_id = {1}
-            ),
-             minmax AS (
-                SELECT
-                    q0.mtypeId,
-                    MIN (q0.measure_value) AS min_val,
-                    MAX (q0.measure_value) AS max_val
-                FROM
-                    q0
-                GROUP BY
-                    q0.mtypeId
-            ),
-                 q3 AS (
-                    SELECT
-                        q0.*,
-                        minmax.max_val,
-                        minmax.min_val
-                    FROM
-                        q0
-                    JOIN minmax ON (
-                        q0.mtypeId = minmax.mtypeId
-                    )
-                )
-                SELECT
-                    q3.*,
-                    (
-                        CASE
-                        WHEN (q3.max_val - q3.min_val) = 0 THEN
-                            0
-                        ELSE
-                            (
-                                (q3.measure_value - q3.min_val)
-                            ) / (q3.max_val - q3.min_val)
-                        END
-                    ) AS Normalised
-                FROM
-                    q3
-                ORDER BY
-                    q3.interval_start ASC
+        SELECT
+         vmv.id              AS vmvId  ,
+         vmv.measure_type_id as mtypeId,
+         vmv.measure_value             ,
+         vmv.time_interval_id          ,
+         vmv.measure_type_id           ,
+         ti.interval_start
+        FROM
+         city4age_sr.variation_measure_value as vmv
+         JOIN
+          city4age_sr.time_interval AS ti
+          ON
+           (
+            vmv.time_interval_id = ti.id
+           )
+         LEFT join
+          city4age_sr.vmv_filtering as vmvf
+          ON
+           vmv."id" = vmvf.vmv_id
+        WHERE
+         vmv.user_in_role_id        = {0}
+         and vmv.measure_type_id    = {1}
+         and vmvf.filter_type is null
+         or vmvf.filter_type       <> 'E'
+        
+        ORDER BY
+         ti.interval_start ASC
            """.format(userId, dvId))
     curr.execute(sql)
     data = pd.DataFrame(curr.fetchall())
