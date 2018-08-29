@@ -94,9 +94,9 @@ def get_data_multi(userId):
 def pivot_data_multi(df):
     for index, row in df.iterrows():
         df.set_value(index, 'measure_value', float(row['measure_value']))
-        df.set_value(index, 'normalised', float(row['normalised']))
+#         df.set_value(index, 'normalised', float(row['normalised']))
         df.set_value(index, 'interval_start',pd.datetime.strftime(row['interval_start'], "%Y-%m-%d"))
-    df = df[['detection_variable_name', 'interval_start', 'measure_value', 'normalised', 'pilot_code']]
+    df = df[['detection_variable_name', 'interval_start', 'measure_value', 'pilot_code']]
     df['scaled'] = minmax_scale(df['measure_value'])
     # print (df[['scaled', 'normalised']])
     pivot_df = df.pivot_table(columns = ['detection_variable_name'], values = 'measure_value', index=['pilot_code','interval_start'], aggfunc='max')

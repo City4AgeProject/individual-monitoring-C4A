@@ -483,7 +483,7 @@ public class ViewEndpoint {
 			String [] retArray7 = {"#D63B00", "#DB9200", "#D2E000", "#7EE500", "#25EA00",  "#00F497", "#00F7F9"};
 			return retArray7;
 		case 8:
-			String [] retArray8 = {"#D10017", "#D63B00", "#DB9200", "#D2E000", "#7EE500", "#25EA00", "#00F497", "#00F7F9"};
+			String [] retArray8 = {"#D31700", "#D64800", "#DB9200", "#D2E000", "#7EE500", "#25EA00", "#00F497", "#00F7F9"};
 			return retArray8;
 		case 9:
 			String [] retArray9 = {"#D10017", "#D63B00", "#DB9200", "#D2E000", "#7EE500", "#25EA00", "#00EF37", "#00F497", "#00F7F9"};
