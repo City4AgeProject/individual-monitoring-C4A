@@ -40,14 +40,9 @@ def get_data_multi(userId):
                 on
                  (
                   uir.id = vmv.user_in_role_id
-                 )
-                            LEFT join 
-                            city4age_sr.vmv_filtering as vmvf
-                            ON
-                            vmv."id" = vmvf.vmv_id
+                 )                            
               WHERE
                vmv.user_in_role_id = {0}
-                            and vmvf.filter_type is null or vmvf.filter_type <> 'E'
              )
              ,
              q00 as

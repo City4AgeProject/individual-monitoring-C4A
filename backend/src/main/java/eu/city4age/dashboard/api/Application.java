@@ -189,6 +189,7 @@ public class Application extends SpringBootServletInitializer {
 					  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
 					  .setDatabaseUrl("https://m-testing-54584.firebaseio.com")
 					  .build();
+			
 
 			FirebaseApp app = FirebaseApp.initializeApp(options);
 			

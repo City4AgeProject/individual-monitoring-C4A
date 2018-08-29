@@ -18,6 +18,8 @@ public class ClusteredMeasuresItems {
 	
 	private String source;
 	
+	private String sourceSelected;
+	
 	private List<String> categories;
 
 	/**
@@ -34,10 +36,11 @@ public class ClusteredMeasuresItems {
 	 * @param color
 	 * @param shortDesc
 	 * @param source
+	 * @param sourceSelected
 	 * @param categories
 	 */
 	public ClusteredMeasuresItems(String id, String value, String markerShape, String markerSize, String color,
-			String shortDesc, String source, List<String> categories) {
+			String shortDesc, String source, String sourceSelected, List<String> categories) {
 		this.id = id;
 		this.value = value;
 		this.markerShape = markerShape;
@@ -45,6 +48,7 @@ public class ClusteredMeasuresItems {
 		this.color = color;
 		this.shortDesc = shortDesc;
 		this.source = source;
+		this.sourceSelected = sourceSelected;
 		this.categories = categories;
 	}
 
@@ -133,20 +137,6 @@ public class ClusteredMeasuresItems {
 	}
 
 	/**
-	 * @return the categories
-	 */
-	public List<String> getCategories() {
-		return categories;
-	}
-
-	/**
-	 * @param categories the categories to set
-	 */
-	public void setCategories(List<String> categories) {
-		this.categories = categories;
-	}
-
-	/**
 	 * @return the source
 	 */
 	public String getSource() {
@@ -160,4 +150,31 @@ public class ClusteredMeasuresItems {
 		this.source = source;
 	}
 
+	/**
+	 * @return the sourceSelected
+	 */
+	public String getSourceSelected() {
+		return sourceSelected;
+	}
+
+	/**
+	 * @param sourceSelected the sourceSelected to set
+	 */
+	public void setSourceSelected(String sourceSelected) {
+		this.sourceSelected = sourceSelected;
+	}
+
+	/**
+	 * @return the categories
+	 */
+	public List<String> getCategories() {
+		return categories;
+	}
+
+	/**
+	 * @param categories the categories to set
+	 */
+	public void setCategories(List<String> categories) {
+		this.categories = categories;
+	}
 }

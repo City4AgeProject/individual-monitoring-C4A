@@ -243,10 +243,16 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     var items = self.clusterSeries[0].items;
                     var selectedArray = [];
 
-                    for (i = 0; i < items.length; i++) {
-                        if (items[i].categories[0] === clusterId) {
-                            //console.log ("dodao element: " + i);
-                            selectedArray.push(items[i].id);
+                    for (var i = 0; i < items.length; i++) {
+                        for (var j = 0; j < items[i].categories.length; j++) {
+                            if (items[i].categories[j] === clusterId) {
+                                //console.log ("dodao element: " + i);
+                                if (clusterId === 'Exclude') {
+                                    console.log ("Exclude");
+                                    self.clusterSeries[0].items[i].markerSize = '20';
+                                }
+                                selectedArray.push(items[i].id);
+                            }
                         }
                     }
                     //console.log ("selectedArray.len: " + selectedArray.length);

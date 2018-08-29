@@ -21,15 +21,9 @@ def get_data_uni(userId, dvId):
            (
             vmv.time_interval_id = ti.id
            )
-         LEFT join
-          city4age_sr.vmv_filtering as vmvf
-          ON
-           vmv."id" = vmvf.vmv_id
         WHERE
          vmv.user_in_role_id        = {0}
          and vmv.measure_type_id    = {1}
-         and vmvf.filter_type is null
-         or vmvf.filter_type       <> 'E'
         
         ORDER BY
          ti.interval_start ASC

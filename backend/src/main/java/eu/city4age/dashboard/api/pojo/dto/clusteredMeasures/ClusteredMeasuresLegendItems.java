@@ -14,6 +14,10 @@ public class ClusteredMeasuresLegendItems {
 	
 	private String drilling;
 	
+	private String symbolType;
+	
+	private String source;
+	
 	private List<String> categories;
 
 	/**
@@ -28,15 +32,19 @@ public class ClusteredMeasuresLegendItems {
 	 * @param markerSize
 	 * @param color
 	 * @param drilling
+	 * @param symbolType
+	 * @param source
 	 * @param categories
 	 */
 	public ClusteredMeasuresLegendItems(String text, String markerShape, String markerSize, String color,
-			String drilling, List<String> categories) {
+			String drilling, String symbolType, String source, List<String> categories) {
 		this.text = text;
 		this.markerShape = markerShape;
 		this.markerSize = markerSize;
 		this.color = color;
 		this.drilling = drilling;
+		this.symbolType = symbolType;
+		this.source = source;
 		this.categories = categories;
 	}
 
@@ -97,13 +105,6 @@ public class ClusteredMeasuresLegendItems {
 	}
 
 	/**
-	 * @return the categories
-	 */
-	public List<String> getCategories() {
-		return categories;
-	}
-
-	/**
 	 * @return the drilling
 	 */
 	public String getDrilling() {
@@ -115,6 +116,41 @@ public class ClusteredMeasuresLegendItems {
 	 */
 	public void setDrilling(String drilling) {
 		this.drilling = drilling;
+	}
+
+	/**
+	 * @return the symbolType
+	 */
+	public String getSymbolType() {
+		return symbolType;
+	}
+
+	/**
+	 * @param symbolType the symbolType to set
+	 */
+	public void setSymbolType(String symbolType) {
+		this.symbolType = symbolType;
+	}
+
+	/**
+	 * @return the source
+	 */
+	public String getSource() {
+		return source;
+	}
+
+	/**
+	 * @param source the source to set
+	 */
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	/**
+	 * @return the categories
+	 */
+	public List<String> getCategories() {
+		return categories;
 	}
 
 	/**

@@ -205,8 +205,8 @@ def start(userId, dvId):
     optimal_single_variate = get_optimal_hmm_single_variate(userId=userId, dvId=dvId, activity_data=prepared_data, cov_type='diag')
     dict_single_variate = hmm_to_dict_single_variate_v2(prepared_data, optimal_single_variate)
 
-    with open('single_variate_hmms_userId' + str(userId) + '_varId' + str(dvId) + '.json', 'w') as outfile:
-       json.dump(dict_single_variate, outfile)
+#    with open('single_variate_hmms_userId' + str(userId) + '_varId' + str(dvId) + '.json', 'w') as outfile:
+#       json.dump(dict_single_variate, outfile)
 
     return json.dumps(dict_single_variate)
 

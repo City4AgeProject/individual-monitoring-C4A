@@ -42,6 +42,8 @@ import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
+import eu.city4age.dashboard.api.jpa.FilterTypeRepository;
+import eu.city4age.dashboard.api.jpa.VmvFilteringRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
@@ -97,6 +99,12 @@ public class ViewEndpoint {
 	
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;	
+	
+	@Autowired
+	private FilterTypeRepository filterTypeRepository;
+	
+	@Autowired
+	private VmvFilteringRepository vmvFilteringRepository;
 	
 	@Autowired
 	private ViewService viewService;
@@ -367,7 +375,18 @@ public class ViewEndpoint {
 			legendCategories.add(cmli.getText());
 			cmli.setCategories(legendCategories);
 			legendItems.add(cmli);
-		}		
+		}
+		
+		ClusteredMeasuresLegendItems cmli = new ClusteredMeasuresLegendItems ();
+		cmli.setText("Excluded");
+		List<String> legendCategories = new ArrayList<String> ();
+		legendCategories.add("Exclude");
+		cmli.setCategories(legendCategories);
+		cmli.setSymbolType("image");
+		cmli.setSource("images/X.png");
+		cmli.setDrilling("on");
+		legendItems.add(cmli);
+		
 		
 		List<Long> dataIDs = new ArrayList<Long> ();
 		List<String> dataIDsStrings = new ArrayList<String> ();
@@ -383,7 +402,14 @@ public class ViewEndpoint {
 					Long id = data.getVmvid().get(i);
 					dataIDs.add(id);
 					dataIDsStrings.add(id.toString());
-					items.add(new ClusteredMeasuresItems(id.toString(), data.getCluster().get(j).getItems().get(i), "circle", "8", getColorsOfClusters(numOfClusters)[j], "value: " + data.getCluster().get(j).getItems().get(i).toString() + "\ngroup: " + data.getGroups().get(i) + "\ncluster: " + data.getCluster().get(j).getName(), null, categories));
+					Character filterType = vmvFilteringRepository.findFilterTypeByVmvId(id);
+					if (filterType != null)
+						categories.add(filterTypeRepository.findOne(filterType).getFilterDescription());
+					items.add(new ClusteredMeasuresItems(id.toString(), data.getCluster().get(j).getItems().get(i), "circle" , "8", 
+							getColorsOfClusters(numOfClusters)[j], "value: " + data.getCluster().get(j).getItems().get(i).toString() + 
+							"\ngroup: " + data.getGroups().get(i) + "\ncluster: " + data.getCluster().get(j).getName(), 
+							(filterType != null && filterType.equals('E')) ? "images/X.png" : null, 
+							(filterType != null && filterType.equals('E')) ? "images/X_sel.png" : null, categories));
 					break;
 				}
 			}

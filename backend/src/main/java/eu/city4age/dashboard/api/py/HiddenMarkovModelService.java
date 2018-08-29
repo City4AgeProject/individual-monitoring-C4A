@@ -23,6 +23,18 @@ public class HiddenMarkovModelService {
         String response = result.toString();
 		return response;
 	}
+	
+	public static String clusterMultiSeries(String path, Jep jep, Integer userId, Integer varId) throws Exception {
+
+		/*String fileUrlPath = /*"src/main/python/" "/WEB-INF/classes/python/";*/
+		String scriptName = "learnOptimalHMMs_and_persist.py";
+		String funcName = "start_multi";
+		
+        jep.runScript(path + scriptName);
+        Object result = jep.invoke(funcName, userId, varId);
+        String response = result.toString();
+		return response;
+	}
 
 	/*public static void main(String[] args) throws Exception {
 
