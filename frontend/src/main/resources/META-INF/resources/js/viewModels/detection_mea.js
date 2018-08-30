@@ -63,13 +63,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                 self.addedAnnotations = ko.observableArray([]);
                 self.dataIDs = ko.observableArray([]);
-                self.annotationListTitle = ko.observable ('Previously added annotations');
-                self.showFullCommentLabel = ko.observable ('See annotation comment');
-                self.commentTitle = ko.observable ('Comment');
-                self.showMeasuresLabel = ko.observable ('Show annotated measures');
-                self.annotatedMeasureTitle = ko.observable ('Annotated measures');
-                self.annotatedMeasures = ko.observableArray ([]);
-                self.displayFilter = ko.observable ();
+                self.annotationListTitle = ko.observable('Previously added annotations');
+                self.showFullCommentLabel = ko.observable('See annotation comment');
+                self.commentTitle = ko.observable('Comment');
+                self.showMeasuresLabel = ko.observable('Show annotated measures');
+                self.annotatedMeasureTitle = ko.observable('Annotated measures');
+                self.annotatedMeasures = ko.observableArray([]);
+                self.displayFilter = ko.observable();
 
                 self.showDialogAddAnnotations = function () {
                     $('#dialog').ojDialog('open');
@@ -86,34 +86,34 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.closeListener = function (event) {
                     self.resetAddAnnotation();
                 };
-                
+
                 self.closeListenerAnnotation = function (event) {
-                    
+
                 };
-                
+
                 self.closeListenerComment = function (event) {
-                    
+
                 };
-                
+
                 self.closeListenerMeasure = function (event) {
-                    
+
                 };
 
                 self.resetAddAnnotation = function () {
                     self.commentText('');
                     self.excludeConfirm('');
-                    console.log (self.addedAnnotations ());
+                    console.log(self.addedAnnotations());
                 };
 
                 self.postAssessment = function () {
                     $("#confirm-exclude")[0].validate().then(function (result) {
                         if (result === 'valid') {
                             self.submitAnnotation();
-                            self.closeDialog();                            
+                            self.closeDialog();
                         }
-                    });                    
-                    
-                    console.log (self.addedAnnotations ());
+                    });
+
+                    console.log(self.addedAnnotations());
                 };
 
                 self.closeDialog = function () {
@@ -140,8 +140,22 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     var jqXHR = $.postJSON(ASSESSMENT_CLUSTER_ADD_FOR_DATA_SET,
                             JSON.stringify(assessmentToPost), submitCallback);
                 };
-                
+
                 var submitCallback = function () {
+                    var filterType = ko.toJS(self.excludeConfirm);
+                    var selectedIds = ko.toJS(self.clusterSelectionData);
+                    console.log(filterType);
+                    console.log(selectedIds);
+                    if (filterType === 'E') {
+                        for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
+                            if (selectedIds.includes(self.clusterSeries()[0].items[i].id)) {                               
+                                self.clusterSeries()[0].items[i].source = "images/X.png";
+                                self.clusterSeries()[0].items[i].sourceSelected = "images/X_sel.png";
+                                self.clusterSeries()[0].items[i].categories.push ("Exclude");
+                            } 
+                        }
+                        self.clusterSeries(self.clusterSeries());
+                    }
                     self.loadAssessments();
                 };
 
@@ -151,20 +165,20 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         dataIDsString += "/" + self.dataIDs() [i];
 
                     $.get(ASSESSMENT_CLUSTER_GET_FOR_DATA_SET + "/dataPointsIds" + dataIDsString, function (data) {
-                        console.log (data);
-                        self.addedAnnotations (data);
+                        console.log(data);
+                        self.addedAnnotations(data);
                     });
                 };
-                
+
                 self.showFullComment = function () {
                     $('#commentSpan')[0].textContent = this.comment;
                     $('#dialogComment').ojDialog('open');
                 };
-                
+
                 self.showMeasures = function () {
-                    console.log (this);
-                    self.annotatedMeasures (this.measures);
-                    self.displayFilter (this.filterType);
+                    console.log(this);
+                    self.annotatedMeasures(this.measures);
+                    self.displayFilter(this.filterType);
                     $('#dialogMeasure').ojDialog('open');
                 };
 
@@ -203,15 +217,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                     self.nuiData = nuiData;
                                 }),
                                 $.get(CLUSTER_DATA + "/userInRoleId/" + self.careRecipientId() + "/detectionVariableId/" + self.meaId(), function (clusterData) {
-                                    self.clusterGroups (clusterData.groups);
-                                    self.clusterSeries (clusterData.series);
+                                    self.clusterGroups(clusterData.groups);
+                                    self.clusterSeries(clusterData.series);
                                     //self.clusterSeries[0].displayInLegend = "off";
                                     self.clusterDataHeader = "Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name);
                                     //console.log (JSON.stringify(clusterData.legend));
                                     self.clusterLegendSections = clusterData.legend;
                                     self.dataIDs(clusterData.dataIDs);
-                                    console.log (self.dataIDs ())
-                                    self.loadAssessments ();
+                                    console.log(self.dataIDs())
+                                    self.loadAssessments();
                                 }),
                                 $.get(CODEBOOK_SELECT_ALL_FILTER_TYPES, function (data) {
                                     self.excludeConfirmData(data);
@@ -252,7 +266,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                     //self.clusterSeries()[0].items[i].markerSize = '12';
                                 }
                                 selectedArray.push(items[i].id);
-                               
+
                             }
                         }
                     }
@@ -268,23 +282,21 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     if (event.detail.value.length > 0) {
                         self.dataPointsMarked('Selected ' + event.detail.value.length + ' data points');
                         for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
-                            if (event.detail.value.includes (self.clusterSeries()[0].items[i].id)) {
+                            if (event.detail.value.includes(self.clusterSeries()[0].items[i].id)) {
                                 //console.log ("includes");
                                 self.clusterSeries()[0].items[i].markerSize = '12';
-                            }   
-                            else {
+                            } else {
                                 //console.log ("not includes");
                                 self.clusterSeries()[0].items[i].markerSize = '8';
                             }
                         }
-                    }
-                    else {
+                    } else {
                         self.dataPointsMarked('No data points selected');
                         for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
                             self.clusterSeries()[0].items[i].markerSize = '8';
                         }
                     }
-                    self.clusterSeries(self.clusterSeries ());
+                    self.clusterSeries(self.clusterSeries());
                 };
 
 //            	 var nuiLineSeries = [{name : "Series 1", items : [74, 62, 70, 76, 66]},

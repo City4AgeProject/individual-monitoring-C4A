@@ -12,7 +12,7 @@ for /d %%x in ("C:\java_ee_sdk-8\glassfish5\glassfish\domains\domain1\osgi-cache
 
 call asadmin start-domain
 
-cd "C:\Users\marina.andric\Documents\GitHub\anagraph"
+cd "c:\workspace\anagraph"
 call mvn clean install --pl build glassfish:redeploy
 
 pause
