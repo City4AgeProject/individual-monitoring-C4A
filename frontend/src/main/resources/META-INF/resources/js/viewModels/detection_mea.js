@@ -203,9 +203,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                     self.nuiData = nuiData;
                                 }),
                                 $.get(CLUSTER_DATA + "/userInRoleId/" + self.careRecipientId() + "/detectionVariableId/" + self.meaId(), function (clusterData) {
-                                    self.clusterGroups = clusterData.groups;
-                                    self.clusterSeries = clusterData.series;
-                                    self.clusterSeries[0].displayInLegend = "off";
+                                    self.clusterGroups (clusterData.groups);
+                                    self.clusterSeries (clusterData.series);
+                                    //self.clusterSeries[0].displayInLegend = "off";
                                     self.clusterDataHeader = "Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name);
                                     //console.log (JSON.stringify(clusterData.legend));
                                     self.clusterLegendSections = clusterData.legend;
@@ -238,9 +238,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                 self.clusteredChartDrill = function (event) {
 
-                    //console.log ("self.clusteredChartDrill");
+                    //console.log ("self.clusteredChartDrill");                    
                     var clusterId = event.detail.id;
-                    var items = self.clusterSeries[0].items;
+                    var items = self.clusterSeries()[0].items;
                     var selectedArray = [];
 
                     for (var i = 0; i < items.length; i++) {
@@ -248,23 +248,43 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                             if (items[i].categories[j] === clusterId) {
                                 //console.log ("dodao element: " + i);
                                 if (clusterId === 'Exclude') {
-                                    console.log ("Exclude");
-                                    self.clusterSeries[0].items[i].markerSize = '20';
+                                    //console.log ("Exclude");
+                                    //self.clusterSeries()[0].items[i].markerSize = '12';
                                 }
                                 selectedArray.push(items[i].id);
+                               
                             }
                         }
                     }
+                    self.clusterSeries(self.clusterSeries());
                     //console.log ("selectedArray.len: " + selectedArray.length);
                     self.clusterSelectionData(selectedArray);
                     //console.log (self.clusterSelectionData);
                 };
 
                 self.clusterSelectionChanged = function (event) {
-                    if (event.detail.value.length > 0)
+                    //console.log (event.detail.value);
+                    //console.log (self.clusterSeries()[0].items);
+                    if (event.detail.value.length > 0) {
                         self.dataPointsMarked('Selected ' + event.detail.value.length + ' data points');
-                    else
+                        for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
+                            if (event.detail.value.includes (self.clusterSeries()[0].items[i].id)) {
+                                //console.log ("includes");
+                                self.clusterSeries()[0].items[i].markerSize = '12';
+                            }   
+                            else {
+                                //console.log ("not includes");
+                                self.clusterSeries()[0].items[i].markerSize = '8';
+                            }
+                        }
+                    }
+                    else {
                         self.dataPointsMarked('No data points selected');
+                        for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
+                            self.clusterSeries()[0].items[i].markerSize = '8';
+                        }
+                    }
+                    self.clusterSeries(self.clusterSeries ());
                 };
 
 //            	 var nuiLineSeries = [{name : "Series 1", items : [74, 62, 70, 76, 66]},

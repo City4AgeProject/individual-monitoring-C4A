@@ -351,6 +351,7 @@ public class ViewEndpoint {
 		cms.setLineStyle("dotted");
 		cms.setLineWidth("0.25");
 		cms.setMarkerDisplayed("on");		
+		cms.setDisplayInLegend("off");
 		
 		List<ClusteredMeasuresItems> items = new ArrayList<ClusteredMeasuresItems> ();
 		List<ClusteredMeasuresLegendItems> legendItems = new ArrayList<ClusteredMeasuresLegendItems> ();
