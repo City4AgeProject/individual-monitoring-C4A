@@ -70,6 +70,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.annotatedMeasureTitle = ko.observable('Annotated measures');
                 self.annotatedMeasures = ko.observableArray([]);
                 self.displayFilter = ko.observable();
+                
+                var lastExcludeConfirm;
 
                 self.showDialogAddAnnotations = function () {
                     $('#dialog').ojDialog('open');
@@ -125,6 +127,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     var comment = ko.toJS(self.commentText);
                     var selectedIds = ko.toJS(self.clusterSelectionData);
                     var filterType = ko.toJS(self.excludeConfirm);
+                    lastExcludeConfirm = filterType;
+                    console.log (self.excludeConfirm ());
 
                     var assessmentToPost = {};
                     assessmentToPost.comment = comment;
@@ -139,19 +143,29 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     console.log(self.postAssessmentRestUrl);
                     var jqXHR = $.postJSON(ASSESSMENT_CLUSTER_ADD_FOR_DATA_SET,
                             JSON.stringify(assessmentToPost), submitCallback);
+                    jqXHR.fail(serverErrorCallback);
+                };
+                
+                var serverErrorCallback = function (xhr, message, error) {
+                    console.log ("failed");
+                    console.log(error);
                 };
 
                 var submitCallback = function () {
+                    //console.log ("callback function");
+                    //console.log (self.excludeConfirm ());
+                    //console.log (lastExcludeConfirm);
                     var filterType = ko.toJS(self.excludeConfirm);
                     var selectedIds = ko.toJS(self.clusterSelectionData);
-                    console.log(filterType);
-                    console.log(selectedIds);
-                    if (filterType === 'E') {
+                    //console.log(filterType);
+                    //console.log(selectedIds);
+                    if (lastExcludeConfirm === 'E') {
                         for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
                             if (selectedIds.includes(self.clusterSeries()[0].items[i].id)) {                               
                                 self.clusterSeries()[0].items[i].source = "images/X.png";
                                 self.clusterSeries()[0].items[i].sourceSelected = "images/X_sel.png";
                                 self.clusterSeries()[0].items[i].categories.push ("Exclude");
+                                //console.log ("included");
                             } 
                         }
                         self.clusterSeries(self.clusterSeries());
