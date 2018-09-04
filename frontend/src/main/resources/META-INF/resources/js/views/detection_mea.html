@@ -232,7 +232,7 @@
                                                     <span style="display:table; margin: 0 auto;">See measures</span>                              
                                                 </div>
                                                 <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: left;">
-                                                    <span style="display:table; margin: 0 auto;">Undo annotation</span>                              
+                                                    <span style="display:table; margin: 0 auto;">Delete annotation</span>                              
                                                 </div>
                                             </div>
                                         </div>
@@ -273,7 +273,7 @@
                                             </div>
                                             <div style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: right;">
                                                 <span style="display:table; margin: 0 auto;">
-                                                    <a class="link" href="#" id="undoAnnotation" data-bind="click: $parent.undoAllAnnotations" >                                       
+                                                    <a class="link" href="#" id="undoAnnotation" data-bind="click: $parent.openDeleteAnnotationDialog" >                                       
                                                         <div class="tooltip">
                                                             <span class="tooltiptext" data-bind="text: $parent.undoAllAnnotationsLabel"></span>
                                                             <img src="images/undo.png" style="width: 20px; height: 20px;"/>
@@ -330,6 +330,22 @@
                                             </div>
                                         </div>
                                         <!-- /ko -->                                    
+                                    </div>
+                                </div>
+                            </oj-dialog>
+                            <oj-dialog style="display: flex; width: 370px; max-height: 1000px;" id="dialogConfirmDelete" 
+                                       initial-visibility="hide" resize-behavior="none" cancel-behavior="icon"
+                                       data-bind="attr: {title: dialogConfirmDeleteLabel}">
+                                <div class="oj-dialog-body">
+                                    <div align="center">
+                                        <oj-button id='okButton1' disabled="false" on-click="[[undoAllAnnotations]]" chroming="full" display = "icons">
+                                            <span slot='startIcon' ><img src= "images/valid_data.png" style="vertical-align: middle; width: 16px; height: 16px; margin-right: 5px;" /></span>
+                                            <span data-bind='text: postBtnLabel1'></span>
+                                        </oj-button>
+                                        <oj-button id='buttonCancel1' disabled="false" on-click="[[closeDialogConfirm]]" chroming="full" display = "icons">
+                                            <span slot='startIcon' ><img src= "images/faulty_data.png" style="vertical-align: middle; width: 16px; height: 16px; margin-right: 5px;" /></span>
+                                            <span data-bind='text: cancelBtnLabel1'></span>
+                                        </oj-button>			
                                     </div>
                                 </div>
                             </oj-dialog>

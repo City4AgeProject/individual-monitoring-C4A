@@ -47,8 +47,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.addAnnotationLabel = ko.observable('Add new annotation');
                 self.clearSelectionLabel = ko.observable('Clear selection');
                 self.annotationsDetailLabel = ko.observable('Show annotations details');
-                self.undoAllAnnotationsLabel = ko.observable ('Undo annotations on selected data points');
+                self.undoAllAnnotationsLabel = ko.observable ('Remove this annotation');
                 self.addAnnotationTitle = ko.observable('Add new annotation');
+                self.dialogConfirmDeleteLabel = ko.observable('Are you sure you want to delete annotation?');
 
                 self.excludeConfirm = ko.observable();
                 self.excludeConfirmPlaceholder = ko.observable('Exclude or confirm selected data points');
@@ -59,6 +60,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                 self.postBtnLabel = ko.observable("Post annotation");
                 self.cancelBtnLabel = ko.observable("Cancel");
+                
+                self.postBtnLabel1 = ko.observable("Yes");
+                self.cancelBtnLabel1 = ko.observable("No");
 
                 self.excludeConfirmData = ko.observableArray();
 
@@ -72,10 +76,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.annotatedMeasures = ko.observableArray([]);
                 self.displayFilter = ko.observable();
                 
+                self.annotationForDelete = ko.observable ();
+                
                 var lastExcludeConfirm;
 
                 self.showDialogAddAnnotations = function () {
-                    $('#dialog').ojDialog('open');
+                    if (self.clusterSelectionData().length > 0) 
+                        $('#dialog').ojDialog('open');
+                    else
+                        $('#popup').ojPopup('open');
                 };
 
                 self.clearSelection = function () {
@@ -84,9 +93,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 
                 self.undoAllAnnotations = function () {
                     console.log (this);
-                    var tmpDataIDs = this.dataIDs;
-                    var filType = this.filterType.filterType;
-                    $.get(ASSESSMENT_CLUSTER_UNDO_FOR_DATA_SET + "/" + this.id, function (data) {
+                    var tmpDataIDs = self.annotationForDelete().dataIDs;
+                    var filType = self.annotationForDelete().filterType.filterType;
+                    $.get(ASSESSMENT_CLUSTER_UNDO_FOR_DATA_SET + "/" + self.annotationForDelete().id, function (data) {
                         if (filType === 'E') {
                             for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
                                 if (tmpDataIDs.includes(self.clusterSeries()[0].items[i].id)) {                               
@@ -103,11 +112,18 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         console.log ("before load all");
                         self.loadAssessments ();
                         self.clusterSeries (self.clusterSeries ());
-                    });                    
+                    });        
+                    $('#dialogConfirmDelete').ojDialog('close');
                 };
 
                 self.showAnnotationsDetail = function () {
                     $('#dialogAnnotation').ojDialog('open');
+                };
+                
+                self.openDeleteAnnotationDialog = function () {
+                    console.log (this);
+                    self.annotationForDelete (this);
+                    $('#dialogConfirmDelete').ojDialog('open');
                 };
 
                 self.closeListener = function (event) {
@@ -146,6 +162,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.closeDialog = function () {
                     $('#dialog').ojDialog('close');
                 };
+                
+                self.closeDialogConfirm = function () {
+                    $('#dialogConfirmDelete').ojDialog('close');
+                };                
 
                 self.submitAnnotation = function () {
                     var jwt = sessionStorage.getItem("jwt");
