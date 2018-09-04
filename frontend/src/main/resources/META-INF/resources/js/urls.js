@@ -18,6 +18,7 @@ var ASSESSMENT_ADD_FOR_DATA_SET = root + 'assessment/addForSelectedDataSet';
 var ASSESSMENT_LAST_FIVE_FOR_DIAGRAM = root + 'assessment/getLast5AssessmentsForDiagramTimeline';
 var ASSESSMENT_CLUSTER_ADD_FOR_DATA_SET = root + 'assessment/addAssessmentForClusteredMeasures';
 var ASSESSMENT_CLUSTER_GET_FOR_DATA_SET = root + 'assessment/clusterAssessments';
+var ASSESSMENT_CLUSTER_UNDO_FOR_DATA_SET = root + 'assessment/undoAssessment';
 
 var CARE_RECIPIENT_FOR_ID = root + 'careRecipient/findOne';
 var CARE_RECIPIENT_ALL = root + "careRecipient/getCareRecipients";

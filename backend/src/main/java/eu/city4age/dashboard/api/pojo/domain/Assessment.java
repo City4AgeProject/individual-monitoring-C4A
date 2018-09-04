@@ -274,4 +274,18 @@ public class Assessment extends AbstractBaseEntity<Long> {
 		return flag;
 	}
 
+	/**
+	 * @return the vmvFiltering
+	 */
+	public Set<VmvFiltering> getVmvFiltering() {
+		return vmvFiltering;
+	}
+
+	/**
+	 * @param vmvFiltering the vmvFiltering to set
+	 */
+	public void setVmvFiltering(Set<VmvFiltering> vmvFiltering) {
+		this.vmvFiltering = vmvFiltering;
+	}
+
 }

@@ -136,7 +136,7 @@
                                             <img src="images/magni_glass.png" style="width: 32px; height: 32px;"/>
                                         </div>
                                     </a>
-                                </div>
+                                </div>                                
                             </div>
                             <h3 id="clusterTitle" data-bind="text: clusterDataHeader" align="center" style="margin-top: 20px;"></h3>
                             <oj-chart id="clusterChart"
@@ -206,7 +206,7 @@
                                     </div>
                                 </div>    
                             </oj-dialog>
-                            <oj-dialog style="display: flex; width: 600px; allign: center; max-height: 500px;" id="dialogAnnotation" 
+                            <oj-dialog style="display: flex; width: 800px; allign: center; max-height: 500px;" id="dialogAnnotation" 
                                        initial-visibility="hide" resize-behavior="none" cancel-behavior="icon" modality="modeless"
                                        on-oj-close ="[[closeListenerAnnotation]]"
                                        data-bind="attr: {title: annotationListTitle}">
@@ -216,36 +216,39 @@
                                     <div class="demo-flex-display oj-flex-items-pad">
                                         <div class="demo-flex-display oj-flex-items-pad oj-sm-align-items-center" style="border-bottom: 1px solid lightgray">
                                             <div class="oj-flex">
-                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 6.25%; max-width: 37.5px; max-height: 40px; float: left;">
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 5%; max-width: 37.5px; max-height: 40px; float: left;">
                                                     <span style="display:table; margin: 0 auto;">Filter</span>
                                                 </div>
-                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 25%; max-width: 150px; max-height: 40px; float: left;">
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: left;">
                                                     <span style="display:table; margin: 0 auto;">Author name</span> 
                                                 </div>
-                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 12.5%; max-width: 75px; max-height: 40px; float: left;">
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 10%; max-width: 75px; max-height: 40px; float: left;">
                                                     <span style="display:table; margin: 0 auto;">Comment</span>                              
                                                 </div>
-                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 31.25%; max-width: 187.5px; max-height: 40px; float: left;">
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 25%; max-width: 187.5px; max-height: 40px; float: left;">
                                                     <span style="display:table; margin: 0 auto;">Last modified</span>                              
                                                 </div>
-                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 25%; max-width: 150px; max-height: 40px; float: left;">
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: left;">
                                                     <span style="display:table; margin: 0 auto;">See measures</span>                              
+                                                </div>
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: left;">
+                                                    <span style="display:table; margin: 0 auto;">Undo annotation</span>                              
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- ko foreach: addedAnnotations -->
                                         <div class="oj-flex" id="div1"
                                              style="padding-top: 2px">
-                                            <div style="display: inline; height: 100%; width: 6.25%; max-width: 37.5px; max-height: 40px; float: right;">
+                                            <div style="display: inline; height: 100%; width: 5%; max-width: 37.5px; max-height: 40px; float: right;">
                                                 <span style="display:table; margin: 0 auto;">
                                                     <img data-bind="attr: { src: filterType.imagePath, title: filterType.filterDescription }"
                                                          style="vertical-align: bottom; width: 20px; height: 20px;" />
                                                 </span>
                                             </div>
-                                            <div style="display: inline; height: 100%; width: 25%; max-width: 150px; max-height: 40px; float: right;">
+                                            <div style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: right;">
                                                 <span style="display:table; margin: 0 auto;" data-bind="text: (author.length > 25 ? author.substring(0, 21) + '...' : author), attr: { title: author }"></span>                                           
                                             </div>
-                                            <div style="display: inline; height: 100%; width: 12.5%; max-width: 75px; max-height: 40px; float: right;">
+                                            <div style="display: inline; height: 100%; width: 10%; max-width: 75px; max-height: 40px; float: right;">
                                                 <span style="display:table; margin: 0 auto;">
                                                     <a class="link" href="#" id="showFullComment" data-bind="click: $parent.showFullComment" >
                                                         <div class="tooltip" >
@@ -255,15 +258,25 @@
                                                     </a>
                                                 </span>
                                             </div>
-                                            <div style="display: inline; height: 100%; width: 31.25%; max-width: 187.5px; max-height: 40px; float: right;">
+                                            <div style="display: inline; height: 100%; width: 25%; max-width: 187.5px; max-height: 40px; float: right;">
                                                 <span style="display:table; margin: 0 auto;" data-bind="text: createdOrUpdated"></span>                                           
                                             </div>
-                                            <div style="display: inline; height: 100%; width: 25%; max-width: 150px; max-height: 40px; float: right;">
+                                            <div style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: right;">
                                                 <span style="display:table; margin: 0 auto;">
                                                     <a class="link" href="#" id="showFullComment" data-bind="click: $parent.showMeasures" >
                                                         <div class="tooltip" >
                                                             <span class="tooltiptext" data-bind="text: $parent.showMeasuresLabel"></span>
                                                             <img src="images/more.png" style="width: 20px; height: 20px;"/>
+                                                        </div>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                            <div style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: right;">
+                                                <span style="display:table; margin: 0 auto;">
+                                                    <a class="link" href="#" id="undoAnnotation" data-bind="click: $parent.undoAllAnnotations" >                                       
+                                                        <div class="tooltip">
+                                                            <span class="tooltiptext" data-bind="text: $parent.undoAllAnnotationsLabel"></span>
+                                                            <img src="images/undo.png" style="width: 20px; height: 20px;"/>
                                                         </div>
                                                     </a>
                                                 </span>

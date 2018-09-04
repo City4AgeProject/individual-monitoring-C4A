@@ -38,6 +38,7 @@ import eu.city4age.dashboard.api.jpa.ActivityRepository;
 import eu.city4age.dashboard.api.jpa.MTestingReadingsRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
+import eu.city4age.dashboard.api.pojo.json.AndroidTokenDeserializer;
 import eu.city4age.dashboard.api.pojo.ws.C4AAndroidResponse;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.service.AndroidService;
@@ -208,6 +209,15 @@ public class AndroidEndpoint {
 		}
 		
 		return Response.ok().build();
+		
+	}
+	
+	@POST
+	@Path("firebaseToken")
+	public Response firebaseToken (@RequestBody String json) {
+		
+		AndroidTokenDeserializer atd = new AndroidTokenDeserializer ();
+		return null;
 		
 	}
 

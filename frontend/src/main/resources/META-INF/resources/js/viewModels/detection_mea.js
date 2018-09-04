@@ -47,6 +47,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.addAnnotationLabel = ko.observable('Add new annotation');
                 self.clearSelectionLabel = ko.observable('Clear selection');
                 self.annotationsDetailLabel = ko.observable('Show annotations details');
+                self.undoAllAnnotationsLabel = ko.observable ('Undo annotations on selected data points');
                 self.addAnnotationTitle = ko.observable('Add new annotation');
 
                 self.excludeConfirm = ko.observable();
@@ -79,6 +80,30 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                 self.clearSelection = function () {
                     self.clusterSelectionData([]);
+                };
+                
+                self.undoAllAnnotations = function () {
+                    console.log (this);
+                    var tmpDataIDs = this.dataIDs;
+                    var filType = this.filterType.filterType;
+                    $.get(ASSESSMENT_CLUSTER_UNDO_FOR_DATA_SET + "/" + this.id, function (data) {
+                        if (filType === 'E') {
+                            for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
+                                if (tmpDataIDs.includes(self.clusterSeries()[0].items[i].id)) {                               
+                                    self.clusterSeries()[0].items[i].source = null;
+                                    self.clusterSeries()[0].items[i].sourceSelected = null;
+                                    for (var j = 0; j < self.clusterSeries()[0].items[i].categories.length; j++) {
+                                        if (self.clusterSeries()[0].items[i].categories[j] ===  "Exclude")
+                                            self.clusterSeries()[0].items[i].categories.splice (j,1);
+                                    }
+                                    //console.log ("included");
+                                } 
+                            }                        
+                        }
+                        console.log ("before load all");
+                        self.loadAssessments ();
+                        self.clusterSeries (self.clusterSeries ());
+                    });                    
                 };
 
                 self.showAnnotationsDetail = function () {

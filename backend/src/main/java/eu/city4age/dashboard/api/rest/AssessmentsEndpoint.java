@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -63,6 +65,7 @@ import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresAss
 import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredVmv;
 import eu.city4age.dashboard.api.pojo.json.AddAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.json.clusteredMeasures.AddAssessmentClusterDeserializer;
+import eu.city4age.dashboard.api.pojo.json.clusteredMeasures.UpdateOrDeleteAssessmentDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
@@ -342,7 +345,7 @@ public class AssessmentsEndpoint {
 	
 	@POST
 	@Path("addAssessmentForClusteredMeasures")	
-	public Response testAdd(@HeaderParam("Authorization") String jwt, String json) throws JsonProcessingException, IOException {
+	public Response addClusterAssessments(@HeaderParam("Authorization") String jwt, String json) throws JsonProcessingException, IOException {
 		
 		DecodedJWT token;
 		Assessment assessment;
@@ -479,6 +482,111 @@ public class AssessmentsEndpoint {
 		}		
 		
 		return JerseyResponse.build(objectMapper.writeValueAsString(cmsAssessments));
+		
+	}
+	
+	@POST
+	@Path("deleteAssessmentForClusteredMeasures")	
+	public Response deleteClusterAssessments (@HeaderParam("Authorization") String jwt, String json) {
+		
+		DecodedJWT token;
+		
+		try {
+			token = JWT.decode(jwt);
+			
+			String username = token.getClaim("usr").asString();
+			UserInRole userInRole = userInRoleRepository.findBySystemUsername(username);
+			
+			UpdateOrDeleteAssessmentDeserializer data = objectMapper.readerFor(UpdateOrDeleteAssessmentDeserializer.class)
+					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+			
+			if (data.getUpdateOrDelete().equals('U')) {
+				
+				Assessment assessment = assessmentRepository.findOne(data.getAssessmentId());
+				assessment.setAssessmentComment(data.getComment());
+				assessment.setUpdated(new Date ());
+				assessment.setUserInRole(userInRole);
+				
+				Set<VmvFiltering> vmvFilterings = assessment.getVmvFiltering();
+				List<VmvFiltering> newVmvFilterings = new ArrayList <VmvFiltering> ();
+				
+				/*
+				 *  varijanta sa validTo
+				 */
+				/*for (VmvFiltering vmvFilter : vmvFilterings) {
+					vmvFilter.setValidTo(new Date ());
+					
+					VmvFiltering newVmvFilter = new VmvFiltering(vmvFilter.getVmv(), data.getFilterType().toString(), new Date (), assessment);
+					newVmvFilterings.add(newVmvFilter);
+				} */
+				
+				/*
+				 * varijanta samo sa promenom filtera
+				 */
+				
+				for (VmvFiltering vmvFilter : vmvFilterings) {
+					vmvFilter.setValidFrom(new Date ());
+					vmvFilter.setFilterType(data.getFilterType().toString());
+				}
+				
+				assessmentRepository.save(assessment);				
+				vmvFilteringRepository.save(vmvFilterings);
+				/* ovo je samo za prvu varijantu */ vmvFilteringRepository.save(newVmvFilterings);
+				
+			}
+			else if (data.getUpdateOrDelete().equals('D')) {
+				
+				Assessment assessment = assessmentRepository.findOne(data.getAssessmentId());
+				Set<VmvFiltering> vmvFilterings = assessment.getVmvFiltering();
+				
+				/*
+				 * varijanta bez brisanja iz baze, sa postavljanjem flaga
+				 */
+				/*for (VmvFiltering vmvFilter : vmvFilterings) {
+					vmvFilter.setValidTo(new Date ());
+				}
+				
+				vmvFilteringRepository.save(vmvFilterings);
+				
+				assessment.setFlag ("D");
+				
+				assessmentRepository.save(assessment);*/
+				
+				/*
+				 * varijanta sa brisanjem iz baze
+				 */
+				
+				vmvFilteringRepository.delete(vmvFilterings);
+				assessmentRepository.delete(assessment);
+			}
+			else throw new Exception ("Not update nor delete operation");
+			
+		} catch (JWTDecodeException e) {
+			e.printStackTrace();
+			return JerseyResponse.build("402");
+		} 
+		  catch (Exception e) {
+			e.printStackTrace();
+			return JerseyResponse.build("400");
+		} 
+		return null;
+		
+	}
+	
+	@GET
+	@Path("undoAssessment/{assessmentId}")	
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response clusterAssessments (@PathParam(value = "assessmentId") Long assessmentId) throws JsonProcessingException, IOException {		
+		
+		//List<Long> dataPoints = assessmentService.convertToListLong(dataPointsIds);
+		
+		vmvFilteringRepository.delete(vmvFilteringRepository.findByAssessment (assessmentRepository.findOne(assessmentId)));		
+		assessmentRepository.delete(assessmentRepository.findOne(assessmentId));		
+		
+		vmvFilteringRepository.flush();
+		assessmentRepository.flush();
+		
+		return JerseyResponse.build();
 		
 	}
 

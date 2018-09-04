@@ -21,4 +21,7 @@ public interface VmvFilteringRepository extends GenericRepository<VmvFiltering, 
 	
 	@Query ("SELECT vf.filterType FROM VmvFiltering vf INNER JOIN vf.vmv vmv WHERE vmv.id = :vmvId AND vf.validFrom = (SELECT MAX(vf1.validFrom) FROM VmvFiltering vf1 INNER JOIN vf1.vmv vmv1 WHERE vmv1.id = :vmvId)")
 	public Character findFilterTypeByVmvId (@Param ("vmvId") Long vmvId);
+	
+	@Query ("SELECT DISTINCT vf FROM VmvFiltering vf WHERE vf.assessment = :assessment")
+	public List<VmvFiltering> findByAssessment (@Param ("assessment") Assessment assessment);
 }
