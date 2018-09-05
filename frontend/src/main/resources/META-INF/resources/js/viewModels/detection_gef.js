@@ -354,6 +354,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 return obj.name;
             });
             formatDate(data.groups);
+                        console.log('this is formated date : ' + JSON.stringify(data.groups));
             data.series.forEach(function(serie){
                 tmpSerie={
                     items:[],

@@ -8,11 +8,10 @@
 <!-- title: {text: $props.titleValue, halign: 'center'}, -->
                 
                 
-                <div id="selection-context" style="display: none; background-color:white; height: 48px; width: 260px;position: absolute; top:-1px;left:-1px;background-color: #ffffcc;border:1px solid #ffcc00;">
+                <div id="selection-context" style="display: none; background-color:white; height: 50px; width: 260px;position: absolute; top:-1px;left:-1px;background-color: white;border:1px solid #00dacd;">
                     <assessments-preview style="position: absolute;top:0;left:0;" id="assessmentsPreview" class="oj-flex-item" selected-assessments="{{selectedAnotations}}" data-points-marked="{{dataPointsMarked}}"  see-measures="{{seeMeasures}}"></assessments-preview>
                     <a href="#" id="clearSelection" data-bind="click: clearSelection">
-                        <div class="tooltip tooltipClear" style="position: absolute;width: 35px; height: 40px;left:210px;top:0px;padding-top: 4px;padding-bottom: 4px;padding-left: 5px;padding-right: 10px;">
-                            <span class="tooltiptext tooltiptextClear ">Clear selected values</span>
+                        <div class="tooltip tooltipClear" title="Clear selected values" style="position: absolute;width: 35px; height: 42px;left:210px;top:0px;padding-top: 4px;padding-bottom: 4px;padding-left: 5px;padding-right: 10px;">
                             <img src="images/clear_selection.png" style="vertical-align:middle; width: 32px; height: 32px;"/>
                         </div>
                         
@@ -62,7 +61,7 @@
                      <!-- ko foreach: multipleSelectionsArray -->  
                      <span class="oj-choice-item">  
                        <input data-bind="attr:{id:data.id}, value:data.id" type="checkbox">  
-                       <label data-bind="attr:{for:data.id}"><span data-bind="text:seriesData.name +' for ' + groupData[0] +', Value: '+ data.value"></span></label>  
+                       <label data-bind="attr:{for:data.id}"><span data-bind="text:seriesData.name + ' ' + groupData[0] +', Value: '+ data.value"></span></label>  
                      </span>  
                      <!-- /ko -->  
                     </div> 

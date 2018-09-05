@@ -34,10 +34,30 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 
                 self.nuiLineSeriesValue = ko.observableArray();
                 self.nuiLineGroupsValue = ko.observableArray();
+                
+                self.locale = document.documentElement.lang;
+                self.months = ["January", "February", "March", "April", "May", "June", "July", "August","September", "October", "November", "December"];
+                self.monthsFR = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+                self.monthsIT = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto","Settembre", "Ottobre", "Novembre", "Dicembre"];
+  	    	self.monthsES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto","Septiembre", "Octubre", "Noviembre", "Deciembre"];
+                self.monthsGR = ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάιος", "Ιούνιος", "Ιούλιος","Αύγουστος","Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"];
+                          
+  	    		  
             	                                                  
             	//this method loads data form ajax request before view is loaded
             	self.handleActivated = function(info) {
-                    
+                    switch (self.locale)
+                    {
+                        case "it-IT": self.months = self.monthsIT;
+                        break;
+                        case "fr-FR": self.months = self.monthsFR;
+                        break;
+                        case "es-ES": self.months = self.monthsES;
+                        break;
+                        case "el-EL" : self.months = self.monthsGR;
+                        break;	    		  		  	
+                    }
+                          
                         initData();
             		
                         return new Promise(function(resolve, reject) {
@@ -121,14 +141,14 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                       });
                       
                     //get nui groups with month name and year
-                    var months = ["January", "February", "March", "April", "May", "June", "July", "August","September", "October", "November", "December"];
+                    
                     let groups = [];
                     timeIntervals.sort(function(a, b) {
                         return a - b;
                     });
                     timeIntervals.forEach(function(interval){
                         let date = new Date(interval);
-                        groups.push(months[date.getMonth()] + " " + date.getFullYear());                               
+                        groups.push(self.months[date.getMonth()] + " " + date.getFullYear());                               
                     });
                     self.nuiLineGroupsValue(groups.slice());
                     groups.push('End');
@@ -284,17 +304,14 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    			  }
   	    		  });           	    		 
   	    		              	    		  
-  	    		 
-  	    		  var months = ["January", "February", "March", "April", "May", "June", "July", "August","September", "October", "November", "December"];
-  	    		  
-  	    		  
+  	    		 	
   	    		  //finding out for witch months the data is for 
   	    		  measures.forEach(function(mea) {
   	    			var differentMonthsForMeasure = [];
   	    			for(var i = 0; i< mea.measureValues.length; i++){
   	    				var date = new Date(mea.measureValues[i].intervalStart);
-        	    			if(differentMonthsForMeasure.indexOf((months[date.getMonth()] + " " + date.getFullYear())) === -1){
-        	    				differentMonthsForMeasure.push(months[date.getMonth()] + " " + date.getFullYear());
+        	    			if(differentMonthsForMeasure.indexOf((self.months[date.getMonth()] + " " + date.getFullYear())) === -1){
+        	    				differentMonthsForMeasure.push(self.months[date.getMonth()] + " " + date.getFullYear());
         	    			}
         	    			mea.months = differentMonthsForMeasure;                 	    			
         	    			mea.measureValues[i].formattedDate = date.getDate() + "-" + (date.getMonth()+1) + "-" + date.getFullYear();
@@ -385,7 +402,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
     	    				
     	    				mea.measureValues.forEach(function(mv) {
     	    					var date = new Date(mv.intervalStart);
-    	    					var testMon = months[date.getMonth()] + " " + date.getFullYear();              	    					
+    	    					var testMon = self.months[date.getMonth()] + " " + date.getFullYear();              	    					
     	    					if(testMon === mon){               	    						
     	    						lineSerie.items.push(mv);
     	    					}             						
@@ -414,7 +431,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    						  nuiMonth = "January";
   	    					  }
   	    					  else {
-  	    						  nuiMonth = months[date.getMonth()];
+  	    						  nuiMonth = self.months[date.getMonth()];
   	    						  
   	    					  }
   	    					  nuiYear = date.getFullYear();

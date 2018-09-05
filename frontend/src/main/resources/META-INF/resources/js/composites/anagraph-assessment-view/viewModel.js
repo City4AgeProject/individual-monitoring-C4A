@@ -96,7 +96,7 @@ function(oj, ko, $) {
 
                                                 //creating checkbox with multiple selections
                                                 self.multipleSelectionsArray().forEach(function(el){
-                                                    self.checkedMultipleSelections.push(el.data.id.toString());
+                                                    self.checkedMultipleSelections.push(oj.Translations.getTranslatedString(el.data.id.toString()));
                                                 });
                                                 $('#checkboxSetId').ojCheckboxset("refresh");                                         
                                                 self.storedEvent = event;
@@ -743,9 +743,9 @@ function(oj, ko, $) {
                     }
 			
                         //this is a string on assessment-preview that tells how many data points and assessments are selected
-			self.dataPointsMarked = self.dataPointsMarkedIds.length
-					+ oj.Translations.getTranslatedString("dpmw")
-					+ assessmentsResultLength + oj.Translations.getTranslatedString("assessments");
+			self.dataPointsMarked = self.dataPointsMarkedIds.length + " " +
+					 oj.Translations.getTranslatedString("dpmw") + " " +
+					 assessmentsResultLength + " " + oj.Translations.getTranslatedString("assessments");
 			$('#assessmentsPreview').prop('dataPointsMarked', self.dataPointsMarked);
 		}
                 //returns all selections that have equal values in equal time (month)
