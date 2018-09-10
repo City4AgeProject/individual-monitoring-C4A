@@ -2,6 +2,9 @@ package eu.city4age.dashboard.api.rest;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -26,11 +29,17 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
+import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
@@ -70,6 +79,8 @@ public class MeasuresEndpoint {
 
 	@Autowired
 	Environment environment;
+	
+	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@Bean
 	public RestTemplate restTemplate() {
@@ -84,7 +95,9 @@ public class MeasuresEndpoint {
 		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
-		logger.info("computation started: " + new Date());
+		logger.info("computation started: " + new Date());		
+		
+		recomputeExcluded ();
 
 		List<Pilot> pilotsForComputation = setNewestSubmittedDataForAllPilots();
 		
@@ -96,6 +109,34 @@ public class MeasuresEndpoint {
 		return JerseyResponse.buildTextPlain("success", 200);
 	}
 	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("recomputeExcluded")
+	public Response recomputeExcluded() {		
+		
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		
+		Timestamp yesterday = Timestamp.valueOf(OffsetDateTime.now().atZoneSameInstant(ZoneId.of("Z")).minusDays(1l).toLocalDate().atStartOfDay());
+		
+		logger.info("date: " + yesterday);
+		
+		List<UserInRole> uirs = variationMeasureValueRepository.findUsersAllForRecomputing (yesterday);
+		
+		for (UserInRole uir : uirs) {
+			Timestamp firstMonth = variationMeasureValueRepository.findFirstRecomputingMonthForUser(uir.getId(), uir.getPilot().getCompZone(), yesterday);
+			logger.info("user: " + uir.getId() + " start: " + firstMonth);
+			
+			measuresService.computeFor1User (uir, firstMonth);
+		}
+		
+		try {
+			return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString (uirs));
+		} catch (JsonProcessingException e) {			
+			e.printStackTrace();
+			return JerseyResponse.build("400");
+		}
+	}
+
 	public void imputeAndPredict(List<Pilot> pilots) {
 		
 		if (pilots != null && !pilots.isEmpty()) {

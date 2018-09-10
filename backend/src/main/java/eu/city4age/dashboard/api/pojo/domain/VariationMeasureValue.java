@@ -1,12 +1,15 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -62,6 +65,9 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	@JsonInclude ()
 	@OneToOne (mappedBy = "value", fetch = FetchType.LAZY)
 	private ValueEvidenceNotice valueEvidenceNotice; 
+	
+	@OneToMany(mappedBy = "vmv", fetch = FetchType.LAZY)
+	private Set<VmvFiltering> vmvFiltering = new HashSet<VmvFiltering>();
 
 
 	public VariationMeasureValue() {

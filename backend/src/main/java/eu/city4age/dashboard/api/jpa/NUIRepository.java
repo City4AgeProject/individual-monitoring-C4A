@@ -1,5 +1,6 @@
 package eu.city4age.dashboard.api.jpa;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
+import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 
 @Repository(value = "nuiRepository")
 public interface NUIRepository extends GenericRepository<NumericIndicatorValue, Long> {
@@ -21,6 +23,10 @@ public interface NUIRepository extends GenericRepository<NumericIndicatorValue, 
 	
 	@Query("SELECT nui FROM NumericIndicatorValue nui INNER JOIN FETCH nui.detectionVariable dv INNER JOIN FETCH nui.userInRole uir LEFT JOIN FETCH nui.timeInterval ti WHERE nui.userInRole.id = :uirId ORDER BY ti.intervalStart")
 	List<NumericIndicatorValue> getNuisForAllMea(@Param("uirId") Long uirId);
+
+	@Query("SELECT nui FROM NumericIndicatorValue nui INNER JOIN nui.timeInterval ti INNER JOIN nui.userInRole uir WHERE uir = :uir AND ti.intervalStart >= :startOfMonth AND ti.intervalStart <= :endOfMonth ORDER BY nui.detectionVariableId ASC")
+	List<NumericIndicatorValue> findNuisForUserAndStartAndEnd(@Param ("startOfMonth") Timestamp startOfMonth, @Param ("endOfMonth")Timestamp endOfMonth,
+			@Param ("uir") UserInRole uir);
 
 
 }

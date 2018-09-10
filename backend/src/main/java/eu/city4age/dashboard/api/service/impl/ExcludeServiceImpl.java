@@ -68,7 +68,7 @@ public class ExcludeServiceImpl implements ExcludeService {
 			List<VmvFiltering> filterings = new ArrayList<VmvFiltering>();
 			for(VariationMeasureValue measure : vmvDaily) {
 				VmvFiltering filtering = new VmvFiltering();
-				filtering.setFilterType("e");
+				filtering.setFilterType("E");
 				filtering.setVmv(measure);
 				filtering.setValidFrom(new Date());
 				filterings.add(filtering);

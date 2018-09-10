@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
+import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 
 @Repository(value = "variationMeasureValueRepository")
@@ -69,5 +70,13 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 	
 	@Query ("SELECT DISTINCT DATE_TRUNC ('mon', TIMEZONE ('UTC', ti.intervalStart)) FROM VariationMeasureValue vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.timeInterval ti WHERE uir.pilotCode = :pilotCode AND DATE_TRUNC ('mon', TIMEZONE ('UTC', ti.intervalStart)) < DATE_TRUNC ('mon', TIMEZONE ('UTC', CURRENT_TIMESTAMP)) ORDER BY DATE_TRUNC ('mon', TIMEZONE ('UTC', ti.intervalStart)) ASC")
 	List<Timestamp> findAllMonthStartsForPilotCode (@Param ("pilotCode") Pilot.PilotCode pilotCode);
+
+	// query koji izvlaci sve korisnike za koje postoje excludovane mere u prethodnom danu
+	@Query ("SELECT DISTINCT uir FROM VariationMeasureValue vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.vmvFiltering vmf WHERE vmf.validFrom >= :startOfDay AND vmf.filterType = 'E' ORDER BY uir.id ASC")
+	List<UserInRole> findUsersAllForRecomputing(@Param("startOfDay") Timestamp startOfDay);
+	
+	// query koji za zadatog korisnika izvlaci prvi mesec za koji treba raditi preracun
+	@Query ("SELECT DATE_TRUNC('month', TIMEZONE(:timeZone, MIN (ti.intervalStart))) FROM VariationMeasureValue vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.timeInterval ti INNER JOIN vmv.vmvFiltering vmf WHERE uir.id = :userInRoleID AND vmf.filterType = 'E' AND vmf.validFrom >= :startOfDay")
+	Timestamp findFirstRecomputingMonthForUser(@Param("userInRoleID") Long userInRoleID, @Param("timeZone") String timeZone, @Param("startOfDay") Timestamp startOfDay);
 	
 }
