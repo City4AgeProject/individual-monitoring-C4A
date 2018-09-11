@@ -290,7 +290,9 @@ public class MeasuresServiceImpl implements MeasuresService {
 		
 		YearMonth startOfComputationYearMonth = YearMonth.from (firstMonth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		
-		YearMonth endOfComputationYearMonth = YearMonth.from(YearMonth.from(uir.getPilot().getLatestVariablesComputed().toInstant().atZone(ZoneId.of("Z")).toLocalDate()));
+		YearMonth endOfComputationYearMonth;
+		if (uir.getPilot().getLatestVariablesComputed() != null ) endOfComputationYearMonth = YearMonth.from(YearMonth.from(uir.getPilot().getLatestVariablesComputed().toInstant().atZone(ZoneId.of("Z")).toLocalDate()));
+		else return;
 		
 		endOfComputationYearMonth = endOfComputationYearMonth.plusMonths(1l);
 		

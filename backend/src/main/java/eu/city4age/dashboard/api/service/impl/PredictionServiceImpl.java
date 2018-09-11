@@ -305,4 +305,40 @@ public class PredictionServiceImpl implements PredictionService {
 
 	}
 
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public void imputeAndPredictFor1User(UserInRole uir) {
+
+		// List<Pilot> pilots = pilotRepository.findPilotsComputed();
+		logger.debug("*** Start of imputeAndPredict ***");
+		logger.debug("uir: " + uir.getId());
+
+		List<DetectionVariable> detectionVariables = pilotDetectionVariableRepository
+				.findDetectionVariablesForPrediction(uir.getPilotCode());
+		
+		if (uir.getPilot().getLatestVariablesComputed() == null) return;
+
+		for (DetectionVariable dv : detectionVariables) {
+
+			logger.debug("DetectionVariableId: " + dv.getId());
+
+			
+			// Last date for which there is at least one data item in the DB for the user
+			Date endDate = geriatricFactorRepository.findMaxIntervalStartByUserInRole(uir.getId())
+					.getIntervalStart();
+			logger.debug("- EndDate: " + endDate);
+
+			imputeFactorService.imputeMissingValues(dv, uir, endDate);
+
+			// Delete obsolete predictions - FOR USER!
+			List<GeriatricFactorPredictionValue> predictionsToDelete = geriatricFactorPredictionValueRepository
+					.deleteObsoletePredictions(endDate, uir.getId(), dv.getId());
+			geriatricFactorPredictionValueRepository.delete(predictionsToDelete);
+			logger.debug("- Deleted " + predictionsToDelete.size() + " obsolete predictions");
+
+			this.makePredictions(dv, uir, endDate);
+
+		}
+
+	}
+
 }

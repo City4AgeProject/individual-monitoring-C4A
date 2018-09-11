@@ -2,7 +2,6 @@ package eu.city4age.dashboard.api.rest;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -35,7 +34,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
-import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
@@ -127,6 +125,7 @@ public class MeasuresEndpoint {
 			logger.info("user: " + uir.getId() + " start: " + firstMonth);
 			
 			measuresService.computeFor1User (uir, firstMonth);
+			predictionService.imputeAndPredictFor1User (uir);
 		}
 		
 		try {
@@ -181,7 +180,7 @@ public class MeasuresEndpoint {
 				Date previous;
 				if (pilot.getTimeOfComputation() == null || pilot.getTimeOfComputation().before(pilot.getLatestSubmissionCompleted())) {
 					previous = pilot.getNewestSubmittedData();
-					Timestamp newestSubmittedData = variationMeasureValueRepository.findMaxTimeIntervalStartByPilotCode(pilot.getPilotCode());
+					Timestamp newestSubmittedData = variationMeasureValueRepository.findMaxTimeIntervalStartByPilotCode(pilot.getPilotCode(), pilot.getCompZone());
 					pilot.setNewestSubmittedData(newestSubmittedData);
 					if (previous == null || (previous != null && newestSubmittedData != null && previous.before(newestSubmittedData))) 
 						result.add(pilot);

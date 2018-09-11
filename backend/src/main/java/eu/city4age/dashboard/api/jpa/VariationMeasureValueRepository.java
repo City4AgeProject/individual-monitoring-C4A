@@ -65,8 +65,8 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 	@Query("SELECT DATE_TRUNC('month', TIMEZONE(:timeZone, MIN (ti.intervalStart))) FROM VariationMeasureValue vm INNER JOIN vm.userInRole uir INNER JOIN vm.timeInterval ti WHERE uir.pilotCode = :pilotCode")
 	Timestamp findFirstMonthForPilot (@Param ("pilotCode") Pilot.PilotCode pilotCode, @Param("timeZone") String timeZone);
 	
-	@Query("SELECT MAX (date_trunc('mon', TIMEZONE('UTC', ti.intervalStart)))FROM VariationMeasureValue vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.timeInterval ti WHERE uir.pilotCode = :pilotCode AND DATE_TRUNC('mon', ti.intervalStart) < DATE_TRUNC ('mon', CURRENT_TIMESTAMP) AND DATE_TRUNC('mon', ti.intervalStart) < DATE_TRUNC ('mon', (SELECT p.latestSubmissionCompleted FROM Pilot p WHERE p.pilotCode = uir.pilotCode))")
-	Timestamp findMaxTimeIntervalStartByPilotCode (@Param ("pilotCode") Pilot.PilotCode pilotCode);
+	@Query("SELECT MAX (date_trunc('mon', TIMEZONE(:timeZone, ti.intervalStart)))FROM VariationMeasureValue vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.timeInterval ti WHERE uir.pilotCode = :pilotCode AND DATE_TRUNC('mon', ti.intervalStart) < DATE_TRUNC ('mon', CURRENT_TIMESTAMP) AND DATE_TRUNC('mon', ti.intervalStart) < DATE_TRUNC ('mon', (SELECT p.latestSubmissionCompleted FROM Pilot p WHERE p.pilotCode = uir.pilotCode))")
+	Timestamp findMaxTimeIntervalStartByPilotCode (@Param ("pilotCode") Pilot.PilotCode pilotCode, @Param("timeZone") String timeZone);
 	
 	@Query ("SELECT DISTINCT DATE_TRUNC ('mon', TIMEZONE ('UTC', ti.intervalStart)) FROM VariationMeasureValue vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.timeInterval ti WHERE uir.pilotCode = :pilotCode AND DATE_TRUNC ('mon', TIMEZONE ('UTC', ti.intervalStart)) < DATE_TRUNC ('mon', TIMEZONE ('UTC', CURRENT_TIMESTAMP)) ORDER BY DATE_TRUNC ('mon', TIMEZONE ('UTC', ti.intervalStart)) ASC")
 	List<Timestamp> findAllMonthStartsForPilotCode (@Param ("pilotCode") Pilot.PilotCode pilotCode);

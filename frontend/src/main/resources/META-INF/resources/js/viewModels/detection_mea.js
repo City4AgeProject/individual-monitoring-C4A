@@ -279,12 +279,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                     self.clusterGroups(clusterData.groups);
                                     self.clusterSeries(clusterData.series);
                                     //self.clusterSeries[0].displayInLegend = "off";
-                                    self.clusterDataHeader = "Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name);
+                                    if (clusterData.series !== undefined) self.clusterDataHeader = "Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name);
                                     //console.log (JSON.stringify(clusterData.legend));
                                     self.clusterLegendSections = clusterData.legend;
                                     self.dataIDs(clusterData.dataIDs);
                                     console.log(self.dataIDs())
-                                    self.loadAssessments();
+                                    if (clusterData.dataIDs !== undefined) self.loadAssessments();
                                 }),
                                 $.get(CODEBOOK_SELECT_ALL_FILTER_TYPES, function (data) {
                                     self.excludeConfirmData(data);
@@ -575,6 +575,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                 differentMonthsForMeasure.push(months[date.getMonth()] + " " + date.getFullYear());
                             }
                             mea.months = differentMonthsForMeasure;
+                            //console.log (mea.months);
                             mea.measureValues[i].formattedDate = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
                         }
 
@@ -688,7 +689,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                                 var date = new Date(nui.timeInterval.intervalStart);
 
-                                if (date.getMonth() === 11) {
+                                if (date.getMonth() === 12) {
                                     nuiMonth = "January";
                                 } else {
                                     nuiMonth = months[date.getMonth()];
