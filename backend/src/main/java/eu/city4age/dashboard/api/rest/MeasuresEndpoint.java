@@ -140,7 +140,7 @@ public class MeasuresEndpoint {
 				Date previous;
 				if (pilot.getTimeOfComputation() == null || pilot.getTimeOfComputation().before(pilot.getLatestSubmissionCompleted())) {
 					previous = pilot.getNewestSubmittedData();
-					Timestamp newestSubmittedData = variationMeasureValueRepository.findMaxTimeIntervalStartByPilotCode(pilot.getPilotCode());
+					Timestamp newestSubmittedData = variationMeasureValueRepository.findMaxTimeIntervalStartByPilotCode(pilot.getPilotCode(), pilot.getCompZone());
 					pilot.setNewestSubmittedData(newestSubmittedData);
 					if (previous == null || (previous != null && newestSubmittedData != null && previous.before(newestSubmittedData))) 
 						result.add(pilot);

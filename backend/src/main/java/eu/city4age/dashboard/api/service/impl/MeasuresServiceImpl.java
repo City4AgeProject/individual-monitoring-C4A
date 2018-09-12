@@ -4,10 +4,11 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.ws.rs.PathParam;
 import org.apache.logging.log4j.LogManager;
@@ -73,13 +74,13 @@ public class MeasuresServiceImpl implements MeasuresService {
 
 		if (latestDerivedMeasuresComputed == null) {
 			startOfComputationYearMonth = 
-					YearMonth.from(variationMeasureValueRepository.findFirstMonthForPilot(pilot.getPilotCode()).toInstant().atZone(ZoneOffset.UTC).toLocalDate());
+					YearMonth.from(variationMeasureValueRepository.findFirstMonthForPilot(pilot.getPilotCode(), pilot.getCompZone()).toInstant().atZone(ZoneId.of(pilot.getCompZone())).toLocalDate());
 		} else {
 			startOfComputationYearMonth = 
-					YearMonth.from(pilotRepository.findNextMonthForPilot(pilot.getPilotCode()).toInstant().atZone(ZoneOffset.UTC).toLocalDate());
+					YearMonth.from(pilotRepository.findNextMonthForPilot(pilot.getPilotCode()).toInstant().atZone(ZoneId.of(pilot.getCompZone())).toLocalDate());
 		}
 
-		YearMonth endOfComputationYearMonth = YearMonth.from(YearMonth.from(newestSubmittedData.toInstant().atZone(ZoneOffset.UTC).toLocalDate()));
+		YearMonth endOfComputationYearMonth = YearMonth.from(YearMonth.from(newestSubmittedData.toInstant().atZone(ZoneId.of(pilot.getCompZone())).toLocalDate()));
 
 		Timestamp startOfMonth;
 		Timestamp endOfMonth;
@@ -231,8 +232,8 @@ public class MeasuresServiceImpl implements MeasuresService {
 	
 	public TimeInterval getOrCreateTimeIntervalPilotTimeZone(Date intervalStart, TypicalPeriod typicalPeriod, PilotCode pilotCode) {
 		
-		//String computationTimeZone = pilotRepository.findByPilotCode(pilotCode).getCompZone();
-		//TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		String computationTimeZone = pilotRepository.findByPilotCode(pilotCode).getCompZone();
+		TimeZone.setDefault(TimeZone.getTimeZone(computationTimeZone));
 		TimeInterval ti = timeIntervalRepository.findByIntervalStartAndTypicalPeriod(intervalStart,
 				typicalPeriod.getDbName());
 		if (ti == null) {
@@ -243,7 +244,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 			timeIntervalRepository.save(ti);
 			//timeIntervalRepository.flush();
 		}
-		//TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		return ti;
 	}
 	
