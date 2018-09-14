@@ -37,6 +37,7 @@ import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.ActivityRepository;
 import eu.city4age.dashboard.api.jpa.MTestingReadingsRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.json.AndroidActivitiesDeserializer;
 import eu.city4age.dashboard.api.pojo.json.AndroidTokenDeserializer;
 import eu.city4age.dashboard.api.pojo.ws.C4AAndroidResponse;
@@ -217,7 +218,27 @@ public class AndroidEndpoint {
 	public Response firebaseToken (@RequestBody String json) {
 		
 		AndroidTokenDeserializer atd = new AndroidTokenDeserializer ();
-		return null;
+		
+		try {
+			
+			atd = objectMapper.readerFor(AndroidTokenDeserializer.class)
+					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+			
+			UserInRole uir = userInRoleRepository.findOne(atd.getUserId());
+			
+			uir.setToken(atd.getToken());
+			
+			userInRoleRepository.save(uir);
+			
+			return Response.ok().build();
+		} catch (JsonProcessingException e) {			
+			
+			e.printStackTrace();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		return Response.serverError().build();
 		
 	}
 

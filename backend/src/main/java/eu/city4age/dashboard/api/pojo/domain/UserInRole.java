@@ -73,6 +73,9 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 	@OrderBy("changed DESC")
 	private Set<FrailtyStatusTimeline> frailtyStatusTimeline = new HashSet<FrailtyStatusTimeline>();
 	
+	@Column (name = "firebase_token")
+	private String token;
+	
 
 	public UserInRole() {
 		
@@ -166,6 +169,20 @@ public class UserInRole extends AbstractBaseEntity<Long> implements Comparable<A
 	@Override
 	public int compareTo(AbstractBaseEntity<Long> o) {
 		return this.getId().compareTo(o.getId());
+	}
+
+	/**
+	 * @return the token
+	 */
+	public String getToken() {
+		return token;
+	}
+
+	/**
+	 * @param token the token to set
+	 */
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }

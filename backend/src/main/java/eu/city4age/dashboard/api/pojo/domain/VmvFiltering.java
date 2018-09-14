@@ -106,5 +106,19 @@ public class VmvFiltering extends AbstractBaseEntity<Long> {
 	public void setAssessment(Assessment assessment) {
 		this.assessment = assessment;
 	}
+	
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof VmvFiltering) {
+			VmvFiltering vmvf = (VmvFiltering) obj;
+			if (vmvf.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
 
 }

@@ -264,5 +264,19 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 			this.setRecognitions(sb.toString());
 		}
 	}
+	
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof MTestingReadings) {
+			MTestingReadings mtr = (MTestingReadings) obj;
+			if (mtr.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
 
 }

@@ -3,6 +3,7 @@ package eu.city4age.dashboard.api.service.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -146,6 +147,11 @@ public class AndroidServiceImpl implements AndroidService {
 		}
 		
 		return mts;
+	}
+	
+	public HashMap <String, String> generateQuestion () {
+		return null;
+		
 	}
 
 }

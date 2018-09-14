@@ -35,6 +35,7 @@ public class ExcludeServiceImpl implements ExcludeService {
 						|| (vmvDaily.get(0).getTimeInterval().getId().equals(measure.getTimeInterval().getId())
 								&& vmvDaily.get(0).getUserInRole().getId().equals(measure.getUserInRole().getId())))) {
 					excludeMeasuresFor1UserAnd1Ti(vmvDaily);
+					vmvDaily.clear();
 					vmvDaily = new ArrayList<VariationMeasureValue>();
 				}
 				vmvDaily.add(measure);
@@ -43,6 +44,7 @@ public class ExcludeServiceImpl implements ExcludeService {
 		if(!vmvDaily.isEmpty()) {
 			excludeMeasuresFor1UserAnd1Ti(vmvDaily);
 		}
+		vmvDaily.clear();
 	}
 
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
@@ -74,6 +76,7 @@ public class ExcludeServiceImpl implements ExcludeService {
 				filterings.add(filtering);
 			}
 			vmvFilteringRepository.bulkSave(filterings);
+			vmvFilteringRepository.flush();
 			filterings.clear();
 		}
 	}

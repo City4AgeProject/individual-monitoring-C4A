@@ -267,11 +267,13 @@ public class Assessment extends AbstractBaseEntity<Long> {
 	}
 
 	public boolean equals(Object obj) {
-		boolean flag = false;
-		Assessment aa = (Assessment) obj;
-		if (aa.id == id)
-			flag = true;
-		return flag;
+		
+		if (obj != null && obj instanceof Assessment) {
+			Assessment aa = (Assessment) obj;
+			if (aa.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
 	}
 
 	/**

@@ -1,7 +1,6 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -67,7 +66,7 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	private ValueEvidenceNotice valueEvidenceNotice; 
 	
 	@OneToMany(mappedBy = "vmv", fetch = FetchType.LAZY)
-	private Set<VmvFiltering> vmvFiltering = new HashSet<VmvFiltering>();
+	private Set<VmvFiltering> vmvFiltering;
 
 
 	public VariationMeasureValue() {
@@ -155,6 +154,34 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 
 	public void setValueEvidenceNotice (ValueEvidenceNotice valueEvidenceNotice) {
 		this.valueEvidenceNotice = valueEvidenceNotice;
+	}
+
+	/**
+	 * @return the vmvFiltering
+	 */
+	public Set<VmvFiltering> getVmvFiltering() {
+		return vmvFiltering;
+	}
+
+	/**
+	 * @param vmvFiltering the vmvFiltering to set
+	 */
+	public void setVmvFiltering(Set<VmvFiltering> vmvFiltering) {
+		this.vmvFiltering = vmvFiltering;
+	}
+	
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof VariationMeasureValue) {
+			VariationMeasureValue vmv = (VariationMeasureValue) obj;
+			if (vmv.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
 	}
 
 }

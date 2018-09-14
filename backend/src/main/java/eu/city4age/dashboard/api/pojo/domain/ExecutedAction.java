@@ -143,5 +143,19 @@ public class ExecutedAction extends AbstractBaseEntity<Long> {
 	public void setExtraInformation(String extraInformation) {
 		this.extraInformation = extraInformation;
 	}
+	
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof ExecutedAction) {
+			ExecutedAction ea = (ExecutedAction) obj;
+			if (ea.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
 
 }

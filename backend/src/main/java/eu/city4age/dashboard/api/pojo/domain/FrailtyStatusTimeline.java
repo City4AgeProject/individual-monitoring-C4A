@@ -146,4 +146,26 @@ public class FrailtyStatusTimeline implements Serializable {
 	public void setFrailtyStatus(String frailtyStatus) {
 		this.frailtyStatus = frailtyStatus;
 	}
+	
+	public int hashCode() {
+		int result = 17;
+		
+		result = result * 31 * this.timeIntervalId.intValue();
+		result = result * 31 * this.userInRoleId.intValue();
+		result = result * 31 * ((Long) this.changed.getTime()).intValue ();
+		
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof FrailtyStatusTimeline) {
+			FrailtyStatusTimeline fst = (FrailtyStatusTimeline) obj;
+			if (fst.getChanged().equals(this.changed) &&
+					fst.getUserInRoleId().equals(this.userInRoleId) &&
+					fst.getTimeIntervalId().equals(this.timeIntervalId)) return true;
+			else return false;
+		}
+		return false;
+	}
 }

@@ -99,5 +99,19 @@ public class Role extends AbstractBaseEntity<Long> {
 	public Date getValidTo() {
 		return validTo;
 	}
+	
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof Role) {
+			Role role = (Role) obj;
+			if (role.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
 
 }
