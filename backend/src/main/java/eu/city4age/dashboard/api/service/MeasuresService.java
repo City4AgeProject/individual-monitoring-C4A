@@ -7,6 +7,7 @@ import java.util.List;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
+import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
@@ -14,7 +15,7 @@ import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 
 public interface MeasuresService {
 
-	void computeFor1Pilot(String name, String string) throws Exception;
+	void computeFor1Pilot(Pilot pilot) throws Exception;
 	
 	TimeInterval getOrCreateTimeIntervalPilotTimeZone(Date intervalStart, TypicalPeriod typicalPeriod, PilotCode pilotCode);
 	

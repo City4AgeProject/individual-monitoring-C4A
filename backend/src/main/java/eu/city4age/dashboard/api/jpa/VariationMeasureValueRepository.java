@@ -72,7 +72,7 @@ public interface VariationMeasureValueRepository extends GenericRepository<Varia
 	List<Timestamp> findAllMonthStartsForPilotCode (@Param ("pilotCode") Pilot.PilotCode pilotCode);
 
 	// query koji izvlaci sve korisnike za koje postoje excludovane mere u prethodnom danu
-	@Query ("SELECT DISTINCT uir FROM VariationMeasureValue vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.vmvFiltering vmf WHERE vmf.validFrom >= :startOfDay AND vmf.filterType = 'E' ORDER BY uir.id ASC")
+	@Query ("SELECT DISTINCT uir FROM VariationMeasureValue vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.vmvFiltering vmf WHERE vmf.validFrom >= :startOfDay AND vmf.filterType = 'E' AND vmf.assessment IS NOT NULL ORDER BY uir.id ASC")
 	List<UserInRole> findUsersAllForRecomputing(@Param("startOfDay") Timestamp startOfDay);
 	
 	// query koji za zadatog korisnika izvlaci prvi mesec za koji treba raditi preracun

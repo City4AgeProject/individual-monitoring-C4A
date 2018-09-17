@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.ws.rs.PathParam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,16 +74,14 @@ public class MeasuresServiceImpl implements MeasuresService {
 	private ComputeService computeService;
 	
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public void computeFor1Pilot(@PathParam("pilotCode") String pilotCodeString, @PathParam("newestSubmittedDate") String newestSubmittedDataString) throws Exception {
+	public void computeFor1Pilot(Pilot pilot) throws Exception {
 		
-		Pilot pilot = pilotRepository.findByPilotCode(Pilot.PilotCode.valueOf(pilotCodeString.toUpperCase()));
 		PilotCode pilotCode = pilot.getPilotCode();
 
 		logger.info("pilotCode: " + pilotCode.name());
 
 		Date latestDerivedMeasuresComputed = pilot.getLatestVariablesComputed();
-		Timestamp newestSubmittedTimestamp = Timestamp.valueOf(newestSubmittedDataString);
-		Date newestSubmittedData = Date.from(newestSubmittedTimestamp.toInstant());
+		Date newestSubmittedData = pilot.getNewestSubmittedData();
 
 		YearMonth startOfComputationYearMonth;
 

@@ -158,7 +158,7 @@ public class MeasuresEndpoint {
 			while (pilotsIterator.hasNext()) {
 				Pilot pilot = pilotsIterator.next();
 				try {
-					measuresService.computeFor1Pilot(pilot.getPilotCode().name(), pilot.getNewestSubmittedData().toString());
+					measuresService.computeFor1Pilot(pilot);
 				} catch (Exception e) {
 					logger.info("pukao pilot: " + pilot.getPilotCode().getName());
 					e.printStackTrace();
