@@ -105,6 +105,9 @@ public class MeasuresServiceImpl implements MeasuresService {
 			endOfComputationYearMonth = endOfComputationYearMonth.plusMonths(1L);
 			if (pilot.getLatestVariablesComputed() != null) startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
 		}
+		
+		List<NumericIndicatorValue> nuiList = new ArrayList<NumericIndicatorValue> ();
+		List<GeriatricFactorValue> gfvList = new ArrayList<GeriatricFactorValue> ();
 
 		while(!startOfComputationYearMonth.equals(endOfComputationYearMonth)) {
 			
@@ -118,7 +121,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 			logger.info(startOfMonth);
 
 			try {
-				computeService.computeAllFor1Month (startOfMonth, endOfMonth, pilotCode);
+				computeService.computeAllFor1Month (startOfMonth, endOfMonth, pilotCode, nuiList, gfvList);
 			}
 			catch (Exception e) {
 				//startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
@@ -147,7 +150,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		setVariablesComputedForAllPilots(pilot, endOfComputation, newestSubmittedData);
 	}	
 
-	public void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
+	public void computeNuisFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode, List<NumericIndicatorValue> nuiList) {
 
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCode);
@@ -156,16 +159,16 @@ public class MeasuresServiceImpl implements MeasuresService {
 
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
 			excludeService.excludeMeasures(vmsMonthly);
-			List<NumericIndicatorValue> nuis = createAllNuis(startOfMonth, endOfMonth, pilotCode);
-			nuiRepository.bulkSave(nuis);
+			nuiList = createAllNuis(startOfMonth, endOfMonth, pilotCode, nuiList);
+			nuiRepository.bulkSave(nuiList);
 			nuiRepository.flush();
-			nuis.clear();
+			nuiList.clear();
 			//nuiRepository.flush();
 		}
 		vmsMonthly.clear();
 	}
 
-	public void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) throws Exception {
+	public void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode, List<GeriatricFactorValue> gesList) throws Exception {
 
 		String stringPilotCode = pilotCode.name().toLowerCase();
 		
@@ -176,10 +179,10 @@ public class MeasuresServiceImpl implements MeasuresService {
 		//gess.addAll(variationMeasureValueRepository.computeAllDirect(startOfMonth, endOfMonth, pilotCodes, DetectionVariableType.GES));
 		
 		if(gess != null && gess.size() > 0) {
-			List<GeriatricFactorValue> gfvs = createAllGFVs(gess, startOfMonth, endOfMonth, pilotCode);
-			geriatricFactorRepository.bulkSave(gfvs);
+			gesList = createAllGFVs(gess, startOfMonth, endOfMonth, pilotCode, gesList);
+			geriatricFactorRepository.bulkSave(gesList);
 			geriatricFactorRepository.flush();
-			gfvs.clear();
+			gesList.clear();
 			//nuiRepository.flush();
 		}
 		gess.clear();
@@ -187,7 +190,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 	}
 
 	public void computeFor1Month(DetectionVariableType factor, Timestamp startOfMonth,
-			Timestamp endOfMonth, PilotCode pilotCode) throws Exception {
+			Timestamp endOfMonth, PilotCode pilotCode, List<GeriatricFactorValue> gfvList) throws Exception {
 		
 		/*if(factor.equals(DetectionVariableType.OVL) && pilotCode.equals(PilotCode.MAD) && startOfMonth.after(Timestamp.valueOf("2017-09-01 00:00:00.0"))) {
 			logger.info("Desilo se.");
@@ -202,10 +205,10 @@ public class MeasuresServiceImpl implements MeasuresService {
 		list.addAll(variationMeasureValueRepository.computeAllDirect(startOfMonth, endOfMonth, pilotCodes, DetectionVariableType.GEF));*/
 
 		if (list != null && list.size() > 0) {
-			List<GeriatricFactorValue> gfvs = createAllGFVs(list, startOfMonth, endOfMonth, pilotCode);
-			geriatricFactorRepository.bulkSave(gfvs);
+			gfvList = createAllGFVs(list, startOfMonth, endOfMonth, pilotCode, gfvList);
+			geriatricFactorRepository.bulkSave(gfvList);
 			geriatricFactorRepository.flush();
-			gfvs.clear();
+			gfvList.clear();
 			//nuiRepository.flush();
 		}
 		list.clear();
@@ -219,10 +222,9 @@ public class MeasuresServiceImpl implements MeasuresService {
 		pilotRepository.save(pilot);
 	}
 	
-	public List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
+	public List<NumericIndicatorValue> createAllNuis(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode, 
+			List<NumericIndicatorValue> nuiList) {
 		
-		final List<NumericIndicatorValue> nuis = new ArrayList<NumericIndicatorValue>();
-
 		String stringPilotCode = pilotCode.name().toLowerCase();
 		
 		List<Object[]> nuisList = nativeQueryRepository.computeAllNuis(startOfMonth, endOfMonth, stringPilotCode);
@@ -233,19 +235,22 @@ public class MeasuresServiceImpl implements MeasuresService {
 
 				NumericIndicatorValue create1Nui = create1Nui((Integer) nui[0],  (Integer) nui[1], (Double) nui[2], startOfMonth, pilotCode);
 
-				nuis.add(create1Nui);
+				nuiList.add(create1Nui);
 
 			}
 
 		}
-		return nuis;
+		nuisList.clear();
+		
+		return nuiList;
 
 	}
 	
-	public List<GeriatricFactorValue> createAllGFVs(List<Object[]> list, Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode) {
-		
-		final List<GeriatricFactorValue> gfvs = new ArrayList<GeriatricFactorValue>();
+	public List<GeriatricFactorValue> createAllGFVs(List<Object[]> list, Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode,
+			List<GeriatricFactorValue> gfvList) {
+				
 		final TimeInterval ti = getOrCreateTimeIntervalPilotTimeZone(startOfMonth, TypicalPeriod.MONTH, pilotCode);
+		
 		for(Object[] arr : list) {
 			GeriatricFactorValue ges = new GeriatricFactorValue();
 			ges.setGefValue((BigDecimal) arr[2]);
@@ -253,9 +258,9 @@ public class MeasuresServiceImpl implements MeasuresService {
 			ges.setDetectionVariableId(((Integer) arr[1]).longValue());
 			ges.setUserInRoleId(((Integer) arr[0]).longValue());
 			ges.setDerivationWeight(arr[3] == null ? new BigDecimal(1) : (BigDecimal) arr[3]);
-			gfvs.add(ges);
+			gfvList.add(ges);
 		}
-		return gfvs;
+		return gfvList;
 	}
 	
 	public NumericIndicatorValue create1Nui(Integer userId, Integer nuiDvId, Double nuiValue, Timestamp startOfMonth, PilotCode pilotCode) {
@@ -342,19 +347,12 @@ public class MeasuresServiceImpl implements MeasuresService {
 			startOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atDay(1).atStartOfDay());
 			endOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
 			
-			computeNuisFor1User (startOfMonth, endOfMonth, uir);
-			computeGessFor1User (startOfMonth, endOfMonth, uir);
-			computeFor1MonthFor1User(DetectionVariableType.GEF, startOfMonth, endOfMonth, uir);
-			computeFor1MonthFor1User(DetectionVariableType.GFG, startOfMonth, endOfMonth, uir);
-			computeFor1MonthFor1User(DetectionVariableType.OVL, startOfMonth, endOfMonth, uir);
-			
 			try {
-				this.wait(10000l);
-			} catch (InterruptedException e) {
-				logger.info("ne moze wait!!!!");
-				e.printStackTrace();
-				return;
-				
+				computeService.computeAllFor1UserFor1Month (startOfMonth, endOfMonth, uir);
+			}
+			catch (Exception e) {
+				//startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
+				break;
 			}
 			
 			startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
@@ -362,7 +360,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		
 	}
 
-	private void computeFor1MonthFor1User(DetectionVariableType gef, Timestamp startOfMonth, Timestamp endOfMonth,
+	public void computeFor1MonthFor1User(DetectionVariableType gef, Timestamp startOfMonth, Timestamp endOfMonth,
 			UserInRole uir) {
 		
 		
@@ -445,7 +443,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		return gfvs;
 	}
 
-	private void computeGessFor1User(Timestamp startOfMonth, Timestamp endOfMonth, UserInRole uir) {
+	public void computeGessFor1User(Timestamp startOfMonth, Timestamp endOfMonth, UserInRole uir) {
 		
 		List<GeriatricFactorValue> gess = createGessFor1User(startOfMonth, endOfMonth, uir);
 		
@@ -457,7 +455,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		List<String> removedGFVValues = new ArrayList<String> ();
 		List<GeriatricFactorValue> gfvsForDelete = new ArrayList <GeriatricFactorValue> ();*/
 		
-		/*logger.info("existingGess.size: " + existingGess.size()); */
+		logger.info("existingGess.size: " + existingGess.size()); 
 		
 		//int gessCounter = 0;
 		
@@ -496,8 +494,10 @@ public class MeasuresServiceImpl implements MeasuresService {
 			}
 		}
 		
+		logger.info("geriatricFactorRepository.size: " + geriatricFactorRepository.findAll().size());
 		geriatricFactorRepository.delete(existingGess);
 		geriatricFactorRepository.flush();
+		logger.info("geriatricFactorRepository.size: " + geriatricFactorRepository.findAll().size());
 		geriatricFactorRepository.save(gess);
 		
 		for (GeriatricFactorValue gfv : gfvAssessmentMap.keySet()) {
@@ -639,7 +639,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		return gess;
 	}
 
-	private void computeNuisFor1User(Timestamp startOfMonth, Timestamp endOfMonth, UserInRole uir) {
+	public void computeNuisFor1User(Timestamp startOfMonth, Timestamp endOfMonth, UserInRole uir) {
 		
 		List<NumericIndicatorValue> nuis = createNuisFor1User(startOfMonth, endOfMonth, uir);
 		
