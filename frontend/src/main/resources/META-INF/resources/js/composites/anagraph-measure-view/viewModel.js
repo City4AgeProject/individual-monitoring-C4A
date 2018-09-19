@@ -29,10 +29,32 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     {id: 'multi',    label: '4-month'}
                 ];
                 self.mode = ko.observable('single');
+                self.dataSource = ko.observable();
                 
                 context.props.then(function(properties) {                   
                     self.props = properties; 
-                    self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
+
+                    self.composite = context.element;
+                     $(self.composite).on('nuisForMeasure-changed',function(event){
+                         if (event.detail.updatedFrom === 'external'){ 
+                             console.log('nuis for measure changed');
+                                 self.dataSource(new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ));
+                                 self.measureName(properties.measureName);                          
+                            }
+
+                    });
+                    $(self.composite).on('lineSeries-changed',function(event){
+                         if (event.detail.updatedFrom === 'external'){ 
+                             console.log('lineseries changed');
+                                 self.lineSeries(properties.lineSeries);                         
+                            }
+
+                    });
+
+
+
+                    
+                    self.dataSource(new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} )); 
 
                     self.measureName(oj.Translations.getTranslatedString(properties.measureName));                    
                     if(properties.baseUnit){

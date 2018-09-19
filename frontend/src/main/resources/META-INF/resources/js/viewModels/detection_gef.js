@@ -77,11 +77,10 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 filterAssessments(self.queryParams);
                 };
                 //Labels on GEF page with translate option
-
-                self.detectionGEFGroupsLineChartLabel = oj.Translations.getTranslatedString("detection_gef_groups_chart_groups");
-                self.lineChartLabel = oj.Translations.getTranslatedString('line_chart');
-                self.morphologyLabel = oj.Translations.getTranslatedString('morphology');
-                self.visualisationsLabel = oj.Translations.getTranslatedString('visualisations');
+                self.detectionGEFGroupsLineChartLabel = ko.observable(oj.Translations.getTranslatedString("detection_gef_groups_chart_groups"));
+                self.lineChartLabel = ko.observable(oj.Translations.getTranslatedString('line_chart'));
+                self.morphologyLabel = ko.observable(oj.Translations.getTranslatedString('morphology'));
+                self.visualisationsLabel = ko.observable(oj.Translations.getTranslatedString('visualisations'));
                 /* End Detection FGR Groups Line Chart configuration  */
 
                 var groups = ["Initial", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Aug 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016"];
@@ -110,12 +109,17 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 self.titleValue = ko.observable("");
                 self.titlePart = ko.observable("");
                 self.titleObj = ko.observable();
+                self.uiEvent = ko.observable();
                 self.chartDrill = function (event) {
-                var ui = event.detail;
+                    self.uiEvent(event);
+                    var ui = event.detail;
                         if (ui['series']) {
-                chartClicked = true;
-                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
-                        document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';
+                        chartClicked = true;
+                        if(document.getElementById('detectionGEFGroup1FactorsLineChart')){
+                            document.getElementById('detectionGEFGroup1FactorsLineChart').style.visibility = 'visible';
+                            document.getElementById('detectionGEFGroup1FactorsLineChart').style.display = 'block';    
+                        }
+                        
                         self.titleValue(oj.Translations.getTranslatedString('gfg') + " - " + ui['series'].charAt(0).toUpperCase() + ui['series'].slice(1));
                         self.titlePart(ko.toJS(self.titleValue));
                         self.titleObj({"text": self.titlePart(), "halign": "center"});
@@ -211,12 +215,18 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                     self.lineSeriesValue(series);
                     self.lineSeriesPredictionValue(seriesPrediction);
                     //var param = [self.careRecipientId, self.parentFactorId];
-                    $('#detectionGEFGroup1FactorsLineChart').prop('selectedItemsValue', []);
-                    $('#detectionGEFGroup1FactorsLineChart')[0].chartOptionChange();
-                    $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
-                    $('html, body').animate({
-                                    scrollTop: $("#detectionGEFGroup1FactorsLineChart").offset().top
-                                }, 2000);
+                    if( $('#detectionGEFGroup1FactorsLineChart')) {
+                        $('#detectionGEFGroup1FactorsLineChart').prop('selectedItemsValue', []);
+                        if($('#detectionGEFGroup1FactorsLineChart')[0]){
+                            $('#detectionGEFGroup1FactorsLineChart')[0].chartOptionChange();
+                            $('#detectionGEFGroup1FactorsLineChart')[0].loadAssessmentsCached();
+                        }
+                        
+                        $('html, body').animate({
+                                        scrollTop: $("#detectionGEFGroup1FactorsLineChart").offset().top
+                                    }, 2000);
+                    }
+                    
                 };
                 /* End Detection GEF Groups Line Chart configuration*/
 
@@ -354,7 +364,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 return obj.name;
             });
             formatDate(data.groups);
-                        console.log('this is formated date : ' + JSON.stringify(data.groups));
+                        
             data.series.forEach(function(serie){
                 tmpSerie={
                     items:[],
@@ -510,7 +520,51 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                     self.seriesVal(series);
                     self.groupsVal(groups);
                 };
-                }
+                
+                var languageBox = document.getElementById("languageBox");
+                languageBox.removeEventListener("valueChanged", function(event) {
+                    if(window.location.href.includes('detection_gef')){
+                        changeLanguage();
+                    }
+                });
+                languageBox.addEventListener("valueChanged", function(event) {
+                    if(window.location.href.includes('detection_gef')){
+                        changeLanguage();
+                    }
+                });
+        
+        function changeLanguage(){
+             var lang = $('#languageBox').val();
+             oj.Config.setLocale(lang,
+            		 function () {
+                         
+            	 		$('html').attr('lang', lang);                         
+                                
+            	 		if(document.getElementById('detectionGEFGroupsLineChart') != null){
+            	 			
+	            	 	self.detectionGEFGroupsLineChartLabel(oj.Translations.getTranslatedString("detection_gef_groups_chart_groups"));
+	            	    	self.lineChartLabel(oj.Translations.getTranslatedString('line_chart'));
+	            	    	self.morphologyLabel(oj.Translations.getTranslatedString('morphology'));
+	            	    	self.visualisationsLabel(oj.Translations.getTranslatedString('visualisations'));
+	                     	
+	            	        self.dataValiditiesTags = ko.observableArray([
+	            	            {value: 'QUESTIONABLE_DATA', label: oj.Translations.getTranslatedString("questionable_data") , imagePath: 'images/questionable_data.png'},
+	            	            {value: 'FAULTY_DATA', label: oj.Translations.getTranslatedString("faulty_data") , imagePath: 'images/faulty_data.png'},
+	            	            {value: 'VALID_DATA', label: oj.Translations.getTranslatedString("valid_data") , imagePath: 'images/valid_data.png'}]);
+
+	            	        loadCRData();
+	            	        document.getElementById('detectionGEFGroupsLineChart').refresh();
+                                document.getElementById('detectionGEFGroup1FactorsChart').refresh();
+            	        
+            	 		}//end if
+                                if(self.uiEvent()){
+                                    self.chartDrill(self.uiEvent());
+                                }
+                     }
+             );
+
+        }
+        }
 
         return  GraphicsContentViewModel;
         });

@@ -9,7 +9,7 @@
 				<div class="oj-form">
 					<div class="oj-flex">
                                             <div class="oj-flex-item">
-                                                <label id="selectgrouplabel" data-bind="text: choseTypeLabel+'*'"></label>
+                                                <label for="riskSelect" id="selectGroupLabel" data-bind="text: choseTypeLabel"></label>
                                                 <div class="oj-form-control-group" aria-labelledby="selectgrouplabel" role="group">
                                                     <oj-select-one required id="riskSelect" style="width:165px;" value="{{selectedRiskStatus}}"  placeholder="[[choseTypePlcHoldLabel]]">
                                                         <!-- ko foreach: $props.risksTags -->
@@ -40,14 +40,14 @@
 					</div>
 					<div class="oj-flex">
                                             <div class="oj-flex-item">
-							<label for="selectRole" data-bind="text: forSelectRoleLabel+'*'"></label>
-                                                        <oj-combobox-many required id="selectRole"  options="{{roleTagsDP}}" value="[[selectedRoles]]" style="max-width:370px"></oj-combobox-many> 
+							<label id="selectRoleLbl" for="selectRole" data-bind="text: forSelectRoleLabel+'*'"></label>
+                                                        <oj-combobox-many required id="selectRole"  options="{{roleTagsDP}}" value="{{selectedRoles}}" style="max-width:370px"></oj-combobox-many> 
 						</div>
 					</div>
 
 					<div class="oj-flex">
 						<div class="oj-flex-item">
-							<label for="textareacontrol"  data-bind="text: commentLabel"></label>
+							<label id="commentLbl" for="textareacontrol"  data-bind="text: commentLabel"></label>
                                                         <oj-text-area id="textareacontrol" rows="5" value="{{$props.commentText}}" style="max-width:370px" placeholder="[[commentPlcHoldLabel]]"></oj-text-area>
 						</div>
 					</div>
@@ -58,7 +58,7 @@
 	</div>
 	<div class="oj-dialog-footer" style="padding-right: 15px;">
 		<div align="right">
-			<div id="required" style="margin: 4px"><label data-bind="text: '(*)='+requiredLabel"></label></div>
+			<div id="required" style="margin: 4px"><label data-bind="text: requiredLabel"></label></div>
                         <oj-button id='okButton' disabled="false" on-click="[[postAssessment]]" chroming="full">
                             <span data-bind='text: postBtnLabel'></span>
                         </oj-button>

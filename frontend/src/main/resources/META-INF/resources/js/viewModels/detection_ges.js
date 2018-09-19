@@ -114,6 +114,27 @@ function (oj, ko, $) {
                oj.Router.rootInstance.go("detection_mea");
         };
         
+        var languageBox = document.getElementById("languageBox");
+        languageBox.removeEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        languageBox.addEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        
+        function changeLanguage(){
+             var lang = $('#languageBox').val();
+             oj.Config.setLocale(lang,
+            		 function () {
+            	 		$('html').attr('lang', lang);                         
+            	 		if(document.getElementById('detectionGEFGroup1FactorsChart') != null &&
+            	 		   document.getElementById('detectionGEFGroupsLineChart') == null){
+            	 			self.handleActivated();
+                                        document.getElementById('detectionGEFGroup1FactorsChart').refresh();
+            	 		}
+                     }
+             );
+        }
     }
 
     return detectionGesContentViewModel;

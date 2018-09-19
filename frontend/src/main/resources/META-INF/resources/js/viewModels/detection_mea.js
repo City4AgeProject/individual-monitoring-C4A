@@ -10,7 +10,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 
                 $(".loader-hover").hide();
                 var self = this;
-                self.showBarCharts = ko.observable(false);
+                self.showWaterfallCharts = ko.observable(false);
                 self.nuiData = null;
                 self.nuiGroups = ko.observableArray();
                 self.nuiSeries = ko.observableArray();
@@ -18,7 +18,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.gesList = ko.observableArray();
                 self.meaList = ko.observableArray([]);
                 self.meaForSelector = ko.observableArray();
-                self.measureName = null;
+                self.measureName = ko.observable();
                 self.measureTitle = ko.observable();
                 self.barSeriesAvg = ko.observableArray();
                 self.barSeriesStd = ko.observableArray();
@@ -31,12 +31,20 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.referenceObjectsBest = ko.observableArray();
                 self.referenceObjectsDelta = ko.observableArray();
                 self.legendSections = ko.observableArray();
-                
                 self.nuiLineSeriesValue = ko.observableArray();
                 self.nuiLineGroupsValue = ko.observableArray();
+                self.timeIntervalsStored = [];
+
+                self.nuisForMeasure = ko.observable(); 
+                self.lineSeries = ko.observable(); 
+                self.baseUnit = ko.observable(); 
+                self.defaultTypicalPeriod = ko.observable(); 
+                self.lineType = ko.observable(); 
+                self.hasComments = ko.observable(); 
                 
                 self.locale = document.documentElement.lang;
-                self.months = ["January", "February", "March", "April", "May", "June", "July", "August","September", "October", "November", "December"];
+                self.months = [];
+                self.monthsEN = ["January", "February", "March", "April", "May", "June", "July", "August","September", "October", "November", "December"];
                 self.monthsFR = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
                 self.monthsIT = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto","Settembre", "Ottobre", "Novembre", "Dicembre"];
   	    	self.monthsES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto","Septiembre", "Octubre", "Noviembre", "Deciembre"];
@@ -46,15 +54,18 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             	                                                  
             	//this method loads data form ajax request before view is loaded
             	self.handleActivated = function(info) {
-                    switch (self.locale)
+                    
+                    switch ($('#languageBox').val())
                     {
-                        case "it-IT": self.months = self.monthsIT;
+                        case "en": self.months = self.monthsEN;
                         break;
-                        case "fr-FR": self.months = self.monthsFR;
+                        case "it": self.months = self.monthsIT;
                         break;
-                        case "es-ES": self.months = self.monthsES;
+                        case "fr": self.months = self.monthsFR;
                         break;
-                        case "el-EL" : self.months = self.monthsGR;
+                        case "es": self.months = self.monthsES;
+                        break;
+                        case "el" : self.months = self.monthsGR;
                         break;	    		  		  	
                     }
                           
@@ -84,18 +95,19 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                   })
 
                                 ).then(function() {
-                                    self.data.dailyMeasures = [];    
-                                    var arr = setDataForDiagrams(self.data, self.nuiData);
-                                    self.data.dailyMeasures = arr;
-//                                    arr.forEach(function(el){
-//                                        if(el.detectionVariableId === parseInt(sessionStorage.getItem('meaId'))){
-//                                            self.data.dailyMeasures.push(el);
-//                                        }
-//                                    });
                                     
-                                    //self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
+                                    self.finalData = setDataForDiagrams(self.data, self.nuiData); 
+                                    self.measureName = self.finalData[0].measureName; 
+                                    self.nuisForMeasure(self.finalData[0].nuisForMeasure); 
+                                    self.lineSeries(self.finalData[0].lineSeries); 
+                                    self.baseUnit(self.finalData[0].baseUnit); 
+                                    self.defaultTypicalPeriod(self.finalData[0].defaultTypicalPeriod); 
+                                    self.lineType(self.finalData[0].lineType); 
+                                    self.hasComments(self.finalData[0].hasComments); 
+                                    //$('#anagraphMeasureView').prop('nuisForMeasure', self.nuisForMeasure);
                                     resolve();
-                                }).fail(function() {
+                                }).fail(function(err) {
+                                    console.log(err);
                                     console.log( "error recieving json data from web service" );
                                 });           	    	  
                         });           	    	  
@@ -125,7 +137,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                         self.gesId = ko.observable(gesId);    	                 	        	                                                       
 
             	}
-            	function setBarCharts(nuiData) {
+            	function setWaterfallCharts(nuiData) {
                          self.nuiData = nuiData;
                          let nui = nuiData[0];
                          let sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_") + 1;
@@ -146,6 +158,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     timeIntervals.sort(function(a, b) {
                         return a - b;
                     });
+                    self.timeIntervalsStored = timeIntervals.slice(0);
                     timeIntervals.forEach(function(interval){
                         let date = new Date(interval);
                         groups.push(self.months[date.getMonth()] + " " + date.getFullYear());                               
@@ -199,7 +212,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     var waterValuesDelta = nuiDelta.items;
  
                      var waterGroups = self.nuiGroups();
-                     //console.log('this is after create waterfall data ' + JSON.stringify(createWaterfallData(waterValuesAvg)));
                      self.barSeriesAvg([{items: createWaterfallData(waterValuesAvg), displayInLegend: "off"}]);
                      self.barSeriesStd([{items: createWaterfallData(waterValuesStd), displayInLegend: "off"}]);
                      self.barSeriesBest ([{items: createWaterfallData(waterValuesBest), displayInLegend: "off"}]);
@@ -262,11 +274,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
             	function setDataForDiagrams(data, nuiData) {
                     if(data[0].detectionVariable.defaultTypicalPeriod == "mon"){
                          self.measureName = data[0].detectionVariable.detectionVariableName;
-                         self.measureTitle(oj.Translations.getTranslatedString(self.measureName));
-                         self.showBarCharts(false);
+                         //self.measureTitle(oj.Translations.getTranslatedString(self.measureName));
+                         self.showWaterfallCharts(false);
                     }else{
-                        setBarCharts(nuiData);
-                        self.showBarCharts(true);
+                        setWaterfallCharts(nuiData);
+                        self.showWaterfallCharts(true);
                     }
             		 //building diagramData from json data
   	    		  var measureIds = [];
@@ -425,22 +437,22 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    				  var sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_") + 1;
   	    				  if(nui.detectionVariable.detectionVariableName.slice(sliceIndex) === mea.measureName){
   	    					    	    					  
-  	    					  var date = new Date(nui.timeInterval.intervalStart);
+                                                    var date = new Date(nui.timeInterval.intervalStart);
   	    					  
-  	    					  if(date.getMonth() === 11) {
+                                                    if(date.getMonth() === 11) {
   	    						  nuiMonth = "January";
-  	    					  }
-  	    					  else {
+                                                    }
+                                                    else {
   	    						  nuiMonth = self.months[date.getMonth()];
-  	    						  
-  	    					  }
+
+                                                    }
   	    					  nuiYear = date.getFullYear();
-  	    					  
-  	    					  
-  	    					  if(mon === nuiMonth + " " + nuiYear) {
-  	    						  finalNuis.push(nui);
-  	    					  }
-  	    				  }
+
+
+                                                    if(mon === nuiMonth + " " + nuiYear) {
+                                                            finalNuis.push(nui);
+                                                    }
+                                            }
   	    			  });
   	    			
   	    			  return finalNuis;
@@ -533,6 +545,29 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
   	    		return measures;
 	    		  
             	}
+                var languageBox = document.getElementById("languageBox");
+                languageBox.removeEventListener("valueChanged", function(event) {
+                        changeLanguage();
+                });
+                languageBox.addEventListener("valueChanged", function(event) {
+                        changeLanguage();
+                });
+
+                function changeLanguage(){
+                     var lang = $('#languageBox').val();
+                     
+                     oj.Config.setLocale(lang,
+                                 function () {
+                                        $('html').attr('lang', lang);
+                                                if(window.location.href.includes('detection_mea')){
+                                                    self.lineSeries([]); 
+                                                    self.handleActivated();
+                                                }
+                                                
+                             }
+                     );
+
+                }
             	
             }
             return  new detectionMeaViewModel();

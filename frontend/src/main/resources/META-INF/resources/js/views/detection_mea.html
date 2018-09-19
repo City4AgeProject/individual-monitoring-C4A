@@ -26,7 +26,7 @@
         
     </div>-->
 
-<!-- ko if: showBarCharts -->
+<!-- ko if: showWaterfallCharts -->
 <oj-collapsible id="nui-collapsible" expanded="false" style="background-color: #4fc5c5b8">
     <h5 slot="header" style="color:white;">NUI waterfall charts</h5>
     <div id ="nui-charts-container" style="background-color: white;border:1px solid lightgray;border-top: none;">
@@ -89,10 +89,10 @@
 <br>
     <!-- /ko -->
     <div id="daily-measures-container">			
-            <!-- ko foreach: data.dailyMeasures-->
-                <anagraph-measure-view  nuis-for-measure="{{nuisForMeasure}}" measure-name="{{measureName}}"  line-series="{{lineSeries}}" base-unit= "{{baseUnit}}" default-typical-period="{{defaultTypicalPeriod}}" line-type="{{lineType}}" has-comments="{{hasComments}}"/>
+            
+                <anagraph-measure-view  id="anagraphMeasureView" nuis-for-measure="{{nuisForMeasure}}" measure-name="{{measureTitle}}"  line-series="{{lineSeries}}" base-unit= "{{baseUnit}}" default-typical-period="{{defaultTypicalPeriod}}" line-type="{{lineType}}" has-comments="{{hasComments}}"/>
                 <br><br>
-            <!-- /ko -->
+            
     </div>
 <!--        MEA CHART WITH NUIS AS SERIES-->
 <!--        <div  id="nuiChartContainer" class="demo-flex-display oj-flex-items-pad oj-panel oj-panel-shadow-sm" style=" height: 400pxf; background-color: #F1F1F1; padding-top: 15px;" >
