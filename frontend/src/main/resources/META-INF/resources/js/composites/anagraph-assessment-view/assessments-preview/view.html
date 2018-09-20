@@ -40,15 +40,16 @@
 
 </style>
 
-<div style=" display: none;width: 210px; height:50px;" id="popup1" class="popup">
+
+<div style=" display: none;width: 210px; height:52px;" id="popup1" class="popup">
         <div  style="padding: 4px 6px;">
-                <p><span data-bind="text: $props.dataPointsMarked">&nbsp;</span></p>
+                <p style="font-size:13px;text-align:center;"><span data-bind="text: $props.dataPointsMarked">&nbsp;</span></p>
         </div>
         <div>
             
                 <a class="link" href="#" id="addAnnotation" data-bind="click: clickShowPopupAddAssessment" >
-                    <div class="tooltip" style="border:1px solid #ffcc00;border-top: none;border-bottom: none;padding-bottom: 4px;padding-top: 2px;padding-left: 10px;padding-right: 10px;">
-                        <span class="tooltiptext">Add assessment</span>
+
+                    <div class="tooltip" title="Add assessment" style="border:1px solid #00dacd;border-top: none;border-bottom: none;padding-bottom: 4px;padding-top: 2px;padding-left: 10px;padding-right: 10px; height: 44px;">
                         <img src="images/comment_add.png" style=" margin-top: 10px;width: 32px; height: 32px;"/>
                     </div>
                 </a>

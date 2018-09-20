@@ -29,10 +29,31 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                     {id: 'multi',    label: '4-month'}
                 ];
                 self.mode = ko.observable('single');
+                self.dataSource = ko.observable();
                 
                 context.props.then(function(properties) {                   
                     self.props = properties; 
-                    self.dataSource = new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ); 
+                    self.composite = context.element;
+                     $(self.composite).on('nuisForMeasure-changed',function(event){
+                         if (event.detail.updatedFrom === 'external'){ 
+                             console.log('nuis for measure changed');
+                                 self.dataSource(new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} ));
+                                 self.measureName(properties.measureName);                          
+                            }
+
+                    });
+                    $(self.composite).on('lineSeries-changed',function(event){
+                         if (event.detail.updatedFrom === 'external'){ 
+                             console.log('lineseries changed');
+                                 self.lineSeries(properties.lineSeries);                         
+                            }
+
+                    });
+
+
+
+                    
+                    self.dataSource(new oj.ArrayDataGridDataSource(properties.nuisForMeasure,{rowHeader: 'ID'} )); 
 
                     self.measureName(oj.Translations.getTranslatedString(properties.measureName));                    
                     if(properties.baseUnit){
@@ -63,7 +84,8 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                         }else if(properties.baseUnit == 'm'){
                             self.measureUnits([ 
                                 {value: 'm', label: 'm'},
-                                {value: 'km',  label: 'km'}
+                                {value: 'km',  label: 'km'},
+                                {value: 'mi', label: 'mi'}
                             ]);
                         }
                     }else{
@@ -138,7 +160,7 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                 self.currentUnit.subscribe(function(newValue){
                     var test = JSON.parse(self.lineSeriesBaseUnit);
                     var test2 = null;
-                    if(newValue == "min/km" || newValue == "min" || newValue == "h" || newValue == "km" || newValue == "pound"){
+                    if(newValue == "min/km" || newValue == "min" || newValue == "h" || newValue == "km" || newValue == "mi" || newValue == "pound"){
                         test.forEach(function(ls){
                             ls.items.forEach(function(item){
                                 if(item.value){
@@ -152,6 +174,8 @@ define(['knockout', 'jquery', 'urls', 'entities','ojs/ojknockout', 'promise', 'o
                                         item.value = item.value / 3600;
                                     }else if(newValue == "km"){
                                         item.value = item.value / 1000;
+                                    }else if(newValue == "mi"){
+                                        item.value = item.value / 1000 * 0.621371;
                                     }else if(newValue == "pound"){
                                         item.value = item.value * 2.20462;
                                     }

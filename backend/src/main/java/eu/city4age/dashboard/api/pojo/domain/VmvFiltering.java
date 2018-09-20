@@ -41,7 +41,6 @@ public class VmvFiltering extends AbstractBaseEntity<Long> {
 	@JoinColumn(name = "assessment_id", referencedColumnName = "id")
 	private Assessment assessment;
 	
-	
 	public VmvFiltering() {
 		
 	}
@@ -51,6 +50,7 @@ public class VmvFiltering extends AbstractBaseEntity<Long> {
 		this.filterType = filterType;
 		this.validFrom = validFrom;
 		this.assessment = assessment;
+
 	}
 
 	public VariationMeasureValue getVmv() {
@@ -107,10 +107,12 @@ public class VmvFiltering extends AbstractBaseEntity<Long> {
 		this.assessment = assessment;
 	}
 	
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof VmvFiltering) {
@@ -120,5 +122,4 @@ public class VmvFiltering extends AbstractBaseEntity<Long> {
 		}
 		return false;
 	}
-
 }

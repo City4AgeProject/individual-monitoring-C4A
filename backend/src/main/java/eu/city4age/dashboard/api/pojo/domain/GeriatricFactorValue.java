@@ -155,10 +155,12 @@ public class GeriatricFactorValue extends AbstractBaseEntity<Long> {
 		this.detectionVariableId = detectionVariableId;
 	}
 	
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof GeriatricFactorValue) {

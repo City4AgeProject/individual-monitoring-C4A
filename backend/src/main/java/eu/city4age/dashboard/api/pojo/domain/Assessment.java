@@ -262,10 +262,12 @@ public class Assessment extends AbstractBaseEntity<Long> {
 
 	}
 
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof Assessment) {

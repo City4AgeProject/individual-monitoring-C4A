@@ -170,10 +170,12 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 		this.vmvFiltering = vmvFiltering;
 	}
 	
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof VariationMeasureValue) {

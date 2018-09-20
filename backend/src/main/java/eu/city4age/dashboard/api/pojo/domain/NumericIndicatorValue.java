@@ -152,10 +152,12 @@ public class NumericIndicatorValue extends AbstractBaseEntity<Long> {
 		this.interActivityBehaviourVariations = interActivityBehaviourVariations;
 	}
 	
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof NumericIndicatorValue) {

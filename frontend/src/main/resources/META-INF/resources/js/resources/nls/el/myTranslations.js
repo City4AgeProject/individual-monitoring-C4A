@@ -243,7 +243,7 @@ define({
                 assessments: "Αξιολόγηση (-εις)" ,
                 view_annotations :"Εμφάνιση σχολίων" ,
                 view_daily_measures :"Εμφάνιση ημερήσιων μετρήσεων" ,
-                dpmw:" data points marked with " ,
+                dpmw:"data points marked with" ,
                 warning_status: "Κατάσταση κινδύνου" , 
                 alert_status: "Κατάσταση προειδοποίησης" ,
                 

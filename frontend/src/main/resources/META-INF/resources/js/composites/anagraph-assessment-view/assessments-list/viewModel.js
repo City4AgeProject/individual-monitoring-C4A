@@ -5,9 +5,9 @@ define(
 			function model(context) {
 				var self = this;
 
-				self.readMoreLabel = oj.Translations.getTranslatedString("read_more");
-				self.showOnDiagramLabel = oj.Translations.getTranslatedString("show_on_diagram");
-				self.fullAnnotationCommentLabel = oj.Translations.getTranslatedString("full_annotation_comment");
+				self.readMoreLabel = ko.observable(oj.Translations.getTranslatedString("read_more"));
+				self.showOnDiagramLabel = ko.observable(oj.Translations.getTranslatedString("show_on_diagram"));
+				self.fullAnnotationCommentLabel = ko.observable(oj.Translations.getTranslatedString("full_annotation_comment"));
 				self.assessmentId = ko.observable();
 
 				context.props.then(function(properties) {
@@ -39,6 +39,28 @@ define(
 									+ 'px');
 					window.scrollTo();
 				};
+                                
+                                        var languageBox = document.getElementById("languageBox");
+                                        languageBox.removeEventListener("valueChanged", function(event) {
+                                                changeLanguage();
+                                        });
+                                        languageBox.addEventListener("valueChanged", function(event) {
+                                                changeLanguage();
+                                        });
+
+                                        function changeLanguage(){
+                                             var lang = $('#languageBox').val();
+                                             oj.Config.setLocale(lang,
+                                                         function () {
+                                                                $('html').attr('lang', lang);                         
+                                                                self.readMoreLabel(oj.Translations.getTranslatedString("read_more"));
+                                                                self.showOnDiagramLabel(oj.Translations.getTranslatedString("show_on_diagram"));
+                                                                self.fullAnnotationCommentLabel(oj.Translations.getTranslatedString("full_annotation_comment"));        
+
+                                                     }
+                                             );
+
+                                        }
 				}
 			return model;
 		});

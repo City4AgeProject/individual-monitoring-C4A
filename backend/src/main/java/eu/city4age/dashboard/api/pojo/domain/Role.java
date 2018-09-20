@@ -100,10 +100,12 @@ public class Role extends AbstractBaseEntity<Long> {
 		return validTo;
 	}
 	
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof Role) {

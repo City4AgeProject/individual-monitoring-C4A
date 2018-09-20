@@ -64,10 +64,12 @@ public class Eam extends AbstractBaseEntity<Long> {
 		this.duration = duration;
 	}
 	
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof Eam) {

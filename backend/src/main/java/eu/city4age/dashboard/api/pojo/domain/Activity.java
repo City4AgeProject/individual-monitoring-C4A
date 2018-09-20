@@ -60,10 +60,12 @@ public class Activity extends AbstractBaseEntity<Long> {
 		this.instrumental = instrumental;
 	}
 	
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof Activity) {

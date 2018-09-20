@@ -46,28 +46,32 @@ function(oj, ko, $) {
 		self.polarChartGroupsValue = ko.observableArray();		
 		self.commentText = ko.observable('');
                 self.selectedRiskStatus = ko.observableArray([]);
-                self.selectedDataValidity = ko.observableArray([]);            
-		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase() + oj.Translations.getTranslatedString("annotations_assessments").substring(1);
-		self.morphologyLabel = oj.Translations.getTranslatedString("morphology");
-		self.annotations_assessmentsLabel = oj.Translations.getTranslatedString("annotations_assessments");
-		self.addLabel = oj.Translations.getTranslatedString("add");
-		self.riskDataTypeLabel = oj.Translations.getTranslatedString("risk_data_type");		
-		self.showAllLabel = oj.Translations.getTranslatedString("show_all"); 
+                self.selectedDataValidity = ko.observableArray([]); 
+                
+                /* LABELS */
+		self.annotationsLabel = ko.observable(oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase() + oj.Translations.getTranslatedString("annotations_assessments").substring(1));
+		self.morphologyLabel = ko.observable(oj.Translations.getTranslatedString("morphology"));
+		self.annotations_assessmentsLabel = ko.observable(oj.Translations.getTranslatedString("annotations_assessments"));
+		self.addLabel = ko.observable(oj.Translations.getTranslatedString("add"));
+		self.riskDataTypeLabel = ko.observable(oj.Translations.getTranslatedString("risk_data_type"));		
+		self.showAllLabel = ko.observable(oj.Translations.getTranslatedString("show_all")); 
 		self.fromLabel = oj.Translations.getTranslatedString("from");
-		self.fromLabel = self.fromLabel.charAt(0).toUpperCase() + self.fromLabel.slice(1);
-		self.sortLabel = oj.Translations.getTranslatedString("sort_by");
-		self.resetToDefaultsLabel = oj.Translations.getTranslatedString("reset_to_defaults");  
-		self.filterLabel = oj.Translations.getTranslatedString("filter");  		
-		self.dateAscLabel = oj.Translations.getTranslatedString("date_asc");
-                self.dateDescLabel = oj.Translations.getTranslatedString("date_desc");
-                self.authorNameAscLabel = oj.Translations.getTranslatedString("author_name_asc");
-                self.authorNameDescLabel = oj.Translations.getTranslatedString("author_name_desc");
-                self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc");
-                self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
-                self.typeLabel = oj.Translations.getTranslatedString("type");
+		self.fromLabel = ko.observable(self.fromLabel.charAt(0).toUpperCase() + self.fromLabel.slice(1));
+		self.sortLabel = ko.observable(oj.Translations.getTranslatedString("sort_by"));
+		self.resetToDefaultsLabel = ko.observable(oj.Translations.getTranslatedString("reset_to_defaults"));  
+		self.filterLabel = ko.observable(oj.Translations.getTranslatedString("filter"));  		
+		self.dateAscLabel = ko.observable(oj.Translations.getTranslatedString("date_asc"));
+                self.dateDescLabel = ko.observable(oj.Translations.getTranslatedString("date_desc"));
+                self.authorNameAscLabel = ko.observable(oj.Translations.getTranslatedString("author_name_asc"));
+                self.authorNameDescLabel = ko.observable(oj.Translations.getTranslatedString("author_name_desc"));
+                self.authorRoleAscLabel = ko.observable(oj.Translations.getTranslatedString("author_role_asc"));
+                self.authorRoleDescLabel = ko.observable(oj.Translations.getTranslatedString("author_role_desc"));
+                self.typeLabel = ko.observable(oj.Translations.getTranslatedString("type"));
+                
                 self.showPrediction = ko.observable(false);
                 self.selectionMode = ko.observable("multiple");
-                
+                self.groupsCopy = [];
+                self.derivedMeaGroupsCopy = []; 
                 self.predictionButtonText1 = ko.observable("Show prediction");
 		//event triggers when selection changed
 		self.chartOptionChange = function(event) {
@@ -96,7 +100,8 @@ function(oj, ko, $) {
 
                                                 //creating checkbox with multiple selections
                                                 self.multipleSelectionsArray().forEach(function(el){
-                                                    self.checkedMultipleSelections.push(el.data.id.toString());
+
+                                                    self.checkedMultipleSelections.push(oj.Translations.getTranslatedString(el.data.id.toString()));
                                                 });
                                                 $('#checkboxSetId').ojCheckboxset("refresh");                                         
                                                 self.storedEvent = event;
@@ -138,6 +143,7 @@ function(oj, ko, $) {
 
                                             self.queryParams = onlyDataPoints;
                                             loadAssessments(self.queryParams);
+                                            self.annotations_assessmentsLabel(self.selectedAnotations().length + " " + oj.Translations.getTranslatedString("annotations_assessments"));
                                             self.dataPointsMarkedIds = onlyDataPoints;
                                             $('#assessmentsPreview').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));                                           
                                             $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
@@ -172,6 +178,8 @@ function(oj, ko, $) {
                             o++;
                             return obj.name;
                         });
+                                console.log('formating date in ana ass view');
+                                self.groupsCopy = data.groups.slice(0);
                         formatDate(data.groups);
                         var gesList = [];
                         
@@ -372,6 +380,8 @@ function(oj, ko, $) {
                                 data.groups = data.groups.map(function (obj) {
                                     return obj.name;
                                 });
+                                self.derivedMeaGroupsCopy = data.groups.slice(0);
+
                                 formatDate(data.groups);
                                 self.lineGroups = data.groups;
                                 self.lineSeries = data.series;
@@ -743,9 +753,10 @@ function(oj, ko, $) {
                     }
 			
                         //this is a string on assessment-preview that tells how many data points and assessments are selected
-			self.dataPointsMarked = self.dataPointsMarkedIds.length
-					+ oj.Translations.getTranslatedString("dpmw")
-					+ assessmentsResultLength + oj.Translations.getTranslatedString("assessments");
+
+			self.dataPointsMarked = self.dataPointsMarkedIds.length + " " +
+					 oj.Translations.getTranslatedString("dpmw") + " " +
+					 assessmentsResultLength + " " + oj.Translations.getTranslatedString("assessments");
 			$('#assessmentsPreview').prop('dataPointsMarked', self.dataPointsMarked);
 		}
                 //returns all selections that have equal values in equal time (month)
@@ -866,6 +877,61 @@ function(oj, ko, $) {
                     self.seriesVal(series);
                     self.groupsVal(groups);
                 };
+                
+                var languageBox = document.getElementById("languageBox");
+                languageBox.removeEventListener("valueChanged", function(event) {
+                        changeLanguage();
+                });
+                languageBox.addEventListener("valueChanged", function(event) {
+                        changeLanguage();
+                });
+
+                function changeLanguage(){
+                     var lang = $('#languageBox').val();
+                     oj.Config.setLocale(lang,
+                                 function () {
+                                        $('html').attr('lang', lang);                         
+                                                self.riskDataTypeLabel(oj.Translations.getTranslatedString("risk_data_type"));
+                                                self.fromLabel(oj.Translations.getTranslatedString("from"));
+                                                self.fromLabel(self.fromLabel().charAt(0).toUpperCase() + self.fromLabel().slice(1));
+                                                self.showAllLabel(oj.Translations.getTranslatedString("show_all"));
+                                                self.annotationsLabel(oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase() + oj.Translations.getTranslatedString("annotations_assessments").substring(1));
+                                                self.morphologyLabel(oj.Translations.getTranslatedString("morphology"));
+                                                self.annotations_assessmentsLabel(oj.Translations.getTranslatedString("annotations_assessments"));
+                                                self.addLabel(oj.Translations.getTranslatedString("add"));
+                                                self.sortLabel(oj.Translations.getTranslatedString("sort_by"));
+                                                self.resetToDefaultsLabel(oj.Translations.getTranslatedString("reset_to_defaults"));  
+                                                self.filterLabel(oj.Translations.getTranslatedString("filter"));  		
+                                                self.dateAscLabel(oj.Translations.getTranslatedString("date_asc"));
+                                                self.dateDescLabel(oj.Translations.getTranslatedString("date_desc"));
+                                                self.authorNameAscLabel(oj.Translations.getTranslatedString("author_name_asc"));
+                                                self.authorNameDescLabel(oj.Translations.getTranslatedString("author_name_desc"));
+                                                self.authorRoleAscLabel(oj.Translations.getTranslatedString("author_role_asc"));
+                                                self.authorRoleDescLabel(oj.Translations.getTranslatedString("author_role_desc"));
+                                                self.typeLabel(oj.Translations.getTranslatedString("type"));
+
+                                                self.dataPointsMarked = self.dataPointsMarkedIds.length + " " +
+                                                oj.Translations.getTranslatedString("dpmw") + " " +
+                                                self.selectedAnotations().length + " " + oj.Translations.getTranslatedString("assessments");
+                                                $('#assessmentsPreview').prop('dataPointsMarked', self.dataPointsMarked);
+                                                if(window.location.href.includes('detection_ges')){
+                                                    var groups = self.groupsCopy.slice(0);
+                                                    formatDate(groups);
+                                                    groups.pop();
+                                                    groups.pop();
+                                                    groups.pop();
+                                                    
+                                                    self.groupsVal(groups);
+                                                    self.lineGroups = self.derivedMeaGroupsCopy.slice(0);  
+                                                    formatDate(self.lineGroups);
+                                                    
+                                                    $('#derivedMonthlyMea').prop('groups', self.lineGroups);
+                                                }
+                                                
+                             }
+                     );
+
+                }
             }
 
 	return model;

@@ -70,7 +70,27 @@ function(ko, $) {
         self.closePopup2 = function() {
             $('#popup2').ojPopup('close', '#btnClose');
         };
-	}
+        
+        var languageBox = document.getElementById("languageBox");
+        languageBox.removeEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        languageBox.addEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        
+        function changeLanguage(){
+                var lang = $('#languageBox').val();
+                oj.Config.setLocale(lang,
+                            function () {
+                                   $('html').attr('lang', lang);                         
+                                                            	 	
+                                           
+                        }
+                );
+
+        }
+    }
 
 	return model;
 });

@@ -10,8 +10,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                 $(".loader-hover").hide();
                 var self = this;
-
-                self.showBarCharts = ko.observable(false);
+                self.showWaterfallCharts = ko.observable(false);
                 self.nuiData = null;
                 self.nuiGroups = ko.observableArray();
                 self.nuiSeries = ko.observableArray();
@@ -19,7 +18,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.gesList = ko.observableArray();
                 self.meaList = ko.observableArray([]);
                 self.meaForSelector = ko.observableArray();
-                self.measureName = null;
+                self.measureName = ko.observable();
                 self.measureTitle = ko.observable();
                 self.barSeriesAvg = ko.observableArray();
                 self.barSeriesStd = ko.observableArray();
@@ -32,9 +31,24 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.referenceObjectsBest = ko.observableArray();
                 self.referenceObjectsDelta = ko.observableArray();
                 self.legendSections = ko.observableArray();
-
                 self.nuiLineSeriesValue = ko.observableArray();
                 self.nuiLineGroupsValue = ko.observableArray();
+                self.timeIntervalsStored = [];
+
+                self.nuisForMeasure = ko.observable();
+                self.lineSeries = ko.observable();
+                self.baseUnit = ko.observable();
+                self.defaultTypicalPeriod = ko.observable();
+                self.lineType = ko.observable();
+                self.hasComments = ko.observable();
+
+                self.locale = document.documentElement.lang;
+                self.months = [];
+                self.monthsEN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                self.monthsFR = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+                self.monthsIT = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+                self.monthsES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Deciembre"];
+                self.monthsGR = ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάιος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"];
 
                 self.clusterGroups = ko.observableArray();
                 self.clusterSeries = ko.observableArray();
@@ -47,7 +61,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.addAnnotationLabel = ko.observable('Add new annotation');
                 self.clearSelectionLabel = ko.observable('Clear selection');
                 self.annotationsDetailLabel = ko.observable('Show annotations details');
-                self.undoAllAnnotationsLabel = ko.observable ('Remove this annotation');
+                self.undoAllAnnotationsLabel = ko.observable('Remove this annotation');
                 self.addAnnotationTitle = ko.observable('Add new annotation');
                 self.dialogConfirmDeleteLabel = ko.observable('Are you sure you want to delete annotation?');
 
@@ -60,7 +74,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                 self.postBtnLabel = ko.observable("Post annotation");
                 self.cancelBtnLabel = ko.observable("Cancel");
-                
+
                 self.postBtnLabel1 = ko.observable("Yes");
                 self.cancelBtnLabel1 = ko.observable("No");
 
@@ -75,13 +89,13 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.annotatedMeasureTitle = ko.observable('Annotated measures');
                 self.annotatedMeasures = ko.observableArray([]);
                 self.displayFilter = ko.observable();
-                
-                self.annotationForDelete = ko.observable ();
-                
+
+                self.annotationForDelete = ko.observable();
+
                 var lastExcludeConfirm;
 
                 self.showDialogAddAnnotations = function () {
-                    if (self.clusterSelectionData().length > 0) 
+                    if (self.clusterSelectionData().length > 0)
                         $('#dialog').ojDialog('open');
                     else
                         $('#popup').ojPopup('open');
@@ -90,39 +104,39 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.clearSelection = function () {
                     self.clusterSelectionData([]);
                 };
-                
+
                 self.undoAllAnnotations = function () {
-                    console.log (this);
+                    console.log(this);
                     var tmpDataIDs = self.annotationForDelete().dataIDs;
                     var filType = self.annotationForDelete().filterType.filterType;
                     $.get(ASSESSMENT_CLUSTER_UNDO_FOR_DATA_SET + "/" + self.annotationForDelete().id, function (data) {
                         if (filType === 'E') {
                             for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
-                                if (tmpDataIDs.includes(self.clusterSeries()[0].items[i].id)) {                               
+                                if (tmpDataIDs.includes(self.clusterSeries()[0].items[i].id)) {
                                     self.clusterSeries()[0].items[i].source = null;
                                     self.clusterSeries()[0].items[i].sourceSelected = null;
                                     for (var j = 0; j < self.clusterSeries()[0].items[i].categories.length; j++) {
-                                        if (self.clusterSeries()[0].items[i].categories[j] ===  "Exclude")
-                                            self.clusterSeries()[0].items[i].categories.splice (j,1);
+                                        if (self.clusterSeries()[0].items[i].categories[j] === "Exclude")
+                                            self.clusterSeries()[0].items[i].categories.splice(j, 1);
                                     }
                                     //console.log ("included");
-                                } 
-                            }                        
+                                }
+                            }
                         }
-                        console.log ("before load all");
-                        self.loadAssessments ();
-                        self.clusterSeries (self.clusterSeries ());
-                    });        
+                        console.log("before load all");
+                        self.loadAssessments();
+                        self.clusterSeries(self.clusterSeries());
+                    });
                     $('#dialogConfirmDelete').ojDialog('close');
                 };
 
                 self.showAnnotationsDetail = function () {
                     $('#dialogAnnotation').ojDialog('open');
                 };
-                
+
                 self.openDeleteAnnotationDialog = function () {
-                    console.log (this);
-                    self.annotationForDelete (this);
+                    console.log(this);
+                    self.annotationForDelete(this);
                     $('#dialogConfirmDelete').ojDialog('open');
                 };
 
@@ -162,10 +176,10 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.closeDialog = function () {
                     $('#dialog').ojDialog('close');
                 };
-                
+
                 self.closeDialogConfirm = function () {
                     $('#dialogConfirmDelete').ojDialog('close');
-                };                
+                };
 
                 self.submitAnnotation = function () {
                     var jwt = sessionStorage.getItem("jwt");
@@ -173,7 +187,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     var selectedIds = ko.toJS(self.clusterSelectionData);
                     var filterType = ko.toJS(self.excludeConfirm);
                     lastExcludeConfirm = filterType;
-                    console.log (self.excludeConfirm ());
+                    console.log(self.excludeConfirm());
 
                     var assessmentToPost = {};
                     assessmentToPost.comment = comment;
@@ -190,9 +204,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                             JSON.stringify(assessmentToPost), submitCallback);
                     jqXHR.fail(serverErrorCallback);
                 };
-                
+
                 var serverErrorCallback = function (xhr, message, error) {
-                    console.log ("failed");
+                    console.log("failed");
                     console.log(error);
                 };
 
@@ -206,12 +220,12 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     //console.log(selectedIds);
                     if (lastExcludeConfirm === 'E') {
                         for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
-                            if (selectedIds.includes(self.clusterSeries()[0].items[i].id)) {                               
+                            if (selectedIds.includes(self.clusterSeries()[0].items[i].id)) {
                                 self.clusterSeries()[0].items[i].source = "images/X.png";
                                 self.clusterSeries()[0].items[i].sourceSelected = "images/X_sel.png";
-                                self.clusterSeries()[0].items[i].categories.push ("Exclude");
+                                self.clusterSeries()[0].items[i].categories.push("Exclude");
                                 //console.log ("included");
-                            } 
+                            }
                         }
                         self.clusterSeries(self.clusterSeries());
                     }
@@ -254,6 +268,25 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 //this method loads data form ajax request before view is loaded
                 self.handleActivated = function (info) {
 
+                    switch ($('#languageBox').val())
+                    {
+                        case "en":
+                            self.months = self.monthsEN;
+                            break;
+                        case "it":
+                            self.months = self.monthsIT;
+                            break;
+                        case "fr":
+                            self.months = self.monthsFR;
+                            break;
+                        case "es":
+                            self.months = self.monthsES;
+                            break;
+                        case "el" :
+                            self.months = self.monthsGR;
+                            break;
+                    }
+
                     initData();
 
                     return new Promise(function (resolve, reject) {
@@ -279,85 +312,38 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                     self.clusterGroups(clusterData.groups);
                                     self.clusterSeries(clusterData.series);
                                     //self.clusterSeries[0].displayInLegend = "off";
-                                    if (clusterData.series !== undefined) self.clusterDataHeader = "Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name);
+                                    if (clusterData.series !== undefined)
+                                        self.clusterDataHeader = "Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name);
                                     //console.log (JSON.stringify(clusterData.legend));
                                     self.clusterLegendSections = clusterData.legend;
                                     self.dataIDs(clusterData.dataIDs);
                                     console.log(self.dataIDs())
-                                    if (clusterData.dataIDs !== undefined) self.loadAssessments();
+                                    if (clusterData.dataIDs !== undefined)
+                                        self.loadAssessments();
                                 }),
                                 $.get(CODEBOOK_SELECT_ALL_FILTER_TYPES, function (data) {
                                     self.excludeConfirmData(data);
                                 })
-
                                 ).then(function () {
-                            self.data.dailyMeasures = [];
-                            var arr = setDataForDiagrams(self.data, self.nuiData);
-                            self.data.dailyMeasures = arr;
-//                                    arr.forEach(function(el){
-//                                        if(el.detectionVariableId === parseInt(sessionStorage.getItem('meaId'))){
-//                                            self.data.dailyMeasures.push(el);
-//                                        }
-//                                    });
 
-                            //self.data.dailyMeasures = setDataForDiagrams(self.data, self.nuiData);
+                            self.finalData = setDataForDiagrams(self.data, self.nuiData);
+                            console.log (self.finalData);
+                            self.measureName = self.finalData[0].measureName;
+                            self.nuisForMeasure(self.finalData[0].nuisForMeasure);
+                            self.lineSeries(self.finalData[0].lineSeries);
+                            self.baseUnit(self.finalData[0].baseUnit);
+                            self.defaultTypicalPeriod(self.finalData[0].defaultTypicalPeriod);
+                            self.lineType(self.finalData[0].lineType);
+                            self.hasComments(self.finalData[0].hasComments);
+                            //$('#anagraphMeasureView').prop('nuisForMeasure', self.nuisForMeasure);
                             resolve();
-                        }).fail(function () {
+                        }).fail(function (err) {
+                            console.log(err);
                             console.log("error recieving json data from web service");
                         });
                     });
 
                 };
-
-                self.clusteredChartDrill = function (event) {
-
-                    //console.log ("self.clusteredChartDrill");                    
-                    var clusterId = event.detail.id;
-                    var items = self.clusterSeries()[0].items;
-                    var selectedArray = [];
-
-                    for (var i = 0; i < items.length; i++) {
-                        for (var j = 0; j < items[i].categories.length; j++) {
-                            if (items[i].categories[j] === clusterId) {
-                                //console.log ("dodao element: " + i);
-                                if (clusterId === 'Exclude') {
-                                    //console.log ("Exclude");
-                                    //self.clusterSeries()[0].items[i].markerSize = '12';
-                                }
-                                selectedArray.push(items[i].id);
-
-                            }
-                        }
-                    }
-                    self.clusterSeries(self.clusterSeries());
-                    //console.log ("selectedArray.len: " + selectedArray.length);
-                    self.clusterSelectionData(selectedArray);
-                    //console.log (self.clusterSelectionData);
-                };
-
-                self.clusterSelectionChanged = function (event) {
-                    //console.log (event.detail.value);
-                    //console.log (self.clusterSeries()[0].items);
-                    if (event.detail.value.length > 0) {
-                        self.dataPointsMarked('Selected ' + event.detail.value.length + ' data points');
-                        for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
-                            if (event.detail.value.includes(self.clusterSeries()[0].items[i].id)) {
-                                //console.log ("includes");
-                                self.clusterSeries()[0].items[i].markerSize = '12';
-                            } else {
-                                //console.log ("not includes");
-                                self.clusterSeries()[0].items[i].markerSize = '8';
-                            }
-                        }
-                    } else {
-                        self.dataPointsMarked('No data points selected');
-                        for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
-                            self.clusterSeries()[0].items[i].markerSize = '8';
-                        }
-                    }
-                    self.clusterSeries(self.clusterSeries());
-                };
-
 //            	 var nuiLineSeries = [{name : "Series 1", items : [74, 62, 70, 76, 66]},
 //                          {name : "Series 2", items : [50, 38, 46, 54, 42]},
 //                          {name : "Series 3", items : [34, 22, 30, 32, 26]},
@@ -382,7 +368,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     self.gesId = ko.observable(gesId);
 
                 }
-                function setBarCharts(nuiData) {
+                function setWaterfallCharts(nuiData) {
                     self.nuiData = nuiData;
                     let nui = nuiData[0];
                     let sliceIndex = nui.detectionVariable.detectionVariableName.indexOf("_") + 1;
@@ -398,14 +384,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     });
 
                     //get nui groups with month name and year
-                    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
                     let groups = [];
                     timeIntervals.sort(function (a, b) {
                         return a - b;
                     });
+                    self.timeIntervalsStored = timeIntervals.slice(0);
                     timeIntervals.forEach(function (interval) {
                         let date = new Date(interval);
-                        groups.push(months[date.getMonth()] + " " + date.getFullYear());
+                        groups.push(self.months[date.getMonth()] + " " + date.getFullYear());
                     });
                     self.nuiLineGroupsValue(groups.slice());
                     groups.push('End');
@@ -456,7 +443,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     var waterValuesDelta = nuiDelta.items;
 
                     var waterGroups = self.nuiGroups();
-                    //console.log('this is after create waterfall data ' + JSON.stringify(createWaterfallData(waterValuesAvg)));
                     self.barSeriesAvg([{items: createWaterfallData(waterValuesAvg), displayInLegend: "off"}]);
                     self.barSeriesStd([{items: createWaterfallData(waterValuesStd), displayInLegend: "off"}]);
                     self.barSeriesBest([{items: createWaterfallData(waterValuesBest), displayInLegend: "off"}]);
@@ -475,8 +461,6 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
 
                 }
-
-
                 // Function to create data for waterfall graph.
                 var createWaterfallData = function (vals) {
                     var data = [];
@@ -520,11 +504,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 function setDataForDiagrams(data, nuiData) {
                     if (data[0].detectionVariable.defaultTypicalPeriod == "mon") {
                         self.measureName = data[0].detectionVariable.detectionVariableName;
-                        self.measureTitle(oj.Translations.getTranslatedString(self.measureName));
-                        self.showBarCharts(false);
+                        //self.measureTitle(oj.Translations.getTranslatedString(self.measureName));
+                        self.showWaterfallCharts(false);
                     } else {
-                        setBarCharts(nuiData);
-                        self.showBarCharts(true);
+                        setWaterfallCharts(nuiData);
+                        self.showWaterfallCharts(true);
                     }
                     //building diagramData from json data
                     var measureIds = [];
@@ -563,19 +547,15 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                     });
 
 
-                    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-
                     //finding out for witch months the data is for 
                     measures.forEach(function (mea) {
                         var differentMonthsForMeasure = [];
                         for (var i = 0; i < mea.measureValues.length; i++) {
                             var date = new Date(mea.measureValues[i].intervalStart);
-                            if (differentMonthsForMeasure.indexOf((months[date.getMonth()] + " " + date.getFullYear())) === -1) {
-                                differentMonthsForMeasure.push(months[date.getMonth()] + " " + date.getFullYear());
+                            if (differentMonthsForMeasure.indexOf((self.months[date.getMonth()] + " " + date.getFullYear())) === -1) {
+                                differentMonthsForMeasure.push(self.months[date.getMonth()] + " " + date.getFullYear());
                             }
                             mea.months = differentMonthsForMeasure;
-                            //console.log (mea.months);
                             mea.measureValues[i].formattedDate = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
                         }
 
@@ -664,7 +644,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                             mea.measureValues.forEach(function (mv) {
                                 var date = new Date(mv.intervalStart);
-                                var testMon = months[date.getMonth()] + " " + date.getFullYear();
+                                var testMon = self.months[date.getMonth()] + " " + date.getFullYear();
                                 if (testMon === mon) {
                                     lineSerie.items.push(mv);
                                 }
@@ -689,12 +669,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                                 var date = new Date(nui.timeInterval.intervalStart);
 
-                                if (date.getMonth() === 12) {
-                                    nuiMonth = "January";
-                                } else {
-                                    nuiMonth = months[date.getMonth()];
+                                nuiMonth = self.months[date.getMonth()];
 
-                                }
                                 nuiYear = date.getFullYear();
 
 
@@ -784,15 +760,97 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                         }
 
                                     }
-
                                 }
-                            });
+                            }
+                            )
                         }
                     });
-                    return measures;
+
+                    
+
+//            	 var nuiLineSeries = [{name : "Series 1", items : [74, 62, 70, 76, 66]},
+//                          {name : "Series 2", items : [50, 38, 46, 54, 42]},
+//                          {name : "Series 3", items : [34, 22, 30, 32, 26]},
+//                          {name : "Series 4", items : [18,  6, 14, 22, 10]},
+//                          {name : "Series 5", items : [3,  2,  3,  3,  2]}];
+//    
+//                var nuiLineGroups = ["Jan", "Feb", "Mar", "Apr", "May"];
+
+                return measures;
+                }
+                
+                self.clusteredChartDrill = function (event) {
+
+                        //console.log ("self.clusteredChartDrill");                    
+                        var clusterId = event.detail.id;
+                        var items = self.clusterSeries()[0].items;
+                        var selectedArray = [];
+
+                        for (var i = 0; i < items.length; i++) {
+                            for (var j = 0; j < items[i].categories.length; j++) {
+                                if (items[i].categories[j] === clusterId) {
+                                    //console.log ("dodao element: " + i);
+                                    if (clusterId === 'Exclude') {
+                                        //console.log ("Exclude");
+                                        //self.clusterSeries()[0].items[i].markerSize = '12';
+                                    }
+                                    selectedArray.push(items[i].id);
+
+                                }
+                            }
+                        }
+                        self.clusterSeries(self.clusterSeries());
+                        //console.log ("selectedArray.len: " + selectedArray.length);
+                        self.clusterSelectionData(selectedArray);
+                        //console.log (self.clusterSelectionData);
+                    };
+
+                    self.clusterSelectionChanged = function (event) {
+                        //console.log (event.detail.value);
+                        //console.log (self.clusterSeries()[0].items);
+                        if (event.detail.value.length > 0) {
+                            self.dataPointsMarked('Selected ' + event.detail.value.length + ' data points');
+                            for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
+                                if (event.detail.value.includes(self.clusterSeries()[0].items[i].id)) {
+                                    //console.log ("includes");
+                                    self.clusterSeries()[0].items[i].markerSize = '12';
+                                } else {
+                                    //console.log ("not includes");
+                                    self.clusterSeries()[0].items[i].markerSize = '8';
+                                }
+                            }
+                        } else {
+                            self.dataPointsMarked('No data points selected');
+                            for (var i = 0; i < self.clusterSeries()[0].items.length; i++) {
+                                self.clusterSeries()[0].items[i].markerSize = '8';
+                            }
+                        }
+                        self.clusterSeries(self.clusterSeries());
+                    };
+
+                var languageBox = document.getElementById("languageBox");
+                languageBox.removeEventListener("valueChanged", function (event) {
+                    changeLanguage();
+                });
+                languageBox.addEventListener("valueChanged", function (event) {
+                    changeLanguage();
+                });
+
+                function changeLanguage() {
+                    var lang = $('#languageBox').val();
+
+                    oj.Config.setLocale(lang,
+                            function () {
+                                $('html').attr('lang', lang);
+                                if (window.location.href.includes('detection_mea')) {
+                                    self.lineSeries([]);
+                                    self.handleActivated();
+                                }
+
+                            }
+                    );
 
                 }
-
             }
             return  new detectionMeaViewModel();
 

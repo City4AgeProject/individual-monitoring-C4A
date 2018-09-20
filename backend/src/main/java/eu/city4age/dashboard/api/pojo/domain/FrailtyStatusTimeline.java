@@ -147,6 +147,7 @@ public class FrailtyStatusTimeline implements Serializable {
 		this.frailtyStatus = frailtyStatus;
 	}
 	
+	@Override
 	public int hashCode() {
 		int result = 17;
 		
@@ -157,6 +158,7 @@ public class FrailtyStatusTimeline implements Serializable {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof FrailtyStatusTimeline) {

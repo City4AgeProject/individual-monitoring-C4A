@@ -80,10 +80,12 @@ public class InterActivityBehaviourVariation extends AbstractBaseEntity<Long> {
 		this.deviation = deviation;
 	}
 	
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		
 		if (obj != null && obj instanceof InterActivityBehaviourVariation) {
