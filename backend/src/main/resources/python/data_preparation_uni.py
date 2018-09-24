@@ -3,6 +3,7 @@ import pandas as pd
 
 def get_data_uni(userId, dvId):
     conn = psycopg2.connect(host="localhost", database="city4age", user="city4age_dba", password="city4age_dba")
+    # conn = psycopg2.connect(host="10.10.50.10", database="city4age", user="city4age_srv", password="city4age_srv")
     curr = conn.cursor()
     # data for walk distance (MEA)
     sql = ("""
@@ -37,6 +38,7 @@ def get_data_uni(userId, dvId):
 # returns a list of activities for a given user
 def get_list_activities(userId, dvId):
     conn = psycopg2.connect(host="localhost", database="city4age", user="city4age_dba", password="city4age_dba")
+    # conn = psycopg2.connect(host="10.10.50.10", database="city4age", user="city4age_srv", password="city4age_srv")
     curr = conn.cursor()
     sql = ('''
 

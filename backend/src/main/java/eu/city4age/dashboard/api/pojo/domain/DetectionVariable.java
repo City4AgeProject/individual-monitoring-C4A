@@ -133,27 +133,27 @@ public class DetectionVariable extends AbstractBaseEntity<Long> {
 		this.defaultTypicalPeriod = defaultTypicalPeriod;
 	}
 	
-        public Set<PilotDetectionVariable> getPilotDetectionVariable() {
-                return pilotDetectionVariable;
-        }
+    public Set<PilotDetectionVariable> getPilotDetectionVariable() {
+            return pilotDetectionVariable;
+    }
 
-        public void setPilotDetectionVariable(Set<PilotDetectionVariable> pilotDetectionVariable) {
-                this.pilotDetectionVariable = pilotDetectionVariable;
-        }
-        public Set<VariationMeasureValue> getVariationMeasureValue() {
-                return variationMeasureValue;
-        }
+    public void setPilotDetectionVariable(Set<PilotDetectionVariable> pilotDetectionVariable) {
+            this.pilotDetectionVariable = pilotDetectionVariable;
+    }
+    public Set<VariationMeasureValue> getVariationMeasureValue() {
+            return variationMeasureValue;
+    }
 
-        public void setVariationMeasureValue(Set<VariationMeasureValue> variationMeasureValue) {
-                this.variationMeasureValue = variationMeasureValue;
-        }
+    public void setVariationMeasureValue(Set<VariationMeasureValue> variationMeasureValue) {
+            this.variationMeasureValue = variationMeasureValue;
+    }
 
-        public String getBaseUnit() {
-            return baseUnit;
-        }
+    public String getBaseUnit() {
+        return baseUnit;
+    }
 
-        public void setBaseUnit(String baseUnit) {
-            this.baseUnit = baseUnit;
-        }
+    public void setBaseUnit(String baseUnit) {
+        this.baseUnit = baseUnit;
+    }
 
 }

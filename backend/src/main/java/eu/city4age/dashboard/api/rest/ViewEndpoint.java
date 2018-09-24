@@ -289,7 +289,7 @@ public class ViewEndpoint {
 			@Context ServletConfig sc) throws JsonProcessingException, JsonEmptyException {
 		
 		String realPath = sc.getServletContext().getRealPath("/WEB-INF/classes/python/");
-		realPath += "\\";
+		realPath += "/";
 		//logger.info("arg: /WEB-INF/classes/python/     real path: " + realPath);
 		
 		ClusteredMeasuresData response = new ClusteredMeasuresData();

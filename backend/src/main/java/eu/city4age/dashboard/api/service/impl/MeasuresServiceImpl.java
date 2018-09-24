@@ -152,7 +152,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 		List<VariationMeasureValue> vmsMonthly = variationMeasureValueRepository
 				.findAllForMonthByPilotCodeNui(startOfMonth, endOfMonth, pilotCode);
 		
-		logger.info("vms size: " + vmsMonthly.size());
+		//logger.info("vms size: " + vmsMonthly.size());
 
 		if (vmsMonthly != null && vmsMonthly.size() > 0) {
 			excludeService.excludeMeasures(vmsMonthly);
