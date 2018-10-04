@@ -28,17 +28,18 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.jpa.AssessmentRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
+import eu.city4age.dashboard.api.jpa.VmvFilteringRepository;
+import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
+import eu.city4age.dashboard.api.pojo.domain.VmvFiltering;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.service.MeasuresService;
@@ -62,6 +63,15 @@ public class MeasuresEndpoint {
 
 	@Autowired
 	private VariationMeasureValueRepository variationMeasureValueRepository;
+	
+	@Autowired
+	private VmvFilteringRepository vmvFilteringRepository;
+	
+	@Autowired
+	private UserInRoleRepository userInRoleRepository;
+	
+	@Autowired
+	private AssessmentRepository assessmentRepository;
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
@@ -77,8 +87,6 @@ public class MeasuresEndpoint {
 
 	@Autowired
 	Environment environment;
-	
-	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@Bean
 	public RestTemplate restTemplate() {
@@ -103,14 +111,65 @@ public class MeasuresEndpoint {
 
 		imputeAndPredict(pilotsForComputation);
 		
+		createSystemAnnotations ();
+		
 		logger.info("computation completed: " + new Date());
 		return JerseyResponse.buildTextPlain("success", 200);
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@Path("createSystemAnnotations")
+	public void createSystemAnnotations() {
+		
+		logger.info("createSystemAnnotations");
+		
+		List<VmvFiltering> vfs = vmvFilteringRepository.findForSystemExclusion ();
+		
+		logger.info("size: " + vfs.size());
+		
+		Assessment assessment = getOrCreateSystemAssessment ();
+		
+		assessment.setUpdated(new Date ());
+		
+		for (VmvFiltering vf : vfs) {
+			vf.setAssessment(assessment);
+			logger.info("vf.id: " + vf.getId() + " vf.assessment_id: " + vf.getAssessment().getId());
+		}
+		
+		logger.info("before save"); 
+		
+		vmvFilteringRepository.bulkSave(vfs);
+		
+		vmvFilteringRepository.flush();
+		
+		logger.info("after save"); 
+	}
+
+	public Assessment getOrCreateSystemAssessment() {
+		
+		Assessment assessment = assessmentRepository.findByUserInRole (userInRoleRepository.findBySystemUsername("system"));
+		
+		if (assessment == null) {
+			assessment = new Assessment.AssessmentBuilder().userInRole(userInRoleRepository.findBySystemUsername("system"))
+					.assessmentComment("System excluded")
+					.riskStatus(null)
+					.dataValidity(null).build();			
+		}
+		else {
+			assessment.setUpdated(new Date ());
+		}
+		
+		assessmentRepository.save(assessment);		
+		assessmentRepository.flush();
+		
+		return assessment;
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("recomputeExcluded")
-	public Response recomputeExcluded() {		
+	public void recomputeExcluded() {		
 		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		
@@ -126,13 +185,6 @@ public class MeasuresEndpoint {
 			
 			measuresService.computeFor1User (uir, firstMonth);
 			predictionService.imputeAndPredictFor1User (uir);
-		}
-		
-		try {
-			return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString (uirs));
-		} catch (JsonProcessingException e) {			
-			e.printStackTrace();
-			return JerseyResponse.build("400");
 		}
 	}
 

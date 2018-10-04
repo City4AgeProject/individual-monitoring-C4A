@@ -56,6 +56,7 @@ import eu.city4age.dashboard.api.jpa.VmvFilteringRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.AssessmentAudienceRole;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.FilterType;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
@@ -400,7 +401,8 @@ public class AssessmentsEndpoint {
 		}
 
 		Map<String, Object> inQueryParams = new HashMap<String, Object>();
-		inQueryParams.put("dataPointsIds", assessmentService.convertToListLong(dataPointsIds));
+		List<Long> dataPointsLongIds = assessmentService.convertToListLong(dataPointsIds);
+		inQueryParams.put("dataPointsIds", dataPointsLongIds);
 		
 		List<Filter> filters = new ArrayList<Filter>();
 		
@@ -411,10 +413,19 @@ public class AssessmentsEndpoint {
 		DateTimeFormatter dtf = null;
 		
 		List<ClusteredMeasuresAssessments> cmsAssessments = new ArrayList <ClusteredMeasuresAssessments> ();
+		UserInRole uir = null;
+		DetectionVariable measureType = null;
+		
+		if (dataPointsLongIds.size() > 0) {
+			VariationMeasureValue vmv = variationMeasureValueRepository.findOne(dataPointsLongIds.get(0));
+			uir = vmv.getUserInRole();
+			measureType = vmv.getDetectionVariable();
+		}
+		
 		for (Assessment a : assessmentList) {
 			//logger.info(a);
 			Character filterType = vmvFilteringRepository.findFilterTypeByAssessmentId(a);
-			List<Long> vmvIDs = vmvFilteringRepository.findVmvIDsByAssessment (a);
+			List<Long> vmvIDs = vmvFilteringRepository.findVmvIDsByAssessment (a, uir, measureType);
 			List<VariationMeasureValue> vmvList = variationMeasureValueRepository.findAll(vmvIDs);
 			List<ClusteredVmv> assessmentMeasures = new ArrayList<ClusteredVmv> ();
 			FilterType filter = filterTypeRepository.findOne(filterType);

@@ -1,6 +1,8 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -204,9 +206,13 @@ public class Assessment extends AbstractBaseEntity<Long> {
 
 	@JsonView(View.AssessmentView.class)
 	public String getDateAndTime() {
-		if (this.created != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-			return sdf.format(created);
+		if (this.updated != null) {
+			return OffsetDateTime.ofInstant(this.updated.toInstant(), ZoneId.of(this.userInRole.getPilot().getTimeZone())).format(
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss ZZZZ"));
+		}
+		else if (this.created != null) {
+			return OffsetDateTime.ofInstant(this.created.toInstant(), ZoneId.of(this.userInRole.getPilot().getTimeZone())).format(
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss ZZZZ"));
 		}
 		return null;
 	}

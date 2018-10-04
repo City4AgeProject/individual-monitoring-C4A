@@ -170,11 +170,16 @@ public class CareRecipientEndpoint {
 	public String getRemoteCareRecipientData(@PathParam("careRecipientId") Long careRecipientId) {
 		
 		// TODO: Get the pilot's baseurl from the Pilot Configuration Json
-		final String uri = "http://c4amobile.atc.gr/backend/cityForAgeServices2/platform/routes/getCareRecipientData/" + careRecipientId.toString();
-
-	    RestTemplate restTemplate = new RestTemplate();
-	    String result = restTemplate.getForObject(uri, String.class);
-	    return result;
+		//final String uri = "http://c4amobile.atc.gr/backend/cityForAgeServices2/platform/routes/getCareRecipientData/" + careRecipientId.toString();
+		
+		try {
+			String uri = userInRoleRepository.findOne(careRecipientId).getPilot().getPersonalProfileDataUrl() + careRecipientId.toString();
+			RestTemplate restTemplate = new RestTemplate();
+		    String result = restTemplate.getForObject(uri, String.class);
+		    return result;
+		} catch (Exception e) {
+			return "";
+		}	    
 	}
 
 	@GET

@@ -114,6 +114,8 @@ public class PilotDetectionVariableEndpoint {
 				Pilot.PilotCode pilotCode = configuration.getPilotCode();
 				String password = configuration.getPassword();
 				String username = configuration.getUsername();
+				
+				logger.info("url: " + configuration.getPersonalProfileDataUrl());
 
 				UserInRole uir;
 				try {

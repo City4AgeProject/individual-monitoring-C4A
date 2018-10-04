@@ -137,7 +137,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                 self.openDeleteAnnotationDialog = function () {
                     console.log(this);
                     self.annotationForDelete(this);
-                    $('#dialogConfirmDelete').ojDialog('open');
+                    var displayName = sessionStorage.getItem("displayname");
+                    if (this.author === displayName)
+                        $('#dialogConfirmDelete').ojDialog('open');
+                    else
+                        $('#dialogConfirmDeleteFailed').ojPopup('open');
                 };
 
                 self.closeListener = function (event) {

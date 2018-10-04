@@ -53,6 +53,7 @@ public class PilotDetectionVariableServiceImpl implements PilotDetectionVariable
 			}
 						
 		pilot.setLatestConfigurationUpdate(validFrom);
+		pilot.setPersonalProfileDataUrl(configuration.getPersonalProfileDataUrl());
 		pilotRepository.save(pilot);
 		
 		List<PilotDetectionVariable> currPilotRepository = pilotDetectionVariableRepository.findByPilotCodeOrderByDetectionVariableId(pilotCode);

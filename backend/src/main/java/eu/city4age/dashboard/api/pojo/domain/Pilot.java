@@ -64,6 +64,9 @@ public class Pilot implements Serializable {
 	
 	@Column(name = "time_of_computation")
 	private Date timeOfComputation;
+	
+	@Column(name = "personal_profile_data_url")
+	private String personalProfileDataUrl;
 
 	@Transient
 	private YearMonth lastSubmitted;
@@ -209,6 +212,20 @@ public class Pilot implements Serializable {
 
 	public void setCompZone(String compZone) {
 		this.compZone = compZone;
+	}
+
+	/**
+	 * @return the personalProfileDataUrl
+	 */
+	public String getPersonalProfileDataUrl() {
+		return personalProfileDataUrl;
+	}
+
+	/**
+	 * @param personalProfileDataUrl the personalProfileDataUrl to set
+	 */
+	public void setPersonalProfileDataUrl(String personalProfileDataUrl) {
+		this.personalProfileDataUrl = personalProfileDataUrl;
 	}
 
 }

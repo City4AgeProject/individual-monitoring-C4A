@@ -153,6 +153,9 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                 
             }
 
-            return new AppControllerViewModel();
+            appViewModel = new AppControllerViewModel();
+            return appViewModel;
         }
 );
+
+var appViewModel;

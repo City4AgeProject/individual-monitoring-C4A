@@ -275,6 +275,9 @@
                                                         <div class="tooltip">
                                                             <span class="tooltiptext" data-bind="text: $parent.undoAllAnnotationsLabel"></span>
                                                             <img src="images/undo.png" style="width: 20px; height: 20px;"/>
+                                                             <oj-popup style="display:flex" id="dialogConfirmDeleteFailed">
+                                                                <span>You can only undo your own anotations!</span>
+                                                             </oj-popup>
                                                         </div>
                                                     </a>
                                                 </span>
