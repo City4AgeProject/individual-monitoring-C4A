@@ -20,14 +20,14 @@ import eu.city4age.dashboard.api.service.ExcludeService;
 
 @Component
 public class ExcludeServiceImpl implements ExcludeService {
-	
+
 	static protected Logger logger = LogManager.getLogger(ExcludeServiceImpl.class);
-	
+
 	@Autowired
 	private VmvFilteringRepository vmvFilteringRepository;
 
 	public void excludeMeasures(List<VariationMeasureValue> vmvMonthly) {
-		
+
 		List<VariationMeasureValue> vmvDaily = new ArrayList<VariationMeasureValue>();
 		for(VariationMeasureValue measure : vmvMonthly) {
 			if (measure.getTimeInterval().getTypicalPeriod() != null && measure.getTimeInterval().getTypicalPeriod().toLowerCase().equals("day")) {
@@ -49,21 +49,26 @@ public class ExcludeServiceImpl implements ExcludeService {
 
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	private void excludeMeasuresFor1UserAnd1Ti(List<VariationMeasureValue> vmvDaily) {
-		
+
 		Boolean allIsDefault = true;
-		
+
 		for(VariationMeasureValue measure : vmvDaily) {
 			switch(measure.getDetectionVariable().getDetectionVariableName()) {
-				case "home_time":
-					if(!measure.getMeasureValue().setScale(0, RoundingMode.HALF_UP).equals((new BigDecimal(86400.0)).setScale(0, RoundingMode.HALF_UP))) {
-						allIsDefault = false;
-					}
-					break;
-				default:
-					if(!measure.getMeasureValue().setScale(0, RoundingMode.HALF_UP).equals((new BigDecimal(0)).setScale(0, RoundingMode.HALF_UP))) {
-						allIsDefault = false;
-					}
-					break;
+			case "home_time":
+				if(!measure.getMeasureValue().setScale(0, RoundingMode.HALF_UP).equals((new BigDecimal(86400.0)).setScale(0, RoundingMode.HALF_UP))) {
+					allIsDefault = false;
+				}
+				break;
+			case "walk_distance_outdoor_slow_perc":
+				if(!measure.getMeasureValue().setScale(0, RoundingMode.HALF_UP).equals((new BigDecimal(100.0)).setScale(0, RoundingMode.HALF_UP))) {
+					allIsDefault = false;
+				}
+				break;	
+			default:
+				if(!measure.getMeasureValue().setScale(0, RoundingMode.HALF_UP).equals((new BigDecimal(0)).setScale(0, RoundingMode.HALF_UP))) {
+					allIsDefault = false;
+				}
+				break;
 			}
 		}
 		if (allIsDefault) {
