@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.jpa.AssessedGefValuesRepository;
+import eu.city4age.dashboard.api.jpa.DerivedMeasureValueRepository;
 import eu.city4age.dashboard.api.jpa.GeriatricFactorRepository;
 import eu.city4age.dashboard.api.jpa.NUIRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
@@ -28,6 +29,7 @@ import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet.AssessedGefValueSetBuilder;
+import eu.city4age.dashboard.api.pojo.domain.DerivedMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
@@ -57,6 +59,9 @@ public class MeasuresServiceImpl implements MeasuresService {
 	
 	@Autowired
 	private GeriatricFactorRepository geriatricFactorRepository;
+	
+	@Autowired
+	private DerivedMeasureValueRepository derivedMeasureValueRepository;
 	
 	@Autowired
 	private NativeQueryRepository nativeQueryRepository;
@@ -104,13 +109,10 @@ public class MeasuresServiceImpl implements MeasuresService {
 		}
 		
 		List<NumericIndicatorValue> nuiList = new ArrayList<NumericIndicatorValue> ();
+		List<DerivedMeasureValue> dmList = new ArrayList<DerivedMeasureValue> ();
 		List<GeriatricFactorValue> gfvList = new ArrayList<GeriatricFactorValue> ();
 
 		while(!startOfComputationYearMonth.equals(endOfComputationYearMonth)) {
-			
-			//Thread currentThread = Thread.currentThread();
-			
-			//logger.info("currThread: " + currentThread.getId());
 
 			startOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atDay(1).atStartOfDay());
 			endOfMonth = Timestamp.valueOf(startOfComputationYearMonth.atEndOfMonth().atTime(LocalTime.MAX));
@@ -118,28 +120,12 @@ public class MeasuresServiceImpl implements MeasuresService {
 			logger.info(startOfMonth);
 
 			try {
-				computeService.computeAllFor1Month (startOfMonth, endOfMonth, pilotCode, nuiList, gfvList);
+				computeService.computeAllFor1Month (startOfMonth, endOfMonth, pilotCode, nuiList, dmList, gfvList);
 			}
 			catch (Exception e) {
-				//startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
+				e.printStackTrace();
 				break;
 			}
-			/*computeNuisFor1Month(startOfMonth, endOfMonth, pilotCode);
-			computeGESsFor1Month(startOfMonth, endOfMonth, pilotCode);
-			computeFor1Month(DetectionVariableType.GEF, startOfMonth, endOfMonth, pilotCode);
-			computeFor1Month(DetectionVariableType.GFG, startOfMonth, endOfMonth, pilotCode);
-			computeFor1Month(DetectionVariableType.OVL, startOfMonth, endOfMonth, pilotCode);*/
-			
-			//Thread.sleep(5000l);
-			//logger.info("done sleeping");
-			/*try {
-				this.wait(10000l);
-			} catch (InterruptedException e) {
-				logger.info("ne moze wait!!!!");
-				e.printStackTrace();
-				return;
-				
-			}*/
 			startOfComputationYearMonth = startOfComputationYearMonth.plusMonths(1L);
 		}
 
@@ -163,6 +149,21 @@ public class MeasuresServiceImpl implements MeasuresService {
 			//nuiRepository.flush();
 		}
 		vmsMonthly.clear();
+	}
+	
+	public void computeDmsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode, List<DerivedMeasureValue> dmList) {
+		
+		String stringPilotCode = pilotCode.name().toLowerCase();
+		
+		List<Object[]> derivedMeasures = nativeQueryRepository.computeAllDerivedMeasures(startOfMonth, endOfMonth, stringPilotCode);
+		
+		if (derivedMeasures != null && !derivedMeasures.isEmpty()) {
+			dmList = createAllDms(derivedMeasures, startOfMonth, endOfMonth, pilotCode, dmList);
+			derivedMeasureValueRepository.bulkSave(dmList);
+			derivedMeasureValueRepository.flush();
+			dmList.clear();
+		}
+		derivedMeasures.clear();
 	}
 
 	public void computeGESsFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode, List<GeriatricFactorValue> gesList) throws Exception {
@@ -241,6 +242,24 @@ public class MeasuresServiceImpl implements MeasuresService {
 		
 		return nuiList;
 
+	}
+	
+	private List<DerivedMeasureValue> createAllDms(List<Object[]> derivedMeasures, Timestamp startOfMonth,
+			Timestamp endOfMonth, PilotCode pilotCode, List<DerivedMeasureValue> dmList) {
+		
+		final TimeInterval ti = getOrCreateTimeIntervalPilotTimeZone(startOfMonth, TypicalPeriod.MONTH, pilotCode);
+		
+		for (Object[] derivedMeasure : derivedMeasures) {
+			DerivedMeasureValue dmv = new DerivedMeasureValue();
+			dmv.setUserInRoleId(((Integer) derivedMeasure[0]).longValue());
+			dmv.setDetectionVariableId(((Integer) derivedMeasure[1]).longValue());
+			dmv.setDerivedDetectionVariableId(((Integer) derivedMeasure[2]).longValue());
+			dmv.setTimeInterval(ti);
+			dmv.setDmValue((BigDecimal) derivedMeasure[5]);
+			dmList.add(dmv);
+		}
+		
+		return dmList;
 	}
 	
 	public List<GeriatricFactorValue> createAllGFVs(List<Object[]> list, Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode,

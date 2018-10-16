@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import eu.city4age.dashboard.api.pojo.domain.DerivedMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.GeriatricFactorValue;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
@@ -24,9 +25,10 @@ public class ComputeServiceImpl implements ComputeService {
 
 	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void computeAllFor1Month(Timestamp startOfMonth, Timestamp endOfMonth, PilotCode pilotCode,
-			List<NumericIndicatorValue> nuiList, List<GeriatricFactorValue> gfvList) throws Exception {
+			List<NumericIndicatorValue> nuiList, List<DerivedMeasureValue> dmList, List<GeriatricFactorValue> gfvList) throws Exception {
 		
 		measuresService.computeNuisFor1Month(startOfMonth, endOfMonth, pilotCode, nuiList);
+		measuresService.computeDmsFor1Month(startOfMonth, endOfMonth, pilotCode, dmList);
 		measuresService.computeGESsFor1Month(startOfMonth, endOfMonth, pilotCode, gfvList);
 		measuresService.computeFor1Month(DetectionVariableType.GEF, startOfMonth, endOfMonth, pilotCode, gfvList);
 		measuresService.computeFor1Month(DetectionVariableType.GFG, startOfMonth, endOfMonth, pilotCode, gfvList);

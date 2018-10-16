@@ -1,11 +1,11 @@
 package eu.city4age.dashboard.api.rest;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -36,14 +36,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.exceptions.JsonEmptyException;
+import eu.city4age.dashboard.api.jpa.DerivedMeasureValueRepository;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.NUIRepository;
-import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
-import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.jpa.FilterTypeRepository;
 import eu.city4age.dashboard.api.jpa.VmvFilteringRepository;
+import eu.city4age.dashboard.api.pojo.domain.DerivedMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
@@ -92,19 +92,16 @@ public class ViewEndpoint {
 	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
 
 	@Autowired
-	private NativeQueryRepository nativeQueryRepository;
-
-	@Autowired
 	private DetectionVariableRepository detectionVariableRepository;
-	
-	@Autowired
-	private TimeIntervalRepository timeIntervalRepository;	
 	
 	@Autowired
 	private FilterTypeRepository filterTypeRepository;
 	
 	@Autowired
 	private VmvFilteringRepository vmvFilteringRepository;
+	
+	@Autowired
+	private DerivedMeasureValueRepository derivedMeasureValueRepository;
 	
 	@Autowired
 	private ViewService viewService;
@@ -217,15 +214,14 @@ public class ViewEndpoint {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("getDerivedMeasures/userInRoleId/{userInRoleId}/parentFactorId/{parentFactorId}")
 	public Response getDerivedMeasures(@PathParam("userInRoleId") Long userInRoleId, @PathParam("parentFactorId") Long parentFactorId) throws JsonProcessingException {
 
 		DataSet response = new DataSet();
-
-		List<Object[]> derivedMeasures = nativeQueryRepository.computeDerivedMeasures(userInRoleId, parentFactorId);
+		
+		List<DerivedMeasureValue> derivedMeasures = derivedMeasureValueRepository.findByUserInRoleIdAndParentFactorId(userInRoleId, parentFactorId);
 
 		if (derivedMeasures != null && !derivedMeasures.isEmpty()) {
 
@@ -237,12 +233,12 @@ public class ViewEndpoint {
 			
 			Set<DetectionVariable> dvs = new HashSet<DetectionVariable>();
 
-			for (Object[] derivedMeasure : derivedMeasures) {
+			for (DerivedMeasureValue derivedMeasure : derivedMeasures) {
 				DetectionVariable dv = new DetectionVariable();
-				dv.setId(Long.valueOf((Integer) derivedMeasure[1]));
-				dv.setDetectionVariableName(detectionVariableRepository.findOne(Long.valueOf((Integer) derivedMeasure[1])).getDetectionVariableName());
+				dv.setId(derivedMeasure.getDetectionVariableId());
+				dv.setDetectionVariableName(detectionVariableRepository.findOne(Long.valueOf(derivedMeasure.getDetectionVariableId())).getDetectionVariableName());
 				dvs.add(dv);
-			}
+			}			
 
 			for (DetectionVariable dv : dvs) {
 
@@ -251,16 +247,16 @@ public class ViewEndpoint {
 				eu.city4age.dashboard.api.pojo.dto.oj.variant.next.Serie series = new eu.city4age.dashboard.api.pojo.dto.oj.variant.next.Serie(
 						detectionVariableName);
 
-				for (Object[] derivedMeasure : derivedMeasures) {
+				for (DerivedMeasureValue derivedMeasure : derivedMeasures) {
 					Boolean derivedMeasureAdded = false;
-					Long derivedMeasureId = Long.valueOf((Integer) derivedMeasure[1]);
+					Long derivedMeasureId = Long.valueOf(derivedMeasure.getDetectionVariableId());
 					if (derivedMeasureAdded != true && dv.getId().equals(derivedMeasureId)) {
-						TimeInterval ti = timeIntervalRepository.findOne(Long.valueOf((Integer) derivedMeasure[4]));
+						TimeInterval ti = derivedMeasure.getTimeInterval();
 						Date intervalStart = ti.getIntervalStart();
-						int year = intervalStart.getYear() + 1900;
-						logger.info("year: " + year);
-						int month = intervalStart.getMonth() + 1;
-						logger.info("month: " + month);
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(intervalStart);
+						int year = calendar.get(Calendar.YEAR);
+						int month = calendar.get(Calendar.MONTH) + 1;
 						StringBuilder monthLabelBuilder = new StringBuilder();
 						monthLabelBuilder.append(year).append("/");
 						if (month < 10) {
@@ -268,7 +264,7 @@ public class ViewEndpoint {
 						} else {
 							monthLabelBuilder.append(month);
 						}
-						series.getItems().add(new Item((BigDecimal) derivedMeasure[5], Long.valueOf((Integer) derivedMeasure[1]), Long.valueOf((Integer) derivedMeasure[4]), monthLabelBuilder.toString()));
+						series.getItems().add(new Item(derivedMeasure.getDmValue(), derivedMeasure.getDetectionVariableId(), derivedMeasure.getTimeInterval().getId(), monthLabelBuilder.toString()));
 						derivedMeasureAdded = true;
 					}
 				}

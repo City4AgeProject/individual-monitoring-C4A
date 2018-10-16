@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
+import eu.city4age.dashboard.api.pojo.domain.DerivedMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
@@ -88,18 +89,18 @@ public class ViewServiceImpl implements ViewService {
 	}
 	
 	@Override
-	public List<ViewGefCalculatedInterpolatedPredictedValues> convertToViewGFVs(List<Object[]> derivedMeasures) {
+	public List<ViewGefCalculatedInterpolatedPredictedValues> convertToViewGFVs(List<DerivedMeasureValue> derivedMeasures) {
 		
 		List<ViewGefCalculatedInterpolatedPredictedValues> gefs = new ArrayList<>();
 
-		for (Object[] derivedMeasure : derivedMeasures) {
+		for (DerivedMeasureValue derivedMeasure : derivedMeasures) {
 			
 			ViewGefCalculatedInterpolatedPredictedValuesKey id = new ViewGefCalculatedInterpolatedPredictedValuesKey();
-			id.setTimeIntervalId(Long.valueOf((Integer) derivedMeasure[4]));
+			id.setTimeIntervalId(Long.valueOf(derivedMeasure.getTimeInterval().getId()));
 			
 			ViewGefCalculatedInterpolatedPredictedValues gef = new ViewGefCalculatedInterpolatedPredictedValues();
 			gef.setId(id);
-			gef.setPilotCode(userInRoleRepository.findByUirId(Long.valueOf((Integer) derivedMeasure[0])).getPilotCode().name());
+			gef.setPilotCode(userInRoleRepository.findByUirId(derivedMeasure.getUserInRoleId()).getPilotCode().name());
 			
 			gefs.add(gef);
 		}
