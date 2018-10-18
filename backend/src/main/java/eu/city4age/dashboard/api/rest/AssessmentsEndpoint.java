@@ -52,6 +52,7 @@ import eu.city4age.dashboard.api.jpa.FilterTypeRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
+import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.jpa.VmvFilteringRepository;
 import eu.city4age.dashboard.api.pojo.domain.AssessedGefValueSet;
 import eu.city4age.dashboard.api.pojo.domain.Assessment;
@@ -60,7 +61,10 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.FilterType;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
+import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
+import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValuesKey;
 import eu.city4age.dashboard.api.pojo.domain.VmvFiltering;
+import eu.city4age.dashboard.api.pojo.dto.AssessmentJson;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramLast5Assessment;
 import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresAssessments;
 import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredVmv;
@@ -116,6 +120,9 @@ public class AssessmentsEndpoint {
 	
 	@Autowired
 	private FilterTypeRepository filterTypeRepository;
+	
+	@Autowired
+	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
 	
 	@Autowired
 	private AssessmentService assessmentService;
@@ -296,11 +303,28 @@ public class AssessmentsEndpoint {
 
 			audienceRolesRepository.save(assessmentAudienceRoles);
 			
+			String jsonString = "";
 			if (data.getType() == null) {
-				
-				for (Long gefId : data.getGeriatricFactorValueIds())
+				for (Long gefId : data.getGeriatricFactorValueIds()) {
+
+					ViewGefCalculatedInterpolatedPredictedValuesKey key = new ViewGefCalculatedInterpolatedPredictedValuesKey();
+					key.setId(gefId);
+					key.setDataType("c");
+					
+					List<ViewGefCalculatedInterpolatedPredictedValues> gefs = viewGefCalculatedInterpolatedPredictedValuesRepository.findByKey(key);
+
+					AssessmentJson assJson;
+					
+					if(gefs.size() > 5) {
+						assJson = new AssessmentJson(assessment, gefs.subList(gefs.size()-5, gefs.size()));
+					} else {
+						assJson = new AssessmentJson(assessment, gefs);
+					}
+					
+					jsonString = objectMapper.writeValueAsString(assJson);
 					assessedGefValueSets.add(new AssessedGefValueSet.AssessedGefValueSetBuilder()
-							.assessmentId(assessment.getId().intValue()).gefValueId(gefId.intValue()).build());
+							.assessmentId(assessment.getId().intValue()).gefValueId(gefId.intValue()).jsonString(jsonString).build());
+				}
 				assessedGefValuesRepository.save(assessedGefValueSets);
 				
 			} else {

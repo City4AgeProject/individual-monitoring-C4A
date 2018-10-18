@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "assessed_gef_value_set")
@@ -36,23 +37,30 @@ public class AssessedGefValueSet implements Serializable {
 	@Column(name = "assessment_id", nullable = false)
 	private Integer assessmentId;
 
+	@Column(name = "json", columnDefinition = "jsonb")
+	@Type(type = "JsonStringType")
+    private String jsonString;
+
 	public AssessedGefValueSet() {
 	}
 
 	public AssessedGefValueSet(AssessedGefValueSetBuilder builder) {
 		this.gefValueId = builder.gefValueId;
 		this.assessmentId = builder.assessmentId;
+		this.jsonString = builder.jsonString;
 	}
 
-	public AssessedGefValueSet(Integer gefValueId, Integer assessmentId) {
+	public AssessedGefValueSet(Integer gefValueId, Integer assessmentId, String jsonString) {
 		this.gefValueId = gefValueId;
 		this.assessmentId = assessmentId;
+		this.jsonString = jsonString;
 	}
 
-	public AssessedGefValueSet(BigInteger gefValueId, Integer assessmentId) {
+	public AssessedGefValueSet(BigInteger gefValueId, Integer assessmentId, String jsonString) {
 		if (gefValueId != null && assessmentId != null) {
 			this.gefValueId = Integer.valueOf(gefValueId.intValue());
 			this.assessmentId = assessmentId;
+			this.jsonString = jsonString;
 		}
 	}
 
@@ -71,10 +79,19 @@ public class AssessedGefValueSet implements Serializable {
 	public void setAssessmentId(Integer assessmentId) {
 		this.assessmentId = assessmentId;
 	}
+	
+	public void setJsonString(String jsonString) {
+		this.jsonString = jsonString;
+	}
+	
+	public String getJsonString() {
+		return jsonString;
+	}
 
 	public static class AssessedGefValueSetBuilder {
 		private Integer gefValueId = 0;
 		private Integer assessmentId = 0;
+		private String jsonString = "";
 
 		public AssessedGefValueSetBuilder gefValueId(Integer gefValueId) {
 			this.gefValueId = gefValueId;
@@ -83,6 +100,11 @@ public class AssessedGefValueSet implements Serializable {
 
 		public AssessedGefValueSetBuilder assessmentId(Integer assessmentId) {
 			this.assessmentId = assessmentId;
+			return this;
+		}
+		
+		public AssessedGefValueSetBuilder jsonString(String jsonString) {
+			this.jsonString = jsonString;
 			return this;
 		}
 

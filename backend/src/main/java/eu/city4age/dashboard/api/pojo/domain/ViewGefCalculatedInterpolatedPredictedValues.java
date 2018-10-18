@@ -70,6 +70,15 @@ public class ViewGefCalculatedInterpolatedPredictedValues implements Comparable<
 	
 	@Column(name = "username")
 	private String username;
+	
+	@Column(name = "user_in_role_id")
+	private Long userInRoleId;
+	
+	@Column(name = "time_interval_id")
+	private Long timeIntervalId;
+	
+	@Column(name = "gef_type_id")
+	private Long detectionVariableId;
 
 	public ViewGefCalculatedInterpolatedPredictedValues() {
 		
@@ -368,6 +377,30 @@ public class ViewGefCalculatedInterpolatedPredictedValues implements Comparable<
 	 */
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public Long getUserInRoleId() {
+		return userInRoleId;
+	}
+
+	public void setUserInRoleId(Long userInRoleId) {
+		this.userInRoleId = userInRoleId;
+	}
+
+	public Long getTimeIntervalId() {
+		return timeIntervalId;
+	}
+
+	public void setTimeIntervalId(Long timeIntervalId) {
+		this.timeIntervalId = timeIntervalId;
+	}
+
+	public Long getDetectionVariableId() {
+		return detectionVariableId;
+	}
+
+	public void setDetectionVariableId(Long detectionVariableId) {
+		this.detectionVariableId = detectionVariableId;
 	}
 
 	@Override

@@ -57,9 +57,9 @@ public class ViewServiceImpl implements ViewService {
 		SimpleDateFormat formatWithTz = new SimpleDateFormat("yyyy/MM");
 		formatWithTz.setTimeZone(TimeZone.getTimeZone(pilot.getCompZone()));
 
-		TimeInterval startDate = timeIntervalRepository.findOne(gef.getId().getTimeIntervalId());
+		TimeInterval startDate = timeIntervalRepository.findOne(gef.getTimeIntervalId());
 
-		TimeInterval endDate = timeIntervalRepository.findOne(gefs.get(gefs.size() - 1).getId().getTimeIntervalId());
+		TimeInterval endDate = timeIntervalRepository.findOne(gefs.get(gefs.size() - 1).getTimeIntervalId());
 
 		TimeInterval midDate;
 
@@ -73,7 +73,7 @@ public class ViewServiceImpl implements ViewService {
 
 			gef = gefs.get(index + 1);
 
-			midDate = timeIntervalRepository.findOne(gef.getId().getTimeIntervalId());
+			midDate = timeIntervalRepository.findOne(gef.getTimeIntervalId());
 
 			if(!startDate.getIntervalStart().before(midDate.getIntervalStart())) {
 				startDate=midDate;
@@ -94,12 +94,9 @@ public class ViewServiceImpl implements ViewService {
 		List<ViewGefCalculatedInterpolatedPredictedValues> gefs = new ArrayList<>();
 
 		for (DerivedMeasureValue derivedMeasure : derivedMeasures) {
-			
-			ViewGefCalculatedInterpolatedPredictedValuesKey id = new ViewGefCalculatedInterpolatedPredictedValuesKey();
-			id.setTimeIntervalId(Long.valueOf(derivedMeasure.getTimeInterval().getId()));
-			
+
 			ViewGefCalculatedInterpolatedPredictedValues gef = new ViewGefCalculatedInterpolatedPredictedValues();
-			gef.setId(id);
+			gef.setTimeIntervalId(Long.valueOf(derivedMeasure.getTimeInterval().getId()));
 			gef.setPilotCode(userInRoleRepository.findByUirId(derivedMeasure.getUserInRoleId()).getPilotCode().name());
 			
 			gefs.add(gef);
@@ -126,7 +123,7 @@ public class ViewServiceImpl implements ViewService {
 
 			for (DataIdValue month : months) {
 
-				if (gef.getFrailtyStatus() != null && !gef.getId().getDataType().equals("p") && month.getId().equals(gef.getId().getTimeIntervalId())) {
+				if (gef.getFrailtyStatus() != null && !gef.getId().getDataType().equals("p") && month.getId().equals(gef.getTimeIntervalId())) {
 
 					found = true;
 
@@ -180,7 +177,7 @@ public class ViewServiceImpl implements ViewService {
 					}					
 				}
 
-				if (!found && gef.getId().getDetectionVariableId().equals(501L) && !gef.getId().getDataType().equals("p") && month.getId().equals(gef.getId().getTimeIntervalId())) {
+				if (!found && gef.getDetectionVariableId().equals(501L) && !gef.getId().getDataType().equals("p") && month.getId().equals(gef.getTimeIntervalId())) {
 
 					switch (previous) {
 					case "pre_frail":

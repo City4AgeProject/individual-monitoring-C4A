@@ -182,7 +182,7 @@ public class ViewEndpoint {
 
 			for (ViewGefCalculatedInterpolatedPredictedValues gef : list) {
 				DetectionVariable dv = new DetectionVariable();
-				dv.setId(gef.getId().getDetectionVariableId());
+				dv.setId(gef.getDetectionVariableId());
 				dv.setDetectionVariableName(gef.getDetectionVariableName());
 				dvs.add(dv);
 			}
@@ -197,9 +197,9 @@ public class ViewEndpoint {
 				for (ViewGefCalculatedInterpolatedPredictedValues gef : list) {
 					Boolean gefAdded = false;
 
-					if (gefAdded != true && dv.getId().equals(gef.getId().getDetectionVariableId())) {
+					if (gefAdded != true && dv.getId().equals(gef.getDetectionVariableId())) {
 						
-						series.getItems().add(new Item(gef.getId().getId(), gef.getGefValue(), gef.getId().getDataType(), gef.getId().getDetectionVariableId(), gef.getId().getTimeIntervalId()));
+						series.getItems().add(new Item(gef.getId().getId(), gef.getGefValue(), gef.getId().getDataType(), gef.getDetectionVariableId(), gef.getTimeIntervalId()));
 						gefAdded = true;
 					}
 				}
