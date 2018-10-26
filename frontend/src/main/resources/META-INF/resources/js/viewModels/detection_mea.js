@@ -266,6 +266,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                             previousValue = event.detail.previousValue;
                     $('#demo-container').addClass('demo-edge-' + value).removeClass('demo-edge-' + previousValue);
                 };
+                
+                self.switcherSelectionChanged = function (event) {
+                    console.log (event.detail);
+                    //if (event.detail.value === )
+                };
 
                 var lastSelected = false;
 
@@ -312,7 +317,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                 $.get(NUI_VALUES_DATA + "/userInRoleId/" + self.careRecipientId() + queryParams, function (nuiData) {
                                     self.nuiData = nuiData;
                                 }),
-                                $.get(CLUSTER_DATA + "/userInRoleId/" + self.careRecipientId() + "/detectionVariableId/" + self.meaId(), function (clusterData) {
+                                /*$.get(CLUSTER_DATA + "/userInRoleId/" + self.careRecipientId() + "/detectionVariableId/" + self.meaId() + "/locale/" + $('#languageBox').val(), function (clusterData) {
                                     self.clusterGroups(clusterData.groups);
                                     self.clusterSeries(clusterData.series);
                                     //self.clusterSeries[0].displayInLegend = "off";
@@ -327,7 +332,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                 }),
                                 $.get(CODEBOOK_SELECT_ALL_FILTER_TYPES, function (data) {
                                     self.excludeConfirmData(data);
-                                })
+                                })*/
                                 ).then(function () {
 
                             self.finalData = setDataForDiagrams(self.data, self.nuiData);
@@ -345,6 +350,29 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                             console.log(err);
                             console.log("error recieving json data from web service");
                         });
+                        $.when(                                
+                                $.get(CLUSTER_DATA + "/userInRoleId/" + self.careRecipientId() + "/detectionVariableId/" + self.meaId() + "/locale/" + $('#languageBox').val(), function (clusterData) {
+                                    self.clusterGroups(clusterData.groups);
+                                    self.clusterSeries(clusterData.series);
+                                    //self.clusterSeries[0].displayInLegend = "off";
+                                    if (clusterData.series !== undefined)
+                                        self.clusterDataHeader = "Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name);
+                                    //console.log (JSON.stringify(clusterData.legend));
+                                    self.clusterLegendSections = clusterData.legend;
+                                    self.dataIDs(clusterData.dataIDs);
+                                    console.log(self.dataIDs())
+                                    if (clusterData.dataIDs !== undefined)
+                                        self.loadAssessments();
+                                }),
+                                $.get(CODEBOOK_SELECT_ALL_FILTER_TYPES, function (data) {
+                                    self.excludeConfirmData(data);
+                                })
+                                ).then(function () {
+                                    resolve();
+                                }).fail(function (err) {
+                                    console.log(err);
+                                    console.log("error recieving json data from web service");
+                                });
                     });
 
                 };
@@ -842,6 +870,8 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 
                 function changeLanguage() {
                     var lang = $('#languageBox').val();
+                    
+                    console.log ($('#languageBox').val());
 
                     oj.Config.setLocale(lang,
                             function () {

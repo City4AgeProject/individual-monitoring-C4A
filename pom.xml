@@ -160,6 +160,11 @@
     		<groupId>com.fasterxml.jackson.jaxrs</groupId>
     		<artifactId>jackson-jaxrs-json-provider</artifactId>
 		</dependency>
+		<dependency>
+  			<groupId>com.fasterxml.jackson.dataformat</groupId>
+  			<artifactId>jackson-dataformat-csv</artifactId>
+  			<version>2.9.0</version>
+		</dependency>
 		<!-- End Jackson -->
 
 		<!-- Swagger -->

@@ -23,6 +23,8 @@ public interface GenericRepository<T, ID extends Serializable>
 		extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 
 	List<T> doQueryWithFilter(List<Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
+	
+	List<Object> doQueryWithFilterAggr(List<Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
 
 	void disableFilter(String name);
 	

@@ -470,7 +470,10 @@ public class AssessmentsEndpoint {
 				if (typicalPeriod == null) {
 					typicalPeriod = vmv.getTimeInterval().getTypicalPeriod();
 					if (typicalPeriod == null) typicalPeriod = "day";
-					timeZone = ZoneId.of(a.getUserInRole().getPilot().getCompZone());
+					if (a.getUserInRole().getPilot() != null)
+						timeZone = ZoneId.of(a.getUserInRole().getPilot().getCompZone());
+					else 
+						timeZone = ZoneId.systemDefault();
 					if (typicalPeriod.equalsIgnoreCase("mon")) 
 						dtf = DateTimeFormatter.ofPattern("yyyy MMMM", Locale.ENGLISH);
 					else 

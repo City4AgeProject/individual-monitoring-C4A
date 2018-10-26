@@ -44,6 +44,26 @@ public class ViewGefCalculatedInterpolatedPredictedValuesKey implements Serializ
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if ((this == other))
+			return true;
+		if ((other == null))
+			return false;
+		if (!(other instanceof ViewGefCalculatedInterpolatedPredictedValuesKey))
+			return false;
+		ViewGefCalculatedInterpolatedPredictedValuesKey castOther = (ViewGefCalculatedInterpolatedPredictedValuesKey) other;
 
+		return (this.getId().equals(castOther.getId())
+				&& this.getDataType().equals(castOther.getDataType()));
+	}
+	@Override
+	public int hashCode() {
+		int result = 17;
 
+		result = 37 * result + this.getId().intValue();
+		result = 37 * result + this.getDataType().charAt(0);
+		return result;
+	}
 }

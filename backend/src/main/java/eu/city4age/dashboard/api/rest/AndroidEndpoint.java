@@ -1,8 +1,11 @@
 package eu.city4age.dashboard.api.rest;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,10 +103,39 @@ public class AndroidEndpoint {
 		C4AAndroidResponse response = new C4AAndroidResponse();
 		AndroidActivitiesDeserializer data;
 		
+		StringBuilder out = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(json, Charset.forName("UTF-8")));
+		
 		try {
 			
-			data = objectMapper.readerFor(AndroidActivitiesDeserializer.class)
-					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+			/*data = objectMapper.readerFor(AndroidActivitiesDeserializer.class)
+					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);*/
+			
+			logger.info("length: " + req.getContentLength());
+			int intLine;
+			
+			while ((intLine = reader.read()) != -1) {
+				logger.info("intLine: " + intLine);
+				logger.info ("charLine: " + (char) intLine);
+				out.append((char) intLine);	
+				
+			}
+			
+			logger.info("JSON: ");
+	        logger.info(out.toString());
+	        
+	        data = objectMapper.readerFor(AndroidActivitiesDeserializer.class)
+					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(out.toString());
+	        
+	        androidService.storeInfoInDb(data);
+			logger.info("service finnished");
+			
+			response.setResult(1L);
+			//response.setMtss(mtss);
+			response.getStatus().setResponseCode("200 - OK.");
+			response.getStatus().setConsole("Activities saved to database!");
+			
+			return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response));
 		
 		} catch (JsonProcessingException e) {
 			
@@ -114,23 +146,20 @@ public class AndroidEndpoint {
 			return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response), 400);
 		
 		}
+		catch (Exception e) {
+			
+			e.printStackTrace();
+			response.setResult(0L);
+			response.getStatus().setResponseCode("400 - CONTENT NOT JSON/CONTENT EMPTY.");
+			response.getStatus().setConsole("Header content-type is not 'application/json' or content empty.");
+			return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response), 400);
 		
-		logger.info("length: " + req.getContentLength());
-		
-		androidService.storeInfoInDb(data);
-		logger.info("service finnished");
-		
-		response.setResult(1L);
-		//response.setMtss(mtss);
-		response.getStatus().setResponseCode("200 - OK.");
-		response.getStatus().setConsole("Activities saved to database!");
-		
-		return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(response));
+		}	
 	}
 	
 	@GET
-	@Path("testFirebase")
-	public Response testFirebase () {
+	@Path("sendNotification")
+	public Response sendNotification () {
 				
 		try {
 			
@@ -216,6 +245,35 @@ public class AndroidEndpoint {
 	@POST
 	@Path("firebaseToken")
 	public Response firebaseToken (@RequestBody String json) {
+		
+		AndroidTokenDeserializer atd = new AndroidTokenDeserializer ();
+		
+		try {
+			
+			atd = objectMapper.readerFor(AndroidTokenDeserializer.class)
+					.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(json);
+			
+			UserInRole uir = userInRoleRepository.findOne(atd.getUserId());
+			
+			uir.setToken(atd.getToken());
+			
+			userInRoleRepository.save(uir);
+			
+			return Response.ok().build();
+		} catch (JsonProcessingException e) {			
+			
+			e.printStackTrace();
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		return Response.serverError().build();
+		
+	}
+	
+	@POST
+	@Path("notificationAnswer")
+	public Response notificationAnswer (@RequestBody String json) {
 		
 		AndroidTokenDeserializer atd = new AndroidTokenDeserializer ();
 		

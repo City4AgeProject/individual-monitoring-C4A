@@ -15,5 +15,15 @@ public class View {
 	public interface VariationMeasureValueView extends BaseView {}
 	
 	public interface NUIView extends VariationMeasureValueView {}
+	
+	public interface AnalyticsGraphView extends BaseView {}
+	
+	public interface AnalyticsCSVView extends BaseView {}
+	
+	public interface AnalyticsCSVCategoryView extends AnalyticsCSVView {}
+	
+	public interface AnalyticsCSVTimeView extends AnalyticsCSVView {}
+	
+	public interface AnalyticsCSVTimeCategoryView extends AnalyticsCSVView {}
 
 }

@@ -126,6 +126,69 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 		return null;
 
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Object> doQueryWithFilterAggr(List<eu.city4age.dashboard.api.pojo.persist.Filter> filters,
+			String filterQueryName, Map<String, Object> inQueryParams) {
+
+		if (GenericRepository.class.isAssignableFrom(getSpringDataRepositoryInterface())) {
+			Annotation entityFilterAnn = getSpringDataRepositoryInterface().getAnnotation(EntityFilter.class);
+
+			if (entityFilterAnn != null) {
+
+				EntityFilter entityFilter = (EntityFilter) entityFilterAnn;
+				FilterQuery[] filterQuerys = entityFilter.filterQueries();
+
+				for (FilterQuery fQuery : filterQuerys) {
+
+					if (StringUtils.equals(filterQueryName, fQuery.name())) {
+						String jpql = fQuery.jpql();
+
+						for (eu.city4age.dashboard.api.pojo.persist.Filter flt : filters) {
+							Filter filter = entityManager.unwrap(Session.class).enableFilter(flt.getName());
+
+							// Set filter parameter
+							for (Object key : flt.getInParams().keySet()) {
+
+								// FilterParam map key must be filter name
+								if (flt.getName().equals(key.toString())) {
+
+									String filterParamName = key.toString();
+
+									if (flt.getInParams().get(key) instanceof List) {
+										
+										List<T> filterParamValue = (List<T>) flt.getInParams().get(key);
+										filter.setParameterList(filterParamName, filterParamValue);
+									} else {
+										Object filterParamValue = flt.getInParams().get(key);
+										filter.setParameter(filterParamName, filterParamValue);
+									}
+
+								}
+
+							}
+
+						}
+
+						// Set query parameter
+						Query query = entityManager.createQuery(jpql);
+						for (Object key : inQueryParams.keySet()) {
+							String queryParamName = key.toString();
+							Object queryParamValue = inQueryParams.get(key);
+							query.setParameter(queryParamName, queryParamValue);
+						}
+
+						return query.getResultList();
+
+					}
+				}
+			}
+		}
+
+		return null;
+
+	}
 
 	public void disableFilter(String name) {
 		entityManager.unwrap(Session.class).disableFilter(name);
