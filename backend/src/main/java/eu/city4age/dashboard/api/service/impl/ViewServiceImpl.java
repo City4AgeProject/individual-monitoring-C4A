@@ -504,11 +504,11 @@ public class ViewServiceImpl implements ViewService {
 		
 		switch (viewSelecter) {
 		case 1:
-			schemaBuilder.addColumn("avgValue");
+			schemaBuilder.addColumn("avgValue").addColumn("count");
 			csv = mapper.writer(schemaBuilder.build().withHeader()).withView(AnalyticsCSVView.class).writeValueAsString(data);
 			break;
 		case 2:	
-			schemaBuilder.addColumn("avgValue");
+			schemaBuilder.addColumn("avgValue").addColumn("count");
 			for (String c : categories) {
 				schemaBuilder.addColumn(c);
 			}
@@ -516,12 +516,12 @@ public class ViewServiceImpl implements ViewService {
 			break;		
 		case 3:		
 			schemaBuilder.addColumn("intervalStart").addColumn("typicalPeriod");
-			schemaBuilder.addColumn("avgValue");
+			schemaBuilder.addColumn("avgValue").addColumn("count");
 			csv = mapper.writer(schemaBuilder.build().withHeader()).withView(AnalyticsCSVTimeView.class).writeValueAsString(data);
 			break;
 		case 4:
 			schemaBuilder.addColumn("intervalStart").addColumn("typicalPeriod");
-			schemaBuilder.addColumn("avgValue");
+			schemaBuilder.addColumn("avgValue").addColumn("count");
 			for (String c : categories) {
 				schemaBuilder.addColumn(c);
 			}

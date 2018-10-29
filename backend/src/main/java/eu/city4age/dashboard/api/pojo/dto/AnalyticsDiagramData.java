@@ -51,6 +51,10 @@ public class AnalyticsDiagramData {
 	@JsonView ({AnalyticsGraphView.class, AnalyticsCSVView.class})
 	private BigDecimal avgValue;
 	
+	@JsonInclude(Include.ALWAYS)
+	@JsonView ({AnalyticsGraphView.class, AnalyticsCSVView.class})
+	private Long count;
+	
 	/**
 	 * 
 	 */
@@ -185,6 +189,20 @@ public class AnalyticsDiagramData {
 	 */
 	public void setIntervalStart(String intervalStart) {
 		this.intervalStart = intervalStart;
+	}
+
+	/**
+	 * @return the count
+	 */
+	public Long getCount() {
+		return count;
+	}
+
+	/**
+	 * @param count the count to set
+	 */
+	public void setCount(Long count) {
+		this.count = count;
 	}
 
 }

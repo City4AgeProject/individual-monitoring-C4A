@@ -290,7 +290,8 @@ public class ViewEndpoint {
 		
 		for (ArrayList<Filter> filter : allFilters) {
 			
-			List<Object> data = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "avgValue", inQueryParams);
+			List<Object> dataAvg = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "avgValue", inQueryParams);
+			List<Object> dataCount = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "count", inQueryParams);
 			
 			AnalyticsDiagramData ar = new AnalyticsDiagramData ();
 			Map<String, String> arCategories = new LinkedHashMap <String, String> ();
@@ -338,11 +339,16 @@ public class ViewEndpoint {
 			}
 			
 			ar.setCategory(arCategories);
-			Double avg = (Double) data.get(0);
+			Double avg = (Double) dataAvg.get(0);
+			Long count = (Long) dataCount.get(0);
 			if (avg != null)
 				ar.setAvgValue(BigDecimal.valueOf(avg).setScale(3, RoundingMode.HALF_UP));
 			else 
 				ar.setAvgValue(null);
+			if (count != null)
+				ar.setCount(count);
+			else 
+				ar.setCount(0l);
 			analyticsData.add(ar);
 		}
 		

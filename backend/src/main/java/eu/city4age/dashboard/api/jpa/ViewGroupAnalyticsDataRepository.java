@@ -11,6 +11,8 @@ import eu.city4age.dashboard.api.pojo.domain.ViewGroupAnalyticsDataKey;
 @Repository(value = "viewGroupAnalyticsDataRepository")
 @EntityFilter(filterQueries = {
 		@FilterQuery(name = "avgValue",
-					jpql = "SELECT avg (vwgad.value) FROM ViewGroupAnalyticsData vwgad")
+					jpql = "SELECT avg (vwgad.value) FROM ViewGroupAnalyticsData vwgad"),
+		@FilterQuery(name = "count",
+					jpql = "SELECT COUNT (DISTINCT vwgad.userInSystemId) FROM ViewGroupAnalyticsData vwgad")
 })
 public interface ViewGroupAnalyticsDataRepository extends GenericRepository<ViewGroupAnalyticsData, ViewGroupAnalyticsDataKey> {}
