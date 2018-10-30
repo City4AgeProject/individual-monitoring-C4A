@@ -297,12 +297,12 @@ public class MeasuresServiceImpl implements MeasuresService {
 	public TimeInterval getOrCreateTimeIntervalPilotTimeZone(Date intervalStart, TypicalPeriod typicalPeriod, PilotCode pilotCode) {
 		
 		String computationTimeZone = pilotRepository.findByPilotCode(pilotCode).getCompZone();
-		System.err.println("trt: " + computationTimeZone);
+		//System.err.println("trt: " + computationTimeZone);
 		TimeZone.setDefault(TimeZone.getTimeZone(computationTimeZone));
 		TimeInterval ti = timeIntervalRepository.findByIntervalStartAndTypicalPeriod(intervalStart,
 				typicalPeriod.getDbName());
 		if (ti == null) {
-			System.err.println("null");
+			//System.err.println("null");
 			ti = new TimeInterval();
 			ti.setIntervalStart(intervalStart);
 			ti.setTypicalPeriod(typicalPeriod.getDbName());
@@ -310,7 +310,7 @@ public class MeasuresServiceImpl implements MeasuresService {
 			timeIntervalRepository.save(ti);
 			//timeIntervalRepository.flush();
 		} else {
-			System.err.println("not null");
+			//System.err.println("not null");
 		}
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		return ti;

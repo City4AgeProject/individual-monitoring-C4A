@@ -1,18 +1,12 @@
 Install in the following order using the provided links and commands:
 1. python 3.6.6 (https://www.python.org/downloads/release/python-366/)
-	set path environment variables: 
-		- ...path_to_python_installation_directory...\Python\Python36
-		- ...path_to_python_installation_directory...\Python\Python36\DLLs
-		- ...path_to_python_installation_directory...\Python\Python36\Scripts
-	update pip: python -m pip install --upgrade pip
+	update pip: python -m pip3 install --upgrade pip
 2. packages (libraries): 
-	a. numpy: pip install numpy
-	b. pandas: pip install pandas
-	c. hmmlearn: pip install hmmlearn
-	d. sklearn: pip install sklearn
-	e. scipy: pip install scipy
-	f. psycopg2: pip install psycopg2
-	g. jep: pip install jep
+	a. pandas: pip3 install pandas
+	b. hmmlearn: pip3 install hmmlearn
+	c. sklearn: pip3 install sklearn
+	d. psycopg2: pip3 install psycopg2
+	e. jep: pip3 install jep==3.8.1
 		- jep.dll: ...path_to_python_installation_directory...\Python\Python36\Lib\site-packages\jep\ -> \java_ee_sdk-8\glassfish5\glassfish\lib (WINDOWS)
 		- jep.cpython-36m-x86_64-linux-gnu.so: ...path_to_python_installation_directory.../python3.6/site-packages/jep/ -> \...path_to_glassfish.../glassfish5/glassfish/lib (LINUX)
 		

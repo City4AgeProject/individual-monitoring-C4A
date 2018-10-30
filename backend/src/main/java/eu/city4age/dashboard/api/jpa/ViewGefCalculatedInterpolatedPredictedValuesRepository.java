@@ -1,5 +1,7 @@
 package eu.city4age.dashboard.api.jpa;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -34,5 +36,13 @@ public interface ViewGefCalculatedInterpolatedPredictedValuesRepository extends 
 
 	@Query("SELECT gef FROM ViewGefCalculatedInterpolatedPredictedValues gef WHERE gef.userInRoleId = (SELECT gef1.userInRoleId FROM ViewGefCalculatedInterpolatedPredictedValues gef1 WHERE gef1.id = :key) AND gef.detectionVariableId = (SELECT gef2.detectionVariableId FROM ViewGefCalculatedInterpolatedPredictedValues gef2 WHERE gef2.id = :key) AND gef.intervalStart <= (SELECT gef3.intervalStart FROM ViewGefCalculatedInterpolatedPredictedValues gef3 WHERE gef3.id = :key) ORDER BY gef.intervalStart")
 	List<ViewGefCalculatedInterpolatedPredictedValues> findByKey(@Param("key") final ViewGefCalculatedInterpolatedPredictedValuesKey key);
-
+	
+	
+	// correlation coefficient
+	@Query("SELECT gfv.gefValue FROM ViewGefCalculatedInterpolatedPredictedValues gfv WHERE gfv.userInRoleId = :uirId AND gfv.detectionVariableId = :dvId AND gfv.id.dataType <> 'p' AND gfv.intervalStart = :intervalStart")
+	BigDecimal findByUserInRoleIdAndDetectionVariableIdForOneMonth(@Param("uirId") Long uirId, @Param("dvId") Long dvId, @Param("intervalStart") Date intervalStart);
+	
+	@Query("SELECT DISTINCT gfv.intervalStart FROM ViewGefCalculatedInterpolatedPredictedValues gfv WHERE gfv.userInRoleId = :uirId AND gfv.detectionVariableId = :dvId AND gfv.intervalStart >= :intervalStart AND gfv.intervalStart <= :intervalEnd AND gfv.id.dataType <> 'p'")
+	List<Date> findDatesForUserInRoleIdAndDetectionVariableIdForInterval(@Param("uirId") Long uirId, @Param("dvId") Long dvId, @Param("intervalStart") Date intervalStart, @Param("intervalEnd") Date intervalEnd);
+	
 }
