@@ -4,33 +4,53 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
+import eu.city4age.dashboard.api.config.ObjectMapperFactory;
+import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.pojo.domain.DerivedMeasureValue;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.pojo.dto.AnalyticsDiagramData;
+import eu.city4age.dashboard.api.pojo.dto.JsonToExcel;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.json.view.View.AnalyticsCSVCategoryView;
@@ -55,6 +75,11 @@ public class ViewServiceImpl implements ViewService {
 
 	@Autowired
 	private UserInRoleRepository userInRoleRepository;
+	
+	@Autowired
+	private DetectionVariableRepository detectionVariableRepository;
+	
+	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
 	@Override
 	public TreeSet<DataIdValue> createMonthLabels(List<ViewGefCalculatedInterpolatedPredictedValues> gefs) {
@@ -494,7 +519,6 @@ public class ViewServiceImpl implements ViewService {
 	}
 	
 	@Override
-	@Async
 	public void writeToCsv (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException {
 		
 		CsvMapper mapper = new CsvMapper();
@@ -534,6 +558,678 @@ public class ViewServiceImpl implements ViewService {
 		fos.write(csv.getBytes());
 		fos.close();
 		
+	}
+	
+	@Override
+	public void writeToXlsx (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException {
+		
+		List<String> headers = new ArrayList<String> ();
+		
+		Map<String, String> categoryNames = new HashMap <String, String> ();
+		
+		categoryNames.put("sex", "Sex");
+		categoryNames.put("marital_status", "Marital Status");
+		categoryNames.put("age_group", "Age Group");
+		categoryNames.put("education", "Education");
+		categoryNames.put("cohabiting", "Cohabiting");
+		categoryNames.put("informal_caregiver_ability", "Informal Caregiver Availability");
+		categoryNames.put("quality_housing", "Quality Of Housing");
+		categoryNames.put("quality_neighborhood", "Quality Of Neighborhood");
+		categoryNames.put("working", "Working");
+		
+		headers.add("Pilot");
+		headers.add("Variable Name");
+		headers.add("Variable Type");
+		
+		switch (viewSelecter) {
+		case 1:
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			break;
+		case 2:
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			for (String c : categories) {
+				headers.add(categoryNames.get(c));
+			}
+			break;
+		case 3: 
+			headers.add("Interval Start");
+			headers.add("Typical Period");
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			break;
+		case 4:
+			headers.add("Interval Start");
+			headers.add("Typical Period");
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			for (String c : categories) {
+				headers.add(categoryNames.get(c));
+			}
+			break;
+		default: return;
+		}
+		
+		Workbook workbook = new XSSFWorkbook();
+		
+		workbook.getCreationHelper();
+		
+		Sheet sheet = workbook.createSheet("Data");
+		
+		Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 10);
+        //headerFont.setFontName("Times New Roman");
+
+        // Create a CellStyle with the font
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+        headerCellStyle.setBorderTop(BorderStyle.DOUBLE);
+        headerCellStyle.setBorderBottom(BorderStyle.DOUBLE);
+        headerCellStyle.setBorderLeft(BorderStyle.THIN);
+        headerCellStyle.setBorderRight(BorderStyle.THIN);
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        
+        CellStyle leftHeaderCellStyle = workbook.createCellStyle();
+        leftHeaderCellStyle.setFont(headerFont);
+        leftHeaderCellStyle.setBorderTop(BorderStyle.DOUBLE);
+        leftHeaderCellStyle.setBorderBottom(BorderStyle.DOUBLE);
+        leftHeaderCellStyle.setBorderLeft(BorderStyle.DOUBLE);
+        leftHeaderCellStyle.setBorderRight(BorderStyle.THIN);
+        leftHeaderCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        
+        CellStyle rightHeaderCellStyle = workbook.createCellStyle();
+        rightHeaderCellStyle.setFont(headerFont);
+        rightHeaderCellStyle.setBorderTop(BorderStyle.DOUBLE);
+        rightHeaderCellStyle.setBorderBottom(BorderStyle.DOUBLE);
+        rightHeaderCellStyle.setBorderLeft(BorderStyle.THIN);
+        rightHeaderCellStyle.setBorderRight(BorderStyle.DOUBLE);
+        rightHeaderCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        
+        CellStyle dataCellStyle = workbook.createCellStyle();
+        dataCellStyle.setBorderBottom(BorderStyle.THIN);
+        dataCellStyle.setBorderLeft(BorderStyle.THIN);
+        dataCellStyle.setBorderRight(BorderStyle.THIN);
+        dataCellStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        // Create a Row
+        Row headerRow = sheet.createRow(0);
+        
+        // Create cells
+        for(int i = 0; i < headers.size(); i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers.get(i));
+            if (i == 0)
+            	cell.setCellStyle(leftHeaderCellStyle);
+            else if (i == headers.size() - 1)
+            	cell.setCellStyle(rightHeaderCellStyle);
+            else 
+            	cell.setCellStyle(headerCellStyle);
+        }
+        
+        int rowNum = 1;
+        for( AnalyticsDiagramData singleRow: data) {
+        	
+        	Cell cell;
+            Row row = sheet.createRow(rowNum++);
+
+            cell = row.createCell(0);
+            cell.setCellValue(singleRow.getPilot());
+            cell.setCellStyle(dataCellStyle);
+
+            cell = row.createCell(1);
+            cell.setCellValue(singleRow.getDetectionVariableName());
+            cell.setCellStyle(dataCellStyle);
+
+            cell = row.createCell(2);
+            cell.setCellValue(singleRow.getDetectionVariableType());
+            cell.setCellStyle(dataCellStyle);
+            
+            switch (viewSelecter) {
+            case 1:
+            	if (singleRow.getAvgValue() != null) {
+            		cell = row.createCell(3);
+            		cell.setCellValue(singleRow.getAvgValue().doubleValue());
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	else {
+            		cell = row.createCell(3);
+            		cell.setCellValue("");
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	cell = row.createCell(4);
+            	cell.setCellValue(singleRow.getCount());
+            	cell.setCellStyle(dataCellStyle);
+            	break;
+            case 2:
+            	if (singleRow.getAvgValue() != null) {
+            		cell = row.createCell(3);
+            		cell.setCellValue(singleRow.getAvgValue().doubleValue());
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	else {
+            		cell = row.createCell(3);
+            		cell.setCellValue("");
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	cell = row.createCell(4);
+            	cell.setCellValue(singleRow.getCount());
+            	cell.setCellStyle(dataCellStyle);
+            	int i = 0;
+    			for (String c : categories) {
+    				cell = row.createCell(5 + i);
+    				cell.setCellValue(singleRow.getCategory().get(c));
+    				cell.setCellStyle(dataCellStyle);
+    				i++;
+    			}
+    			break;
+            case 3:
+            	cell = row.createCell(3);
+            	cell.setCellValue(singleRow.getIntervalStart());
+            	cell.setCellStyle(dataCellStyle);
+            	
+            	cell = row.createCell(4);
+            	cell.setCellValue(singleRow.getTypicalPeriod());
+            	cell.setCellStyle(dataCellStyle);
+            	if (singleRow.getAvgValue() != null) {
+            		cell = row.createCell(5);
+            		cell.setCellValue(singleRow.getAvgValue().doubleValue());
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	else {
+            		cell = row.createCell(5);
+            		cell.setCellValue("");
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	cell = row.createCell(6);
+            	cell.setCellValue(singleRow.getCount());
+            	cell.setCellStyle(dataCellStyle);
+    			break;
+            case 4:
+            	cell = row.createCell(3);
+            	cell.setCellValue(singleRow.getIntervalStart());
+            	cell.setCellStyle(dataCellStyle);
+            	
+            	cell = row.createCell(4);
+            	cell.setCellValue(singleRow.getTypicalPeriod());
+            	cell.setCellStyle(dataCellStyle);
+            	if (singleRow.getAvgValue() != null) {
+            		cell = row.createCell(5);
+            		cell.setCellValue(singleRow.getAvgValue().doubleValue());
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	else {
+            		cell = row.createCell(5);
+            		cell.setCellValue("");
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	cell = row.createCell(6);
+            	cell.setCellValue(singleRow.getCount());
+            	cell.setCellStyle(dataCellStyle);
+				int ii = 0;
+				for (String c : categories) {
+					cell = row.createCell(7 + ii);
+    				cell.setCellValue(singleRow.getCategory().get(c));
+    				cell.setCellStyle(dataCellStyle);
+    				ii++;
+    			}
+    			break;
+        	default: return;
+            }
+        }
+        
+        for(int i = 0; i < headers.size(); i++) {
+            sheet.autoSizeColumn(i);
+        }
+		
+		FileOutputStream fos = new FileOutputStream(tmp);
+		workbook.write(fos);
+		fos.close();
+		
+		workbook.close();
+	}
+	
+	@Override
+	public void writeToXls (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException {
+		
+		List<String> headers = new ArrayList<String> ();
+		
+		Map<String, String> categoryNames = new HashMap <String, String> ();
+		
+		categoryNames.put("sex", "Sex");
+		categoryNames.put("marital_status", "Marital Status");
+		categoryNames.put("age_group", "Age Group");
+		categoryNames.put("education", "Education");
+		categoryNames.put("cohabiting", "Cohabiting");
+		categoryNames.put("informal_caregiver_ability", "Informal Caregiver Availability");
+		categoryNames.put("quality_housing", "Quality Of Housing");
+		categoryNames.put("quality_neighborhood", "Quality Of Neighborhood");
+		categoryNames.put("working", "Working");
+		
+		headers.add("Pilot");
+		headers.add("Variable Name");
+		headers.add("Variable Type");
+		
+		switch (viewSelecter) {
+		case 1:
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			break;
+		case 2:
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			for (String c : categories) {
+				headers.add(categoryNames.get(c));
+			}
+			break;
+		case 3: 
+			headers.add("Interval Start");
+			headers.add("Typical Period");
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			break;
+		case 4:
+			headers.add("Interval Start");
+			headers.add("Typical Period");
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			for (String c : categories) {
+				headers.add(categoryNames.get(c));
+			}
+			break;
+		default: return;
+		}
+		
+		Workbook workbook = new HSSFWorkbook();
+		
+		workbook.getCreationHelper();
+		
+		Sheet sheet = workbook.createSheet("Data");
+		
+		Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 10);
+        //headerFont.setFontName("Times New Roman");
+
+        // Create a CellStyle with the font
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+        headerCellStyle.setBorderTop(BorderStyle.DOUBLE);
+        headerCellStyle.setBorderBottom(BorderStyle.DOUBLE);
+        headerCellStyle.setBorderLeft(BorderStyle.THIN);
+        headerCellStyle.setBorderRight(BorderStyle.THIN);
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        
+        CellStyle leftHeaderCellStyle = workbook.createCellStyle();
+        leftHeaderCellStyle.setFont(headerFont);
+        leftHeaderCellStyle.setBorderTop(BorderStyle.DOUBLE);
+        leftHeaderCellStyle.setBorderBottom(BorderStyle.DOUBLE);
+        leftHeaderCellStyle.setBorderLeft(BorderStyle.DOUBLE);
+        leftHeaderCellStyle.setBorderRight(BorderStyle.THIN);
+        leftHeaderCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        
+        CellStyle rightHeaderCellStyle = workbook.createCellStyle();
+        rightHeaderCellStyle.setFont(headerFont);
+        rightHeaderCellStyle.setBorderTop(BorderStyle.DOUBLE);
+        rightHeaderCellStyle.setBorderBottom(BorderStyle.DOUBLE);
+        rightHeaderCellStyle.setBorderLeft(BorderStyle.THIN);
+        rightHeaderCellStyle.setBorderRight(BorderStyle.DOUBLE);
+        rightHeaderCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        
+        CellStyle dataCellStyle = workbook.createCellStyle();
+        dataCellStyle.setBorderBottom(BorderStyle.THIN);
+        dataCellStyle.setBorderLeft(BorderStyle.THIN);
+        dataCellStyle.setBorderRight(BorderStyle.THIN);
+        dataCellStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        // Create a Row
+        Row headerRow = sheet.createRow(0);
+        
+        // Create cells
+        for(int i = 0; i < headers.size(); i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers.get(i));
+            if (i == 0)
+            	cell.setCellStyle(leftHeaderCellStyle);
+            else if (i == headers.size() - 1)
+            	cell.setCellStyle(rightHeaderCellStyle);
+            else 
+            	cell.setCellStyle(headerCellStyle);
+        }
+        
+        int rowNum = 1;
+        for( AnalyticsDiagramData singleRow: data) {
+        	
+        	Cell cell;
+            Row row = sheet.createRow(rowNum++);
+
+            cell = row.createCell(0);
+            cell.setCellValue(singleRow.getPilot());
+            cell.setCellStyle(dataCellStyle);
+
+            cell = row.createCell(1);
+            cell.setCellValue(singleRow.getDetectionVariableName());
+            cell.setCellStyle(dataCellStyle);
+
+            cell = row.createCell(2);
+            cell.setCellValue(singleRow.getDetectionVariableType());
+            cell.setCellStyle(dataCellStyle);
+            
+            switch (viewSelecter) {
+            case 1:
+            	if (singleRow.getAvgValue() != null) {
+            		cell = row.createCell(3);
+            		cell.setCellValue(singleRow.getAvgValue().doubleValue());
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	else {
+            		cell = row.createCell(3);
+            		cell.setCellValue("");
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	cell = row.createCell(4);
+            	cell.setCellValue(singleRow.getCount());
+            	cell.setCellStyle(dataCellStyle);
+            	break;
+            case 2:
+            	if (singleRow.getAvgValue() != null) {
+            		cell = row.createCell(3);
+            		cell.setCellValue(singleRow.getAvgValue().doubleValue());
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	else {
+            		cell = row.createCell(3);
+            		cell.setCellValue("");
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	cell = row.createCell(4);
+            	cell.setCellValue(singleRow.getCount());
+            	cell.setCellStyle(dataCellStyle);
+            	int i = 0;
+    			for (String c : categories) {
+    				cell = row.createCell(5 + i);
+    				cell.setCellValue(singleRow.getCategory().get(c));
+    				cell.setCellStyle(dataCellStyle);
+    				i++;
+    			}
+    			break;
+            case 3:
+            	cell = row.createCell(3);
+            	cell.setCellValue(singleRow.getIntervalStart());
+            	cell.setCellStyle(dataCellStyle);
+            	
+            	cell = row.createCell(4);
+            	cell.setCellValue(singleRow.getTypicalPeriod());
+            	cell.setCellStyle(dataCellStyle);
+            	if (singleRow.getAvgValue() != null) {
+            		cell = row.createCell(5);
+            		cell.setCellValue(singleRow.getAvgValue().doubleValue());
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	else {
+            		cell = row.createCell(5);
+            		cell.setCellValue("");
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	cell = row.createCell(6);
+            	cell.setCellValue(singleRow.getCount());
+            	cell.setCellStyle(dataCellStyle);
+    			break;
+            case 4:
+            	cell = row.createCell(3);
+            	cell.setCellValue(singleRow.getIntervalStart());
+            	cell.setCellStyle(dataCellStyle);
+            	
+            	cell = row.createCell(4);
+            	cell.setCellValue(singleRow.getTypicalPeriod());
+            	cell.setCellStyle(dataCellStyle);
+            	if (singleRow.getAvgValue() != null) {
+            		cell = row.createCell(5);
+            		cell.setCellValue(singleRow.getAvgValue().doubleValue());
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	else {
+            		cell = row.createCell(5);
+            		cell.setCellValue("");
+            		cell.setCellStyle(dataCellStyle);
+            	}
+            	cell = row.createCell(6);
+            	cell.setCellValue(singleRow.getCount());
+            	cell.setCellStyle(dataCellStyle);
+				int ii = 0;
+				for (String c : categories) {
+					cell = row.createCell(7 + ii);
+    				cell.setCellValue(singleRow.getCategory().get(c));
+    				cell.setCellStyle(dataCellStyle);
+    				ii++;
+    			}
+    			break;
+        	default: return;
+            }
+        }
+        
+        for(int i = 0; i < headers.size(); i++) {
+            sheet.autoSizeColumn(i);
+        }
+		
+		FileOutputStream fos = new FileOutputStream(tmp);
+		workbook.write(fos);
+		fos.close();
+		
+		workbook.close();
+	}
+	
+	@Override
+	public void writeToJSON (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException {
+		
+		String json;// = objectMapper.writerWithView(AnalyticsGraphView.class).writeValueAsString(data);
+		switch (viewSelecter) {
+		case 1:
+			json = objectMapper.writerWithView(AnalyticsCSVView.class).writeValueAsString(data);
+			break;
+		case 2:
+			json = objectMapper.writerWithView(AnalyticsCSVCategoryView.class).writeValueAsString(data);
+			break;
+		case 3:
+			json = objectMapper.writerWithView(AnalyticsCSVTimeView.class).writeValueAsString(data);
+			break;
+		case 4:
+			json = objectMapper.writerWithView(AnalyticsCSVTimeCategoryView.class).writeValueAsString(data);
+			break;
+		default: return;
+		}
+		FileOutputStream fos = new FileOutputStream(tmp);
+		fos.write(json.getBytes());
+		fos.close();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public AnalyticsDiagramData createAnalyticsDiagramData (ArrayList<Filter> filter, Double avg, 
+			Long count, Boolean comparison) {
+		
+		AnalyticsDiagramData ar = new AnalyticsDiagramData ();
+		Map<String, String> arCategories = new LinkedHashMap <String, String> ();
+		
+		for (Filter f : filter) {
+			
+			switch (f.getName()) {
+			case "detectionVariable":
+				DetectionVariable dv = detectionVariableRepository.getOne((Long) f.getInParams().entrySet().iterator().next().getValue());
+				ar.setDetectionVariable(dv.getId());
+				ar.setDetectionVariableName(dv.getDetectionVariableName());
+				ar.setDetectionVariableType(dv.getDetectionVariableType().toString());
+				break;
+			case "pilot":
+				if (comparison)
+					ar.setPilot((String) f.getInParams().entrySet().iterator().next().getValue());	
+				else {
+					ArrayList<String> list = (ArrayList<String>) f.getInParams().entrySet().iterator().next().getValue();
+					StringBuilder pilotStringBuilder = new StringBuilder ();
+					
+					for (int i = 0; i < list.size() - 1; i++)
+						pilotStringBuilder.append(list.get(i)).append(", ");
+					pilotStringBuilder.append(list.get(list.size() - 1));
+					ar.setPilot(pilotStringBuilder.toString());
+				}
+				break;
+			case "intervalStart":
+				ar.setIntervalStartJSON (OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy/MM")));
+				ar.setIntervalStart (OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)));
+				ar.setTypicalPeriod("month");
+				break;
+			case "intervalEnd":
+				break;
+			case "sex":
+			case "marital_status":
+			case "age_group":
+			case "education":
+			case "cohabiting":
+			case "informal_caregiver_ability":
+			case "quality_housing":
+			case "quality_neighborhood":
+			case "working":
+				arCategories.put(f.getName(), (String) f.getInParams().entrySet().iterator().next().getValue());
+			}	
+		}
+		
+		ar.setCategory(arCategories);
+		
+		if (avg != null)
+			ar.setAvgValue(BigDecimal.valueOf(avg).setScale(3, RoundingMode.HALF_UP));
+		else 
+			ar.setAvgValue(null);
+		if (count != null)
+			ar.setCount(count);
+		else 
+			ar.setCount(0l);
+		
+		return ar;
+	}
+	
+	@Override
+	public JsonToExcel createExcelJson (List<AnalyticsDiagramData> data, List<String> categories, int viewSelecter) {
+		
+		JsonToExcel result = new JsonToExcel ();
+		
+		List<String> headers = new ArrayList<String> ();
+		
+		Map<String, String> categoryNames = new HashMap <String, String> ();
+		
+		categoryNames.put("sex", "Sex");
+		categoryNames.put("marital_status", "Marital Status");
+		categoryNames.put("age_group", "Age Group");
+		categoryNames.put("education", "Education");
+		categoryNames.put("cohabiting", "Cohabiting");
+		categoryNames.put("informal_caregiver_ability", "Informal Caregiver Availability");
+		categoryNames.put("quality_housing", "Quality Of Housing");
+		categoryNames.put("quality_neighborhood", "Quality Of Neighborhood");
+		categoryNames.put("working", "Working");
+		
+		headers.add("Pilot");
+		headers.add("Variable Name");
+		headers.add("Variable Type");
+		
+		switch (viewSelecter) {
+		case 1:
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			break;
+		case 2:
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			for (String c : categories) {
+				headers.add(categoryNames.get(c));
+			}
+			break;
+		case 3: 
+			headers.add("Interval Start");
+			headers.add("Typical Period");
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			break;
+		case 4:
+			headers.add("Interval Start");
+			headers.add("Typical Period");
+			headers.add("Average Value");
+			headers.add("Num Of CR-s");
+			for (String c : categories) {
+				headers.add(categoryNames.get(c));
+			}
+			break;
+		default: return null;
+		}
+		
+		List<String[]> dataList = new ArrayList<String[]> ();
+		
+		for (AnalyticsDiagramData d : data) {
+			String[] dataString = new String[headers.size()];
+			
+			dataString[0] = d.getPilot();
+			dataString[1] = d.getDetectionVariableName();
+			dataString[2] = d.getDetectionVariableType();
+			
+			switch (viewSelecter) {
+			case 1:
+            	if (d.getAvgValue() != null) {
+            		dataString[3] = d.getAvgValue().toString();
+            	}
+            	else {
+            		dataString[3] = "";
+            	}
+            	dataString[4] = d.getCount().toString();
+            	break;
+			case 2:
+				if (d.getAvgValue() != null) {
+            		dataString[3] = d.getAvgValue().toString();
+            	}
+            	else {
+            		dataString[3] = "";
+            	}
+            	dataString[4] = d.getCount().toString();
+            	
+            	int i = 0;
+    			for (String c : categories) {
+    				dataString[5 + i] = d.getCategory().get(c);
+    				i++;
+    			}
+    			break;
+			case 3:
+				dataString[3] = d.getIntervalStart();
+				dataString[4] = d.getTypicalPeriod();
+				if (d.getAvgValue() != null) {
+            		dataString[5] = d.getAvgValue().toString();
+            	}
+            	else {
+            		dataString[5] = "";
+            	}
+            	dataString[6] = d.getCount().toString();
+            	break;
+			case 4:
+				dataString[3] = d.getIntervalStart();
+				dataString[4] = d.getTypicalPeriod();
+				if (d.getAvgValue() != null) {
+            		dataString[5] = d.getAvgValue().toString();
+            	}
+            	else {
+            		dataString[5] = "";
+            	}
+            	dataString[6] = d.getCount().toString();
+            	int ii = 0;
+    			for (String c : categories) {
+    				dataString[7 + ii] = d.getCategory().get(c);
+    				ii++;
+    			}
+    			break;
+			}
+			
+			dataList.add(dataString);
+		}
+		
+		result.setHeaders(headers);
+		result.setData(dataList);
+		return result;
 	}
 
 }

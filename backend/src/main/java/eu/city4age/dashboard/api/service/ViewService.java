@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import eu.city4age.dashboard.api.pojo.domain.DerivedMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.pojo.dto.AnalyticsDiagramData;
+import eu.city4age.dashboard.api.pojo.dto.JsonToExcel;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
@@ -48,5 +49,15 @@ public interface ViewService {
 	List<ArrayList<Filter>> createCategoryFilter(HashMap<String, List<String>> socioEconomics, List<String> categories);
 	
 	void writeToCsv (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException;
+	
+	void writeToXls (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException;
+	
+	void writeToXlsx (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException;
+	
+	void writeToJSON (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException;
+	
+	AnalyticsDiagramData createAnalyticsDiagramData (ArrayList<Filter> filter, Double avg, Long count, Boolean comparison);
+	
+	JsonToExcel createExcelJson (List<AnalyticsDiagramData> data, List<String> categories, int viewSelecter);
 	
 }

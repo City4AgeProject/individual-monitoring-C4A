@@ -159,6 +159,21 @@ public class AndroidEndpoint {
 	
 	@GET
 	@Path("sendNotification")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
+	@ApiOperation(value = "Send notification to firebase API",
+	  nickname = "sendNotification",
+	  httpMethod = "GET",
+	  notes = "Generates questions for users, creates FirebaseNotification objects and sends them " 
+	  		+ "to firebase API, which redistributes them to the user(s) specified in those notification objects.",
+	  produces = "text/plain, application/json",
+	  hidden = false,
+	  protocols = "http, https"
+	)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "The request has succeeded.", response = Response.class),
+			@ApiResponse(code = 404, message = "Not Found.", response = Response.class),
+			@ApiResponse(code = 500, message = "Internal Server Error", response = Response.class) }
+	)
 	public Response sendNotification () {
 				
 		try {
@@ -244,6 +259,22 @@ public class AndroidEndpoint {
 	
 	@POST
 	@Path("firebaseToken")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
+	@ApiOperation(value = "Receive firebase token",
+	  nickname = "firebaseToken",
+	  httpMethod = "POST",
+	  notes = "Receives firebase token from Android app, and stores it in db for corresponding user.",
+	  produces = "text/plain, application/json",
+	  hidden = false,
+	  protocols = "http, https"
+	)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "The request has succeeded.", response = Response.class),
+			@ApiResponse(code = 404, message = "Not Found.", response = Response.class),
+			@ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
+			@ApiResponse(code = 401, message = "Wrong user credentials."),
+			@ApiResponse(code = 402, message = "JSON could not be deserialized.")}
+	)
 	public Response firebaseToken (@RequestBody String json) {
 		
 		AndroidTokenDeserializer atd = new AndroidTokenDeserializer ();
@@ -273,6 +304,23 @@ public class AndroidEndpoint {
 	
 	@POST
 	@Path("notificationAnswer")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, "application/javascript"})
+	@ApiOperation(value = "Receive answer for question sent via firebase",
+	  nickname = "notificationAnswer",
+	  httpMethod = "POST",
+	  notes = "Receives answer for question sent via firebase API, stores it in db for corresponding user, "
+	  			+ "and performs data validity checks based on that answer",
+	  produces = "text/plain, application/json",
+	  hidden = false,
+	  protocols = "http, https"
+	)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "The request has succeeded.", response = Response.class),
+			@ApiResponse(code = 404, message = "Not Found.", response = Response.class),
+			@ApiResponse(code = 500, message = "Internal Server Error", response = Response.class),
+			@ApiResponse(code = 401, message = "Wrong user credentials."),
+			@ApiResponse(code = 402, message = "JSON could not be deserialized.")}
+	)
 	public Response notificationAnswer (@RequestBody String json) {
 		
 		AndroidTokenDeserializer atd = new AndroidTokenDeserializer ();

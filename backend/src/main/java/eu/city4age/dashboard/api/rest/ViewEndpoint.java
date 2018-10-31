@@ -3,9 +3,6 @@ package eu.city4age.dashboard.api.rest;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -18,7 +15,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -69,7 +65,6 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.pojo.domain.VmvFiltering;
 import eu.city4age.dashboard.api.pojo.dto.AnalyticsDiagramData;
-import eu.city4age.dashboard.api.pojo.dto.AnalyticsDiagramResponse;
 import eu.city4age.dashboard.api.pojo.dto.Item;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.analytics.AnalyticsMetadataResponse;
@@ -183,9 +178,8 @@ public class ViewEndpoint {
 
 	}
 	
-	@SuppressWarnings("unchecked")
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
 	@Path("graphData")
 	public Response getGraphData(@QueryParam(value = "pilotCode") String pilotCode,
 			@QueryParam(value = "detectionVariable") String detectionVariable,
@@ -193,9 +187,8 @@ public class ViewEndpoint {
 			@QueryParam(value = "intervalEnd") String intervalEnd,
 			@QueryParam(value = "category") String category,
 			@QueryParam(value = "comparison") String comparison,
+			@QueryParam(value = "format") String format,
 			@Context ServletConfig sc) throws JsonProcessingException, JsonEmptyException, IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		
-		AnalyticsDiagramResponse response = new AnalyticsDiagramResponse ();
 		
 		List<AnalyticsDiagramData> analyticsData = new ArrayList<AnalyticsDiagramData> ();
 		
@@ -255,36 +248,20 @@ public class ViewEndpoint {
 		
 		int viewSelecter = 0;
 		
-		/*CsvMapper mapper = new CsvMapper();
-		CsvSchema.Builder schemaBuilder = new  CsvSchema.Builder ();
-		schemaBuilder.addColumn("pilot").addColumn("detectionVariableName").addColumn("detectionVariableType");*/
-		
 		if (allTimesFilters.isEmpty() && allCategoryFilters.isEmpty()) {
 			allFilters = viewService.createAllFiltersWithoutCategoriesAndTime (allVariablesFilters, allPilotsFilters);
-			//schemaBuilder.addColumn("avgValue");
 			viewSelecter = 1;
 		}
 		else if (allTimesFilters.isEmpty()) {
 			allFilters = viewService.createAllFiltersWithoutTimes (allVariablesFilters, allPilotsFilters, allCategoryFilters);
-			/*schemaBuilder.addColumn("avgValue");
-			for (String c : categories) {
-				schemaBuilder.addColumn(c);
-			}*/
 			viewSelecter = 2;
 		}
 		else if (allCategoryFilters.isEmpty()) {
 			allFilters = viewService.createAllFiltersWithoutCategories (allVariablesFilters, allPilotsFilters, allTimesFilters);
-			/*schemaBuilder.addColumn("intervalStart").addColumn("typicalPeriod");
-			schemaBuilder.addColumn("avgValue");*/
 			viewSelecter = 3;
 		}
 		else {
 			allFilters = viewService.createAllFilters (allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
-			/*schemaBuilder.addColumn("intervalStart").addColumn("typicalPeriod");
-			schemaBuilder.addColumn("avgValue");
-			for (String c : categories) {
-				schemaBuilder.addColumn(c);
-			}*/
 			viewSelecter = 4;
 		}
 		
@@ -293,107 +270,60 @@ public class ViewEndpoint {
 			List<Object> dataAvg = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "avgValue", inQueryParams);
 			List<Object> dataCount = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "count", inQueryParams);
 			
-			AnalyticsDiagramData ar = new AnalyticsDiagramData ();
-			Map<String, String> arCategories = new LinkedHashMap <String, String> ();
-			
-			for (Filter f : filter) {
-				
-				switch (f.getName()) {
-				case "detectionVariable":
-					DetectionVariable dv = detectionVariableRepository.getOne((Long) f.getInParams().entrySet().iterator().next().getValue());
-					ar.setDetectionVariable(dv.getId());
-					ar.setDetectionVariableName(dv.getDetectionVariableName());
-					ar.setDetectionVariableType(dv.getDetectionVariableType().toString());
-					break;
-				case "pilot":
-					if (comp)
-						ar.setPilot((String) f.getInParams().entrySet().iterator().next().getValue());	
-					else {
-						ArrayList<String> list = (ArrayList<String>) f.getInParams().entrySet().iterator().next().getValue();
-						StringBuilder pilotStringBuilder = new StringBuilder ();
-						
-						for (int i = 0; i < list.size() - 1; i++)
-							pilotStringBuilder.append(list.get(i)).append(", ");
-						pilotStringBuilder.append(list.get(list.size() - 1));
-						ar.setPilot(pilotStringBuilder.toString());
-					}
-					break;
-				case "intervalStart":
-					ar.setIntervalStartJSON (OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy/MM")));
-					ar.setIntervalStart (OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)));
-					ar.setTypicalPeriod("month");
-					break;
-				case "intervalEnd":
-					break;
-				case "sex":
-				case "marital_status":
-				case "age_group":
-				case "education":
-				case "cohabiting":
-				case "informal_caregiver_ability":
-				case "quality_housing":
-				case "quality_neighborhood":
-				case "working":
-					arCategories.put(f.getName(), (String) f.getInParams().entrySet().iterator().next().getValue());
-				}	
-			}
-			
-			ar.setCategory(arCategories);
-			Double avg = (Double) dataAvg.get(0);
-			Long count = (Long) dataCount.get(0);
-			if (avg != null)
-				ar.setAvgValue(BigDecimal.valueOf(avg).setScale(3, RoundingMode.HALF_UP));
-			else 
-				ar.setAvgValue(null);
-			if (count != null)
-				ar.setCount(count);
-			else 
-				ar.setCount(0l);
-			analyticsData.add(ar);
+			analyticsData.add(viewService.createAnalyticsDiagramData(filter, (Double) dataAvg.get(0), (Long) dataCount.get(0), comp));
 		}
-		
-		/*String csv;
-		
-		switch (viewSelecter) {
-		case 1:
-			csv = mapper.writer(schemaBuilder.build().withHeader()).withView(AnalyticsCSVView.class).writeValueAsString(response);
-			break;
-		case 2:
-			csv = mapper.writer(schemaBuilder.build().withHeader()).withView(AnalyticsCSVCategoryView.class).writeValueAsString(response);
-			break;
-		case 3:
-			csv = mapper.writer(schemaBuilder.build().withHeader()).withView(AnalyticsCSVTimeView.class).writeValueAsString(response);
-			break;
-		case 4:
-			csv = mapper.writer(schemaBuilder.build().withHeader()).withView(AnalyticsCSVTimeCategoryView.class).writeValueAsString(response);
-			break;
-		default:
-			csv = "Error while exporting to csv";
-			break;
-		}*/
 		
 		File tempDir = (File) sc.getServletContext().getAttribute(ServletContext.TEMPDIR);
 		
-		File tmpFileCSV = File.createTempFile("data-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), 
-				".csv", tempDir);
+		int form = 0;
+		if (format != null) {
+			if (format.equals("csv"))
+				form = 1;
+			else if (format.equals("json"))
+				form = 2;
+			else if (format.equals("xls"))
+				form = 3;
+			else if (format.equals("xlsx"))
+				form = 4;
+			else if (format.equals("excel"))
+				form = 5;
+			else form = 0;
+		}
 		
-		viewService.writeToCsv(viewSelecter, categories, analyticsData, tmpFileCSV);
+		Response response;
+		switch (form) {
+		case 1:
+			File tmpFileCSV = File.createTempFile("data-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), 
+					".csv", tempDir);
+			viewService.writeToCsv(viewSelecter, categories, analyticsData, tmpFileCSV);
+			response =  JerseyResponse.buildFile(tmpFileCSV, "csv");
+		case 2:
+			File tmpFileJSON = File.createTempFile("data-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), 
+					".json", tempDir);
+			viewService.writeToJSON(viewSelecter, categories, analyticsData, tmpFileJSON);
+			response =  JerseyResponse.buildFile(tmpFileJSON, "json");
+			break;
+		case 3:
+			File tmpFileXLS = File.createTempFile("data-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), 
+					".xls", tempDir);
+			viewService.writeToXls(viewSelecter, categories, analyticsData, tmpFileXLS);
+			response =  JerseyResponse.buildFile(tmpFileXLS, "xls");
+			break;
+		case 4:
+			File tmpFileXLSX = File.createTempFile("data-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), 
+					".xlsx", tempDir);
+			viewService.writeToXlsx(viewSelecter, categories, analyticsData, tmpFileXLSX);
+			response =  JerseyResponse.buildFile(tmpFileXLSX, "xlsx");
+			break;
+		case 5:	
+			response =  JerseyResponse.build(objectMapper.writeValueAsString(viewService.createExcelJson(analyticsData, categories, viewSelecter)));
+			break;
+		default:
+			response =  JerseyResponse.build(objectMapper.writerWithView(AnalyticsGraphView.class).writeValueAsString(analyticsData));	
+			break;
+		}
 		
-		/*File tmpFileJSON = File.createTempFile("data-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), 
-				".json", tempDir);*/
-		
-		/*FileOutputStream fos = new FileOutputStream(tmpFileCSV);
-		fos.write(csv.getBytes());
-		fos.close();*/
-		
-		/*fos = new FileOutputStream(tmpFileJSON);
-		fos.write(objectMapper.writerWithView(AnalyticsGraphView.class).writeValueAsString(response).getBytes());
-		fos.close();*/
-		
-		response.setCsvFile(tmpFileCSV.getAbsolutePath());
-		response.setData(analyticsData);
-		
-		return JerseyResponse.build(objectMapper.writerWithView(AnalyticsGraphView.class).writeValueAsString(response));
+		return response;
 	}
 
 	@GET
