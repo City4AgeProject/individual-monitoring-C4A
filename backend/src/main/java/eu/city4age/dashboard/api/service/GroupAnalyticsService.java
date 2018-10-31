@@ -16,7 +16,7 @@ public interface GroupAnalyticsService {
 			List<Date> ovlDates, List<Date> dvDates, double[] ovlValuesDoubles,
 			double[] detectionVariableValuesDoubles);
 	
-	void averageCorrelationValues(LinkedHashMap<String, Double> valuesList, String name,
+	LinkedHashMap<String, Double> averageCorrelationValues(LinkedHashMap<String, Double> valuesList, String name,
 			List<Double> correlations);
 	
 	List<Date> findAllDatesForDetectionVariable(DetectionVariable dv, Date intervalStartDate,
@@ -26,6 +26,6 @@ public interface GroupAnalyticsService {
 	
 	List<DetectionVariable> getDetectionVariables(List<PathSegment> detectionVariableId);
 	
-	void calculateCorrelationCoefficientsForUser(DetectionVariable overall, DetectionVariable dv,
+	List<Double> calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
 			List<Double> correlations, Date intervalStartDate, Date intervalEndDate, UserInRole uir);
 }

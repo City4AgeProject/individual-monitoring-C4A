@@ -98,13 +98,13 @@ public class GroupAnalyticsEndpoint {
 
 				for (UserInRole uir : uirList) {
 
-					groupAnalyticsService.calculateCorrelationCoefficientsForUser(overall, dv, correlations, intervalStartDate,
+					correlations = groupAnalyticsService.calculateCorrelationCoefficientsForOneUser(overall, dv, correlations, intervalStartDate,
 							intervalEndDate, uir);
 				}
 			}
 
 			// average of the correlation coefficients for the given time period
-			groupAnalyticsService.averageCorrelationValues(valuesList, dv.getDetectionVariableName(), correlations);
+			valuesList = groupAnalyticsService.averageCorrelationValues(valuesList, dv.getDetectionVariableName(), correlations);
 		}
 
 		return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(valuesList));
@@ -157,13 +157,13 @@ public class GroupAnalyticsEndpoint {
 
 					for (UserInRole uir : uirList) {
 
-						groupAnalyticsService.calculateCorrelationCoefficientsForUser(overall, dv, correlations, intervalStartDate,
+						correlations = groupAnalyticsService.calculateCorrelationCoefficientsForOneUser(overall, dv, correlations, intervalStartDate,
 								intervalEndDate, uir);
 					}
 				}
 
 				// average of the correlation coefficients for the given time period
-				groupAnalyticsService.averageCorrelationValues(valuesList, period, correlations);
+				valuesList = groupAnalyticsService.averageCorrelationValues(valuesList, period, correlations);
 
 				startDate = startDate.plusMonths(6L);
 				endDate = endDate.plusMonths(6L);

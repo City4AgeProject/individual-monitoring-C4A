@@ -60,7 +60,6 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	 * @param detectionVariableValuesDoubles
 	 * @return
 	 */
-	@Override
 	public int findDetectionVariableValues(DetectionVariable overall, DetectionVariable dv, UserInRole uir,
 			List<Date> ovlDates, List<Date> dvDates, double[] ovlValuesDoubles,
 			double[] detectionVariableValuesDoubles) {
@@ -99,9 +98,10 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	 * @param valuesList
 	 * @param dv
 	 * @param correlations
+	 * @return 
 	 */
 	@Override
-	public void averageCorrelationValues(LinkedHashMap<String, Double> valuesList, String name,
+	public LinkedHashMap<String, Double> averageCorrelationValues(LinkedHashMap<String, Double> valuesList, String name,
 			List<Double> correlations) {
 		if (!correlations.isEmpty()) {
 			Double sum = 0d;
@@ -112,6 +112,8 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		} else {
 			valuesList.put(name, null);
 		}
+		
+		return valuesList;
 	}
 
 	/**
@@ -175,9 +177,10 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	 * @param intervalStartDate
 	 * @param intervalEndDate
 	 * @param uir
+	 * @return 
 	 */
 	@Override
-	public void calculateCorrelationCoefficientsForUser(DetectionVariable overall, DetectionVariable dv,
+	public List<Double> calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
 			List<Double> correlations, Date intervalStartDate, Date intervalEndDate, UserInRole uir) {
 		
 		// find min and max dates for overall and the selected detection variable and determine the interval common to both
@@ -187,7 +190,9 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		List<Date> dvDates = findAllDatesForDetectionVariable(dv, intervalStartDate, intervalEndDate,
 				uir);
 
-		calculateCorrelations(overall, dv, correlations, uir, ovlDates, dvDates);
+		correlations = calculateCorrelationCoefficients(overall, dv, correlations, uir, ovlDates, dvDates);
+		
+		return correlations;
 	}
 	
 	/**
@@ -197,8 +202,9 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	 * @param uir
 	 * @param ovlDates
 	 * @param dvDates
+	 * @return 
 	 */
-	private void calculateCorrelations(DetectionVariable overall, DetectionVariable dv, List<Double> correlations,
+	private List<Double> calculateCorrelationCoefficients(DetectionVariable overall, DetectionVariable dv, List<Double> correlations,
 			UserInRole uir, List<Date> ovlDates, List<Date> dvDates) {
 		
 		if (!ovlDates.isEmpty() && !dvDates.isEmpty()) {
@@ -215,12 +221,32 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 			// calculate the correlation coefficient
 			if (cnt > 2) {
 
-				calculateCorrelation(correlations, ovlValuesDoubles, detectionVariableValuesDoubles);
+				double matrix[][] = { ovlValuesDoubles, detectionVariableValuesDoubles };
+
+				RealMatrix mat = MatrixUtils.createRealMatrix(matrix);
+				mat = mat.transpose();
+
+				PearsonsCorrelation corrP = new PearsonsCorrelation(mat);
+
+				RealMatrix corrMatrix = corrP.getCorrelationPValues();
+
+				double corrPValue = corrMatrix.getEntry(0, 1);
+
+				if (corrPValue <= 0.05) {
+					double corr = new PearsonsCorrelation().correlation(ovlValuesDoubles,
+							detectionVariableValuesDoubles);
+
+					correlations.add(corr);
+				} else {
+					logger.info("p value previse visoka!!!");
+				}
 
 			} else {
 				logger.info("nema dovoljno podataka!!!");
 			}
 		}
+		
+		return correlations;
 	}
 	
 	/**
@@ -235,35 +261,6 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		else
 			arraySize = dvDates.size();
 		return arraySize;
-	}
-	
-	/**
-	 * @param correlations
-	 * @param ovlValuesDoubles
-	 * @param detectionVariableValuesDoubles
-	 */
-	private void calculateCorrelation(List<Double> correlations, double[] ovlValuesDoubles,
-			double[] detectionVariableValuesDoubles) {
-		
-		double matrix[][] = { ovlValuesDoubles, detectionVariableValuesDoubles };
-
-		RealMatrix mat = MatrixUtils.createRealMatrix(matrix);
-		mat = mat.transpose();
-
-		PearsonsCorrelation corrP = new PearsonsCorrelation(mat);
-
-		RealMatrix corrMatrix = corrP.getCorrelationPValues();
-
-		double corrPValue = corrMatrix.getEntry(0, 1);
-
-		if (corrPValue <= 0.05) {
-			double corr = new PearsonsCorrelation().correlation(ovlValuesDoubles,
-					detectionVariableValuesDoubles);
-
-			correlations.add(corr);
-		} else {
-			logger.info("p value previse visoka!!!");
-		}
 	}
 
 }

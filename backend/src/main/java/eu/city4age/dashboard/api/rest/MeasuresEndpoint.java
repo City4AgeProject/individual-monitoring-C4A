@@ -134,7 +134,7 @@ public class MeasuresEndpoint {
 		
 		for (VmvFiltering vf : vfs) {
 			vf.setAssessment(assessment);
-			logger.info("vf.id: " + vf.getId() + " vf.assessment_id: " + vf.getAssessment().getId());
+			//logger.info("vf.id: " + vf.getId() + " vf.assessment_id: " + vf.getAssessment().getId());
 		}
 		
 		logger.info("before save"); 
