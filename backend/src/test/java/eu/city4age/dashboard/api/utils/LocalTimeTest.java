@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -56,9 +57,17 @@ public class LocalTimeTest {
 	@Test
 	public void timeZoneOffsetTest() throws ParseException {
 
-		List<String> zoneList = new ArrayList<>(ZoneId.getAvailableZoneIds());
+		/*List<String> zoneList = new ArrayList<>(ZoneId.getAvailableZoneIds());
 		
-		for (String zone : zoneList) System.out.println(zone);
+		for (String zone : zoneList) System.out.println(zone);*/
+		
+		String pilot = "ath bhx";
+		
+		String category = "sex cohabiting";
+		
+		System.out.println("'" + pilot.replace(" ", "', '") + "'");
+		
+		System.out.println(", vwgad." + category.replace(" ", ", vwgad."));
 
 	}
 

@@ -65,6 +65,7 @@ import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.pojo.domain.VmvFiltering;
 import eu.city4age.dashboard.api.pojo.dto.AnalyticsDiagramData;
+import eu.city4age.dashboard.api.pojo.dto.GenericTableData;
 import eu.city4age.dashboard.api.pojo.dto.Item;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.analytics.AnalyticsMetadataResponse;
@@ -188,7 +189,9 @@ public class ViewEndpoint {
 			@QueryParam(value = "category") String category,
 			@QueryParam(value = "comparison") String comparison,
 			@QueryParam(value = "format") String format,
-			@Context ServletConfig sc) throws JsonProcessingException, JsonEmptyException, IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			@Context ServletConfig sc) throws Exception {
+		logger.info("graphData");
+		System.out.println("graphData");
 		
 		List<AnalyticsDiagramData> analyticsData = new ArrayList<AnalyticsDiagramData> ();
 		
@@ -205,8 +208,7 @@ public class ViewEndpoint {
 		List<ArrayList<Filter>> allFilters = new ArrayList<ArrayList<Filter>>();
 		
 		Map<String, Object> inQueryParams = new HashMap<String, Object> ();
-		
-		
+
 		List<String> pilotCodes = new ArrayList<String> ();
 		
 		if(pilotCode != null) 
@@ -218,17 +220,22 @@ public class ViewEndpoint {
 			List<String> detectionVariables = Arrays.asList(detectionVariable.split(" "));			
 			for (String s : detectionVariables) 
 				detectionVariableIDs.add(Long.parseLong(s));
-			
 		}
 		
 		Boolean comp = false;
-		if (comparison != null) comp = Boolean.parseBoolean(comparison);
-		
-		allPilotsFilters = viewService.createAllFiltersFromPilotCodes(pilotCodes, comp);		
+
+		if (comparison != null)
+			comp = Boolean.parseBoolean(comparison);
+
+		allPilotsFilters = viewService.createAllFiltersFromPilotCodes(pilotCodes, comp);
+
 		allVariablesFilters = viewService.createAllFiltersFromVariables (detectionVariableIDs);
-		
-		if (category != null) categories = Arrays.asList(category.split(" "));		
-		if (!categories.isEmpty()) allCategoryFilters = viewService.createAllCategoryFilters (categories);
+
+		if (category != null)
+			categories = Arrays.asList(category.split(" "));
+
+		if (!categories.isEmpty())
+			allCategoryFilters = viewService.createAllCategoryFilters (categories);
 		
 		OffsetDateTime intervalStartODT = null;
 		OffsetDateTime intervalEndODT = null;
@@ -245,32 +252,18 @@ public class ViewEndpoint {
 			
 			allTimesFilters = viewService.createAllTimeFilters (intervalStartODT, intervalEndODT);
 		}
+
+		allFilters = viewService.createAllFilters (allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
 		
-		int viewSelecter = 0;
-		
-		if (allTimesFilters.isEmpty() && allCategoryFilters.isEmpty()) {
-			allFilters = viewService.createAllFiltersWithoutCategoriesAndTime (allVariablesFilters, allPilotsFilters);
-			viewSelecter = 1;
-		}
-		else if (allTimesFilters.isEmpty()) {
-			allFilters = viewService.createAllFiltersWithoutTimes (allVariablesFilters, allPilotsFilters, allCategoryFilters);
-			viewSelecter = 2;
-		}
-		else if (allCategoryFilters.isEmpty()) {
-			allFilters = viewService.createAllFiltersWithoutCategories (allVariablesFilters, allPilotsFilters, allTimesFilters);
-			viewSelecter = 3;
-		}
-		else {
-			allFilters = viewService.createAllFilters (allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
-			viewSelecter = 4;
-		}
+		GenericTableData tableData = new GenericTableData();
 		
 		for (ArrayList<Filter> filter : allFilters) {
 			
-			List<Object> dataAvg = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "avgValue", inQueryParams);
-			List<Object> dataCount = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "count", inQueryParams);
+			Object[] dataAvg = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "grAn", inQueryParams);
 			
-			analyticsData.add(viewService.createAnalyticsDiagramData(filter, (Double) dataAvg.get(0), (Long) dataCount.get(0), comp));
+			tableData = viewService.addGenericTableData(filter, dataAvg, comp, tableData, pilotCodes);
+			
+			//analyticsData.add(viewService.createAnalyticsDiagramData(filter, dataAvg, comp));
 		}
 		
 		File tempDir = (File) sc.getServletContext().getAttribute(ServletContext.TEMPDIR);
@@ -290,6 +283,19 @@ public class ViewEndpoint {
 			else form = 0;
 		}
 		
+		int viewSelecter = 0;
+		
+		if (allTimesFilters.isEmpty() && allCategoryFilters.isEmpty())
+			viewSelecter = 1;
+		else if (allTimesFilters.isEmpty())
+			viewSelecter = 2;
+		else if (allCategoryFilters.isEmpty())
+			viewSelecter = 3;
+		else
+			viewSelecter = 4;
+		
+		logger.info("viewSelecter: " + viewSelecter);
+		
 		Response response;
 		switch (form) {
 		case 1:
@@ -300,7 +306,7 @@ public class ViewEndpoint {
 		case 2:
 			File tmpFileJSON = File.createTempFile("data-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), 
 					".json", tempDir);
-			viewService.writeToJSON(viewSelecter, categories, analyticsData, tmpFileJSON);
+			viewService.writeToJSON(viewSelecter, categories, tableData, tmpFileJSON);
 			response =  JerseyResponse.buildFile(tmpFileJSON, "json");
 			break;
 		case 3:

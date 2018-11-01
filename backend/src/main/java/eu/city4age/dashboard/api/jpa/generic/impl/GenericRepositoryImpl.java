@@ -129,7 +129,7 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Object> doQueryWithFilterAggr(List<eu.city4age.dashboard.api.pojo.persist.Filter> filters,
+	public Object[] doQueryWithFilterAggr(List<eu.city4age.dashboard.api.pojo.persist.Filter> filters,
 			String filterQueryName, Map<String, Object> inQueryParams) {
 
 		if (GenericRepository.class.isAssignableFrom(getSpringDataRepositoryInterface())) {
@@ -179,7 +179,7 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 							query.setParameter(queryParamName, queryParamValue);
 						}
 
-						return query.getResultList();
+						return (Object[]) query.getSingleResult();
 
 					}
 				}

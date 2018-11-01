@@ -24,7 +24,7 @@ public interface GenericRepository<T, ID extends Serializable>
 
 	List<T> doQueryWithFilter(List<Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
 	
-	List<Object> doQueryWithFilterAggr(List<Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
+	Object[] doQueryWithFilterAggr(List<Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
 
 	void disableFilter(String name);
 	

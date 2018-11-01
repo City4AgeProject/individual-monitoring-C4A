@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
 import java.math.BigDecimal;
+
 import javax.annotation.concurrent.Immutable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;

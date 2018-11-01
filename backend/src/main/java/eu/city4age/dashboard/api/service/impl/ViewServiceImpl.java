@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeSet;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -33,11 +32,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
@@ -50,6 +47,7 @@ import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.pojo.dto.AnalyticsDiagramData;
+import eu.city4age.dashboard.api.pojo.dto.GenericTableData;
 import eu.city4age.dashboard.api.pojo.dto.JsonToExcel;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
@@ -266,104 +264,29 @@ public class ViewServiceImpl implements ViewService {
 		
 		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
 		
-		for (ArrayList<Filter> pilotFilter : allPilotsFilters) {
+		for (ArrayList<Filter> pilotFilter : allPilotsFilters)
 		
-			for (ArrayList<Filter> variableFilter : allVariablesFilters) {			
-						
-				for (ArrayList<Filter> categoryFilter: allCategoryFilters) {			
+			if (!allCategoryFilters.isEmpty()) for (ArrayList<Filter> categoryFilter: allCategoryFilters)			
 					
-					for (ArrayList<Filter> timeFilter: allTimesFilters) {
+				if (!allTimesFilters.isEmpty()) for (ArrayList<Filter> timeFilter: allTimesFilters)
+						
+					for (ArrayList<Filter> variableFilter : allVariablesFilters) {
 						
 						ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
 						
 						specificFilters.addAll(variableFilter);
 						specificFilters.addAll(pilotFilter);
-						specificFilters.addAll(timeFilter);
-						specificFilters.addAll(categoryFilter);
+						if (!allTimesFilters.isEmpty())
+							specificFilters.addAll(timeFilter);
+						if (!allCategoryFilters.isEmpty())
+							specificFilters.addAll(categoryFilter);
 						
 						list.add(specificFilters);				
 					}			
-				}
-			}
-		}
-		
+
 		return list;
 	}
-	
-	@Override
-	public List<ArrayList<Filter>> createAllFiltersWithoutCategories(List<ArrayList<Filter>> allVariablesFilters,
-			List<ArrayList<Filter>> allPilotsFilters, List<ArrayList<Filter>> allTimesFilters) {
-		
-		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
-		
-		for (ArrayList<Filter> pilotFilter : allPilotsFilters) {
-		
-			for (ArrayList<Filter> variableFilter : allVariablesFilters) {
-			
-				for (ArrayList<Filter> timeFilter: allTimesFilters) {
-					
-					ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
-					
-					specificFilters.addAll(variableFilter);
-					specificFilters.addAll(pilotFilter);
-					specificFilters.addAll(timeFilter);
-					
-					list.add(specificFilters);				
-				}			
-			}
-		}
-		
-		return list;
-	}
-	
-	@Override
-	public List<ArrayList<Filter>> createAllFiltersWithoutTimes(List<ArrayList<Filter>> allVariablesFilters,
-			List<ArrayList<Filter>> allPilotsFilters, List<ArrayList<Filter>> allCategoryFilters) {
-		
-		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
-		
-		for (ArrayList<Filter> pilotFilter : allPilotsFilters) {
-		
-			for (ArrayList<Filter> variableFilter : allVariablesFilters) {
-			
-				for (ArrayList<Filter> categoryFilter: allCategoryFilters) {
-					
-					ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
-					
-					specificFilters.addAll(variableFilter);
-					specificFilters.addAll(pilotFilter);
-					specificFilters.addAll(categoryFilter);
-					
-					list.add(specificFilters);				
-				}			
-			}
-		}
-		
-		return list;
-	}
-	
-	@Override
-	public List<ArrayList<Filter>> createAllFiltersWithoutCategoriesAndTime(
-			List<ArrayList<Filter>> allVariablesFilters, List<ArrayList<Filter>> allPilotsFilters) {
-		
-		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
-		
-		for (ArrayList<Filter> pilotFilter : allPilotsFilters) {
-		
-			for (ArrayList<Filter> variableFilter : allVariablesFilters) {
-				
-				ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
-				
-				specificFilters.addAll(variableFilter);
-				specificFilters.addAll(pilotFilter);
-				
-				list.add(specificFilters);				
-			}			
-		}
-		
-		return list;
-	}
-	
+
 	@Override
 	public List<ArrayList<Filter>> createAllTimeFilters(OffsetDateTime intervalStartODT,
 			OffsetDateTime intervalEndODT) {
@@ -1021,33 +944,111 @@ public class ViewServiceImpl implements ViewService {
 	}
 	
 	@Override
-	public void writeToJSON (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException {
-		
-		String json;// = objectMapper.writerWithView(AnalyticsGraphView.class).writeValueAsString(data);
-		switch (viewSelecter) {
-		case 1:
-			json = objectMapper.writerWithView(AnalyticsCSVView.class).writeValueAsString(data);
-			break;
-		case 2:
-			json = objectMapper.writerWithView(AnalyticsCSVCategoryView.class).writeValueAsString(data);
-			break;
-		case 3:
-			json = objectMapper.writerWithView(AnalyticsCSVTimeView.class).writeValueAsString(data);
-			break;
-		case 4:
-			json = objectMapper.writerWithView(AnalyticsCSVTimeCategoryView.class).writeValueAsString(data);
-			break;
-		default: return;
-		}
+	public void writeToJSON (int viewSelecter, List<String> categories, GenericTableData data, File tmp) throws IOException {
+		String json = objectMapper.writerWithView(AnalyticsCSVTimeCategoryView.class).writeValueAsString(data);
 		FileOutputStream fos = new FileOutputStream(tmp);
 		fos.write(json.getBytes());
 		fos.close();
 	}
 	
+	/*
+		socioEconomics.put("sex", Arrays.asList("m", "f"));
+		socioEconomics.put("marital_status", Arrays.asList("s", "m", "w", "d", "t"));
+		socioEconomics.put("age_group", Arrays.asList("50-59", "60-69", "70-79", "80-89", "90+"));
+		socioEconomics.put("education", Arrays.asList("none", "primary", "secondary", "tertiary"));
+		socioEconomics.put("cohabiting", Arrays.asList("alone", "family", "friends", "other"));
+		socioEconomics.put("informal_caregiver_ability", Arrays.asList("t", "f"));
+		socioEconomics.put("quality_housing", Arrays.asList("low", "average", "high"));
+		socioEconomics.put("quality_neighborhood", Arrays.asList("low", "average", "high"));
+		socioEconomics.put("working", Arrays.asList("t", "f"));*/
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public AnalyticsDiagramData createAnalyticsDiagramData (ArrayList<Filter> filter, Double avg, 
-			Long count, Boolean comparison) {
+	public GenericTableData addGenericTableData(ArrayList<Filter> filter, Object[] data, Boolean comp,
+			GenericTableData tableData, List<String> pilotCodes) {
+
+		if(tableData.getHeaders().size() == 0)
+			for (Filter f : filter) {
+				switch (f.getName()) {
+					case "detectionVariable":
+						tableData.getHeaders().add("detectionVariable");
+						tableData.getHeaders().add("detectionVariableName");
+						tableData.getHeaders().add("detectionVariableType");
+						break;
+					case "pilot":
+						if (comp)
+							tableData.getHeaders().add("pilot");
+						else {
+							for(String pilot : pilotCodes) {
+								tableData.getHeaders().add(pilot);
+							}
+						}
+						break;
+					case "intervalStart":
+						tableData.getHeaders().add("intervalStartJSON");
+						tableData.getHeaders().add("intervalStart");
+						tableData.getHeaders().add("typicalPeriod");
+						break;
+					case "intervalEnd":
+						break;
+					default:
+						tableData.getHeaders().add(f.getName());
+						break;
+				}
+				
+			}
+		
+		ArrayList<String> row = new ArrayList<String>();
+		
+		for (Filter f : filter) {
+			switch (f.getName()) {
+			case "detectionVariable":
+				DetectionVariable dv = detectionVariableRepository.getOne((Long) f.getInParams().entrySet().iterator().next().getValue());
+				row.add(dv.getId().toString());
+				row.add(dv.getDetectionVariableName());
+				row.add(dv.getDetectionVariableType().getDetectionVariableType().getName());
+				break;
+			case "pilot":
+				if (comp)
+					row.add((String) f.getInParams().entrySet().iterator().next().getValue());	
+				else {
+					ArrayList<String> list = (ArrayList<String>) f.getInParams().entrySet().iterator().next().getValue();
+					StringBuilder pilotStringBuilder = new StringBuilder ();
+					
+					for (int i = 0; i < list.size() - 1; i++)
+						pilotStringBuilder.append(list.get(i)).append(", ");
+					pilotStringBuilder.append(list.get(list.size() - 1));
+					row.add(pilotStringBuilder.toString());
+				}
+				break;
+			case "intervalStart":
+				row.add(OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy/MM")));
+				row.add(OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)));
+				row.add("month");
+				break;
+			case "intervalEnd":
+				break;
+			case "sex":
+			case "marital_status":
+			case "age_group":
+			case "education":
+			case "cohabiting":
+			case "informal_caregiver_ability":
+			case "quality_housing":
+			case "quality_neighborhood":
+			case "working":
+				row.add((String) f.getInParams().entrySet().iterator().next().getValue().toString());
+			}		
+		}
+		
+		tableData.getData().add(row);
+
+		return tableData;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public AnalyticsDiagramData createAnalyticsDiagramData (ArrayList<Filter> filter, Object[] data, Boolean comparison) {
 		
 		AnalyticsDiagramData ar = new AnalyticsDiagramData ();
 		Map<String, String> arCategories = new LinkedHashMap <String, String> ();
@@ -1096,12 +1097,12 @@ public class ViewServiceImpl implements ViewService {
 		
 		ar.setCategory(arCategories);
 		
-		if (avg != null)
-			ar.setAvgValue(BigDecimal.valueOf(avg).setScale(3, RoundingMode.HALF_UP));
+		if (data[0] != null)
+			ar.setAvgValue(BigDecimal.valueOf((Double)data[0]).setScale(3, RoundingMode.HALF_UP));
 		else 
 			ar.setAvgValue(null);
-		if (count != null)
-			ar.setCount(count);
+		if (data[1] != null)
+			ar.setCount((Long) data[1]);
 		else 
 			ar.setCount(0l);
 		
@@ -1231,5 +1232,7 @@ public class ViewServiceImpl implements ViewService {
 		result.setData(dataList);
 		return result;
 	}
+
+
 
 }

@@ -28,4 +28,5 @@ public interface GroupAnalyticsService {
 	
 	List<Double> calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
 			List<Double> correlations, Date intervalStartDate, Date intervalEndDate, UserInRole uir);
+
 }

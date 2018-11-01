@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import eu.city4age.dashboard.api.pojo.domain.DerivedMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.ViewGefCalculatedInterpolatedPredictedValues;
 import eu.city4age.dashboard.api.pojo.dto.AnalyticsDiagramData;
+import eu.city4age.dashboard.api.pojo.dto.GenericTableData;
 import eu.city4age.dashboard.api.pojo.dto.JsonToExcel;
 import eu.city4age.dashboard.api.pojo.dto.OJDiagramFrailtyStatus;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
@@ -27,15 +28,6 @@ public interface ViewService {
 	List<ArrayList<Filter>> createAllFilters(List<ArrayList<Filter>> allVariablesFilters,
 			List<ArrayList<Filter>> allPilotsFilters, List<ArrayList<Filter>> allCategoryFilters,
 			List<ArrayList<Filter>> allTimesFilters);
-	
-	List<ArrayList<Filter>> createAllFiltersWithoutCategories(List<ArrayList<Filter>> allVariablesFilters,
-			List<ArrayList<Filter>> allPilotsFilters, List<ArrayList<Filter>> allTimesFilters);
-	
-	List<ArrayList<Filter>> createAllFiltersWithoutTimes(List<ArrayList<Filter>> allVariablesFilters,
-			List<ArrayList<Filter>> allPilotsFilters, List<ArrayList<Filter>> allCategoryFilters);
-	
-	List<ArrayList<Filter>> createAllFiltersWithoutCategoriesAndTime(
-			List<ArrayList<Filter>> allVariablesFilters, List<ArrayList<Filter>> allPilotsFilters);
 	
 	List<ArrayList<Filter>> createAllTimeFilters(OffsetDateTime intervalStartODT,
 			OffsetDateTime intervalEndODT);
@@ -54,10 +46,12 @@ public interface ViewService {
 	
 	void writeToXlsx (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException;
 	
-	void writeToJSON (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException;
+	void writeToJSON (int viewSelecter, List<String> categories, GenericTableData data, File tmp) throws IOException;
 	
-	AnalyticsDiagramData createAnalyticsDiagramData (ArrayList<Filter> filter, Double avg, Long count, Boolean comparison);
+	AnalyticsDiagramData createAnalyticsDiagramData (ArrayList<Filter> filter, Object[] data, Boolean comparison);
 	
 	JsonToExcel createExcelJson (List<AnalyticsDiagramData> data, List<String> categories, int viewSelecter);
+
+	GenericTableData addGenericTableData(ArrayList<Filter> filter, Object[] data, Boolean comp, GenericTableData tableData, List<String> pilotCodes);
 	
 }

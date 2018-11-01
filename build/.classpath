@@ -14,10 +14,9 @@
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/classes" path="Users/marina.andric/Documents/GitHub/anagraph/backend/src/main/java">
+	<classpathentry kind="src" output="target/classes" path="Users/dilan/eclipse-workspace/anagraph/backend/src/main/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>

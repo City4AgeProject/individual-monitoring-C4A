@@ -23,6 +23,10 @@ public class ObjectMapperFactory {
 		objectMapper.registerModule(hbm);
 		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+		/*objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+		objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true);
+		objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+		objectMapper.configure(DeserializationFeature.ACCEPT_FLOAT_AS_INT, true);*/
 		objectMapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
 
 	}

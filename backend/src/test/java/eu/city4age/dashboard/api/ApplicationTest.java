@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -26,7 +27,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import eu.city4age.dashboard.api.jpa.generic.GenericRepositoryFactoryBean;
 
 
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude = LiquibaseAutoConfiguration.class)
 @ComponentScan(basePackages = { "eu.city4age.dashboard.api.persist", "eu.city4age.dashboard.api.rest", "eu.city4age.dashboard.api.service" })
 @EnableJpaRepositories(basePackages = "eu.city4age.dashboard.api.jpa", repositoryFactoryBeanClass = GenericRepositoryFactoryBean.class)
 public class ApplicationTest {
