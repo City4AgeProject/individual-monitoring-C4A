@@ -20,6 +20,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeSet;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -56,11 +59,14 @@ import eu.city4age.dashboard.api.pojo.json.view.View.AnalyticsCSVTimeCategoryVie
 import eu.city4age.dashboard.api.pojo.json.view.View.AnalyticsCSVTimeView;
 import eu.city4age.dashboard.api.pojo.json.view.View.AnalyticsCSVView;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
+import eu.city4age.dashboard.api.rest.ViewEndpoint;
 import eu.city4age.dashboard.api.service.ImputeFactorService;
 import eu.city4age.dashboard.api.service.ViewService;
 
 @Component
 public class ViewServiceImpl implements ViewService {
+	
+	static protected Logger logger = LogManager.getLogger(ViewServiceImpl.class);
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
@@ -261,28 +267,43 @@ public class ViewServiceImpl implements ViewService {
 	public List<ArrayList<Filter>> createAllFilters(List<ArrayList<Filter>> allVariablesFilters,
 			List<ArrayList<Filter>> allPilotsFilters, List<ArrayList<Filter>> allCategoryFilters,
 			List<ArrayList<Filter>> allTimesFilters) {
+		logger.info("createAllFilters");
+		logger.info("allVariablesFilters size: " + allVariablesFilters.size());
+		logger.info("allPilotsFilters size: " + allPilotsFilters.size());
+		logger.info("allCategoryFilters size: " + allCategoryFilters.size());
+		logger.info("allTimesFilters size: " + allTimesFilters.size());
+		logger.info("allVariablesFilters isEmpty: " + allVariablesFilters.isEmpty());
+		logger.info("allPilotsFilters isEmpty: " + allPilotsFilters.isEmpty());
+		logger.info("allCategoryFilters isEmpty: " + allCategoryFilters.isEmpty());
+		logger.info("allTimesFilters isEmpty: " + allTimesFilters.isEmpty());
 		
 		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
 		
 		for (ArrayList<Filter> pilotFilter : allPilotsFilters)
-		
-			if (!allCategoryFilters.isEmpty()) for (ArrayList<Filter> categoryFilter: allCategoryFilters)			
-					
-				if (!allTimesFilters.isEmpty()) for (ArrayList<Filter> timeFilter: allTimesFilters)
-						
-					for (ArrayList<Filter> variableFilter : allVariablesFilters) {
-						
+			for (ArrayList<Filter> variableFilter : allVariablesFilters)
+				if (!allCategoryFilters.isEmpty()) for (ArrayList<Filter> categoryFilter: allCategoryFilters)	
+					if (!allTimesFilters.isEmpty())
+						for (ArrayList<Filter> timeFilter: allTimesFilters) {
+							ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
+							
+							specificFilters.addAll(variableFilter);
+							specificFilters.addAll(pilotFilter);
+							specificFilters.addAll(timeFilter);
+							if (!allCategoryFilters.isEmpty())
+								specificFilters.addAll(categoryFilter);
+							
+							list.add(specificFilters);				
+						}
+					else {
 						ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
 						
 						specificFilters.addAll(variableFilter);
 						specificFilters.addAll(pilotFilter);
-						if (!allTimesFilters.isEmpty())
-							specificFilters.addAll(timeFilter);
 						if (!allCategoryFilters.isEmpty())
 							specificFilters.addAll(categoryFilter);
 						
-						list.add(specificFilters);				
-					}			
+						list.add(specificFilters);						
+					}
 
 		return list;
 	}
@@ -944,8 +965,8 @@ public class ViewServiceImpl implements ViewService {
 	}
 	
 	@Override
-	public void writeToJSON (int viewSelecter, List<String> categories, GenericTableData data, File tmp) throws IOException {
-		String json = objectMapper.writerWithView(AnalyticsCSVTimeCategoryView.class).writeValueAsString(data);
+	public void writeToJSON (GenericTableData data, File tmp) throws IOException {
+		String json = objectMapper.writeValueAsString(data);
 		FileOutputStream fos = new FileOutputStream(tmp);
 		fos.write(json.getBytes());
 		fos.close();
@@ -966,9 +987,13 @@ public class ViewServiceImpl implements ViewService {
 	@Override
 	public GenericTableData addGenericTableData(ArrayList<Filter> filter, Object[] data, Boolean comp,
 			GenericTableData tableData, List<String> pilotCodes) {
-
-		if(tableData.getHeaders().size() == 0)
+		logger.info("addGenericTableData");
+		logger.info("tableData.getHeaders().size(): " + tableData.getHeaders().size());
+		logger.info("filter size: " + filter.size());
+		if(tableData.getHeaders().size() == 0) {
+			logger.info("inside if");
 			for (Filter f : filter) {
+				logger.info("inside for");
 				switch (f.getName()) {
 					case "detectionVariable":
 						tableData.getHeaders().add("detectionVariable");
@@ -997,6 +1022,7 @@ public class ViewServiceImpl implements ViewService {
 				}
 				
 			}
+		}
 		
 		ArrayList<String> row = new ArrayList<String>();
 		
@@ -1041,7 +1067,11 @@ public class ViewServiceImpl implements ViewService {
 			}		
 		}
 		
+		logger.info("tableData size pre: " + tableData.getData().size());
+		
 		tableData.getData().add(row);
+		
+		logger.info("tableData size posle: " + tableData.getData().size());
 
 		return tableData;
 	}

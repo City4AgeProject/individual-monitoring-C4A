@@ -2,7 +2,6 @@ package eu.city4age.dashboard.api.rest;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -43,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.exceptions.JsonEmptyException;
 import eu.city4age.dashboard.api.jpa.DerivedMeasureValueRepository;
@@ -54,7 +54,6 @@ import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.jpa.ViewGroupAnalyticsDataRepository;
 import eu.city4age.dashboard.api.jpa.VmvFilteringRepository;
-import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.pojo.domain.DerivedMeasureValue;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
@@ -81,7 +80,7 @@ import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataSet;
 import eu.city4age.dashboard.api.pojo.json.clusteredMeasures.ClusteredMeasuresDeserializer;
 import eu.city4age.dashboard.api.pojo.json.view.View;
-import eu.city4age.dashboard.api.pojo.json.view.View.AnalyticsGraphView;
+import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.py.HiddenMarkovModelService;
 import eu.city4age.dashboard.api.service.ViewService;
@@ -254,17 +253,21 @@ public class ViewEndpoint {
 		}
 
 		allFilters = viewService.createAllFilters (allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
+		logger.info("allFilters: " + allFilters);
 		
 		GenericTableData tableData = new GenericTableData();
 		
 		for (ArrayList<Filter> filter : allFilters) {
-			
+			logger.info("allFilters for");
 			Object[] dataAvg = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "grAn", inQueryParams);
-			
+			logger.info("dataAvg length: " + dataAvg.length);
 			tableData = viewService.addGenericTableData(filter, dataAvg, comp, tableData, pilotCodes);
 			
 			//analyticsData.add(viewService.createAnalyticsDiagramData(filter, dataAvg, comp));
 		}
+		
+		logger.info("tableData header size: " + tableData.getHeaders().size());
+		logger.info("tableData data size: " + tableData.getData().size());
 		
 		File tempDir = (File) sc.getServletContext().getAttribute(ServletContext.TEMPDIR);
 		
@@ -306,7 +309,7 @@ public class ViewEndpoint {
 		case 2:
 			File tmpFileJSON = File.createTempFile("data-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")), 
 					".json", tempDir);
-			viewService.writeToJSON(viewSelecter, categories, tableData, tmpFileJSON);
+			viewService.writeToJSON(tableData, tmpFileJSON);
 			response =  JerseyResponse.buildFile(tmpFileJSON, "json");
 			break;
 		case 3:
@@ -325,7 +328,7 @@ public class ViewEndpoint {
 			response =  JerseyResponse.build(objectMapper.writeValueAsString(viewService.createExcelJson(analyticsData, categories, viewSelecter)));
 			break;
 		default:
-			response =  JerseyResponse.build(objectMapper.writerWithView(AnalyticsGraphView.class).writeValueAsString(analyticsData));	
+			response =  JerseyResponse.build(objectMapper.writeValueAsString(tableData));
 			break;
 		}
 		

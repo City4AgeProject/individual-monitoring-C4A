@@ -46,7 +46,7 @@ public interface ViewService {
 	
 	void writeToXlsx (int viewSelecter, List<String> categories, List<AnalyticsDiagramData> data, File tmp) throws IOException;
 	
-	void writeToJSON (int viewSelecter, List<String> categories, GenericTableData data, File tmp) throws IOException;
+	void writeToJSON (GenericTableData data, File tmp) throws IOException;
 	
 	AnalyticsDiagramData createAnalyticsDiagramData (ArrayList<Filter> filter, Object[] data, Boolean comparison);
 	
