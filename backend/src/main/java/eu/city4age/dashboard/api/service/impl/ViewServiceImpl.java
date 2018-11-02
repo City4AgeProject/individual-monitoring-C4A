@@ -35,9 +35,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
@@ -59,7 +61,6 @@ import eu.city4age.dashboard.api.pojo.json.view.View.AnalyticsCSVTimeCategoryVie
 import eu.city4age.dashboard.api.pojo.json.view.View.AnalyticsCSVTimeView;
 import eu.city4age.dashboard.api.pojo.json.view.View.AnalyticsCSVView;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
-import eu.city4age.dashboard.api.rest.ViewEndpoint;
 import eu.city4age.dashboard.api.service.ImputeFactorService;
 import eu.city4age.dashboard.api.service.ViewService;
 
@@ -424,6 +425,9 @@ public class ViewServiceImpl implements ViewService {
 			
 			String type = categories.get(cnt - 1);
 			
+			logger.info("type: " + type);
+			logger.info("socioEconomics size: " + socioEconomics.size());
+			logger.info("socioEconomics get type: " + socioEconomics.get(type));
 			for (String category : socioEconomics.get(type)) {
 				
 				ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
@@ -992,6 +996,8 @@ public class ViewServiceImpl implements ViewService {
 		logger.info("filter size: " + filter.size());
 		if(tableData.getHeaders().size() == 0) {
 			logger.info("inside if");
+			tableData.getHeaders().add("avgValue");
+			tableData.getHeaders().add("count");
 			for (Filter f : filter) {
 				logger.info("inside for");
 				switch (f.getName()) {
@@ -1025,6 +1031,15 @@ public class ViewServiceImpl implements ViewService {
 		}
 		
 		ArrayList<String> row = new ArrayList<String>();
+		
+		if (data[0] != null)
+			row.add(BigDecimal.valueOf((Double)data[0]).setScale(3, RoundingMode.HALF_UP).toString());
+		else 
+			row.add(null);
+		if (data[1] != null)
+			row.add(((Long) data[1]).toString());
+		else 
+			row.add(Long.valueOf(0l).toString());
 		
 		for (Filter f : filter) {
 			switch (f.getName()) {

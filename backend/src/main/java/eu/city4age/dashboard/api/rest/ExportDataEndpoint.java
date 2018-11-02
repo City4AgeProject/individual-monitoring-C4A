@@ -27,6 +27,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
@@ -129,10 +133,16 @@ public class ExportDataEndpoint {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response generateExcel(String microServiceURL) throws Exception {
     	logger.info("generateExcel");
+    	logger.info("microServiceURL: " + microServiceURL);
+  
     	//final String uri = " http://localhost:8080/C4A-dashboard/rest/" + microServiceURL;
-
-		String jsonData = restTemplate().getForObject(microServiceURL, String.class);
-
+		//String jsonData = restTemplate().getForObject(microServiceURL, String.class);
+    	
+    	HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+    	ResponseEntity<String> jsonData = restTemplate().exchange(microServiceURL, HttpMethod.GET, entity, String.class);
+   
 		Object deserializedObject;
 		ObjectDeserializer objectDeserializer = new ObjectDeserializer(AllConstants.GENERATED_CLASSES_OUTPUT_DIRECTORY,
 				ExportDataEndpoint.EXPORT_CLASS_NAME);
@@ -140,14 +150,14 @@ public class ExportDataEndpoint {
 		JsonPojoConverter converter = new JsonPojoConverter(AllConstants.DOMAIN_PACKAGE, ExportDataEndpoint.EXPORT_CLASS_NAME,
                 AllConstants.GENERATED_CLASSES_OUTPUT_DIRECTORY);
 
-		logger.info("jsonData: " + jsonData);
-        generatedPackageName = converter.generateJavaClasses(jsonData);
+		logger.info("trt");
+		logger.info("jsonData: " + jsonData.getBody());
+		logger.info("mrt");
+        generatedPackageName = converter.generateJavaClasses(jsonData.getBody());
         logger.info("Pred deserializaciju");
-        deserializedObject = objectDeserializer.makeJsonObject(generatedPackageName,
-            jsonData);
+        deserializedObject = objectDeserializer.makeJsonObject(generatedPackageName, jsonData.getBody());
         logger.info("deserializedObject object: " + deserializedObject);
  
-            
 		try(InputStream is = ExportDataEndpoint.class.getResourceAsStream("grid_template.xlsx")) {
 			try (OutputStream os = new FileOutputStream("target/grid_output.xlsx")) {
 	            Map<String, Object> beans = new HashMap<>();

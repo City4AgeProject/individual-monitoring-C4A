@@ -142,12 +142,12 @@ public class ViewEndpoint {
 		List<NumericIndicatorValue> nuis;
 		if(varName==null) {
 			nuis = nuiRepository.getNuisForAllMea(userInRoleId);
-		}else {
+		} else {
 			if(varName.compareTo("ges")==0) {
 				nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, varId);
-			}else if(varName.compareTo("mea")==0) {
+			} else if(varName.compareTo("mea")==0) {
 				nuis = nuiRepository.getNuisForSelectedMea(userInRoleId, varId);
-			}else {
+			} else {
 				throw new JsonEmptyException ("Variable name must be ges or mea");	
 			}
 		}

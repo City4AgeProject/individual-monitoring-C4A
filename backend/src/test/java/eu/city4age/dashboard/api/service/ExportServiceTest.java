@@ -51,11 +51,11 @@ public class ExportServiceTest {
 		JsonPojoConverter converter = new JsonPojoConverter(AllConstants.DOMAIN_PACKAGE, this.EXPORT_CLASS_NAME,
                 AllConstants.GENERATED_CLASSES_OUTPUT_DIRECTORY);
 
-		String name = "testtest.json";
-		String myString = "{\"headers\": [\"Name\",\"Birthday\",\"Payment\"],\"data\": [[\"Elsa\", \"1\", \"2\"],[\"Oleg\", \"2\", \"3\"],[\"Neil\", \"3\", \"4\"]]}";
+		String name = "testtest2.json";
+		//String myString = "{\"headers\": [\"Name\",\"Birthday\",\"Payment\"],\"data\": [[\"Elsa\", \"1\", \"2\"],[\"Oleg\", \"2\", \"3\"],[\"Neil\", \"3\", \"4\"]]}";
 		// new ByteArrayInputStream( myString.getBytes( charset ) );
-		//try(InputStream isJson = ExportServiceTest.class.getResourceAsStream( name)) {
-		try(InputStream isJson = new ByteArrayInputStream( myString.getBytes( "UTF-8" ) ) ) {
+		try(InputStream isJson = ExportServiceTest.class.getResourceAsStream( name)) {
+		//try(InputStream isJson = new ByteArrayInputStream( myString.getBytes( "UTF-8" ) ) ) {
 			String jsonData = IOUtils.toString( isJson );
 			System.out.println("jsonData: " + jsonData);
             if(jsonData.startsWith("[")){
