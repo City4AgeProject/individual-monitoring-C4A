@@ -1035,7 +1035,7 @@ public class ViewServiceImpl implements ViewService {
 		if (data[0] != null)
 			row.add(BigDecimal.valueOf((Double)data[0]).setScale(3, RoundingMode.HALF_UP).toString());
 		else 
-			row.add(null);
+			row.add("");
 		if (data[1] != null)
 			row.add(((Long) data[1]).toString());
 		else 
