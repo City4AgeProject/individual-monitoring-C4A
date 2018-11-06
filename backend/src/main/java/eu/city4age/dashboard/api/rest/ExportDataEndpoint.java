@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -23,7 +24,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,6 +37,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import io.ei.jsontoxls.AllConstants;
 import io.ei.jsontoxls.Messages;
 import io.ei.jsontoxls.repository.ExcelRepository;
@@ -56,7 +57,7 @@ public class ExportDataEndpoint {
 	static protected Logger logger = LogManager.getLogger(ExportDataEndpoint.class);
 	
 	static String EXPORT_CLASS_NAME = "Export";
-	
+
     private ExcelUtils excelUtil;
     //private Logger logger = LoggerFactory.getLogger(XlsResource.class);
     private JsonPojoConverter converter;
@@ -121,10 +122,7 @@ public class ExportDataEndpoint {
     @POST
     @Path("generateExcel")
     @Consumes("text/plain")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response generateExcel(String microServiceURL) throws Exception {
-    	logger.info("generateExcel");
-    	logger.info("microServiceURL: " + microServiceURL);
 
     	HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
@@ -138,17 +136,11 @@ public class ExportDataEndpoint {
 		JsonPojoConverter converter = new JsonPojoConverter(AllConstants.DOMAIN_PACKAGE, ExportDataEndpoint.EXPORT_CLASS_NAME,
                 AllConstants.GENERATED_CLASSES_OUTPUT_DIRECTORY);
 
-		logger.info("trt");
-		logger.info("jsonData: " + jsonData.getBody());
-		logger.info("mrt");
         generatedPackageName = converter.generateJavaClasses(jsonData.getBody());
-        logger.info("Pred deserializaciju");
         deserializedObject = objectDeserializer.makeJsonObject(generatedPackageName, jsonData.getBody());
-        logger.info("deserializedObject object: " + deserializedObject);
- 
-		try(InputStream is = ExportDataEndpoint.class.getResourceAsStream("grid_template.xlsx")) {
+
+		try(InputStream is = ExportDataEndpoint.class.getResourceAsStream("group_analytics_template.xlsx")) {
 			try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-			//try (OutputStream os = new FileOutputStream("target/grid_output.xlsx")) {
 	            Map<String, Object> beans = new HashMap<>();
 	            java.lang.reflect.Field field = deserializedObject.getClass().getDeclaredField("headers");    
 	            field.setAccessible(true);
@@ -159,23 +151,19 @@ public class ExportDataEndpoint {
 	            Object value2 = field2.get(deserializedObject);
 	            beans.put("data", value2);
 	            Context context = new Context(beans);
-	            System.out.println("context: " + context);
 	            JxlsHelper.getInstance().processTemplate(is, os, context);
-	    		ResponseBuilder rb = Response.ok(os.toByteArray()); 
-	    		rb.header("content-disposition", "attachment; filename=grid_output.xlsx");  
-	    	    return rb.build(); 
+	    	    return JerseyResponse.buildFile(os.toByteArray(), "group_analytics.xlsx"); 
 			}
 		}
 
     }
  
     
-    @POST
+    @SuppressWarnings("unchecked")
+	@POST
     @Path("generateCsv")
     @Consumes("text/plain")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response generateCsv(String microServiceURL) throws Exception {
-    	logger.info("generateCsv");
 
     	HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
@@ -189,27 +177,41 @@ public class ExportDataEndpoint {
 		JsonPojoConverter converter = new JsonPojoConverter(AllConstants.DOMAIN_PACKAGE, ExportDataEndpoint.EXPORT_CLASS_NAME,
                 AllConstants.GENERATED_CLASSES_OUTPUT_DIRECTORY);
 
-		logger.info("jsonData: " + jsonData);
         generatedPackageName = converter.generateJavaClasses(jsonData.getBody());
-        logger.info("Pred deserializaciju");        deserializedObject = objectDeserializer.makeJsonObject(generatedPackageName, jsonData.getBody());
-        logger.info("deserializedObject object: " + deserializedObject);
+        deserializedObject = objectDeserializer.makeJsonObject(generatedPackageName, jsonData.getBody());
  
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			try (PrintWriter  writer = new PrintWriter(os)) {
 	            java.lang.reflect.Field field = deserializedObject.getClass().getDeclaredField("headers");    
 	            field.setAccessible(true);
-	            Object value = field.get(deserializedObject);
-	            writer.println(value.toString());
+	            List<Object> value = (List<Object>) field.get(deserializedObject);
+	            StringBuilder sb = new StringBuilder();
+	            for(int i = 0; i < value.size(); i++) {
+	            	sb.append(value.get(i));
+	            	if(i < value.size() - 1)
+	            		sb.append(",");
+	            }
+	            writer.println(sb.toString());
 	            java.lang.reflect.Field field2 = deserializedObject.getClass().getDeclaredField("data");    
 	            field2.setAccessible(true);
-	            Object value2 = field2.get(deserializedObject);
-	            writer.println(value2.toString());
+	            List<List<Object>> value2 = (List<List<Object>>) field2.get(deserializedObject);
+	            StringBuilder sb2 = null;
+	            for(int i = 0; i < value2.size(); i++) {
+	            	sb2 = new StringBuilder();
+	            	for(int j = 0; j < value2.get(i).size(); j++) {
+	            		sb2.append(value2.get(i).get(j));
+		            	if(j < value2.get(i).size() - 1)
+		            		sb2.append(",");
+	            	}
+	            	if(i < value2.size() - 1)
+	            		writer.println(sb2.toString());
+	            	else
+	            		writer.print(sb2.toString());
+	            }
 	            writer.flush();
 	            writer.close();
 			}
-    		ResponseBuilder rb = Response.ok(os.toByteArray());
-    		rb.header("content-disposition", "attachment; filename=grid_output.csv");  
-    	    return rb.build(); 
+    	    return JerseyResponse.buildFile(os.toByteArray(), "group_analytics.csv"); 
 		}
 
     }

@@ -38,21 +38,21 @@ public class JerseyResponse {
 				.type(MediaType.TEXT_PLAIN)
 				.build();
 	}
-	
-	public static Response buildFile(Object response, String ext) {
+
+	public static Response buildFile(Object response, String filename) {
 		return Response
 				.ok(response)
 				.type(MediaType.APPLICATION_OCTET_STREAM)
-				.header("Content-Disposition", "attachment; filename=data." + ext)
+				.header("Content-Disposition", "attachment; filename=" + filename)
 				.build();
 	}
-	
-	public static Response buildFile(Object response, int responseCode, String ext) {
+
+	public static Response buildFile(Object response, int responseCode, String filename) {
 		return Response
 				.status(responseCode)
 				.entity(response)
 				.type(MediaType.APPLICATION_OCTET_STREAM)
-				.header("Content-Disposition", "attachment; filename=data." + ext)
+				.header("Content-Disposition", "attachment; filename=" + filename)
 				.build();
 	}
 
