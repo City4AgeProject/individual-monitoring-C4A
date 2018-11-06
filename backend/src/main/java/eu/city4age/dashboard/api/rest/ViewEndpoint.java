@@ -2,6 +2,7 @@ package eu.city4age.dashboard.api.rest;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -22,7 +23,9 @@ import java.util.TreeSet;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -35,9 +38,12 @@ import javax.ws.rs.ext.ContextResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -76,6 +82,9 @@ import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresIte
 import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresLegend;
 import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresLegendItems;
 import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresSeries;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsResponse;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsSeries;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataSet;
 import eu.city4age.dashboard.api.pojo.json.clusteredMeasures.ClusteredMeasuresDeserializer;
@@ -104,7 +113,7 @@ public class ViewEndpoint {
 
 	@Autowired
 	private NUIRepository nuiRepository;
-	
+
 	@Autowired
 	private PilotRepository pilotRepository;
 
@@ -116,22 +125,27 @@ public class ViewEndpoint {
 
 	@Autowired
 	private DetectionVariableRepository detectionVariableRepository;
-	
+
 	@Autowired
 	private VmvFilteringRepository vmvFilteringRepository;
-	
+
 	@Autowired
 	private DerivedMeasureValueRepository derivedMeasureValueRepository;
-	
+
 	@Autowired
 	private ViewService viewService;
-	
+
 	@Autowired
 	private PilotDetectionVariableRepository pilotDetectionVariableRepository;
-	
+
 	@Autowired
 	private ViewGroupAnalyticsDataRepository viewGroupAnalyticsDataRepository;
-	
+
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("getNuiValues/userInRoleId/{userInRoleId}")
@@ -177,7 +191,7 @@ public class ViewEndpoint {
 		return JerseyResponse.build(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures));
 
 	}
-	
+
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
 	@Path("graphData")
@@ -191,36 +205,39 @@ public class ViewEndpoint {
 			@Context ServletConfig sc) throws Exception {
 		logger.info("graphData");
 		System.out.println("graphData");
-		
+
 		List<AnalyticsDiagramData> analyticsData = new ArrayList<AnalyticsDiagramData> ();
-		
+
 		List<String> categories = new ArrayList <String> ();
-		
+
 		List<ArrayList<Filter>> allCategoryFilters = new ArrayList<ArrayList<Filter>>();
-		
+
 		List<ArrayList<Filter>> allPilotsFilters = new ArrayList<ArrayList<Filter>>();
-		
+
 		List<ArrayList<Filter>> allVariablesFilters = new ArrayList<ArrayList<Filter>>();
-		
+
 		List<ArrayList<Filter>> allTimesFilters = new ArrayList<ArrayList<Filter>>();
-		
+
 		List<ArrayList<Filter>> allFilters = new ArrayList<ArrayList<Filter>>();
-		
+
 		Map<String, Object> inQueryParams = new HashMap<String, Object> ();
 
 		List<String> pilotCodes = new ArrayList<String> ();
-		
+
 		if(pilotCode != null) 
 			for (String s :Arrays.asList(pilotCode.split(" "))) 
 				pilotCodes.add (s);
 		List<Long> detectionVariableIDs = new ArrayList <Long> ();
-		
+
 		if(detectionVariable != null) {
 			List<String> detectionVariables = Arrays.asList(detectionVariable.split(" "));			
 			for (String s : detectionVariables) 
 				detectionVariableIDs.add(Long.parseLong(s));
 		}
-		
+
+		logger.info("pilotCode: " + pilotCode);
+		logger.info("pilotCodes: " + pilotCodes.size());
+
 		Boolean comp = false;
 
 		if (comparison != null)
@@ -233,44 +250,47 @@ public class ViewEndpoint {
 		if (category != null)
 			categories = Arrays.asList(category.split(" "));
 
+		logger.info("category: " + category);
+		logger.info("categories: " + categories.size());
+
 		if (!categories.isEmpty())
 			allCategoryFilters = viewService.createAllCategoryFilters (categories);
-		
+
 		OffsetDateTime intervalStartODT = null;
 		OffsetDateTime intervalEndODT = null;
-		
+
 		if(intervalStart != null) intervalStartODT = LocalDate.parse(intervalStart.substring(0, 10), 
 				DateTimeFormatter.ofPattern("yyyy-MM-dd")).withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.UTC);
-		
+
 		if(intervalEnd != null) intervalEndODT = LocalDate.parse(intervalEnd.substring(0, 10), 
 				DateTimeFormatter.ofPattern("yyyy-MM-dd")).withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.UTC);
-		
+
 		if (intervalStartODT != null) {
 			if (intervalEndODT == null) 
 				intervalEndODT = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).atOffset(ZoneOffset.UTC);
-			
+
 			allTimesFilters = viewService.createAllTimeFilters (intervalStartODT, intervalEndODT);
 		}
 
 		allFilters = viewService.createAllFilters (allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
 		logger.info("allFilters: " + allFilters);
-		
+
 		GenericTableData tableData = new GenericTableData();
-		
+
 		for (ArrayList<Filter> filter : allFilters) {
 			logger.info("allFilters for");
 			Object[] dataAvg = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "grAn", inQueryParams);
 			logger.info("dataAvg length: " + dataAvg.length);
 			tableData = viewService.addGenericTableData(filter, dataAvg, comp, tableData, pilotCodes);
-			
+
 			//analyticsData.add(viewService.createAnalyticsDiagramData(filter, dataAvg, comp));
 		}
-		
+
 		logger.info("tableData header size: " + tableData.getHeaders().size());
 		logger.info("tableData data size: " + tableData.getData().size());
-		
+
 		File tempDir = (File) sc.getServletContext().getAttribute(ServletContext.TEMPDIR);
-		
+
 		int form = 0;
 		if (format != null) {
 			if (format.equals("csv"))
@@ -285,9 +305,9 @@ public class ViewEndpoint {
 				form = 5;
 			else form = 0;
 		}
-		
+
 		int viewSelecter = 0;
-		
+
 		if (allTimesFilters.isEmpty() && allCategoryFilters.isEmpty())
 			viewSelecter = 1;
 		else if (allTimesFilters.isEmpty())
@@ -296,9 +316,9 @@ public class ViewEndpoint {
 			viewSelecter = 3;
 		else
 			viewSelecter = 4;
-		
+
 		logger.info("viewSelecter: " + viewSelecter);
-		
+
 		Response response;
 		switch (form) {
 		case 1:
@@ -331,146 +351,272 @@ public class ViewEndpoint {
 			response =  JerseyResponse.build(objectMapper.writeValueAsString(tableData));
 			break;
 		}
-		
+
 		return response;
+	}
+
+	@POST
+	@Consumes("text/plain")
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+	@Path("groupsAndSeries")
+	public Response getGroupsAndSeries (String url) throws JsonProcessingException {
+
+		logger.info("groupsAndSeries");
+		logger.info("url: " + url);
+
+		GroupAnalyticsResponse response = new GroupAnalyticsResponse();
+
+		HashMap<String, List<String>> socioEconomics = new HashMap <String, List<String>> ();
+		socioEconomics.put("sex", Arrays.asList("m", "f"));
+		socioEconomics.put("marital_status", Arrays.asList("s", "m", "w", "d", "t"));
+		socioEconomics.put("age_group", Arrays.asList("50-59", "60-69", "70-79", "80-89", "90+"));
+		socioEconomics.put("education", Arrays.asList("none", "primary", "secondary", "tertiary"));
+		socioEconomics.put("cohabiting", Arrays.asList("alone", "family", "friends", "other"));
+		socioEconomics.put("informal_caregiver_ability", Arrays.asList("t", "f"));
+		socioEconomics.put("quality_housing", Arrays.asList("low", "average", "high"));
+		socioEconomics.put("quality_neighborhood", Arrays.asList("low", "average", "high"));
+		socioEconomics.put("working", Arrays.asList("t", "f"));
+
+		ResponseEntity<GenericTableData> graphResponse = restTemplate().getForEntity(url, GenericTableData.class);
+
+		GenericTableData json = graphResponse.getBody();
+
+		List<List<String>> data = json.getData();
+
+		List<String> categories = json.getHeaders().subList(6, json.getHeaders().size());
+
+		// create groups
+		int numOfLoops = categories.size();
+		int cnt = 0;
+
+		if (cnt < numOfLoops) {
+			List<GroupAnalyticsGroups> groups = new ArrayList<GroupAnalyticsGroups>();
+			for (String category1 : socioEconomics.get(categories.get(cnt))) {
+				GroupAnalyticsGroups groups1 = new GroupAnalyticsGroups();
+				groups1.setName(category1);
+
+				if (cnt + 1 < numOfLoops) {
+					List<GroupAnalyticsGroups> subGroups1 = new ArrayList<GroupAnalyticsGroups>(); 
+					for (String category2 : socioEconomics.get(categories.get(cnt + 1))) {
+						GroupAnalyticsGroups groups2 = new GroupAnalyticsGroups();
+						groups2.setName(category2);
+
+						if (cnt + 2 < numOfLoops) {
+							List<GroupAnalyticsGroups> subGroups2 = new ArrayList<GroupAnalyticsGroups>();
+							for (String category3 : socioEconomics.get(categories.get(cnt + 2))) {
+								GroupAnalyticsGroups groups3 = new GroupAnalyticsGroups();
+								groups3.setName(category3);
+
+								if (cnt + 3 < numOfLoops) {
+									List<GroupAnalyticsGroups> subGroups3 = new ArrayList<GroupAnalyticsGroups>();
+									for (String category4 : socioEconomics.get(categories.get(cnt + 3))) {
+										GroupAnalyticsGroups groups4 = new GroupAnalyticsGroups();
+										groups4.setName(category4);
+										subGroups3.add(groups4);
+									}
+									groups3.setGroups(subGroups3);
+								}
+								subGroups2.add(groups3);
+							}
+							groups2.setGroups(subGroups2);
+						}
+						subGroups1.add(groups2);
+					}
+					groups1.setGroups(subGroups1);
+				}
+				groups.add(groups1);
+			}
+			response.setGroups(groups);
+		}
+
+		// create series all scenarios
+		String previousPilot = data.get(0).get(5);
+		String previousDetectionVariableName = data.get(0).get(3);
+
+		String firstPilot = data.get(0).get(5);
+
+		GroupAnalyticsSeries serie = new GroupAnalyticsSeries();
+		List<GroupAnalyticsSeries> series = new ArrayList<GroupAnalyticsSeries>();
+
+		serie.setName(previousDetectionVariableName);
+		serie.setPilot(previousPilot);
+
+		List<BigDecimal> items = new ArrayList<BigDecimal>();
+
+		for (List<String> entry : data) {
+
+			if (!(previousDetectionVariableName.contains(entry.get(3)) && previousPilot.contains(entry.get(5)))) {
+
+				previousDetectionVariableName = entry.get(3);
+				previousPilot = entry.get(5);
+
+				serie.setItems(items);
+				series.add(serie);
+				items = new ArrayList<BigDecimal>();
+
+				serie = new GroupAnalyticsSeries();
+
+				serie.setName(entry.get(3));
+				serie.setPilot(previousPilot);
+
+				if (url.contains("comparison=true") && !entry.get(5).equals(firstPilot)) {
+					serie.setAssignedToY2("on");
+					serie.setDisplayInLegend("off");
+				}
+
+			}
+
+			if (entry.get(0).matches(""))
+				items.add(null);
+			else
+				items.add(BigDecimal.valueOf(Double.parseDouble(entry.get(0))));
+
+		}
+		serie.setItems(items);
+		series.add(serie);
+
+		response.setSeries(series);
+
+		return JerseyResponse.build(objectMapper.writeValueAsString(response));
+		//return JerseyResponse.build(json);
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("analyticsMetadata")
 	public Response getAnalyticsMetadata (@Context ServletConfig sc) throws JsonEmptyException, IOException {
-		
+
 		AnalyticsMetadataResponse response = new AnalyticsMetadataResponse ();
-		
+
 		List<OJDataTreeDetectionVariableSingleElem> detectionVariables = new ArrayList <OJDataTreeDetectionVariableSingleElem> ();
-		
+
 		List<DetectionVariable> varsList = detectionVariableRepository.findByDetectionVariableType(DetectionVariableType.GFG);
-		
+
 		Long counter = 0l;
-		
+
 		for (DetectionVariable gfg : varsList) {
-			
+
 			List<Pilot.PilotCode> pilotCodes = pilotDetectionVariableRepository.findPilotCodeByDetectionVariableId(gfg.getId());
-			
+
 			if (!pilotCodes.isEmpty()) {
-				
+
 				OJDataTreeDetectionVariableSingleElem gfgElement = new OJDataTreeDetectionVariableSingleElem ();
 				OJDataTreeDetectionVariableAttribute gfgAttr = new OJDataTreeDetectionVariableAttribute ();
 				List<OJDataTreeDetectionVariableSingleElem> gfgChildren = new ArrayList <OJDataTreeDetectionVariableSingleElem> ();
-				
+
 				gfgAttr.setId(++counter);
 				gfgAttr.setDetectionVariableId(gfg.getId());
 				gfgAttr.setTitle(gfg.getDetectionVariableName());
 				gfgAttr.setType(DetectionVariableType.GFG.getDetectionVariableType());
-				
+
 				if (pilotCodes.size() == 6) 
 					gfgAttr.setAllPilots(true);
 				else
 					gfgAttr.setAllPilots(false);
-				
+
 				gfgAttr.setPilots(pilotCodes);
 				gfgElement.setAttr(gfgAttr);
-				
+
 				List<DetectionVariable> derivedGEFs = pilotDetectionVariableRepository.findDetectionVariableByDerivedDetectionVariableIdAndPilotCodes(gfg.getId(), pilotCodes);
-				
+
 				for (DetectionVariable gef : derivedGEFs) {
-					
+
 					List<Pilot.PilotCode> gefToGfgPilots = pilotDetectionVariableRepository.findPilotCodesByDetectionVariableIdAndDerivedDetectionVariableIdAndDetectionVariableType (gef.getDetectionVariableType(), gef.getId(), gfg.getId());
-					
+
 					if (!gefToGfgPilots.isEmpty()) {
-						
+
 						OJDataTreeDetectionVariableSingleElem gefElement = new OJDataTreeDetectionVariableSingleElem ();
 						OJDataTreeDetectionVariableAttribute gefAttr = new OJDataTreeDetectionVariableAttribute ();
 						List<OJDataTreeDetectionVariableSingleElem> gefChildren = new ArrayList <OJDataTreeDetectionVariableSingleElem> ();
-						
+
 						gefAttr.setId(++counter);
 						gefAttr.setDetectionVariableId(gef.getId());
 						gefAttr.setTitle(gef.getDetectionVariableName());
 						gefAttr.setType(DetectionVariableType.GEF.getDetectionVariableType());
-						
+
 						if (gefToGfgPilots.size() == 6) 
 							gefAttr.setAllPilots(true);
 						else
 							gefAttr.setAllPilots(false);
-						
+
 						gefAttr.setPilots(gefToGfgPilots);
 						gefElement.setAttr(gefAttr);
-						
+
 						List<DetectionVariable> derivedGESs = pilotDetectionVariableRepository.findDetectionVariableByDerivedDetectionVariableIdAndPilotCodes(gef.getId(), gefToGfgPilots);
-						
+
 						for (DetectionVariable ges : derivedGESs) {
-							
+
 							List<Pilot.PilotCode> gesToGefPilots = pilotDetectionVariableRepository.findPilotCodesByDetectionVariableIdAndDerivedDetectionVariableIdAndDetectionVariableType (ges.getDetectionVariableType(), ges.getId(), gef.getId());
-							
+
 							if (!gesToGefPilots.isEmpty()) {
-								
+
 								OJDataTreeDetectionVariableSingleElem gesElement = new OJDataTreeDetectionVariableSingleElem ();
 								OJDataTreeDetectionVariableAttribute gesAttr = new OJDataTreeDetectionVariableAttribute ();
 								List<OJDataTreeDetectionVariableSingleElem> gesChildren = new ArrayList <OJDataTreeDetectionVariableSingleElem> ();
-								
+
 								gesAttr.setId(++counter);
 								gesAttr.setDetectionVariableId(ges.getId());
 								gesAttr.setTitle(ges.getDetectionVariableName());
 								gesAttr.setType(DetectionVariableType.GES.getDetectionVariableType());
-								
+
 								if (gesToGefPilots.size() == 6) 
 									gesAttr.setAllPilots(true);
 								else
 									gesAttr.setAllPilots(false);
-								
+
 								gesAttr.setPilots(gesToGefPilots);
 								gesElement.setAttr(gesAttr);
-								
+
 								List<DetectionVariable> derivedMEAs = pilotDetectionVariableRepository.findDetectionVariableByDerivedDetectionVariableIdAndPilotCodes(ges.getId(), gesToGefPilots);
-								
+
 								for (DetectionVariable mea : derivedMEAs) {
-									
+
 									List<Pilot.PilotCode> meaToGesPilots = pilotDetectionVariableRepository.findPilotCodesByDetectionVariableIdAndDerivedDetectionVariableIdAndDetectionVariableType (mea.getDetectionVariableType(), mea.getId(), ges.getId());
-									
+
 									if (!meaToGesPilots.isEmpty()) {
-										
+
 										OJDataTreeDetectionVariableSingleElem meaElement = new OJDataTreeDetectionVariableSingleElem ();
 										OJDataTreeDetectionVariableAttribute meaAttr = new OJDataTreeDetectionVariableAttribute ();
-										
+
 										meaAttr.setId(++counter);
 										meaAttr.setDetectionVariableId(mea.getId());
 										meaAttr.setTitle(mea.getDetectionVariableName());
 										meaAttr.setType(DetectionVariableType.MEA.getDetectionVariableType());
-										
+
 										if (meaToGesPilots.size() == 6) 
 											meaAttr.setAllPilots(true);
 										else
 											meaAttr.setAllPilots(false);
-										
+
 										meaAttr.setPilots(meaToGesPilots);
 										meaElement.setAttr(meaAttr);
-										
+
 										gesChildren.add(meaElement);
 									}
 								}
-								
+
 								gesElement.setChildren(gesChildren);
 								gefChildren.add(gesElement);
 							}
 						}
-						
+
 						gefElement.setChildren(gefChildren);
 						gfgChildren.add(gefElement);
 					}
 				}
-				
+
 				gfgElement.setChildren(gfgChildren);
 				detectionVariables.add(gfgElement);
 			}
 		}
-		
+
 		response.setDetectionVariables(detectionVariables);
-		
+
 		response.setPilots(pilotRepository.findAll());
-		
+
 		response.setSocioEconomics(Arrays.asList("sex", "marital_status", "age_group", 
 				"education", "cohabiting", "informal_caregiver_ability", "quality_housing", "quality_neighborhood", "working"));
-		
+
 		return JerseyResponse.build(objectMapper.writeValueAsString(response));
 
 	}
@@ -493,7 +639,7 @@ public class ViewEndpoint {
 		if (list != null && !list.isEmpty()) {
 
 			TreeSet<DataIdValue> monthLabels = viewService.createMonthLabels(list);
-			
+
 			if(parentFactorId == null) {
 				OJDiagramFrailtyStatus frailtyStatus = viewService.transformToDto(list, monthLabels);
 				response.setFrailtyStatus(frailtyStatus);
@@ -521,14 +667,14 @@ public class ViewEndpoint {
 					Boolean gefAdded = false;
 
 					if (gefAdded != true && dv.getId().equals(gef.getDetectionVariableId())) {
-						
+
 						series.getItems().add(new Item(gef.getId().getId(), gef.getGefValue(), gef.getId().getDataType(), gef.getDetectionVariableId(), gef.getTimeIntervalId()));
 						gefAdded = true;
 					}
 				}
 				((DataSet)response).getSeries().add(series);
 			}
-			
+
 			dvs.clear();
 
 		}
@@ -543,17 +689,17 @@ public class ViewEndpoint {
 	public Response getDerivedMeasures(@PathParam("userInRoleId") Long userInRoleId, @PathParam("parentFactorId") Long parentFactorId) throws JsonProcessingException {
 
 		DataSet response = new DataSet();
-		
+
 		List<DerivedMeasureValue> derivedMeasures = derivedMeasureValueRepository.findByUserInRoleIdAndParentFactorId(userInRoleId, parentFactorId);
 
 		if (derivedMeasures != null && !derivedMeasures.isEmpty()) {
 
 			List<ViewGefCalculatedInterpolatedPredictedValues> gfvsList = viewService.convertToViewGFVs(derivedMeasures);
-			
+
 			TreeSet<DataIdValue> monthLabels = viewService.createMonthLabels(gfvsList);
 
 			response.getGroups().addAll(monthLabels);
-			
+
 			Set<DetectionVariable> dvs = new HashSet<DetectionVariable>();
 
 			for (DerivedMeasureValue derivedMeasure : derivedMeasures) {
@@ -593,13 +739,13 @@ public class ViewEndpoint {
 				}
 				((DataSet)response).getSeries().add(series);
 			}
-			
+
 			dvs.clear();
 
 		}
 		return JerseyResponse.build(objectMapper.writeValueAsString(response));
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("clusteredMeasures/userInRoleId/{userInRoleId}/detectionVariableId/{detectionVariableId}/locale/{localeString}")
@@ -607,24 +753,24 @@ public class ViewEndpoint {
 			@ApiParam(hidden = true) @PathParam("detectionVariableId") Long detectionVariableId,
 			@ApiParam(hidden = true) @PathParam("localeString") String localeString,
 			@Context ServletConfig sc) throws JsonProcessingException, JsonEmptyException {
-		
+
 		String realPath = sc.getServletContext().getRealPath("/WEB-INF/classes/python/");
 		realPath += "/";
 		//logger.info("arg: /WEB-INF/classes/python/     real path: " + realPath);
-		
+
 		HashMap <String, Locale> languageMap = new HashMap <String, Locale> ();
-		
+
 		languageMap.put("en", Locale.ENGLISH);
 		languageMap.put("el", new Locale("el", "GR"));
 		languageMap.put("es", new Locale("es", "ES"));
 		languageMap.put("it", new Locale("it", "IT"));
 		languageMap.put("fr", new Locale("fr", "FR"));
 		languageMap.put("zh-Hant", Locale.ENGLISH);
-		
+
 		ClusteredMeasuresData response = new ClusteredMeasuresData();
-		
+
 		ClusteredMeasuresDeserializer data = new ClusteredMeasuresDeserializer();
-		
+
 		try {
 			logger.info ("JEP started");
 			data = objectMapper.readerFor(ClusteredMeasuresDeserializer.class).
@@ -634,22 +780,22 @@ public class ViewEndpoint {
 			logger.info(e.getMessage());
 			return JerseyResponse.build(objectMapper.writeValueAsString(""));
 		}
-		
+
 		logger.info ("JEP finnished");
-		
+
 		List<ClusteredMeasuresGroups> groups = new ArrayList <ClusteredMeasuresGroups> ();
-		
+
 		ClusteredMeasuresGroups cmg = null;
 		List<String> subgroups = null;
 		YearMonth curr = null;
-		
+
 		logger.info ("groups started");
-		
+
 		if (!detectionVariableRepository.findOne(detectionVariableId).getDefaultTypicalPeriod().equals("mon")) {
 			for (String group : data.getGroups()) {
-				
+
 				LocalDate groupDate = LocalDate.parse(group);
-							
+
 				// TODO ovde ce ici provera da li je mera mesecna; sad je HC, pa je dnevna po defaultu
 				if (cmg == null || !YearMonth.from(groupDate).equals(curr)) {
 					if (cmg != null) {
@@ -678,11 +824,11 @@ public class ViewEndpoint {
 			}
 		}
 		response.setGroups(groups); 
-		
+
 		logger.info ("groups finished");
-		
+
 		logger.info ("series started");
-		
+
 		ClusteredMeasuresSeries cms = new ClusteredMeasuresSeries();
 		cms.setName(detectionVariableRepository.findOne(detectionVariableId).getDetectionVariableName());
 		cms.setColor("#000000");
@@ -690,21 +836,21 @@ public class ViewEndpoint {
 		cms.setLineWidth("0.25");
 		cms.setMarkerDisplayed("on");		
 		cms.setDisplayInLegend("off");
-		
+
 		List<ClusteredMeasuresItems> items = new ArrayList<ClusteredMeasuresItems> ();
 		List<ClusteredMeasuresLegendItems> legendItems = new ArrayList<ClusteredMeasuresLegendItems> ();
 		ClusteredMeasuresLegend legend = new ClusteredMeasuresLegend ();
-		
+
 		int numOfClusters = data.getCluster().size();	
-		
+
 		//String[] markerShapes = {"circle", "square", "plus", "diamond", "triangleDown"}; // dodati ostale
-		
+
 		//String[] markerSizes = {"10", "10"}; // dodati ostale
-		
+
 		//String[] colors = {"#ff3300","#ff6600","#ff8000","#ffcc00","bfff00","#99ff33","#66ff33","#008080","#aa6e28","#800000",}; // dodati ostale
-		
+
 		logger.info ("legend started");
-		
+
 		for (int i = 0; i < numOfClusters; i++) {
 			ClusteredMeasuresLegendItems cmli = new ClusteredMeasuresLegendItems ();
 			cmli.setText(data.getCluster().get(i).getName());
@@ -717,7 +863,7 @@ public class ViewEndpoint {
 			cmli.setCategories(legendCategories);
 			legendItems.add(cmli);
 		}
-		
+
 		ClusteredMeasuresLegendItems cmli = new ClusteredMeasuresLegendItems ();
 		cmli.setText("Excluded");
 		List<String> legendCategories = new ArrayList<String> ();
@@ -727,73 +873,73 @@ public class ViewEndpoint {
 		cmli.setSource("images/X.png");
 		cmli.setDrilling("on");
 		legendItems.add(cmli);
-		
+
 		logger.info ("legend finished");
-		
-		
+
+
 		List<Long> dataIDs = new ArrayList<Long> ();
 		List<String> dataIDsStrings = new ArrayList<String> ();
-		
+
 		logger.info ("items started");
-		
+
 		HashMap <Character, String> filterTypeDescription = new HashMap <Character, String> ();
 		filterTypeDescription.put('C', "Confirm");
 		filterTypeDescription.put('E', "Exclude");
 		filterTypeDescription.put('Q', "Questionable");
-		
+
 		for (int i = 0; i < data.getGroups().size(); i++) {
 			LocalDate groupDate = LocalDate.parse(data.getGroups().get(i));
 			Long id = data.getVmvid().get(i);
-			
+
 			curr = YearMonth.from(groupDate);
-			
+
 			dataIDs.add(id);
 			dataIDsStrings.add(id.toString());
 			List<VmvFiltering> vf = vmvFilteringRepository.findFilterTypeByVmvId(id);
 			Character filterType = vf.size() > 0 ? vf.get(0).getFilterType().charAt(0) : null;
-			
+
 			for (int j = 0; j < numOfClusters; j++) {
-				
+
 				String cluster = data.getCluster().get(j).getItems().get(i);
 				if (!cluster.equals("null")) {
 					List<String> categories = new ArrayList<String> ();
 					String name = data.getCluster().get(j).getName();
 					categories.add(name);
-					
+
 					if (filterType != null)
 						categories.add(filterTypeDescription.get(filterType));
-					
+
 					items.add(new ClusteredMeasuresItems(id.toString(), cluster, "circle" , "8", 
 							getColorsOfClusters(numOfClusters)[j], "value: " + cluster + 
 							"\ngroup: " + data.getGroups().get(i) + "\ncluster: " + data.getCluster().get(j).getName(), 
 							(filterType != null && filterType.equals('E')) ? "images/X.png" : null, 
-							(filterType != null && filterType.equals('E')) ? "images/X_sel.png" : null, categories));
+									(filterType != null && filterType.equals('E')) ? "images/X_sel.png" : null, categories));
 					break;
 				}
 			}
 		}
-		
+
 		cms.setItems(items);
-		
+
 		logger.info ("items finished");
-		
+
 		List<ClusteredMeasuresSeries> cmsList = new ArrayList <ClusteredMeasuresSeries> ();
 		cmsList.add(cms);
 		response.setSeries(cmsList);
-		
+
 		logger.info ("series finished");
-		
+
 		legend.setItems(legendItems);
 		List<ClusteredMeasuresLegend> cmsLegendList = new ArrayList<ClusteredMeasuresLegend> ();
 		cmsLegendList.add(legend);
 		response.setLegend(cmsLegendList);
-		
+
 		/*List<ClusteredMeasuresAssessments> cmsAssessments = new ArrayList <ClusteredMeasuresAssessments> ();
 		Map<String, Object> inQueryParams = new HashMap<String, Object>();
 		inQueryParams.put("dataPointsIds", dataIDs);
-		
+
 		List<Filter> filters = new ArrayList<Filter>();
-		
+
 		List<Assessment> assessmentList = assessmentRepository.doQueryWithFilter(filters, "findClusterForSelectedDataSet", inQueryParams);
 		logger.info ("listSize: " + assessmentList.size());
 		for (Assessment a : assessmentList) {
@@ -803,13 +949,13 @@ public class ViewEndpoint {
 			cmsAssessments.add(new ClusteredMeasuresAssessments (a.getId(), filterTypeRepository.findOne(filterType), a.getAssessmentComment(), 
 					a.getCreated(), a.getUpdated(), a.getUserInRole(), vmvIDs));
 		}
-		
+
 		response.setAssessments(cmsAssessments);*/
 		response.setDataIDs(dataIDsStrings);
-		
+
 		return JerseyResponse.build(objectMapper.writeValueAsString(response));
 	}
-	
+
 	/*public String[] getShapesOfClusters(int num) {
 		switch (num) {
 		case 1:
@@ -846,9 +992,9 @@ public class ViewEndpoint {
 			return null;
 		}	
 	}
-*/
+	 */
 	public String[] getColorsOfClusters (int num) {
-				
+
 		switch (num) {
 		case 1:
 			String [] retArray1 = {"#7EE500"};
@@ -887,11 +1033,11 @@ public class ViewEndpoint {
 			return null;
 		}	
 	}
-		
+
 	public String getClusteredSeries(String path, Long userInRoleId, Long varId) throws Exception {
-		
+
 		String response;
-		
+
 		JepConfig jepConfig = new JepConfig ();
 		jepConfig.addSharedModules("pandas");
 		jepConfig.addSharedModules("numpy");
@@ -909,9 +1055,9 @@ public class ViewEndpoint {
 		jepConfig.addSharedModules("learn_optimal_model");
 		jepConfig.addSharedModules("learnOptimalHMMs_and_persist");
 		Jep jep = new Jep (jepConfig);
-		
+
 		jep.setInteractive(true);
-		
+
 		try {
 			response = HiddenMarkovModelService.clusterSingleSeries(path, jep, userInRoleId.intValue(), varId.intValue());
 		} catch (Exception e) {
@@ -922,7 +1068,7 @@ public class ViewEndpoint {
 		}
 		//logger.info(response);
 		jep.close();
-		
+
 		return response;
 	}
 

@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -38,11 +37,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import io.ei.jsontoxls.AllConstants;
 import io.ei.jsontoxls.Messages;
 import io.ei.jsontoxls.repository.ExcelRepository;
@@ -62,8 +56,6 @@ public class ExportDataEndpoint {
 	static protected Logger logger = LogManager.getLogger(ExportDataEndpoint.class);
 	
 	static String EXPORT_CLASS_NAME = "Export";
-	
-	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
 	
     private ExcelUtils excelUtil;
     //private Logger logger = LoggerFactory.getLogger(XlsResource.class);

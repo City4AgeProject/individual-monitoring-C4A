@@ -11,6 +11,8 @@ public class GroupAnalyticsGroups {
 	private List<GroupAnalyticsGroups> groups;
 	
 	private TreeSet<Date> dates;
+	
+	private List<String> lastGroup;
 
 	/**
 	 * 
@@ -67,6 +69,20 @@ public class GroupAnalyticsGroups {
 	 */
 	public void setDates(TreeSet<Date> dates) {
 		this.dates = dates;
+	}
+
+	/**
+	 * @return the lastGroup
+	 */
+	public List<String> getLastGroup() {
+		return lastGroup;
+	}
+
+	/**
+	 * @param lastGroup the lastGroup to set
+	 */
+	public void setLastGroup(List<String> lastGroup) {
+		this.lastGroup = lastGroup;
 	}
 
 }

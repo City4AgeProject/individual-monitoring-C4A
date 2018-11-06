@@ -2,7 +2,6 @@ package eu.city4age.dashboard.api.pojo.dto.groupAnalytics;
 
 import java.util.List;
 
-import eu.city4age.dashboard.api.pojo.domain.ViewGroupAnalyticsData;
 import eu.city4age.dashboard.api.pojo.dto.Response;
 
 public class GroupAnalyticsResponse implements Response {
@@ -10,8 +9,6 @@ public class GroupAnalyticsResponse implements Response {
 	private List<GroupAnalyticsSeries> series;
 	
 	private List<GroupAnalyticsGroups> groups;
-	
-	private List<ViewGroupAnalyticsData> data;
 	
 	public GroupAnalyticsResponse() {
 		
@@ -50,19 +47,4 @@ public class GroupAnalyticsResponse implements Response {
 	public void setGroups(List<GroupAnalyticsGroups> groups) {
 		this.groups = groups;
 	}
-
-	/**
-	 * @return the data
-	 */
-	public List<ViewGroupAnalyticsData> getData() {
-		return data;
-	}
-
-	/**
-	 * @param data the data to set
-	 */
-	public void setData(List<ViewGroupAnalyticsData> data) {
-		this.data = data;
-	}
-	
 }
