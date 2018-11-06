@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -20,7 +21,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.servlet.ServletConfig;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -33,9 +36,12 @@ import javax.ws.rs.ext.ContextResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -73,6 +79,9 @@ import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresIte
 import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresLegend;
 import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresLegendItems;
 import eu.city4age.dashboard.api.pojo.dto.clusteredMeasures.ClusteredMeasuresSeries;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsResponse;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsSeries;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataSet;
 import eu.city4age.dashboard.api.pojo.json.clusteredMeasures.ClusteredMeasuresDeserializer;
@@ -128,6 +137,11 @@ public class ViewEndpoint {
 	
 	@Autowired
 	private ViewGroupAnalyticsDataRepository viewGroupAnalyticsDataRepository;
+	
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -254,6 +268,217 @@ public class ViewEndpoint {
 		}
 
 		return JerseyResponse.build(objectMapper.writeValueAsString(tableData));
+	}
+	
+	@POST
+	@Consumes("text/plain")
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
+	@Path("groupsAndSeries")
+	public Response getGroupsAndSeries (String url) throws JsonProcessingException {
+
+		GroupAnalyticsResponse response = new GroupAnalyticsResponse();
+
+		boolean comparison = url.contains("comparison=true");
+
+		HashMap<String, List<String>> socioEconomics = new HashMap <String, List<String>> ();
+		socioEconomics.put("sex", Arrays.asList("m", "f"));
+		socioEconomics.put("marital_status", Arrays.asList("s", "m", "w", "d", "t"));
+		socioEconomics.put("age_group", Arrays.asList("50-59", "60-69", "70-79", "80-89", "90+"));
+		socioEconomics.put("education", Arrays.asList("none", "primary", "secondary", "tertiary"));
+		socioEconomics.put("cohabiting", Arrays.asList("alone", "family", "friends", "other"));
+		socioEconomics.put("informal_caregiver_ability", Arrays.asList("t", "f"));
+		socioEconomics.put("quality_housing", Arrays.asList("low", "average", "high"));
+		socioEconomics.put("quality_neighborhood", Arrays.asList("low", "average", "high"));
+		socioEconomics.put("working", Arrays.asList("t", "f"));
+
+		ResponseEntity<GenericTableData> graphResponse = restTemplate().getForEntity(url, GenericTableData.class);
+
+		GenericTableData json = graphResponse.getBody();
+
+		List<List<String>> data = json.getData();
+
+		int numOfPilots = 1;
+
+		if (comparison == false) numOfPilots = Arrays.asList(data.get(0).get(5).split(", ")).size();
+
+		// categories
+		List<String> categories = json.getHeaders().subList(8 + numOfPilots, json.getHeaders().size());
+		
+		List<String> datesStringList = new ArrayList<String>(); 
+
+		if (comparison == false) {
+			// dates
+			String startDate = "";
+			String endDate = "";
+			for (String str : Arrays.asList(url.split("&"))) {
+				if (str.contains("intervalStart"))
+					startDate = str.split("=")[1];
+				if (str.contains("intervalEnd"))
+					endDate = str.split("=")[1];
+			}
+			LocalDate intervalStartLD = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			LocalDate intervalEndLD = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			datesStringList = new ArrayList<String>();
+			while (intervalStartLD.isBefore(intervalEndLD)) {
+				String intervalStart = intervalStartLD.format(DateTimeFormatter.ofPattern("yyyy/MM"));
+				datesStringList.add(intervalStart);
+				intervalStartLD = intervalStartLD.plusMonths(1L);
+			} 
+		}
+		
+		// create groups all scenarios
+		int numOfLoops = categories.size();
+		int cnt = 0;
+
+		if (cnt < numOfLoops) {
+			if (cnt == numOfLoops - 1) {
+				if (comparison == true) {
+					response.setLastGroup(socioEconomics.get(categories.get(cnt)));
+				} else {
+					List<GroupAnalyticsGroups> groups = new ArrayList<GroupAnalyticsGroups>();
+					for (String category1 : socioEconomics.get(categories.get(cnt))) {
+						GroupAnalyticsGroups groups1 = new GroupAnalyticsGroups();
+						groups1.setName(category1);
+						groups1.setLastGroup(datesStringList);
+						groups.add(groups1);
+					}
+					response.setGroups(groups);
+				}
+			} else {
+				List<GroupAnalyticsGroups> groups = new ArrayList<GroupAnalyticsGroups>();
+				for (String category1 : socioEconomics.get(categories.get(cnt))) {
+					GroupAnalyticsGroups groups1 = new GroupAnalyticsGroups();
+					groups1.setName(category1);
+
+					if (cnt + 1 < numOfLoops) {
+						if (cnt + 1 == numOfLoops - 1) {
+							if (comparison == true) {
+								groups1.setLastGroup(socioEconomics.get(categories.get(cnt + 1)));
+							} else {
+								List<GroupAnalyticsGroups> subGroups1 = new ArrayList<GroupAnalyticsGroups>(); 
+								for (String category2 : socioEconomics.get(categories.get(cnt + 1))) {
+									GroupAnalyticsGroups groups2 = new GroupAnalyticsGroups();
+									groups2.setName(category2);
+									groups2.setLastGroup(datesStringList);
+									subGroups1.add(groups2);
+								}
+								groups1.setGroups(subGroups1);
+							}
+						} else {
+							List<GroupAnalyticsGroups> subGroups1 = new ArrayList<GroupAnalyticsGroups>(); 
+							for (String category2 : socioEconomics.get(categories.get(cnt + 1))) {
+								GroupAnalyticsGroups groups2 = new GroupAnalyticsGroups();
+								groups2.setName(category2);
+
+								if (cnt + 2 < numOfLoops) {
+									if (cnt + 2 == numOfLoops - 1) {
+										if (comparison == true) {
+											groups2.setLastGroup(socioEconomics.get(categories.get(cnt + 2)));
+										} else {
+											List<GroupAnalyticsGroups> subGroups2 = new ArrayList<GroupAnalyticsGroups>();
+											for (String category3 : socioEconomics.get(categories.get(cnt + 2))) {
+												GroupAnalyticsGroups groups3 = new GroupAnalyticsGroups();
+												groups3.setName(category3);
+												groups3.setLastGroup(datesStringList);
+												subGroups2.add(groups3);
+											}
+											groups2.setGroups(subGroups2);
+										}
+									} else {
+										List<GroupAnalyticsGroups> subGroups2 = new ArrayList<GroupAnalyticsGroups>();
+										for (String category3 : socioEconomics.get(categories.get(cnt + 2))) {
+											GroupAnalyticsGroups groups3 = new GroupAnalyticsGroups();
+											groups3.setName(category3);
+
+											if (cnt + 3 < numOfLoops) {
+												if (cnt + 3 == numOfLoops - 1) {
+													if (comparison == true) {
+														groups3.setLastGroup(socioEconomics.get(categories.get(cnt + 3)));
+													} else {
+														List<GroupAnalyticsGroups> subGroups3 = new ArrayList<GroupAnalyticsGroups>();
+														for (String category4 : socioEconomics.get(categories.get(cnt + 3))) {
+															GroupAnalyticsGroups groups4 = new GroupAnalyticsGroups();
+															groups4.setName(category4);
+															groups4.setLastGroup(datesStringList);
+															subGroups3.add(groups4);
+														}
+														groups3.setGroups(subGroups3);
+													}
+												} else {
+													List<GroupAnalyticsGroups> subGroups3 = new ArrayList<GroupAnalyticsGroups>();
+													for (String category4 : socioEconomics.get(categories.get(cnt + 3))) {
+														GroupAnalyticsGroups groups4 = new GroupAnalyticsGroups();
+														groups4.setName(category4);
+														subGroups3.add(groups4);
+													}
+													groups3.setGroups(subGroups3);
+												}
+											}
+											subGroups2.add(groups3);
+										}
+										groups2.setGroups(subGroups2);
+									}
+								}
+								subGroups1.add(groups2);
+							}
+							groups1.setGroups(subGroups1);
+						}
+					}
+					groups.add(groups1);
+				}
+				response.setGroups(groups);
+			}
+		}
+
+		// create series all scenarios
+		String previousPilot = data.get(0).get(5);
+		String previousDetectionVariableName = data.get(0).get(3);
+
+		String firstPilot = data.get(0).get(5);
+
+		GroupAnalyticsSeries serie = new GroupAnalyticsSeries();
+		List<GroupAnalyticsSeries> series = new ArrayList<GroupAnalyticsSeries>();
+
+		serie.setName(previousDetectionVariableName);
+		serie.setPilot(previousPilot);
+
+		List<BigDecimal> items = new ArrayList<BigDecimal>();
+
+		for (List<String> entry : data) {
+
+			if (!(previousDetectionVariableName.contains(entry.get(3)) && previousPilot.contains(entry.get(5)))) {
+
+				previousDetectionVariableName = entry.get(3);
+				previousPilot = entry.get(5);
+
+				serie.setItems(items);
+				series.add(serie);
+				items = new ArrayList<BigDecimal>();
+
+				serie = new GroupAnalyticsSeries();
+
+				serie.setName(entry.get(3));
+				serie.setPilot(previousPilot);
+
+				if (url.contains("comparison=true") && !entry.get(5).equals(firstPilot)) {
+					serie.setAssignedToY2("on");
+					serie.setDisplayInLegend("off");
+				}
+
+			}
+
+			if (entry.get(0).matches(""))
+				items.add(null);
+			else
+				items.add(BigDecimal.valueOf(Double.parseDouble(entry.get(0))));
+
+		}
+		serie.setItems(items);
+		series.add(serie);
+
+		response.setSeries(series);
+
+		return JerseyResponse.build(objectMapper.writeValueAsString(response));
 	}
 
 	@GET

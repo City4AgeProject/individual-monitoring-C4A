@@ -1,16 +1,12 @@
 package eu.city4age.dashboard.api.pojo.dto.groupAnalytics;
 
-import java.util.Date;
 import java.util.List;
-import java.util.TreeSet;
 
 public class GroupAnalyticsGroups {
 	
 	private String name;
 	
 	private List<GroupAnalyticsGroups> groups;
-	
-	private TreeSet<Date> dates;
 	
 	private List<String> lastGroup;
 
@@ -55,20 +51,6 @@ public class GroupAnalyticsGroups {
 	 */
 	public void setGroups(List<GroupAnalyticsGroups> groups) {
 		this.groups = groups;
-	}
-
-	/**
-	 * @return the dates
-	 */
-	public TreeSet<Date> getDates() {
-		return dates;
-	}
-
-	/**
-	 * @param dates the dates to set
-	 */
-	public void setDates(TreeSet<Date> dates) {
-		this.dates = dates;
 	}
 
 	/**

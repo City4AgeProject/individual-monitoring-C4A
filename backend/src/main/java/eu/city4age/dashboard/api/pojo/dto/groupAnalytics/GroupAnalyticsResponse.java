@@ -10,6 +10,8 @@ public class GroupAnalyticsResponse implements Response {
 	
 	private List<GroupAnalyticsGroups> groups;
 	
+	private List<String> lastGroup;
+	
 	public GroupAnalyticsResponse() {
 		
 	}
@@ -46,5 +48,19 @@ public class GroupAnalyticsResponse implements Response {
 	 */
 	public void setGroups(List<GroupAnalyticsGroups> groups) {
 		this.groups = groups;
+	}
+
+	/**
+	 * @return the lastGroup
+	 */
+	public List<String> getLastGroup() {
+		return lastGroup;
+	}
+
+	/**
+	 * @param lastGroup the lastGroup to set
+	 */
+	public void setLastGroup(List<String> lastGroup) {
+		this.lastGroup = lastGroup;
 	}
 }
