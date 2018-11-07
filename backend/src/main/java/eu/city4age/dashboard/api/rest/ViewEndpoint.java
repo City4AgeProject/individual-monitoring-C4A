@@ -255,7 +255,7 @@ public class ViewEndpoint {
 			if (intervalEndODT == null) 
 				intervalEndODT = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).atOffset(ZoneOffset.UTC);
 			
-			allTimesFilters = viewService.createAllTimeFilters (intervalStartODT, intervalEndODT);
+			allTimesFilters = viewService.createAllTimeFilters (intervalStartODT, intervalEndODT, comp);
 		}
 
 		allFilters = viewService.createAllFilters (allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
@@ -299,7 +299,9 @@ public class ViewEndpoint {
 
 		int numOfPilots = 1;
 
-		if (comparison == false) numOfPilots = Arrays.asList(data.get(0).get(5).split(", ")).size();
+		if (comparison == false) {
+			if (!json.getHeaders().contains("whole_population")) numOfPilots = Arrays.asList(data.get(0).get(5).split(", ")).size();
+		}
 
 		// categories
 		List<String> categories = json.getHeaders().subList(8 + numOfPilots, json.getHeaders().size());

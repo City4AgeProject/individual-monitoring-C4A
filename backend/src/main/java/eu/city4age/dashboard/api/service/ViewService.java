@@ -26,7 +26,7 @@ public interface ViewService {
 			List<ArrayList<Filter>> allTimesFilters);
 	
 	List<ArrayList<Filter>> createAllTimeFilters(OffsetDateTime intervalStartODT,
-			OffsetDateTime intervalEndODT);
+			OffsetDateTime intervalEndODT, boolean comparison);
 	
 	List<ArrayList<Filter>> createAllFiltersFromPilotCodes (List<String> pilotCodes, Boolean comparison);
 	

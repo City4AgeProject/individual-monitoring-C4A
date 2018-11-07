@@ -274,30 +274,49 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public List<ArrayList<Filter>> createAllTimeFilters(OffsetDateTime intervalStartODT,
-			OffsetDateTime intervalEndODT) {
+			OffsetDateTime intervalEndODT, boolean comparison) {
 		
 		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
 		
-		OffsetDateTime current = intervalStartODT;
-		
-		while (!current.isAfter(intervalEndODT)) {
+		if (comparison == false) {
+			
+			OffsetDateTime current = intervalStartODT;
+			
+			while (!current.isAfter(intervalEndODT)) {
+				
+				ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
+				
+				Filter byIntervalStart = new Filter();
+				byIntervalStart.setName("intervalStart");
+				byIntervalStart.getInParams().put("intervalStart", Timestamp.from(current.toInstant()));
+				specificFilters.add(byIntervalStart);
+				
+				current = current.plusMonths(1l);
+				
+				Filter byIntervalEnd = new Filter();
+				byIntervalEnd.setName("intervalEnd");
+				byIntervalEnd.getInParams().put("intervalEnd", Timestamp.from(current.toInstant()));
+				specificFilters.add(byIntervalEnd);
+				
+				list.add(specificFilters);
+			}
+		} else {
 			
 			ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
 			
 			Filter byIntervalStart = new Filter();
 			byIntervalStart.setName("intervalStart");
-			byIntervalStart.getInParams().put("intervalStart", Timestamp.from(current.toInstant()));
+			byIntervalStart.getInParams().put("intervalStart", Timestamp.from(intervalStartODT.toInstant()));
 			specificFilters.add(byIntervalStart);
-			
-			current = current.plusMonths(1l);
 			
 			Filter byIntervalEnd = new Filter();
 			byIntervalEnd.setName("intervalEnd");
-			byIntervalEnd.getInParams().put("intervalEnd", Timestamp.from(current.toInstant()));
+			byIntervalEnd.getInParams().put("intervalEnd", Timestamp.from(intervalEndODT.toInstant()));
 			specificFilters.add(byIntervalEnd);
 			
 			list.add(specificFilters);
 		}
+		
 		return list;
 	}
 	
@@ -306,7 +325,7 @@ public class ViewServiceImpl implements ViewService {
 		
 		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
 		
-		if (comparison ) {
+		if (comparison) {
 			
 			for (String pilot : pilotCodes) {
 					
@@ -314,7 +333,14 @@ public class ViewServiceImpl implements ViewService {
 					
 					Filter byPilotCodes = new Filter();
 					byPilotCodes.setName("pilot");
-					byPilotCodes.getInParams().put("pilot", pilot);
+					
+					if (pilot.contains("whole_population")) {						
+						List<String> pilots = getAllPilots();						
+						byPilotCodes.getInParams().put("pilot", pilots);
+					} else {
+						byPilotCodes.getInParams().put("pilot", pilot);
+					}
+					
 					specificFilters.add(byPilotCodes);
 					
 					list.add(specificFilters);				
@@ -326,13 +352,31 @@ public class ViewServiceImpl implements ViewService {
 			
 			Filter byPilotCodes = new Filter();
 			byPilotCodes.setName("pilot");
-			byPilotCodes.getInParams().put("pilot", pilotCodes);
+			
+			if (pilotCodes.size() == 1 && pilotCodes.get(0).contains("whole_population")) {
+				List<String> pilots = getAllPilots();						
+				byPilotCodes.getInParams().put("pilot", pilots);
+			} else {
+				byPilotCodes.getInParams().put("pilot", pilotCodes);
+			}
+			
 			specificFilters.add(byPilotCodes);
 			
 			list.add(specificFilters);
 		}
 		
 		return list;
+	}
+
+	/**
+	 * @return
+	 */
+	private List<String> getAllPilots() {
+		List<String> pilots = new ArrayList<String>();
+		List<Pilot> pilotList = pilotRepository.findAll();
+		
+		for (Pilot p : pilotList) pilots.add(p.getPilotCode().name().toLowerCase());
+		return pilots;
 	}
 	
 	@Override
@@ -388,9 +432,9 @@ public class ViewServiceImpl implements ViewService {
 			
 			String type = categories.get(cnt - 1);
 			
-			logger.info("type: " + type);
-			logger.info("socioEconomics size: " + socioEconomics.size());
-			logger.info("socioEconomics get type: " + socioEconomics.get(type));
+			//logger.info("type: " + type);
+			//logger.info("socioEconomics size: " + socioEconomics.size());
+			//logger.info("socioEconomics get type: " + socioEconomics.get(type));
 			for (String category : socioEconomics.get(type)) {
 				
 				ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
@@ -488,9 +532,13 @@ public class ViewServiceImpl implements ViewService {
 				row.add(dv.getDetectionVariableType().getDetectionVariableType().getName());
 				break;
 			case "pilot":
-				if (comp)
-					row.add((String) f.getInParams().entrySet().iterator().next().getValue());	
-				else {
+				if (comp) {
+					try {
+						row.add((String) f.getInParams().entrySet().iterator().next().getValue());
+					} catch (Exception e) {
+						row.add("Whole population");
+					}
+				} else {
 					ArrayList<String> list = (ArrayList<String>) f.getInParams().entrySet().iterator().next().getValue();
 					StringBuilder pilotStringBuilder = new StringBuilder ();
 					
