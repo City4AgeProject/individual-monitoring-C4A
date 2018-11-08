@@ -290,11 +290,11 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public List<List<Filter>> createAllTimeFilters(OffsetDateTime intervalStartODT,
-			OffsetDateTime intervalEndODT, boolean comparison) {
+			OffsetDateTime intervalEndODT, String comparison, int numOfCategories) {
 		
 		List<List<Filter>> list = new ArrayList<List<Filter>> ();
 		
-		if (comparison == false) {
+		if ((comparison != null && comparison.contains("false")) || (comparison == null && numOfCategories == 0)) {
 			
 			OffsetDateTime current = intervalStartODT;
 			

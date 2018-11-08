@@ -122,10 +122,11 @@ public class ParseDateTest {
 		List<String> datesStringList = new ArrayList<String>();
 		
 		boolean comparison = url.contains("comparison=true");
+		boolean comp = url.contains("comparison");
 		
 		HashMap<String, List<String>> socioEconomics = viewEndpoint.createSocioEconomicsMap();
 		
-		List<Object> groups = viewEndpoint.createGroups(reverseCategories, socioEconomics, datesStringList, comparison);
+		List<Object> groups = viewEndpoint.createGroups(reverseCategories, socioEconomics, datesStringList, comparison, comp);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());

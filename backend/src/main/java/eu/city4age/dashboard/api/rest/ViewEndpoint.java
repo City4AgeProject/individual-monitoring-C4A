@@ -223,7 +223,7 @@ public class ViewEndpoint {
 		List<Long> detectionVariableIDs = new ArrayList <Long> ();
 		
 		if(detectionVariable != null) {
-			List<String> detectionVariables = Arrays.asList(detectionVariable.split(" "));			
+			List<String> detectionVariables = Arrays.asList(detectionVariable.split(" "));
 			for (String s : detectionVariables) 
 				detectionVariableIDs.add(Long.parseLong(s));
 		}
@@ -256,7 +256,7 @@ public class ViewEndpoint {
 			if (intervalEndODT == null) 
 				intervalEndODT = LocalDateTime.now().withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).atOffset(ZoneOffset.UTC);
 			
-			allTimesFilters = viewService.createAllTimeFilters (intervalStartODT, intervalEndODT, comp);
+			allTimesFilters = viewService.createAllTimeFilters (intervalStartODT, intervalEndODT, comparison, categories.size());
 		}
 
 		allFilters = viewService.createAllFilters(allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
@@ -280,6 +280,7 @@ public class ViewEndpoint {
 		GroupAnalyticsResponse response = new GroupAnalyticsResponse();
 
 		boolean comparison = url.contains("comparison=true");
+		boolean comp = url.contains("comparison");
 
 		HashMap<String, List<String>> socioEconomics = createSocioEconomicsMap();
 
@@ -294,14 +295,19 @@ public class ViewEndpoint {
 		Collections.reverse(categories);
 		
 		// dates
-		List<String> datesStringList = null; 
+		List<String> datesStringList = null;
 
 		if (comparison == false) {
 			datesStringList = createDateList(url); 
 		}
 		
-		// create groups all scenarios		
-		List<Object> groups = createGroups(categories, socioEconomics, datesStringList, comparison);
+		// create groups all scenarios
+		List<Object> groups = null;
+		if (url.contains("category")) {
+			groups = createGroups(categories, socioEconomics, datesStringList, comparison, comp);
+		} else {
+			groups = new ArrayList<Object>(datesStringList);
+		}
 		response.setGroups(groups);
 		
 
@@ -334,7 +340,7 @@ public class ViewEndpoint {
 
 				serie.setName(entry.get(3));
 				serie.setPilot(previousPilot);
-
+				
 				if (comparison && !entry.get(5).equals(firstPilot)) {
 					serie.setAssignedToY2("on");
 					serie.setDisplayInLegend("off");
@@ -362,14 +368,14 @@ public class ViewEndpoint {
 	}
 
 	public List<Object> createGroups(List<String> categories,
-			HashMap<String, List<String>> socioEconomics, List<String> datesStringList, boolean comparison) {
+			HashMap<String, List<String>> socioEconomics, List<String> datesStringList, boolean comparison, boolean comp) {
 
 		int cnt = categories.size();
 
 		List<GroupAnalyticsGroups> groups = new ArrayList<GroupAnalyticsGroups>();
 
 		if (cnt - 1 == 0) {
-			if (comparison == true) {				
+			if (!comp || comparison) {				
 				GroupAnalyticsGroups group1 = new GroupAnalyticsGroups();
 				group1.setGroups(socioEconomics.get(categories.get(cnt - 1)));
 				return new ArrayList<Object>(socioEconomics.get(categories.get(cnt - 1)));
@@ -390,7 +396,7 @@ public class ViewEndpoint {
 
 			String type = categories.get(cnt - 1);
 
-			List<Object> alreadyCreatedGroups = createGroups(currCategories, socioEconomics, datesStringList, comparison);
+			List<Object> alreadyCreatedGroups = createGroups(currCategories, socioEconomics, datesStringList, comparison, comp);
 
 			for (String category : socioEconomics.get(type)) {
 				GroupAnalyticsGroups group = new GroupAnalyticsGroups();
@@ -417,14 +423,23 @@ public class ViewEndpoint {
 			if (str.contains("intervalEnd"))
 				endDate = str.split("=")[1];
 		}
-		LocalDate intervalStartLD = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		LocalDate intervalEndLD = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		
+		OffsetDateTime intervalStartODT = LocalDate.parse(startDate.substring(0, 10), 
+				DateTimeFormatter.ofPattern("yyyy-MM-dd")).withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+		
+		OffsetDateTime intervalEndODT = LocalDate.parse(endDate.substring(0, 10), 
+				DateTimeFormatter.ofPattern("yyyy-MM-dd")).withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+		
 		datesStringList = new ArrayList<String>();
-		while (intervalStartLD.isBefore(intervalEndLD)) {
-			String intervalStart = intervalStartLD.format(DateTimeFormatter.ofPattern("yyyy/MM"));
-			datesStringList.add(intervalStart);
-			intervalStartLD = intervalStartLD.plusMonths(1L);
+		
+		OffsetDateTime current = intervalStartODT;
+		
+		while (!current.isAfter(intervalEndODT)) {
+			String currentString = current.format(DateTimeFormatter.ofPattern("yyyy/MM"));
+			datesStringList.add(currentString);
+			current = current.plusMonths(1L);
 		}
+		
 		return datesStringList;
 	}
 
