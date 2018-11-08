@@ -1,5 +1,7 @@
 package eu.city4age.dashboard.api.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -7,22 +9,35 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
+import eu.city4age.dashboard.api.rest.ViewEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
 public class ParseDateTest {
+	
+	@Autowired
+	private ViewEndpoint viewEndpoint;
 	
 	@Test
 	public void ParseDateTest() throws ParseException  {
@@ -36,7 +51,7 @@ public class ParseDateTest {
 	}
 	
 	@Test
-	public void stringSplitting() {
+	public void getIntervalStartAndIntervalEndFromUrl() {
 		String url = "http://localhost:8080/C4A-dashboard/rest/view/graphData?pilotCode=ath bhx&detectionVariable=501 514&category=sex cohabiting education quality_housing&intervalStart=2018-01-01&intervalEnd=2018-10-31&comparison=true";
 		
 		//List<String> urlList = Arrays.asList(url.split("&"));
@@ -66,6 +81,55 @@ public class ParseDateTest {
 		System.out.println("i: " + i);
 		System.out.println("startDate: " + startDate);
 		System.out.println("endDate: " + endDate);
+		
+	}
+	
+	@Test
+	public void getPilots() {
+		String url = "http://localhost:8080/C4A-dashboard/rest/view/graphData?pilotCode=ath bhx&detectionVariable=501 514&category=sex cohabiting education quality_housing&intervalStart=2018-01-01&intervalEnd=2018-10-31&comparison=true";
+		
+		String property = "pilotCode";
+		//String property = "detectionVariable";
+		//String property = "category";
+		
+		List<String> propertyList = viewEndpoint.getPropertyFromURL(url, property);
+		
+		System.out.println("propertyList.size(): " + propertyList.size());
+		for (String p : propertyList) System.out.println(p);
+		
+	}
+	
+	@Test
+	public void testCreateGroups() throws JsonGenerationException, JsonMappingException, IOException {
+		
+		String url = "http://localhost:8080/C4A-dashboard/rest/view/graphData?pilotCode=ath bhx&detectionVariable=501 514&category=sex cohabiting education quality_housing&intervalStart=2018-01-01&intervalEnd=2018-10-31&comparison=true";
+		
+		List<String> categories = new ArrayList<String>();
+		
+		for (String str : Arrays.asList(url.split("&"))) {
+			if (str.contains("category")) {
+				categories = Arrays.asList(str.split("=")[1].split(" "));
+			}
+		}
+		List<String> reverseCategories = new ArrayList<String>();
+		
+		for (int i = categories.size() - 1; i >= 0; i--) {
+			reverseCategories.add(categories.get(i));
+		}
+		
+		for (String c : reverseCategories) System.out.print(c + " ");
+		
+		List<String> datesStringList = new ArrayList<String>();
+		
+		boolean comparison = url.contains("comparison=true");
+		
+		HashMap<String, List<String>> socioEconomics = viewEndpoint.createSocioEconomicsMap();
+		
+		List<Object> groups = viewEndpoint.createGroups(reverseCategories, socioEconomics, datesStringList, comparison);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+		writer.writeValue(new File("C:/Users/Stefan.Spasojevic/Desktop/groups.json"), groups);
 		
 	}
 

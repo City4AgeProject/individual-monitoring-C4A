@@ -1,14 +1,10 @@
 package eu.city4age.dashboard.api.pojo.dto.groupAnalytics;
 
-import java.util.List;
-
 public class GroupAnalyticsGroups {
 	
 	private String name;
 	
-	private List<GroupAnalyticsGroups> groups;
-	
-	private List<String> lastGroup;
+	private Object groups;
 
 	/**
 	 * 
@@ -20,7 +16,7 @@ public class GroupAnalyticsGroups {
 	 * @param name
 	 * @param groups
 	 */
-	public GroupAnalyticsGroups(String name, List<GroupAnalyticsGroups> groups) {
+	public GroupAnalyticsGroups(String name, Object groups) {
 		this.name = name;
 		this.groups = groups;
 	}
@@ -42,29 +38,14 @@ public class GroupAnalyticsGroups {
 	/**
 	 * @return the groups
 	 */
-	public List<GroupAnalyticsGroups> getGroups() {
+	public Object getGroups() {
 		return groups;
 	}
 
 	/**
 	 * @param groups the groups to set
 	 */
-	public void setGroups(List<GroupAnalyticsGroups> groups) {
+	public void setGroups(Object groups) {
 		this.groups = groups;
 	}
-
-	/**
-	 * @return the lastGroup
-	 */
-	public List<String> getLastGroup() {
-		return lastGroup;
-	}
-
-	/**
-	 * @param lastGroup the lastGroup to set
-	 */
-	public void setLastGroup(List<String> lastGroup) {
-		this.lastGroup = lastGroup;
-	}
-
 }

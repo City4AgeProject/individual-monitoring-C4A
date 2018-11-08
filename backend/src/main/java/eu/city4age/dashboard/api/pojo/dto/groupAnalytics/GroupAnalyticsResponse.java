@@ -8,15 +8,13 @@ public class GroupAnalyticsResponse implements Response {
 
 	private List<GroupAnalyticsSeries> series;
 	
-	private List<GroupAnalyticsGroups> groups;
-	
-	private List<String> lastGroup;
+	private List<Object> groups;
 	
 	public GroupAnalyticsResponse() {
 		
 	}
 
-	public GroupAnalyticsResponse(List<GroupAnalyticsSeries> series, List<GroupAnalyticsGroups> groups) {
+	public GroupAnalyticsResponse(List<GroupAnalyticsSeries> series, List<Object> groups) {
 		super();
 		this.series = series;
 		this.groups = groups;
@@ -39,28 +37,14 @@ public class GroupAnalyticsResponse implements Response {
 	/**
 	 * @return the groups
 	 */
-	public List<GroupAnalyticsGroups> getGroups() {
+	public List<Object> getGroups() {
 		return groups;
 	}
 
 	/**
 	 * @param groups the groups to set
 	 */
-	public void setGroups(List<GroupAnalyticsGroups> groups) {
+	public void setGroups(List<Object> groups) {
 		this.groups = groups;
-	}
-
-	/**
-	 * @return the lastGroup
-	 */
-	public List<String> getLastGroup() {
-		return lastGroup;
-	}
-
-	/**
-	 * @param lastGroup the lastGroup to set
-	 */
-	public void setLastGroup(List<String> lastGroup) {
-		this.lastGroup = lastGroup;
 	}
 }
