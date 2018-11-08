@@ -203,15 +203,15 @@ public class ViewEndpoint {
 
 		List<String> categories = new ArrayList <String> ();
 		
-		List<ArrayList<Filter>> allCategoryFilters = new ArrayList<ArrayList<Filter>>();
+		List<List<Filter>> allCategoryFilters = new ArrayList<List<Filter>>();
 		
-		List<ArrayList<Filter>> allPilotsFilters = new ArrayList<ArrayList<Filter>>();
+		List<List<Filter>> allPilotsFilters = new ArrayList<List<Filter>>();
 		
-		List<ArrayList<Filter>> allVariablesFilters = new ArrayList<ArrayList<Filter>>();
+		List<List<Filter>> allVariablesFilters = new ArrayList<List<Filter>>();
 		
-		List<ArrayList<Filter>> allTimesFilters = new ArrayList<ArrayList<Filter>>();
+		List<List<Filter>> allTimesFilters = new ArrayList<List<Filter>>();
 		
-		List<ArrayList<Filter>> allFilters = new ArrayList<ArrayList<Filter>>();
+		List<List<Filter>> allFilters = new ArrayList<List<Filter>>();
 		
 		Map<String, Object> inQueryParams = new HashMap<String, Object> ();
 
@@ -259,11 +259,11 @@ public class ViewEndpoint {
 			allTimesFilters = viewService.createAllTimeFilters (intervalStartODT, intervalEndODT, comp);
 		}
 
-		allFilters = viewService.createAllFilters (allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
-		
+		allFilters = viewService.createAllFilters(allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
+
 		GenericTableData tableData = new GenericTableData();
 		
-		for (ArrayList<Filter> filter : allFilters) {
+		for (List<Filter> filter : allFilters) {
 			Object[] dataAvg = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "grAn", inQueryParams);
 			tableData = viewService.addGenericTableData(filter, dataAvg, comp, tableData, pilotCodes);
 		}

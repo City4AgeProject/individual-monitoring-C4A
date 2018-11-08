@@ -237,46 +237,62 @@ public class ViewServiceImpl implements ViewService {
 	}
 	
 	@Override
-	public List<ArrayList<Filter>> createAllFilters(List<ArrayList<Filter>> allVariablesFilters,
-			List<ArrayList<Filter>> allPilotsFilters, List<ArrayList<Filter>> allCategoryFilters,
-			List<ArrayList<Filter>> allTimesFilters) {
-		
-		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
-		
-		for (ArrayList<Filter> pilotFilter : allPilotsFilters)
-			for (ArrayList<Filter> variableFilter : allVariablesFilters)
-				if (!allCategoryFilters.isEmpty()) for (ArrayList<Filter> categoryFilter: allCategoryFilters)	
+	public List<List<Filter>> createAllFilters(List<List<Filter>> allVariablesFilters,
+	List<List<Filter>> allPilotsFilters, List<List<Filter>> allCategoryFilters,
+	List<List<Filter>> allTimesFilters) {
+	
+		List<List<Filter>> list = new ArrayList<List<Filter>> ();
+	
+		for (List<Filter> pilotFilter : allPilotsFilters)
+			for (List<Filter> variableFilter : allVariablesFilters)
+				if (!allCategoryFilters.isEmpty()) for (List<Filter> categoryFilter: allCategoryFilters)
 					if (!allTimesFilters.isEmpty())
-						for (ArrayList<Filter> timeFilter: allTimesFilters) {
-							ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
-							
+						for (List<Filter> timeFilter: allTimesFilters) {
+							List<Filter> specificFilters = new ArrayList<Filter> ();
+	
 							specificFilters.addAll(variableFilter);
 							specificFilters.addAll(pilotFilter);
 							specificFilters.addAll(timeFilter);
-							if (!allCategoryFilters.isEmpty())
-								specificFilters.addAll(categoryFilter);
-							
-							list.add(specificFilters);				
-						}
-					else {
-						ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
-						
-						specificFilters.addAll(variableFilter);
-						specificFilters.addAll(pilotFilter);
-						if (!allCategoryFilters.isEmpty())
 							specificFilters.addAll(categoryFilter);
 						
-						list.add(specificFilters);						
+							list.add(specificFilters);	
+						}
+					else {
+						List<Filter> specificFilters = new ArrayList<Filter> ();
+					
+						specificFilters.addAll(variableFilter);
+						specificFilters.addAll(pilotFilter);
+						specificFilters.addAll(categoryFilter);
+					
+						list.add(specificFilters);	
 					}
-
+					else
+						if (!allTimesFilters.isEmpty())
+							for (List<Filter> timeFilter: allTimesFilters) {
+								List<Filter> specificFilters = new ArrayList<Filter> ();
+				
+								specificFilters.addAll(variableFilter);
+								specificFilters.addAll(pilotFilter);
+								specificFilters.addAll(timeFilter);
+							
+								list.add(specificFilters);	
+							}
+						else {
+							ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
+						
+							specificFilters.addAll(variableFilter);
+							specificFilters.addAll(pilotFilter);
+						
+							list.add(specificFilters);	
+						}	
 		return list;
 	}
 
 	@Override
-	public List<ArrayList<Filter>> createAllTimeFilters(OffsetDateTime intervalStartODT,
+	public List<List<Filter>> createAllTimeFilters(OffsetDateTime intervalStartODT,
 			OffsetDateTime intervalEndODT, boolean comparison) {
 		
-		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
+		List<List<Filter>> list = new ArrayList<List<Filter>> ();
 		
 		if (comparison == false) {
 			
@@ -284,7 +300,7 @@ public class ViewServiceImpl implements ViewService {
 			
 			while (!current.isAfter(intervalEndODT)) {
 				
-				ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
+				List<Filter> specificFilters = new ArrayList<Filter> ();
 				
 				Filter byIntervalStart = new Filter();
 				byIntervalStart.setName("intervalStart");
@@ -302,7 +318,7 @@ public class ViewServiceImpl implements ViewService {
 			}
 		} else {
 			
-			ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
+			List<Filter> specificFilters = new ArrayList<Filter> ();
 			
 			Filter byIntervalStart = new Filter();
 			byIntervalStart.setName("intervalStart");
@@ -321,9 +337,9 @@ public class ViewServiceImpl implements ViewService {
 	}
 	
 	@Override
-	public List<ArrayList<Filter>> createAllFiltersFromPilotCodes (List<String> pilotCodes, Boolean comparison) {
+	public List<List<Filter>> createAllFiltersFromPilotCodes (List<String> pilotCodes, Boolean comparison) {
 		
-		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
+		List<List<Filter>> list = new ArrayList<List<Filter>> ();
 		
 		if (comparison) {
 			
@@ -380,9 +396,9 @@ public class ViewServiceImpl implements ViewService {
 	}
 	
 	@Override
-	public List<ArrayList<Filter>> createAllFiltersFromVariables (List<Long> detectionVariableIDs) {
+	public List<List<Filter>> createAllFiltersFromVariables (List<Long> detectionVariableIDs) {
 		
-		List<ArrayList<Filter>> list = new ArrayList<ArrayList<Filter>> ();
+		List<List<Filter>> list = new ArrayList<List<Filter>> ();
 		
 		for (Long varID : detectionVariableIDs) {
 			
@@ -400,9 +416,9 @@ public class ViewServiceImpl implements ViewService {
 	}
 	
 	@Override
-	public List<ArrayList<Filter>> createAllCategoryFilters(List<String> categories) {
+	public List<List<Filter>> createAllCategoryFilters(List<String> categories) {
 		
-		List<ArrayList<Filter>> allFilters = new ArrayList<ArrayList<Filter>>();
+		List<List<Filter>> allFilters = new ArrayList<List<Filter>>();
 		
 		HashMap<String, List<String>> socioEconomics = new HashMap <String, List<String>> ();
 		
@@ -422,9 +438,9 @@ public class ViewServiceImpl implements ViewService {
 	}
 	
 	@Override
-	public List<ArrayList<Filter>> createCategoryFilter(HashMap<String, List<String>> socioEconomics, List<String> categories) {
+	public List<List<Filter>> createCategoryFilter(HashMap<String, List<String>> socioEconomics, List<String> categories) {
 		
-		List<ArrayList<Filter>> allFilters = new ArrayList<ArrayList<Filter>>();
+		List<List<Filter>> allFilters = new ArrayList<List<Filter>>();
 		
 		int cnt = categories.size();
 		
@@ -453,13 +469,13 @@ public class ViewServiceImpl implements ViewService {
 			for (int i = 0; i < cnt - 1; i++) 
 				currCategories.add(categories.get(i));
 			String type = categories.get(cnt - 1);
-			List<ArrayList<Filter>> alreadyCreatedFilters = createCategoryFilter (socioEconomics, currCategories);
+			List<List<Filter>> alreadyCreatedFilters = createCategoryFilter (socioEconomics, currCategories);
 						
-			for (ArrayList<Filter> alreadyCreatedFilter: alreadyCreatedFilters) {
+			for (List<Filter> alreadyCreatedFilter: alreadyCreatedFilters) {
 				
 				for (String category : socioEconomics.get(type)) {
 					
-					ArrayList<Filter> specificFilters = new ArrayList<Filter> ();
+					List<Filter> specificFilters = new ArrayList<Filter> ();
 					Filter filter = new Filter();
 					filter.setName(type);
 					filter.getInParams().put(type, category);
@@ -475,7 +491,7 @@ public class ViewServiceImpl implements ViewService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public GenericTableData addGenericTableData(ArrayList<Filter> filter, Object[] data, Boolean comp,
+	public GenericTableData addGenericTableData(List<Filter> filter, Object[] data, Boolean comp,
 			GenericTableData tableData, List<String> pilotCodes) {
 
 		if(tableData.getHeaders().size() == 0) {
