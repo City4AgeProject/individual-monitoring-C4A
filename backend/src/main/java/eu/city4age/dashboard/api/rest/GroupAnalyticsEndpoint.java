@@ -54,12 +54,13 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.GenericTableData;
-import eu.city4age.dashboard.api.pojo.dto.analytics.AnalyticsMetadataResponse;
-import eu.city4age.dashboard.api.pojo.dto.analytics.CorrelationData;
-import eu.city4age.dashboard.api.pojo.dto.analytics.OJDataTreeDetectionVariableAttribute;
-import eu.city4age.dashboard.api.pojo.dto.analytics.OJDataTreeDetectionVariableSingleElem;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.AnalyticsMetadataResponse;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.CorrelationData;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsResponse;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsSeries;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.OJDataTreeDetectionVariableAttribute;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.OJDataTreeDetectionVariableSingleElem;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.service.GroupAnalyticsService;
@@ -470,11 +471,13 @@ public class GroupAnalyticsEndpoint {
 		}
 		
 		// create groups all scenarios
-		List<Object> groups = null;
+		List<GroupAnalyticsGroups> groups = new ArrayList<GroupAnalyticsGroups>();
 		if (url.contains("category")) {
 			groups = groupAnalyticsService.createGroups(categories, socioEconomics, datesStringList, comparison, comp);
 		} else {
-			groups = new ArrayList<Object>(datesStringList);
+			GroupAnalyticsGroups group = new GroupAnalyticsGroups();
+			group.setGroups(datesStringList);
+			groups.add(group);
 		}
 		response.setGroups(groups);
 		

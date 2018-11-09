@@ -1,4 +1,4 @@
-package eu.city4age.dashboard.api.pojo.dto.analytics;
+package eu.city4age.dashboard.api.pojo.dto.groupAnalytics;
 
 import java.util.Map;
 

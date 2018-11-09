@@ -8,13 +8,13 @@ public class GroupAnalyticsResponse implements Response {
 
 	private List<GroupAnalyticsSeries> series;
 	
-	private List<Object> groups;
+	private List<GroupAnalyticsGroups> groups;
 	
 	public GroupAnalyticsResponse() {
 		
 	}
 
-	public GroupAnalyticsResponse(List<GroupAnalyticsSeries> series, List<Object> groups) {
+	public GroupAnalyticsResponse(List<GroupAnalyticsSeries> series, List<GroupAnalyticsGroups> groups) {
 		super();
 		this.series = series;
 		this.groups = groups;
@@ -37,14 +37,14 @@ public class GroupAnalyticsResponse implements Response {
 	/**
 	 * @return the groups
 	 */
-	public List<Object> getGroups() {
+	public List<GroupAnalyticsGroups> getGroups() {
 		return groups;
 	}
 
 	/**
 	 * @param groups the groups to set
 	 */
-	public void setGroups(List<Object> groups) {
+	public void setGroups(List<GroupAnalyticsGroups> groups) {
 		this.groups = groups;
 	}
 }

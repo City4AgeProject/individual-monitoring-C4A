@@ -12,6 +12,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.GenericTableData;
+import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsSeries;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 
@@ -53,7 +54,7 @@ public interface GroupAnalyticsService {
 	
 	List<GroupAnalyticsSeries> createSeries(boolean comparison, List<List<String>> data);
 	
-	List<Object> createGroups(List<String> categories,
+	List<GroupAnalyticsGroups> createGroups(List<String> categories,
 			HashMap<String, List<String>> socioEconomics, List<String> datesStringList, boolean comparison, boolean comp);
 	
 	List<String> createDateList(String url);

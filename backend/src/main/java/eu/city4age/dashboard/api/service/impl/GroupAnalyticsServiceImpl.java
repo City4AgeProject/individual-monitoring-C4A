@@ -686,28 +686,32 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		series.add(serie);
 		return series;
 	}
-
-	@Override
-	public List<Object> createGroups(List<String> categories,
+	
+	// attempt with interface
+	/*@Override
+	public List<GroupAnalyticGroups> createGroups(List<String> categories,
 			HashMap<String, List<String>> socioEconomics, List<String> datesStringList, boolean comparison, boolean comp) {
 
 		int cnt = categories.size();
 
-		List<GroupAnalyticsGroups> groups = new ArrayList<GroupAnalyticsGroups>();
+		List<GroupAnalyticGroups> groups = new ArrayList<GroupAnalyticGroups>();
 
 		if (cnt - 1 == 0) {
 			if (!comp || comparison) {				
-				GroupAnalyticsGroups group1 = new GroupAnalyticsGroups();
-				group1.setGroups(socioEconomics.get(categories.get(cnt - 1)));
-				return new ArrayList<Object>(socioEconomics.get(categories.get(cnt - 1)));
+				GroupAnalyticGroups group1 = new GroupAnalyticGroupsBaseCase();
+				group1.setGroups(new ArrayList<Object>(socioEconomics.get(categories.get(cnt - 1))));
+				groups.add(group1);
+				logger.info("1. groups.size(): " + groups.size());
+				return groups;
 			} else {
 				for (String category1 : socioEconomics.get(categories.get(cnt - 1))) {
-					GroupAnalyticsGroups group1 = new GroupAnalyticsGroups();
+					GroupAnalyticGroups group1 = new GroupAnalyticGroupsBaseCase();;
 					group1.setName(category1);
-					group1.setGroups(datesStringList);
+					group1.setGroups(new ArrayList<Object>(datesStringList));
 					groups.add(group1);
 				}
-				return new ArrayList<Object>(groups);
+				logger.info("2. groups.size(): " + groups.size());
+				return groups;
 			}
 		} else {
 
@@ -717,7 +721,54 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 
 			String type = categories.get(cnt - 1);
 
-			List<Object> alreadyCreatedGroups = createGroups(currCategories, socioEconomics, datesStringList, comparison, comp);
+			List<GroupAnalyticGroups> alreadyCreatedGroups = createGroups(currCategories, socioEconomics, datesStringList, comparison, comp);
+
+			for (String category : socioEconomics.get(type)) {
+				GroupAnalyticGroups group = new GroupAnalyticGroupsRecursive();
+				group.setName(category);
+				group.setGroups(new ArrayList<Object>(alreadyCreatedGroups));
+				groups.add(group);
+
+			}
+			logger.info("3. groups.size(): " + groups.size());
+			return groups;
+		}
+	}*/
+
+	@Override
+	public List<GroupAnalyticsGroups> createGroups(List<String> categories,
+			HashMap<String, List<String>> socioEconomics, List<String> datesStringList, boolean comparison, boolean comp) {
+
+		int cnt = categories.size();
+
+		List<GroupAnalyticsGroups> groups = new ArrayList<GroupAnalyticsGroups>();
+
+		if (cnt - 1 == 0) {
+			if (!comp || comparison) {
+				// base case for comparison and/or initial diagram where groups is a List<String>
+				GroupAnalyticsGroups group1 = new GroupAnalyticsGroups();
+				group1.setGroups(socioEconomics.get(categories.get(cnt - 1)));
+				groups.add(group1);
+				return groups;
+			} else {
+				// base case for evolution in time (contains the timeline) where dates are a List<String>
+				for (String category1 : socioEconomics.get(categories.get(cnt - 1))) {
+					GroupAnalyticsGroups group1 = new GroupAnalyticsGroups();
+					group1.setName(category1);
+					group1.setGroups(datesStringList);
+					groups.add(group1);
+				}
+				return groups;
+			}
+		} else {
+
+			ArrayList<String> currCategories = new ArrayList<String> ();
+			for (int i = 0; i < cnt - 1; i++) 
+				currCategories.add(categories.get(i));
+
+			String type = categories.get(cnt - 1);
+
+			List<GroupAnalyticsGroups> alreadyCreatedGroups = createGroups(currCategories, socioEconomics, datesStringList, comparison, comp);
 
 			for (String category : socioEconomics.get(type)) {
 				GroupAnalyticsGroups group = new GroupAnalyticsGroups();
@@ -726,7 +777,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 				groups.add(group);
 
 			}
-			return new ArrayList<Object>(groups);
+			return groups;
 		}
 	}
 
