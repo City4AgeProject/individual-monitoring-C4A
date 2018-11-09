@@ -4,7 +4,7 @@ body{
 }
 
 html{
-    font-family:  "Open Sans", Arial, sans-serif;
+/*    font-family:  "Open Sans", Arial, sans-serif;*/
 }
 
 .oj-web-applayout-header{
@@ -262,4 +262,7 @@ th {
 .oj-switch.oj-selected.oj-hover .oj-switch-track{
 	    background-color: #478EFA;
     border-color: #478EFA;
+}
+.oj-datepicker-calendar  th {
+    background-color: white;
 }

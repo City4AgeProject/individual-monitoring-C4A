@@ -32,3 +32,7 @@ var USER_LOGIN = root + "users/login";
 
 var CONFIG_ALL_GEF = root + "configuration/findAllGef";
 var CONFIG_ALL_GES = root + "configuration/findAllGes";
+
+var GROUP_ANALYTICS_DATA = root + "groupAnalytics/graphData";
+var GROUP_ANALYTICS_HEATMAP = root + "groupAnalytics/correlationCoefficientHeatMap";
+var GROUP_ANALYTICS_DATA_GROUPS_AND_SERIES = root + "groupAnalytics/groupsAndSeries";

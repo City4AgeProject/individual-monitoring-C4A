@@ -330,3 +330,71 @@
 }
 /*END TABS ON MEA PAGE*/
 
+/*GROUP ANALYTICS*/
+
+.demo-tab-content-group{
+    
+    
+}
+#sampleDemo{
+    text-align: left;
+}
+.oj-panel{
+    background-color: #fcfcfd;
+}
+@media(min-width: 1000px){
+    .flex-container {
+        display: flex;
+    }
+    .flex-item-1, .flex-item-2{
+        margin-right: 15px;
+       
+    }
+}
+@media(max-width: 1000px){
+    .input-container-1, .input-container-2{
+        margin-top: 20px;
+        
+    }
+    .tree-container{
+        width: 50%;
+    }
+}
+@media(max-width: 800px){
+    .tree-container{
+        width: 75%;
+    }
+}
+@media(max-width: 550px){
+    .tree-container{
+        width: 100%;
+    }
+}
+
+.heatmap-container {
+    padding: 10px;
+    text-align: center;
+}
+.heatmap-legend-gradient{
+    
+    height: 15px;
+    background-image: linear-gradient(to right, #76b8e1,white,#ff8080);
+     margin:0 auto;
+}
+.heatmap-legend-numbers{
+    width: 80%;
+    height: 20px;
+    display: flex;
+    margin:0 auto;
+}
+.numbers{
+    
+    flex:1;
+    text-align: center;
+}
+/*END GROUP ANALYTICS*/
+
+
+.group-analytics-container{
+    
+}

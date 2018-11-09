@@ -54,7 +54,9 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                     'cr_list_full': {label: 'Care Recipient'},
                     'detection_ges': {label: 'Detection GES'},
                     'detection_gef': {label: 'Detection GEF'},
-                    'detection_mea': {label: 'Detection MEA'}
+                    'detection_mea': {label: 'Detection MEA'},
+                    'dashboard_selection': {label: 'Dashboard selection'},
+                    'group_analytics': {label: 'Group analytics'}
                 });
                 oj.Router.defaults['urlAdapter'] = new oj.Router.urlParamAdapter();
 

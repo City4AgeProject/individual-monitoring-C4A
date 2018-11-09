@@ -55,7 +55,9 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
 	                                    $('#appHeader').css({display: 'block'});
 	                                    $('.user-menu').css({display: 'block'});
 	
-	                                    oj.Router.rootInstance.go("cr_list_full");
+	                                    //oj.Router.rootInstance.go("cr_list_full");
+                                            
+                                            oj.Router.rootInstance.go("dashboard_selection");
 	                                    app.userLogin(users.displayName);
 	                                    app.userPilotName(users.pilotName);
 	

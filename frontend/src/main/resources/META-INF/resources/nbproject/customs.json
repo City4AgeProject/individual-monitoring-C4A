@@ -1,6 +1,7 @@
 {
     "elements": {
         "assessments-preview": {},
+        "oj-dialog": {},
         "oj-label": {},
         "oj-popup": {},
         "oj-data-grid": {},
@@ -17,7 +18,10 @@
         "oj-collapsible": {},
         "oj-switcher": {},
         "oj-switch": {},
-        "oj-tab-bar": {}
+        "oj-tab-bar": {},
+        "oj-combobox-many": {},
+        "oj-switch": {},
+        "oj-text-area": {}
     },
     "attributes": {
         "slot": {
