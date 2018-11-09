@@ -12,7 +12,6 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.GenericTableData;
-import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsSeries;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
 

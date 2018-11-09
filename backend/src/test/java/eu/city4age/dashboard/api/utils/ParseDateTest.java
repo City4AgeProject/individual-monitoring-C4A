@@ -126,7 +126,7 @@ public class ParseDateTest {
 		
 		HashMap<String, List<String>> socioEconomics = groupAnalyticsService.createSocioEconomicsMap();
 		
-		List<GroupAnalyticsGroups> groups = groupAnalyticsService.createGroups(reverseCategories, socioEconomics, datesStringList, comparison, comp);
+		List<?> groups = groupAnalyticsService.createGroups(reverseCategories, socioEconomics, datesStringList, comparison, comp);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
