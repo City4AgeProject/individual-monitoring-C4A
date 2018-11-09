@@ -726,7 +726,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	}*/
 
 	@Override
-	public List<GroupAnalyticsGroups> createGroups(List<String> categories,
+	public List<?> createGroups(List<String> categories,
 			HashMap<String, List<String>> socioEconomics, List<String> datesStringList, boolean comparison, boolean comp) {
 
 		int cnt = categories.size();
@@ -738,8 +738,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 				// base case for comparison and/or initial diagram where groups is a List<String>
 				GroupAnalyticsGroups group1 = new GroupAnalyticsGroups();
 				group1.setGroups(socioEconomics.get(categories.get(cnt - 1)));
-				groups.add(group1);
-				return groups;
+				return socioEconomics.get(categories.get(cnt - 1));
 			} else {
 				// base case for evolution in time (contains the timeline) where dates are a List<String>
 				for (String category1 : socioEconomics.get(categories.get(cnt - 1))) {
@@ -758,7 +757,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 
 			String type = categories.get(cnt - 1);
 
-			List<GroupAnalyticsGroups> alreadyCreatedGroups = createGroups(currCategories, socioEconomics, datesStringList, comparison, comp);
+			List<?> alreadyCreatedGroups = createGroups(currCategories, socioEconomics, datesStringList, comparison, comp);
 
 			for (String category : socioEconomics.get(type)) {
 				GroupAnalyticsGroups group = new GroupAnalyticsGroups();

@@ -471,13 +471,11 @@ public class GroupAnalyticsEndpoint {
 		}
 		
 		// create groups all scenarios
-		List<GroupAnalyticsGroups> groups = new ArrayList<GroupAnalyticsGroups>();
+		List<?> groups = new ArrayList<GroupAnalyticsGroups>();
 		if (url.contains("category")) {
 			groups = groupAnalyticsService.createGroups(categories, socioEconomics, datesStringList, comparison, comp);
 		} else {
-			GroupAnalyticsGroups group = new GroupAnalyticsGroups();
-			group.setGroups(datesStringList);
-			groups.add(group);
+			groups = datesStringList;
 		}
 		response.setGroups(groups);
 		

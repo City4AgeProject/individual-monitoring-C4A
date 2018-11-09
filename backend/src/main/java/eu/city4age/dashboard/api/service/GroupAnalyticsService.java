@@ -54,7 +54,7 @@ public interface GroupAnalyticsService {
 	
 	List<GroupAnalyticsSeries> createSeries(boolean comparison, List<List<String>> data);
 	
-	List<GroupAnalyticsGroups> createGroups(List<String> categories,
+	List<?> createGroups(List<String> categories,
 			HashMap<String, List<String>> socioEconomics, List<String> datesStringList, boolean comparison, boolean comp);
 	
 	List<String> createDateList(String url);
