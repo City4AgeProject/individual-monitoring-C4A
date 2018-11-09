@@ -459,17 +459,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		
 		List<List<Filter>> allFilters = new ArrayList<List<Filter>>();
 		
-		HashMap<String, List<String>> socioEconomics = new HashMap <String, List<String>> ();
-		
-		socioEconomics.put("sex", Arrays.asList("m", "f"));
-		socioEconomics.put("marital_status", Arrays.asList("s", "m", "w", "d", "t"));
-		socioEconomics.put("age_group", Arrays.asList("50-59", "60-69", "70-79", "80-89", "90+"));
-		socioEconomics.put("education", Arrays.asList("none", "primary", "secondary", "tertiary"));
-		socioEconomics.put("cohabiting", Arrays.asList("alone", "family", "friends", "other"));
-		socioEconomics.put("informal_caregiver_ability", Arrays.asList("t", "f"));
-		socioEconomics.put("quality_housing", Arrays.asList("low", "average", "high"));
-		socioEconomics.put("quality_neighborhood", Arrays.asList("low", "average", "high"));
-		socioEconomics.put("working", Arrays.asList("t", "f"));
+		HashMap<String, List<String>> socioEconomics = createSocioEconomicsMap();
 						
 		allFilters = createCategoryFilter (socioEconomics, categories);
 		
