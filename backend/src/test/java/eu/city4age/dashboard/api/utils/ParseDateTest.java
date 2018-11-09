@@ -30,14 +30,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
-import eu.city4age.dashboard.api.rest.ViewEndpoint;
+import eu.city4age.dashboard.api.service.GroupAnalyticsService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
 public class ParseDateTest {
 	
 	@Autowired
-	private ViewEndpoint viewEndpoint;
+	private GroupAnalyticsService groupAnalyticsService;
 	
 	@Test
 	public void ParseDateTest() throws ParseException  {
@@ -92,7 +92,7 @@ public class ParseDateTest {
 		//String property = "detectionVariable";
 		//String property = "category";
 		
-		List<String> propertyList = viewEndpoint.getPropertyFromURL(url, property);
+		List<String> propertyList = groupAnalyticsService.getPropertyFromURL(url, property);
 		
 		System.out.println("propertyList.size(): " + propertyList.size());
 		for (String p : propertyList) System.out.println(p);
@@ -124,9 +124,9 @@ public class ParseDateTest {
 		boolean comparison = url.contains("comparison=true");
 		boolean comp = url.contains("comparison");
 		
-		HashMap<String, List<String>> socioEconomics = viewEndpoint.createSocioEconomicsMap();
+		HashMap<String, List<String>> socioEconomics = groupAnalyticsService.createSocioEconomicsMap();
 		
-		List<Object> groups = viewEndpoint.createGroups(reverseCategories, socioEconomics, datesStringList, comparison, comp);
+		List<Object> groups = groupAnalyticsService.createGroups(reverseCategories, socioEconomics, datesStringList, comparison, comp);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());

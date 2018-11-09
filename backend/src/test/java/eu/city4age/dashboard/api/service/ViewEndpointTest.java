@@ -50,7 +50,7 @@ import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.UserInSystem;
 import eu.city4age.dashboard.api.pojo.dto.oj.DataSet;
-import eu.city4age.dashboard.api.rest.ViewEndpoint;
+import eu.city4age.dashboard.api.rest.IndividualMonitoringEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -60,7 +60,7 @@ public class ViewEndpointTest {
 	
 	@Spy
 	@InjectMocks
-	ViewEndpoint viewEndpoint;
+	IndividualMonitoringEndpoint viewEndpoint;
 	
 	@Autowired
 	private MeasuresService measuresService;

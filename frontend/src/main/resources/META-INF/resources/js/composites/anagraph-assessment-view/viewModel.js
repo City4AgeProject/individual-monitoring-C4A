@@ -249,7 +249,7 @@ function(oj, ko, $) {
 
 		var loadDataSet = function(data) { 
                     //loading data for ges diagram (if anagraph-assessment-view is on gef page, it triggers but does not load data)
-                        var jqXHR = $.getJSON(VIEW_DIAGRAM_DATA
+                        var jqXHR = $.getJSON(INDIVIDUAL_MONITORING_DIAGRAM_DATA
 					+ "/careRecipientId/" + self.props.careRecipientId
 					+ "?parentFactorId=" + self.props.parentFactorId,
 					loadDiagramDataCallback2);
@@ -351,7 +351,7 @@ function(oj, ko, $) {
 		};
                 // Measures’ monthly values diagram
                 var drawDerivedMonthlyMeasuresChart = function(gesId) {
-                    $.getJSON(VIEW_DERIVED_MEASURES + "/userInRoleId/" + parseInt(sessionStorage.getItem("crId")) + "/parentFactorId/" + gesId, function(data) {
+                    $.getJSON(INDIVIDUAL_MONITORING_DERIVED_MEASURES + "/userInRoleId/" + parseInt(sessionStorage.getItem("crId")) + "/parentFactorId/" + gesId, function(data) {
                                 data.series.forEach(function(serie){
                                    serie.name =  oj.Translations.getTranslatedString(serie.name);
                                 });
