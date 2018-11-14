@@ -325,6 +325,7 @@
 		    <version>1.7.1</version>
 		</dependency>
 		
+		<!--
 		<dependency>
 			<groupId>io.ei</groupId>
 			<artifactId>json-to-xls-master</artifactId>
@@ -336,7 +337,7 @@
 			<artifactId>jsontojava</artifactId>
 			<version>1.0</version>
 		</dependency>
-	
+		-->
 
 	</dependencies>
 
