@@ -49,9 +49,9 @@ public interface GroupAnalyticsService {
 	
 	List<List<Filter>> createCategoryFilter(HashMap<String, List<String>> socioEconomics, List<String> categories);
 
-	GenericTableData addGenericTableData(List<Filter> filter, Object[] data, Boolean comp, GenericTableData tableData, List<String> pilotCodes);
+	GenericTableData addGenericTableData(List<Filter> filter, Object[] data, Boolean comp, GenericTableData tableData, List<String> pilotCodes, Boolean hasCategories);
 	
-	List<GroupAnalyticsSeries> createSeries(boolean comparison, List<List<String>> data);
+	List<GroupAnalyticsSeries> createSeries(boolean comparison, GenericTableData json);
 	
 	List<?> createGroups(List<String> categories,
 			HashMap<String, List<String>> socioEconomics, List<String> datesStringList, boolean comparison, boolean comp);

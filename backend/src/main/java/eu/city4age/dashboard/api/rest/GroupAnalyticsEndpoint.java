@@ -397,7 +397,7 @@ public class GroupAnalyticsEndpoint {
 				detectionVariableIDs.add(Long.parseLong(s));
 		}
 		
-		Boolean comp = false;
+		Boolean comp = null;
 
 		if (comparison != null)
 			comp = Boolean.parseBoolean(comparison);
@@ -434,7 +434,7 @@ public class GroupAnalyticsEndpoint {
 		
 		for (List<Filter> filter : allFilters) {
 			Object[] dataAvg = viewGroupAnalyticsDataRepository.doQueryWithFilterAggr(filter, "grAn", inQueryParams);
-			tableData = groupAnalyticsService.addGenericTableData(filter, dataAvg, comp, tableData, pilotCodes);
+			tableData = groupAnalyticsService.addGenericTableData(filter, dataAvg, comp, tableData, pilotCodes, categories.isEmpty());
 		}
 
 		return JerseyResponse.build(objectMapper.writeValueAsString(tableData));
@@ -455,9 +455,7 @@ public class GroupAnalyticsEndpoint {
 
 		ResponseEntity<GenericTableData> graphResponse = restTemplate().getForEntity(url, GenericTableData.class);
 
-		GenericTableData json = graphResponse.getBody();
-
-		List<List<String>> data = json.getData();
+		GenericTableData json = graphResponse.getBody();		
 
 		// categories
 		List<String> categories = groupAnalyticsService.getPropertyFromURL(url, "category");
@@ -481,7 +479,7 @@ public class GroupAnalyticsEndpoint {
 		
 
 		// create series all scenarios
-		List<GroupAnalyticsSeries> series = groupAnalyticsService.createSeries(comparison, data);
+		List<GroupAnalyticsSeries> series = groupAnalyticsService.createSeries(comparison, json);
 
 		response.setSeries(series);
 

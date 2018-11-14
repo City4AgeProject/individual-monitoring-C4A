@@ -380,7 +380,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		
 		List<List<Filter>> list = new ArrayList<List<Filter>> ();
 		
-		if (comparison) {
+		if (comparison != null && comparison == true) {
 			
 			for (String pilot : pilotCodes) {
 					
@@ -521,7 +521,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public GenericTableData addGenericTableData(List<Filter> filter, Object[] data, Boolean comp,
-			GenericTableData tableData, List<String> pilotCodes) {
+			GenericTableData tableData, List<String> pilotCodes, Boolean hasCategories) {
 
 		if(tableData.getHeaders().size() == 0) {
 			tableData.getHeaders().add("avgValue");
@@ -529,23 +529,22 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 			for (Filter f : filter) {
 				switch (f.getName()) {
 					case "detectionVariable":
-						tableData.getHeaders().add("detectionVariable");
 						tableData.getHeaders().add("detectionVariableName");
 						tableData.getHeaders().add("detectionVariableType");
 						break;
 					case "pilot":
-						if (comp)
-							tableData.getHeaders().add("pilot");
-						else {
-							for(String pilot : pilotCodes) {
-								tableData.getHeaders().add(pilot);
-							}
-						}
+						tableData.getHeaders().add("pilot");						
 						break;
 					case "intervalStart":
-						tableData.getHeaders().add("intervalStartJSON");
-						tableData.getHeaders().add("intervalStart");
-						tableData.getHeaders().add("typicalPeriod");
+						if ((comp == null && hasCategories) || (comp != null && !comp)) {
+						//if (!comp) {
+							tableData.getHeaders().add("intervalStart");
+							tableData.getHeaders().add("typicalPeriod");
+						}
+						else {
+							tableData.getHeaders().add("intervalStart");
+							tableData.getHeaders().add("intervalEnd");
+						}
 						break;
 					case "intervalEnd":
 						break;
@@ -572,12 +571,11 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 			switch (f.getName()) {
 			case "detectionVariable":
 				DetectionVariable dv = detectionVariableRepository.getOne((Long) f.getInParams().entrySet().iterator().next().getValue());
-				row.add(dv.getId().toString());
 				row.add(dv.getDetectionVariableName());
 				row.add(dv.getDetectionVariableType().getDetectionVariableType().getName());
 				break;
 			case "pilot":
-				if (comp) {
+				if (comp != null && comp) {
 					try {
 						row.add((String) f.getInParams().entrySet().iterator().next().getValue());
 					} catch (Exception e) {
@@ -594,11 +592,12 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 				}
 				break;
 			case "intervalStart":
-				row.add(OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy/MM")));
+				//row.add(OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy/MM")));
 				row.add(OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)));
-				row.add("month");
+				if ((comp == null && hasCategories) || (comp != null && !comp)) row.add("month");
 				break;
 			case "intervalEnd":
+				if (!((comp == null && hasCategories) || (comp != null && !comp))) row.add(OffsetDateTime.ofInstant(((Timestamp) f.getInParams().entrySet().iterator().next().getValue()).toInstant(), ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)));
 				break;
 			case "sex":
 			case "marital_status":
@@ -624,14 +623,22 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	 * @return
 	 */
 	@Override
-	public List<GroupAnalyticsSeries> createSeries(boolean comparison, List<List<String>> data) {
+	public List<GroupAnalyticsSeries> createSeries(boolean comparison, GenericTableData json) {
+		
+		List<List<String>> data = json.getData();
+		List<String> headers = json.getHeaders();
+		
 		GroupAnalyticsSeries serie = new GroupAnalyticsSeries();
 		List<GroupAnalyticsSeries> series = new ArrayList<GroupAnalyticsSeries>();
 		
-		String previousPilot = data.get(0).get(5);
-		String previousDetectionVariableName = data.get(0).get(3);
+		int pilotIndex = headers.indexOf("pilot");
+		String previousPilot = data.get(0).get(pilotIndex);
+		int variableNameIndex = headers.indexOf("detectionVariableName");
+		String previousDetectionVariableName = data.get(0).get(variableNameIndex);
+		
+		int avgValueIndex = headers.indexOf("avgValue");
 
-		String firstPilot = data.get(0).get(5);
+		String firstPilot = data.get(0).get(pilotIndex);
 
 		serie.setName(previousDetectionVariableName);
 		serie.setPilot(previousPilot);
@@ -639,11 +646,15 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		List<BigDecimal> items = new ArrayList<BigDecimal>();
 
 		for (List<String> entry : data) {
+			
+			String varName = entry.get(variableNameIndex);
+			String pilot = entry.get(pilotIndex);
+			String avgValue = entry.get(avgValueIndex);
 
-			if (!(previousDetectionVariableName.contains(entry.get(3)) && previousPilot.contains(entry.get(5)))) {
+			if (!(previousDetectionVariableName.contains(varName) && previousPilot.contains(pilot))) {
 
-				previousDetectionVariableName = entry.get(3);
-				previousPilot = entry.get(5);
+				previousDetectionVariableName = varName;
+				previousPilot = pilot;
 
 				serie.setItems(items);
 				series.add(serie);
@@ -651,23 +662,24 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 
 				serie = new GroupAnalyticsSeries();
 
-				serie.setName(entry.get(3));
+				serie.setName(varName);
 				serie.setPilot(previousPilot);
 				
-				if (comparison && !entry.get(5).equals(firstPilot)) {
+				if (comparison && !pilot.equals(firstPilot)) {
 					serie.setAssignedToY2("on");
 					serie.setDisplayInLegend("off");
 				}
 
 			}
 
-			if (entry.get(0).matches("")) {
+			
+			if (avgValue.matches("")) {
 				items.add(null);
 			} else {
-				if (comparison && entry.get(5).equals(firstPilot)) {
-					items.add(BigDecimal.valueOf(0 - Double.parseDouble(entry.get(0))));
+				if (comparison && pilot.equals(firstPilot)) {
+					items.add(BigDecimal.valueOf(0 - Double.parseDouble(avgValue)));
 				} else {
-					items.add(BigDecimal.valueOf(Double.parseDouble(entry.get(0))));
+					items.add(BigDecimal.valueOf(Double.parseDouble(avgValue)));
 				}
 			}
 
@@ -736,16 +748,14 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		if (cnt - 1 == 0) {
 			if (!comp || comparison) {
 				// base case for comparison and/or initial diagram where groups is a List<String>
-				GroupAnalyticsGroups group1 = new GroupAnalyticsGroups();
-				group1.setGroups(socioEconomics.get(categories.get(cnt - 1)));
 				return socioEconomics.get(categories.get(cnt - 1));
 			} else {
 				// base case for evolution in time (contains the timeline) where dates are a List<String>
 				for (String category1 : socioEconomics.get(categories.get(cnt - 1))) {
-					GroupAnalyticsGroups group1 = new GroupAnalyticsGroups();
-					group1.setName(category1);
-					group1.setGroups(datesStringList);
-					groups.add(group1);
+					GroupAnalyticsGroups group = new GroupAnalyticsGroups();
+					group.setName(category1);
+					group.setGroups(datesStringList);
+					groups.add(group);
 				}
 				return groups;
 			}
