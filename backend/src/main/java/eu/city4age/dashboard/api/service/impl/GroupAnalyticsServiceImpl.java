@@ -235,7 +235,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 
 				PearsonsCorrelation corrP = new PearsonsCorrelation(mat);
 
-				double corrPValue = getCorrelationPValues(corrP, mat.getRowDimension());
+				double corrPValue = getCorrelationPValues(corrP.getCorrelationMatrix(), mat.getRowDimension());
 
 				if (corrPValue <= 0.05) {
 					double corr = new PearsonsCorrelation().correlation(ovlValuesDoubles,
@@ -254,9 +254,9 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		return correlations;
 	}
 	
-    public double getCorrelationPValues(PearsonsCorrelation corrP, int nObs) {
+    private double getCorrelationPValues(RealMatrix matrix, int nObs) {
 		TDistribution tDistribution = new TDistribution(nObs - 2);
-        double r = corrP.getCorrelationMatrix().getEntry(0, 1);
+        double r = matrix.getEntry(0, 1);
         double t = FastMath.abs(r * FastMath.sqrt((nObs - 2)/(1 - r * r)));
         return (2 * tDistribution.cumulativeProbability(-t));
     }
