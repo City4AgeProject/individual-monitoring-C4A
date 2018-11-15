@@ -22,13 +22,15 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import eu.city4age.dashboard.api.external.io.ei.jsontoxls.AllConstants;
+import eu.city4age.dashboard.api.external.io.ei.jsontoxls.util.JsonPojoConverter;
+import eu.city4age.dashboard.api.external.io.ei.jsontoxls.util.ObjectDeserializer;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
-import io.ei.jsontoxls.AllConstants;
-import io.ei.jsontoxls.util.JsonPojoConverter;
-import io.ei.jsontoxls.util.ObjectDeserializer;
 
+@Component
 @Path(ExportDataEndpoint.PATH)
 public class ExportDataEndpoint {
 	

@@ -1,4 +1,4 @@
-package com.astav.jsontojava.classmanager;
+package eu.city4age.dashboard.api.external.com.astav.jsontojava.classmanager;
 
 import com.google.common.collect.Lists;
 import org.codehaus.jackson.map.ObjectMapper;

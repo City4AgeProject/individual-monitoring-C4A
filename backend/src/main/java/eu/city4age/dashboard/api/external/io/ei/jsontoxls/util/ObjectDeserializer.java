@@ -1,7 +1,10 @@
-package io.ei.jsontoxls.util;
+package eu.city4age.dashboard.api.external.io.ei.jsontoxls.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import eu.city4age.dashboard.api.external.io.ei.jsontoxls.util.ChildURLClassLoader;
+
 import java.lang.reflect.Type;
 
 import java.io.File;

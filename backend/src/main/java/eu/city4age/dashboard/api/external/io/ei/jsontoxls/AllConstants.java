@@ -1,4 +1,4 @@
-package io.ei.jsontoxls;
+package eu.city4age.dashboard.api.external.io.ei.jsontoxls;
 
 public class AllConstants {
     public static final String MICRO_SERVICE_NAME = "json_to_xls";

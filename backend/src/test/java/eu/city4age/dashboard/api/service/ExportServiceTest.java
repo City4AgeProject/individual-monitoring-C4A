@@ -25,9 +25,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
-import io.ei.jsontoxls.AllConstants;
-import io.ei.jsontoxls.util.JsonPojoConverter;
-import io.ei.jsontoxls.util.ObjectDeserializer;
+import eu.city4age.dashboard.api.external.io.ei.jsontoxls.AllConstants;
+import eu.city4age.dashboard.api.external.io.ei.jsontoxls.util.JsonPojoConverter;
+import eu.city4age.dashboard.api.external.io.ei.jsontoxls.util.ObjectDeserializer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)

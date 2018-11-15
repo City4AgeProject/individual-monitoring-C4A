@@ -1,4 +1,4 @@
-package com.astav.jsontojava.util;
+package eu.city4age.dashboard.api.external.com.astav.jsontojava.util;
 
 import com.google.common.base.Optional;
 

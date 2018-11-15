@@ -1,4 +1,4 @@
-package com.astav.jsontojava;
+package eu.city4age.dashboard.api.external.com.astav.jsontojava;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,15 +9,16 @@ import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.astav.jsontojava.classmanager.GeneratedClassManager;
-import com.astav.jsontojava.classmanager.ImportClassManager;
-import com.astav.jsontojava.regex.RegexFilter;
-import com.astav.jsontojava.template.JavaTemplate;
-import com.astav.jsontojava.util.MapValuesHelper;
-import com.astav.jsontojava.util.MergeMapCollectionHelper;
-import com.astav.jsontojava.util.StringHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.classmanager.GeneratedClassManager;
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.classmanager.ImportClassManager;
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.regex.RegexFilter;
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.template.JavaTemplate;
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.util.MapValuesHelper;
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.util.MergeMapCollectionHelper;
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.util.StringHelper;
 
 /**
  * User: Astav

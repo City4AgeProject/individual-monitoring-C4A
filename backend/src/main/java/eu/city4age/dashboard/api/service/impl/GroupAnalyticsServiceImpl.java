@@ -17,9 +17,11 @@ import java.util.Locale;
 
 import javax.ws.rs.core.PathSegment;
 
+import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.util.FastMath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,8 @@ import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValue
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
-import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
+import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.dto.GenericTableData;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsSeries;
@@ -233,9 +235,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 
 				PearsonsCorrelation corrP = new PearsonsCorrelation(mat);
 
-				RealMatrix corrMatrix = corrP.getCorrelationPValues();
-
-				double corrPValue = corrMatrix.getEntry(0, 1);
+				double corrPValue = getCorrelationPValues(corrP, mat.getRowDimension());
 
 				if (corrPValue <= 0.05) {
 					double corr = new PearsonsCorrelation().correlation(ovlValuesDoubles,
@@ -253,6 +253,13 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		
 		return correlations;
 	}
+	
+    public double getCorrelationPValues(PearsonsCorrelation corrP, int nObs) {
+		TDistribution tDistribution = new TDistribution(nObs - 2);
+        double r = corrP.getCorrelationMatrix().getEntry(0, 1);
+        double t = FastMath.abs(r * FastMath.sqrt((nObs - 2)/(1 - r * r)));
+        return (2 * tDistribution.cumulativeProbability(-t));
+    }
 	
 	@Override
 	public List<List<Filter>> createAllFilters(List<List<Filter>> allVariablesFilters,

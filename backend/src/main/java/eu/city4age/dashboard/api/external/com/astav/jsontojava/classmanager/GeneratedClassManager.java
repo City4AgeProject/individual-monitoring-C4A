@@ -1,4 +1,4 @@
-package com.astav.jsontojava.classmanager;
+package eu.city4age.dashboard.api.external.com.astav.jsontojava.classmanager;
 
 import javax.tools.*;
 import java.io.File;

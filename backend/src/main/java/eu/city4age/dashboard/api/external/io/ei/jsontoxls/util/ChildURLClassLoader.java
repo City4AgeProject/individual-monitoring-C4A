@@ -1,4 +1,4 @@
-package io.ei.jsontoxls.util;
+package eu.city4age.dashboard.api.external.io.ei.jsontoxls.util;
 
 import java.net.URL;
 import java.net.URLClassLoader;

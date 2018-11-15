@@ -1,4 +1,4 @@
-package com.astav.jsontojava;
+package eu.city4age.dashboard.api.external.com.astav.jsontojava;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;

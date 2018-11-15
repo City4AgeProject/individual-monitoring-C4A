@@ -1,13 +1,13 @@
-package io.ei.jsontoxls.util;
+package eu.city4age.dashboard.api.external.io.ei.jsontoxls.util;
 
-import static io.ei.jsontoxls.util.UUIDUtils.newUUID;
+import static eu.city4age.dashboard.api.external.io.ei.jsontoxls.util.UUIDUtils.newUUID;
 
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.astav.jsontojava.Generator;
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.Generator;
 
 public class JsonPojoConverter {
 	static protected Logger logger = LogManager.getLogger(JsonPojoConverter.class);

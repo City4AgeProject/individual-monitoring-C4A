@@ -1,13 +1,14 @@
-package com.astav.jsontojava.template;
-
-import com.astav.jsontojava.ClassFileData;
-import com.astav.jsontojava.ClassFiles;
-import com.astav.jsontojava.util.StringHelper;
-import org.apache.commons.io.FileUtils;
+package eu.city4age.dashboard.api.external.com.astav.jsontojava.template;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
+
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.ClassFileData;
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.ClassFiles;
+import eu.city4age.dashboard.api.external.com.astav.jsontojava.util.StringHelper;
 
 /**
  * User: Astav

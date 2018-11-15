@@ -1,4 +1,4 @@
-package com.astav.jsontojava.regex;
+package eu.city4age.dashboard.api.external.com.astav.jsontojava.regex;
 
 import com.google.common.base.Optional;
 import org.codehaus.jackson.annotate.JsonProperty;
