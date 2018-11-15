@@ -18,7 +18,7 @@ import eu.city4age.dashboard.api.pojo.persist.Filter;
 public interface GroupAnalyticsService {
 	
 	int findDetectionVariableValues(DetectionVariable overall, DetectionVariable dv, UserInRole uir,
-			List<Date> ovlDates, List<Date> dvDates, double[] ovlValuesDoubles,
+			List<Date> dvDates, double[] ovlValuesDoubles,
 			double[] detectionVariableValuesDoubles);
 	
 	LinkedHashMap<String, Double> averageCorrelationValues(LinkedHashMap<String, Double> valuesList, String name,

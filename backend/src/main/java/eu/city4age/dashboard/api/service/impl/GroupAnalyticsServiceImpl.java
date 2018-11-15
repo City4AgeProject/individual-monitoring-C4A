@@ -73,35 +73,31 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	 * @return
 	 */
 	public int findDetectionVariableValues(DetectionVariable overall, DetectionVariable dv, UserInRole uir,
-			List<Date> ovlDates, List<Date> dvDates, double[] ovlValuesDoubles,
+			List<Date> dvDates, double[] ovlValuesDoubles,
 			double[] detectionVariableValuesDoubles) {
-		Date intervalStart = null;
+
 		int cnt = 0;
-		for (Date ovlDate : ovlDates) {
-			if (dvDates.contains(ovlDate)) {
-				intervalStart = ovlDate;
+		for (Date dvDate : dvDates) {
 
+			BigDecimal ovlValue = viewGefCalculatedInterpolatedPredictedValuesRepository
+					.findByUserInRoleIdAndDetectionVariableIdForOneMonth(uir.getId(), overall.getId(),
+							dvDate);
+			ovlValuesDoubles[cnt] = ovlValue.doubleValue();
 
-				BigDecimal ovlValue = viewGefCalculatedInterpolatedPredictedValuesRepository
-						.findByUserInRoleIdAndDetectionVariableIdForOneMonth(uir.getId(), overall.getId(),
-								intervalStart);
-				ovlValuesDoubles[cnt] = ovlValue.doubleValue();
-
-				BigDecimal detectionVariableValue = null;
-				if (dv.getDetectionVariableType()
-						.getDetectionVariableType() != DetectionVariableType.Type.MEA) {
-					detectionVariableValue = viewGefCalculatedInterpolatedPredictedValuesRepository
-							.findByUserInRoleIdAndDetectionVariableIdForOneMonth(uir.getId(), dv.getId(),
-									intervalStart);
-				} else {
-					detectionVariableValue = derivedMeasureValueRepository
-							.findByUserInRoleIdAndDetectionVariableIdForOneMonth(uir.getId(), dv.getId(),
-									intervalStart);
-				}
-				detectionVariableValuesDoubles[cnt] = detectionVariableValue.doubleValue();
-
-				cnt++;
+			BigDecimal detectionVariableValue = null;
+			if (dv.getDetectionVariableType()
+					.getDetectionVariableType() != DetectionVariableType.Type.MEA) {
+				detectionVariableValue = viewGefCalculatedInterpolatedPredictedValuesRepository
+						.findByUserInRoleIdAndDetectionVariableIdForOneMonth(uir.getId(), dv.getId(),
+								dvDate);
+			} else {
+				detectionVariableValue = derivedMeasureValueRepository
+						.findByUserInRoleIdAndDetectionVariableIdForOneMonth(uir.getId(), dv.getId(),
+								dvDate);
 			}
+			detectionVariableValuesDoubles[cnt] = detectionVariableValue.doubleValue();
+
+			cnt++;
 		}
 		return cnt;
 	}
@@ -115,6 +111,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	@Override
 	public LinkedHashMap<String, Double> averageCorrelationValues(LinkedHashMap<String, Double> valuesList, String name,
 			List<Double> correlations) {
+		
 		if (!correlations.isEmpty()) {
 			Double sum = 0d;
 			for (Double c : correlations) {
@@ -194,15 +191,11 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	@Override
 	public List<Double> calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
 			List<Double> correlations, Date intervalStartDate, Date intervalEndDate, UserInRole uir) {
-		
-		// find min and max dates for overall and the selected detection variable and determine the interval common to both
-		List<Date> ovlDates = viewGefCalculatedInterpolatedPredictedValuesRepository
-				.findDatesForUserInRoleIdAndDetectionVariableIdForInterval(uir.getId(), overall.getId(), intervalStartDate, intervalEndDate);
 
 		List<Date> dvDates = findAllDatesForDetectionVariable(dv, intervalStartDate, intervalEndDate,
 				uir);
-
-		correlations = calculateCorrelationCoefficients(overall, dv, correlations, uir, ovlDates, dvDates);
+		
+		correlations = calculateCorrelationCoefficients(overall, dv, correlations, uir, dvDates);
 		
 		return correlations;
 	}
@@ -217,17 +210,17 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	 * @return 
 	 */
 	private List<Double> calculateCorrelationCoefficients(DetectionVariable overall, DetectionVariable dv, List<Double> correlations,
-			UserInRole uir, List<Date> ovlDates, List<Date> dvDates) {
+			UserInRole uir, List<Date> dvDates) {
 		
-		if (!ovlDates.isEmpty() && !dvDates.isEmpty()) {
+		if (!dvDates.isEmpty()) {
 
-			int arraySize = getArraySize(ovlDates, dvDates);
+			int arraySize = dvDates.size();
 
 			double ovlValuesDoubles[] = new double[arraySize];
 			double detectionVariableValuesDoubles[] = new double[arraySize];
 
 			// find appropriate values for overall and the selected detection variable for the selected interval
-			int cnt = findDetectionVariableValues(overall, dv, uir, ovlDates, dvDates, ovlValuesDoubles,
+			int cnt = findDetectionVariableValues(overall, dv, uir, dvDates, ovlValuesDoubles,
 					detectionVariableValuesDoubles);
 
 			// calculate the correlation coefficient
@@ -259,20 +252,6 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		}
 		
 		return correlations;
-	}
-	
-	/**
-	 * @param ovlDates
-	 * @param dvDates
-	 * @return
-	 */
-	private int getArraySize(List<Date> ovlDates, List<Date> dvDates) {
-		int arraySize = 0;
-		if (ovlDates.size() <= dvDates.size())
-			arraySize = ovlDates.size();
-		else
-			arraySize = dvDates.size();
-		return arraySize;
 	}
 	
 	@Override
@@ -688,54 +667,6 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		series.add(serie);
 		return series;
 	}
-	
-	// attempt with interface
-	/*@Override
-	public List<GroupAnalyticGroups> createGroups(List<String> categories,
-			HashMap<String, List<String>> socioEconomics, List<String> datesStringList, boolean comparison, boolean comp) {
-
-		int cnt = categories.size();
-
-		List<GroupAnalyticGroups> groups = new ArrayList<GroupAnalyticGroups>();
-
-		if (cnt - 1 == 0) {
-			if (!comp || comparison) {				
-				GroupAnalyticGroups group1 = new GroupAnalyticGroupsBaseCase();
-				group1.setGroups(new ArrayList<Object>(socioEconomics.get(categories.get(cnt - 1))));
-				groups.add(group1);
-				logger.info("1. groups.size(): " + groups.size());
-				return groups;
-			} else {
-				for (String category1 : socioEconomics.get(categories.get(cnt - 1))) {
-					GroupAnalyticGroups group1 = new GroupAnalyticGroupsBaseCase();;
-					group1.setName(category1);
-					group1.setGroups(new ArrayList<Object>(datesStringList));
-					groups.add(group1);
-				}
-				logger.info("2. groups.size(): " + groups.size());
-				return groups;
-			}
-		} else {
-
-			ArrayList<String> currCategories = new ArrayList<String> ();
-			for (int i = 0; i < cnt - 1; i++) 
-				currCategories.add(categories.get(i));
-
-			String type = categories.get(cnt - 1);
-
-			List<GroupAnalyticGroups> alreadyCreatedGroups = createGroups(currCategories, socioEconomics, datesStringList, comparison, comp);
-
-			for (String category : socioEconomics.get(type)) {
-				GroupAnalyticGroups group = new GroupAnalyticGroupsRecursive();
-				group.setName(category);
-				group.setGroups(new ArrayList<Object>(alreadyCreatedGroups));
-				groups.add(group);
-
-			}
-			logger.info("3. groups.size(): " + groups.size());
-			return groups;
-		}
-	}*/
 
 	@Override
 	public List<?> createGroups(List<String> categories,
@@ -747,10 +678,10 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 
 		if (cnt - 1 == 0) {
 			if (!comp || comparison) {
-				// base case for comparison and/or initial diagram where groups is a List<String>
+				// base case for comparison and/or initial diagram where the groups is a List<String>
 				return socioEconomics.get(categories.get(cnt - 1));
 			} else {
-				// base case for evolution in time (contains the timeline) where dates are a List<String>
+				// base case for evolution in time (contains the timeline) where the dates are a List<String>
 				for (String category1 : socioEconomics.get(categories.get(cnt - 1))) {
 					GroupAnalyticsGroups group = new GroupAnalyticsGroups();
 					group.setName(category1);

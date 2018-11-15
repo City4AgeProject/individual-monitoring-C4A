@@ -143,6 +143,7 @@ public class GroupAnalyticsEndpoint {
 
 					correlations = groupAnalyticsService.calculateCorrelationCoefficientsForOneUser(overall, dv, correlations, intervalStartDate,
 							intervalEndDate, uir);
+					
 				}
 			}
 

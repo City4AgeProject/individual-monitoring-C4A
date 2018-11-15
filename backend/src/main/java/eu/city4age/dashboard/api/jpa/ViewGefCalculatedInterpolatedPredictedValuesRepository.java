@@ -42,6 +42,9 @@ public interface ViewGefCalculatedInterpolatedPredictedValuesRepository extends 
 	@Query("SELECT gfv.gefValue FROM ViewGefCalculatedInterpolatedPredictedValues gfv WHERE gfv.userInRoleId = :uirId AND gfv.detectionVariableId = :dvId AND gfv.id.dataType <> 'p' AND gfv.intervalStart = :intervalStart")
 	BigDecimal findByUserInRoleIdAndDetectionVariableIdForOneMonth(@Param("uirId") Long uirId, @Param("dvId") Long dvId, @Param("intervalStart") Date intervalStart);
 	
+	@Query("SELECT gfv.gefValue FROM ViewGefCalculatedInterpolatedPredictedValues gfv WHERE gfv.userInRoleId = :uirId AND gfv.detectionVariableId IN (501, :dvId) AND gfv.id.dataType <> 'p' AND gfv.intervalStart = :intervalStart")
+	BigDecimal[] findOvlAndDvByUserInRoleIdAndDetectionVariableIdForOneMonth(@Param("uirId") Long uirId, @Param("dvId") Long dvId, @Param("intervalStart") Date intervalStart);
+	
 	@Query("SELECT DISTINCT gfv.intervalStart FROM ViewGefCalculatedInterpolatedPredictedValues gfv WHERE gfv.userInRoleId = :uirId AND gfv.detectionVariableId = :dvId AND gfv.intervalStart >= :intervalStart AND gfv.intervalStart <= :intervalEnd AND gfv.id.dataType <> 'p'")
 	List<Date> findDatesForUserInRoleIdAndDetectionVariableIdForInterval(@Param("uirId") Long uirId, @Param("dvId") Long dvId, @Param("intervalStart") Date intervalStart, @Param("intervalEnd") Date intervalEnd);
 	

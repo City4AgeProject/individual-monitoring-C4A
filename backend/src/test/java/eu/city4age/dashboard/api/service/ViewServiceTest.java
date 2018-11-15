@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.city4age.dashboard.api.ApplicationTest;
 import eu.city4age.dashboard.api.pojo.persist.Filter;
-import eu.city4age.dashboard.api.service.impl.ViewServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationTest.class)
@@ -28,7 +27,7 @@ public class ViewServiceTest {
 	static protected Logger logger = LogManager.getLogger(ViewServiceTest.class);
 	
 	@Autowired
-	private ViewService viewService;
+	private GroupAnalyticsService groupAnalyticsService;
 
 	@Test
 	@Transactional
@@ -67,7 +66,7 @@ public class ViewServiceTest {
 		byIntervalStart.getInParams().put("intervalStart", new Timestamp((new Date()).getTime()));
 		allTimesFilters.add(Arrays.asList(byIntervalStart));
 
-		List<List<Filter>> result = viewService.createAllFilters(allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
+		List<List<Filter>> result = groupAnalyticsService.createAllFilters(allVariablesFilters, allPilotsFilters, allCategoryFilters, allTimesFilters);
 		
 		Assert.assertNotNull(result);
 		
