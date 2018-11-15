@@ -7,11 +7,11 @@
 /**
  * group_analytics module
  */
-define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojbutton', 'ojs/ojnavigationlist',
+define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs/ojnavigationlist',
     'ojs/ojswitcher', 'ojs/ojdatetimepicker', 'ojs/ojselectcombobox', 'ojs/ojtimezonedata', 'ojs/ojlabel', 
     'ojs/ojconveyorbelt','ojs/ojtreeview', 'ojs/ojjsontreedatasource','ojs/ojchart','ojs/ojcollapsible','ojs/ojdatagrid', 'ojs/ojcollectiondatagriddatasource',
-'ojs/ojcollapsible','urls'
-], function (oj, ko) {
+'ojs/ojcollapsible','urls','ojs/ojvalidation-base','ojs/ojmessaging'
+], function (oj, ko, $) {
     /**
      * The view model for the main content view template
      */
@@ -55,6 +55,27 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojbutton', 'ojs/ojnavigationlist
         self.dateFromValue1 = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2017, 1, 1)));
         self.dateToValue1 = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2018, 1, 1)));
         self.comparisonDisabled = ko.observable(true);
+        self.startGroup = ko.observable();
+        self.endGroup = ko.observable();
+        self.lineXAxis = ko.observable();
+        
+        self.setViewPort = function(evolutionInTime){
+            let socioFactors = self.selectedSocio();
+            let totalGroups = 1;
+            for(let i = 0; i < socioFactors.length; i++){
+               totalGroups *= self.allSocioEconomics[socioFactors[i]].length;
+            }
+            if(evolutionInTime) {
+                //adding months to totalGroups
+                let date1 = new Date(self.dateFromValue1());
+                let date2 = new Date(self.dateToValue1());
+                let monthDiff = date2.getMonth() + date2.getFullYear() * 12 - (date1.getMonth() + date1.getFullYear() * 12);
+                
+                
+                totalGroups *= monthDiff + 1;
+            }
+            self.lineXAxis({viewportMin: -0.5, viewportMax: totalGroups - 0.5});
+        };
         
         self.keyValuePairs = [];
         
@@ -89,58 +110,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojbutton', 'ojs/ojnavigationlist
             {id: 'bhx', label: 'Birmingham'},
             {id: 'whole_population', label: 'Whole population'}
         ];
-        self.selectedPilots2.subscribe(function(changes){
-            if(self.selectedPilots2().length == 2){
-                self.comparisonDisabled(false);
-            }else{
-                self.comparisonDisabled(true);
-            }
-        },null, "arrayChange");
-        self.comparisonAnalysis2.subscribe(function(newValue){
-            if(newValue == "disabled"){
-                self.applyScenario2(true);
-                self.evolutionInTime2([]);
-            }else{
-                
-            }
-        });
-        self.evolutionInTime2.subscribe(function(newValue){
-            if(newValue == "disabled"){
-                self.applyScenario2(false);
-                self.comparisonAnalysis2([]);
-            }else{
-                
-            }
-        });
-
-        self.applyScenario1 = function(){
-            document.getElementById('logo-img-1').style.display = 'none';    
-            document.getElementById('collapsible-container1').style.display = 'block';
-            var variables = [];
-            //get selected detection variables
-            self.treeSelection1().forEach(function(el){
-                variables.push(self.keyValuePairs[el-1]);
-            });
-            self.getScenario1Data(self.selectedPilots1(), variables, self.dateFromValue(),  self.dateToValue());
-            self.getHeatmapData(self.selectedPilots1(), variables, 1);
-        };
-        self.applyScenario2 = function(comparison){
-            document.getElementById('logo-img-2').style.display = 'none';    
-            document.getElementById('collapsible-container2').style.display = 'block';
-            if(comparison !== true && comparison !== false){
-                comparison = undefined;
-            }
-            var variables = [];
-            
-            //get selected detection variables
-            self.treeSelection2().forEach(function(el){
-                variables.push(self.keyValuePairs[el-1]);
-            });
-            
-            self.getScenario2Data(self.selectedPilots2(), variables, self.selectedSocio(), self.dateFromValue1(), self.dateToValue1(), comparison);
-            self.getHeatmapData(self.selectedPilots2(), variables, 2);
-        };
-        
         /*HEATMAP*/
 
         self.dataSource1 = ko.observable();
@@ -186,6 +155,96 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojbutton', 'ojs/ojnavigationlist
               }
         };
         /*END HEATMAP*/
+        
+        self.selectedPilots2.subscribe(function(changes){
+            if(self.selectedPilots2().length == 2){
+                self.comparisonDisabled(false);
+            }else{
+                self.comparisonDisabled(true);
+            }
+        },null, "arrayChange");
+        self.comparisonAnalysis2.subscribe(function(newValue){
+            if(newValue == "disabled"){
+                document.getElementById('chart2').style.display = 'none';
+                document.getElementById('ldr2').style.display = 'block';
+                self.resolveFilters(true);
+                self.evolutionInTime2([]);
+                self.setViewPort(false);
+            }else{
+                
+            }
+        });
+        self.evolutionInTime2.subscribe(function(newValue){
+            if(newValue == "disabled"){
+                document.getElementById('chart2').style.display = 'none';
+                document.getElementById('ldr2').style.display = 'block';
+                self.resolveFilters(false);
+                self.comparisonAnalysis2([]);
+                self.setViewPort(true);
+            }else{
+                
+            }
+        });
+        
+        self.applyScenario1 = function(){
+            let dateFrom = new Date(self.dateFromValue());
+            let dateTo = new Date(self.dateToValue());
+            
+            if(self.selectedPilots1().length === 0 || self.treeSelection1().length === 0 || dateFrom.getTime() > dateTo.getTime()){
+                $( "#errorMessage1" ).fadeIn( "slow", function() {
+                // Animation complete
+              });
+                //document.getElementById('errorMessage1').style.display = 'block';
+                return;
+            }
+            document.getElementById('errorMessage1').style.display = 'none'
+            document.getElementById('logo-img-1').style.display = 'none';
+            document.getElementById('collapsible-container1').style.display = 'block';
+            document.getElementById('chart1').style.display = 'none';
+            document.getElementById('ldr1').style.display = 'block';
+            
+            var variables = [];
+            //get selected detection variables
+            self.treeSelection1().forEach(function(el){
+                variables.push(self.keyValuePairs[el-1]);
+            });
+            self.getScenario1Data(self.selectedPilots1(), variables, self.dateFromValue(),  self.dateToValue());
+            self.getHeatmapData(self.selectedPilots1(), variables, 1);
+        };
+        self.applyScenario2 = function(){
+            let dateFrom = new Date(self.dateFromValue());
+            let dateTo = new Date(self.dateToValue());
+            if(self.selectedPilots2().length === 0 || self.treeSelection2().length === 0 || self.selectedSocio().length === 0 || dateFrom.getTime() > dateTo.getTime()){
+                 $( "#errorMessage2" ).fadeIn( "slow", function() {
+                // Animation complete
+              });
+                return;
+            }
+            document.getElementById('errorMessage2').style.display = 'none'
+            document.getElementById('logo-img-2').style.display = 'none'; 
+            document.getElementById('collapsible-container2').style.display = 'block';
+            document.getElementById('chart2').style.display = 'none';
+            document.getElementById('ldr2').style.display = 'block';
+            
+            self.evolutionInTime2([]);
+            self.comparisonAnalysis2([]);
+            self.resolveFilters(undefined);
+        };
+        self.resolveFilters = function(comparison){
+            var variables = [];
+            
+            //get selected detection variables
+            self.treeSelection2().forEach(function(el){
+                variables.push(self.keyValuePairs[el-1]);
+            });
+            
+            self.getScenario2Data(self.selectedPilots2(), variables, self.selectedSocio(), self.dateFromValue1(), self.dateToValue1(), comparison);
+            self.getHeatmapData(self.selectedPilots2(), variables, 2);
+            self.setViewPort();
+        };
+        
+        
+        
 
         self.treeViewData = ko.observable();
         self.groupAnalyticsData = ko.observable();
@@ -217,7 +276,8 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojbutton', 'ojs/ojnavigationlist
 
         self.getScenario1Data = function(pilots, variables, dateFrom, dateTo){
             var pilotString = pilots.join(' ');
-            var variableString = variables.join(' ');
+            var variableString1 = variables.join(' ');
+            var variableString2 = variables.join('/');
 
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
@@ -228,13 +288,28 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojbutton', 'ojs/ojnavigationlist
               }
             };
             xhttp.open("POST", GROUP_ANALYTICS_DATA_GROUPS_AND_SERIES, true);
-            xhttp.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotString + "&detectionVariable=" + variableString + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + "&comparison=false");
+            xhttp.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotString + "&detectionVariable=" + variableString1 + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + "&comparison=false");
+            $.getJSON(GROUP_ANALYTICS_CORELATION_COEFFICIENT + "/detectionVariable/"+ variableString2 +"?pilot=" + pilotString +"&intervalStart=" + dateFrom +"&intervalEnd=" + dateTo).  
+            then(function (response) { 
+                        let series = self.lineSeriesValue();
+                        for(let i = 0; i < series.length; i++){
+                            if(response[series[i].name]){
+                                 series[i].name = series[i].name.concat('(' + response[series[i].name].toFixed(2)  + ')');
+                            }
+                        }
+                        self.lineSeriesValue(series);
+                        console.log('lineseries ' + JSON.stringify());
+                        console.log('this is response : ' + JSON.stringify(response));
+                        document.getElementById('ldr1').style.display = 'none';
+                        document.getElementById('chart1').style.display = 'block';
+            });
             
            
         };
         self.getScenario2Data = function(pilots, variables, socio, dateFrom, dateTo, comparison){
             var pilotString = pilots.join(' ');
             var variableString = variables.join(' ');
+            var variableString2 = variables.join('/');
             var socioString = socio.join(' ');
             var comparisonString = "";
             if(comparison !== undefined){
@@ -279,6 +354,20 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojbutton', 'ojs/ojnavigationlist
                     self.groupsValue(response.groups); 
               }
             };
+             $.getJSON(GROUP_ANALYTICS_CORELATION_COEFFICIENT + "/detectionVariable/"+ variableString2 +"?pilot=" + pilotString +"&intervalStart=" + dateFrom +"&intervalEnd=" + dateTo).  
+            then(function (response) { 
+                        let series = self.seriesValue();
+                        for(let i = 0; i < series.length; i++){
+                            if(response[series[i].name]){
+                                 series[i].name = series[i].name.concat('(' + response[series[i].name].toFixed(2)  + ')');
+                            }
+                        }
+                        self.seriesValue(series);
+                        console.log('lineseries ' + JSON.stringify());
+                        console.log('this is response : ' + JSON.stringify(response));
+                        document.getElementById('ldr2').style.display = 'none';
+                        document.getElementById('chart2').style.display = 'block';
+            });
         };
         
         self.getHeatmapData = function(pilots,variables,scenario){

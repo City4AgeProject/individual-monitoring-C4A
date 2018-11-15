@@ -123,18 +123,18 @@
                                         <oj-button id='applyFilterBtn1' data-bind="click:applyScenario1">
                                         <span><oj-bind-text value="[[applyFilterLbl]]"></oj-bind-text></span>
                                     </oj-button>
-                                  
-                                    
+                                        <div id="errorMessage1">You did not set all required filters, or the time period selected is not valid. Please try again.</div>
                                 </div>
                                 <br>
                                     <div id="logo-collapsible-container1" style="text-align: center;">
-                                        <img id="logo-img-1" src="images/City4AgeLogo.png" style="display: inline;">
+                                        <img id="logo-img-1" src="images/City4AgeLogo.png" style="display: inline;width:60%;">
                                         <div id="collapsible-container1" style="display: none">
                                         <oj-collapsible expanded='true'>
                                             <h3  slot="header">Diagram</h3>
                                             <div class='chart-container oj-panel oj-panel-shadow-sm' style="text-align: center;">
                                                 <img id="logo-img-1" src="images/City4AgeLogo.png" style="display: none">
-                                                <div id="chart-container-1" style="display: block;">
+                                                <div id="chart-container-1" style="display: block;padding-top: 15px;min-height:500px">
+                                                    <div id="ldr1" class="loader1"></div>
                                                     <oj-chart 
                                                         id="chart1"
                                                         type="line"
@@ -143,7 +143,7 @@
                                                         animation-on-display="auto"
                                                         animation-on-data-change="auto"
                                                         hover-behavior="dim"
-                                                        style="height:400px;width:100%;"
+                                                        style="height:500px;width:100%;"
                                                         legend.position ="top"
                                                         zoom-and-scroll="live"
                                                         hide-and-show-behavior="withRescale"
@@ -295,17 +295,19 @@
                                     <oj-button id='applyFilterBtn2' data-bind="click:applyScenario2">
                                         <span><oj-bind-text value="[[applyFilterLbl]]"></oj-bind-text></span>
                                     </oj-button>
+                                     <div id="errorMessage2">You did not set all required filters, or the time period selected is not valid. Please try again.</div>
                                     
                             </div>
                                     <br>
                                         <div id="logo-collapsible-container2" style="text-align: center;">
                                         <img id="logo-img-2" src="images/City4AgeLogo.png" style="display: inline;">
+                                        
                                         <div id="collapsible-container2" style="display: none">
                                         <oj-collapsible expanded='true'>
                                             <h3  slot="header">Diagram</h3>
                                             <div class="oj-panel oj-panel-shadow-sm" style="text-align: center;">
                                             
-                                                <div id="chart-container-2" style="display: block;padding-top: 15px;">
+                                                <div id="chart-container-2" style="display: block;padding-top: 15px;min-height:500px">
                                                     <div class="oj-flex">
                                                         <div class="oj-flex-item" style="text-align: right;">
                                                             <oj-buttonset-many value="{{evolutionInTime2}}">
@@ -319,7 +321,7 @@
                                                         </div>
 
                                                     </div>
-                                                   
+                                                    <div id="ldr2" class="loader2"></div>
                                                     <oj-chart id="chart2"
                                                         type="[[chartTypeValue]]"
                                                         series="[[seriesValue]]"
@@ -336,8 +338,10 @@
                                                         y-axis.tick-label.rendered="off"
                                                         y2-axis.tick-label.rendered="off"
                                                         orientation="[[orientationValue]]"
-
-                                                        zoom-and-scroll="delayed"
+                                                        
+                                                        x-axis = "[[lineXAxis]]"
+                                                        
+                                                        zoom-and-scroll="live"
                                                         hide-and-show-behavior="withRescale"
                                                         orientation="vertical"
                                                         style="width:100%;max-width:1100px;height:500px;margin:0 auto;" >
