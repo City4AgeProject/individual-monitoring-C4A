@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import eu.city4age.dashboard.api.jpa.DerivedMeasureValueRepository;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
+import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
@@ -62,6 +63,9 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	
 	@Autowired
 	private AssessmentService assessmentService;
+	
+	@Autowired
+	private NativeQueryRepository nativeQueryRepository;
 	
 
 	/**
@@ -191,67 +195,52 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	 * @return 
 	 */
 	@Override
-	public List<Double> calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
-			List<Double> correlations, Date intervalStartDate, Date intervalEndDate, UserInRole uir) {
+	public Double calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
+			Timestamp intervalStart, Timestamp intervalEnd, UserInRole uir) {
 
-		List<Date> dvDates = findAllDatesForDetectionVariable(dv, intervalStartDate, intervalEndDate,
-				uir);
-		
-		correlations = calculateCorrelationCoefficients(overall, dv, correlations, uir, dvDates);
-		
-		return correlations;
-	}
-	
-	/**
-	 * @param overall
-	 * @param dv
-	 * @param correlations
-	 * @param uir
-	 * @param ovlDates
-	 * @param dvDates
-	 * @return 
-	 */
-	private List<Double> calculateCorrelationCoefficients(DetectionVariable overall, DetectionVariable dv, List<Double> correlations,
-			UserInRole uir, List<Date> dvDates) {
-		
-		if (!dvDates.isEmpty()) {
+		logger.info("intervalStart: " + intervalStart);
+		logger.info("intervalEnd: " + intervalEnd);
 
-			int arraySize = dvDates.size();
+		List<Object[]> result = new ArrayList<Object[]>();			
+		if (dv.getDetectionVariableType().getDetectionVariableType() != DetectionVariableType.Type.MEA) 
+			result = nativeQueryRepository.findOvlAndGfgForUserInRoleIdAndDetectionVariableIdForPeriod(uir.getId(), dv.getId(), intervalStart, intervalEnd);
+		else
+			result = nativeQueryRepository.findOvlAndDmvForUserInRoleIdAndDetectionVariableIdForPeriod(uir.getId(), dv.getId(), intervalStart, intervalEnd);
+
+		int arraySize = result.size();
+
+		// calculate the correlation coefficient
+		if (arraySize > 2) {
 
 			double ovlValuesDoubles[] = new double[arraySize];
 			double detectionVariableValuesDoubles[] = new double[arraySize];
 
-			// find appropriate values for overall and the selected detection variable for the selected interval
-			int cnt = findDetectionVariableValues(overall, dv, uir, dvDates, ovlValuesDoubles,
-					detectionVariableValuesDoubles);
-
-			// calculate the correlation coefficient
-			if (cnt > 2) {
-
-				double matrix[][] = { ovlValuesDoubles, detectionVariableValuesDoubles };
-
-				RealMatrix mat = MatrixUtils.createRealMatrix(matrix);
-				mat = mat.transpose();
-
-				PearsonsCorrelation corrP = new PearsonsCorrelation(mat);
-
-				double corrPValue = getCorrelationPValues(corrP.getCorrelationMatrix(), mat.getRowDimension());
-
-				if (corrPValue <= 0.05) {
-					double corr = new PearsonsCorrelation().correlation(ovlValuesDoubles,
-							detectionVariableValuesDoubles);
-
-					correlations.add(corr);
-				} else {
-					logger.info("p value previse visoka!!!");
-				}
-
-			} else {
-				logger.info("nema dovoljno podataka!!!");
+			for (int i = 0; i < result.size(); i++) {
+				ovlValuesDoubles[i] = ((BigDecimal) result.get(i)[1]).doubleValue();
+				detectionVariableValuesDoubles[i] = ((BigDecimal) result.get(i)[0]).doubleValue();
 			}
+
+			double matrix[][] = { ovlValuesDoubles, detectionVariableValuesDoubles };
+
+			RealMatrix mat = MatrixUtils.createRealMatrix(matrix);
+			mat = mat.transpose();
+
+			PearsonsCorrelation corrP = new PearsonsCorrelation(mat);
+
+			double corrPValue = getCorrelationPValues(corrP.getCorrelationMatrix(), mat.getRowDimension());
+
+			if (corrPValue <= 0.05) {
+				return new PearsonsCorrelation().correlation(ovlValuesDoubles,
+						detectionVariableValuesDoubles);
+			} else {
+				logger.info("p value previse visoka!!!");
+			}
+
+		} else {
+			logger.info("nema dovoljno podataka!!!");
 		}
-		
-		return correlations;
+
+		return null;
 	}
 	
     private double getCorrelationPValues(RealMatrix matrix, int nObs) {

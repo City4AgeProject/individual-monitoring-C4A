@@ -1,6 +1,7 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -9,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -122,8 +122,8 @@ public class GroupAnalyticsEndpoint {
 		else
 			intervalEndLDT = LocalDateTime.parse(intervalEndString.concat(" 23:59:59"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		
-		Date intervalStartDate = Date.from(intervalStartLDT.toInstant(ZoneOffset.UTC));
-		Date intervalEndDate = Date.from(intervalEndLDT.toInstant(ZoneOffset.UTC));
+		Timestamp intervalStartDate = Timestamp.from(intervalStartLDT.toInstant(ZoneOffset.UTC));
+		Timestamp intervalEndDate = Timestamp.from(intervalEndLDT.toInstant(ZoneOffset.UTC));
 
 		List<DetectionVariable> detectionVariables = groupAnalyticsService.getDetectionVariables(detectionVariableId);
 
@@ -134,17 +134,23 @@ public class GroupAnalyticsEndpoint {
 		for (DetectionVariable dv : detectionVariables) {			
 
 			List<Double> correlations = new ArrayList<Double>();
+			
+			Double corr;
 
 			for (Pilot pilot : pilots) {
+				
+				logger.info("poceo pilot: " + pilot.getPilotCode().name());
 
 				List<UserInRole> uirList = userInRoleRepository.findForPilotCode(pilot.getPilotCode());
 
 				for (UserInRole uir : uirList) {
 
-					correlations = groupAnalyticsService.calculateCorrelationCoefficientsForOneUser(overall, dv, correlations, intervalStartDate,
-							intervalEndDate, uir);
+					corr = groupAnalyticsService.calculateCorrelationCoefficientsForOneUser(overall, dv, intervalStartDate,	intervalEndDate, uir);
+					
+					if (corr != null) correlations.add(corr);
 					
 				}
+				logger.info("zavrsio pilot: " + pilot.getPilotCode().name());
 			}
 
 			// average of the correlation coefficients for the given time period
@@ -191,18 +197,22 @@ public class GroupAnalyticsEndpoint {
 				}
 
 				List<Double> correlations = new ArrayList<Double>();
+				
+				Double corr;
 
 				for (Pilot pilot : pilots) {
 
-					Date intervalStartDate = Date.from(startDate.toInstant(ZoneOffset.UTC));
-					Date intervalEndDate = Date.from(endDate.toInstant(ZoneOffset.UTC));
+					Timestamp intervalStartDate = Timestamp.from(startDate.toInstant(ZoneOffset.UTC));
+					Timestamp intervalEndDate = Timestamp.from(endDate.toInstant(ZoneOffset.UTC));
 
 					List<UserInRole> uirList = userInRoleRepository.findForPilotCode(pilot.getPilotCode());
 
 					for (UserInRole uir : uirList) {
 
-						correlations = groupAnalyticsService.calculateCorrelationCoefficientsForOneUser(overall, dv, correlations, intervalStartDate,
+						corr = groupAnalyticsService.calculateCorrelationCoefficientsForOneUser(overall, dv, intervalStartDate,
 								intervalEndDate, uir);
+						
+						if (corr != null) correlations.add(corr);
 					}
 				}
 

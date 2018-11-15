@@ -1,5 +1,6 @@
 package eu.city4age.dashboard.api.service;
 
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,8 +32,8 @@ public interface GroupAnalyticsService {
 	
 	List<DetectionVariable> getDetectionVariables(List<PathSegment> detectionVariableId);
 	
-	List<Double> calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
-			List<Double> correlations, Date intervalStartDate, Date intervalEndDate, UserInRole uir);
+	Double calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
+			Timestamp intervalStartDate, Timestamp intervalEndDate, UserInRole uir);
 	
 	List<List<Filter>> createAllFilters(List<List<Filter>> allVariablesFilters,
 			List<List<Filter>> allPilotsFilters, List<List<Filter>> allCategoryFilters,

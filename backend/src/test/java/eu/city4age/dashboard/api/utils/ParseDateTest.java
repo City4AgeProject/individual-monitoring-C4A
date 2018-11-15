@@ -2,6 +2,8 @@ package eu.city4age.dashboard.api.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import eu.city4age.dashboard.api.ApplicationTest;
+import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
 import eu.city4age.dashboard.api.service.GroupAnalyticsService;
 
@@ -38,6 +41,9 @@ public class ParseDateTest {
 	
 	@Autowired
 	private GroupAnalyticsService groupAnalyticsService;
+	
+	@Autowired
+	private NativeQueryRepository nativeQueryRepository;
 	
 	@Test
 	public void ParseDateTest() throws ParseException  {
@@ -132,6 +138,33 @@ public class ParseDateTest {
 		ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 		writer.writeValue(new File("C:/Users/Stefan.Spasojevic/Desktop/groups.json"), groups);
 		
+	}
+	
+	@Test
+	public void testQuery() {
+		
+		Timestamp intervalStart = Timestamp.valueOf("2016-06-01 00:00:00.0");
+		Timestamp intervalEnd = Timestamp.valueOf("2018-10-31 23:59:59.0");
+		
+		List<Object[]> result = nativeQueryRepository.findOvlAndGfgForUserInRoleIdAndDetectionVariableIdForPeriod(14L, 514L, intervalStart, intervalEnd);
+		
+		int arraySize = result.size();
+		
+		double ovlValuesDoubles[] = new double[arraySize];
+		double detectionVariableValuesDoubles[] = new double[arraySize];
+		
+		for (int i = 0; i < result.size(); i++) {
+			ovlValuesDoubles[i] = ((BigDecimal) result.get(i)[1]).doubleValue();
+			detectionVariableValuesDoubles[i] = ((BigDecimal) result.get(i)[0]).doubleValue();
+		}
+		
+		System.out.println("result.size(): " + arraySize);
+		System.out.println("result.size(): " + result.get(1).length);
+		System.out.println("result.size(): " + result.get(1)[0].getClass());
+		System.out.println("result.size(): " + result.get(1)[1]);
+		
+		System.out.println("ovlValuesDoubles: " + Arrays.toString(ovlValuesDoubles));
+		System.out.println("detectionVariableValuesDoubles: " + Arrays.toString(detectionVariableValuesDoubles));
 	}
 
 }
