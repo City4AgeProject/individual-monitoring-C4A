@@ -17,15 +17,19 @@
         "oj-buttonset-one": {},
         "oj-collapsible": {},
         "oj-switcher": {},
-        "oj-switch": {},
-        "oj-tab-bar": {},
         "oj-combobox-many": {},
         "oj-switch": {},
-        "oj-text-area": {}
+        "oj-text-area": {},
+        "oj-tab-bar": {}
     },
     "attributes": {
+        "edge": {},
+        "role": {},
+        "selection": {},
+        "style": {},
         "slot": {
             "context": "h3"
-        }
+        },
+        "id": {}
     }
 }

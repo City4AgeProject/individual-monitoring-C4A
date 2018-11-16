@@ -58,6 +58,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.startGroup = ko.observable();
         self.endGroup = ko.observable();
         self.lineXAxis = ko.observable();
+        self.orderedSocioFactors = [];
         
         self.setViewPort = function(evolutionInTime){
             let socioFactors = self.selectedSocio();
@@ -156,6 +157,16 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         };
         /*END HEATMAP*/
         
+        self.selectedSocio.subscribe(function(changes) {
+            console.log('this is changes : ' + JSON.stringify(changes));
+             if(changes[0].status == "added"){
+                 self.orderedSocioFactors.push(changes[0].value);
+             }else{
+                 self.orderedSocioFactors.pop(changes[0].value);
+             }
+             console.log('ordered socio : ' + self.orderedSocioFactors);
+        }, null, "arrayChange");
+        
         self.selectedPilots2.subscribe(function(changes){
             if(self.selectedPilots2().length == 2){
                 self.comparisonDisabled(false);
@@ -238,7 +249,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
                 variables.push(self.keyValuePairs[el-1]);
             });
             
-            self.getScenario2Data(self.selectedPilots2(), variables, self.selectedSocio(), self.dateFromValue1(), self.dateToValue1(), comparison);
+            self.getScenario2Data(self.selectedPilots2(), variables, self.orderedSocioFactors, self.dateFromValue1(), self.dateToValue1(), comparison);
             self.getHeatmapData(self.selectedPilots2(), variables, 2);
             self.setViewPort();
         };
