@@ -345,6 +345,23 @@
                                                         orientation="vertical"
                                                         style="width:100%;max-width:1100px;height:500px;margin:0 auto;" >
                                                     </oj-chart>
+                                                    <div class="export-container">
+                                                             <oj-label for="selectExport">Select export format:</oj-label>
+                                                            <oj-select-one id="selectExport" style="max-width:5em">
+                                                                <oj-option value="xlsx">
+                                                                    <span slot="startIcon">
+                                                                        <img src="images/xlsxIcon.png" role="presentation" style="vertical-align:middle"/>
+                                                                    </span> xlsx
+                                                                </oj-option>
+                                                                <oj-option value="csv">
+                                                                    <span slot="startIcon">
+                                                                        <img src="images/csvIcon.png" role="presentation" style="vertical-align:middle"/>
+                                                                    </span> csv
+                                                                </oj-option>
+                                                            </oj-select-one>
+                                                             <oj-button id="export-button" data-bind="click:exportBtn">Export</oj-button>
+                                                    </div>
+                                                    
                                                 </div>
                                         </div>
                                           </oj-collapsible>

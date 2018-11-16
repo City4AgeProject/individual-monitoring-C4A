@@ -30,6 +30,7 @@
         "slot": {
             "context": "h3"
         },
-        "id": {}
+        "id": {},
+        "on-oj-action": {}
     }
 }

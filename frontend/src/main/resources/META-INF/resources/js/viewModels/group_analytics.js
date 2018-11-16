@@ -157,14 +157,23 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         };
         /*END HEATMAP*/
         
+        self.exportBtn = function(){
+            let xhttp = new XMLHttpRequest
+            xhttp.open("POST", "http://localhost:8080/C4A-dashboard/rest/exportData/generateExcel", true);
+            xhttp.send("http://localhost:8080/C4A-dashboard/rest/groupAnalytics/graphData?pilotCode=ath lcc&detectionVariable=507 508&intervalStart=2017-05-23&intervalEnd=2018-02-01");
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                    console.log('FILE RECIEVED!');
+              }
+            };
+            
+        };
         self.selectedSocio.subscribe(function(changes) {
-            console.log('this is changes : ' + JSON.stringify(changes));
              if(changes[0].status == "added"){
                  self.orderedSocioFactors.push(changes[0].value);
              }else{
                  self.orderedSocioFactors.pop(changes[0].value);
              }
-             console.log('ordered socio : ' + self.orderedSocioFactors);
         }, null, "arrayChange");
         
         self.selectedPilots2.subscribe(function(changes){
@@ -310,7 +319,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
                         }
                         self.lineSeriesValue(series);
                         console.log('lineseries ' + JSON.stringify());
-                        console.log('this is response : ' + JSON.stringify(response));
                         document.getElementById('ldr1').style.display = 'none';
                         document.getElementById('chart1').style.display = 'block';
             });
@@ -353,7 +361,8 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
 
                         });
                         }else{
-                            //evolution in time line chart  
+                            //evolution in time line chart 
+                            self.yAxisTitleValue(""); 
                         self.chartTypeValue("line");
                         self.stackValue("off");
                         self.splitDualYValue("off");
