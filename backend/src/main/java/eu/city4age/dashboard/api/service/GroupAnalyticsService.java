@@ -2,7 +2,6 @@ package eu.city4age.dashboard.api.service;
 
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,15 +17,8 @@ import eu.city4age.dashboard.api.pojo.persist.Filter;
 
 public interface GroupAnalyticsService {
 	
-	int findDetectionVariableValues(DetectionVariable overall, DetectionVariable dv, UserInRole uir,
-			List<Date> dvDates, double[] ovlValuesDoubles,
-			double[] detectionVariableValuesDoubles);
-	
 	LinkedHashMap<String, Double> averageCorrelationValues(LinkedHashMap<String, Double> valuesList, String name,
 			List<Double> correlations);
-	
-	List<Date> findAllDatesForDetectionVariable(DetectionVariable dv, Date intervalStartDate,
-			Date intervalEndDate, UserInRole uir);
 	
 	List<Pilot> getPilots(String pilotString);
 	

@@ -9,7 +9,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,11 +26,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.city4age.dashboard.api.jpa.DerivedMeasureValueRepository;
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
 import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
-import eu.city4age.dashboard.api.jpa.ViewGefCalculatedInterpolatedPredictedValuesRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
@@ -50,12 +47,6 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	static protected Logger logger = LogManager.getLogger(GroupAnalyticsServiceImpl.class);
 	
 	@Autowired
-	private ViewGefCalculatedInterpolatedPredictedValuesRepository viewGefCalculatedInterpolatedPredictedValuesRepository;
-	
-	@Autowired
-	private DerivedMeasureValueRepository derivedMeasureValueRepository;
-	
-	@Autowired
 	private PilotRepository pilotRepository;
 	
 	@Autowired
@@ -66,47 +57,6 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	
 	@Autowired
 	private NativeQueryRepository nativeQueryRepository;
-	
-
-	/**
-	 * @param overall
-	 * @param dv
-	 * @param uir
-	 * @param ovlDates
-	 * @param dvDates
-	 * @param ovlValuesDoubles
-	 * @param detectionVariableValuesDoubles
-	 * @return
-	 */
-	public int findDetectionVariableValues(DetectionVariable overall, DetectionVariable dv, UserInRole uir,
-			List<Date> dvDates, double[] ovlValuesDoubles,
-			double[] detectionVariableValuesDoubles) {
-
-		int cnt = 0;
-		for (Date dvDate : dvDates) {
-
-			BigDecimal ovlValue = viewGefCalculatedInterpolatedPredictedValuesRepository
-					.findByUserInRoleIdAndDetectionVariableIdForOneMonth(uir.getId(), overall.getId(),
-							dvDate);
-			ovlValuesDoubles[cnt] = ovlValue.doubleValue();
-
-			BigDecimal detectionVariableValue = null;
-			if (dv.getDetectionVariableType()
-					.getDetectionVariableType() != DetectionVariableType.Type.MEA) {
-				detectionVariableValue = viewGefCalculatedInterpolatedPredictedValuesRepository
-						.findByUserInRoleIdAndDetectionVariableIdForOneMonth(uir.getId(), dv.getId(),
-								dvDate);
-			} else {
-				detectionVariableValue = derivedMeasureValueRepository
-						.findByUserInRoleIdAndDetectionVariableIdForOneMonth(uir.getId(), dv.getId(),
-								dvDate);
-			}
-			detectionVariableValuesDoubles[cnt] = detectionVariableValue.doubleValue();
-
-			cnt++;
-		}
-		return cnt;
-	}
 
 	/**
 	 * @param valuesList
@@ -129,30 +79,6 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		}
 		
 		return valuesList;
-	}
-
-	/**
-	 * @param dv
-	 * @param intervalStartDate
-	 * @param intervalEndDate
-	 * @param uir
-	 * @return
-	 */
-	@Override
-	public List<Date> findAllDatesForDetectionVariable(DetectionVariable dv, Date intervalStartDate,
-			Date intervalEndDate, UserInRole uir) {
-		
-		List<Date> dvDates = new ArrayList<Date>();
-
-		if (dv.getDetectionVariableType()
-				.getDetectionVariableType() != DetectionVariableType.Type.MEA) {
-			dvDates = viewGefCalculatedInterpolatedPredictedValuesRepository
-					.findDatesForUserInRoleIdAndDetectionVariableIdForInterval(uir.getId(), dv.getId(), intervalStartDate, intervalEndDate);
-		} else {
-			dvDates = derivedMeasureValueRepository
-					.findDatesForUserInRoleIdAndDetectionVariableIdForInterval(uir.getId(), dv.getId(), intervalStartDate, intervalEndDate);
-		}
-		return dvDates;
 	}
 	
 	/**
@@ -198,9 +124,6 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	public Double calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
 			Timestamp intervalStart, Timestamp intervalEnd, UserInRole uir) {
 
-		logger.info("intervalStart: " + intervalStart);
-		logger.info("intervalEnd: " + intervalEnd);
-
 		List<Object[]> result = new ArrayList<Object[]>();			
 		if (dv.getDetectionVariableType().getDetectionVariableType() != DetectionVariableType.Type.MEA) 
 			result = nativeQueryRepository.findOvlAndGfgForUserInRoleIdAndDetectionVariableIdForPeriod(uir.getId(), dv.getId(), intervalStart, intervalEnd);
@@ -233,11 +156,11 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 				return new PearsonsCorrelation().correlation(ovlValuesDoubles,
 						detectionVariableValuesDoubles);
 			} else {
-				logger.info("p value previse visoka!!!");
+				logger.info("p value is too high!!!");
 			}
 
 		} else {
-			logger.info("nema dovoljno podataka!!!");
+			logger.info("Not enough data!!!");
 		}
 
 		return null;
