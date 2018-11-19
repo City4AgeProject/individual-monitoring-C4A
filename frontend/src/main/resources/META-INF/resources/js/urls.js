@@ -37,3 +37,5 @@ var GROUP_ANALYTICS_DATA = root + "groupAnalytics/graphData";
 var GROUP_ANALYTICS_HEATMAP = root + "groupAnalytics/correlationCoefficientHeatMap";
 var GROUP_ANALYTICS_CORELATION_COEFFICIENT = root + "groupAnalytics/correlationCoefficient";
 var GROUP_ANALYTICS_DATA_GROUPS_AND_SERIES = root + "groupAnalytics/groupsAndSeries";
+var GROUP_ANALYTICS_GENERATE_EXCEL = root + "exportData/generateExcel";
+var GROUP_ANALYTICS_GENERATE_CSV = root + "exportData/generateCsv";

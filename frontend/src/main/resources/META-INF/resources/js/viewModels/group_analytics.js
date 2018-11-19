@@ -10,7 +10,7 @@
 define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs/ojnavigationlist',
     'ojs/ojswitcher', 'ojs/ojdatetimepicker', 'ojs/ojselectcombobox', 'ojs/ojtimezonedata', 'ojs/ojlabel', 
     'ojs/ojconveyorbelt','ojs/ojtreeview', 'ojs/ojjsontreedatasource','ojs/ojchart','ojs/ojcollapsible','ojs/ojdatagrid', 'ojs/ojcollectiondatagriddatasource',
-'ojs/ojcollapsible','urls','ojs/ojvalidation-base','ojs/ojmessaging'
+'ojs/ojcollapsible','urls','ojs/ojvalidation-base','ojs/ojmessaging', 'treeViewData'
 ], function (oj, ko, $) {
     /**
      * The view model for the main content view template
@@ -59,6 +59,9 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.endGroup = ko.observable();
         self.lineXAxis = ko.observable();
         self.orderedSocioFactors = [];
+        self.exportValue = ko.observable('xlsx');
+        self.treeViewData = ko.observable();
+        self.treeViewData(new oj.JsonTreeDataSource(JSON.parse(JSON.stringify(variableTreeViewData))));
         
         self.setViewPort = function(evolutionInTime){
             let socioFactors = self.selectedSocio();
@@ -78,7 +81,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             self.lineXAxis({viewportMin: -0.5, viewportMax: totalGroups - 0.5});
         };
         
-        self.keyValuePairs = [];
         
         self.socioEconomic = [
                     {id: 'age_group', label: 'Age'},
@@ -158,15 +160,43 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         /*END HEATMAP*/
         
         self.exportBtn = function(){
-            let xhttp = new XMLHttpRequest
-            xhttp.open("POST", "http://localhost:8080/C4A-dashboard/rest/exportData/generateExcel", true);
-            xhttp.send("http://localhost:8080/C4A-dashboard/rest/groupAnalytics/graphData?pilotCode=ath lcc&detectionVariable=507 508&intervalStart=2017-05-23&intervalEnd=2018-02-01");
-            xhttp.onreadystatechange = function() {
-              if (this.readyState == 4 && this.status == 200) {
-                    console.log('FILE RECIEVED!');
+            let pilotsString = self.selectedPilots2().join(" ");
+            let variables = [];
+            //get selected detection variables
+            self.treeSelection2().forEach(function(el){
+                variables.push(variableIds[el-1]);
+            });
+            let variableString = variables.join(" ");
+            let url;
+            let fileName;
+            if(self.exportValue() == 'xlsx'){
+                url = GROUP_ANALYTICS_GENERATE_EXCEL;
+                fileName = "results.xlsx";
+            }else{
+                url = GROUP_ANALYTICS_GENERATE_CSV;
+                fileName = "results.csv";
+            }
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.responseType = 'blob';
+            xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1());
+            xhr.onload = function(e) {
+              if (this.status == 200) {
+                console.log('successfully recieved data');
+                let link = document.createElement('a');
+                link.setAttribute("type", "hidden");
+                var binaryData = [];
+                binaryData.push(this.response);
+                link.href = window.URL.createObjectURL(new Blob(binaryData));
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
               }
-            };
-            
+              else {
+                console.log('invalid data');
+              }
+            }
         };
         self.selectedSocio.subscribe(function(changes) {
              if(changes[0].status == "added"){
@@ -226,7 +256,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             var variables = [];
             //get selected detection variables
             self.treeSelection1().forEach(function(el){
-                variables.push(self.keyValuePairs[el-1]);
+                variables.push(variableIds[el-1]);
             });
             self.getScenario1Data(self.selectedPilots1(), variables, self.dateFromValue(),  self.dateToValue());
             self.getHeatmapData(self.selectedPilots1(), variables, 1);
@@ -255,7 +285,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             
             //get selected detection variables
             self.treeSelection2().forEach(function(el){
-                variables.push(self.keyValuePairs[el-1]);
+                variables.push(variableIds[el-1]);
             });
             
             self.getScenario2Data(self.selectedPilots2(), variables, self.orderedSocioFactors, self.dateFromValue1(), self.dateToValue1(), comparison);
@@ -263,37 +293,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             self.setViewPort();
         };
         
-        
-        
-
-        self.treeViewData = ko.observable();
-        self.groupAnalyticsData = ko.observable();
-        //self.treeViewData(new oj.JsonTreeDataSource(jsonData));
-
-        /*TREEVIEW*/
-        $.getJSON("https://dl.dropboxusercontent.com/s/49ktd88brz9xoyg/DataTree4.json?dl=0").  
-            then(function (response) { 
-                response.forEach(function(el){
-                    self.keyValuePairs.push(el.attr.detectionVariableId);
-                    if(el.children){
-                        el.children.forEach(function(el2){
-                            self.keyValuePairs.push(el2.attr.detectionVariableId);
-                            if(el2.children){
-                                el2.children.forEach(function(el3){
-                                    self.keyValuePairs.push(el3.attr.detectionVariableId);
-                                    if(el3.children){
-                                        el3.children.forEach(function(el4){
-                                                self.keyValuePairs.push(el4.attr.detectionVariableId);    
-                                        });   
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-                    self.treeViewData(new oj.JsonTreeDataSource(JSON.parse(JSON.stringify(response)))); 
-            });
-
         self.getScenario1Data = function(pilots, variables, dateFrom, dateTo){
             var pilotString = pilots.join(' ');
             var variableString1 = variables.join(' ');
