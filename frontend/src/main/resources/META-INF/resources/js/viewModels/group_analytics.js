@@ -54,6 +54,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.dateToValue = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2018, 1, 1)));
         self.dateFromValue1 = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2017, 1, 1)));
         self.dateToValue1 = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2018, 1, 1)));
+        self.nowDate = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date()));
         self.comparisonDisabled = ko.observable(true);
         self.startGroup = ko.observable();
         self.endGroup = ko.observable();
@@ -62,6 +63,19 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.exportValue = ko.observable('xlsx');
         self.treeViewData = ko.observable();
         self.treeViewData(new oj.JsonTreeDataSource(JSON.parse(JSON.stringify(variableTreeViewData))));
+        self.treeSelection1 = ko.observableArray();
+        self.treeSelection2 = ko.observableArray();
+        self.apply1Enable = ko.computed(function(){
+            if(self.treeSelection1().length === 0 || self.selectedPilots1().length === 0){
+                return true;
+            }else return false;
+        },this);
+        self.apply2Enable = ko.computed(function(){
+            if(self.treeSelection2().length === 0 || self.selectedPilots2().length === 0 || self.selectedSocio().length === 0){
+                return true;
+            }else return false;
+        },this);
+        
         
         self.setViewPort = function(evolutionInTime){
             let socioFactors = self.selectedSocio();
@@ -114,7 +128,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             {id: 'whole_population', label: 'Whole population'}
         ];
         /*HEATMAP*/
-
+        
         self.dataSource1 = ko.observable();
         self.dataSource2 = ko.observable();
 
@@ -128,8 +142,6 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             }else{
                 cellContext['data'] = "no data";
             }
-            
-            
             cell.setAttribute('title', cellContext['data']);
         };
 
@@ -215,19 +227,17 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         },null, "arrayChange");
         self.comparisonAnalysis2.subscribe(function(newValue){
             if(newValue == "disabled"){
-                document.getElementById('chart2').style.display = 'none';
-                document.getElementById('ldr2').style.display = 'block';
+                self.showLoader('1');
                 self.resolveFilters(true);
                 self.evolutionInTime2([]);
-                self.setViewPort(false);
+                self.setViewPort();
             }else{
                 
             }
         });
         self.evolutionInTime2.subscribe(function(newValue){
             if(newValue == "disabled"){
-                document.getElementById('chart2').style.display = 'none';
-                document.getElementById('ldr2').style.display = 'block';
+                self.showLoader('2');
                 self.resolveFilters(false);
                 self.comparisonAnalysis2([]);
                 self.setViewPort(true);
@@ -235,49 +245,38 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
                 
             }
         });
+        self.showLoader = function(scenario){
+            document.getElementById('logo-img-' + scenario).style.display = 'none';
+            document.getElementById('collapsible-container' + scenario).style.display = 'block';
+            document.getElementById('chart' + scenario).style.display = 'none';
+            document.getElementById('ldr' + scenario).style.display = 'block';
+            document.getElementById('export-container').style.display = 'none';
+        };
+        self.hideLoader = function(scenario){
+            document.getElementById('chart' + scenario).style.display = 'block';
+            document.getElementById('ldr' + scenario).style.display = 'none';
+            document.getElementById('export-container').style.display = 'block';
+        };
         
         self.applyScenario1 = function(){
             let dateFrom = new Date(self.dateFromValue());
             let dateTo = new Date(self.dateToValue());
-            
-            if(self.selectedPilots1().length === 0 || self.treeSelection1().length === 0 || dateFrom.getTime() > dateTo.getTime()){
-                $( "#errorMessage1" ).fadeIn( "slow", function() {
-                // Animation complete
-              });
-                //document.getElementById('errorMessage1').style.display = 'block';
-                return;
-            }
-            document.getElementById('errorMessage1').style.display = 'none'
-            document.getElementById('logo-img-1').style.display = 'none';
-            document.getElementById('collapsible-container1').style.display = 'block';
-            document.getElementById('chart1').style.display = 'none';
-            document.getElementById('ldr1').style.display = 'block';
-            
+            self.showLoader('1');
             var variables = [];
             //get selected detection variables
             self.treeSelection1().forEach(function(el){
                 variables.push(variableIds[el-1]);
             });
-            self.getScenario1Data(self.selectedPilots1(), variables, self.dateFromValue(),  self.dateToValue());
+            self.getScenario1Data(self.selectedPilots1(), variables, self.dateFromValue(),  self.dateToValue(), getCorelationCoefficients);
             self.getHeatmapData(self.selectedPilots1(), variables, 1);
         };
         self.applyScenario2 = function(){
             let dateFrom = new Date(self.dateFromValue());
             let dateTo = new Date(self.dateToValue());
-            if(self.selectedPilots2().length === 0 || self.treeSelection2().length === 0 || self.selectedSocio().length === 0 || dateFrom.getTime() > dateTo.getTime()){
-                 $( "#errorMessage2" ).fadeIn( "slow", function() {
-                // Animation complete
-              });
-                return;
-            }
-            document.getElementById('errorMessage2').style.display = 'none'
-            document.getElementById('logo-img-2').style.display = 'none'; 
-            document.getElementById('collapsible-container2').style.display = 'block';
-            document.getElementById('chart2').style.display = 'none';
-            document.getElementById('ldr2').style.display = 'block';
-            
+            self.showLoader('2');
             self.evolutionInTime2([]);
             self.comparisonAnalysis2([]);
+            self.setViewPort();
             self.resolveFilters(undefined);
         };
         self.resolveFilters = function(comparison){
@@ -288,12 +287,12 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
                 variables.push(variableIds[el-1]);
             });
             
-            self.getScenario2Data(self.selectedPilots2(), variables, self.orderedSocioFactors, self.dateFromValue1(), self.dateToValue1(), comparison);
+            self.getScenario2Data(self.selectedPilots2(), variables, self.orderedSocioFactors, self.dateFromValue1(), self.dateToValue1(), comparison, getCorelationCoefficients);
             self.getHeatmapData(self.selectedPilots2(), variables, 2);
-            self.setViewPort();
+            
         };
         
-        self.getScenario1Data = function(pilots, variables, dateFrom, dateTo){
+        self.getScenario1Data = function(pilots, variables, dateFrom, dateTo, callback){
             var pilotString = pilots.join(' ');
             var variableString1 = variables.join(' ');
             var variableString2 = variables.join('/');
@@ -304,27 +303,14 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
                   var response = JSON.parse(this.responseText);
                     self.lineSeriesValue(response.series);
                     self.lineGroupsValue(response.groups);
+                    callback(pilotString, variableString2, dateFrom, dateTo, 1);
               }
             };
             xhttp.open("POST", GROUP_ANALYTICS_DATA_GROUPS_AND_SERIES, true);
             xhttp.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotString + "&detectionVariable=" + variableString1 + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + "&comparison=false");
-            $.getJSON(GROUP_ANALYTICS_CORELATION_COEFFICIENT + "/detectionVariable/"+ variableString2 +"?pilot=" + pilotString +"&intervalStart=" + dateFrom +"&intervalEnd=" + dateTo).  
-            then(function (response) { 
-                        let series = self.lineSeriesValue();
-                        for(let i = 0; i < series.length; i++){
-                            if(response[series[i].name]){
-                                 series[i].name = series[i].name.concat('(' + response[series[i].name].toFixed(2)  + ')');
-                            }
-                        }
-                        self.lineSeriesValue(series);
-                        console.log('lineseries ' + JSON.stringify());
-                        document.getElementById('ldr1').style.display = 'none';
-                        document.getElementById('chart1').style.display = 'block';
-            });
-            
            
         };
-        self.getScenario2Data = function(pilots, variables, socio, dateFrom, dateTo, comparison){
+        self.getScenario2Data = function(pilots, variables, socio, dateFrom, dateTo, comparison, callback){
             var pilotString = pilots.join(' ');
             var variableString = variables.join(' ');
             var variableString2 = variables.join('/');
@@ -337,7 +323,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", GROUP_ANALYTICS_DATA_GROUPS_AND_SERIES, true);
             xhttp.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotString + "&detectionVariable=" + variableString + "&category=" + socioString + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + comparisonString);
-            xhttp.onreadystatechange = function() {
+            xhttp.onreadystatechange = function(call) {
               if (this.readyState == 4 && this.status == 200) {
                     var response = JSON.parse(this.responseText);
                     
@@ -362,31 +348,47 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
                         }else{
                             //evolution in time line chart 
                             self.yAxisTitleValue(""); 
-                        self.chartTypeValue("line");
-                        self.stackValue("off");
-                        self.splitDualYValue("off");
-                        self.orientationValue("vertical");
+                            self.chartTypeValue("line");
+                            self.stackValue("off");
+                            self.splitDualYValue("off");
+                            self.orientationValue("vertical");
                         }
                     }
                     
                     self.seriesValue(response.series);
-                    self.groupsValue(response.groups); 
+                    self.groupsValue(response.groups);
+                    callback(pilotString, variableString2, dateFrom, dateTo, 2);
+                    
               }
             };
-             $.getJSON(GROUP_ANALYTICS_CORELATION_COEFFICIENT + "/detectionVariable/"+ variableString2 +"?pilot=" + pilotString +"&intervalStart=" + dateFrom +"&intervalEnd=" + dateTo).  
+             
+        };
+        var getCorelationCoefficients = function(pilots, variables, dateFrom, dateTo, scenario ){
+            $.getJSON(GROUP_ANALYTICS_CORELATION_COEFFICIENT + "/detectionVariable/"+ variables +"?pilot=" + pilots +"&intervalStart=" + dateFrom +"&intervalEnd=" + dateTo).  
             then(function (response) { 
-                        let series = self.seriesValue();
-                        for(let i = 0; i < series.length; i++){
-                            if(response[series[i].name]){
-                                 series[i].name = series[i].name.concat('(' + response[series[i].name].toFixed(2)  + ')');
-                            }
-                        }
-                        self.seriesValue(series);
-                        console.log('lineseries ' + JSON.stringify());
-                        console.log('this is response : ' + JSON.stringify(response));
-                        document.getElementById('ldr2').style.display = 'none';
-                        document.getElementById('chart2').style.display = 'block';
+                let series;
+                if(scenario === 1){
+                    series = self.lineSeriesValue();
+                }else{
+                    series = self.seriesValue();
+                }
+
+                for(let i = 0; i < series.length; i++){
+                    if(response[series[i].name]){
+                         series[i].name = series[i].name.concat('(' + response[series[i].name].toFixed(2)  + ')');
+                    }
+                }
+                if(scenario === 1){
+                    self.lineSeriesValue(series);
+                    self.hideLoader('1');
+                    
+                }else{
+                    self.seriesValue(series);
+                    self.hideLoader('2');
+                }
+                
             });
+             
         };
         
         self.getHeatmapData = function(pilots,variables,scenario){
@@ -492,8 +494,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
            console.log('button2 clicked');
         };
 
-        self.treeSelection1 = ko.observableArray();
-        self.treeSelection2 = ko.observableArray();
+        
 
         self.selectionChangedTree1 = function(event){
             console.log('selection1 changed!');

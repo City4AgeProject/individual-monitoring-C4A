@@ -299,6 +299,46 @@ th {
         margin-top: 15px;
         display:none;
 }
-.export-container {
+#export-container {
     padding: 20px;
 }
+
+#ind-panel{
+        margin-right: 15px;
+    }
+#group-panel{
+        margin-left: 15px;
+    }
+@media(max-width: 1071px){
+    #ind-panel{
+        margin-right: 0px;
+    }
+    #group-panel{
+        margin-left: 0px;
+        margin-top:20px;
+    }
+}
+
+/*TREEVIEW */
+.oj-treeview-item-content.oj-selected{
+    border:1px solid #ff852b;
+    background-color: #fffa9c;
+    border-radius: 3px;
+    padding: 5px;
+    font-weight: bold;
+}
+.oj-treeview-item-content.oj-selected span{
+    color:#ed6647;
+}
+
+.oj-treeview-list:focus .oj-treeview-item-content.oj-selected {
+    background-color: #fffa9c;
+    
+}
+.oj-treeview-list:focus .oj-treeview-item-content.oj-selected span{
+    color:#ed6647;
+    font-weight: bold;
+}
+/*END TREEVIEW */
+
+

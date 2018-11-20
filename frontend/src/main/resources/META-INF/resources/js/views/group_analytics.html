@@ -112,18 +112,17 @@
                                     <div class="oj-flex">
                                         <div class="oj-flex-item" style="text-align: right">
                                                 <oj-label for="fromDate">From:</oj-label>
-                                                <oj-input-date id="fromDate" value='{{dateFromValue}}' style="width:10em"></oj-input-date>
+                                                <oj-input-date id="fromDate" value='{{dateFromValue}}' max="[[dateToValue]]" style="width:10em"></oj-input-date>
                                         </div>
                                         <div class="oj-flex-item" style="text-align: left;padding-left: 1em;">
                                                 <oj-label for="toDate">To:</oj-label>
-                                                <oj-input-date id="toDate" value='{{dateToValue}}' style="width:10em"></oj-input-date>
+                                                <oj-input-date id="toDate" value='{{dateToValue}}' min="[[dateFromValue]]" max="[[nowDate]]" style="width:10em"></oj-input-date>
                                         </div>
                                 </div>
                                     <br>
-                                        <oj-button id='applyFilterBtn1' data-bind="click:applyScenario1">
+                                        <oj-button id='applyFilterBtn1' disabled="[[apply1Enable]]" data-bind="click:applyScenario1">
                                         <span><oj-bind-text value="[[applyFilterLbl]]"></oj-bind-text></span>
                                     </oj-button>
-                                        <div id="errorMessage1">You did not set all required filters, or the time period selected is not valid. Please try again.</div>
                                 </div>
                                 <br>
                                     <div id="logo-collapsible-container1" style="text-align: center;">
@@ -283,18 +282,17 @@
                                     <div class="oj-flex">
                                         <div class="oj-flex-item" style="text-align: right">
                                                 <oj-label for="fromDate1">From:</oj-label>
-                                                <oj-input-date id="fromDate1" value='{{dateFromValue1}}' style="width:10em"></oj-input-date>
+                                                <oj-input-date id="fromDate1" value='{{dateFromValue1}}' min="2016-07-01" max="[[dateToValue1]]" style="width:10em"></oj-input-date>
                                         </div>
                                         <div class="oj-flex-item" style="text-align: left;padding-left: 1em;">
                                                 <oj-label for="toDate1">To:</oj-label>
-                                                <oj-input-date id="toDate1" value='{{dateToValue1}}' style="width:10em"></oj-input-date>
+                                                <oj-input-date id="toDate1" value='{{dateToValue1}}' min="[[dateFromValue1]]" max="[[nowDate]]" style="width:10em"></oj-input-date>
                                         </div>
                                     </div>
                                  <br>
-                                    <oj-button id='applyFilterBtn2' data-bind="click:applyScenario2">
+                                    <oj-button id='applyFilterBtn2' disabled="[[apply2Enable]]" data-bind="click:applyScenario2">
                                         <span><oj-bind-text value="[[applyFilterLbl]]"></oj-bind-text></span>
                                     </oj-button>
-                                     <div id="errorMessage2">You did not set all required filters, or the time period selected is not valid. Please try again.</div>
                                     
                             </div>
                                     <br>
@@ -314,7 +312,7 @@
                                                             </oj-buttonset-many>
                                                         </div>
                                                         <div class="oj-flex-item" style="text-align: left; padding-left: 1em;">
-                                                            <oj-buttonset-many value="{{comparisonAnalysis2}}" disabled=[[comparisonDisabled]] >
+                                                            <oj-buttonset-many value="{{comparisonAnalysis2}}" disabled="[[comparisonDisabled]]" >
                                                                 <oj-option value="disabled">Comparison Analysis</oj-option>
                                                             </oj-buttonset-many>
                                                         </div>
@@ -345,7 +343,7 @@
                                                         orientation="vertical"
                                                         style="width:100%;max-width:1100px;height:500px;margin:0 auto;" >
                                                     </oj-chart>
-                                                    <div class="export-container">
+                                                    <div id="export-container">
                                                              <oj-label for="selectExport">Select export format:</oj-label>
                                                             <oj-select-one id="selectExport" value="{{exportValue}}"style="max-width:5em">
                                                                 <oj-option value="xlsx">
