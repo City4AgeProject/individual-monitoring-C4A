@@ -76,12 +76,15 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.treeSelection2 = ko.observableArray();
         self.comparison = undefined;
         
-         self.close = function (event) {
+        self.close1 = function (event) {
+          document.getElementById('modalDialog1').close();
+        };
+         self.close2 = function (event) {
           document.getElementById('modalDialog2').close();
         };
-        self.open = function (event) {
-          document.getElementById('modalDialog1').open();
-        };
+//        self.open = function (event) {
+//          document.getElementById('modalDialog1').open();
+//        };
         
         self.apply1Enable = ko.computed(function(){
             if(self.treeSelection1().length === 0 || self.selectedPilots1().length === 0){

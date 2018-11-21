@@ -141,11 +141,17 @@
                                                         animation-on-display="auto"
                                                         animation-on-data-change="auto"
                                                         hover-behavior="dim"
-                                                        style="height:500px;width:100%;"
+                                                        style="height:500px;width:100%;position: relative;"
                                                         legend.position ="top"
                                                         zoom-and-scroll="live"
                                                         hide-and-show-behavior="withRescale"
                                                         >
+                                                        <oj-button class="oj-panel-resize-button demo-button" data-bind="click:fullScreen1" style="position: absolute; top:0; right: 0;"
+                                                                    chroming="half"
+                                                                    display="icons">
+                                                                    <span slot="startIcon" class="oj-panel-expand-icon"></span>
+                                                                    <span>expand</span>
+                                                        </oj-button>
                                                     </oj-chart>
                                                     <div id="export-container1">
                                                              <oj-label for="selectExport1">Select export format:</oj-label>
@@ -200,6 +206,27 @@
                                                 </div>
                                             </div>
                                         </oj-collapsible>
+                                            <oj-dialog id="modalDialog1" style="display:none;margin:0 auto;"  data-bind="style:{height : dialogFullScreenHeight1(),width:dialogFullScreenWidth1()}"  title="Diagram">
+                                                <div slot="body">
+                                                    <oj-chart 
+                                                        type="line"
+                                                        series="[[lineSeriesValue]]"
+                                                        groups="[[lineGroupsValue]]"
+                                                        animation-on-display="auto"
+                                                        animation-on-data-change="auto"
+                                                        hover-behavior="dim"
+                                                        style="height:500px;width:100%;"
+                                                        legend.position ="top"
+                                                        zoom-and-scroll="live"
+                                                        hide-and-show-behavior="withRescale"
+                                                        >
+                                                    </oj-chart>
+                                                </div>
+                                                <div slot="footer">
+                                                  <oj-button id="okButton" data-bind="click:close1">OK
+                                                  </oj-button>
+                                                </div>
+                                              </oj-dialog>
                                         </div>
                                     </div>
                         </div>
@@ -437,7 +464,7 @@
                                                     </oj-chart>
                                                 </div>
                                                 <div slot="footer">
-                                                  <oj-button id="okButton" data-bind="click:close">OK
+                                                  <oj-button id="okButton" data-bind="click:close2">OK
                                                   </oj-button>
                                                 </div>
                                               </oj-dialog>
