@@ -147,11 +147,27 @@
                                                         hide-and-show-behavior="withRescale"
                                                         >
                                                     </oj-chart>
+                                                    <div id="export-container1">
+                                                             <oj-label for="selectExport1">Select export format:</oj-label>
+                                                            <oj-select-one id="selectExport1" value="{{exportValue1}}"style="max-width:5em">
+                                                                <oj-option value="xlsx">
+                                                                    <span slot="startIcon">
+                                                                        <img src="images/xlsxIcon.png" role="presentation" style="vertical-align:middle"/>
+                                                                    </span> xlsx
+                                                                </oj-option>
+                                                                <oj-option value="csv">
+                                                                    <span slot="startIcon">
+                                                                        <img src="images/csvIcon.png" role="presentation" style="vertical-align:middle"/>
+                                                                    </span> csv
+                                                                </oj-option>
+                                                            </oj-select-one>
+                                                             <oj-button id="export-button1" data-bind="click:exportBtn1">Export</oj-button>
+                                                    </div>
                                                 </div>
                                             </div>
                                           </oj-collapsible>
                                         <oj-collapsible>
-                                            <h3  slot="header">Coorelation factors heatmap</h3>
+                                            <h3  slot="header">Correlation factors heatmap</h3>
                                             <div class="oj-panel oj-panel-shadow-sm">
                                                 <div class="heatmap-container ">
                                                     <oj-label for="datagrid">Heatmap:</oj-label> 
@@ -265,7 +281,6 @@
                                             <!-- /ko -->
                                         </oj-buttonset-many>
                                     </oj-conveyor-belt>
-                                
                             
                                 <oj-label for="soc">Sociodemografic Factors:</oj-label>
                                 
@@ -316,17 +331,14 @@
                                                                 <oj-option value="disabled">Comparison Analysis</oj-option>
                                                             </oj-buttonset-many>
                                                         </div>
-
                                                     </div>
                                                     <div id="ldr2" class="loader2"></div>
                                                     <oj-chart id="chart2"
                                                         type="[[chartTypeValue]]"
                                                         series="[[seriesValue]]"
                                                         groups="[[groupsValue]]"                  
-                                                        selection-mode="multiple"
                                                         style-defaults="[[styleDefaultValue]]"
                                                         legend.position="top"
-
                                                         stack="[[stackValue]]"
                                                         split-dual-y="[[splitDualYValue]]"
                                                         y-axis.title="[[yAxisTitleValue]]"
@@ -335,17 +347,21 @@
                                                         y-axis.tick-label.rendered="off"
                                                         y2-axis.tick-label.rendered="off"
                                                         orientation="[[orientationValue]]"
-                                                        
                                                         x-axis = "[[lineXAxis]]"
-                                                        
                                                         zoom-and-scroll="live"
                                                         hide-and-show-behavior="withRescale"
                                                         orientation="vertical"
-                                                        style="width:100%;max-width:1100px;height:500px;margin:0 auto;" >
+                                                        style="width:100%;max-width:1100px;height:500px;margin:0 auto;position: relative;" >
+                                                        <oj-button class="oj-panel-resize-button demo-button" data-bind="click:fullScreen2" style="position: absolute; top:0; right: 0;"
+                                                                    chroming="half"
+                                                                    display="icons">
+                                                                    <span slot="startIcon" class="oj-panel-expand-icon"></span>
+                                                                    <span>expand</span>
+                                                        </oj-button>
                                                     </oj-chart>
-                                                    <div id="export-container">
-                                                             <oj-label for="selectExport">Select export format:</oj-label>
-                                                            <oj-select-one id="selectExport" value="{{exportValue}}"style="max-width:5em">
+                                                    <div id="export-container2">
+                                                             <oj-label for="selectExport2">Select export format:</oj-label>
+                                                            <oj-select-one id="selectExport2" value="{{exportValue2}}"style="max-width:5em">
                                                                 <oj-option value="xlsx">
                                                                     <span slot="startIcon">
                                                                         <img src="images/xlsxIcon.png" role="presentation" style="vertical-align:middle"/>
@@ -357,14 +373,14 @@
                                                                     </span> csv
                                                                 </oj-option>
                                                             </oj-select-one>
-                                                             <oj-button id="export-button" data-bind="click:exportBtn">Export</oj-button>
+                                                             <oj-button id="export-button2" data-bind="click:exportBtn2">Export</oj-button>
                                                     </div>
                                                     
                                                 </div>
                                         </div>
                                           </oj-collapsible>
                                         <oj-collapsible>
-                                            <h3  slot="header">Coorelation factors heatmap</h3>
+                                            <h3  slot="header">Correlation factors heatmap</h3>
                                             <div class="oj-panel oj-panel-shadow-sm">
                                                 <div class="heatmap-container ">
                                                     <oj-label for="datagrid">Heatmap:</oj-label> 
@@ -397,6 +413,34 @@
                                                 </div>
                                             </div>
                                         </oj-collapsible>
+                                            <oj-dialog id="modalDialog2" style="display:none;margin:0 auto;"  data-bind="style:{height : dialogFullScreenHeight2(),width:dialogFullScreenWidth2()}"  title="Modal Dialog">
+                                                <div slot="body">
+                                                    <oj-chart data-bind="style:{height : chartFullScreenHeight2(),width:chartFullScreenWidth2()}" style="margin:0 auto;"
+                                                        type="[[chartTypeValue]]"
+                                                        series="[[seriesValue]]"
+                                                        groups="[[groupsValue]]"                  
+                                                        style-defaults="[[styleDefaultValue]]"
+                                                        legend.position="top"
+                                                        stack="[[stackValue]]"
+                                                        split-dual-y="[[splitDualYValue]]"
+                                                        y-axis.title="[[yAxisTitleValue]]"
+                                                        y2-axis.title="[[y2AxisTitleValue]]"
+                                                        splitter-position="0.5"
+                                                        y-axis.tick-label.rendered="off"
+                                                        y2-axis.tick-label.rendered="off"
+                                                        orientation="[[orientationValue]]"
+                                                        x-axis = "[[lineXAxis]]"
+                                                        zoom-and-scroll="live"
+                                                        hide-and-show-behavior="withRescale"
+                                                        orientation="vertical"
+                                                         >                                                                
+                                                    </oj-chart>
+                                                </div>
+                                                <div slot="footer">
+                                                  <oj-button id="okButton" data-bind="click:close">OK
+                                                  </oj-button>
+                                                </div>
+                                              </oj-dialog>
                                         </div>
                                             </div>
                         </div>

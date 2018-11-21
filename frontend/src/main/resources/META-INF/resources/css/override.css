@@ -299,7 +299,7 @@ th {
         margin-top: 15px;
         display:none;
 }
-#export-container {
+#export-container1,  #export-container2{
     padding: 20px;
 }
 

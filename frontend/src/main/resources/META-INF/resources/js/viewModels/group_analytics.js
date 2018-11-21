@@ -10,7 +10,7 @@
 define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs/ojnavigationlist',
     'ojs/ojswitcher', 'ojs/ojdatetimepicker', 'ojs/ojselectcombobox', 'ojs/ojtimezonedata', 'ojs/ojlabel', 
     'ojs/ojconveyorbelt','ojs/ojtreeview', 'ojs/ojjsontreedatasource','ojs/ojchart','ojs/ojcollapsible','ojs/ojdatagrid', 'ojs/ojcollectiondatagriddatasource',
-'ojs/ojcollapsible','urls','ojs/ojvalidation-base','ojs/ojmessaging', 'treeViewData'
+'ojs/ojcollapsible','urls','ojs/ojvalidation-base','ojs/ojmessaging', 'treeViewData','ojs/ojdialog'
 ], function (oj, ko, $) {
     /**
      * The view model for the main content view template
@@ -24,6 +24,14 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.groupsValue = ko.observableArray();
         self.heatmapHeight = ko.observable("250px");
         self.heatmapWidth = ko.observable("552px");
+        self.chartFullScreenWidth1 = ko.observable("95vw");
+        self.chartFullScreenHeight1 = ko.observable("650px");
+        self.chartFullScreenWidth2 = ko.observable("95vw");
+        self.chartFullScreenHeight2 = ko.observable("650px");
+        self.dialogFullScreenWidth1 = ko.observable("95vw");
+        self.dialogFullScreenHeight1 = ko.observable("650px");
+        self.dialogFullScreenWidth2 = ko.observable("95vw");
+        self.dialogFullScreenHeight2 = ko.observable("650px");
         
         self.chartTypeValue = ko.observable("bar");
         self.stackValue = ko.observable("on");
@@ -60,11 +68,21 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.endGroup = ko.observable();
         self.lineXAxis = ko.observable();
         self.orderedSocioFactors = [];
-        self.exportValue = ko.observable('xlsx');
+        self.exportValue1 = ko.observable('xlsx');
+        self.exportValue2 = ko.observable('xlsx');
         self.treeViewData = ko.observable();
         self.treeViewData(new oj.JsonTreeDataSource(JSON.parse(JSON.stringify(variableTreeViewData))));
         self.treeSelection1 = ko.observableArray();
         self.treeSelection2 = ko.observableArray();
+        self.comparison = undefined;
+        
+         self.close = function (event) {
+          document.getElementById('modalDialog2').close();
+        };
+        self.open = function (event) {
+          document.getElementById('modalDialog1').open();
+        };
+        
         self.apply1Enable = ko.computed(function(){
             if(self.treeSelection1().length === 0 || self.selectedPilots1().length === 0){
                 return true;
@@ -170,18 +188,18 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
               }
         };
         /*END HEATMAP*/
-        
-        self.exportBtn = function(){
-            let pilotsString = self.selectedPilots2().join(" ");
+        self.exportBtn1 = function(){
+            let pilotsString = self.selectedPilots1().join(" ");
             let variables = [];
             //get selected detection variables
-            self.treeSelection2().forEach(function(el){
+            self.treeSelection1().forEach(function(el){
                 variables.push(variableIds[el-1]);
             });
             let variableString = variables.join(" ");
+            
             let url;
             let fileName;
-            if(self.exportValue() == 'xlsx'){
+            if(self.exportValue1() == 'xlsx'){
                 url = GROUP_ANALYTICS_GENERATE_EXCEL;
                 fileName = "results.xlsx";
             }else{
@@ -191,7 +209,47 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             let xhr = new XMLHttpRequest();
             xhr.open('POST', url);
             xhr.responseType = 'blob';
-            xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1());
+            xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&intervalStart="+  self.dateFromValue() +"&intervalEnd=" + self.dateToValue());
+            xhr.onload = function(e) {
+              if (this.status == 200) {
+                console.log('successfully recieved data');
+                let link = document.createElement('a');
+                link.setAttribute("type", "hidden");
+                var binaryData = [];
+                binaryData.push(this.response);
+                link.href = window.URL.createObjectURL(new Blob(binaryData));
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+              }
+              else {
+                console.log('invalid data');
+              }
+            }
+        };
+        self.exportBtn2 = function(){
+            let pilotsString = self.selectedPilots2().join(" ");
+            let variables = [];
+            //get selected detection variables
+            self.treeSelection2().forEach(function(el){
+                variables.push(variableIds[el-1]);
+            });
+            let variableString = variables.join(" ");
+            let socioString = self.selectedSocio().join(" ");
+            let url;
+            let fileName;
+            if(self.exportValue2() == 'xlsx'){
+                url = GROUP_ANALYTICS_GENERATE_EXCEL;
+                fileName = "results.xlsx";
+            }else{
+                url = GROUP_ANALYTICS_GENERATE_CSV;
+                fileName = "results.csv";
+            }
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.responseType = 'blob';
+            xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1() +"&comparison=" + self.comparison);
             xhr.onload = function(e) {
               if (this.status == 200) {
                 console.log('successfully recieved data');
@@ -228,6 +286,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.comparisonAnalysis2.subscribe(function(newValue){
             if(newValue == "disabled"){
                 self.showLoader('1');
+                self.comparison = true;
                 self.resolveFilters(true);
                 self.evolutionInTime2([]);
                 self.setViewPort();
@@ -238,6 +297,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.evolutionInTime2.subscribe(function(newValue){
             if(newValue == "disabled"){
                 self.showLoader('2');
+                self.comparison = false;
                 self.resolveFilters(false);
                 self.comparisonAnalysis2([]);
                 self.setViewPort(true);
@@ -250,12 +310,12 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             document.getElementById('collapsible-container' + scenario).style.display = 'block';
             document.getElementById('chart' + scenario).style.display = 'none';
             document.getElementById('ldr' + scenario).style.display = 'block';
-            document.getElementById('export-container').style.display = 'none';
+            document.getElementById('export-container2').style.display = 'none';
         };
         self.hideLoader = function(scenario){
             document.getElementById('chart' + scenario).style.display = 'block';
             document.getElementById('ldr' + scenario).style.display = 'none';
-            document.getElementById('export-container').style.display = 'block';
+            document.getElementById('export-container2').style.display = 'block';
         };
         
         self.applyScenario1 = function(){
@@ -277,6 +337,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             self.evolutionInTime2([]);
             self.comparisonAnalysis2([]);
             self.setViewPort();
+            self.comparison = undefined;
             self.resolveFilters(undefined);
         };
         self.resolveFilters = function(comparison){
@@ -508,6 +569,25 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             console.log('selection2 changed!');
              var newSelection2 = event.detail.value;
              $('#selection-list2').text(newSelection2.length > 0 ? newSelection2 : 'none');
+        };
+        self.fullScreen1 = function(event){
+            document.getElementById('modalDialog1').open();
+        };
+        self.fullScreen2 = function(event){
+            let sWidth = $(window).width();
+            let sHeight = $(window).height();
+            if(self.comparison){
+                self.dialogFullScreenWidth2("750px");
+                self.dialogFullScreenHeight2("55vw");
+                self.chartFullScreenWidth2("700px");
+                self.chartFullScreenHeight2("45vw");
+            }else{
+                self.dialogFullScreenWidth2((sWidth -50).toString() + "px");
+                self.dialogFullScreenHeight2("650px");
+                self.chartFullScreenWidth2((sWidth - 100).toString() + "px");
+                self.chartFullScreenHeight2("500px");
+            }
+            document.getElementById('modalDialog2').open();
         };
            
     }
