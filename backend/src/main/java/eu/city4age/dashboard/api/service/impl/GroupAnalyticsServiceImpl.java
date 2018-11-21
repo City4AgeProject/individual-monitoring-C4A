@@ -27,13 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.city4age.dashboard.api.jpa.DetectionVariableRepository;
-import eu.city4age.dashboard.api.jpa.NativeQueryRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
+import eu.city4age.dashboard.api.jpa.ViewCorrelationDataRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
-import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.Pilot.PilotCode;
 import eu.city4age.dashboard.api.pojo.domain.UserInRole;
+import eu.city4age.dashboard.api.pojo.domain.ViewCorrelationData;
 import eu.city4age.dashboard.api.pojo.dto.GenericTableData;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsGroups;
 import eu.city4age.dashboard.api.pojo.dto.groupAnalytics.GroupAnalyticsSeries;
@@ -56,7 +56,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 	private AssessmentService assessmentService;
 	
 	@Autowired
-	private NativeQueryRepository nativeQueryRepository;
+	private ViewCorrelationDataRepository viewCorrelationDataRepository;
 
 	/**
 	 * @param valuesList
@@ -111,24 +111,12 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		return detectionVariables;
 	}
 	
-	/**
-	 * @param overall
-	 * @param dv
-	 * @param correlations
-	 * @param intervalStartDate
-	 * @param intervalEndDate
-	 * @param uir
-	 * @return 
-	 */
 	@Override
 	public Double calculateCorrelationCoefficientsForOneUser(DetectionVariable overall, DetectionVariable dv,
 			Timestamp intervalStart, Timestamp intervalEnd, UserInRole uir) {
 
-		List<Object[]> result = new ArrayList<Object[]>();			
-		if (dv.getDetectionVariableType().getDetectionVariableType() != DetectionVariableType.Type.MEA) 
-			result = nativeQueryRepository.findOvlAndGfgForUserInRoleIdAndDetectionVariableIdForPeriod(uir.getId(), dv.getId(), intervalStart, intervalEnd);
-		else
-			result = nativeQueryRepository.findOvlAndDmvForUserInRoleIdAndDetectionVariableIdForPeriod(uir.getId(), dv.getId(), intervalStart, intervalEnd);
+		List<ViewCorrelationData> result = new ArrayList<ViewCorrelationData>();                     
+		result = viewCorrelationDataRepository.findCorrelationDataForUserAndVariableAndInterval(uir.getId(), dv.getId(), intervalStart, intervalEnd);
 
 		int arraySize = result.size();
 
@@ -139,8 +127,8 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 			double detectionVariableValuesDoubles[] = new double[arraySize];
 
 			for (int i = 0; i < result.size(); i++) {
-				ovlValuesDoubles[i] = ((BigDecimal) result.get(i)[1]).doubleValue();
-				detectionVariableValuesDoubles[i] = ((BigDecimal) result.get(i)[0]).doubleValue();
+				ovlValuesDoubles[i] = ((BigDecimal) result.get(i).getOvlValue()).doubleValue();
+				detectionVariableValuesDoubles[i] = ((BigDecimal) result.get(i).getValue()).doubleValue();
 			}
 
 			double matrix[][] = { ovlValuesDoubles, detectionVariableValuesDoubles };
@@ -165,6 +153,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 
 		return null;
 	}
+
 	
     private double getCorrelationPValues(RealMatrix matrix, int nObs) {
 		TDistribution tDistribution = new TDistribution(nObs - 2);

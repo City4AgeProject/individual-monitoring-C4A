@@ -22,6 +22,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -124,26 +126,31 @@ public class MeasuresEndpoint {
 		
 		logger.info("createSystemAnnotations");
 		
-		List<VmvFiltering> vfs = vmvFilteringRepository.findForSystemExclusion ();
+		int numOfVmvFilteringEntriesForUpdate = vmvFilteringRepository.findCountOfVmvFiltering();
+		int pageSize = 50000;
 		
-		logger.info("size: " + vfs.size());
+		int numOfPages = 0;
+		if (numOfVmvFilteringEntriesForUpdate % pageSize != 0) 
+			numOfPages = (numOfVmvFilteringEntriesForUpdate / pageSize) + 1;
+		else
+			numOfPages = numOfVmvFilteringEntriesForUpdate / pageSize;
 		
 		Assessment assessment = getOrCreateSystemAssessment ();
-		
 		assessment.setUpdated(new Date ());
 		
-		for (VmvFiltering vf : vfs) {
-			vf.setAssessment(assessment);
-			//logger.info("vf.id: " + vf.getId() + " vf.assessment_id: " + vf.getAssessment().getId());
+		int page = 0;
+		Pageable pageable = new PageRequest(page, pageSize);
+		
+		while (page < numOfPages) {
+			List<VmvFiltering> vfs = vmvFilteringRepository.findForSystemExclusion(pageable);
+			pageable.next();
+			for (VmvFiltering vf : vfs) {
+				vf.setAssessment(assessment);
+			}
+			vmvFilteringRepository.bulkSave(vfs);
+			vmvFilteringRepository.flush();
+			page++;
 		}
-		
-		logger.info("before save"); 
-		
-		vmvFilteringRepository.bulkSave(vfs);
-		
-		vmvFilteringRepository.flush();
-		
-		logger.info("after save"); 
 	}
 
 	public Assessment getOrCreateSystemAssessment() {

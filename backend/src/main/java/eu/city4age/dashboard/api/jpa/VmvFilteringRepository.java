@@ -2,6 +2,7 @@ package eu.city4age.dashboard.api.jpa;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -35,7 +36,13 @@ public interface VmvFilteringRepository extends GenericRepository<VmvFiltering, 
 
 	@Query ("SELECT DISTINCT vf FROM VmvFiltering vf INNER JOIN vf.vmv vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.detectionVariable dv WHERE vf.assessment IS NULL AND uir = :uir AND dv = :dv ORDER BY vf ASC")
 	public List<VmvFiltering> findFilteredByUserAndMeasureForSystemExclusion(@Param ("uir") UserInRole uir, @Param ("dv") DetectionVariable dv);
-
-	@Query ("SELECT DISTINCT vf FROM VmvFiltering vf WHERE vf.assessment IS NULL ORDER BY vf ASC")
-	public List<VmvFiltering> findForSystemExclusion();
+	
+	/*@Query ("SELECT DISTINCT vf FROM VmvFiltering vf WHERE vf.assessment IS NULL")
+	public List<VmvFiltering> findForSystemExclusion();*/
+	
+	@Query ("SELECT DISTINCT vf FROM VmvFiltering vf WHERE vf.assessment IS NULL ORDER BY vf.id")
+	public List<VmvFiltering> findForSystemExclusion(Pageable size);
+	
+	@Query ("SELECT COUNT(DISTINCT vf) FROM VmvFiltering vf WHERE vf.assessment IS NULL")
+	public int findCountOfVmvFiltering();
 }
