@@ -456,6 +456,8 @@ public class GroupAnalyticsEndpoint {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
 	@Path("groupsAndSeries")
 	public Response getGroupsAndSeries (String url) throws JsonProcessingException {
+		
+		logger.info("url: " + url);
 
 		GroupAnalyticsResponse response = new GroupAnalyticsResponse();
 

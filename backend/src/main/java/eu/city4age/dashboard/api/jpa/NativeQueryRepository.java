@@ -41,10 +41,4 @@ public interface NativeQueryRepository extends GenericRepository<NativeQuery, Lo
 	@Query(nativeQuery = true)
 	List<Object[]> computeAllDerivedMeasures(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("pilotCode") String pilotCode);
 	
-	@Query(nativeQuery = true)
-	List<Object[]> findOvlAndGfgForUserInRoleIdAndDetectionVariableIdForPeriod(@Param("uirId") Long uirId, @Param("dvId") Long dvId, @Param("intervalStart") Timestamp intervalStart, @Param("intervalEnd") Timestamp intervalEnd);
-	
-	@Query(nativeQuery = true)
-	List<Object[]> findOvlAndDmvForUserInRoleIdAndDetectionVariableIdForPeriod(@Param("uirId") Long uirId, @Param("dvId") Long dvId, @Param("intervalStart") Timestamp intervalStart, @Param("intervalEnd") Timestamp intervalEnd);
-	
 }

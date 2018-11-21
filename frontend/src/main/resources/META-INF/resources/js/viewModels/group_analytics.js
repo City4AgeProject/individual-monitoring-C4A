@@ -58,10 +58,10 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
       
         self.selectedPilots1 = ko.observableArray([]);
         self.selectedPilots2 = ko.observableArray([]);
-        self.dateFromValue = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2017, 1, 1)));
-        self.dateToValue = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2018, 1, 1)));
-        self.dateFromValue1 = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2017, 1, 1)));
-        self.dateToValue1 = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2018, 1, 1)));
+        self.dateFromValue = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2016, 6, 1)));
+        self.dateToValue = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date()));
+        self.dateFromValue1 = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date(2016, 6, 1)));
+        self.dateToValue1 = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date()));
         self.nowDate = ko.observable(oj.IntlConverterUtils.dateToLocalIso(new Date()));
         self.comparisonDisabled = ko.observable(true);
         self.startGroup = ko.observable();
@@ -124,7 +124,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
                     {id: 'education', label: 'Education'},
                     {id: 'marital_status', label: 'Marital status'},
                     {id: 'working', label: 'Working'},
-                    {id: 'informal_caregiver_ability', label: 'Informal caregiver ability'},
+                    {id: 'informal_caregiver_ability', label: 'Informal caregiver availability'},
                     {id: 'quality_housing', label: 'Quality of housing'},
                     {id: 'quality_neighborhood', label: 'Quality of neighborhood'}
         ];
@@ -135,8 +135,8 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             education: [ "none", "primary", "secondary", "tertiary"],
             cohabiting: ["alone", "family", "friends", "other"],
             informal_caregiver_ability: ["t", "f"],
-            quality_of_housing: ["low", "average", "high"],
-            quality_of_neighborhood: ["low", "average", "high"],
+            quality_housing: ["low", "average", "high"],
+            quality_neighborhood: ["low", "average", "high"],
             working: ["t", "f"]
         };
          self.pilots = [
@@ -252,7 +252,11 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             let xhr = new XMLHttpRequest();
             xhr.open('POST', url);
             xhr.responseType = 'blob';
-            xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1() +"&comparison=" + self.comparison);
+            if(self.comparison == undefined){
+                xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1());
+            } else {
+                xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1() +"&comparison=" + self.comparison);
+            }
             xhr.onload = function(e) {
               if (this.status == 200) {
                 console.log('successfully recieved data');
@@ -288,7 +292,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         },null, "arrayChange");
         self.comparisonAnalysis2.subscribe(function(newValue){
             if(newValue == "disabled"){
-                self.showLoader('1');
+                self.showLoader('2');
                 self.comparison = true;
                 self.resolveFilters(true);
                 self.evolutionInTime2([]);
@@ -309,16 +313,16 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             }
         });
         self.showLoader = function(scenario){
-            document.getElementById('logo-img-' + scenario).style.display = 'none';
-            document.getElementById('collapsible-container' + scenario).style.display = 'block';
-            document.getElementById('chart' + scenario).style.display = 'none';
-            document.getElementById('ldr' + scenario).style.display = 'block';
-            document.getElementById('export-container2').style.display = 'none';
+           document.getElementById('logo-img-' + scenario).style.display = 'none';
+           document.getElementById('collapsible-container' + scenario).style.display = 'block';
+           document.getElementById('chart' + scenario).style.display = 'none';
+           document.getElementById('ldr' + scenario).style.display = 'block';
+           document.getElementById('export-container' + scenario).style.display = 'none';
         };
-        self.hideLoader = function(scenario){
-            document.getElementById('chart' + scenario).style.display = 'block';
-            document.getElementById('ldr' + scenario).style.display = 'none';
-            document.getElementById('export-container2').style.display = 'block';
+       self.hideLoader = function(scenario){
+           document.getElementById('chart' + scenario).style.display = 'block';
+           document.getElementById('ldr' + scenario).style.display = 'none';
+           document.getElementById('export-container' + scenario).style.display = 'block';
         };
         
         self.applyScenario1 = function(){

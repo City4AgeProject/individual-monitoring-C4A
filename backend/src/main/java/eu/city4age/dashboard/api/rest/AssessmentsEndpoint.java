@@ -504,10 +504,10 @@ public class AssessmentsEndpoint {
 				}
 			}
 			
-			OffsetDateTime created = OffsetDateTime.ofInstant(a.getCreated().toInstant(), ZoneId.of(a.getUserInRole().getPilot().getCompZone()));
+			OffsetDateTime created = OffsetDateTime.ofInstant(a.getCreated().toInstant(), timeZone);
 			OffsetDateTime updated = null;
 			if (a.getUpdated() != null) 
-				updated = OffsetDateTime.ofInstant(a.getUpdated().toInstant(), ZoneId.of(a.getUserInRole().getPilot().getCompZone()));
+				updated = OffsetDateTime.ofInstant(a.getUpdated().toInstant(), timeZone);
 			
 			String minMax = minValue.setScale(2).toString() + " - " + maxValue.setScale(2).toString();
 			mean = mean.divide(new BigDecimal (vmvList.size()), RoundingMode.HALF_UP);
