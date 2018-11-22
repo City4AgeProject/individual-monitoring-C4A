@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jxls.common.Context;
 import org.jxls.util.JxlsHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +32,7 @@ import eu.city4age.dashboard.api.external.io.ei.jsontoxls.AllConstants;
 import eu.city4age.dashboard.api.external.io.ei.jsontoxls.util.JsonPojoConverter;
 import eu.city4age.dashboard.api.external.io.ei.jsontoxls.util.ObjectDeserializer;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
+import eu.city4age.dashboard.api.service.GroupAnalyticsService;
 
 @Component
 @Path(ExportDataEndpoint.PATH)
@@ -39,6 +43,9 @@ public class ExportDataEndpoint {
 	static protected Logger logger = LogManager.getLogger(ExportDataEndpoint.class);
 	
 	static String EXPORT_CLASS_NAME = "Export";
+	
+	@Autowired
+	private GroupAnalyticsService groupAnalyticsService;
     
 	@Bean
 	public RestTemplate restTemplate() {
@@ -48,12 +55,15 @@ public class ExportDataEndpoint {
     @POST
     @Path("generateExcel")
     @Consumes("text/plain")
-    public Response generateExcel(String microServiceURL) throws Exception {
+    public Response generateExcel(String microServiceURL, @javax.ws.rs.core.Context HttpServletRequest req, @javax.ws.rs.core.Context ServletConfig sc) throws Exception {
 
     	HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-    	ResponseEntity<String> jsonData = restTemplate().exchange(microServiceURL, HttpMethod.GET, entity, String.class);
+        
+        String url = groupAnalyticsService.buildMicroserviceURL(microServiceURL, req, sc, "groupAnalytics");
+        
+    	ResponseEntity<String> jsonData = restTemplate().exchange(url, HttpMethod.GET, entity, String.class);
    
 		Object deserializedObject;
 		ObjectDeserializer objectDeserializer = new ObjectDeserializer(AllConstants.GENERATED_CLASSES_OUTPUT_DIRECTORY,
@@ -89,12 +99,15 @@ public class ExportDataEndpoint {
 	@POST
     @Path("generateCsv")
     @Consumes("text/plain")
-    public Response generateCsv(String microServiceURL) throws Exception {
+    public Response generateCsv(String microServiceURL, @javax.ws.rs.core.Context HttpServletRequest req, @javax.ws.rs.core.Context ServletConfig sc) throws Exception {
 
     	HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-    	ResponseEntity<String> jsonData = restTemplate().exchange(microServiceURL, HttpMethod.GET, entity, String.class);
+        
+        String url = groupAnalyticsService.buildMicroserviceURL(microServiceURL, req, sc, "groupAnalytics");
+        
+    	ResponseEntity<String> jsonData = restTemplate().exchange(url, HttpMethod.GET, entity, String.class);
     	
 		Object deserializedObject;
 		ObjectDeserializer objectDeserializer = new ObjectDeserializer(AllConstants.GENERATED_CLASSES_OUTPUT_DIRECTORY,

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.PathSegment;
 
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
@@ -54,5 +56,7 @@ public interface GroupAnalyticsService {
 	HashMap<String, List<String>> createSocioEconomicsMap();
 	
 	List<String> getPropertyFromURL(String url, String property);
+	
+	String buildMicroserviceURL(String urlQueryParams, HttpServletRequest req, ServletConfig sc, String path);
 
 }

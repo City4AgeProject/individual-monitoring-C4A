@@ -212,7 +212,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             let xhr = new XMLHttpRequest();
             xhr.open('POST', url);
             xhr.responseType = 'blob';
-            xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&intervalStart="+  self.dateFromValue() +"&intervalEnd=" + self.dateToValue());
+            xhr.send("?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&intervalStart="+  self.dateFromValue() +"&intervalEnd=" + self.dateToValue());
             xhr.onload = function(e) {
               if (this.status == 200) {
                 console.log('successfully recieved data');
@@ -253,9 +253,9 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             xhr.open('POST', url);
             xhr.responseType = 'blob';
             if(self.comparison == undefined){
-                xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1());
+                xhr.send("?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1());
             } else {
-                xhr.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1() +"&comparison=" + self.comparison);
+                xhr.send("?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1() +"&comparison=" + self.comparison);
             }
             xhr.onload = function(e) {
               if (this.status == 200) {
@@ -375,7 +375,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
               }
             };
             xhttp.open("POST", GROUP_ANALYTICS_DATA_GROUPS_AND_SERIES, true);
-            xhttp.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotString + "&detectionVariable=" + variableString1 + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + "&comparison=false");
+            xhttp.send("?pilotCode=" + pilotString + "&detectionVariable=" + variableString1 + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + "&comparison=false");
            
         };
         self.getScenario2Data = function(pilots, variables, socio, dateFrom, dateTo, comparison, callback){
@@ -390,7 +390,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", GROUP_ANALYTICS_DATA_GROUPS_AND_SERIES, true);
-            xhttp.send(GROUP_ANALYTICS_DATA + "?pilotCode=" + pilotString + "&detectionVariable=" + variableString + "&category=" + socioString + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + comparisonString);
+            xhttp.send("?pilotCode=" + pilotString + "&detectionVariable=" + variableString + "&category=" + socioString + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + comparisonString);
             xhttp.onreadystatechange = function(call) {
               if (this.readyState == 4 && this.status == 200) {
                     var response = JSON.parse(this.responseText);

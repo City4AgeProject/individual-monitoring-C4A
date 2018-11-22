@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -455,14 +456,14 @@ public class GroupAnalyticsEndpoint {
 	@Consumes("text/plain")
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM})
 	@Path("groupsAndSeries")
-	public Response getGroupsAndSeries (String url) throws JsonProcessingException {
+	public Response getGroupsAndSeries (String urlQueryParams, @Context HttpServletRequest req, @Context ServletConfig sc) throws JsonProcessingException {
 		
-		logger.info("url: " + url);
-
+		String url = groupAnalyticsService.buildMicroserviceURL(urlQueryParams, req, sc, PATH);
+		
 		GroupAnalyticsResponse response = new GroupAnalyticsResponse();
 
-		boolean comparison = url.contains("comparison=true");
-		boolean comp = url.contains("comparison");
+		boolean comparison = urlQueryParams.contains("comparison=true");
+		boolean comp = urlQueryParams.contains("comparison");
 
 		HashMap<String, List<String>> socioEconomics = groupAnalyticsService.createSocioEconomicsMap();
 
@@ -471,19 +472,19 @@ public class GroupAnalyticsEndpoint {
 		GenericTableData json = graphResponse.getBody();		
 
 		// categories
-		List<String> categories = groupAnalyticsService.getPropertyFromURL(url, "category");
+		List<String> categories = groupAnalyticsService.getPropertyFromURL(urlQueryParams, "category");
 		Collections.reverse(categories);
 		
 		// dates
 		List<String> datesStringList = null;
 
 		if (comparison == false) {
-			datesStringList = groupAnalyticsService.createDateList(url); 
+			datesStringList = groupAnalyticsService.createDateList(urlQueryParams); 
 		}
 		
 		// create groups all scenarios
 		List<?> groups = new ArrayList<GroupAnalyticsGroups>();
-		if (url.contains("category")) {
+		if (urlQueryParams.contains("category")) {
 			groups = groupAnalyticsService.createGroups(categories, socioEconomics, datesStringList, comparison, comp);
 		} else {
 			groups = datesStringList;
@@ -498,5 +499,5 @@ public class GroupAnalyticsEndpoint {
 
 		return JerseyResponse.build(objectMapper.writeValueAsString(response));
 	}
-
+	
 }

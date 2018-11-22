@@ -14,6 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.PathSegment;
 
 import org.apache.commons.math3.distribution.TDistribution;
@@ -688,6 +690,28 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 			}
 		}
 		return propertyList;
+	}
+	
+	/**
+	 * @param urlQueryParams
+	 * @param req
+	 * @param sc
+	 * @return
+	 */
+	@Override
+	public String buildMicroserviceURL(String urlQueryParams, HttpServletRequest req, ServletConfig sc, String path) {
+		String mapping = ((String) sc.getServletContext().getServletRegistration(sc.getServletName()).getMappings().toArray()[0]).replaceAll("\\*", "");
+		
+		String localAddr = "";
+		if (req.getServerName().contains("localhost"))
+			localAddr = req.getServerName();
+		else
+			localAddr = req.getLocalAddr();
+		
+		StringBuilder urlBuilder = new StringBuilder();
+		urlBuilder.append(req.getScheme()).append("://").append(localAddr).append(":").append(req.getLocalPort()).append(req.getContextPath()).append(mapping).append(path).append("/").append("graphData").append(urlQueryParams);
+		String url = urlBuilder.toString();
+		return url;
 	}
 
 }
