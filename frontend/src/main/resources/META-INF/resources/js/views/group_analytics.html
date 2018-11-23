@@ -371,8 +371,6 @@
                                                         y-axis.title="[[yAxisTitleValue]]"
                                                         y2-axis.title="[[y2AxisTitleValue]]"
                                                         splitter-position="0.5"
-                                                        y-axis.tick-label.rendered="off"
-                                                        y2-axis.tick-label.rendered="off"
                                                         orientation="[[orientationValue]]"
                                                         x-axis = "[[lineXAxis]]"
                                                         zoom-and-scroll="live"
@@ -440,7 +438,17 @@
                                                 </div>
                                             </div>
                                         </oj-collapsible>
-                                            <oj-dialog id="modalDialog2" style="display:none;margin:0 auto;"  data-bind="style:{height : dialogFullScreenHeight2(),width:dialogFullScreenWidth2()}"  title="Diagram">
+                                            
+                                        </div>
+                                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </oj-switcher>
+    </div>
+</div>
+<oj-dialog id="modalDialog2"   data-bind="style:{height : dialogFullScreenHeight2(),width:dialogFullScreenWidth2()}" style="display:none;" title="Diagram">
                                                 <div slot="body">
                                                     <oj-chart data-bind="style:{height : chartFullScreenHeight2(),width:chartFullScreenWidth2()}" style="margin:0 auto;"
                                                         type="[[chartTypeValue]]"
@@ -468,13 +476,4 @@
                                                   </oj-button>
                                                 </div>
                                               </oj-dialog>
-                                        </div>
-                                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </oj-switcher>
-    </div>
-</div>
   

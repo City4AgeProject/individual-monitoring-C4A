@@ -87,12 +87,12 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
 //        };
         
         self.apply1Enable = ko.computed(function(){
-            if(self.treeSelection1().length === 0 || self.selectedPilots1().length === 0){
+            if(self.selectedPilots1().length === 0){
                 return true;
             }else return false;
         },this);
         self.apply2Enable = ko.computed(function(){
-            if(self.treeSelection2().length === 0 || self.selectedPilots2().length === 0 || self.selectedSocio().length === 0){
+            if(self.selectedPilots2().length === 0 || self.selectedSocio().length === 0){
                 return true;
             }else return false;
         },this);
@@ -195,9 +195,14 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             let pilotsString = self.selectedPilots1().join(" ");
             let variables = [];
             //get selected detection variables
-            self.treeSelection1().forEach(function(el){
+            if(self.treeSelection1().length === 0){
+                variables.push("501");
+            }else{
+                self.treeSelection1().forEach(function(el){
                 variables.push(variableIds[el-1]);
-            });
+                });
+            }
+           
             let variableString = variables.join(" ");
             
             let url;
@@ -235,9 +240,13 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             let pilotsString = self.selectedPilots2().join(" ");
             let variables = [];
             //get selected detection variables
-            self.treeSelection2().forEach(function(el){
+            if(self.treeSelection2().length === 0){
+                variables.push("501");
+            }else{
+                self.treeSelection2().forEach(function(el){
                 variables.push(variableIds[el-1]);
-            });
+                });
+            }
             let variableString = variables.join(" ");
             let socioString = self.selectedSocio().join(" ");
             let url;
@@ -331,9 +340,13 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             self.showLoader('1');
             var variables = [];
             //get selected detection variables
-            self.treeSelection1().forEach(function(el){
+            if(self.treeSelection1().length === 0){
+                variables.push("501");
+            }else{
+                self.treeSelection1().forEach(function(el){
                 variables.push(variableIds[el-1]);
-            });
+                });
+            }
             self.getScenario1Data(self.selectedPilots1(), variables, self.dateFromValue(),  self.dateToValue(), getCorelationCoefficients);
             self.getHeatmapData(self.selectedPilots1(), variables, 1);
         };
@@ -351,9 +364,13 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             var variables = [];
             
             //get selected detection variables
-            self.treeSelection2().forEach(function(el){
+            if(self.treeSelection2().length === 0){
+                variables.push("501");
+            }else{
+                self.treeSelection2().forEach(function(el){
                 variables.push(variableIds[el-1]);
-            });
+                });
+            }
             
             self.getScenario2Data(self.selectedPilots2(), variables, self.orderedSocioFactors, self.dateFromValue1(), self.dateToValue1(), comparison, getCorelationCoefficients);
             self.getHeatmapData(self.selectedPilots2(), variables, 2);
@@ -565,24 +582,20 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         
 
         self.selectionChangedTree1 = function(event){
-            console.log('selection1 changed!');
-            console.log('event.detail = ' + JSON.stringify(event.detail));
-             var newSelection1 = event.detail.value;
-             $('#selection-list1').text(newSelection1.length > 0 ? newSelection1 : 'none');
-             console.log('new selection is : ' + newSelection1);
-             console.log('treeselection 1 is now : ' + self.treeSelection1());
         };
         self.selectionChangedTree2 = function(event){
-            console.log('selection2 changed!');
-             var newSelection2 = event.detail.value;
-             $('#selection-list2').text(newSelection2.length > 0 ? newSelection2 : 'none');
         };
         self.fullScreen1 = function(event){
             document.getElementById('modalDialog1').open();
         };
         self.fullScreen2 = function(event){
-            let sWidth = $(window).width();
-            let sHeight = $(window).height();
+//            let sWidth = $(window).width();
+//            let sHeight = $(window).height();
+            console.log('inner height ' + window.innerHeight);
+            console.log('window height ' + $(window).width());
+            
+            let sWidth = window.innerWidth;
+            let sHeight = window.innerHeight;
             if(self.comparison){
                 self.dialogFullScreenWidth2("750px");
                 self.dialogFullScreenHeight2("55vw");
