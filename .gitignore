@@ -9,4 +9,5 @@
 /target/*
 /frontend/src/main/resources/META-INF/resources/node_modules/
 /frontend/src/main/resources/META-INF/resources/package-lock.json
+/frontend/src/main/resources/META-INF/resources/nbproject/private/
 /frontend/node/

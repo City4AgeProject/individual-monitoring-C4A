@@ -240,13 +240,9 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             let pilotsString = self.selectedPilots2().join(" ");
             let variables = [];
             //get selected detection variables
-            if(self.treeSelection2().length === 0){
-                variables.push("501");
-            }else{
-                self.treeSelection2().forEach(function(el){
+            self.treeSelection2().forEach(function(el){
                 variables.push(variableIds[el-1]);
-                });
-            }
+            });
             let variableString = variables.join(" ");
             let socioString = self.selectedSocio().join(" ");
             let url;
@@ -262,9 +258,9 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             xhr.open('POST', url);
             xhr.responseType = 'blob';
             if(self.comparison == undefined){
-                xhr.send("?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1());
+                xhr.send("?pilotCode=" + pilotsString +"&detectionVariable=501 " + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1());
             } else {
-                xhr.send("?pilotCode=" + pilotsString +"&detectionVariable=" + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1() +"&comparison=" + self.comparison);
+                xhr.send("?pilotCode=" + pilotsString +"&detectionVariable=501 " + variableString + "&category=" + socioString +"&intervalStart="+ self.dateFromValue1() +"&intervalEnd=" + self.dateToValue1() +"&comparison=" + self.comparison);
             }
             xhr.onload = function(e) {
               if (this.status == 200) {
@@ -340,13 +336,9 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             self.showLoader('1');
             var variables = [];
             //get selected detection variables
-            if(self.treeSelection1().length === 0){
-                variables.push("501");
-            }else{
-                self.treeSelection1().forEach(function(el){
+            self.treeSelection1().forEach(function(el){
                 variables.push(variableIds[el-1]);
-                });
-            }
+            });
             self.getScenario1Data(self.selectedPilots1(), variables, self.dateFromValue(),  self.dateToValue(), getCorelationCoefficients);
             self.getHeatmapData(self.selectedPilots1(), variables, 1);
         };
@@ -364,13 +356,9 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             var variables = [];
             
             //get selected detection variables
-            if(self.treeSelection2().length === 0){
-                variables.push("501");
-            }else{
-                self.treeSelection2().forEach(function(el){
+            self.treeSelection2().forEach(function(el){
                 variables.push(variableIds[el-1]);
-                });
-            }
+            });
             
             self.getScenario2Data(self.selectedPilots2(), variables, self.orderedSocioFactors, self.dateFromValue1(), self.dateToValue1(), comparison, getCorelationCoefficients);
             self.getHeatmapData(self.selectedPilots2(), variables, 2);
@@ -392,7 +380,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
               }
             };
             xhttp.open("POST", GROUP_ANALYTICS_DATA_GROUPS_AND_SERIES, true);
-            xhttp.send("?pilotCode=" + pilotString + "&detectionVariable=" + variableString1 + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + "&comparison=false");
+            xhttp.send("?pilotCode=" + pilotString + "&detectionVariable=501 " + variableString1 + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + "&comparison=false");
            
         };
         self.getScenario2Data = function(pilots, variables, socio, dateFrom, dateTo, comparison, callback){
@@ -407,7 +395,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", GROUP_ANALYTICS_DATA_GROUPS_AND_SERIES, true);
-            xhttp.send("?pilotCode=" + pilotString + "&detectionVariable=" + variableString + "&category=" + socioString + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + comparisonString);
+            xhttp.send("?pilotCode=" + pilotString + "&detectionVariable=501 " + variableString + "&category=" + socioString + "&intervalStart=" + dateFrom + "&intervalEnd=" + dateTo + comparisonString);
             xhttp.onreadystatechange = function(call) {
               if (this.readyState == 4 && this.status == 200) {
                     var response = JSON.parse(this.responseText);
@@ -449,7 +437,10 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
              
         };
         var getCorelationCoefficients = function(pilots, variables, dateFrom, dateTo, scenario ){
-            $.getJSON(GROUP_ANALYTICS_CORELATION_COEFFICIENT + "/detectionVariable/"+ variables +"?pilot=" + pilots +"&intervalStart=" + dateFrom +"&intervalEnd=" + dateTo).  
+            var detectionVariablesString = "/detectionVariable/";
+            if (variables.length === 0) detectionVariablesString = detectionVariablesString + "501";
+            if (variables.length !== 0) detectionVariablesString = detectionVariablesString + variables;
+            $.getJSON(GROUP_ANALYTICS_CORELATION_COEFFICIENT + detectionVariablesString +"?pilot=" + pilots +"&intervalStart=" + dateFrom +"&intervalEnd=" + dateTo).  
             then(function (response) { 
                 let series;
                 if(scenario === 1){
@@ -480,8 +471,12 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             var pilotString = pilots.join('+');
             var variableString = variables.join('/');
             
+            var detectionVariablesString = "/detectionVariable/";
+            if (variables.length === 0) detectionVariablesString = detectionVariablesString + "501";
+            if (variables.length !== 0) detectionVariablesString = detectionVariablesString + variableString;
+            
             var collection = new oj.Collection(null, {
-                    url: GROUP_ANALYTICS_HEATMAP + "/detectionVariable/" + variableString + "?pilot=" + pilotString
+                    url: GROUP_ANALYTICS_HEATMAP + detectionVariablesString + "?pilot=" + pilotString
             });
             if(scenario == 1){
                 self.dataSource1(new oj.CollectionDataGridDataSource(collection, {rowHeader: 'detectionVariableName'}));

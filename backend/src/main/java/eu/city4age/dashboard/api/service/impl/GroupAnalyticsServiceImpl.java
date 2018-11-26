@@ -709,8 +709,18 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 			localAddr = req.getLocalAddr();
 		
 		StringBuilder urlBuilder = new StringBuilder();
-		urlBuilder.append(req.getScheme()).append("://").append(localAddr).append(":").append(req.getLocalPort()).append(req.getContextPath()).append(mapping).append(path).append("/").append("graphData").append(urlQueryParams);
+		urlBuilder.append(req.getScheme())
+					.append("://")
+					.append(localAddr)
+					.append(":")
+					.append(req.getLocalPort())
+					.append(req.getContextPath())
+					.append(mapping).append(path)
+					.append("/").append("graphData")
+					.append(urlQueryParams);
+		
 		String url = urlBuilder.toString();
+		
 		return url;
 	}
 

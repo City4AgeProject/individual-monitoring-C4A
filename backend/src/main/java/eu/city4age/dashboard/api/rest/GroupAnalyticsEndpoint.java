@@ -127,6 +127,8 @@ public class GroupAnalyticsEndpoint {
 		Timestamp intervalEndDate = Timestamp.from(intervalEndLDT.toInstant(ZoneOffset.UTC));
 
 		List<DetectionVariable> detectionVariables = groupAnalyticsService.getDetectionVariables(detectionVariableId);
+		
+		if (detectionVariables.size() == 1 && detectionVariables.get(0).getId() == 501) return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(new ArrayList<CorrelationData>()));;
 
 		DetectionVariable overall = detectionVariableRepository.findOne(501L);
 		
@@ -170,6 +172,8 @@ public class GroupAnalyticsEndpoint {
 		List<Pilot> pilots = groupAnalyticsService.getPilots(pilotString);
 
 		List<DetectionVariable> detectionVariables = groupAnalyticsService.getDetectionVariables(detectionVariableId);
+		
+		if (detectionVariables.size() == 1 && detectionVariables.get(0).getId() == 501) return JerseyResponse.buildTextPlain(objectMapper.writeValueAsString(new ArrayList<CorrelationData>()));
 
 		DetectionVariable overall = detectionVariableRepository.findOne(501L);
 
