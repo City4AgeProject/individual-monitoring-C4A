@@ -35,23 +35,26 @@
                     <br>
                         <br>
                     <div class="flex-container" >
-                        <div class="oj-panel flex-item-1 oj-panel oj-panel-shadow-sm" style="flex-basis: 30%;min-width: 380px;">
-                            <div class="tree-container" style="text-align: center; margin:0 auto;">
-                                        <oj-label for="treeview1" >Geriatric Model Variables:</oj-label>
+                        <div class="flex-item-1" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
+                            <div class="tree-container oj-panel oj-panel-shadow-sm" style="text-align: center; margin:0 auto;min-height: 600px;">
+                                <div class="only-tree" style="min-height: 500px;">
+                                            <oj-label for="treeview1" >Geriatric Model Variables:</oj-label>
+                                            <br>
+                                            <oj-tree-view id="treeview1" 
+                                                          data="[[treeViewData]]" 
+                                                          item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('item_template', true)]]" 
+                                                          selection="{{treeSelection1}}" 
+                                                          selection-mode="multiple" 
+                                                          on-selection-changed="[[selectionChangedTree1]]" 
+                                                          aria-label="Tree View Selection Demo"
+                                                          expanded="{{expanded}}" 
+                                                          style="text-align: left;"
+                                                          >
+                                            </oj-tree-view>
+                                            </div>
                                         <br>
-                                        <oj-tree-view id="treeview1" 
-                                                      data="[[treeViewData]]" 
-                                                      item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('item_template', true)]]" 
-                                                      selection="{{treeSelection1}}" 
-                                                      selection-mode="multiple" 
-                                                      on-selection-changed="[[selectionChangedTree1]]" 
-                                                      aria-label="Tree View Selection Demo"
-                                                      style="text-align: left;"
-                                                      >
-                                        </oj-tree-view>
-                                        <br>
-                                        <div id="tree-legend" style="padding-top: 15px;">
-                                                <oj-label for="tree-legend">Legend:</oj-label>
+                                            <div id="tree-legend1" style="margin-bottom: 0px;">
+                                                <oj-label for="tree-legend1">Legend:</oj-label>
 
                                                 <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
                                                             <circle cx="8" cy="8" r="8" fill="#0376AC" />
@@ -67,13 +70,13 @@
                                                             <circle cx="8" cy="8" r="8" fill="#ED6647" />
                                                 </svg>
                                                 <span class="oj-treeview-item-text">Measure</span>
-                                            </div>
+                                            </div> 
                             </div>
                                         
-                                    
-                                    
+                        
+                                   
                                     <script type="text/html" id="item_template">
-                                          <li>
+                                        <li>
                                             <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
                                                     <!-- ko if: (type == "GEF") -->
                                                         <circle cx="8" cy="8" r="8" fill="#0376AC" />
@@ -93,13 +96,14 @@
                                           </li>
                                     </script>
                         </div>
-                        
-                        <div style=" flex-basis: 70%;" class=" ">
+                       
+                        <div style=" flex-grow: 3;" class=" ">
                             
                             <div class="input-container-1 oj-panel oj-panel-shadow-sm" style="text-align: center;">
-                                    <oj-label for="pilots1">Pilots:</oj-label>
-                                    <oj-conveyor-belt  class="conv-pilots" style="width:500px;margin:0 auto;">
-                                        <oj-buttonset-many id="pilots1" class="oj-buttonset-width-auto" value="{{selectedPilots1}}">
+                                <div  id = "pilots1-container" class="oj-flex" style=" margin: 0 auto;text-align: center; ">
+                                    <oj-label style="margin:0 auto;" for="pilots1">Pilots:</oj-label>
+                                    <oj-conveyor-belt  id="conv-blt-1" class="conv-pilots oj-xl-12 oj-lg-12 oj-md-6 oj-sm-12" content-parent="#pilots1"style="margin:0 auto;">
+                                        <oj-buttonset-many id="pilots1" class="oj-buttonset-width-auto" value="{{selectedPilots1}}" style="margin:0 auto;">
                                             <!-- ko foreach: pilots -->
                                             <oj-option value='[[id]]'>
                                                 <span data-bind="text: label"></span>
@@ -107,7 +111,9 @@
                                             <!-- /ko -->
                                         </oj-buttonset-many>
                                     </oj-conveyor-belt>
-                                
+                                </div>
+                                    
+                                    
                                 
                                     <div class="oj-flex">
                                         <div class="oj-flex-item" style="text-align: right">
@@ -126,7 +132,7 @@
                                 </div>
                                 <br>
                                     <div id="logo-collapsible-container1" style="text-align: center;">
-                                        <img id="logo-img-1" src="images/City4AgeLogo.png" style="display: inline;width:60%;">
+                                        <img id="logo-img-1" src="images/City4AgeLogo1.png" style="display: inline;width:60%; opacity: 0.3;">
                                         <div id="collapsible-container1" style="display: none">
                                         <oj-collapsible expanded='true'>
                                             <h3  slot="header">Diagram</h3>
@@ -141,7 +147,7 @@
                                                         animation-on-display="auto"
                                                         animation-on-data-change="auto"
                                                         hover-behavior="dim"
-                                                        style="height:500px;width:100%;position: relative;"
+                                                        style="height:400px;width:100%;position: relative;"
                                                         legend.position ="top"
                                                         zoom-and-scroll="live"
                                                         hide-and-show-behavior="withRescale"
@@ -241,8 +247,9 @@
                          <br>
                              <br>
                     <div class="flex-container">
-                        <div class="oj-panel oj-panel-shadow-sm flex-item-2" style="flex-basis: 30%;min-width: 380px;">
-                                <div class="tree-container" style="text-align: center; margin:0 auto;">
+                        <div class="flex-item-2" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
+                                <div class="tree-container oj-panel oj-panel-shadow-sm" style="text-align: center; margin:0 auto;min-height: 600px;">
+                                    <div class="only-tree" style="min-height: 500px;">
                                         <oj-label for="treeview2">Geriatric Model Variables:</oj-label>
                                         <br>
                                         <oj-tree-view id="treeview2" 
@@ -252,28 +259,12 @@
                                                       selection-mode="multiple" 
                                                       on-selection-changed="[[selectionChangedTree2]]" 
                                                       aria-label="Tree View Selection Demo"
+                                                      expanded="{{expanded}}" 
                                                       style="text-align: left;"
                                                       >
                                         </oj-tree-view>
-                                        <br>   
-                                    <div id="tree-legend" style="padding-top: 15px;">
-                                        <oj-label for="tree-legend">Legend:</oj-label>
-                                        
-                                        <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-                                                    <circle cx="8" cy="8" r="8" fill="#0376AC" />
-                                        </svg>
-                                        <span class="oj-treeview-item-text">Geriatric factor</span>
-                                        <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-                                                    <circle cx="8" cy="8" r="8" fill="#68a23f" />
-                                        </svg>
-                                        <span class="oj-treeview-item-text">Geriatric sub-factor</span>
-                                        <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-                                                    <circle cx="8" cy="8" r="8" fill="#ED6647" />
-                                        </svg>
-                                        <span class="oj-treeview-item-text">Measure</span>
                                     </div>
-                                        
-                                    
+                                        <br>   
                                     <script type="text/html" id="item_template">
                                           <li>
                                             <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
@@ -293,14 +284,32 @@
                                             <!-- /ko -->
                                           </li>
                                     </script>
+                                            <div id="tree-legend2" style="margin-bottom: 0px;">
+                                        <oj-label for="tree-legend2">Legend:</oj-label>
+                                        
+                                        <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="8" cy="8" r="8" fill="#0376AC" />
+                                        </svg>
+                                        <span class="oj-treeview-item-text">Geriatric factor</span>
+                                        <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="8" cy="8" r="8" fill="#68a23f" />
+                                        </svg>
+                                        <span class="oj-treeview-item-text">Geriatric sub-factor</span>
+                                        <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="8" cy="8" r="8" fill="#ED6647" />
+                                        </svg>
+                                        <span class="oj-treeview-item-text">Measure</span>
+                                    </div>
                             </div>
+                            
                         </div>
                         
-                        <div style="flex-basis: 70%;">
-                            <div class="input-container-2 oj-panel oj-panel-shadow-sm" style="text-align: center;">
-                                    <oj-label for="pilots2">Pilots:</oj-label>
-                                    <oj-conveyor-belt  class="conv-pilots" style="width:500px;margin:0 auto;">
-                                        <oj-buttonset-many id="pilots2" class="oj-buttonset-width-auto" value="{{selectedPilots2}}">
+                        <div style="flex-grow: 3">
+                            <div class="input-container-2 oj-panel oj-panel-shadow-sm" style="text-align: center;margin: 0 auto;text-align: center; ">
+                                <div id="pilots2-container" class="oj-flex" style="margin:0 auto;">
+                                     <oj-label for="conv-blt-2" style="margin: 0 auto;">Pilots:</oj-label>
+                                    <oj-conveyor-belt  class="conv-pilots oj-xl-12 oj-lg-12 oj-md-6 oj-sm-12" id="conv-blt-2" style="margin:0 auto;" content-parent="#pilots2">
+                                        <oj-buttonset-many id="pilots2" class="oj-buttonset-width-auto" value="{{selectedPilots2}}" style="margin: 0 auto;">
                                             <!-- ko foreach: pilots -->
                                             <oj-option value='[[id]]'>
                                                 <span data-bind="text: label"></span>
@@ -308,11 +317,13 @@
                                             <!-- /ko -->
                                         </oj-buttonset-many>
                                     </oj-conveyor-belt>
+                                </div>
+                                   
                             
-                                <oj-label for="soc">Sociodemografic Factors:</oj-label>
-                                
-                                    <oj-conveyor-belt class="conv-socio" id="soc" style="width:500px;margin:0 auto;">
-                                        <oj-buttonset-many id="socioeconomicFactors" class="oj-buttonset-width-auto" value="{{selectedSocio}}">
+                                <div id="socio-container"  style="margin: 0 auto;text-align: center; ">
+                                    <oj-label for="conv-blt-3" style="margin: 0 auto;">Sociodemografic Factors:</oj-label>
+                                    <oj-conveyor-belt class="conv-socio oj-xl-12 oj-lg-12 oj-md-6 oj-sm-12" id="conv-blt-3" style="margin:0 auto;"  content-parent="#socioeconomicFactors">
+                                        <oj-buttonset-many id="socioeconomicFactors" class="oj-buttonset-width-auto" value="{{selectedSocio}}" style="margin: 0 auto;">
                                             <!-- ko foreach: socioEconomic -->
                                             <oj-option value='[[id]]'>
                                                 <span data-bind="text: label"></span>
@@ -320,6 +331,7 @@
                                             <!-- /ko -->
                                         </oj-buttonset-many>
                                     </oj-conveyor-belt>
+                                </div>
                                
                                     <div class="oj-flex">
                                         <div class="oj-flex-item" style="text-align: right">
@@ -339,7 +351,7 @@
                             </div>
                                     <br>
                                         <div id="logo-collapsible-container2" style="text-align: center;">
-                                        <img id="logo-img-2" src="images/City4AgeLogo.png" style="display: inline;width:60%;">
+                                        <img id="logo-img-2" src="images/City4AgeLogo1.png" style="display: inline;width:60%;opacity: 0.3;">
                                         
                                         <div id="collapsible-container2" style="display: none">
                                         <oj-collapsible expanded='true'>

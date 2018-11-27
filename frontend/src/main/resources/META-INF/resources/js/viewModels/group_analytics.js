@@ -7,11 +7,11 @@
 /**
  * group_analytics module
  */
-define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs/ojnavigationlist',
+define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout-keyset','ojs/ojknockout','ojs/ojbutton', 'ojs/ojnavigationlist',
     'ojs/ojswitcher', 'ojs/ojdatetimepicker', 'ojs/ojselectcombobox', 'ojs/ojtimezonedata', 'ojs/ojlabel', 
     'ojs/ojconveyorbelt','ojs/ojtreeview', 'ojs/ojjsontreedatasource','ojs/ojchart','ojs/ojcollapsible','ojs/ojdatagrid', 'ojs/ojcollectiondatagriddatasource',
-'ojs/ojcollapsible','urls','ojs/ojvalidation-base','ojs/ojmessaging', 'treeViewData','ojs/ojdialog'
-], function (oj, ko, $) {
+'ojs/ojcollapsible','urls','ojs/ojvalidation-base','ojs/ojmessaging', 'treeViewData','ojs/ojdialog',
+], function (oj, ko, $, keySet) {
     /**
      * The view model for the main content view template
      */
@@ -74,6 +74,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
         self.treeViewData(new oj.JsonTreeDataSource(JSON.parse(JSON.stringify(variableTreeViewData))));
         self.treeSelection1 = ko.observableArray();
         self.treeSelection2 = ko.observableArray();
+        self.expanded = new keySet.ObservableExpandedKeySet().add(['1','120']);
         self.comparison = undefined;
         
         self.close1 = function (event) {
@@ -140,12 +141,12 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojbutton', 'ojs
             working: ["t", "f"]
         };
          self.pilots = [
-            {id: 'mad', label: 'Madrid'},
             {id: 'ath', label: 'Athens'},
             {id: 'lcc', label: 'Lecce'},
             {id: 'sin', label: 'Singapore'},
             {id: 'mpl', label: 'Montpellier'},
             {id: 'bhx', label: 'Birmingham'},
+            {id: 'mad', label: 'Madrid'},
             {id: 'whole_population', label: 'Whole population'}
         ];
         /*HEATMAP*/
