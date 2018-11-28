@@ -35,8 +35,8 @@
                     <br>
                         <br>
                     <div class="flex-container" >
-                        <div class="flex-item-1" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
-                            <div class="tree-container oj-panel oj-panel-shadow-sm" style="text-align: center; margin:0 auto;min-height: 600px;">
+                        <div id="tree-panel-1" class="flex-item-1" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
+                            <div id="tree-container-1" class="tree-container oj-panel oj-panel-shadow-sm"  style="text-align: center; margin:0 auto;min-height: 600px;">
                                 <div class="only-tree" style="min-height: 500px;">
                                             <oj-label for="treeview1" >Geriatric Model Variables:</oj-label>
                                             <br>
@@ -102,7 +102,7 @@
                             <div class="input-container-1 oj-panel oj-panel-shadow-sm" style="text-align: center;">
                                 <div  id = "pilots1-container" class="oj-flex" style=" margin: 0 auto;text-align: center; ">
                                     <oj-label style="margin:0 auto;" for="pilots1">Pilots:</oj-label>
-                                    <oj-conveyor-belt  id="conv-blt-1" class="conv-pilots oj-xl-12 oj-lg-12 oj-md-6 oj-sm-12" content-parent="#pilots1"style="margin:0 auto;">
+                                    <oj-conveyor-belt  id="conv-blt-1" class="conv-pilots oj-xl-12 oj-lg-12 oj-md-12 oj-sm-12" content-parent="#pilots1"style="margin:0 auto;">
                                         <oj-buttonset-many id="pilots1" class="oj-buttonset-width-auto" value="{{selectedPilots1}}" style="margin:0 auto;">
                                             <!-- ko foreach: pilots -->
                                             <oj-option value='[[id]]'>
@@ -139,7 +139,7 @@
                                             <div class='chart-container oj-panel oj-panel-shadow-sm' style="text-align: center;">
                                                 <div id="chart-container-1" style="display: block;padding-top: 15px;min-height:500px">
                                                     <div id="ldr1" class="loader1"></div>
-                                                    <oj-chart 
+                                                        <oj-chart 
                                                         id="chart1"
                                                         type="line"
                                                         series="[[lineSeriesValue]]"
@@ -179,7 +179,7 @@
                                             </div>
                                           </oj-collapsible>
                                         <oj-collapsible>
-                                            <h3  slot="header">Correlation factors heatmap</h3>
+                                            <h3  slot="header">Correlation factors heatmap since the start of the data acquisition</h3>
                                             <div class="oj-panel oj-panel-shadow-sm">
                                                 <div class="heatmap-container ">
                                                     <oj-label for="datagrid">Heatmap:</oj-label> 
@@ -308,7 +308,7 @@
                             <div class="input-container-2 oj-panel oj-panel-shadow-sm" style="text-align: center;margin: 0 auto;text-align: center; ">
                                 <div id="pilots2-container" class="oj-flex" style="margin:0 auto;">
                                      <oj-label for="conv-blt-2" style="margin: 0 auto;">Pilots:</oj-label>
-                                    <oj-conveyor-belt  class="conv-pilots oj-xl-12 oj-lg-12 oj-md-6 oj-sm-12" id="conv-blt-2" style="margin:0 auto;" content-parent="#pilots2">
+                                    <oj-conveyor-belt  class="conv-pilots oj-xl-12 oj-lg-12 oj-md-12 oj-sm-12" id="conv-blt-2" style="margin:0 auto;" content-parent="#pilots2">
                                         <oj-buttonset-many id="pilots2" class="oj-buttonset-width-auto" value="{{selectedPilots2}}" style="margin: 0 auto;">
                                             <!-- ko foreach: pilots -->
                                             <oj-option value='[[id]]'>
@@ -322,7 +322,7 @@
                             
                                 <div id="socio-container"  style="margin: 0 auto;text-align: center; ">
                                     <oj-label for="conv-blt-3" style="margin: 0 auto;">Sociodemografic Factors:</oj-label>
-                                    <oj-conveyor-belt class="conv-socio oj-xl-12 oj-lg-12 oj-md-6 oj-sm-12" id="conv-blt-3" style="margin:0 auto;"  content-parent="#socioeconomicFactors">
+                                    <oj-conveyor-belt class="conv-socio oj-xl-12 oj-lg-12 oj-md-12 oj-sm-12" id="conv-blt-3" style="margin:0 auto;"  content-parent="#socioeconomicFactors">
                                         <oj-buttonset-many id="socioeconomicFactors" class="oj-buttonset-width-auto" value="{{selectedSocio}}" style="margin: 0 auto;">
                                             <!-- ko foreach: socioEconomic -->
                                             <oj-option value='[[id]]'>
@@ -417,7 +417,7 @@
                                         </div>
                                           </oj-collapsible>
                                         <oj-collapsible>
-                                            <h3  slot="header">Correlation factors heatmap</h3>
+                                            <h3  slot="header">Correlation factors heatmap since the start of the data acquisition</h3>
                                             <div class="oj-panel oj-panel-shadow-sm">
                                                 <div class="heatmap-container ">
                                                     <oj-label for="datagrid">Heatmap:</oj-label> 

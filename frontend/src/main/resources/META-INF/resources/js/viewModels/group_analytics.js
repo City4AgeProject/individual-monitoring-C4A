@@ -605,8 +605,8 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout-keyset','ojs/ojknocko
             }
             document.getElementById('modalDialog2').open();
         };
-           
-    }
-    
+
+                }
+
     return group_analyticsContentViewModel;
 });

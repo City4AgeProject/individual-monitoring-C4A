@@ -348,8 +348,9 @@
     }
     .flex-item-1, .flex-item-2{
         margin-right: 15px;
-       
+        max-width: 380px;
     }
+    
 }
 @media(max-width: 1050px){
     .input-container-1, .input-container-2{
@@ -358,7 +359,7 @@
     }
     .tree-container{
         width: 50%;
-    }
+    }    
 }
 @media(max-width: 800px){
     .tree-container{

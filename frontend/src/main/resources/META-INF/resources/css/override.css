@@ -349,6 +349,13 @@ th {
     
     
 }*/
+@media only screen and (min-width:1550px) {
+#pilots1-container{
+        width:1007px;
+    }
+    
+}
+
 @media only screen and (max-width:1550px) {
 
     #socio-container{
