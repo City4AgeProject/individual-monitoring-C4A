@@ -344,6 +344,11 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                             self.defaultTypicalPeriod(self.finalData[0].defaultTypicalPeriod);
                             self.lineType(self.finalData[0].lineType);
                             self.hasComments(self.finalData[0].hasComments);
+                            self.clusterGroups([]);
+                            self.clusterSeries([]);
+                            self.clusterDataHeader ("");
+                            self.clusterLegendSections ([]);
+
                             //$('#anagraphMeasureView').prop('nuisForMeasure', self.nuisForMeasure);
                             resolve();
                         }).fail(function (err) {
@@ -356,13 +361,14 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'appController', 'jquery
                                     self.clusterSeries(clusterData.series);
                                     //self.clusterSeries[0].displayInLegend = "off";
                                     if (clusterData.series !== undefined)
-                                        self.clusterDataHeader = "Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name);
+                                        self.clusterDataHeader("Cluster Data for " + oj.Translations.getTranslatedString(clusterData.series[0].name));
                                     //console.log (JSON.stringify(clusterData.legend));
-                                    self.clusterLegendSections = clusterData.legend;
+                                    self.clusterLegendSections(clusterData.legend);
                                     self.dataIDs(clusterData.dataIDs);
                                     console.log(self.dataIDs())
                                     if (clusterData.dataIDs !== undefined)
                                         self.loadAssessments();
+                                    $("#clusterChart")[0].refresh();
                                 }),
                                 $.get(CODEBOOK_SELECT_ALL_FILTER_TYPES, function (data) {
                                     self.excludeConfirmData(data);

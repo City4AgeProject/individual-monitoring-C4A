@@ -22,8 +22,8 @@ public interface VmvFilteringRepository extends GenericRepository<VmvFiltering, 
 	@Query ("SELECT vmv.id FROM VmvFiltering vf INNER JOIN vf.vmv vmv INNER JOIN vmv.userInRole uir INNER JOIN vmv.detectionVariable dv WHERE vf.assessment = :assessment AND uir = :uir AND dv = :measureType")
 	public List<Long> findVmvIDsByAssessment(@Param ("assessment") Assessment a, @Param ("uir") UserInRole uir, @Param ("measureType") DetectionVariable measureType);
 	
-	@Query ("SELECT vf FROM VmvFiltering vf INNER JOIN vf.vmv vmv WHERE vmv.id = :vmvId ORDER BY vf.validFrom DESC")
-	public List<VmvFiltering> findFilterTypeByVmvId (@Param ("vmvId") Long vmvId);
+	@Query ("SELECT vf FROM VmvFiltering vf WHERE vf.vmvId IN :vmvId AND vf.filterType = 'E'")
+	public List<VmvFiltering> findFilterTypeByVmvId (@Param ("vmvId") List<Long> vmvId);
 	
 	@Query ("SELECT DISTINCT vf FROM VmvFiltering vf WHERE vf.assessment = :assessment")
 	public List<VmvFiltering> findByAssessment (@Param ("assessment") Assessment assessment);

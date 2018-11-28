@@ -130,15 +130,15 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout-keyset','ojs/ojknocko
                     {id: 'quality_neighborhood', label: 'Quality of neighborhood'}
         ];
         self.allSocioEconomics = {
-            sex : ["m", "f"],
-            marital_status : ["s","m","w","d","t"],
+            sex : ["male", "female"],
+            marital_status : ["single", "married", "widowed", "divorced", "domestic partnership"],
             age_group: ["55-65", "65-75", "75-85", "85-95", "95+"],
             education: [ "none", "primary", "secondary", "tertiary"],
             cohabiting: ["alone", "family", "friends", "other"],
-            informal_caregiver_ability: ["t", "f"],
+            informal_caregiver_ability: ["available", "unavailable"],
             quality_housing: ["low", "average", "high"],
             quality_neighborhood: ["low", "average", "high"],
-            working: ["t", "f"]
+            working: ["working", "not working"]
         };
          self.pilots = [
             {id: 'ath', label: 'Athens'},

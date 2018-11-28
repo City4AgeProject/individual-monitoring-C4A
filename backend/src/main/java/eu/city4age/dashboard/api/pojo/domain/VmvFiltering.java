@@ -25,6 +25,9 @@ public class VmvFiltering extends AbstractBaseEntity<Long> {
 	@JoinColumn(name = "vmv_id", referencedColumnName = "id")
 	private VariationMeasureValue vmv;
 	
+	@Column(name = "vmv_id", insertable = false, updatable = false)
+	private Long vmvId;
+	
 	@Column(name = "filter_type")
 	private String filterType;
 	
@@ -107,6 +110,20 @@ public class VmvFiltering extends AbstractBaseEntity<Long> {
 		this.assessment = assessment;
 	}
 	
+	/**
+	 * @return the vmvId
+	 */
+	public Long getVmvId() {
+		return vmvId;
+	}
+
+	/**
+	 * @param vmvId the vmvId to set
+	 */
+	public void setVmvId(Long vmvId) {
+		this.vmvId = vmvId;
+	}
+
 	@Override
 	public int hashCode() {
 		return id.intValue();

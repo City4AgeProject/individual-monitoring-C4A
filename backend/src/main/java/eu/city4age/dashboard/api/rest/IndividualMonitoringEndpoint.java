@@ -413,6 +413,8 @@ public class IndividualMonitoringEndpoint {
 		filterTypeDescription.put('E', "Exclude");
 		filterTypeDescription.put('Q', "Questionable");
 		
+		List<VmvFiltering> vfs = vmvFilteringRepository.findFilterTypeByVmvId(data.getVmvid());
+		
 		for (int i = 0; i < data.getGroups().size(); i++) {
 			LocalDate groupDate = LocalDate.parse(data.getGroups().get(i));
 			Long id = data.getVmvid().get(i);
@@ -421,11 +423,15 @@ public class IndividualMonitoringEndpoint {
 			
 			dataIDs.add(id);
 			dataIDsStrings.add(id.toString());
-			List<VmvFiltering> vf = vmvFilteringRepository.findFilterTypeByVmvId(id);
-			Character filterType = vf.size() > 0 ? vf.get(0).getFilterType().charAt(0) : null;
+			Character filterType = null;
+			for (VmvFiltering vf : vfs) {
+				if (vf.getVmvId().equals(id)) {
+					filterType = 'E';
+					break;
+				}
+			}
 			
 			for (int j = 0; j < numOfClusters; j++) {
-				
 				String cluster = data.getCluster().get(j).getItems().get(i);
 				if (!cluster.equals("null")) {
 					List<String> categories = new ArrayList<String> ();
@@ -438,12 +444,13 @@ public class IndividualMonitoringEndpoint {
 					items.add(new ClusteredMeasuresItems(id.toString(), cluster, "circle" , "8", 
 							individualMonitoringService.getColorsOfClusters(numOfClusters)[j], "value: " + cluster + 
 							"\ngroup: " + data.getGroups().get(i) + "\ncluster: " + data.getCluster().get(j).getName(), 
-							(filterType != null && filterType.equals('E')) ? "images/X.png" : null, 
-							(filterType != null && filterType.equals('E')) ? "images/X_sel.png" : null, categories));
+							filterType != null ? "images/X.png" : null, 
+							filterType != null ? "images/X_sel.png" : null, categories));
 					break;
 				}
 			}
 		}
+		
 		
 		cms.setItems(items);
 		
