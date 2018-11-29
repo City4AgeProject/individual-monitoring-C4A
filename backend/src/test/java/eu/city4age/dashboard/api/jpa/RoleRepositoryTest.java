@@ -1,5 +1,6 @@
 package eu.city4age.dashboard.api.jpa;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -90,13 +91,13 @@ public class RoleRepositoryTest {
 		r4.setStakeholderAbbreviation("DRL");
 		roleRepository.save(r4);
 		
-		List<Role> result = roleRepository.findByStakeholderAbbreviation("DRL");
+		List<Role> result = roleRepository.findByStakeholderAbbreviation(Arrays.asList("DRL"));
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(4, result.size());		
 		Assert.assertEquals(Long.valueOf(1), result.get(0).getId());
 		
-		result = roleRepository.findByStakeholderAbbreviation("GPS");
+		result = roleRepository.findByStakeholderAbbreviation(Arrays.asList("GPS"));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(0, result.size());
 

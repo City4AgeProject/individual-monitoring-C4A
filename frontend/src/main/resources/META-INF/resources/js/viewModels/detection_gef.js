@@ -305,7 +305,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                         return new Promise(function (resolve, reject) {
 
                         $.when(
-                                $.get(CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/grs", function (rolesData) {
+                                $.get(CODEBOOK_SELECT_ROLES_FOR_STAKEHOLDER + "/grs/cgs/gps", function (rolesData) {
                                 rolesData.forEach(function (role) {
                                 self.roleTags.push({
                                 value: role.id,

@@ -408,15 +408,7 @@ public class AssessmentsEndpoint {
 	@GET
 	@Path("clusterAssessments/dataPointsIds/{dataPointsIds : .+}")	
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response clusterAssessments (@PathParam(value = "dataPointsIds") List<PathSegment> dataPointsIds,
-			@QueryParam(value = "roleId") Long roleId,
-			@QueryParam(value = "orderById") Long orderById,
-			@QueryParam(value = "riskStatusWarning") Boolean riskStatusWarning,
-			@QueryParam(value = "riskStatusAlert") Boolean riskStatusAlert,
-			@QueryParam(value = "riskStatusNoRisk") Boolean riskStatusNoRisk,
-			@QueryParam(value = "dataValidityQuestionable") Boolean dataValidityQuestionable,
-			@QueryParam(value = "dataValidityFaulty") Boolean dataValidityFaulty,
-			@QueryParam(value = "dataValidityValid") Boolean dataValidityValid) throws JsonProcessingException, IOException {		
+	public Response clusterAssessments (@PathParam(value = "dataPointsIds") List<PathSegment> dataPointsIds) throws JsonProcessingException, IOException {		
 		
 		List<Assessment> assessmentList;
 		
