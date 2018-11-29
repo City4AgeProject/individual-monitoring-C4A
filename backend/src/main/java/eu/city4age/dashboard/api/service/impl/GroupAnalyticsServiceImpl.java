@@ -667,7 +667,7 @@ public class GroupAnalyticsServiceImpl implements GroupAnalyticsService {
 		socioEconomics.put("age_group", Arrays.asList("50-59", "60-69", "70-79", "80-89", "90+"));
 		socioEconomics.put("education", Arrays.asList("none", "primary", "secondary", "tertiary"));
 		socioEconomics.put("cohabiting", Arrays.asList("alone", "family", "friends", "other"));
-		socioEconomics.put("informal_caregiver_ability", Arrays.asList("available", "unavailable"));
+		socioEconomics.put("informal_caregiver_ability", Arrays.asList("IC available", "IC unavailable"));
 		socioEconomics.put("quality_housing", Arrays.asList("low", "average", "high"));
 		socioEconomics.put("quality_neighborhood", Arrays.asList("low", "average", "high"));
 		socioEconomics.put("working", Arrays.asList("working", "not working"));

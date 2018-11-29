@@ -135,7 +135,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout-keyset','ojs/ojknocko
             age_group: ["55-65", "65-75", "75-85", "85-95", "95+"],
             education: [ "none", "primary", "secondary", "tertiary"],
             cohabiting: ["alone", "family", "friends", "other"],
-            informal_caregiver_ability: ["available", "unavailable"],
+            informal_caregiver_ability: ["IC available", "IC unavailable"],
             quality_housing: ["low", "average", "high"],
             quality_neighborhood: ["low", "average", "high"],
             working: ["working", "not working"]
@@ -282,11 +282,15 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout-keyset','ojs/ojknocko
             }
         };
         self.selectedSocio.subscribe(function(changes) {
-             if(changes[0].status == "added"){
-                 self.orderedSocioFactors.push(changes[0].value);
-             }else{
-                 self.orderedSocioFactors.pop(changes[0].value);
-             }
+            if (changes[0].status == "added") {
+                self.orderedSocioFactors.push(changes[0].value);
+            } else {
+                for( var i = 0; i < self.orderedSocioFactors.length; i++){ 
+                    if (self.orderedSocioFactors[i] === changes[0].value) {
+                        self.orderedSocioFactors.splice(i, 1); 
+                    } 
+                }
+            }
         }, null, "arrayChange");
         
         self.selectedPilots2.subscribe(function(changes){
