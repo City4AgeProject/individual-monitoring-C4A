@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -415,6 +417,10 @@ public class IndividualMonitoringEndpoint {
 		
 		List<VmvFiltering> vfs = vmvFilteringRepository.findFilterTypeByVmvId(data.getVmvid());
 		
+		Map<Long, VmvFiltering> vfsMap = new HashMap<Long, VmvFiltering>();
+		for (VmvFiltering vf : vfs)
+			vfsMap.put(vf.getId(), vf);
+		
 		for (int i = 0; i < data.getGroups().size(); i++) {
 			LocalDate groupDate = LocalDate.parse(data.getGroups().get(i));
 			Long id = data.getVmvid().get(i);
@@ -424,11 +430,9 @@ public class IndividualMonitoringEndpoint {
 			dataIDs.add(id);
 			dataIDsStrings.add(id.toString());
 			Character filterType = null;
-			for (VmvFiltering vf : vfs) {
-				if (vf.getVmvId().equals(id)) {
-					filterType = 'E';
-					break;
-				}
+			if (vfsMap.get(id) != null && vfsMap.get(id).getVmvId().equals(id)) {
+				filterType = 'E';
+				break;
 			}
 			
 			for (int j = 0; j < numOfClusters; j++) {

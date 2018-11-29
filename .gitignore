@@ -1,3 +1,5 @@
+.project
+.pydevproject
 /frontend/nbproject/*
 /frontend/target/*
 /backend/target/*
