@@ -35,10 +35,10 @@
                     <br>
                         <br>
                     <div class="flex-container" >
-                        <div id="tree-panel-1" class="flex-item-1" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
-                            <div id="tree-container-1" class="tree-container oj-panel oj-panel-shadow-sm"  style="text-align: center; margin:0 auto;min-height: 600px;">
-                                <div class="only-tree" style="min-height: 500px;">
-                                            <oj-label for="treeview1" >Geriatric Model Variables:</oj-label>
+                        <div id="tree-panel-1" class="flex-item-1 oj-panel oj-panel-shadow-sm" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
+                            <div id="tree-container-1" class="tree-container"  style="text-align: center; margin:0 auto;min-height: 600px;">
+                                <div class="only-tree" style="min-height: 500px">
+                                            <oj-label for="treeview1" style="margin-top: 15px;">Geriatric Model Variables:</oj-label>
                                             <br>
                                             <oj-tree-view id="treeview1" 
                                                           data="[[treeViewData]]" 
@@ -181,11 +181,10 @@
                                         <oj-collapsible>
                                             <h3  slot="header">Correlation factors heatmap since the start of the data acquisition</h3>
                                             <div class="oj-panel oj-panel-shadow-sm">
-                                                <div class="heatmap-container ">
+                                                <div class="heatmap-container" style="margin: 0 auto;">
                                                     <oj-label for="datagrid">Heatmap:</oj-label> 
-                                                    <oj-data-grid id="heatmap1" data-bind="style:{height : heatmapHeight(),width:heatmapWidth()}" 
+                                                    <oj-data-grid id="heatmap1" data-bind="style:{height : heatmapHeight(),width:heatmapWidth()}"
                                                         aria-label="Data Grid Heatmap Demo" 
-                                                        style=" margin:0 auto;"
                                                         data="[[dataSource1]]"
                                                         header.row.style="width:250px;height:50px;"
                                                         header.column.resizable='{"width":"enable", "height":"enable"}'
@@ -247,10 +246,10 @@
                          <br>
                              <br>
                     <div class="flex-container">
-                        <div class="flex-item-2" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
-                                <div class="tree-container oj-panel oj-panel-shadow-sm" style="text-align: center; margin:0 auto;min-height: 600px;">
+                        <div id="tree-panel-2" class="flex-item-2 oj-panel oj-panel-shadow-sm" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
+                                <div id="tree-container-2" class="tree-container" style="text-align: center; margin:0 auto;min-height: 600px;">
                                     <div class="only-tree" style="min-height: 500px;">
-                                        <oj-label for="treeview2">Geriatric Model Variables:</oj-label>
+                                        <oj-label for="treeview2" style="margin-top: 15px;">Geriatric Model Variables:</oj-label>
                                         <br>
                                         <oj-tree-view id="treeview2" 
                                                       data="[[treeViewData]]" 
@@ -305,7 +304,7 @@
                         </div>
                         
                         <div style="flex-grow: 3">
-                            <div class="input-container-2 oj-panel oj-panel-shadow-sm" style="text-align: center;margin: 0 auto;text-align: center; ">
+                            <div class="input-container-2 oj-panel oj-panel-shadow-sm" style="text-align: center;">
                                 <div id="pilots2-container" class="oj-flex" style="margin:0 auto;">
                                      <oj-label for="conv-blt-2" style="margin: 0 auto;">Pilots:</oj-label>
                                     <oj-conveyor-belt  class="conv-pilots oj-xl-12 oj-lg-12 oj-md-12 oj-sm-12" id="conv-blt-2" style="margin:0 auto;" content-parent="#pilots2">
@@ -358,7 +357,7 @@
                                             <h3  slot="header">Diagram</h3>
                                             <div class="oj-panel oj-panel-shadow-sm" style="text-align: center;">
                                             
-                                                <div id="chart-container-2" style="display: block;padding-top: 15px;min-height:500px">
+                                                <div id="chart-container-2" style="display: block;padding-top: 15px;min-height:500px;position: relative;">
                                                     <div class="oj-flex">
                                                         <div class="oj-flex-item" style="text-align: right;">
                                                             <oj-buttonset-many value="{{evolutionInTime2}}">
@@ -423,7 +422,6 @@
                                                     <oj-label for="datagrid">Heatmap:</oj-label> 
                                                     <oj-data-grid id="heatmap2" data-bind="style:{height : heatmapHeight(),width:heatmapWidth()}" 
                                                         aria-label="Data Grid Heatmap Demo" 
-                                                        style=" margin:0 auto;"
                                                         data="[[dataSource2]]"
                                                         header.row.style="width:250px;height:50px;"
                                                         header.column.resizable='{"width":"enable", "height":"enable"}'

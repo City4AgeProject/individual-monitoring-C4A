@@ -23,7 +23,7 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout-keyset','ojs/ojknocko
         self.seriesValue = ko.observableArray();
         self.groupsValue = ko.observableArray();
         self.heatmapHeight = ko.observable("250px");
-        self.heatmapWidth = ko.observable("552px");
+        self.heatmapWidth = ko.observable("100%");
         self.chartFullScreenWidth1 = ko.observable("95vw");
         self.chartFullScreenHeight1 = ko.observable("650px");
         self.chartFullScreenWidth2 = ko.observable("95vw");
@@ -323,16 +323,16 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout-keyset','ojs/ojknocko
             }
         });
         self.showLoader = function(scenario){
-           document.getElementById('logo-img-' + scenario).style.display = 'none';
-           document.getElementById('collapsible-container' + scenario).style.display = 'block';
-           document.getElementById('chart' + scenario).style.display = 'none';
+           if(document.getElementById('logo-img-' + scenario).style.display !== 'none'){
+                document.getElementById('logo-img-' + scenario).style.display = 'none';
+                document.getElementById('collapsible-container' + scenario).style.display = 'block';
+            }
+           document.getElementById('chart' + scenario).style.visibility = 'hidden';
            document.getElementById('ldr' + scenario).style.display = 'block';
-           document.getElementById('export-container' + scenario).style.display = 'none';
         };
        self.hideLoader = function(scenario){
-           document.getElementById('chart' + scenario).style.display = 'block';
+           document.getElementById('chart' + scenario).style.visibility = 'visible';
            document.getElementById('ldr' + scenario).style.display = 'none';
-           document.getElementById('export-container' + scenario).style.display = 'block';
         };
         
         self.applyScenario1 = function(){
@@ -418,8 +418,10 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout-keyset','ojs/ojknocko
                         self.stackValue("on");
                         self.splitDualYValue("on");
                         self.orientationValue("horizontal");
-                        self.yAxisTitleValue(pilots[0]);
-                        self.y2AxisTitleValue(pilots[1]);
+                        for(let i = 0; i < self.pilots.length; i++){
+                            if(self.pilots[i].id == pilots[0]) self.yAxisTitleValue(self.pilots[i].label);
+                            if(self.pilots[i].id == pilots[1]) self.y2AxisTitleValue(self.pilots[i].label);
+                        }
                         response.series.forEach(function(el){
 
                         });
@@ -609,7 +611,10 @@ define(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout-keyset','ojs/ojknocko
             }
             document.getElementById('modalDialog2').open();
         };
-
+        self.chart1Collapse = function(){
+            alert('collapse');
+        };
+            
                 }
 
     return group_analyticsContentViewModel;

@@ -342,7 +342,7 @@
 .oj-panel{
     background-color: #fcfcfd;
 }
-@media(min-width: 1050px){
+@media(min-width: 900px){
     .flex-container {
         display: flex;
     }
@@ -350,16 +350,41 @@
         margin-right: 15px;
         max-width: 380px;
     }
+    #tree-panel-1, #tree-panel-2 {
+        border: none;
+        box-shadow: none;  
+    }
+    #tree-container-1, #tree-container-2 {        
+        border: 1px solid #e7e8e9;
+        border-radius: 3px;
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.2),0 1px 5px 0 rgba(0,0,0,0.12);
+        background-color: #fcfcfd; 
+        padding-bottom: 20px;
+    }
+    .only-tree{
+        
+    }
+   
     
 }
-@media(max-width: 1050px){
+@media(max-width: 900px){
     .input-container-1, .input-container-2{
         margin-top: 20px;
-        
     }
     .tree-container{
         width: 50%;
-    }    
+    }  
+     #tree-panel-1, #tree-panel-2 {
+        border: 1px solid #e7e8e9;
+        border-radius: 3px;
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.2),0 1px 5px 0 rgba(0,0,0,0.12);
+        background-color: #fcfcfd;
+    }
+    #tree-container-1, #tree-container-2 {
+        border: none;
+        border-radius: 3px;
+        border:none;
+    }
 }
 @media(max-width: 800px){
     .tree-container{
@@ -371,10 +396,13 @@
         width: 100%;
     }
 }
-
+#heatmap1, #heatmap2 {
+    margin:0 auto;
+}
 .heatmap-container {
     padding: 10px;
     text-align: center;
+    margin:0 auto;
 }
 .heatmap-legend-gradient{
     
