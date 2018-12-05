@@ -419,7 +419,7 @@ public class IndividualMonitoringEndpoint {
 		
 		Map<Long, VmvFiltering> vfsMap = new HashMap<Long, VmvFiltering>();
 		for (VmvFiltering vf : vfs)
-			vfsMap.put(vf.getId(), vf);
+			vfsMap.put(vf.getVmvId(), vf);
 		
 		for (int i = 0; i < data.getGroups().size(); i++) {
 			LocalDate groupDate = LocalDate.parse(data.getGroups().get(i));
@@ -430,10 +430,9 @@ public class IndividualMonitoringEndpoint {
 			dataIDs.add(id);
 			dataIDsStrings.add(id.toString());
 			Character filterType = null;
-			if (vfsMap.get(id) != null && vfsMap.get(id).getVmvId().equals(id)) {
+			
+			if (vfsMap.get(id) != null)
 				filterType = 'E';
-				break;
-			}
 			
 			for (int j = 0; j < numOfClusters; j++) {
 				String cluster = data.getCluster().get(j).getItems().get(i);

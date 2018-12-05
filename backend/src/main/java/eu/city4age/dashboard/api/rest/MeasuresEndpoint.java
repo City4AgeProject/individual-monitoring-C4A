@@ -127,7 +127,7 @@ public class MeasuresEndpoint {
 		logger.info("createSystemAnnotations");
 		
 		int numOfVmvFilteringEntriesForUpdate = vmvFilteringRepository.findCountOfVmvFiltering();
-		int pageSize = 50000;
+		int pageSize = 5000;
 		
 		int numOfPages = 0;
 		if (numOfVmvFilteringEntriesForUpdate % pageSize != 0) 
