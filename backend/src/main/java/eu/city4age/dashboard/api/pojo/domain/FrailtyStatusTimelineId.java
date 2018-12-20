@@ -65,9 +65,9 @@ public class FrailtyStatusTimelineId implements Serializable {
 
 	public void setFrailtyStatus(String frailtyStatus) {
 		this.frailtyStatus = frailtyStatus;
-	}
-	
+	}	
 
+	@Override
 	public boolean equals(Object other) {
 		if ((this == other))
 			return true;
@@ -83,6 +83,7 @@ public class FrailtyStatusTimelineId implements Serializable {
 				&& (this.getFrailtyStatus() == castOther.getFrailtyStatus());
 	}
 
+	@Override
 	public int hashCode() {
 	    StringBuilder builder = new StringBuilder();
 	    builder.append(String.valueOf(timeIntervalId));

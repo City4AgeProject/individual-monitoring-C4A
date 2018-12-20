@@ -63,5 +63,21 @@ public class Eam extends AbstractBaseEntity<Long> {
 	public void setDuration(Integer duration) {
 		this.duration = duration;
 	}
+	
+	@Override
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof Eam) {
+			Eam eam = (Eam) obj;
+			if (eam.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
 
 }

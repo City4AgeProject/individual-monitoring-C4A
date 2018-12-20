@@ -1,12 +1,14 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -62,6 +64,9 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 	@JsonInclude ()
 	@OneToOne (mappedBy = "value", fetch = FetchType.LAZY)
 	private ValueEvidenceNotice valueEvidenceNotice; 
+	
+	@OneToMany(mappedBy = "vmv", fetch = FetchType.LAZY)
+	private Set<VmvFiltering> vmvFiltering;
 
 
 	public VariationMeasureValue() {
@@ -149,6 +154,36 @@ public class VariationMeasureValue extends AbstractBaseEntity<Long> {
 
 	public void setValueEvidenceNotice (ValueEvidenceNotice valueEvidenceNotice) {
 		this.valueEvidenceNotice = valueEvidenceNotice;
+	}
+
+	/**
+	 * @return the vmvFiltering
+	 */
+	public Set<VmvFiltering> getVmvFiltering() {
+		return vmvFiltering;
+	}
+
+	/**
+	 * @param vmvFiltering the vmvFiltering to set
+	 */
+	public void setVmvFiltering(Set<VmvFiltering> vmvFiltering) {
+		this.vmvFiltering = vmvFiltering;
+	}
+	
+	@Override
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof VariationMeasureValue) {
+			VariationMeasureValue vmv = (VariationMeasureValue) obj;
+			if (vmv.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
 	}
 
 }

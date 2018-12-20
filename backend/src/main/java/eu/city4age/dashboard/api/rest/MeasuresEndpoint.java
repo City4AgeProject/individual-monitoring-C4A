@@ -2,6 +2,8 @@ package eu.city4age.dashboard.api.rest;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -11,7 +13,6 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -21,43 +22,38 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import eu.city4age.dashboard.api.config.ObjectMapperFactory;
-import eu.city4age.dashboard.api.jpa.NUIRepository;
+import eu.city4age.dashboard.api.jpa.AssessmentRepository;
 import eu.city4age.dashboard.api.jpa.PilotRepository;
 import eu.city4age.dashboard.api.jpa.TimeIntervalRepository;
+import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
 import eu.city4age.dashboard.api.jpa.VariationMeasureValueRepository;
-import eu.city4age.dashboard.api.pojo.domain.NumericIndicatorValue;
+import eu.city4age.dashboard.api.jpa.VmvFilteringRepository;
+import eu.city4age.dashboard.api.pojo.domain.Assessment;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.TimeInterval;
+import eu.city4age.dashboard.api.pojo.domain.UserInRole;
 import eu.city4age.dashboard.api.pojo.domain.VariationMeasureValue;
+import eu.city4age.dashboard.api.pojo.domain.VmvFiltering;
 import eu.city4age.dashboard.api.pojo.enu.TypicalPeriod;
-import eu.city4age.dashboard.api.pojo.json.view.View;
 import eu.city4age.dashboard.api.pojo.ws.JerseyResponse;
 import eu.city4age.dashboard.api.service.MeasuresService;
 import eu.city4age.dashboard.api.service.PredictionService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 /**
  * @author milos.holclajtner
  *
  */
 @Component
-//@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 @Path(MeasuresEndpoint.PATH)
 public class MeasuresEndpoint {
 
@@ -67,81 +63,139 @@ public class MeasuresEndpoint {
 
 	static protected SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM");
 
-	private static final ObjectMapper objectMapper = ObjectMapperFactory.create();
-
 	@Autowired
 	private VariationMeasureValueRepository variationMeasureValueRepository;
-
+	
 	@Autowired
-	private NUIRepository nuiRepository;
-
+	private VmvFilteringRepository vmvFilteringRepository;
+	
 	@Autowired
-	private PilotRepository pilotRepository;
+	private UserInRoleRepository userInRoleRepository;
+	
+	@Autowired
+	private AssessmentRepository assessmentRepository;
 
 	@Autowired
 	private TimeIntervalRepository timeIntervalRepository;
 	
 	@Autowired
+	private PilotRepository pilotRepository;
+	
+	@Autowired
 	private MeasuresService measuresService;
+	
+	@Autowired
+	private PredictionService predictionService;
 
 	@Autowired
 	Environment environment;
-
-	@Autowired 
-	private PredictionService predictionService = new PredictionService();
 
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
-
-	@GET
-	@ApiOperation("Get daily measures for care recipient within given geriatric subfactor.")
-	@Produces(MediaType.APPLICATION_JSON)
-	@JsonView(View.VariationMeasureValueView.class)
-	@Path("getDailyMeasures/userInRoleId/{userInRoleId}/gesId/{gesId}")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "userInRoleId", value = "id of care recipient", required = false, dataType = "long", paramType = "path", defaultValue = "1"),
-		@ApiImplicitParam(name = "gesId", value = "id of geriatric subfactor", required = false, dataType = "long", paramType = "path", defaultValue = "2") })
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success", response = VariationMeasureValue.class),
-			@ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure") })
-	public Response getDailyMeasures(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
-			@ApiParam(hidden = true) @PathParam("gesId") Long gesId) throws JsonProcessingException {
-
-		List<VariationMeasureValue> measures = new ArrayList<VariationMeasureValue>();
-		try {
-			measures = variationMeasureValueRepository.findByUserAndGes(userInRoleId, gesId);
-		} catch (Exception e) {
-			logger.info("getDailyMeasures REST service - query exception: ", e);
-		}
-
-		return JerseyResponse.build(objectMapper.writerWithView(View.VariationMeasureValueView.class).writeValueAsString(measures));
-
-	}
-
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("computeFromMeasures")
 	@Scheduled(cron = "0 0 0 * * *", zone = "UTC")
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	public Response computeFromMeasures() throws Exception {
 		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
-		logger.info("computation started: " + new Date());
+		logger.info("computation started: " + new Date());		
+		
+		recomputeExcluded ();
 
 		List<Pilot> pilotsForComputation = setNewestSubmittedDataForAllPilots();
 		
-		List<Pilot> pilots = computeForAllPilots(pilotsForComputation);
+		computeForAllPilots(pilotsForComputation);
 
-		pilots = imputeAndPredict(pilots);
+		imputeAndPredict(pilotsForComputation);
+		
+		createSystemAnnotations ();
 		
 		logger.info("computation completed: " + new Date());
 		return JerseyResponse.buildTextPlain("success", 200);
 	}
 	
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
-	public List<Pilot> imputeAndPredict(List<Pilot> pilots) {
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("createSystemAnnotations")
+	public void createSystemAnnotations() {
+		
+		logger.info("createSystemAnnotations");
+		
+		int numOfVmvFilteringEntriesForUpdate = vmvFilteringRepository.findCountOfVmvFiltering();
+		int pageSize = 5000;
+		
+		int numOfPages = 0;
+		if (numOfVmvFilteringEntriesForUpdate % pageSize != 0) 
+			numOfPages = (numOfVmvFilteringEntriesForUpdate / pageSize) + 1;
+		else
+			numOfPages = numOfVmvFilteringEntriesForUpdate / pageSize;
+		
+		Assessment assessment = getOrCreateSystemAssessment ();
+		assessment.setUpdated(new Date ());
+		
+		int page = 0;
+		Pageable pageable = new PageRequest(page, pageSize);
+		
+		while (page < numOfPages) {
+			List<VmvFiltering> vfs = vmvFilteringRepository.findForSystemExclusion(pageable);
+			pageable.next();
+			for (VmvFiltering vf : vfs) {
+				vf.setAssessment(assessment);
+			}
+			vmvFilteringRepository.bulkSave(vfs);
+			vmvFilteringRepository.flush();
+			page++;
+		}
+	}
+
+	public Assessment getOrCreateSystemAssessment() {
+		
+		Assessment assessment = assessmentRepository.findByUserInRole (userInRoleRepository.findBySystemUsername("system"));
+		
+		if (assessment == null) {
+			assessment = new Assessment.AssessmentBuilder().userInRole(userInRoleRepository.findBySystemUsername("system"))
+					.assessmentComment("System excluded")
+					.riskStatus(null)
+					.dataValidity(null).build();			
+		}
+		else {
+			assessment.setUpdated(new Date ());
+		}
+		
+		assessmentRepository.save(assessment);		
+		assessmentRepository.flush();
+		
+		return assessment;
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("recomputeExcluded")
+	public void recomputeExcluded() {		
+		
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		
+		Timestamp yesterday = Timestamp.valueOf(OffsetDateTime.now().atZoneSameInstant(ZoneId.of("Z")).minusDays(1l).toLocalDate().atStartOfDay());
+		
+		logger.info("date: " + yesterday);
+		
+		List<UserInRole> uirs = variationMeasureValueRepository.findUsersAllForRecomputing (yesterday);
+		
+		for (UserInRole uir : uirs) {
+			Timestamp firstMonth = variationMeasureValueRepository.findFirstRecomputingMonthForUser(uir.getId(), uir.getPilot().getCompZone(), yesterday);
+			logger.info("user: " + uir.getId() + " start: " + firstMonth);
+			
+			measuresService.computeFor1User (uir, firstMonth);
+			predictionService.imputeAndPredictFor1User (uir);
+		}
+	}
+
+	public void imputeAndPredict(List<Pilot> pilots) {
 		
 		if (pilots != null && !pilots.isEmpty()) {
 			Iterator<Pilot> pilotsIterator = pilots.iterator();
@@ -151,14 +205,11 @@ public class MeasuresEndpoint {
 			}
 		} 
 		else {
-			logger.info("No new data submitted!");
+			logger.info("No new data submitted (imputeAndPredict)!");
 		}
-		return pilots;
 	}
 
-	@Transactional(value="transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
-	public List<Pilot> computeForAllPilots(List<Pilot> pilotsForComputation) {
-		
+	public void computeForAllPilots(List<Pilot> pilotsForComputation) {
 
 		if (pilotsForComputation != null && !pilotsForComputation.isEmpty()) {
 
@@ -166,25 +217,15 @@ public class MeasuresEndpoint {
 			while (pilotsIterator.hasNext()) {
 				Pilot pilot = pilotsIterator.next();
 				try {
-					measuresService.computeFor1Pilot(pilot.getPilotCode().name(), pilot.getNewestSubmittedData().toString());
+					measuresService.computeFor1Pilot(pilot);
 				} catch (Exception e) {
 					logger.info("pukao pilot: " + pilot.getPilotCode().getName());
 					e.printStackTrace();
 				}
 			}
 		} else {
-			logger.info("No new data submitted!");
+			logger.info("No new data submitted (computeForAllPilots)!");
 		}
-		
-		return pilotsForComputation;
-	}
-
-	public void setVariablesComputedForAllPilots(Pilot pilot, Timestamp endOfComputation, Date newestSubmittedData) {
-		
-		pilot.setLatestVariablesComputed(endOfComputation);
-		pilot.setTimeOfComputation(new Date());
-		pilot.setNewestSubmittedData(newestSubmittedData);
-		pilotRepository.save(pilot);
 	}
 
 	public List<Pilot> setNewestSubmittedDataForAllPilots() {
@@ -198,7 +239,7 @@ public class MeasuresEndpoint {
 				Date previous;
 				if (pilot.getTimeOfComputation() == null || pilot.getTimeOfComputation().before(pilot.getLatestSubmissionCompleted())) {
 					previous = pilot.getNewestSubmittedData();
-					Timestamp newestSubmittedData = variationMeasureValueRepository.findMaxTimeIntervalStartByPilotCode(pilot.getPilotCode());
+					Timestamp newestSubmittedData = variationMeasureValueRepository.findMaxTimeIntervalStartByPilotCode(pilot.getPilotCode(), pilot.getCompZone());
 					pilot.setNewestSubmittedData(newestSubmittedData);
 					if (previous == null || (previous != null && newestSubmittedData != null && previous.before(newestSubmittedData))) 
 						result.add(pilot);
@@ -207,16 +248,7 @@ public class MeasuresEndpoint {
 		}
 		return result;
 	}
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("getNuiValues/userInRoleId/{userInRoleId}/detectionVariableId/{detectionVariableId}")
-	public Response getNuiValues(@ApiParam(hidden = true) @PathParam("userInRoleId") Long userInRoleId,
-			@ApiParam(hidden = true) @PathParam("detectionVariableId") Long detectionVariableId) throws JsonProcessingException {
-		List<NumericIndicatorValue> nuis = nuiRepository.getNuisForSelectedGes(userInRoleId, detectionVariableId);
-		return JerseyResponse.build(objectMapper.writerWithView(View.NUIView.class).writeValueAsString(nuis));
-	}
-	
+
 	@GET
 	@ApiOperation("Method for fixing time intervals to have interval start and typical period, not interval start and interval end")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -259,11 +291,11 @@ public class MeasuresEndpoint {
 			Timestamp intervalDiff = timeIntervalRepository.getTruncatedTimeIntervalEnd(vm.getTimeInterval().getId(), "day");
 			TimeInterval newTimeInterval = null;
 			
-			if (determineTimeInterval(vm.getTimeInterval().getIntervalStart().getTime(), vm.getTimeInterval().getIntervalEnd().getTime(), intervalDiff.getTime()) == 0)
-				newTimeInterval = measuresService.getOrCreateTimeInterval(timeIntervalRepository.getTruncatedTimeIntervalStart(vm.getTimeInterval().getId(), "day"), TypicalPeriod.DAY);
-				
-			else
+			if (measuresService.determineTimeInterval(vm.getTimeInterval().getIntervalStart().getTime(), vm.getTimeInterval().getIntervalEnd().getTime(), intervalDiff.getTime()) == 0) {
+				newTimeInterval = measuresService.getOrCreateTimeInterval(timeIntervalRepository.getTruncatedTimeIntervalStart(vm.getTimeInterval().getId(), "day"), TypicalPeriod.DAY);	
+			} else {
 				newTimeInterval = measuresService.getOrCreateTimeInterval(intervalDiff, TypicalPeriod.DAY);
+			}
 			
 			vm.setTimeInterval(newTimeInterval);
 			
@@ -289,19 +321,6 @@ public class MeasuresEndpoint {
 		
 		return JerseyResponse.buildTextPlain("success", 200);
 		
-	}
-	
-	public int determineTimeInterval (long start, long end, long differentiator) {
-		
-		if ((differentiator - start) >= (end - differentiator)) return 0;
-		else return 1;
-		
-	}
-
-	public String mockitoTest() {
-		return "hello";
-	}
-	
-	
+	}	
 
 }

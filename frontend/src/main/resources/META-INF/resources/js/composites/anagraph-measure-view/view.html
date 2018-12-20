@@ -1,25 +1,45 @@
 <!-- ko if: showNuis -->
 <div class="oj-flex-item">		                                               										
-    <oj-collapsible id="collapsible" expanded="true">
-                <h5 slot="header">NUI values</h5>
-                <oj-data-grid id="datagrid" 
-                    style="width:100%;height:200px;display: grid; background-color:transparent;"                   
-                    data= "[[dataSource]]"  
-                    header.column.style = "height:45px; width:125px; text-align:center;"
-                    header.column.sortable = "disable"
-                    header.row.style ="width:100px;"
-                    on-oj-before-current-cell='[[beforeCurrentCellListener]]'                  
-                 ></oj-data-grid>               
+    <oj-collapsible id="collapsible" expanded="true" style="background-color: #4fc5c5b8;">
+        <h5 slot="header" style="color:white;">NUI values</h5>
+                
+                    <oj-data-grid id="datagrid" 
+                        style="width:100%;height:250px;display: grid; background-color:#f1f3f7;border-top: 1px solid transparent;"                   
+                        data= "[[dataSource]]"  
+                        header.column.style = "height:45px; width:125px; text-align:center;"
+                        header.column.sortable = "disable"
+                        header.row.style ="width:100px;height:45px;text-align:center;"
+                        on-oj-before-current-cell='[[beforeCurrentCellListener]]'                  
+                     ></oj-data-grid> 
+                
     </oj-collapsible>	  
 </div>
 <!-- /ko -->
 
-<div id='measure-view-container' style="border:1px solid silver;">
-    <h3 id="measureName" data-bind="text: measureName" align="center" style="margin-top: 20px;"></h3>
+<div id='measure-view-container' style="border:1px solid silver;position: relative; margin-top: 30px;">    
+    <div style="padding-left:16px; position:absolute; top:10px;left:0;" data-bind="style: { display: showUnitsConversion}">
+            <oj-label for="select">Select unit:</oj-label>
+            <oj-select-one id="select" style="max-width:20em" value="{{currentUnit}}">
+              <!-- ko foreach: measureUnits -->
+                <oj-option value="[[value]]"><span data-bind="text: label"></span></oj-option>
+              <!-- /ko -->
+            </oj-select-one>
+    </div>  
+    <div id='toggle-button' style="position: absolute; top:10px; right: 15px;">
+            <oj-label for="selection-mode">Series display mode:</oj-label>
+            <oj-buttonset-one id="selection-mode" value="{{mode}}">
+                <!-- ko foreach: modeValues -->
+                <oj-option value='[[id]]' >
+                    <span data-bind="text: label"></span>
+                </oj-option>
+                <!-- /ko -->
+            </oj-buttonset-one>  
+    </div>
+    <h3 id="measureName" data-bind="text: measureNameForDiagram" align="center" style="margin-top: 20px;font-weight: normal;"></h3>
     <oj-chart id="lineChart"                
         style-defaults.line-type="[[$props.lineType]]"
         type="line"
-        series="[[$props.lineSeries]]"
+        series="[[lineSeries]]"
         groups="[[lineGroups]]"
         animation-on-display="auto"
         animation-on-data-change="auto" 
@@ -43,4 +63,4 @@
     </oj-chart>  
 </div>
 
-          
+

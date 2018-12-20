@@ -1,0 +1,489 @@
+<!--
+ Copyright (c) 2014, 2018, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+-->
+
+<div class="oj-hybrid-padding group-analytics-container" style="background-color: white;">
+    <h1 align="center">Group Analytics</h1>
+    <br>
+    <div id="switcherdemo" style="min-height: 800px;">
+        <oj-tab-bar id="hnavlist" 
+                    edge="top"
+                    role="tablist"
+                    selection="{{selectedItem}}"
+                    style="font-size: 22px;font-style: italic;">
+            <ul>
+                <li id="analytics1">
+                    <a href="#" aria-controls="analytics1-tab-panel" id="analytics1-tab" data-bind="text:city4ageApproachLbl" >
+                        
+                    </a>
+                </li>
+                <li id="analytics2">
+                    <a href="#" aria-controls="analytics2-tab-panel" id="analytics2-tab" data-bind="text:geriatricExplorationLbl">
+                        
+                    </a>
+                </li>
+            </ul>
+        </oj-tab-bar>
+
+        <oj-switcher value="[[selectedItem]]">
+            <div slot="analytics1" 
+                 id="analytics1-tab-panel"
+                 role="tabpanel" 
+                 aria-labelledby="analytics1-tab">
+                <div class="demo-tab-content-group">
+                    <br>
+                        <br>
+                    <div class="flex-container" >
+                        <div id="tree-panel-1" class="flex-item-1 oj-panel oj-panel-shadow-sm" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
+                            <div id="tree-container-1" class="tree-container"  style="text-align: center; margin:0 auto;min-height: 600px;">
+                                <div class="only-tree" style="min-height: 500px">
+                                            <oj-label for="treeview1" style="margin-top: 15px;">Geriatric Model Variables:</oj-label>
+                                            <br>
+                                            <oj-tree-view id="treeview1" 
+                                                          data="[[treeViewData]]" 
+                                                          item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('item_template', true)]]" 
+                                                          selection="{{treeSelection1}}" 
+                                                          selection-mode="multiple" 
+                                                          on-selection-changed="[[selectionChangedTree1]]" 
+                                                          aria-label="Tree View Selection Demo"
+                                                          expanded="{{expanded}}" 
+                                                          style="text-align: left;"
+                                                          >
+                                            </oj-tree-view>
+                                            </div>
+                                        <br>
+                                            <div id="tree-legend1" style="margin-bottom: 0px;">
+                                                <oj-label for="tree-legend1">Legend:</oj-label>
+
+                                                <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                            <circle cx="8" cy="8" r="8" fill="#0376AC" />
+                                                </svg>
+                                                <span class="oj-treeview-item-text">Geriatric factor</span>
+
+                                                <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                            <circle cx="8" cy="8" r="8" fill="#68a23f" />
+                                                </svg>
+                                                <span class="oj-treeview-item-text">Geriatric sub-factor</span>
+
+                                                <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                            <circle cx="8" cy="8" r="8" fill="#ED6647" />
+                                                </svg>
+                                                <span class="oj-treeview-item-text">Measure</span>
+                                            </div> 
+                            </div>
+                                        
+                        
+                                   
+                                    <script type="text/html" id="item_template">
+                                        <li>
+                                            <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                    <!-- ko if: (type == "GEF") -->
+                                                        <circle cx="8" cy="8" r="8" fill="#0376AC" />
+                                                    <!-- /ko -->
+                                                    <!-- ko if: (type == "GES") -->
+                                                        <circle cx="8" cy="8" r="8" fill="#68a23f" />
+                                                    <!-- /ko -->
+                                                    <!-- ko if: (type == "MEA") -->
+                                                        <circle cx="8" cy="8" r="8" fill="#ED6647" />
+                                                    <!-- /ko -->
+                                             </svg>
+                                            <span class="oj-treeview-item-text" data-bind="text:title, attr: {title: pilots.join() }"></span>
+                                             <!-- ko if: (allPilots == false) -->
+                                            <img src="images/warn.png">
+                                            <!-- /ko -->
+                                            
+                                          </li>
+                                    </script>
+                        </div>
+                       
+                        <div style=" flex-grow: 3;" class=" ">
+                            
+                            <div class="input-container-1 oj-panel oj-panel-shadow-sm" style="text-align: center;">
+                                <div  id = "pilots1-container" class="oj-flex" style=" margin: 0 auto;text-align: center; ">
+                                    <oj-label style="margin:0 auto;" for="pilots1">Pilots:</oj-label>
+                                    <oj-conveyor-belt  id="conv-blt-1" class="conv-pilots oj-xl-12 oj-lg-12 oj-md-12 oj-sm-12" content-parent="#pilots1"style="margin:0 auto;">
+                                        <oj-buttonset-many id="pilots1" class="oj-buttonset-width-auto" value="{{selectedPilots1}}" style="margin:0 auto;">
+                                            <!-- ko foreach: pilots -->
+                                            <oj-option value='[[id]]'>
+                                                <span data-bind="text: label"></span>
+                                            </oj-option>
+                                            <!-- /ko -->
+                                        </oj-buttonset-many>
+                                    </oj-conveyor-belt>
+                                </div>
+                                    
+                                    
+                                
+                                    <div class="oj-flex">
+                                        <div class="oj-flex-item" style="text-align: right">
+                                                <oj-label for="fromDate">From:</oj-label>
+                                                <oj-input-date id="fromDate" value='{{dateFromValue}}' max="[[dateToValue]]" style="width:10em"></oj-input-date>
+                                        </div>
+                                        <div class="oj-flex-item" style="text-align: left;padding-left: 1em;">
+                                                <oj-label for="toDate">To:</oj-label>
+                                                <oj-input-date id="toDate" value='{{dateToValue}}' min="[[dateFromValue]]" max="[[nowDate]]" style="width:10em"></oj-input-date>
+                                        </div>
+                                </div>
+                                    <br>
+                                        <oj-button id='applyFilterBtn1' disabled="[[apply1Enable]]" data-bind="click:applyScenario1">
+                                        <span><oj-bind-text value="[[applyFilterLbl]]"></oj-bind-text></span>
+                                    </oj-button>
+                                </div>
+                                <br>
+                                    <div id="logo-collapsible-container1" style="text-align: center;">
+                                        <img id="logo-img-1" src="images/City4AgeLogo1.png" style="display: inline;width:60%; opacity: 0.3;">
+                                        <div id="collapsible-container1" style="display: none">
+                                        <oj-collapsible expanded='true'>
+                                            <h3  slot="header">Diagram</h3>
+                                            <div class='chart-container oj-panel oj-panel-shadow-sm' style="text-align: center;">
+                                                <div id="chart-container-1" style="display: block;padding-top: 15px;min-height:500px">
+                                                    <div id="ldr1" class="loader1"></div>
+                                                        <oj-chart 
+                                                        id="chart1"
+                                                        type="line"
+                                                        series="[[lineSeriesValue]]"
+                                                        groups="[[lineGroupsValue]]"
+                                                        animation-on-display="auto"
+                                                        animation-on-data-change="auto"
+                                                        hover-behavior="dim"
+                                                        style="height:400px;width:100%;position: relative;"
+                                                        legend.position ="top"
+                                                        zoom-and-scroll="live"
+                                                        hide-and-show-behavior="withRescale"
+                                                        >
+                                                        <oj-button class="oj-panel-resize-button demo-button" data-bind="click:fullScreen1" style="position: absolute; top:0; right: 0;"
+                                                                    chroming="half"
+                                                                    display="icons">
+                                                                    <span slot="startIcon" class="oj-panel-expand-icon"></span>
+                                                                    <span>expand</span>
+                                                        </oj-button>
+                                                    </oj-chart>
+                                                    <div id="export-container1">
+                                                             <oj-label for="selectExport1">Select export format:</oj-label>
+                                                            <oj-select-one id="selectExport1" value="{{exportValue1}}"style="max-width:5em">
+                                                                <oj-option value="xlsx">
+                                                                    <span slot="startIcon">
+                                                                        <img src="images/xlsxIcon.png" role="presentation" style="vertical-align:middle"/>
+                                                                    </span> xlsx
+                                                                </oj-option>
+                                                                <oj-option value="csv">
+                                                                    <span slot="startIcon">
+                                                                        <img src="images/csvIcon.png" role="presentation" style="vertical-align:middle"/>
+                                                                    </span> csv
+                                                                </oj-option>
+                                                            </oj-select-one>
+                                                             <oj-button id="export-button1" data-bind="click:exportBtn1">Export</oj-button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                          </oj-collapsible>
+                                        <oj-collapsible>
+                                            <h3  slot="header">Correlation factors heatmap since the start of the data acquisition</h3>
+                                            <div class="oj-panel oj-panel-shadow-sm">
+                                                <div class="heatmap-container" style="margin: 0 auto;">
+                                                    <oj-label for="datagrid">Heatmap:</oj-label> 
+                                                    <oj-data-grid id="heatmap1" data-bind="style:{height : heatmapHeight(),width:heatmapWidth()}"
+                                                        aria-label="Data Grid Heatmap Demo" 
+                                                        data="[[dataSource1]]"
+                                                        header.row.style="width:250px;height:50px;"
+                                                        header.column.resizable='{"width":"enable", "height":"enable"}'
+                                                        header.column.class-name="demo-cell-alignment"
+                                                        header.column.style="height:60px;width:50px;"
+                                                        header.column.sortable="disable"
+                                                        cell.renderer="[[cellRenderer]]"
+                                                        cell.style='[[setCellStyle]]'>
+                                                    </oj-data-grid>
+                                                    <br>
+                                                     <oj-label for="heatmap-legend-container">Legend:</oj-label>  
+                                                     <div id="heatmap-legend-container">
+                                                        <div class="heatmap-legend-numbers" data-bind="style:{width:heatmapWidth()}">
+                                                            <div class="numbers">-0.8</div>
+                                                            <div class="numbers">-0.4</div>
+                                                            <div class="numbers">0</div>
+                                                            <div class="numbers">0.4</div>
+                                                            <div class="numbers">0.8</div>
+                                                        </div>
+                                                    <div class="heatmap-legend-gradient" data-bind="style:{width:heatmapWidth()}">
+                                                        
+                                                    </div>
+                                                     </div>
+                                                </div>
+                                            </div>
+                                        </oj-collapsible>
+                                            <oj-dialog id="modalDialog1" style="display:none;margin:0 auto;"  data-bind="style:{height : dialogFullScreenHeight1(),width:dialogFullScreenWidth1()}"  title="Diagram">
+                                                <div slot="body">
+                                                    <oj-chart 
+                                                        type="line"
+                                                        series="[[lineSeriesValue]]"
+                                                        groups="[[lineGroupsValue]]"
+                                                        animation-on-display="auto"
+                                                        animation-on-data-change="auto"
+                                                        hover-behavior="dim"
+                                                        style="height:500px;width:100%;"
+                                                        legend.position ="top"
+                                                        zoom-and-scroll="live"
+                                                        hide-and-show-behavior="withRescale"
+                                                        >
+                                                    </oj-chart>
+                                                </div>
+                                                <div slot="footer">
+                                                  <oj-button id="okButton" data-bind="click:close1">OK
+                                                  </oj-button>
+                                                </div>
+                                              </oj-dialog>
+                                        </div>
+                                    </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div slot="analytics2" 
+                 id="analytics2-tab-panel"
+                 role="tabpanel" 
+                 aria-labelledby="analytics2-tab">
+                <div class="demo-tab-content-group">
+                         <br>
+                             <br>
+                    <div class="flex-container">
+                        <div id="tree-panel-2" class="flex-item-2 oj-panel oj-panel-shadow-sm" style="flex-grow: 1;min-width: 380px;text-align: center; padding-top: 0; padding-left: 1px; padding-right: 2px; border-right: none;">
+                                <div id="tree-container-2" class="tree-container" style="text-align: center; margin:0 auto;min-height: 600px;">
+                                    <div class="only-tree" style="min-height: 500px;">
+                                        <oj-label for="treeview2" style="margin-top: 15px;">Geriatric Model Variables:</oj-label>
+                                        <br>
+                                        <oj-tree-view id="treeview2" 
+                                                      data="[[treeViewData]]" 
+                                                      item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('item_template', true)]]" 
+                                                      selection="{{treeSelection2}}" 
+                                                      selection-mode="multiple" 
+                                                      on-selection-changed="[[selectionChangedTree2]]" 
+                                                      aria-label="Tree View Selection Demo"
+                                                      expanded="{{expanded}}" 
+                                                      style="text-align: left;"
+                                                      >
+                                        </oj-tree-view>
+                                    </div>
+                                        <br>   
+                                    <script type="text/html" id="item_template">
+                                          <li>
+                                            <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                    <!-- ko if: (type == "GEF") -->
+                                                        <circle cx="8" cy="8" r="8" fill="#0376AC" />
+                                                    <!-- /ko -->
+                                                    <!-- ko if: (type == "GES") -->
+                                                        <circle cx="8" cy="8" r="8" fill="#68a23f" />
+                                                    <!-- /ko -->
+                                                    <!-- ko if: (type == "MEA") -->
+                                                        <circle cx="8" cy="8" r="8" fill="#ED6647" />
+                                                    <!-- /ko -->
+                                             </svg>
+                                            <span class="oj-treeview-item-text" data-bind="text:title, attr: {title: pilots.join() }"></span>
+                                             <!-- ko if: (allPilots == false) -->
+                                            <img src="images/warn.png">
+                                            <!-- /ko -->
+                                          </li>
+                                    </script>
+                                            <div id="tree-legend2" style="margin-bottom: 0px;">
+                                        <oj-label for="tree-legend2">Legend:</oj-label>
+                                        
+                                        <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="8" cy="8" r="8" fill="#0376AC" />
+                                        </svg>
+                                        <span class="oj-treeview-item-text">Geriatric factor</span>
+                                        <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="8" cy="8" r="8" fill="#68a23f" />
+                                        </svg>
+                                        <span class="oj-treeview-item-text">Geriatric sub-factor</span>
+                                        <svg class="demo-treeview-icon" width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="8" cy="8" r="8" fill="#ED6647" />
+                                        </svg>
+                                        <span class="oj-treeview-item-text">Measure</span>
+                                    </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div style="flex-grow: 3">
+                            <div class="input-container-2 oj-panel oj-panel-shadow-sm" style="text-align: center;">
+                                <div id="pilots2-container" class="oj-flex" style="margin:0 auto;">
+                                     <oj-label for="conv-blt-2" style="margin: 0 auto;">Pilots:</oj-label>
+                                    <oj-conveyor-belt  class="conv-pilots oj-xl-12 oj-lg-12 oj-md-12 oj-sm-12" id="conv-blt-2" style="margin:0 auto;" content-parent="#pilots2">
+                                        <oj-buttonset-many id="pilots2" class="oj-buttonset-width-auto" value="{{selectedPilots2}}" style="margin: 0 auto;">
+                                            <!-- ko foreach: pilots -->
+                                            <oj-option value='[[id]]'>
+                                                <span data-bind="text: label"></span>
+                                            </oj-option>
+                                            <!-- /ko -->
+                                        </oj-buttonset-many>
+                                    </oj-conveyor-belt>
+                                </div>
+                                   
+                            
+                                <div id="socio-container"  style="margin: 0 auto;text-align: center; ">
+                                    <oj-label for="conv-blt-3" style="margin: 0 auto;">Sociodemografic Factors:</oj-label>
+                                    <oj-conveyor-belt class="conv-socio oj-xl-12 oj-lg-12 oj-md-12 oj-sm-12" id="conv-blt-3" style="margin:0 auto;"  content-parent="#socioeconomicFactors">
+                                        <oj-buttonset-many id="socioeconomicFactors" class="oj-buttonset-width-auto" value="{{selectedSocio}}" style="margin: 0 auto;">
+                                            <!-- ko foreach: socioEconomic -->
+                                            <oj-option value='[[id]]'>
+                                                <span data-bind="text: label"></span>
+                                            </oj-option>
+                                            <!-- /ko -->
+                                        </oj-buttonset-many>
+                                    </oj-conveyor-belt>
+                                </div>
+                               
+                                    <div class="oj-flex">
+                                        <div class="oj-flex-item" style="text-align: right">
+                                                <oj-label for="fromDate1">From:</oj-label>
+                                                <oj-input-date id="fromDate1" value='{{dateFromValue1}}' min="2016-07-01" max="[[dateToValue1]]" style="width:10em"></oj-input-date>
+                                        </div>
+                                        <div class="oj-flex-item" style="text-align: left;padding-left: 1em;">
+                                                <oj-label for="toDate1">To:</oj-label>
+                                                <oj-input-date id="toDate1" value='{{dateToValue1}}' min="[[dateFromValue1]]" max="[[nowDate]]" style="width:10em"></oj-input-date>
+                                        </div>
+                                    </div>
+                                 <br>
+                                    <oj-button id='applyFilterBtn2' disabled="[[apply2Enable]]" data-bind="click:applyScenario2">
+                                        <span><oj-bind-text value="[[applyFilterLbl]]"></oj-bind-text></span>
+                                    </oj-button>
+                                    
+                            </div>
+                                    <br>
+                                        <div id="logo-collapsible-container2" style="text-align: center;">
+                                        <img id="logo-img-2" src="images/City4AgeLogo1.png" style="display: inline;width:60%;opacity: 0.3;">
+                                        
+                                        <div id="collapsible-container2" style="display: none">
+                                        <oj-collapsible expanded='true'>
+                                            <h3  slot="header">Diagram</h3>
+                                            <div class="oj-panel oj-panel-shadow-sm" style="text-align: center;">
+                                            
+                                                <div id="chart-container-2" style="display: block;padding-top: 15px;min-height:500px;position: relative;">
+                                                    <div class="oj-flex">
+                                                        <div class="oj-flex-item" style="text-align: right;">
+                                                            <oj-buttonset-many value="{{evolutionInTime2}}">
+                                                                <oj-option value="disabled">Evolution in time</oj-option>
+                                                            </oj-buttonset-many>
+                                                        </div>
+                                                        <div class="oj-flex-item" style="text-align: left; padding-left: 1em;">
+                                                            <oj-buttonset-many value="{{comparisonAnalysis2}}" disabled="[[comparisonDisabled]]" >
+                                                                <oj-option value="disabled">Comparison Analysis</oj-option>
+                                                            </oj-buttonset-many>
+                                                        </div>
+                                                    </div>
+                                                    <div id="ldr2" class="loader2"></div>
+                                                    <oj-chart id="chart2"
+                                                        type="[[chartTypeValue]]"
+                                                        series="[[seriesValue]]"
+                                                        groups="[[groupsValue]]"                  
+                                                        style-defaults="[[styleDefaultValue]]"
+                                                        legend.position="top"
+                                                        stack="[[stackValue]]"
+                                                        split-dual-y="[[splitDualYValue]]"
+                                                        y-axis.title="[[yAxisTitleValue]]"
+                                                        y2-axis.title="[[y2AxisTitleValue]]"
+                                                        splitter-position="0.5"
+                                                        orientation="[[orientationValue]]"
+                                                        x-axis = "[[lineXAxis]]"
+                                                        zoom-and-scroll="live"
+                                                        hide-and-show-behavior="withRescale"
+                                                        orientation="vertical"
+                                                        style="width:100%;max-width:1100px;height:500px;margin:0 auto;position: relative;" >
+                                                        <oj-button class="oj-panel-resize-button demo-button" data-bind="click:fullScreen2" style="position: absolute; top:0; right: 0;"
+                                                                    chroming="half"
+                                                                    display="icons">
+                                                                    <span slot="startIcon" class="oj-panel-expand-icon"></span>
+                                                                    <span>expand</span>
+                                                        </oj-button>
+                                                    </oj-chart>
+                                                    <div id="export-container2">
+                                                             <oj-label for="selectExport2">Select export format:</oj-label>
+                                                            <oj-select-one id="selectExport2" value="{{exportValue2}}"style="max-width:5em">
+                                                                <oj-option value="xlsx">
+                                                                    <span slot="startIcon">
+                                                                        <img src="images/xlsxIcon.png" role="presentation" style="vertical-align:middle"/>
+                                                                    </span> xlsx
+                                                                </oj-option>
+                                                                <oj-option value="csv">
+                                                                    <span slot="startIcon">
+                                                                        <img src="images/csvIcon.png" role="presentation" style="vertical-align:middle"/>
+                                                                    </span> csv
+                                                                </oj-option>
+                                                            </oj-select-one>
+                                                             <oj-button id="export-button2" data-bind="click:exportBtn2">Export</oj-button>
+                                                    </div>
+                                                    
+                                                </div>
+                                        </div>
+                                          </oj-collapsible>
+                                        <oj-collapsible>
+                                            <h3  slot="header">Correlation factors heatmap since the start of the data acquisition</h3>
+                                            <div class="oj-panel oj-panel-shadow-sm">
+                                                <div class="heatmap-container ">
+                                                    <oj-label for="datagrid">Heatmap:</oj-label> 
+                                                    <oj-data-grid id="heatmap2" data-bind="style:{height : heatmapHeight(),width:heatmapWidth()}" 
+                                                        aria-label="Data Grid Heatmap Demo" 
+                                                        data="[[dataSource2]]"
+                                                        header.row.style="width:250px;height:50px;"
+                                                        header.column.resizable='{"width":"enable", "height":"enable"}'
+                                                        header.column.class-name="demo-cell-alignment"
+                                                        header.column.style="height:60px;width:50px;"
+                                                        header.column.sortable="disable"
+                                                        cell.renderer="[[cellRenderer]]"
+                                                        cell.style='[[setCellStyle]]'>
+                                                    </oj-data-grid>
+                                                    <br>
+                                                     <oj-label for="heatmap-legend-container">Legend:</oj-label>  
+                                                     <div id="heatmap-legend-container">
+                                                        <div class="heatmap-legend-numbers" data-bind="style:{width:heatmapWidth()}">
+                                                            <div class="numbers">-0.8</div>
+                                                            <div class="numbers">-0.4</div>
+                                                            <div class="numbers">0</div>
+                                                            <div class="numbers">0.4</div>
+                                                            <div class="numbers">0.8</div>
+                                                        </div>
+                                                    <div class="heatmap-legend-gradient" data-bind="style:{width:heatmapWidth()}">
+                                                        
+                                                    </div>
+                                                     </div>
+                                                </div>
+                                            </div>
+                                        </oj-collapsible>
+                                            
+                                        </div>
+                                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </oj-switcher>
+    </div>
+</div>
+<oj-dialog id="modalDialog2"   data-bind="style:{height : dialogFullScreenHeight2(),width:dialogFullScreenWidth2()}" style="display:none;" title="Diagram">
+                                                <div slot="body">
+                                                    <oj-chart data-bind="style:{height : chartFullScreenHeight2(),width:chartFullScreenWidth2()}" style="margin:0 auto;"
+                                                        type="[[chartTypeValue]]"
+                                                        series="[[seriesValue]]"
+                                                        groups="[[groupsValue]]"                  
+                                                        style-defaults="[[styleDefaultValue]]"
+                                                        legend.position="top"
+                                                        stack="[[stackValue]]"
+                                                        split-dual-y="[[splitDualYValue]]"
+                                                        y-axis.title="[[yAxisTitleValue]]"
+                                                        y2-axis.title="[[y2AxisTitleValue]]"
+                                                        splitter-position="0.5"
+                                                        y-axis.tick-label.rendered="off"
+                                                        y2-axis.tick-label.rendered="off"
+                                                        orientation="[[orientationValue]]"
+                                                        x-axis = "[[lineXAxis]]"
+                                                        zoom-and-scroll="live"
+                                                        hide-and-show-behavior="withRescale"
+                                                        orientation="vertical"
+                                                         >                                                                
+                                                    </oj-chart>
+                                                </div>
+                                                <div slot="footer">
+                                                  <oj-button id="okButton" data-bind="click:close2">OK
+                                                  </oj-button>
+                                                </div>
+                                              </oj-dialog>
+  

@@ -7,13 +7,18 @@ function(oj, ko, $) {
 	function model(context) {
 		var self = this;
 
+                var lineColors = ['#b4b2b2', '#ea97f1', '#5dd6c9', '#e4d70d', '#82ef46', '#29a4e4'];
 		self.crId = ko.observable();
 		self.detectionVariable  = ko.observable(); 
                 self.gefName = ko.observable();
 		self.parentFactorId = ko.observable();
-		self.series = ko.observableArray();
-		self.groups = ko.observableArray();
-		self.drilling = ko.observable();
+		self.seriesVal = ko.observableArray([]);
+		self.groupsVal = ko.observableArray([]);
+		self.seriesPredictionVal = ko.observableArray([]);
+		self.groupsPredictionVal = ko.observableArray([]);               
+                self.lineGroupsPredictionValue = ko.observableArray([]);
+                self.lineSeriesPredictionValue = ko.observableArray([]);
+                self.drilling = ko.observable();
 		self.seeMeasures = ko.observable(false);
 		self.highlightValue = ko.observable();
 		self.dataPointsMarked = ko.observable('No data points marked.');
@@ -41,152 +46,213 @@ function(oj, ko, $) {
 		self.polarChartGroupsValue = ko.observableArray();		
 		self.commentText = ko.observable('');
                 self.selectedRiskStatus = ko.observableArray([]);
-                self.selectedDataValidity = ko.observableArray([]);            
-		self.annotationsLabel = oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase() + oj.Translations.getTranslatedString("annotations_assessments").substring(1);
-		self.morphologyLabel = oj.Translations.getTranslatedString("morphology");
-		self.annotations_assessmentsLabel = oj.Translations.getTranslatedString("annotations_assessments");
-		self.addLabel = oj.Translations.getTranslatedString("add");
-		self.riskDataTypeLabel = oj.Translations.getTranslatedString("risk_data_type");		
-		self.showAllLabel = oj.Translations.getTranslatedString("show_all"); 
+                self.selectedDataValidity = ko.observableArray([]); 
+                
+                /* LABELS */
+		self.annotationsLabel = ko.observable(oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase() + oj.Translations.getTranslatedString("annotations_assessments").substring(1));
+		self.morphologyLabel = ko.observable(oj.Translations.getTranslatedString("morphology"));
+		self.annotations_assessmentsLabel = ko.observable(oj.Translations.getTranslatedString("annotations_assessments"));
+		self.addLabel = ko.observable(oj.Translations.getTranslatedString("add"));
+		self.riskDataTypeLabel = ko.observable(oj.Translations.getTranslatedString("risk_data_type"));		
+		self.showAllLabel = ko.observable(oj.Translations.getTranslatedString("show_all")); 
 		self.fromLabel = oj.Translations.getTranslatedString("from");
-		self.fromLabel = self.fromLabel.charAt(0).toUpperCase() + self.fromLabel.slice(1);
-		self.sortLabel = oj.Translations.getTranslatedString("sort_by");
-		self.resetToDefaultsLabel = oj.Translations.getTranslatedString("reset_to_defaults");  
-		self.filterLabel = oj.Translations.getTranslatedString("filter");  		
-		self.dateAscLabel = oj.Translations.getTranslatedString("date_asc");
-                self.dateDescLabel = oj.Translations.getTranslatedString("date_desc");
-                self.authorNameAscLabel = oj.Translations.getTranslatedString("author_name_asc");
-                self.authorNameDescLabel = oj.Translations.getTranslatedString("author_name_desc");
-                self.authorRoleAscLabel = oj.Translations.getTranslatedString("author_role_asc");
-                self.authorRoleDescLabel = oj.Translations.getTranslatedString("author_role_desc");
-                self.typeLabel = oj.Translations.getTranslatedString("type");
+		self.fromLabel = ko.observable(self.fromLabel.charAt(0).toUpperCase() + self.fromLabel.slice(1));
+		self.sortLabel = ko.observable(oj.Translations.getTranslatedString("sort_by"));
+		self.resetToDefaultsLabel = ko.observable(oj.Translations.getTranslatedString("reset_to_defaults"));  
+		self.filterLabel = ko.observable(oj.Translations.getTranslatedString("filter"));  		
+		self.dateAscLabel = ko.observable(oj.Translations.getTranslatedString("date_asc"));
+                self.dateDescLabel = ko.observable(oj.Translations.getTranslatedString("date_desc"));
+                self.authorNameAscLabel = ko.observable(oj.Translations.getTranslatedString("author_name_asc"));
+                self.authorNameDescLabel = ko.observable(oj.Translations.getTranslatedString("author_name_desc"));
+                self.authorRoleAscLabel = ko.observable(oj.Translations.getTranslatedString("author_role_asc"));
+                self.authorRoleDescLabel = ko.observable(oj.Translations.getTranslatedString("author_role_desc"));
+                self.typeLabel = ko.observable(oj.Translations.getTranslatedString("type"));
                 
-                
+                self.showPrediction = ko.observable(false);
+                self.selectionMode = ko.observable("multiple");
+                self.groupsCopy = [];
+                self.derivedMeaGroupsCopy = []; 
+                self.predictionButtonText1 = ko.observable("Show prediction");
 		//event triggers when selection changed
 		self.chartOptionChange = function(event) {
-                    if (!self.showSelectionOnDiagram()) {
-                        if(event){     
-                            $('#multipleSelection').ojPopup('close');
-                            if(event.detail.selectionData){ 
-                                self.multipleSelectionsArray(returnMultipleSelectionsOnSameValue(event.detail));
-                                    // if there is multiple selections on same value
-                                    if(self.multipleSelectionsArray().length > 0 && !self.solvedMultipleSelection()) {
-                                        
-                                        //creating checkbox with multiple selections
-                                        self.multipleSelectionsArray().forEach(function(el){
-                                            self.checkedMultipleSelections.push(el.data.id.toString());
-                                        });
-                                        $('#checkboxSetId').ojCheckboxset("refresh");                                         
-                                        self.storedEvent = event;
-                                        self.drawMultipleSelectionCheckBoxSet();
-                                        return;
-                                    }
-                                if (event.detail.selectionData.length > 0) {                                    
-                                    var onlyDataPoints = [];						
-                                    var allDataPoints = getDataPoints(event.detail.selectionData);
-                                    allDataPoints.forEach(function(el){
-                                        if(self.rejectedIds.indexOf(el) === -1){
-                                            onlyDataPoints.push(el);                                           
-                                        }
-                                    });
-                                    var stringArray = [];
-                                    onlyDataPoints.forEach(function(el){
-                                        stringArray.push(el.toString());
-                                    });
-                                    self.selectedItemsValue(stringArray);
-                                    if(onlyDataPoints.length === 0){
-                                                return;
-                                    }
+                        if (!self.showSelectionOnDiagram()) {
+                            
+                                if(event){     
                                     
-                                    // Compose selections in get query parameters
-                                    if(event.detail.selectionData.length == 1){
-                                        //if there is only 1 selection
-                                        var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
-                                        var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
+                                    if(event.detail.selectionData){
+                                        //console.log('this is selection data : ' + JSON.stringify(event.detail.selectionData));
+                                        $('#multipleSelection').ojPopup('close');    
+                                        var onlyCalculated = [];
+                                        event.detail.selectionData.forEach(function(obj,i,array){   
+                                            if(obj.data.type === "c"){
+                                                 onlyCalculated.push(obj);
+                                                 
+                                            }
+                                            
+                                        });
+                                        
+                                        event.detail.selectionData = onlyCalculated;
+                                        self.selectedItemsValue(onlyCalculated);
 
-                                        if(selectedDetectionVariable.detectionVariableType == 'ges'){
-                                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
-                                            $('#assessmentsPreview').prop('seeMeasures', true);
-                                        }else {
-                                            $('#assessmentsPreview').prop('seeMeasures', false);
+                                        self.multipleSelectionsArray(returnMultipleSelectionsOnSameValue(event.detail));
+                                            // if there is multiple selections on same value
+                                            if(self.multipleSelectionsArray().length > 0 && !self.solvedMultipleSelection()) {
+
+                                                //creating checkbox with multiple selections
+                                                self.multipleSelectionsArray().forEach(function(el){
+
+                                                    self.checkedMultipleSelections.push(oj.Translations.getTranslatedString(el.data.id.toString()));
+                                                });
+                                                $('#checkboxSetId').ojCheckboxset("refresh");                                         
+                                                self.storedEvent = event;
+                                                self.drawMultipleSelectionCheckBoxSet();
+                                                return;
+                                            }
+                                        if (event.detail.selectionData.length > 0) {
+                                            var onlyDataPoints = [];						
+                                            var allDataPoints = getDataPoints(event.detail.selectionData);
+                                            allDataPoints.forEach(function(el){
+                                                if(self.rejectedIds.indexOf(el) === -1){
+                                                    onlyDataPoints.push(el);                                           
+                                                }
+                                            });
+                                            var stringArray = [];
+                                            onlyDataPoints.forEach(function(el){
+                                                stringArray.push(el.toString());
+                                            });
+                                            self.selectedItemsValue(stringArray);
+                                            if(onlyDataPoints.length === 0){
+                                                        return;
+                                            }
+
+                                            // Compose selections in get query parameters
+                                            if(event.detail.selectionData.length == 1){
+                                                //if there is only 1 selection
+                                                var gefOrGesId = event.detail.selectionData[0]['data']['gefTypeId'];	
+                                                var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, gefOrGesId, self.props.careRecipientId);
+
+                                                if(selectedDetectionVariable.detectionVariableType == 'ges'){
+                                                    sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
+                                                    $('#assessmentsPreview').prop('seeMeasures', true);
+                                                }else {
+                                                    $('#assessmentsPreview').prop('seeMeasures', false);
+                                                }
+                                            }else {				
+                                                $('#assessmentsPreview').prop('seeMeasures', false);
+                                            }
+
+                                            self.queryParams = onlyDataPoints;
+                                            loadAssessments(self.queryParams);
+                                            self.annotations_assessmentsLabel(self.selectedAnotations().length + " " + oj.Translations.getTranslatedString("annotations_assessments"));
+                                            self.dataPointsMarkedIds = onlyDataPoints;
+                                            $('#assessmentsPreview').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));                                           
+                                            $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
+                                        } else {
+                                                self.dataPointsMarkedIds = [];
                                         }
-                                    }else {				
-                                        $('#assessmentsPreview').prop('seeMeasures', false);
+                                        self.solvedMultipleSelection(false);
+                                        self.rejectedIds = [];
                                     }
-
-                                    self.queryParams = onlyDataPoints;
-                                    loadAssessments(self.queryParams);
-                                    self.dataPointsMarkedIds = onlyDataPoints;
-                                    $('#assessmentsPreview').prop('dataPointsMarkedIds', ko.toJS(self.dataPointsMarkedIds));                                           
-                                    $('#addAssessment').prop('dataPointsMarkedIds', onlyDataPoints);
-                                } else {
-                                        self.dataPointsMarkedIds = [];
                                 }
-                                self.solvedMultipleSelection(false);
-                                self.rejectedIds = [];
-                            }
+                        
+                        } else {
+                                self.showSelectionOnDiagram(false);
                         }
-                    } else {
-                            self.showSelectionOnDiagram(false);
-                    }
+                    
 		};
 		
-		var loadDiagramDataCallback = function (data) {
-
-                    var grupe = ko.observableArray(data.groups);
-
+		var loadDiagramDataCallback2 = function (data) {
+                    //this is loading diagram data
                     if (data !== undefined && data.groups !== undefined && data.series !== undefined) {
 
+                        var groupsCopy = data.groups.slice();
+
+                        var grupe = ko.observableArray(data.groups);
+                        var timeIntervals=[];
+                        var series = [];
+                        var seriesPrediction = [];
+                        var tmpSeries= [];
+                        var tmpSerie, i, o=0, p, P=0;
                         data.groups = data.groups.map(function (obj) {
+                            timeIntervals.push(obj.id);
+                            o++;
                             return obj.name;
                         });
-
+                                console.log('formating date in ana ass view');
+                                self.groupsCopy = data.groups.slice(0);
                         formatDate(data.groups);
-
-                        self.props.groups = data.groups;
-                        self.props.series = data.series;
-
-                    }
-
-                    if (self.props !== undefined
-                            && self.props.series !== undefined) {
-                        for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
-                            self.props.series[ig].name = oj.Translations.getTranslatedString(self.props.series[ig].name);
-                        }
-
-
-                        for (var jg = 0; jg < self.props.series.length; jg++) {
-                            var pomocni = [];
-                            var timeIntervals = [];
-                            for (var m = 0; m < self.props.series[jg].items.length; m++) {
-                                timeIntervals.push(self.props.series[jg].items[m].timeIntervalId);
+                        var gesList = [];
+                        
+                        data.series.forEach(function(serie){
+                            gesList.push({name:serie.name,
+                                        id:serie.items[0].gefTypeId});
+                            tmpSerie={
+                                items:[],
+                                name:serie.name,
+                                havePrediction:0
+                            };
+                            for(i=o;i;i--) tmpSerie.items.push(null);
+                            p=0; //Count of predicted TI for this serie
+                            $.each(serie.items, function(j, item){
+                                switch (item.type){
+                                    case 'i':
+                                        item.markerDisplayed = "on";
+                                        item.markerShape = "diamond";
+                                        item.markerSize = 15;
+                                        item.shortDesc = "Interpolated value (" + item.value + ")";
+                                    case 'c': //Fall-thru with markerDisplayed=off only
+                                        break;
+                                    case 'p':
+                                        item.shortDesc = "Predicted value (" + item.value + ")";
+                                        item.drilling = "off";
+                                        p++;
+                                        break;
+                                    default:
+                                        console.log('uknown t: ' + item.type)
+                                };
+                                tmpSerie.items[timeIntervals.indexOf(item.timeIntervalId)]=item;
+                            });
+                            tmpSerie.havePrediction=p;
+                            p=Math.max(p, P); P=p;
+                            tmpSeries.push(tmpSerie);
+                        });
+                        o-=p;
+                        self.groupsVal(data.groups.slice(0, o));
+                        self.groupsPredictionVal(data.groups.slice(o));
+                        tmpSeries.forEach(function(serie, ndx){
+                            var nSerie = {
+                                name:serie.name,
+                                items:serie.items.slice(0, o),
+                                color: lineColors[ndx]
+                            }                      
+                            var pSerie = {
+                                name:serie.name + ' prediction',
+                                items:serie.items.slice(o),
+                                lineStyle: "dashed",
+                                color: lineColors[ndx],
+                                drilling:"off"
                             }
-                            for (var ig = 0; ig < grupe().length; ig++) {
-                                for (var kg = 0; kg < self.props.series[jg].items.length; kg++) {
-                                    if (grupe()[ig].id === self.props.series[jg].items[kg].timeIntervalId) {
-                                        pomocni.push(self.props.series[jg].items[kg]);
-                                    } else if (!timeIntervals.includes(grupe()[ig].id)) {
-                                        var item = new Object();
-                                        item.id = null;
-                                        item.value = null;
-                                        item.gefTypeId = self.props.series[jg].items[kg].gefTypeId;
-                                        item.timeIntervalId = grupe()[ig].id;
-
-                                        pomocni.push(item);
-                                        timeIntervals.push(item.timeIntervalId);
-                                    }
-                                }
+                            pSerie.items.unshift(serie.havePrediction ? nSerie.items[o-1] : null);
+                            for (var i=o-1; i>0; i--){
+                                pSerie.items.unshift(null);
                             }
-                            self.props.series[jg].items = pomocni;
-                        }
+                            series.push(nSerie);
+                            seriesPrediction.push(pSerie);
+
+                        });
+                        self.seriesVal(series);
+                        self.seriesPredictionVal(seriesPrediction);
+                        sessionStorage.setItem('gesList', JSON.stringify(gesList));
+                        self.loadAssessmentsCached();
                     }
                 };
 
-		var loadDataSet = function(data) {                  
-			var jqXHR = $.getJSON(CARE_RECIPIENT_DIAGRAM_DATA
+		var loadDataSet = function(data) { 
+                    //loading data for ges diagram (if anagraph-assessment-view is on gef page, it triggers but does not load data)
+                        var jqXHR = $.getJSON(INDIVIDUAL_MONITORING_DIAGRAM_DATA
 					+ "/careRecipientId/" + self.props.careRecipientId
-					+ "/parentFactorId/" + self.props.parentFactorId,
-					loadDiagramDataCallback);
+					+ "?parentFactorId=" + self.props.parentFactorId,
+					loadDiagramDataCallback2);
 			jqXHR.fail(serverErrorCallback);			
 			return jqXHR;
 		};
@@ -219,12 +285,12 @@ function(oj, ko, $) {
 
 		context.props.then(function(properties) {
 			self.props = properties;
+                        self.props.selectedRoles = [];
 		});
 		
 
-		self.attached = function() {
-			var response = loadDataSet();
-			return response;
+		self.attached = function() {                   
+                        loadDataSet();                            
 		};
 
 
@@ -232,7 +298,8 @@ function(oj, ko, $) {
 		self.bindingsApplied = function() {
 			selected = [];
 			self.props.subFactorName = "testtest";			
-			self.loadAssessmentsCached();
+			//self.loadAssessmentsCached();
+                        //debugger;
 			if (self.showSelectionOnDiagram()) {				
 				selected = [];
 				for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
@@ -259,8 +326,14 @@ function(oj, ko, $) {
 
 		self.chartDrill = function(event) {
                     if(event.detail['series']){
-			console.log('drill on anagraph-assessment-view');                      
-                        self.props.selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);
+			console.log('drill on anagraph-assessment-view');   
+                        var tmpGefTypeId;
+                        event.detail['seriesData']['items'].forEach(function(item){
+                            if(item)
+                                tmpGefTypeId = JSON.stringify(item['gefTypeId'])
+                        })
+                        self.props.selectedId = tmpGefTypeId;
+                        //self.props.selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);
                                                    
                         var selectedDetectionVariable = ViewPilotDetectionVariable.findByDetectionVariableId(self.props.viewPilotDetectionVariables, self.props.selectedId, self.props.careRecipientId);
                         if(selectedDetectionVariable.detectionVariableType === 'gef'){ 
@@ -270,11 +343,65 @@ function(oj, ko, $) {
                             
                         }else if(selectedDetectionVariable.detectionVariableType === 'ges'){
                             console.log('selected GES');                           
-                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable));  
-                            oj.Router.rootInstance.go("detection_mea");
+                            sessionStorage.setItem("gesObj", JSON.stringify(selectedDetectionVariable)); 
+                            drawDerivedMonthlyMeasuresChart(selectedDetectionVariable.detectionVariableId);
+                            //oj.Router.rootInstance.go("detection_mea");
                         }
                     }
 		};
+                // Measures’ monthly values diagram
+                var drawDerivedMonthlyMeasuresChart = function(gesId) {
+                    $.getJSON(INDIVIDUAL_MONITORING_DERIVED_MEASURES + "/userInRoleId/" + parseInt(sessionStorage.getItem("crId")) + "/parentFactorId/" + gesId, function(data) {
+                                data.series.forEach(function(serie){
+                                   serie.name =  oj.Translations.getTranslatedString(serie.name);
+                                });
+                                
+                                // adding nulls for missing data
+                                var grupe = ko.observableArray(data.groups);
+                                for (var jg = 0; jg < data.series.length; jg++) {
+                                    var fullSeries = [];
+                                    var timeIntervals = [];
+                                    for (var m = 0; m < data.series[jg].items.length; m++) {
+                                        timeIntervals.push(data.series[jg].items[m].monthLabel);
+                                    }
+                                    for (var ig = 0; ig < grupe().length; ig++) {
+                                        for (var kg = 0; kg < data.series[jg].items.length; kg++) {
+                                            if (grupe()[ig].name === data.series[jg].items[kg].monthLabel) {
+                                                fullSeries.push(data.series[jg].items[kg]);
+                                            } else if (!timeIntervals.includes(grupe()[ig].name)) {
+                                                fullSeries.push(null);
+                                                timeIntervals.push(grupe()[ig].name);
+                                            }
+                                        }
+                                    }
+                                    data.series[jg].items = fullSeries.slice(0);
+                                }
+                                
+                                data.groups = data.groups.map(function (obj) {
+                                    return obj.name;
+                                });
+                                self.derivedMeaGroupsCopy = data.groups.slice(0);
+
+                                formatDate(data.groups);
+                                self.lineGroups = data.groups;
+                                self.lineSeries = data.series;
+                                document.getElementById('monthly-mea-container').style.display = "block";
+                                $('#derivedMonthlyMea').prop('series', self.lineSeries);
+                                $('#derivedMonthlyMea').prop('groups', self.lineGroups);
+                                $('html, body').animate({
+                                    scrollTop: $("#monthly-mea-container").offset().top
+                                }, 2000);
+                                
+                    });
+                           
+                    
+                };
+                self.lineSeries = [{name : "Series 1", items : [74, 62, 70, 76, 66]},
+                          {name : "Series 2", items : [50, 38, 46, 54, 42]}
+                          ];
+                     
+    
+                self.lineGroups = ["Jan", "Feb", "Mar", "Apr", "May"];
                 
 		/*
 		 * Mouse handles .. should be deleted when we find better way to
@@ -293,14 +420,14 @@ function(oj, ko, $) {
 		function matchSeriesIndexByItemId(item) {
 			var series = null;
 			if (self.props.series !== undefined) {
-				series = self.props.series;
+				series = self.seriesVal();
 			} else {
 				series = self.series;
 			}
 
 			for (var i = 0; i < series.length; i++) {
 				for (var j = 0; j < series[i].items.length; j++) {
-					if (series[i].items[j].id === item.id) {
+					if (series[i].items[j] && series[i].items[j].id === item.id) {
 						series[i].items[j].markerDisplayed = 'on';
 						series[i].items[j].markerSize = '32';
 						series[i].items[j].source = 'images/comment_unsel.png';
@@ -319,67 +446,64 @@ function(oj, ko, $) {
 		}
 
 		self.loadAssessmentsCached = function() {
-			return $.getJSON(ASSESSMENT_LAST_FIVE_FOR_DIAGRAM
-									+ '/userInRoleId/'
-									+ self.props.careRecipientId
-									+ '/parentDetectionVariableId/'
-									+ self.props.parentFactorId
-									+ '/intervalStart/2001-1-1/intervalEnd/2040-1-1',
-							function(dataSet) {
-								var assesmentsDataSet = DataSet.produceFromOther(dataSet);
-								for (var i = 0; i < assesmentsDataSet.series.length; i++) {
-									var serie = assesmentsDataSet.series[i];
-									if (serie.items !== undefined) {
-										for (var j = 0; j < serie.items.length; j++) {
-											var item = serie.items[j];
-											var matchedIndex = matchSeriesIndexByItemId(item);
-										}
-									}
-								}
-								var series = null;
-								if (self.props.series !== undefined) {
-									series = self.props.series;
-								} else {
-									series = self.series;
-								}
-								if (series !== undefined) {
-                                                                    //risk status icon priority settings 
-									for (var i = 0; i < series.length; i++) {
-										for (var j = 0; j < series[i].items.length; j++) {
-											if (series[i].items[j] !== undefined
-													&& series[i].items[j].assessmentObjects
-													&& series[i].items[j].assessmentObjects[0].length > 0) {
-												var hasWarning = false;
-												var hasAlert = false;
-												for (var k = 0; k < series[i].items[j].assessmentObjects[0].length; k++) {
-                                                                                                    if (series[i].items[j].assessmentObjects[k] !== undefined) {
-													if ('W' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
-                                                                                                                series[i].items[j].source = 'images/risk_warning_unsel.png';
-														series[i].items[j].sourceSelected = 'images/risk_warning_sel.png';
-														hasWarning = true;
-													}
-													if ('A' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
-														series[i].items[j].source = 'images/risk_alert_unsel.png';
-														series[i].items[j].sourceSelected = 'images/risk_alert_sel.png';
-														hasAlert = true;
-														break;
-													}
-                                                                                                    }
+                    return $.getJSON(ASSESSMENT_LAST_FIVE_FOR_DIAGRAM
+                                                                    + '/userInRoleId/'
+                                                                    + self.props.careRecipientId
+                                                                    + '/parentDetectionVariableId/'
+                                                                    + self.props.parentFactorId
+                                                                    + '/intervalStart/2001-1-1/intervalEnd/2040-1-1',
+                    function(dataSet) {
+                            var assesmentsDataSet = DataSet.produceFromOther(dataSet);
+                            for (var i = 0; i < assesmentsDataSet.series.length; i++) {
+                                    var serie = assesmentsDataSet.series[i];
+                                    if (serie.items !== undefined) {
+                                            for (var j = 0; j < serie.items.length; j++) {
+                                                    var item = serie.items[j];
+                                                    var matchedIndex = matchSeriesIndexByItemId(item);
+                                            }
+                                    }
+                            }
+                            var series = self.seriesVal();
+                             //this is loading assessments  
+                            if (series !== undefined) {
+                                //risk status icon priority settings 
+                                    for (var i = 0; i < series.length; i++) {
+                                            for (var j = 0; j < series[i].items.length; j++) {
+                                                    if (series[i].items[j]
+                                                                    && series[i].items[j].assessmentObjects
+                                                                    && series[i].items[j].assessmentObjects[0].length > 0) {
+                                                            var hasWarning = false;
+                                                            var hasAlert = false;
+                                                            for (var k = 0; k < series[i].items[j].assessmentObjects[0].length; k++) {
+                                                                if (series[i].items[j].assessmentObjects[k] !== undefined) {
+                                                                    if ('W' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
+                                                                            series[i].items[j].source = 'images/risk_warning_unsel.png';
+                                                                            series[i].items[j].sourceSelected = 'images/risk_warning_sel.png';
+                                                                            hasWarning = true;
+                                                                    }
+                                                                    if ('A' === series[i].items[j].assessmentObjects[k][6]) {//series[i].items[j].assessmentObjects[k][6] - risk_status (index 6)
+                                                                            series[i].items[j].source = 'images/risk_alert_unsel.png';
+                                                                            series[i].items[j].sourceSelected = 'images/risk_alert_sel.png';
+                                                                            hasAlert = true;
+                                                                            break;
+                                                                    }
+                                                                }
 
-												}
-											}
-										}
-									}
-								}
-								if (self.props.series !== undefined) {
-									self.props.series = self.props.series
-											.slice();
-								}
-								if (self.props.groups !== undefined) {
-									self.props.groups = self.props.groups
-											.slice();
-								}
-							});
+                                                            }
+                                                    }
+                                            }
+                                    }
+                            }
+                            if (self.props.series !== undefined) {
+                                    self.props.series = series;
+                                            var test = self.props.series;
+                                            self.seriesVal(test);
+                            }
+                            if (self.props.groups !== undefined) {
+                                    self.props.groups = self.props.groups
+                                                    .slice();
+                            }
+                    });
 		};
 
 		function getDataPoints(selectionData) {
@@ -426,55 +550,16 @@ function(oj, ko, $) {
 		};
 		//shows either popup1 or popup2 on assessment preview component based on number of selected assessments
 		function showAssessmentsPopup( aLength) {
+                    
 			self.selectedAnotations([]);
-			$('.popup').ojPopup('close');
+			//$('.popup').ojPopup('close');
 			// Popup1 or popup2 if there are any assessments
-			if ($('#' + $('.popup').attr('id')).ojPopup("isOpen") === false) {
-                                if (aLength > 0) {
-					
-					$('#popup1').ojPopup("option", "position", {
-						"my" : {
-							"horizontal" : "center",
-							"vertical" : "center"
-						},
-						"at" : {
-							"horizontal" : "center",
-							"vertical" : "center"
-						},
-						"offset" : {
-							"x" : 0,
-							"y" : 0
-						}
-					}
-					);
-					
-					$('#popup1').ojPopup('open');
-					$('#popup1').draggable({
-						containment : "#detectionGEFGroup1FactorsChart"
-					});
-				} else if (aLength === 0) {
-					
-					$('#popup2').ojPopup("option", "position", {
-						"my" : {
-							"horizontal" : "center",
-							"vertical" : "center"
-						},
-						"at" : {
-							"horizontal" : "center",
-							"vertical" : "center"
-						},
-						"offset" : {
-							"x" : 0,
-							"y" : 0
-						}
-					});
-					
-					$('#popup2').ojPopup('open');
-					$('#popup2').draggable({
-						containment : "#detectionGEFGroup1FactorsChart"
-					});
-				}
-                            }
+			
+                                
+					document.getElementById('popup1').style.display = 'flex';
+                                        document.getElementById('selection-context').style.display = 'block';
+				
+                            
 			}
 
 		// Popup relative position
@@ -514,7 +599,7 @@ function(oj, ko, $) {
 						assessmentsResult.push(newAssessment);
 				}
 				self.selectedAnotations(assessmentsResult);
-				refreshDataPointsMarked(assessmentsResult.length);
+				//refreshDataPointsMarked(assessmentsResult.length);
 			});
 		};
 
@@ -624,16 +709,16 @@ function(oj, ko, $) {
                 self.selectDatapointsDiagram = function() {
 			self.showSelectionOnDiagram(true);
 			self.props.subFactorName = "testtest";
-			self.loadAssessmentsCached();
+			//self.loadAssessmentsCached();
 			selected = [];
-			for (var ig = 0; ig < Object.keys(self.props.series).length; ig++) {
-				for (var jg = 0; jg < Object.keys(self.props.series[ig].items).length; jg++) {
-					if (self.props.series[ig].items[jg].assessmentObjects
-							&& self.props.series[ig].items[jg].assessmentObjects[0].length > 0) {
-                                                    for (var kg = 0; kg < self.props.series[ig].items[jg].assessmentObjects[0].length; kg++) {
-                                                        if (self.props.series[ig].items[jg].assessmentObjects[kg] !== undefined) {
-                                                            if (self.props.series[ig].items[jg].assessmentObjects[kg][4] === self.props.assessmentId) {//self.props.series[ig].items[jg].assessmentObjects[0][4] - assessment_id (index 4)
-                                                                    selected.push(self.props.series[ig].items[jg].assessmentObjects[0][2].toString());//self.props.series[ig].items[jg].assessmentObjects[0][2] - gef_id (index 2)
+			for (var ig = 0; ig < Object.keys(self.seriesVal()).length; ig++) {
+				for (var jg = 0; jg < Object.keys(self.seriesVal()[ig].items).length; jg++) {
+					if (self.seriesVal()[ig].items[jg] && self.seriesVal()[ig].items[jg].assessmentObjects
+							&& self.seriesVal()[ig].items[jg].assessmentObjects[0].length > 0) {
+                                                    for (var kg = 0; kg < self.seriesVal()[ig].items[jg].assessmentObjects[0].length; kg++) {
+                                                        if (self.seriesVal()[ig].items[jg].assessmentObjects[kg] !== undefined) {
+                                                            if (self.seriesVal()[ig].items[jg].assessmentObjects[kg][4] === self.props.assessmentId) {//self.props.series[ig].items[jg].assessmentObjects[0][4] - assessment_id (index 4)
+                                                                    selected.push(self.seriesVal()[ig].items[jg].assessmentObjects[0][2].toString());//self.props.series[ig].items[jg].assessmentObjects[0][2] - gef_id (index 2)
                                                             }
                                                         }
                                                     }
@@ -644,14 +729,34 @@ function(oj, ko, $) {
 		}
                 //makes annotation list with filters visible and sets dataPointsMarked to assessment-preview component 
 		function refreshDataPointsMarked(assessmentsResultLength) {
-			document.getElementById('tabs-container').style.display = 'block';
-			$('#tabAnnotations').css({
-				display : 'block'
-			});
+                    if(assessmentsResultLength > 0){
+                        $( "#tabs-container" ).fadeIn( "slow", function() {
+                            // Animation complete
+                          });
+//                        document.getElementById('tabs-container').style.display = 'block';
+//			$('#tabAnnotations').css({
+//				display : 'block'
+//			});
+                         $( "#tabAnnotations" ).fadeIn( "slow", function() {
+                            // Animation complete
+                          });
+                    }else {
+                        $( "#tabAnnotations" ).fadeOut( "fast", function() {
+                            // Animation complete
+                          });
+                          $( "#tabs-container" ).fadeOut( "slow", function() {
+                            // Animation complete
+                          });
+
+                          
+			
+                    }
+			
                         //this is a string on assessment-preview that tells how many data points and assessments are selected
-			self.dataPointsMarked = self.dataPointsMarkedIds.length
-					+ oj.Translations.getTranslatedString("dpmw")
-					+ assessmentsResultLength + oj.Translations.getTranslatedString("assessments");
+
+			self.dataPointsMarked = self.dataPointsMarkedIds.length + " " +
+					 oj.Translations.getTranslatedString("dpmw") + " " +
+					 assessmentsResultLength + " " + oj.Translations.getTranslatedString("assessments");
 			$('#assessmentsPreview').prop('dataPointsMarked', self.dataPointsMarked);
 		}
                 //returns all selections that have equal values in equal time (month)
@@ -661,7 +766,7 @@ function(oj, ko, $) {
                             for(var i = 0; i < selectedDots.length; i++){
                                 for(var j = 0; j < selectedDots.length; j++){
                                     if(selectedDots[i].data.value === selectedDots[j].data.value && 
-                                        selectedDots[i].data.timeIntervalId === selectedDots[j].data.timeIntervalId &&
+                                        selectedDots[i].groupData[0] === selectedDots[j].groupData[0] &&
                                             selectedDots[i].data.id !== selectedDots[j].data.id){
                                              if(!multipleSelectionsInOneVal.filter(function(selection){ return selection.data.id === selectedDots[i].data.id; }).length > 0){
                                                  multipleSelectionsInOneVal.push(selectedDots[i]);
@@ -689,7 +794,6 @@ function(oj, ko, $) {
                        } 
                     });
                     
-                    console.log('rejected ids ' + ko.toJSON(self.rejectedIds));
                     $('#multipleSelection').ojPopup('close');
                     self.solvedMultipleSelection(true);
                     self.chartOptionChange(self.storedEvent);
@@ -712,9 +816,123 @@ function(oj, ko, $) {
 					}
 					);
                     $('#multipleSelection').ojPopup('open');            
-                }
+                };
+                self.composite = context.element;
+                
+                $(self.composite).on('series-changed',function(event){
+                         if (event.detail.updatedFrom === 'external'){                             
+                                    self.seriesVal(self.props.series);
+                                    self.groupsVal(self.props.groups);
+                                    self.seriesPredictionVal(self.props.seriesPrediction);
+                                    self.groupsPredictionVal(self.props.groupsPrediction);
+                                    self.showPrediction(false);
+                                    self.predictionButtonText1("Show prediction");
+                            }
+                });
+/*  Everything is updated in same f call
+                $(self.composite).on('groups-changed',function(event){                           
+                         if (event.detail.updatedFrom === 'external'){ 
+                                     self.groupsVal(self.props.groups);
+                                                         
+                            }
 
-	}
+                });
+                $(self.composite).on('seriesPrediction-changed',function(event){
+                         if (event.detail.updatedFrom === 'external'){                             
+                                       self.seriesPredictionVal(self.props.seriesPrediction);
+                            }
+
+                });
+                $(self.composite).on('groupsPrediction-changed',function(event){                           
+                         if (event.detail.updatedFrom === 'external'){ 
+                                     self.groupsPredictionVal(self.props.groupsPrediction);
+                                                         
+                            }
+
+                });
+*/
+                self.clearSelection = function(){
+                    self.selectedItemsValue([]);
+                    refreshDataPointsMarked(0);
+                    document.getElementById('selection-context').style.display = 'none';
+                };
+                self.showHidePredictions1 = function(event) {
+                    self.clearSelection();
+                    var series = self.seriesVal();
+                    var groups = self.groupsVal();
+                    if (!self.showPrediction()) {
+                        groups = groups.concat(self.groupsPredictionVal());
+                        series = series.concat(self.seriesPredictionVal());
+                        self.showPrediction(true);
+                        self.selectionMode("none");
+                        self.predictionButtonText1("Hide prediction");
+                    } else {
+                        groups.splice(groups.length - self.groupsPredictionVal().length);
+                        series.splice(series.length - self.seriesPredictionVal().length);
+                        self.showPrediction(false);
+                        self.selectionMode("multiple");
+                        self.predictionButtonText1("Show prediction");
+                    }
+
+                    self.seriesVal(series);
+                    self.groupsVal(groups);
+                };
+                
+                var languageBox = document.getElementById("languageBox");
+                languageBox.removeEventListener("valueChanged", function(event) {
+                        changeLanguage();
+                });
+                languageBox.addEventListener("valueChanged", function(event) {
+                        changeLanguage();
+                });
+
+                function changeLanguage(){
+                     var lang = $('#languageBox').val();
+                     oj.Config.setLocale(lang,
+                                 function () {
+                                        $('html').attr('lang', lang);                         
+                                                self.riskDataTypeLabel(oj.Translations.getTranslatedString("risk_data_type"));
+                                                self.fromLabel(oj.Translations.getTranslatedString("from"));
+                                                self.fromLabel(self.fromLabel().charAt(0).toUpperCase() + self.fromLabel().slice(1));
+                                                self.showAllLabel(oj.Translations.getTranslatedString("show_all"));
+                                                self.annotationsLabel(oj.Translations.getTranslatedString("annotations_assessments")[0].toUpperCase() + oj.Translations.getTranslatedString("annotations_assessments").substring(1));
+                                                self.morphologyLabel(oj.Translations.getTranslatedString("morphology"));
+                                                self.annotations_assessmentsLabel(oj.Translations.getTranslatedString("annotations_assessments"));
+                                                self.addLabel(oj.Translations.getTranslatedString("add"));
+                                                self.sortLabel(oj.Translations.getTranslatedString("sort_by"));
+                                                self.resetToDefaultsLabel(oj.Translations.getTranslatedString("reset_to_defaults"));  
+                                                self.filterLabel(oj.Translations.getTranslatedString("filter"));  		
+                                                self.dateAscLabel(oj.Translations.getTranslatedString("date_asc"));
+                                                self.dateDescLabel(oj.Translations.getTranslatedString("date_desc"));
+                                                self.authorNameAscLabel(oj.Translations.getTranslatedString("author_name_asc"));
+                                                self.authorNameDescLabel(oj.Translations.getTranslatedString("author_name_desc"));
+                                                self.authorRoleAscLabel(oj.Translations.getTranslatedString("author_role_asc"));
+                                                self.authorRoleDescLabel(oj.Translations.getTranslatedString("author_role_desc"));
+                                                self.typeLabel(oj.Translations.getTranslatedString("type"));
+
+                                                self.dataPointsMarked = self.dataPointsMarkedIds.length + " " +
+                                                oj.Translations.getTranslatedString("dpmw") + " " +
+                                                self.selectedAnotations().length + " " + oj.Translations.getTranslatedString("assessments");
+                                                $('#assessmentsPreview').prop('dataPointsMarked', self.dataPointsMarked);
+                                                if(window.location.href.includes('detection_ges')){
+                                                    var groups = self.groupsCopy.slice(0);
+                                                    formatDate(groups);
+                                                    groups.pop();
+                                                    groups.pop();
+                                                    groups.pop();
+                                                    
+                                                    self.groupsVal(groups);
+                                                    self.lineGroups = self.derivedMeaGroupsCopy.slice(0);  
+                                                    formatDate(self.lineGroups);
+                                                    
+                                                    $('#derivedMonthlyMea').prop('groups', self.lineGroups);
+                                                }
+                                                
+                             }
+                     );
+
+                }
+            }
 
 	return model;
 });

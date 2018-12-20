@@ -39,4 +39,21 @@ public class JerseyResponse {
 				.build();
 	}
 
+	public static Response buildFile(Object response, String filename) {
+		return Response
+				.ok(response)
+				.type(MediaType.APPLICATION_OCTET_STREAM)
+				.header("Content-Disposition", "attachment; filename=" + filename)
+				.build();
+	}
+
+	public static Response buildFile(Object response, int responseCode, String filename) {
+		return Response
+				.status(responseCode)
+				.entity(response)
+				.type(MediaType.APPLICATION_OCTET_STREAM)
+				.header("Content-Disposition", "attachment; filename=" + filename)
+				.build();
+	}
+
 }

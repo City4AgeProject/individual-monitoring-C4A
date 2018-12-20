@@ -1,22 +1,24 @@
 package eu.city4age.dashboard.api.pojo.dto;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import eu.city4age.dashboard.api.pojo.dto.oj.DataIdValue;
 import eu.city4age.dashboard.api.pojo.dto.oj.variant.Serie;
 
 public class OJDiagramFrailtyStatus {
 
-	List<DataIdValue> months = new ArrayList<DataIdValue>();
+	Set<DataIdValue> months = new HashSet<DataIdValue>();
 
 	List<Serie> series = new ArrayList<Serie>();
 
-	public List<DataIdValue> getMonths() {
+	public Set<DataIdValue> getMonths() {
 		return months;
 	}
 
-	public void setMonths(List<DataIdValue> months) {
+	public void setMonths(Set<DataIdValue> months) {
 		this.months = months;
 	}
 

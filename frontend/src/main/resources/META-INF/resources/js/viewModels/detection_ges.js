@@ -2,19 +2,21 @@ define(['ojs/ojcore', 'knockout', 'jquery',
      'ojs/ojknockout', 'ojs/ojmodule','ojs/ojmodel', 'ojs/ojchart', 'ojs/ojlegend', 'ojs/ojbutton',
     'ojs/ojmenu', 'ojs/ojpopup', 'ojs/ojinputtext', 'ojs/ojtoolbar', 'ojs/ojselectcombobox', 'ojs/ojslider',
     'ojs/ojradioset', 'ojs/ojdialog', 'ojs/ojlistview', 'ojs/ojarraytabledatasource', 'ojs/ojswitch', 'ojs/ojtabs', 
-    'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view'],
+    'urls','entities', 'add-assessment', 'assessments-list', 'assessments-preview', 'anagraph-assessment-view','ojs/ojcore',
+    'ojs/ojnavigationlist','ojs/ojswitcher','ojs/ojoption','ojs/ojcollapsible','ojs/ojlabel','ojs/ojaccordion'],
 
 function (oj, ko, $) {
-
+    
     function detectionGesContentViewModel() {
     	var CODEBOOK_SELECT_ALL_RISKS = root + 'codebook/getAllRiskStatus';
         
         var self = this;
-
-        self.careRecipientId = ko.observable();
+        self.tabValues = [{label: "Walking"}, {label : "Still moving"}];
+        self.selectedTab = ko.observable("Walking");
+        
         self.careRecipientId = parseInt(sessionStorage.getItem("crId"));
        
-        
+      
         self.selectedId = ko.observable();
         self.titleValue = ko.observable("");
 
@@ -70,7 +72,7 @@ function (oj, ko, $) {
            $(".loader-hover").hide(); 
         };
 
-        
+                
         /*Mouse handles .. should be deleted when we found better way to fix popup position */
         var clientX;
         var clientY;
@@ -93,8 +95,46 @@ function (oj, ko, $) {
         
         self.searchInput = function () {};
         self.nowrap = ko.observable(false);
-
         
+        self.derivedMonthlyMeaDrill = function(event){
+            var selectedId = JSON.stringify(event.detail['seriesData']['items'][0]['gefTypeId']);  
+            var meaName = event.detail['seriesData'].name;
+            sessionStorage.setItem('seeAllMeasures', 0);
+            sessionStorage.setItem('meaId', selectedId);
+            sessionStorage.setItem('meaName', selectedId);
+            oj.Router.rootInstance.go("detection_mea");           
+        };
+         /* chart data */       
+        self.lineSeriesValue = ko.observableArray();
+        self.lineGroupsValue = ko.observableArray();
+        self.derivedMonthlyMeaTitle = ko.observable("Measures’ monthly values");
+        
+        self.seeAllMeasuresForGes = function(event){
+               sessionStorage.setItem('seeAllMeasures', 1);
+               oj.Router.rootInstance.go("detection_mea");
+        };
+        
+        var languageBox = document.getElementById("languageBox");
+        languageBox.removeEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        languageBox.addEventListener("valueChanged", function(event) {
+        	changeLanguage();
+        });
+        
+        function changeLanguage(){
+             var lang = $('#languageBox').val();
+             oj.Config.setLocale(lang,
+            		 function () {
+            	 		$('html').attr('lang', lang);                         
+            	 		if(document.getElementById('detectionGEFGroup1FactorsChart') != null &&
+            	 		   document.getElementById('detectionGEFGroupsLineChart') == null){
+            	 			self.handleActivated();
+                                        document.getElementById('detectionGEFGroup1FactorsChart').refresh();
+            	 		}
+                     }
+             );
+        }
     }
 
     return detectionGesContentViewModel;

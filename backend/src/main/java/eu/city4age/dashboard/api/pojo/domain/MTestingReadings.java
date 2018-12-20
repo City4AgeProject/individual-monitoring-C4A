@@ -1,13 +1,16 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -83,6 +86,13 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 	@Column (name = "google_api_movement_recognition")
 	@ApiModelProperty (hidden = false)
 	private String recognitions;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "mtesting_parent")
+	private MTestingReadings mtesting_parent;
+	
+	@OneToMany(mappedBy = "mtesting_parent", fetch = FetchType.LAZY)
+	private Set<MTestingReadings> readings = new HashSet <MTestingReadings> ();
 	
 	public Date getStart() {
 		return start;
@@ -181,6 +191,34 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 		this.recognitions = recognitions;
 	}
 	
+	/**
+	 * @return the mtesting_parent
+	 */
+	public MTestingReadings getMtesting_parent() {
+		return mtesting_parent;
+	}
+
+	/**
+	 * @param mtesting_parent the mtesting_parent to set
+	 */
+	public void setMtesting_parent(MTestingReadings mtesting_parent) {
+		this.mtesting_parent = mtesting_parent;
+	}
+
+	/**
+	 * @return the readings
+	 */
+	public Set<MTestingReadings> getReadings() {
+		return readings;
+	}
+
+	/**
+	 * @param readings the readings to set
+	 */
+	public void setReadings(Set<MTestingReadings> readings) {
+		this.readings = readings;
+	}
+
 	public void addGpss (List<Gps> gpss) {
 		if (gpss != null && gpss.size() > 0) {
 			StringBuilder sbLongitude = new StringBuilder ();
@@ -225,6 +263,22 @@ public class MTestingReadings extends AbstractBaseEntity<Long> {
 			}
 			this.setRecognitions(sb.toString());
 		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof MTestingReadings) {
+			MTestingReadings mtr = (MTestingReadings) obj;
+			if (mtr.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
 	}
 
 }

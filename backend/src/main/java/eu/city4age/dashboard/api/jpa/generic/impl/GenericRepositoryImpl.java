@@ -2,7 +2,6 @@ package eu.city4age.dashboard.api.jpa.generic.impl;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +33,6 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	private final JpaEntityInformation<T, ID> entityInformation;
 
 	private final EntityManager entityManager;
-	
-	private final int batchSize = 50;
 
 	private Class<?> springDataRepositoryInterface;
 
@@ -129,6 +126,69 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 		return null;
 
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Object[] doQueryWithFilterAggr(List<eu.city4age.dashboard.api.pojo.persist.Filter> filters,
+			String filterQueryName, Map<String, Object> inQueryParams) {
+
+		if (GenericRepository.class.isAssignableFrom(getSpringDataRepositoryInterface())) {
+			Annotation entityFilterAnn = getSpringDataRepositoryInterface().getAnnotation(EntityFilter.class);
+
+			if (entityFilterAnn != null) {
+
+				EntityFilter entityFilter = (EntityFilter) entityFilterAnn;
+				FilterQuery[] filterQuerys = entityFilter.filterQueries();
+
+				for (FilterQuery fQuery : filterQuerys) {
+
+					if (StringUtils.equals(filterQueryName, fQuery.name())) {
+						String jpql = fQuery.jpql();
+
+						for (eu.city4age.dashboard.api.pojo.persist.Filter flt : filters) {
+							Filter filter = entityManager.unwrap(Session.class).enableFilter(flt.getName());
+
+							// Set filter parameter
+							for (Object key : flt.getInParams().keySet()) {
+
+								// FilterParam map key must be filter name
+								if (flt.getName().equals(key.toString())) {
+
+									String filterParamName = key.toString();
+
+									if (flt.getInParams().get(key) instanceof List) {
+										
+										List<T> filterParamValue = (List<T>) flt.getInParams().get(key);
+										filter.setParameterList(filterParamName, filterParamValue);
+									} else {
+										Object filterParamValue = flt.getInParams().get(key);
+										filter.setParameter(filterParamName, filterParamValue);
+									}
+
+								}
+
+							}
+
+						}
+
+						// Set query parameter
+						Query query = entityManager.createQuery(jpql);
+						for (Object key : inQueryParams.keySet()) {
+							String queryParamName = key.toString();
+							Object queryParamValue = inQueryParams.get(key);
+							query.setParameter(queryParamName, queryParamValue);
+						}
+
+						return (Object[]) query.getSingleResult();
+
+					}
+				}
+			}
+		}
+
+		return null;
+
+	}
 
 	public void disableFilter(String name) {
 		entityManager.unwrap(Session.class).disableFilter(name);
@@ -144,23 +204,22 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	}
 	
 	public <S extends AbstractBaseEntity<?>> Collection<S> bulkSave(Collection<S> entities) {
-		final List<S> savedEntities = new ArrayList<>(entities.size());
-		int i = 0;
+		//int i = 0;
 		for (S s : entities) {
-			savedEntities.add(persistOrMerge(s));
-			i++;
-			if (i % batchSize == 0) {
+			persistOrMerge(s);
+			//i++;
+			/*if (i % batchSize == 0) {
 				// Flush a batch of inserts and release memory
 				entityManager.flush();
 				entityManager.clear();
-			}
+			}*/
 		}
-		entityManager.flush();
-		entityManager.clear();
-		return savedEntities;
+		/*entityManager.flush();
+		entityManager.clear();*/
+		return entities;
 	}
 
-	public <S extends AbstractBaseEntity<?>> S persistOrMerge(S entity) {
+	private <S extends AbstractBaseEntity<?>> S persistOrMerge(S entity) {
 		if (entity.getId() == null) {
 			entityManager.persist(entity);
 			return entity;

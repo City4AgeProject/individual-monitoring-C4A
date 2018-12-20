@@ -27,25 +27,30 @@
 		</ul>
 	
 	</div>-->
-<div class="demo-flex-display oj-flex-items-pad" style="padding-top: 15px;">
+<div id="gfg-chart-container" class="demo-flex-display oj-flex-items-pad" style="padding-top: 15px;">
 		<!-- <div class="oj-flex oj-sm-flex-direction-column "></div> -->
 		<!-- end context menu for Detection chart -->
 
-                <div class="oj-flex-item" style="background-color: #F1F1F1; padding-top: 5px;">
-			<form
+                <div class="oj-flex-item" style="border:1px solid lightgray;background-color: #F1F1F1; padding-top: 10px;padding-bottom: 10px;position:relative;">
+			<!--<form
 				style="position: absolute; z-index: 10; right: 25px; margin-top: 5px;"
 				id="formId" class="formShow">
-				<!--<div>
+				<div>
 					<input style="vertical-align: text-bottom;" id="checkcontrol"
 						type="checkbox" class="oj-checkbox-nocomp"
 						data-bind="checked: checkbox" /> <label for="checkcontrol"
 						class="oj-checkbox-label-nocomp"> Show frailty status </label>
-				</div>-->
-			</form>
+				</div>
+			</form>-->
 			<!-- chart for overall situation with two groups of geriatric factors -->
 			<!--detectionGEFGroupsLineChart-->
-			<h3 id="measureName" data-bind="text: detectionGEFGroupsLineChartLabel" align="center" style="margin-top: 20px;"></h3>
-                        <oj-chart id="detectionGEFGroupsLineChart" class="oj-flex-item" style="width: 100%;"               
+                        <div style="padding-right:16px; position:absolute; top:10px;right:0;">
+                                <oj-button id= "btnPrediction" aria-controls="lineChart" on-click="[[showHidePredictions2]]">
+                                  <span data-bind='text: predictionButtonText2'></span>
+                                </oj-button>
+                        </div>
+			<h3 id="measureName" data-bind="text: detectionGEFGroupsLineChartLabel" align="center" style="margin-top: 10px;font-weight: normal;"></h3>
+                        <oj-chart id="detectionGEFGroupsLineChart" class="oj-flex-item" style="width: 100%;height: 350px;"               
                             
                             type="line"
                             drilling="on"
@@ -112,6 +117,7 @@
 	care-recipient-id="{{careRecipientId}}" parent-factor-id="{{parentFactorId}}"
 	selected-id="{{selectedId}}" title-value="{{titleValue}}" view-pilot-detection-variables="{{viewPilotDetectionVariables}}"
 	series="{{lineSeriesValue}}" groups="{{lineGroupsValue}}"
+        series-prediction="{{lineSeriesPredictionValue}}" groups-prediction="{{lineGroupsPredictionValue}}"
         oj-chart-id="detectionGEFGroup1FactorsLineChart2"
         risks-tags="{{risksTags}}" data-validities-tags="{{dataValiditiesTags}}" role-tags="{{roleTags}}"
 	legend='{"position":"bottom"}' drilling='on' style="display: none" />

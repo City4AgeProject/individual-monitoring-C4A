@@ -23,11 +23,11 @@ public interface GenericRepository<T, ID extends Serializable>
 		extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 
 	List<T> doQueryWithFilter(List<Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
+	
+	Object[] doQueryWithFilterAggr(List<Filter> flts, String filterQueryName, Map<String, Object> inQueryParams);
 
 	void disableFilter(String name);
 	
 	<S extends AbstractBaseEntity<?>> Collection<S> bulkSave(Collection<S> entities);
-	
-	<S extends AbstractBaseEntity<?>> S persistOrMerge(S s);
 
 }

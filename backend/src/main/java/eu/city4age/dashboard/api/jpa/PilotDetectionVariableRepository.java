@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
 import eu.city4age.dashboard.api.pojo.domain.DetectionVariable;
+import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 import eu.city4age.dashboard.api.pojo.domain.Pilot;
 import eu.city4age.dashboard.api.pojo.domain.PilotDetectionVariable;
 
@@ -29,5 +30,14 @@ public interface PilotDetectionVariableRepository extends GenericRepository<Pilo
 
 	@Query ("SELECT DISTINCT ddv FROM PilotDetectionVariable pdv INNER JOIN pdv.derivedDetectionVariable ddv WHERE pdv.pilotCode = :pilotCode AND ddv.detectionVariableType IN ('ovl', 'gfg', 'gef', 'ges') ")
 	List<DetectionVariable> findDetectionVariablesForPrediction(@Param("pilotCode") Pilot.PilotCode pilotCode);
+	
+	@Query ("SELECT pdv.pilotCode FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv WHERE dv.id = :dvId")
+	List<Pilot.PilotCode> findPilotCodeByDetectionVariableId (@Param ("dvId") Long dvId);
+	
+	@Query ("SELECT DISTINCT dv FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN dv.detectionVariableType dvt INNER JOIN pdv.derivedDetectionVariable ddv WHERE ddv.id = :dvId AND pdv.pilotCode IN :pilotCodes AND dvt <> 'nui'")
+	List<DetectionVariable> findDetectionVariableByDerivedDetectionVariableIdAndPilotCodes (@Param ("dvId") Long dvId, @Param ("pilotCodes") List<Pilot.PilotCode> pilotCodes);
+
+	@Query ("SELECT pdv.pilotCode FROM PilotDetectionVariable pdv INNER JOIN pdv.detectionVariable dv INNER JOIN dv.detectionVariableType dvt INNER JOIN pdv.derivedDetectionVariable ddv WHERE dv.id = :dvId AND dvt = :dvType AND ddv.id = :ddvId")
+	List<Pilot.PilotCode> findPilotCodesByDetectionVariableIdAndDerivedDetectionVariableIdAndDetectionVariableType (@Param ("dvType") DetectionVariableType dvType, @Param ("dvId") Long dvId, @Param ("ddvId") Long ddvId);
 
 }

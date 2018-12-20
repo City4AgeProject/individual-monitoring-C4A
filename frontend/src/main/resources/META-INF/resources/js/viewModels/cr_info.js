@@ -4,12 +4,21 @@ define([ 'ojs/ojcore','knockout', 'jquery','setting_properties', 'urls', 'entiti
 			function model() {
 				var self = this;
 				
-				self.careRecipientLabel = oj.Translations.getTranslatedString("care_recipient");
-				self.ageLabel = oj.Translations.getTranslatedString("age");
-				self.genderLabel = oj.Translations.getTranslatedString("gender");
-				self.assignGeriatricianLabel= oj.Translations.getTranslatedString("assign_geriatrician");
-				self.summaryLabel= oj.Translations.getTranslatedString("summary");
-				self.readMoreLabel = oj.Translations.getTranslatedString("read_more");
+				self.careRecipientLabel = ko.observable();
+				self.ageLabel = ko.observable();
+				self.genderLabel = ko.observable();
+				self.assignGeriatricianLabel= ko.observable();
+				self.summaryLabel= ko.observable();
+				self.readMoreLabel = ko.observable();
+				self.local_pilot_data = ko.observable();
+				
+				self.careRecipientLabel(oj.Translations.getTranslatedString("care_recipient"));
+				self.ageLabel(oj.Translations.getTranslatedString("age"));
+				self.genderLabel(oj.Translations.getTranslatedString("gender"));
+				self.assignGeriatricianLabel(oj.Translations.getTranslatedString("assign_geriatrician"));
+				self.summaryLabel(oj.Translations.getTranslatedString("summary"));
+				self.readMoreLabel(oj.Translations.getTranslatedString("read_more"));
+				self.local_pilot_data(oj.Translations.getTranslatedString("local_pilot_data")); 
 				
 				console.log(sp);
 				
@@ -65,6 +74,38 @@ define([ 'ojs/ojcore','knockout', 'jquery','setting_properties', 'urls', 'entiti
 		                    $this.data('open', 1);
 		                }
 		        };
+		        
+                var languageBox = document.getElementById("languageBox");
+                languageBox.removeEventListener("valueChanged", function(event) {
+                	changeLanguage();
+                });
+                languageBox.addEventListener("valueChanged", function(event) {
+                	changeLanguage();
+                });
+                
+                function changeLanguage(){
+                	                              	
+                	 var newLang = '';
+                     var lang = $('#languageBox').val();
+                     newLang = lang;
+
+                     oj.Config.setLocale(newLang,
+                    		 function () {
+                                 
+                    	 		$('html').attr('lang', newLang);                         
+                				
+                    	 		self.careRecipientLabel(oj.Translations.getTranslatedString("care_recipient"));
+                				self.ageLabel = (oj.Translations.getTranslatedString("age"));
+                				self.genderLabel = (oj.Translations.getTranslatedString("gender"));
+                				self.assignGeriatricianLabel= (oj.Translations.getTranslatedString("assign_geriatrician"));
+                				self.summaryLabel= (oj.Translations.getTranslatedString("summary"));
+                				self.readMoreLabel = (oj.Translations.getTranslatedString("read_more"));
+                				self.local_pilot_data(oj.Translations.getTranslatedString("local_pilot_data"));
+                				
+                             }
+                     );
+
+                }
 
 			}
 

@@ -1,6 +1,8 @@
 package eu.city4age.dashboard.api.pojo.domain;
 
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -67,6 +70,9 @@ public class Assessment extends AbstractBaseEntity<Long> {
 	@ManyToOne(targetEntity = GeriatricFactorValue.class, cascade = CascadeType.ALL)
 	@JoinTable(name = "assessed_gef_value_set", joinColumns = @JoinColumn(name = "assessment_id"), inverseJoinColumns = @JoinColumn(name = "gef_value_id"))
 	private GeriatricFactorValue geriatricFactorValue;
+	
+	@OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY)
+	private Set<VmvFiltering> vmvFiltering = new HashSet<VmvFiltering>();
 
 	/*
 	 * @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE },
@@ -200,9 +206,13 @@ public class Assessment extends AbstractBaseEntity<Long> {
 
 	@JsonView(View.AssessmentView.class)
 	public String getDateAndTime() {
-		if (this.created != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-			return sdf.format(created);
+		if (this.updated != null) {
+			return OffsetDateTime.ofInstant(this.updated.toInstant(), ZoneId.of(this.userInRole.getPilot().getTimeZone())).format(
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss ZZZZ"));
+		}
+		else if (this.created != null) {
+			return OffsetDateTime.ofInstant(this.created.toInstant(), ZoneId.of(this.userInRole.getPilot().getTimeZone())).format(
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss ZZZZ"));
 		}
 		return null;
 	}
@@ -258,16 +268,34 @@ public class Assessment extends AbstractBaseEntity<Long> {
 
 	}
 
+	@Override
 	public int hashCode() {
 		return id.intValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
-		boolean flag = false;
-		Assessment aa = (Assessment) obj;
-		if (aa.id == id)
-			flag = true;
-		return flag;
+		
+		if (obj != null && obj instanceof Assessment) {
+			Assessment aa = (Assessment) obj;
+			if (aa.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
+
+	/**
+	 * @return the vmvFiltering
+	 */
+	public Set<VmvFiltering> getVmvFiltering() {
+		return vmvFiltering;
+	}
+
+	/**
+	 * @param vmvFiltering the vmvFiltering to set
+	 */
+	public void setVmvFiltering(Set<VmvFiltering> vmvFiltering) {
+		this.vmvFiltering = vmvFiltering;
 	}
 
 }

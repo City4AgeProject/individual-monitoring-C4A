@@ -3,7 +3,7 @@
  * The Universal Permissive License (UPL), Version 1.0
  */
 define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrouter', 'ojs/ojdialog',
-    'ojs/ojoffcanvas', 'ojs/ojknockout'],
+    'ojs/ojoffcanvas', 'ojs/ojknockout', 'ojs/ojselectcombobox'],
         function (oj, ko, nav, sp) {
             /*
              * Your application specific code will go here
@@ -54,7 +54,9 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                     'cr_list_full': {label: 'Care Recipient'},
                     'detection_ges': {label: 'Detection GES'},
                     'detection_gef': {label: 'Detection GEF'},
-                    'detection_mea': {label: 'Detection MEA'}
+                    'detection_mea': {label: 'Detection MEA'},
+                    'dashboard_selection': {label: 'Dashboard selection'},
+                    'group_analytics': {label: 'Group analytics'}
                 });
                 oj.Router.defaults['urlAdapter'] = new oj.Router.urlParamAdapter();
 
@@ -136,10 +138,26 @@ define(['ojs/ojcore', 'knockout', 'navigation', 'setting_properties', 'ojs/ojrou
                     new footerLink('Your Privacy Rights', 'yourPrivacyRights', 'http://www.city4ageproject.eu/')
                 ]);
                 
-                this.loggedinasLabel = oj.Translations.getTranslatedString('loggedinas');
+                this.loggedinasLabel = ko.observable();
+                this.loggedinasLabel(oj.Translations.getTranslatedString('loggedinas'));
+                
+                this.signoutLabel = ko.observable();
+                this.signoutLabel(oj.Translations.getTranslatedString('signout'));
+                
+                this.languages = ko.observableArray([
+                    {value: 'en', label: 'English'},
+                    {value: 'el',  label: 'Ελληνικά'},
+                    {value: 'es',   label: 'Español'},
+                    {value: 'fr',    label: 'Français'},
+                    {value: 'it',    label: 'Italiano'},
+                    {value: 'zh-Hant',   label: '中文'}
+                  ]);
                 
             }
 
-            return new AppControllerViewModel();
+            appViewModel = new AppControllerViewModel();
+            return appViewModel;
         }
 );
+
+var appViewModel;

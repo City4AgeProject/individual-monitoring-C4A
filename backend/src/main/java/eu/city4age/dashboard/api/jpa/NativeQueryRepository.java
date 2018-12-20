@@ -28,4 +28,17 @@ public interface NativeQueryRepository extends GenericRepository<NativeQuery, Lo
 	@Query(nativeQuery = true)
 	List<Object[]> getJointGefValues(@Param("factorId") final Long factorId, @Param("userInRoleId") final Long userInRoleId);
 	
+	@Query(nativeQuery = true)
+	List<Object[]> computeNuisForUser(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("pilotCode") String pilotCode, @Param ("userInRoleId") Long userInRoleId);
+	
+	@Query(nativeQuery = true)
+	List<Object[]> computeGessForUser(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param ("userInRoleId") Long userInRoleId);
+
+	@Query(nativeQuery = true)
+	List<Object[]> computeGfvsFor1User(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param ("userInRoleId") Long userInRoleId,
+			@Param("detectionVariableType") DetectionVariableType detectionVariableType);
+
+	@Query(nativeQuery = true)
+	List<Object[]> computeAllDerivedMeasures(@Param("startOfMonth") Timestamp startOfMonth, @Param("endOfMonth") Timestamp endOfMonth, @Param("pilotCode") String pilotCode);
+	
 }

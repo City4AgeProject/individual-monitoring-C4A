@@ -10,6 +10,7 @@ import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import eu.city4age.dashboard.api.service.impl.JythonServiceImpl;
 import jep.Jep;
 import jep.JepException;
 
@@ -30,7 +31,7 @@ public class JythonServiceTest {
 	}
 	
 	@After
-	public void destroy() {
+	public void destroy() throws JepException {
 		
 		jep.close();
 		

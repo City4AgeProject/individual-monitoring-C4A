@@ -154,5 +154,21 @@ public class GeriatricFactorValue extends AbstractBaseEntity<Long> {
 	public void setDetectionVariableId(Long detectionVariableId) {
 		this.detectionVariableId = detectionVariableId;
 	}
+	
+	@Override
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof GeriatricFactorValue) {
+			GeriatricFactorValue gfv = (GeriatricFactorValue) obj;
+			if (gfv.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
 
 }

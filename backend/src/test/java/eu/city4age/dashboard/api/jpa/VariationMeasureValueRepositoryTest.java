@@ -166,6 +166,56 @@ public class VariationMeasureValueRepositoryTest {
 		Assert.assertEquals(3, result.size());
 		
 	}
+	@Test
+	@Transactional
+	@Rollback(false)
+	public void testFindByUserAndMea() {
+
+		Long uirId;
+		Long gesId;
+		Long meaId;
+						
+		logger.info("Start");
+		
+		DetectionVariableType dvt1 = DetectionVariableType.MEA;
+		//DetectionVariableType dvt2 = DetectionVariableType.GES;
+		detectionVariableTypeRepository.save(dvt1);
+		//detectionVariableTypeRepository.save(dvt2);
+		
+		//dv measures
+		DetectionVariable mea1 = new DetectionVariable();
+		///mea1.setId(91L);
+		mea1.setDetectionVariableName("MEA1");
+		mea1.setDetectionVariableType(dvt1);
+		detectionVariableRepository.save(mea1);
+		meaId=mea1.getId();
+		
+		TimeInterval ti1 = new TimeInterval();
+		ti1.setId(1L);
+		ti1.setIntervalStart(Timestamp.valueOf("2017-05-03 00:00:00"));
+		ti1.setIntervalEnd(Timestamp.valueOf("2017-05-03 00:00:00"));
+		ti1 = timeIntervalRepository.save(ti1);
+		
+		//user
+		UserInRole uir1 = new UserInRole();
+		//uir1.setId(uirId);
+		uir1 = userInRoleRepository.save(uir1);
+		uirId=uir1.getId();
+		userInRoleRepository.flush();
+		
+		VariationMeasureValue vm1 = new VariationMeasureValue();
+		vm1.setDetectionVariable(mea1);
+		vm1.setUserInRole(uir1);
+		vm1.setTimeInterval(ti1);
+		vm1 = variationMeasureValueRepository.save(vm1);
+
+		
+		List<VariationMeasureValue> result = variationMeasureValueRepository.findByUserAndMea(uirId, meaId);
+		Assert.assertNotNull(result);
+		
+		Assert.assertEquals(1, result.size());
+		
+	}
 	
 	@Test
 	@Transactional

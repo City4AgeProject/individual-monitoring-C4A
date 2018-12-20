@@ -4,6 +4,8 @@
  */
 package eu.city4age.dashboard.api.pojo.dto;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author mnou2
@@ -12,11 +14,38 @@ public class Item {
     
     private Long id;
     private Float value;
+    private String type;
     private Integer gefTypeId;
     private Long timeIntervalId;
+    private String monthLabel;
+    
     
 
-    /**
+    public Item(Long id, BigDecimal value, String type, Long gefTypeId, Long timeIntervalId) {
+		this.id = id;
+		this.value = value.floatValue();
+		this.type = type;
+		this.gefTypeId = gefTypeId.intValue();
+		this.timeIntervalId = timeIntervalId;
+	}
+    
+    public Item(BigDecimal value, Long gefTypeId, Long timeIntervalId) {
+		this.value = value.floatValue();
+		this.gefTypeId = gefTypeId.intValue();
+		this.timeIntervalId = timeIntervalId;
+	}
+    
+    public Item(BigDecimal value, Long gefTypeId, Long timeIntervalId, String monthLabel) {
+		this.value = value.floatValue();
+		this.gefTypeId = gefTypeId.intValue();
+		this.timeIntervalId = timeIntervalId;
+		this.monthLabel = monthLabel;
+	}
+
+	public Item() {
+	}
+
+	/**
      * @return the id
      */
     public Long getId() {
@@ -44,7 +73,15 @@ public class Item {
         this.value = value;
     }
 
-    /**
+    public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	/**
      * @return the gefTypeId
      */
     public Integer getGefTypeId() {
@@ -64,6 +101,20 @@ public class Item {
 
 	public void setTimeIntervalId(Long timeIntervalId) {
 		this.timeIntervalId = timeIntervalId;
-	}    
+	}
+
+	/**
+	 * @return the monthLabel
+	 */
+	public String getMonthLabel() {
+		return monthLabel;
+	}
+
+	/**
+	 * @param monthLabel the monthLabel to set
+	 */
+	public void setMonthLabel(String monthLabel) {
+		this.monthLabel = monthLabel;
+	}
     
 }

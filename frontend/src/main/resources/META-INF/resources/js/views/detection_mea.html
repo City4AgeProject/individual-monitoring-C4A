@@ -1,19 +1,401 @@
-		<div class="oj-panel oj-panel-shadow-sm" style="border: none; background-color: #fcfcfc">
-	
-                    <!-- CR info -->
-                    <div data-bind="ojModule: { name: 'cr_info'}"></div>
-                    <!-- end CR info -->
+<div class="oj-panel oj-panel-shadow-sm" style="border: none; background-color: #fcfcfc">
 
-                    <br><br>
-                    <div id="daily-measures-container">			
-                            <!-- ko foreach: data.dailyMeasures-->
-                                <anagraph-measure-view  nuis-for-measure="{{nuisForMeasure}}" measure-name="{{measureName}}"  line-series="{{lineSeries}}" base-unit= "{{baseUnit}}" default-typical-period="{{defaultTypicalPeriod}}" line-type="{{lineType}}" has-comments="{{hasComments}}"/>
-                                <br><br>
-                            <!-- /ko -->
+    <!-- CR info -->
+    <div data-bind="ojModule: { name: 'cr_info'}"></div>
+    <!-- end CR info -->
+
+    <br><br>
+    <div id="demo-container" class="oj-flex demo-edge-top">
+        <oj-tab-bar id="hnavlist" 
+                    edge="[[currentEdge]]"
+                    selection="{{selectedItem}}"
+                    on-selection-changed = "[[switcherSelectionChanged]]">
+            <ul>
+                <li id="meaNui">
+                    <a href="#" aria-controls="home-tab-panel" id="meaNui-tab" >
+                        Measure and NUI
+                    </a>
+                </li>
+                <li id="cluster">
+                    <a href="#"  aria-controls="blogs-tab-panel" id="cluster-tab">
+                        Cluster data
+                    </a>
+                </li>
+
+            </ul>
+        </oj-tab-bar>
+
+        <oj-switcher value="[[selectedItem]]">
+
+            <div slot="meaNui" id="meaNui-tab-panel" role="tabpanel">
+                <br><br>
+                <h2 style="display: inline-block; margin-right: 5px; font-size: 20px;"><span data-bind="text: measureTitle" style="font-style: italic;font-weight: bold;"></span></h2><h2 style="margin-bottom: 25px; font-size: 20px; display: inline-block;" data-bind="text: remainingTitle"></h2>
+                <!-- ko if: showWaterfallCharts  -->
+                <oj-collapsible id="nui-collapsible" expanded="false" style="background-color: #4fc5c5b8">
+                    <h5 slot="header" style="color:white;">NUI waterfall charts</h5>
+                    <div id ="nui-charts-container" style="background-color: white;border:1px solid lightgray;border-top: none;">
+                        <div class=" oj-flex" style="border-bottom: 1px solid lightgray;padding-bottom: 15px;">
+                            <div class="oj-flex-item oj-sm-6 oj-md-6">
+                                <h3 id="avgTitle" align="center" style="margin-top: 20px;">Average</h3>
+                                <oj-chart id="waterfallChartAvg"
+                                          type="bar" 
+                                          series="[[barSeriesAvg]]" groups="[[barGroups]]"
+                                          y-axis.reference-objects="[[referenceObjectsAvg]]"
+                                          animation-on-display="auto"
+                                          legend.sections="[[legendSections]]"
+                                          style-defaults.data-item-gaps="0"
+                                          style="width:100%;height:350px;">
+                                </oj-chart>
+                            </div>
+                            <div class="oj-flex-item oj-sm-6 oj-md-6">
+                                <h3 id="stdTitle" align="center" style="margin-top: 20px;">Standard</h3>
+                                <oj-chart id="waterfallChartStd"
+                                          type="bar" 
+                                          series="[[barSeriesStd]]" groups="[[barGroups]]"
+                                          y-axis.reference-objects="[[referenceObjectsStd]]"
+                                          animation-on-display="auto"
+                                          legend.sections="[[legendSections]]"
+                                          style-defaults.data-item-gaps="0"
+                                          style="width:100%;height:350px;">
+                                </oj-chart>
+                            </div>
+
+                        </div>
+
+                        <div class="oj-flex" style="padding-bottom: 15px;"> 
+                            <div class="oj-flex-item oj-sm-6 oj-md-6">
+                                <h3 id="bestTitle" align="center" style="margin-top: 20px;">Best</h3>
+                                <oj-chart id="waterfallChartBest"
+                                          type="bar" 
+                                          series="[[barSeriesBest]]" groups="[[barGroups]]"
+                                          y-axis.reference-objects="[[referenceObjectsBest]]"
+                                          animation-on-display="auto"
+                                          legend.sections="[[legendSections]]"
+                                          style-defaults.data-item-gaps="0"
+                                          style="width:100%;height:350px;">
+                                </oj-chart>
+                            </div>
+                            <div class="oj-flex-item oj-sm-6 oj-md-6">
+                                <h3 id="deltaTitle" align="center" style="margin-top: 20px;">Delta</h3>
+                                <oj-chart id="waterfallChartDelta"
+                                          type="bar" 
+                                          series="[[barSeriesDelta]]" groups="[[barGroups]]"
+                                          y-axis.reference-objects="[[referenceObjectsDelta]]"
+                                          animation-on-display="auto"
+                                          legend.sections="[[legendSections]]"
+                                          style-defaults.data-item-gaps="0"
+                                          style="width:100%;height:350px;">
+                                </oj-chart>
+                            </div>    
+                        </div>
                     </div>
-		</div>
-	
-	
+                </oj-collapsible>
+                <br>
+                <!-- /ko -->
+
+                <div id="daily-measures-container">			
+                    <anagraph-measure-view  id="anagraphMeasureView" nuis-for-measure="{{nuisForMeasure}}" measure-name="{{measureTitle}}"  line-series="{{lineSeries}}" base-unit= "{{baseUnit}}" default-typical-period="{{defaultTypicalPeriod}}" line-type="{{lineType}}" has-comments="{{hasComments}}"/>
+                    <br><br>
+                </div>
+            </div>
+
+            <div slot="cluster" id="cluster-tab-panel" role="tabpanel">
+                <br><br>
+                <div id="cluster-data-container">                    
+                    <div class="oj-panel oj-panel-shadow-sm oj-flex" >                        
+                        <div class="oj-flex-item">  
+                            <div class="oj-flex-item" style="width: 100%; height: 10%; max-height: 40px; max-width: 320px; display: block; border:1px solid lightgray;
+                                 background-color: #F1F1F1; position:relative;">
+                                <div style="display:inline-block; margin: 0 auto; height: 100%; width: 62.5%; max-width: 200px; max-height: 40px">
+                                    <p><span data-bind="text: dataPointsMarked">&nbsp</span></p>
+                                </div>
+                                <div style="display: inline; height: 100%; width: 12.5%; max-width: 40px; max-height: 40px; float: right;">
+                                    <a class="link" href="#" id="addAnnotation" data-bind="click: showDialogAddAnnotations" >
+                                        <oj-popup style="display:flex" id="popup">
+                                            <span>Must select data points before adding annotation</span>
+                                        </oj-popup>
+                                        <div class="tooltip" style="border:1px solid #ffcc00;">
+                                            <span class="tooltiptext" data-bind="text: addAnnotationLabel"></span>
+                                            <img src="images/comment_add.png" style="width: 32px; height: 32px;"/>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div style="display: inline; height: 100%; width: 12.5%; max-width: 40px; max-height: 40px; float: right;">
+                                    <a class="link" href="#" id="clearSelection" data-bind="click: clearSelection" >
+                                        <div class="tooltip" style="border:1px solid #ffcc00;">
+                                            <span class="tooltiptext" data-bind="text: clearSelectionLabel"></span>
+                                            <img src="images/clear_selection.png" style="width: 32px; height: 32px;"/>
+                                        </div>
+                                    </a>
+                                </div>                        
+                                <div style="display: inline; height: 100%; width: 12.5%; max-width: 40px; max-height: 40px; float: right;">
+                                    <a class="link" href="#" id="showAnnotationsDetail" data-bind="click: showAnnotationsDetail" >
+                                        <div class="tooltip" style="border:1px solid #ffcc00;">
+                                            <span class="tooltiptext" data-bind="text: annotationsDetailLabel"></span>
+                                            <img src="images/magni_glass.png" style="width: 32px; height: 32px;"/>
+                                        </div>
+                                    </a>
+                                </div>                                
+                            </div>
+                            <h3 id="clusterTitle" data-bind="text: clusterDataHeader" align="center" style="margin-top: 20px;"></h3>
+                            <oj-chart id="clusterChart"
+                                      type="line" 
+                                      series="[[clusterSeries]]" groups="[[clusterGroups]]"
+                                      animation-on-display="auto"
+                                      style-defaults.data-item-gaps="0"
+                                      zoom-and-scroll="live"
+                                      hide-and-show-behavior ="none"
+                                      selection-mode="multiple"
+                                      selection ="{{clusterSelectionData}}"
+                                      on-selection-changed="[[clusterSelectionChanged]]"
+                                      drilling ="seriesOnly"
+                                      on-oj-drill="[[clusteredChartDrill]]"
+                                      legend.rendered = "on"
+                                      legend.sections ="[[clusterLegendSections]]"
+                                      legend.orientation ="horizontal"
+                                      legend.position ="bottom"
+                                      legend.halign ="center"
+                                      legend.hide-and-show-behavior ="off"
+                                      legend.drilling ="on"
+                                      legend.style="width: 100%; height: 50px;"
+                                      style="width:100%;height:350px;">
+                            </oj-chart>
+                            <oj-dialog style="display: flex; width: 370px; max-height: 1000px;" id="dialog" 
+                                       initial-visibility="hide" resize-behavior="none" cancel-behavior="icon"
+                                       on-oj-close ="[[closeListener]]"
+                                       data-bind="attr: {title: addAnnotationTitle}">
+                                <div class="oj-dialog-body">
+                                    <div id="form-container" class="postAssessment">
+                                        <div class="oj-form-layout">
+                                            <div class="oj-form">
+                                                <div class="oj-flex">
+                                                    <div class="oj-flex">
+                                                        <div class="oj-flex-item">
+                                                            <label for="property" data-bind="text: excludeConfirmLabel"></label>
+                                                            <oj-select-one required id ="confirm-exclude" value="{{excludeConfirm}}" style="max-width:375px; width: 345px" 
+                                                                           placeholder="[[excludeConfirmPlaceholder]]">
+                                                                <!-- ko foreach: excludeConfirmData -->
+                                                                <oj-option value = "[[filterType]]">
+                                                                    <span slot='startIcon'><img data-bind="attr: {src: imagePath}" role="presentation" style="vertical-align: middle; width: 16px; height: 16px; margin-right: 5px;" /></span>
+                                                                    <span data-bind="text: filterDescription"></span>
+                                                                </oj-option>
+                                                                <!-- /ko -->
+                                                            </oj-select-one>
+                                                        </div>
+                                                    </div>
+                                                    <div class="oj-flex-item">
+                                                        <label for="textareacontrol" data-bind="text: commentLabel"></label>
+                                                        <oj-text-area id="textareacontrol" rows="5" value="{{commentText}}" style="max-width:370px" placeholder="[[commentPlaceholder]]"></oj-text-area>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="oj-dialog-footer" style="padding-right: 15px;">
+                                    <div align="center">
+                                        <oj-button id='okButton' disabled="false" on-click="[[postAssessment]]" chroming="full" display = "icons">
+                                            <span slot='startIcon' ><img src= "images/valid_data.png" style="vertical-align: middle; width: 16px; height: 16px; margin-right: 5px;" /></span>
+                                            <span data-bind='text: postBtnLabel'></span>
+                                        </oj-button>
+                                        <oj-button id='buttonCancel' disabled="false" on-click="[[closeDialog]]" chroming="full" display = "icons">
+                                            <span slot='startIcon' ><img src= "images/faulty_data.png" style="vertical-align: middle; width: 16px; height: 16px; margin-right: 5px;" /></span>
+                                            <span data-bind='text: cancelBtnLabel'></span>
+                                        </oj-button>			
+                                    </div>
+                                </div>    
+                            </oj-dialog>
+                            <oj-dialog style="display: flex; width: 800px; allign: center; max-height: 500px;" id="dialogAnnotation" 
+                                       initial-visibility="hide" resize-behavior="none" cancel-behavior="icon" modality="modeless"
+                                       on-oj-close ="[[closeListenerAnnotation]]"
+                                       data-bind="attr: {title: annotationListTitle}">
+                                <div class="oj-dialog-title" data-bind="attr: {title: annotationListTitle}" style="margin: 0 auto;">                                    
+                                </div>
+                                <div class="oj-dialog-body">                                    
+                                    <div class="demo-flex-display oj-flex-items-pad">
+                                        <div class="demo-flex-display oj-flex-items-pad oj-sm-align-items-center" style="border-bottom: 1px solid lightgray">
+                                            <div class="oj-flex">
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 5%; max-width: 37.5px; max-height: 40px; float: left;">
+                                                    <span style="display:table; margin: 0 auto;">Filter</span>
+                                                </div>
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: left;">
+                                                    <span style="display:table; margin: 0 auto;">Author name</span> 
+                                                </div>
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 10%; max-width: 75px; max-height: 40px; float: left;">
+                                                    <span style="display:table; margin: 0 auto;">Comment</span>                              
+                                                </div>
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 25%; max-width: 187.5px; max-height: 40px; float: left;">
+                                                    <span style="display:table; margin: 0 auto;">Last modified</span>                              
+                                                </div>
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: left;">
+                                                    <span style="display:table; margin: 0 auto;">See measures</span>                              
+                                                </div>
+                                                <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: left;">
+                                                    <span style="display:table; margin: 0 auto;">Delete annotation</span>                              
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- ko foreach: addedAnnotations -->
+                                        <div class="oj-flex" id="div1"
+                                             style="padding-top: 2px">
+                                            <div style="display: inline; height: 100%; width: 5%; max-width: 37.5px; max-height: 40px; float: right;">
+                                                <span style="display:table; margin: 0 auto;">
+                                                    <img data-bind="attr: { src: filterType.imagePath, title: filterType.filterDescription }"
+                                                         style="vertical-align: bottom; width: 20px; height: 20px;" />
+                                                </span>
+                                            </div>
+                                            <div style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: right;">
+                                                <span style="display:table; margin: 0 auto;" data-bind="text: (author.length > 25 ? author.substring(0, 21) + '...' : author), attr: { title: author }"></span>                                           
+                                            </div>
+                                            <div style="display: inline; height: 100%; width: 10%; max-width: 75px; max-height: 40px; float: right;">
+                                                <span style="display:table; margin: 0 auto;">
+                                                    <a class="link" href="#" id="showFullComment" data-bind="click: $parent.showFullComment" >
+                                                        <div class="tooltip" >
+                                                            <span class="tooltiptext" data-bind="text: $parent.showFullCommentLabel"></span>
+                                                            <img src="images/comment.png" style="width: 20px; height: 20px;"/>
+                                                        </div>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                            <div style="display: inline; height: 100%; width: 25%; max-width: 187.5px; max-height: 40px; float: right;">
+                                                <span style="display:table; margin: 0 auto;" data-bind="text: createdOrUpdated"></span>                                           
+                                            </div>
+                                            <div style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: right;">
+                                                <span style="display:table; margin: 0 auto;">
+                                                    <a class="link" href="#" id="showFullComment" data-bind="click: $parent.showMeasures" >
+                                                        <div class="tooltip" >
+                                                            <span class="tooltiptext" data-bind="text: $parent.showMeasuresLabel"></span>
+                                                            <img src="images/more.png" style="width: 20px; height: 20px;"/>
+                                                        </div>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                            <div style="display: inline; height: 100%; width: 20%; max-width: 150px; max-height: 40px; float: right;">
+                                                <span style="display:table; margin: 0 auto;">
+                                                    <a class="link" href="#" id="undoAnnotation" data-bind="click: $parent.openDeleteAnnotationDialog" >                                       
+                                                        <div class="tooltip">
+                                                            <span class="tooltiptext" data-bind="text: $parent.undoAllAnnotationsLabel"></span>
+                                                            <img src="images/undo.png" style="width: 20px; height: 20px;"/>
+                                                             <oj-popup style="display:flex" id="dialogConfirmDeleteFailed">
+                                                                <span>You can only undo your own anotations!</span>
+                                                             </oj-popup>
+                                                        </div>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <!-- /ko -->
+                                    </div>
+                                </div>
+                            </oj-dialog>
+                            <oj-dialog style="display: flex; width: 370px; max-height: 1000px;" id="dialogComment" 
+                                       initial-visibility="hide" resize-behavior="none" cancel-behavior="icon"
+                                       on-oj-close ="[[closeListenerComment]]"
+                                       data-bind="attr: {title: commentTitle}">
+                                <div class="oj-dialog-body">
+                                    <span id="commentSpan"></span>
+                                </div>
+                            </oj-dialog>
+                            <oj-dialog style="display: flex; width: 270px; max-height: 500px;" id="dialogMeasure" 
+                                       initial-visibility="hide" resize-behavior="none" cancel-behavior="icon"
+                                       on-oj-close ="[[closeListenerMeasure]]"
+                                       data-bind="attr: {title: annotatedMeasureTitle}">
+                                <div class="oj-dialog-body">  
+                                    <div class="demo-flex-display oj-flex-items-pad oj-sm-align-items-center">
+                                        <div class="oj-flex" style="border-bottom: 1px solid lightgray">
+                                            <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 10%; max-width: 27px; max-height: 40px; float: left;">
+                                                <span style="display:table; margin: 0 auto;">Filter</span>
+                                            </div>
+                                            <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 45%; max-width: 130px; max-height: 40px; float: left;">
+                                                <span style="display:table; margin: 0 auto;">Interval</span> 
+                                            </div>
+                                            <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 45%; max-width: 130px; max-height: 40px; float: left;">
+                                                <span style="display:table; margin: 0 auto;">Value</span>                              
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="demo-flex-display oj-flex-items-pad oj-sm-align-items-center">
+                                        <!-- ko foreach: annotatedMeasures -->
+                                        <div class="oj-flex" id="div2"
+                                             style="padding-top: 2px">
+                                            <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 10%; max-width: 27px; max-height: 40px; float: left;">
+                                                <span style="display:table; margin: 0 auto;">
+                                                    <img data-bind="attr: { src: imagePath, title: filterDescription }"
+                                                         style="vertical-align: bottom; width: 15px; height: 15px;" />
+                                                </span> 
+                                            </div>
+                                            <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 45%; max-width: 130px; max-height: 40px; float: left;">
+                                                <span style="display:table; margin: 0 auto;" data-bind="text: intervalStart "></span> 
+                                            </div>
+                                            <div class="oj-sm-align-items-center" style="display: inline; height: 100%; width: 45%; max-width: 130px; max-height: 40px; float: left;">
+                                                <span style="display:table; margin: 0 auto;" data-bind="text: value"></span>                              
+                                            </div>
+                                        </div>
+                                        <!-- /ko -->                                    
+                                    </div>
+                                </div>
+                            </oj-dialog>
+                            <oj-dialog style="display: flex; width: 370px; max-height: 1000px;" id="dialogConfirmDelete" 
+                                       initial-visibility="hide" resize-behavior="none" cancel-behavior="icon"
+                                       data-bind="attr: {title: dialogConfirmDeleteLabel}">
+                                <div class="oj-dialog-body">
+                                    <div align="center">
+                                        <oj-button id='okButton1' disabled="false" on-click="[[undoAllAnnotations]]" chroming="full" display = "icons">
+                                            <span slot='startIcon' ><img src= "images/valid_data.png" style="vertical-align: middle; width: 16px; height: 16px; margin-right: 5px;" /></span>
+                                            <span data-bind='text: postBtnLabel1'></span>
+                                        </oj-button>
+                                        <oj-button id='buttonCancel1' disabled="false" on-click="[[closeDialogConfirm]]" chroming="full" display = "icons">
+                                            <span slot='startIcon' ><img src= "images/faulty_data.png" style="vertical-align: middle; width: 16px; height: 16px; margin-right: 5px;" /></span>
+                                            <span data-bind='text: cancelBtnLabel1'></span>
+                                        </oj-button>			
+                                    </div>
+                                </div>
+                            </oj-dialog>
+                        </div>           
+                    </div>
+                </div>
+
+            </div>
+
+        </oj-switcher>
+    </div>
 
 
 
+    <!--    NUI LINE CHART IN PERCENTIGE-->
+    <!--    <div id="nui-lineChart-container" class="oj-flex" style="position:relative" >
+          <h3 align="center" style="margin-top: 20px;">Numeric indicator values</h3>
+                <oj-chart id="lineChart"
+                    type="line"
+                    series="[[nuiLineSeriesValue]]"
+                    groups="[[nuiLineGroupsValue]]"
+                    animation-on-display="auto"
+                    animation-on-data-change="auto"
+                    hover-behavior="dim"
+                    style="width:100%;height:350px;">
+                </oj-chart>
+                 vertical/horizontal toggle button 
+                <demo-chart-orientation-control id="orientationControl" type="line" orientation="{{orientationValue}}" aria-controls="lineChart">
+                </demo-chart-orientation-control>
+            
+        </div>-->
+
+
+
+    <!--        MEA CHART WITH NUIS AS SERIES-->
+    <!--        <div  id="nuiChartContainer" class="demo-flex-display oj-flex-items-pad oj-panel oj-panel-shadow-sm" style=" height: 400pxf; background-color: #F1F1F1; padding-top: 15px;" >
+                    <h3 id="meaTitle" data-bind="text: meaTitle" align="center" style="margin-top: 20px;"></h3>
+                    <oj-chart id="nuiChart" class="oj-flex-item"
+                        type="line"
+                        series="[[nuiSeries]]"
+                        groups="[[nuiGroups]]"
+                        animation-on-display="auto"
+                        animation-on-data-change="auto"               
+                        hover-behavior="dim"
+                        style="width:100%;height:350px;background-color: #F1F1F1;">
+                    </oj-chart>
+                </div>-->
+                    
+
+
+</div>

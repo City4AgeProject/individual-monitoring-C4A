@@ -1,0 +1,367 @@
+{
+    "data": [
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "overall",
+            "value": 3.2246153846153844,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "overall",
+            "value": 2.8842857142857143,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "overall",
+            "value": 2.5585714285714287,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "primary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "overall",
+            "value": 3.2435,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "overall",
+            "value": 2.637,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "overall",
+            "value": 2.639090909090909,
+            "sex": "m",
+            "cohabiting": "alone",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "overall",
+            "value": 2.992857142857143,
+            "sex": "m",
+            "cohabiting": "family",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "overall",
+            "value": 2.9932291666666666,
+            "sex": "m",
+            "cohabiting": "family",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "walking",
+            "value": 2.8615384615384616,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "walking",
+            "value": 2.6,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "walking",
+            "value": 1.657142857142857,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "primary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "walking",
+            "value": 3.415,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "walking",
+            "value": 2.4166666666666665,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "walking",
+            "value": 1.6363636363636365,
+            "sex": "m",
+            "cohabiting": "alone",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "walking",
+            "value": 2.2285714285714286,
+            "sex": "m",
+            "cohabiting": "family",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "bhx",
+            "detectionVariableName": "walking",
+            "value": 2.8588541666666667,
+            "sex": "m",
+            "cohabiting": "family",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "overall",
+            "value": 2.558611111111111,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "primary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "overall",
+            "value": 2.4025842696629214,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "overall",
+            "value": 2.674375,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "overall",
+            "value": 2.480625,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "primary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "overall",
+            "value": 2.700877192982456,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "overall",
+            "value": 2.58875,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "overall",
+            "value": 1.875,
+            "sex": "m",
+            "cohabiting": "alone",
+            "education": "primary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "overall",
+            "value": 2.453125,
+            "sex": "m",
+            "cohabiting": "alone",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 501
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "overall",
+            "value": 2.21125,
+            "sex": "m",
+            "cohabiting": "family",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "walking",
+            "value": 2.8988636363636364,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "primary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "walking",
+            "value": 2.457894736842105,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "walking",
+            "value": 2.9,
+            "sex": "f",
+            "cohabiting": "alone",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "walking",
+            "value": 3.2576923076923077,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "primary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "walking",
+            "value": 3.2728571428571427,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "secondary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "walking",
+            "value": 2.3633928571428573,
+            "sex": "f",
+            "cohabiting": "family",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "walking",
+            "value": 3,
+            "sex": "m",
+            "cohabiting": "alone",
+            "education": "tertiary"
+        },
+        {
+            "id": {
+                "detectionVariableId": 514
+            },
+            "pilotCode": "ath",
+            "detectionVariableName": "walking",
+            "value": 3.3125,
+            "sex": "m",
+            "cohabiting": "family",
+            "education": "tertiary"
+        }
+    ]
+}

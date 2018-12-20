@@ -1,10 +1,17 @@
+.project
+.pydevproject
 /frontend/nbproject/*
 /frontend/target/*
 /backend/target/*
 /backend/bin/*
+/backend/*.json
+/backend/*.log
 /build/target/*
 /build/RemoteSystemsTempFiles/*
 /target/*
 /frontend/src/main/resources/META-INF/resources/node_modules/
 /frontend/src/main/resources/META-INF/resources/package-lock.json
+/frontend/src/main/resources/META-INF/resources/nbproject/private/*
+/frontend/src/main/resources/META-INF/resources/nbproject/private/private.xml
+/frontend/src/main/resources/META-INF/resources/nbproject/private/private.properties
 /frontend/node/

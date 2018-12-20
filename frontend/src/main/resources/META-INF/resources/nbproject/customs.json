@@ -1,6 +1,36 @@
 {
     "elements": {
-        "anagraph-assessment-view": {}
+        "assessments-preview": {},
+        "oj-dialog": {},
+        "oj-label": {},
+        "oj-popup": {},
+        "oj-data-grid": {},
+        "oj-button": {},
+        "oj-chart": {},
+        "oj-select-one": {},
+        "oj-option": {},
+        "add-assessment": {},
+        "oj-buttonset-many": {},
+        "anagraph-assessment-view": {},
+        "assessments-list": {},
+        "anagraph-measure-view": {},
+        "oj-buttonset-one": {},
+        "oj-collapsible": {},
+        "oj-switcher": {},
+        "oj-combobox-many": {},
+        "oj-switch": {},
+        "oj-text-area": {},
+        "oj-tab-bar": {}
     },
-    "attributes": {}
+    "attributes": {
+        "edge": {},
+        "role": {},
+        "selection": {},
+        "style": {},
+        "slot": {
+            "context": "h3"
+        },
+        "id": {},
+        "on-oj-action": {}
+    }
 }

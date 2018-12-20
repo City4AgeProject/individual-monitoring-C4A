@@ -151,5 +151,21 @@ public class NumericIndicatorValue extends AbstractBaseEntity<Long> {
 	public void setInterActivityBehaviourVariations(Set<InterActivityBehaviourVariation> interActivityBehaviourVariations) {
 		this.interActivityBehaviourVariations = interActivityBehaviourVariations;
 	}
+	
+	@Override
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof NumericIndicatorValue) {
+			NumericIndicatorValue nui = (NumericIndicatorValue) obj;
+			if (nui.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
 
 }

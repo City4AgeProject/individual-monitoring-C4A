@@ -16,5 +16,9 @@ public interface FrailtyStatusTimelineRepository extends GenericRepository<Frail
 	@Query("SELECT fst FROM FrailtyStatusTimeline fst INNER JOIN fst.timeInterval ti WHERE fst.timeInterval IN :timeintervals AND fst.userInRole.id = :userId ORDER BY ti.intervalStart ASC")
 	List<FrailtyStatusTimeline> findByPeriodAndUserId(@Param("timeintervals") final List<TimeInterval> timeintervals,
 			@Param("userId") final Long uId);
-
+	
+	@Query("SELECT fst FROM FrailtyStatusTimeline fst INNER JOIN fst.timeInterval ti WHERE fst.timeInterval.id IN :timeintervals AND fst.userInRole.id = :userId ORDER BY ti.intervalStart ASC")
+	List<FrailtyStatusTimeline> findByPeriodIdsAndUserId(@Param("timeintervals") final List<Long> timeintervals,
+			@Param("userId") final Long uId);
+	
 }

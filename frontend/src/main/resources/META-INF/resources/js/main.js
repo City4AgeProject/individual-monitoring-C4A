@@ -26,6 +26,7 @@ requirejs.config({
     'css': '../node_modules/require-css/css',
     'entities': 'domain/entities',
     'urls': 'urls',
+    'treeViewData' : 'treeViewData',
     
     'add-assessment': 'composites/anagraph-assessment-view/add-assessment/loader',
     'assessments-list': 'composites/anagraph-assessment-view/assessments-list/loader',

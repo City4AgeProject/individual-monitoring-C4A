@@ -79,5 +79,21 @@ public class InterActivityBehaviourVariation extends AbstractBaseEntity<Long> {
 	public void setDeviation(Float deviation) {
 		this.deviation = deviation;
 	}
+	
+	@Override
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof InterActivityBehaviourVariation) {
+			InterActivityBehaviourVariation iabv = (InterActivityBehaviourVariation) obj;
+			if (iabv.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
 
 }

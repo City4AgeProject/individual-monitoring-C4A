@@ -16,31 +16,18 @@ public class ViewGefCalculatedInterpolatedPredictedValuesKey implements Serializ
 	@Column(name = "id")
 	private Long id;
 	
-	@Column(name = "user_in_role_id")
-	private Long userInRoleId;
-	
-	@Column(name = "time_interval_id")
-	private Long timeIntervalId;
-	
-	@Column(name = "gef_type_id")
-	private Long detectionVariableId;
-	
 	@Column(name = "data_type")
 	private String dataType;
-	
+
 
 	public ViewGefCalculatedInterpolatedPredictedValuesKey() {
 		
 	}
 	
-	public ViewGefCalculatedInterpolatedPredictedValuesKey(Long id, Long userInRoleId, Long timeIntervalId, Long detectionVariableId, String dataType) {
+	public ViewGefCalculatedInterpolatedPredictedValuesKey(Long id, String dataType) {
 		this.id = id;
-		this.userInRoleId = userInRoleId;
-		this.timeIntervalId = timeIntervalId;
-		this.detectionVariableId = detectionVariableId;
 		this.dataType = dataType;
 	}
-	
 
 	public Long getId() {
 		return id;
@@ -49,23 +36,7 @@ public class ViewGefCalculatedInterpolatedPredictedValuesKey implements Serializ
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public Long getUserInRoleId() {
-		return userInRoleId;
-	}
-
-	public void setUserInRoleId(Long userInRoleId) {
-		this.userInRoleId = userInRoleId;
-	}
-
-	public Long getTimeIntervalId() {
-		return timeIntervalId;
-	}
-
-	public void setTimeIntervalId(Long timeIntervalId) {
-		this.timeIntervalId = timeIntervalId;
-	}
-
+	
 	public String getDataType() {
 		return dataType;
 	}
@@ -73,13 +44,26 @@ public class ViewGefCalculatedInterpolatedPredictedValuesKey implements Serializ
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
-
-	public Long getDetectionVariableId() {
-		return detectionVariableId;
-	}
-
-	public void setDetectionVariableId(Long detectionVariableId) {
-		this.detectionVariableId = detectionVariableId;
-	}
 	
+	@Override
+	public boolean equals(Object other) {
+		if ((this == other))
+			return true;
+		if ((other == null))
+			return false;
+		if (!(other instanceof ViewGefCalculatedInterpolatedPredictedValuesKey))
+			return false;
+		ViewGefCalculatedInterpolatedPredictedValuesKey castOther = (ViewGefCalculatedInterpolatedPredictedValuesKey) other;
+
+		return (this.getId().equals(castOther.getId())
+				&& this.getDataType().equals(castOther.getDataType()));
+	}
+	@Override
+	public int hashCode() {
+		int result = 17;
+
+		result = 37 * result + this.getId().intValue();
+		result = 37 * result + this.getDataType().charAt(0);
+		return result;
+	}
 }

@@ -1,5 +1,7 @@
 package eu.city4age.dashboard.api.jpa;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import eu.city4age.dashboard.api.jpa.generic.GenericRepository;
@@ -10,5 +12,7 @@ import eu.city4age.dashboard.api.pojo.domain.DetectionVariableType;
 public interface DetectionVariableRepository extends GenericRepository<DetectionVariable, Long> {
 
 	DetectionVariable findByDetectionVariableNameAndDetectionVariableType(String string, DetectionVariableType dvt);
+		
+	List<DetectionVariable> findByDetectionVariableType(DetectionVariableType dvt);
 
 }

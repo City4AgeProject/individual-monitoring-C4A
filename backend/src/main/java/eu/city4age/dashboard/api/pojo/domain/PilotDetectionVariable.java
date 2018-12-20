@@ -174,5 +174,21 @@ public class PilotDetectionVariable extends AbstractBaseEntity<Long> {
 	public void setMainDataSourceType(String mainDataSourceType) {
 		this.mainDataSourceType = mainDataSourceType;
 	}
+	
+	@Override
+	public int hashCode() {
+		return id.intValue();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (obj != null && obj instanceof PilotDetectionVariable) {
+			PilotDetectionVariable pdv = (PilotDetectionVariable) obj;
+			if (pdv.getId().equals(this.id)) return true;
+			else return false;
+		}
+		return false;
+	}
 
 }

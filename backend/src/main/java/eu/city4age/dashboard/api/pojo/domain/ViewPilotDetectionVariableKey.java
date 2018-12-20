@@ -65,4 +65,28 @@ public class ViewPilotDetectionVariableKey implements Serializable {
 	public void setDerivedDetectionVariableId(Long derivedDetectionVariableId) {
 		this.derivedDetectionVariableId = derivedDetectionVariableId;
 	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if ((this == other))
+			return true;
+		if ((other == null))
+			return false;
+		if (!(other instanceof ViewPilotDetectionVariableKey))
+			return false;
+		ViewPilotDetectionVariableKey castOther = (ViewPilotDetectionVariableKey) other;
+
+		return (this.getUserInRoleId().equals(castOther.getUserInRoleId())
+				&& this.getDetectionVariableId().equals(castOther.getDetectionVariableId())
+				&& this.getDerivedDetectionVariableId().equals(castOther.getDerivedDetectionVariableId()));
+	}
+	@Override
+	public int hashCode() {
+		int result = 17;
+
+		result = 37 * result + this.getUserInRoleId().intValue();
+		result = 37 * result + this.getDetectionVariableId().intValue();
+		result = 37 * result + this.getDerivedDetectionVariableId().intValue();
+		return result;
+	}
 }

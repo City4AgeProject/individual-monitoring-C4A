@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "vw_gef_calculated_interpolated_predicted_values")
 @Immutable
-public class ViewGefCalculatedInterpolatedPredictedValues {
+public class ViewGefCalculatedInterpolatedPredictedValues implements Comparable<ViewGefCalculatedInterpolatedPredictedValues> {
 	
 	@EmbeddedId
 	private ViewGefCalculatedInterpolatedPredictedValuesKey id;
@@ -68,6 +68,17 @@ public class ViewGefCalculatedInterpolatedPredictedValues {
 	@Column(name = "pilot_code")
 	private String pilotCode;
 	
+	@Column(name = "username")
+	private String username;
+	
+	@Column(name = "user_in_role_id")
+	private Long userInRoleId;
+	
+	@Column(name = "time_interval_id")
+	private Long timeIntervalId;
+	
+	@Column(name = "gef_type_id")
+	private Long detectionVariableId;
 
 	public ViewGefCalculatedInterpolatedPredictedValues() {
 		
@@ -352,6 +363,49 @@ public class ViewGefCalculatedInterpolatedPredictedValues {
 	 */
 	public void setDerivedDetectionVariableName(String derivedDetectionVariableName) {
 		this.derivedDetectionVariableName = derivedDetectionVariableName;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public Long getUserInRoleId() {
+		return userInRoleId;
+	}
+
+	public void setUserInRoleId(Long userInRoleId) {
+		this.userInRoleId = userInRoleId;
+	}
+
+	public Long getTimeIntervalId() {
+		return timeIntervalId;
+	}
+
+	public void setTimeIntervalId(Long timeIntervalId) {
+		this.timeIntervalId = timeIntervalId;
+	}
+
+	public Long getDetectionVariableId() {
+		return detectionVariableId;
+	}
+
+	public void setDetectionVariableId(Long detectionVariableId) {
+		this.detectionVariableId = detectionVariableId;
+	}
+
+	@Override
+	public int compareTo(ViewGefCalculatedInterpolatedPredictedValues o) {
+		return this.getIntervalStart().compareTo(o.getIntervalStart());
 	}
 
 }

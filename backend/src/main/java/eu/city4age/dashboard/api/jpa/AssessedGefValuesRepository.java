@@ -12,4 +12,6 @@ public interface AssessedGefValuesRepository extends GenericRepository<AssessedG
 	
 	List<AssessedGefValueSet> findByAssessmentId(Integer assessmentId);
 
+	List<AssessedGefValueSet> findByGefValueId(Integer gfvID);
+
 }

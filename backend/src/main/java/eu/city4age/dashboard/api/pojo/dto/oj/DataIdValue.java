@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import eu.city4age.dashboard.api.pojo.json.view.View;
 
-public class DataIdValue implements Serializable {
+public class DataIdValue implements Serializable, Comparable<DataIdValue> {
 
 	/**
 	 * 
@@ -68,6 +68,11 @@ public class DataIdValue implements Serializable {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public int compareTo(DataIdValue o) {
+		return this.getName().compareTo(o.getName());
 	}
 
 }
