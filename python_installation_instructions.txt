@@ -13,6 +13,5 @@ Install in the following order using the provided links and commands:
 		
 if hmmlearn installation fails on linux platform because of the missing c compiler, follow the instructions on https://www.cyberciti.biz/faq/howto-installing-gnu-c-compiler-development-environment-on-ubuntu/
 
-if jep installation fails on linux platform you might need to set up LD_PRELOAD and LD_LIBRARY_PATH (as suggested: https://github.com/ninia/jep/wiki/Linux)
-	export LD_PRELOAD=$PWD/...path_to_python_installation_directory.../python3.6/site-packages/jep/jep.cpython-36m-x86_64-linux-gnu.so
+if jep installation fails on linux platform you might need to set up LD_LIBRARY_PATH (as suggested: https://github.com/ninia/jep/wiki/Linux)
 	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/...path_to_python_installation_directory.../python3.6/site-packages/jep

@@ -5,13 +5,17 @@ from hmmlearn.hmm import GaussianHMM
 
 import sys
 
-
+'''
 sys.path.append(
     'C:\\java_ee_sdk-8\\glassfish5\\glassfish\\domains\\domain1\\applications\\C4A-dashboard\\WEB-INF\\classes\\python')
+'''
+
+sys.path.append(
+    '/home/glassfish/glassfish5/glassfish/domains/domain1/applications/C4A-dashboard/WEB-INF/classes/python')
 
 '''
 sys.path.append(
-    '/home/glassfish/glassfish5/glassfish/domains/domain1/applications/C4A-dashboard/WEB-INF/classes/python')
+    '/opt/glassfish5/glassfish/domains/domain1/applications/C4A-dashboard/WEB-INF/classes/python')
 '''
 
 import json

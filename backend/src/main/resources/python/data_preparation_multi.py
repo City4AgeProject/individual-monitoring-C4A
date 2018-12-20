@@ -7,8 +7,9 @@ from sklearn.preprocessing import minmax_scale
 import numpy as np
 
 def get_data_multi(userId):
-    conn = psycopg2.connect(host='localhost', database = 'city4age', user = 'city4age_dba', password = 'city4age_dba')
-    # conn = psycopg2.connect(host='10.10.50.10', database = 'city4age', user = 'city4age_srv', password = 'city4age_srv')
+    # conn = psycopg2.connect(host='localhost', database = 'city4age', user = 'city4age_dba', password = 'city4age_dba')
+    conn = psycopg2.connect(host='10.10.50.10', database = 'city4age', user = 'city4age_srv', password = 'city4age_srv')
+    # conn = psycopg2.connect(host='localhost', database = 'city4agedb', user = 'city4agedb', password = 'city4agedb')
     cur = conn.cursor()
     sql = ("""           
             WITH q0 AS
