@@ -1,6 +1,8 @@
 package eu.city4age.dashboard.api.rest;
 
 import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -10,7 +12,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -18,21 +20,23 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import eu.city4age.dashboard.api.config.ObjectMapperFactory;
 import eu.city4age.dashboard.api.jpa.CrProfileRepository;
 import eu.city4age.dashboard.api.jpa.UserInRoleRepository;
@@ -176,10 +180,44 @@ public class CareRecipientEndpoint {
 		
 		try {
 			String uri = userInRoleRepository.findOne(careRecipientId).getPilot().getPersonalProfileDataUrl() + careRecipientId.toString();
-			RestTemplate restTemplate = new RestTemplate();
+
+			RestTemplate restTemplate;
+			
+			if(uri.startsWith("https")){
+			    
+			  TrustStrategy acceptingTrustStrategy = new TrustStrategy() {
+		        public boolean isTrusted(X509Certificate[] x509Certificates, String s)
+		                        throws CertificateException {
+		            return true;
+		        }
+		      };
+			  
+		      SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
+		          .loadTrustMaterial(null, acceptingTrustStrategy)
+		          .build();
+
+    		  SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
+    
+    		  CloseableHttpClient httpClient = HttpClients.custom()
+    		          .setSSLSocketFactory(csf)
+    		          .build();
+    
+    		  HttpComponentsClientHttpRequestFactory requestFactory =
+    		          new HttpComponentsClientHttpRequestFactory();
+
+    		  requestFactory.setHttpClient(httpClient);
+			  
+			  restTemplate = new RestTemplate(requestFactory);
+			    
+			}else{
+			  restTemplate = new RestTemplate();
+			}
+			
 		    String result = restTemplate.getForObject(uri, String.class);
 		    return result;
+		    
 		} catch (Exception e) {
+		    logger.error("Error receiving local pilot data!",e);
 			return "";
 		}	    
 	}
