@@ -78,7 +78,7 @@ define(['ojs/ojcore', 'knockout', 'setting_properties', 'jquery', 'ojs/ojknockou
                                     attention: this.attention,
                                     det_status: this.detectionStatus,
                                     det_date: this.detectionDate,
-                                    interv_total: 0,
+                                    interv_total: this.interventions,
 //                                    interv_date: this.interventionDate,
                                     age: this.age,
                                     pilotcode: this.pilotCode,

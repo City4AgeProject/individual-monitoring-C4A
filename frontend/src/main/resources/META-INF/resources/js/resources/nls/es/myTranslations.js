@@ -269,22 +269,50 @@ define({
                 show_on_diagram :"Mostar en un diagrama",
                 
                 //login page translations
-                username :"Username:",
-                password :"Password:",
-                welcome_message_1 :"Welcome to the City4Age Dashboard Login page. Access is restricted to authorised members only. ",
-                welcome_message_2 :"Use our ",
-                welcome_message_3 :"Contact Form",
-                welcome_message_4 :" to request access.",
-                login :"Login:",
-                loggedinas : "Logged in as",
-                     
+                username :"Nombre de usuario:",
+                password :"Contraseña:",
+                welcome_message_1 :"Bienvenida a la City4Age Individual Monitoring Dashboard página de inicio de sesión. El acceso está restringido a miembros autorizados solamente. ",
+                welcome_message_2 :"Usa nuestro ",
+                welcome_message_3 :"Formulario de contacto",
+                welcome_message_4 :" para solicitar acceso.",
+                login :"Iniciar sesión:",
+                loggedinas : "Conectado como",
+                signout: "Desconectar",
+                
                 //cr_list_full page translation
-                show_more :"Show more:",
-                view_more_details :"View more details",
-                view_intervention_summary : "View Intervention Summary",
-                view_detection_summary : "View Detection Summary",
-                open_detection_session : "Open Detection Session",
-                open_detection_intervention : "Open Detection Intervention"
-
+                show_more :"Mostrar más:",
+                view_more_details :"Ver más detalles",
+                view_intervention_summary : "Ver resumen de intervención",
+                view_detection_summary : "Ver resumen de detección",
+                open_detection_session : "Abierta Sesión de detección",
+                open_detection_intervention : "Abierta Intervención de detección",
+                pilot:"Piloto",
+                frailty_status: "Estado de fragilidad",
+                frailty_notice: "Aviso de fragilidad",
+                cr_id: "CR ID",
+                profile: "Perfil",
+                intervention_status: "Estado de intervención",
+                intervention_date: "Dato de intervención",
+                intervention_total: "Intervenciones",
+                actions:"Acciones",
+                	
+                	//cr_info page translations
+                	local_pilot_data: "Datos de piloto locales:",
+                	hover_nuis : "Desplácese para ver los valores NUI",
+                	click_notice : "Haga clic para ver el aviso de evidencia",
+                	start_month : "Comienzo de mes",
+                	end_month : "Fin de mes",
+                	april: "Abril",
+                	may: "Mayo",
+                	june: "Junio",
+                	july: "Julio",
+                	august: "Agosto",
+                	september: "Septiembre",
+                	october: "Octubre",
+                	november: "Noviembre",
+                	december: "Diciembre",
+                	january: "Enero",
+                	february: "Febrero",
+                	march: "Marzo"
 			});
 

@@ -2,14 +2,12 @@ package eu.city4age.dashboard.api.pojo.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -52,6 +50,9 @@ public class CareProfile implements Serializable {
 	@Column(name = "last_intervention_date")
 	private Date lastInterventionDate;
 
+	@Column(name = "interventions")
+    private Integer interventions;
+	
 	@JsonIgnore
 	@Column(name = "created")
 	private Date created;
@@ -163,4 +164,12 @@ public class CareProfile implements Serializable {
 		this.lastUpdated = lastUpdated;
 	}
 
+    public Integer getInterventions() {
+      return interventions;
+    }
+  
+    public void setInterventions(Integer interventions) {
+      this.interventions = interventions;
+    }
+	
 }

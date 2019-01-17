@@ -312,6 +312,7 @@ define({
                 	november: "November",
                 	december: "December",
                 	january: "January",
+                	february: "February",
                 	march: "March"
 	},
 	

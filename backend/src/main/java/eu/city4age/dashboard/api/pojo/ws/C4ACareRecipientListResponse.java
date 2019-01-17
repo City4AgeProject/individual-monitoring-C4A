@@ -36,6 +36,8 @@ public class C4ACareRecipientListResponse {
 	private Pilot.PilotCode pilotCode;
 	
 	private String gender;
+	
+	private Integer interventions;
 
 	public C4ACareRecipientListResponse(Long userId, Integer age, String frailtyStatus, String frailtyNotice, Character attention,
 			String textline, Character interventionstatus, String interventionDate, String detectionStatus,
@@ -54,6 +56,24 @@ public class C4ACareRecipientListResponse {
 		this.gender = gender;
 	}
 
+	public C4ACareRecipientListResponse(Long userId, Integer age, String frailtyStatus, String frailtyNotice, Character attention,
+        String textline, Character interventionstatus, String interventionDate, String detectionStatus,
+        String detectionDate, Pilot.PilotCode pilotCode,String gender, Integer interventions) {
+        this.userId = userId;
+        this.age = age;
+        this.frailtyStatus = frailtyStatus;
+        this.frailtyNotice = frailtyNotice;
+        this.attention = attention;
+        this.textline = textline;
+        this.interventionstatus = interventionstatus;
+        this.interventionDate = interventionDate;
+        this.detectionStatus = detectionStatus;
+        this.detectionDate = detectionDate;
+        this.pilotCode = pilotCode;
+        this.gender = gender;
+        this.interventions = interventions;
+    }
+	
 	public Long getUserId() {
 		return userId;
 	}
@@ -150,4 +170,13 @@ public class C4ACareRecipientListResponse {
 		this.gender = gender;
 	}
 
+  public Integer getInterventions() {
+    return interventions;
+  }
+
+  public void setInterventions(Integer interventions) {
+    this.interventions = interventions;
+  }
+
+	
 }// end class

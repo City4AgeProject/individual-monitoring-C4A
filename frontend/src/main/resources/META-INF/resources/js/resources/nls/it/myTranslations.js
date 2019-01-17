@@ -165,21 +165,50 @@ define({
                 show_on_diagram :"Mostra sul diagramma",
                    	
                 //login page translations
-                username :"Username:",
-                password :"Password:",
-                welcome_message_1 :"Welcome to the City4Age Dashboard Login page. Access is restricted to authorised members only. ",
-                welcome_message_2 :"Use our ",
-                welcome_message_3 :"Contact Form",
-                welcome_message_4 :" to request access.",
-                login :"Login:",
-                loggedinas : "Logged in as",
-                   
+                username :"Nome utente:",
+                password :"Parola d'ordine:",
+                welcome_message_1 :"Benvenuto a City4Age Individual Monitoring Dashboard pagina di login. L'accesso è limitato ai soli membri autorizzati. ",
+                welcome_message_2 :"Usa il nostro ",
+                welcome_message_3 :"Modulo di Contatto",
+                welcome_message_4 :" per richiedere l'accesso.",
+                login :"Accesso:",
+                loggedinas : "Collegato come",
+                signout: "Disconnessione",
+                
                 //cr_list_full page translation
-                show_more :"Show more:",
-                view_more_details :"View more details",
-                view_intervention_summary : "View Intervention Summary",
-                view_detection_summary : "View Detection Summary",
-                open_detection_session : "Open Detection Session",
-                open_detection_intervention : "Open Detection Intervention"
-	});
+                show_more :"Mostra di più:",
+                view_more_details :"Visualizza maggiori dettagli",
+                view_intervention_summary : "Visualizza riepilogo di intervento",
+                view_detection_summary : "Visualizza riepilogo di rilevamento",
+                open_detection_session : "Apri sessione di rilevamento",
+                open_detection_intervention : "Intervento di rilevamento aperto",
+                pilot:"Pilota",
+                frailty_status: "Stato di fragilità",
+                frailty_notice: "Avviso di fragilità",
+                cr_id: "CR ID",
+                profile: "Profilo",
+                intervention_status: "Stato dell'intervento",
+                intervention_date: "Intervention date",
+                intervention_total: "Interventi",
+                	actions:"Azioni",
+                	
+                	//cr_info page translations
+                	local_pilot_data: "Dati pilota locali:",
+                	hover_nuis : "Passa il mouse per vedere i valori NUI",
+                	click_notice : "Clicca per vedere l'avviso di prova",
+                	start_month : "Inizio del mese",
+                	end_month : "Fine del mese",
+                	april: "Aprile",
+                	may: "Maggio",
+                	june: "Giugno",
+                	july: "Luglio",
+                	august: "Agosto",
+                	september: "Settembre",
+                	october: "Ottobre",
+                	november: "Novembre",
+                	december: "Dicembre",
+                	january: "Gennaio",
+                	february: "Febbraio",
+                	march: "Marzo"
+         });
 

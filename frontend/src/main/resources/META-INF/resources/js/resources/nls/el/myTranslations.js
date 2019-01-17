@@ -312,6 +312,7 @@ define({
             	november: "Νοέμβριος",
             	december: "Δεκεμβριος",
             	january: "Ιανουαριος",
+            	february: "Φεβρουάριος",
             	march: "Μαρτιος"
 
 			});

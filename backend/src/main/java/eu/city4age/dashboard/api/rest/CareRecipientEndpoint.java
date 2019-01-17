@@ -136,11 +136,13 @@ public class CareRecipientEndpoint {
                 String interventionDate = "N/A";
                 String detectionStatus = "N/A";
                 String detectionDate = "N/A";
+                Integer interventions = 0;
 
                 if (user.getCareProfile() != null) {
                     attention = user.getCareProfile().getAttentionStatus();
                     textline = user.getCareProfile().getIndividualSummary();
                     interventionstatus = user.getCareProfile().getInterventionStatus();
+                    interventions = user.getCareProfile().getInterventions();
                     if(user.getCareProfile().getLastInterventionDate() != null)
                     	interventionDate = sdf.format(user.getCareProfile().getLastInterventionDate());
                 }
@@ -154,7 +156,7 @@ public class CareRecipientEndpoint {
 				}
 
                 itemList.add(new C4ACareRecipientListResponse(user.getId(), age, frailtyStatus, frailtyNotice,
-                        attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate, user.getPilotCode(), gender));
+                        attention, textline, interventionstatus, interventionDate, detectionStatus, detectionDate, user.getPilotCode(), gender, interventions));
             } // detectionVariables loop
             response.setItemList(itemList);
 
